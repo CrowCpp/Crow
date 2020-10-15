@@ -419,8 +419,8 @@ Generat/home/travis/build/mrozigor/crow/include/crow/routing.h:23: warning: Memb
 /home/travis/build/mrozigor/crow/include/crow/routing.h:917: warning: Member internal_add_rule_object(const std::string &rule, BaseRule *ruleObject) (function) of class crow::Router is not documented.
 /home/travis/build/mrozigor/crow/include/crow/routing.h:943: warning: Member validate() (function) of class crow::Router is not documented.
 /home/travis/build/mrozigor/crow/include/crow/routing.h:963: warning: Member handle_upgrade(const request &req, response &res, Adaptor &&adaptor) (function) of class crow::Router is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:1025: warning: Member handle(const request &req, response &res) (function) of class crow::Router is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:1089: warning: Member debug_print() (function) of class crow::Router is not documented.
+/home/travis/build/mrozigor/crow/include/crow/routing.h:1035: warning: Member handle(const request &req, response &res) (function) of class crow::Router is not documented.
+/home/travis/build/mrozigor/crow/include/crow/routing.h:1110: warning: Member debug_print() (function) of class crow::Router is not documented.
 /home/travis/build/mrozigor/crow/include/crow/common.h:90: warning: Member debug_print() const (function) of class crow::routing_params is not documented.
 /home/travis/build/mrozigor/crow/include/crow/common.h:108: warning: Member get(unsigned) const (function) of class crow::routing_params is not documented.
 /home/travis/build/mrozigor/crow/include/crow/common.h:113: warning: Member get(unsigned index) const (function) of class crow::routing_params is not documented.
@@ -838,5 +838,5 @@ Generating example index...
 finalizing index lists...
 writing tag file...
 Running plantuml with JAVA...
-lookup cache used 2128/65536 hits=19274 misses=2251
+lookup cache used 2128/65536 hits=19312 misses=2251
 finished...
