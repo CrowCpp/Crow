@@ -62,87 +62,87 @@ Parsing file /home/travis/build/mrozigor/crow/include/crow.h...
 Building group list...
 Building directory list...
 Buildin/home/travis/build/mrozigor/crow/include/crow/websocket.h:37: warning: Compound crow::websocket::Connection is not documented.
-/home/travis/build/mrozigor/crow/include/crow/utility.h:485: warning: Compound crow::utility::function_traits< R(ClassType::*)(Args...)> is not documented.
 /home/travis/build/mrozigor/crow/include/crow/utility.h:474: warning: Compound crow::utility::function_traits< R(ClassType::*)(Args...) const > is not documented.
 /home/travis/build/mrozigor/crow/include/crow/utility.h:457: warning: Compound crow::utility::function_traits is not documented.
-/home/travis/build/mrozigor/crow/include/crow/utility.h:436: warning: Compound crow::detail::get_index_of_element_from_tuple_by_type_impl< T, N, T, Args... > is not documented.
-/home/travis/build/mrozigor/crow/include/crow/utility.h:430: warning: Compound crow::detail::get_index_of_element_from_tuple_by_type_impl is not documented.
-/home/travis/build/mrozigor/crow/include/crow/utility.h:396: warning: Compound crow::black_magic::promote is not documented.
-/home/travis/build/mrozigor/crow/include/crow/utility.h:370: warning: Compound crow::black_magic::pop_back<> is not documented.
-/home/travis/build/mrozigor/crow/include/crow/utility.h:356: warning: Compound crow::black_magic::pop_back_helper< seq< N... >, Tuple > is not documented.
 /home/travis/build/mrozigor/crow/include/crow/utility.h:442: warning: Compound crow::detail::get_index_of_element_from_tuple_by_type_impl< T, N, U, Args... > is not documented.
+/home/travis/build/mrozigor/crow/include/crow/utility.h:430: warning: Compound crow::detail::get_index_of_element_from_tuple_by_type_impl is not documented.
+/home/travis/build/mrozigor/crow/include/crow/utility.h:370: warning: Compound crow::black_magic::pop_back<> is not documented.
+/home/travis/build/mrozigor/crow/include/crow/utility.h:396: warning: Compound crow::black_magic::promote is not documented.
+/home/travis/build/mrozigor/crow/include/crow/utility.h:363: warning: Compound crow::black_magic::pop_back is not documented.
+/home/travis/build/mrozigor/crow/include/crow/utility.h:331: warning: Compound crow::black_magic::seq is not documented.
 /home/travis/build/mrozigor/crow/include/crow/utility.h:317: warning: Compound crow::black_magic::last_element_type is not documented.
 /home/travis/build/mrozigor/crow/include/crow/utility.h:311: warning: Compound crow::black_magic::arguments< 0 > is not documented.
+/home/travis/build/mrozigor/crow/include/crow/utility.h:296: warning: Compound crow::black_magic::single_tag_to_type< 5 > is not documented.
+/home/travis/build/mrozigor/crow/include/crow/utility.h:290: warning: Compound crow::black_magic::single_tag_to_type< 4 > is not documented.
+/home/travis/build/mrozigor/crow/include/crow/utility.h:284: warning: Compound crow::black_magic::single_tag_to_type< 3 > is not documented.
 /home/travis/build/mrozigor/crow/include/crow/websocket.h:22: warning: Compound crow::websocket::connection is not documented.
 /home/travis/build/mrozigor/crow/include/crow/utility.h:278: warning: Compound crow::black_magic::single_tag_to_type< 2 > is not documented.
+/home/travis/build/mrozigor/crow/include/crow/utility.h:272: warning: Compound crow::black_magic::single_tag_to_type< 1 > is not documented.
+/home/travis/build/mrozigor/crow/include/crow/utility.h:252: warning: Compound crow::black_magic::CallHelper< F, S< Args... > > is not documented.
 /home/travis/build/mrozigor/crow/include/crow/utility.h:240: warning: Compound crow::black_magic::S is not documented.
-/home/travis/build/mrozigor/crow/include/crow/utility.h:154: warning: Compound crow::black_magic::compute_parameter_tag_from_args_list<> is not documented.
 /home/travis/build/mrozigor/crow/include/crow/utility.h:127: warning: Compound crow::black_magic::parameter_tag is not documented.
 /home/travis/build/mrozigor/crow/include/crow/utility.h:28: warning: Compound crow::black_magic::const_str is not documented.
 /home/travis/build/mrozigor/crow/include/crow/utility.h:19: warning: Compound crow::black_magic::OutOfRange is not documented.
-/home/travis/build/mrozigor/crow/include/crow/utility.h:284: warning: Compound crow::black_magic::single_tag_to_type< 3 > is not documented.
-/home/travis/build/mrozigor/crow/include/crow/utility.h:252: warning: Compound crow::black_magic::CallHelper< F, S< Args... > > is not documented.
-/home/travis/build/mrozigor/crow/include/crow/socket_adaptors.h:18: warning: Compound crow::SocketAdaptor is not documented.
+/home/travis/build/mrozigor/crow/include/crow/utility.h:485: warning: Compound crow::utility::function_traits< R(ClassType::*)(Args...)> is not documented.
+/home/travis/build/mrozigor/crow/include/crow/TinySHA1.hpp:31: warning: Compound sha1::SHA1 is not documented.
 /home/travis/build/mrozigor/crow/include/crow/routing.h:567: warning: Compound crow::Trie::Node is not documented.
 /home/travis/build/mrozigor/crow/include/crow/routing.h:564: warning: Compound crow::Trie is not documented.
-/home/travis/build/mrozigor/crow/include/crow/app.h:35: warning: Compound crow::Crow is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:169: warning: Compound crow::detail::routing_handler_call_helper::Wrapped is not documented.
 /home/travis/build/mrozigor/crow/include/crow/routing.h:345: warning: Compound crow::RuleParameterTraits is not documented.
-/home/travis/build/mrozigor/crow/include/crow/json.h:214: warning: Compound crow::json::rvalue is not documented.
-/home/travis/build/mrozigor/crow/include/crow/http_parser_merged.h:265: warning: Compound http_parser_url is not documented.
-/home/travis/build/mrozigor/crow/include/crow/json.h:117: warning: Compound crow::json::detail::r_string is not documented.
-/home/travis/build/mrozigor/crow/include/crow/http_response.h:23: warning: Compound crow::response is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:156: warning: Compound crow::detail::routing_handler_call_helper::call< F, NInt, NUint, NDouble, NString, black_magic::S<>, black_magic::S< Args1... > > is not documented.
-/home/travis/build/mrozigor/crow/include/crow/http_parser_merged.h:204: warning: Compound http_parser is not documented.
-/home/travis/build/mrozigor/crow/include/crow/middleware_context.h:40: warning: Compound crow::detail::context is not documented.
-/home/travis/build/mrozigor/crow/include/crow/query_string.h:291: warning: Compound crow::query_string is not documented.
-/home/travis/build/mrozigor/crow/include/crow/ci_map.h:10: warning: Compound crow::ci_hash is not documented.
-/home/travis/build/mrozigor/crow/include/crow/ci_map.h:26: warning: Compound crow::ci_key_eq is not documented.
-/home/travis/build/mrozigor/crow/include/crow/utility.h:496: warning: Compound crow::utility::function_traits< std::function< R(Args...)> > is not documented.
-/home/travis/build/mrozigor/crow/include/crow/dumb_timer_queue.h:17: warning: Compound crow::detail::dumb_timer_queue is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:112: warning: Compound crow::detail::routing_handler_call_helper::call< F, NInt, NUint, NDouble, NString, black_magic::S< int64_t, Args1... >, black_magic::S< Args2... > > is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:134: warning: Compound crow::detail::routing_handler_call_helper::call< F, NInt, NUint, NDouble, NString, black_magic::S< double, Args1... >, black_magic::S< Args2... > > is not documented.
-/home/travis/build/mrozigor/crow/include/crow/http_connection.h:183: warning: Compound crow::Connection is not documented.
-/home/travis/build/mrozigor/crow/include/crow/json.h:1146: warning: Compound crow::json::wvalue is not documented.
-/home/travis/build/mrozigor/crow/include/crow/http_connection.h:69: warning: Compound crow::detail::is_before_handle_arity_3_impl is not documented.
-/home/travis/build/mrozigor/crow/include/crow/middleware_context.h:15: warning: Compound crow::detail::partial_context is not documented.
-/home/travis/build/mrozigor/crow/include/crow/http_response.h:137: warning: Compound crow::response::static_file_info is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:452: warning: Compound crow::TaggedRule is not documented.
-/home/travis/build/mrozigor/crow/include/crow/utility.h:290: warning: Compound crow::black_magic::single_tag_to_type< 4 > is not documented.
-/home/travis/build/mrozigor/crow/include/crow/common.h:84: warning: Compound crow::routing_params is not documented.
-/home/travis/build/mrozigor/crow/include/crow/TinySHA1.hpp:31: warning: Compound sha1::SHA1 is not documented.
-/home/travis/build/mrozigor/crow/include/crow/http_parser_merged.h:234: warning: Compound http_parser_settings is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:230: warning: Compound crow::detail::routing_handler_call_helper::Wrapped::handler_type_helper is not documented.
-/home/travis/build/mrozigor/crow/include/crow/http_server.h:27: warning: Compound crow::Server is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:145: warning: Compound crow::detail::routing_handler_call_helper::call< F, NInt, NUint, NDouble, NString, black_magic::S< std::string, Args1... >, black_magic::S< Args2... > > is not documented.
-/home/travis/build/mrozigor/crow/include/crow/utility.h:331: warning: Compound crow::black_magic::seq is not documented.
-/home/travis/build/mrozigor/crow/include/crow/mustache.h:42: warning: Compound crow::mustache::Action is not documented.
-/home/travis/build/mrozigor/crow/include/crow/http_request.h:25: warning: Compound crow::request is not documented.
-/home/travis/build/mrozigor/crow/include/crow/utility.h:363: warning: Compound crow::black_magic::pop_back is not documented.
-/home/travis/build/mrozigor/crow/include/crow/utility.h:272: warning: Compound crow::black_magic::single_tag_to_type< 1 > is not documented.
-/home/travis/build/mrozigor/crow/include/crow/logging.h:36: warning: Compound crow::CerrLogHandler is not documented.
-/home/travis/build/mrozigor/crow/include/crow/logging.h:31: warning: Compound crow::ILogHandler is not documented.
-/home/travis/build/mrozigor/crow/include/crow/middleware.h:32: warning: Compound crow::CookieParser is not documented.
-/home/travis/build/mrozigor/crow/include/crow/mustache.h:17: warning: Compound crow::mustache::invalid_template_exception is not documented.
-/home/travis/build/mrozigor/crow/include/crow/middleware.h:34: warning: Compound crow::CookieParser::context is not documented.
-/home/travis/build/mrozigor/crow/include/crow/middleware_context.h:29: warning: Compound crow::detail::partial_context<> is not documented.
-/home/travis/build/mrozigor/crow/include/crow/utility.h:303: warning: Compound crow::black_magic::arguments is not documented.
+/home/travis/build/mrozigor/crow/include/crow/routing.h:271: warning: Compound crow::WebSocketRule is not documented.
 /home/travis/build/mrozigor/crow/include/crow/routing.h:244: warning: Compound crow::detail::routing_handler_call_helper::Wrapped::handler_type_helper< const request &, response &, Args... > is not documented.
+/home/travis/build/mrozigor/crow/include/crow/http_response.h:23: warning: Compound crow::response is not documented.
+/home/travis/build/mrozigor/crow/include/crow/query_string.h:291: warning: Compound crow::query_string is not documented.
+/home/travis/build/mrozigor/crow/include/crow/routing.h:892: warning: Compound crow::Router is not documented.
+/home/travis/build/mrozigor/crow/include/crow/http_parser_merged.h:265: warning: Compound http_parser_url is not documented.
+/home/travis/build/mrozigor/crow/include/crow/utility.h:160: warning: Compound crow::black_magic::compute_parameter_tag_from_args_list< Arg, Args... > is not documented.
+/home/travis/build/mrozigor/crow/include/crow/socket_adaptors.h:18: warning: Compound crow::SocketAdaptor is not documented.
+/home/travis/build/mrozigor/crow/include/crow/ci_map.h:26: warning: Compound crow::ci_key_eq is not documented.
+/home/travis/build/mrozigor/crow/include/crow/http_connection.h:183: warning: Compound crow::Connection is not documented.
+/home/travis/build/mrozigor/crow/include/crow/mustache.h:42: warning: Compound crow::mustache::Action is not documented.
+/home/travis/build/mrozigor/crow/include/crow/routing.h:377: warning: Compound crow::DynamicRule is not documented.
+/home/travis/build/mrozigor/crow/include/crow/http_request.h:25: warning: Compound crow::request is not documented.
+/home/travis/build/mrozigor/crow/include/crow/middleware_context.h:29: warning: Compound crow::detail::partial_context<> is not documented.
+/home/travis/build/mrozigor/crow/include/crow/utility.h:436: warning: Compound crow::detail::get_index_of_element_from_tuple_by_type_impl< T, N, T, Args... > is not documented.
+/home/travis/build/mrozigor/crow/include/crow/http_server.h:27: warning: Compound crow::Server is not documented.
+/home/travis/build/mrozigor/crow/include/crow/utility.h:303: warning: Compound crow::black_magic::arguments is not documented.
+/home/travis/build/mrozigor/crow/include/crow/routing.h:237: warning: Compound crow::detail::routing_handler_call_helper::Wrapped::handler_type_helper< const request &, Args... > is not documented.
+/home/travis/build/mrozigor/crow/include/crow/json.h:1146: warning: Compound crow::json::wvalue is not documented.
+/home/travis/build/mrozigor/crow/include/crow/middleware_context.h:15: warning: Compound crow::detail::partial_context is not documented.
+/home/travis/build/mrozigor/crow/include/crow/routing.h:169: warning: Compound crow::detail::routing_handler_call_helper::Wrapped is not documented.
+/home/travis/build/mrozigor/crow/include/crow/mustache.h:17: warning: Compound crow::mustache::invalid_template_exception is not documented.
+/home/travis/build/mrozigor/crow/include/crow/logging.h:43: warning: Compound crow::logger is not documented.
+/home/travis/build/mrozigor/crow/include/crow/routing.h:145: warning: Compound crow::detail::routing_handler_call_helper::call< F, NInt, NUint, NDouble, NString, black_magic::S< std::string, Args1... >, black_magic::S< Args2... > > is not documented.
+/home/travis/build/mrozigor/crow/include/crow/utility.h:154: warning: Compound crow::black_magic::compute_parameter_tag_from_args_list<> is not documented.
+/home/travis/build/mrozigor/crow/include/crow/dumb_timer_queue.h:17: warning: Compound crow::detail::dumb_timer_queue is not documented.
+/home/travis/build/mrozigor/crow/include/crow/utility.h:356: warning: Compound crow::black_magic::pop_back_helper< seq< N... >, Tuple > is not documented.
+/home/travis/build/mrozigor/crow/include/crow/routing.h:98: warning: Compound crow::detail::routing_handler_call_helper::call_params is not documented.
+/home/travis/build/mrozigor/crow/include/crow/middleware_context.h:40: warning: Compound crow::detail::context is not documented.
+/home/travis/build/mrozigor/crow/include/crow/routing.h:230: warning: Compound crow::detail::routing_handler_call_helper::Wrapped::handler_type_helper is not documented.
+/home/travis/build/mrozigor/crow/include/crow/app.h:35: warning: Compound crow::Crow is not documented.
+/home/travis/build/mrozigor/crow/include/crow/routing.h:112: warning: Compound crow::detail::routing_handler_call_helper::call< F, NInt, NUint, NDouble, NString, black_magic::S< int64_t, Args1... >, black_magic::S< Args2... > > is not documented.
+/home/travis/build/mrozigor/crow/include/crow/ci_map.h:10: warning: Compound crow::ci_hash is not documented.
+/home/travis/build/mrozigor/crow/include/crow/http_parser_merged.h:204: warning: Compound http_parser is not documented.
+/home/travis/build/mrozigor/crow/include/crow/routing.h:134: warning: Compound crow::detail::routing_handler_call_helper::call< F, NInt, NUint, NDouble, NString, black_magic::S< double, Args1... >, black_magic::S< Args2... > > is not documented.
+/home/travis/build/mrozigor/crow/include/crow/utility.h:496: warning: Compound crow::utility::function_traits< std::function< R(Args...)> > is not documented.
+/home/travis/build/mrozigor/crow/include/crow/routing.h:452: warning: Compound crow::TaggedRule is not documented.
+/home/travis/build/mrozigor/crow/include/crow/routing.h:156: warning: Compound crow::detail::routing_handler_call_helper::call< F, NInt, NUint, NDouble, NString, black_magic::S<>, black_magic::S< Args1... > > is not documented.
+/home/travis/build/mrozigor/crow/include/crow/http_connection.h:85: warning: Compound crow::detail::is_after_handle_arity_3_impl is not documented.
+/home/travis/build/mrozigor/crow/include/crow/common.h:84: warning: Compound crow::routing_params is not documented.
+/home/travis/build/mrozigor/crow/include/crow/http_connection.h:69: warning: Compound crow::detail::is_before_handle_arity_3_impl is not documented.
+/home/travis/build/mrozigor/crow/include/crow/http_parser_merged.h:234: warning: Compound http_parser_settings is not documented.
+/home/travis/build/mrozigor/crow/include/crow/routing.h:91: warning: Compound crow::detail::routing_handler_call_helper::call_pair is not documented.
+/home/travis/build/mrozigor/crow/include/crow/routing.h:123: warning: Compound crow::detail::routing_handler_call_helper::call< F, NInt, NUint, NDouble, NString, black_magic::S< uint64_t, Args1... >, black_magic::S< Args2... > > is not documented.
+/home/travis/build/mrozigor/crow/include/crow/http_response.h:137: warning: Compound crow::response::static_file_info is not documented.
+/home/travis/build/mrozigor/crow/include/crow/json.h:117: warning: Compound crow::json::detail::r_string is not documented.
+/home/travis/build/mrozigor/crow/include/crow/json.h:214: warning: Compound crow::json::rvalue is not documented.
+/home/travis/build/mrozigor/crow/include/crow/logging.h:31: warning: Compound crow::ILogHandler is not documented.
+/home/travis/build/mrozigor/crow/include/crow/middleware.h:34: warning: Compound crow::CookieParser::context is not documented.
+/home/travis/build/mrozigor/crow/include/crow/logging.h:36: warning: Compound crow::CerrLogHandler is not documented.
+/home/travis/build/mrozigor/crow/include/crow/middleware.h:32: warning: Compound crow::CookieParser is not documented.
 /home/travis/build/mrozigor/crow/include/crow/mustache.h:53: warning: Compound crow::mustache::template_t is not documented.
 /home/travis/build/mrozigor/crow/include/crow/parser.h:15: warning: Compound crow::HTTPParser is not documented.
-/home/travis/build/mrozigor/crow/include/crow/http_connection.h:85: warning: Compound crow::detail::is_after_handle_arity_3_impl is not documented.
 /home/travis/build/mrozigor/crow/include/crow/routing.h:21: warning: Compound crow::BaseRule is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:91: warning: Compound crow::detail::routing_handler_call_helper::call_pair is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:98: warning: Compound crow::detail::routing_handler_call_helper::call_params is not documented.
-/home/travis/build/mrozigor/crow/include/crow/utility.h:160: warning: Compound crow::black_magic::compute_parameter_tag_from_args_list< Arg, Args... > is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:123: warning: Compound crow::detail::routing_handler_call_helper::call< F, NInt, NUint, NDouble, NString, black_magic::S< uint64_t, Args1... >, black_magic::S< Args2... > > is not documented.
-/home/travis/build/mrozigor/crow/include/crow/logging.h:43: warning: Compound crow::logger is not documented.
 /home/travis/build/mrozigor/crow/include/crow/routing.h:189: warning: Compound crow::detail::routing_handler_call_helper::Wrapped::req_handler_wrapper is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:892: warning: Compound crow::Router is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:237: warning: Compound crow::detail::routing_handler_call_helper::Wrapped::handler_type_helper< const request &, Args... > is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:271: warning: Compound crow::WebSocketRule is not documented.
-/home/travis/build/mrozigor/crow/include/crow/utility.h:296: warning: Compound crow::black_magic::single_tag_to_type< 5 > is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:377: warning: Compound crow::DynamicRule is not documented.
 /home/travis/build/mrozigor/crow/include/crow/http_parser_merged.h:207: warning: Member flags (variable) of class http_parser is not documented.
 /home/travis/build/mrozigor/crow/include/crow/http_parser_merged.h:208: warning: Member state (variable) of class http_parser is not documented.
 /home/travis/build/mrozigor/crow/include/crow/http_parser_merged.h:209: warning: Member header_state (variable) of class http_parser is not documented.
@@ -838,5 +838,5 @@ Generating example index...
 finalizing index lists...
 writing tag file...
 Running plantuml with JAVA...
-lookup cache used 2128/65536 hits=19312 misses=2251
+lookup cache used 2473/65536 hits=21177 misses=2776
 finished...

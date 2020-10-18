@@ -28,12 +28,11 @@ var hierarchy =
     [ "crow::black_magic::compute_parameter_tag_from_args_list< Arg, Args... >", "structcrow_1_1black__magic_1_1compute__parameter__tag__from__args__list_3_01_arg_00_01_args_8_8_8_01_4.html", null ],
     [ "crow::black_magic::compute_parameter_tag_from_args_list<>", "structcrow_1_1black__magic_1_1compute__parameter__tag__from__args__list_3_4.html", null ],
     [ "crow::black_magic::concat< S1, S2 >", "structcrow_1_1black__magic_1_1concat.html", null ],
-    [ "crow::Connection< Adaptor, Handler, Middlewares >", "classcrow_1_1_connection.html", null ],
     [ "crow::websocket::connection", "structcrow_1_1websocket_1_1connection.html", [
       [ "crow::websocket::Connection< Adaptor >", "classcrow_1_1websocket_1_1_connection.html", null ]
     ] ],
+    [ "crow::Connection< Adaptor, Handler, Middlewares >", "classcrow_1_1_connection.html", null ],
     [ "crow::black_magic::const_str", "classcrow_1_1black__magic_1_1const__str.html", null ],
-    [ "crow::CookieParser::context", "structcrow_1_1_cookie_parser_1_1context.html", null ],
     [ "context", null, [
       [ "crow::detail::partial_context< Middlewares >", "structcrow_1_1detail_1_1partial__context.html", null ],
       [ "crow::detail::partial_context< Middlewares... >", "structcrow_1_1detail_1_1partial__context.html", [
@@ -41,6 +40,7 @@ var hierarchy =
         [ "crow::detail::context< Middlewares >", "structcrow_1_1detail_1_1context.html", null ]
       ] ]
     ] ],
+    [ "crow::CookieParser::context", "structcrow_1_1_cookie_parser_1_1context.html", null ],
     [ "crow::CookieParser", "structcrow_1_1_cookie_parser.html", null ],
     [ "crow::Crow< Middlewares >", "classcrow_1_1_crow.html", null ],
     [ "crow::detail::dumb_timer_queue", "classcrow_1_1detail_1_1dumb__timer__queue.html", null ],
@@ -49,7 +49,7 @@ var hierarchy =
       [ "crow::json::detail::r_string", "structcrow_1_1json_1_1detail_1_1r__string.html", null ],
       [ "crow::json::detail::r_string", "structcrow_1_1json_1_1detail_1_1r__string.html", null ]
     ] ],
-    [ "exception", null, [
+    [ "std::exception", null, [
       [ "crow::mustache::invalid_template_exception", "classcrow_1_1mustache_1_1invalid__template__exception.html", null ]
     ] ],
     [ "false_type", null, [
@@ -60,10 +60,10 @@ var hierarchy =
     [ "crow::utility::function_traits< R(ClassType::*)(Args...)>", "structcrow_1_1utility_1_1function__traits_3_01_r_07_class_type_1_1_5_08_07_args_8_8_8_08_4.html", null ],
     [ "crow::utility::function_traits< std::function< R(Args...)> >", "structcrow_1_1utility_1_1function__traits_3_01std_1_1function_3_01_r_07_args_8_8_8_08_4_01_4.html", null ],
     [ "crow::black_magic::gen_seq< N >", "structcrow_1_1black__magic_1_1gen__seq.html", null ],
-    [ "crow::detail::check_after_handle_arity_3_const< MW >::get< T, const  >", "structcrow_1_1detail_1_1check__after__handle__arity__3__const_1_1get.html", null ],
-    [ "crow::detail::check_before_handle_arity_3< MW >::get< T, >", "structcrow_1_1detail_1_1check__before__handle__arity__3_1_1get.html", null ],
-    [ "crow::detail::check_after_handle_arity_3< MW >::get< T, >", "structcrow_1_1detail_1_1check__after__handle__arity__3_1_1get.html", null ],
     [ "crow::detail::check_before_handle_arity_3_const< MW >::get< T, const  >", "structcrow_1_1detail_1_1check__before__handle__arity__3__const_1_1get.html", null ],
+    [ "crow::detail::check_before_handle_arity_3< MW >::get< T, >", "structcrow_1_1detail_1_1check__before__handle__arity__3_1_1get.html", null ],
+    [ "crow::detail::check_after_handle_arity_3_const< MW >::get< T, const  >", "structcrow_1_1detail_1_1check__after__handle__arity__3__const_1_1get.html", null ],
+    [ "crow::detail::check_after_handle_arity_3< MW >::get< T, >", "structcrow_1_1detail_1_1check__after__handle__arity__3_1_1get.html", null ],
     [ "crow::detail::get_index_of_element_from_tuple_by_type_impl< T, N, Args >", "structcrow_1_1detail_1_1get__index__of__element__from__tuple__by__type__impl.html", null ],
     [ "crow::detail::get_index_of_element_from_tuple_by_type_impl< T, N, T, Args... >", "structcrow_1_1detail_1_1get__index__of__element__from__tuple__by__type__impl_3_01_t_00_01_n_00_01_t_00_01_args_8_8_8_01_4.html", null ],
     [ "crow::detail::get_index_of_element_from_tuple_by_type_impl< T, N, U, Args... >", "structcrow_1_1detail_1_1get__index__of__element__from__tuple__by__type__impl_3_01_t_00_01_n_00_01_u_00_01_args_8_8_8_01_4.html", null ],
