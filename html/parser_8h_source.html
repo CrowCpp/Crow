@@ -112,21 +112,21 @@ $(document).ready(function(){initNavTree('parser_8h_source.html',''); initResiza
 <div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="keyword">namespace </span>crow</div>
 <div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;{</div>
 <div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;    <span class="keyword">template</span> &lt;<span class="keyword">typename</span> Handler&gt;</div>
-<div class="line"><a name="l00014"></a><span class="lineno"><a class="line" href="structcrow_1_1_h_t_t_p_parser.html">   14</a></span>&#160;    <span class="keyword">struct </span><a class="code" href="structcrow_1_1_h_t_t_p_parser.html">HTTPParser</a> : <span class="keyword">public</span> <a class="code" href="structhttp__parser.html">http_parser</a></div>
+<div class="line"><a name="l00014"></a><span class="lineno"><a class="line" href="structcrow_1_1_h_t_t_p_parser.html">   14</a></span>&#160;    <span class="keyword">struct </span><a class="code" href="structcrow_1_1_h_t_t_p_parser.html">HTTPParser</a> : <span class="keyword">public</span> http_parser</div>
 <div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;    {</div>
-<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;        <span class="keyword">static</span> <span class="keywordtype">int</span> on_message_begin(<a class="code" href="structhttp__parser.html">http_parser</a>* self_)</div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;        <span class="keyword">static</span> <span class="keywordtype">int</span> on_message_begin(http_parser* self_)</div>
 <div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;        {</div>
 <div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;            <a class="code" href="structcrow_1_1_h_t_t_p_parser.html">HTTPParser</a>* <span class="keyword">self</span> = <span class="keyword">static_cast&lt;</span><a class="code" href="structcrow_1_1_h_t_t_p_parser.html">HTTPParser</a>*<span class="keyword">&gt;</span>(self_);</div>
 <div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;            <span class="keyword">self</span>-&gt;clear();</div>
 <div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;            <span class="keywordflow">return</span> 0;</div>
 <div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;        }</div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;        <span class="keyword">static</span> <span class="keywordtype">int</span> on_url(<a class="code" href="structhttp__parser.html">http_parser</a>* self_, <span class="keyword">const</span> <span class="keywordtype">char</span>* at, <span class="keywordtype">size_t</span> length)</div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;        <span class="keyword">static</span> <span class="keywordtype">int</span> on_url(http_parser* self_, <span class="keyword">const</span> <span class="keywordtype">char</span>* at, <span class="keywordtype">size_t</span> length)</div>
 <div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;        {</div>
 <div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;            <a class="code" href="structcrow_1_1_h_t_t_p_parser.html">HTTPParser</a>* <span class="keyword">self</span> = <span class="keyword">static_cast&lt;</span><a class="code" href="structcrow_1_1_h_t_t_p_parser.html">HTTPParser</a>*<span class="keyword">&gt;</span>(self_);</div>
 <div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;            <span class="keyword">self</span>-&gt;raw_url.insert(self-&gt;raw_url.end(), at, at+length);</div>
 <div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;            <span class="keywordflow">return</span> 0;</div>
 <div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;        }</div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;        <span class="keyword">static</span> <span class="keywordtype">int</span> on_header_field(<a class="code" href="structhttp__parser.html">http_parser</a>* self_, <span class="keyword">const</span> <span class="keywordtype">char</span>* at, <span class="keywordtype">size_t</span> length)</div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;        <span class="keyword">static</span> <span class="keywordtype">int</span> on_header_field(http_parser* self_, <span class="keyword">const</span> <span class="keywordtype">char</span>* at, <span class="keywordtype">size_t</span> length)</div>
 <div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;        {</div>
 <div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;            <a class="code" href="structcrow_1_1_h_t_t_p_parser.html">HTTPParser</a>* <span class="keyword">self</span> = <span class="keyword">static_cast&lt;</span><a class="code" href="structcrow_1_1_h_t_t_p_parser.html">HTTPParser</a>*<span class="keyword">&gt;</span>(self_);</div>
 <div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;            <span class="keywordflow">switch</span> (self-&gt;header_building_state)</div>
@@ -145,7 +145,7 @@ $(document).ready(function(){initNavTree('parser_8h_source.html',''); initResiza
 <div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;            }</div>
 <div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;            <span class="keywordflow">return</span> 0;</div>
 <div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;        }</div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;        <span class="keyword">static</span> <span class="keywordtype">int</span> on_header_value(<a class="code" href="structhttp__parser.html">http_parser</a>* self_, <span class="keyword">const</span> <span class="keywordtype">char</span>* at, <span class="keywordtype">size_t</span> length)</div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;        <span class="keyword">static</span> <span class="keywordtype">int</span> on_header_value(http_parser* self_, <span class="keyword">const</span> <span class="keywordtype">char</span>* at, <span class="keywordtype">size_t</span> length)</div>
 <div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;        {</div>
 <div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;            <a class="code" href="structcrow_1_1_h_t_t_p_parser.html">HTTPParser</a>* <span class="keyword">self</span> = <span class="keyword">static_cast&lt;</span><a class="code" href="structcrow_1_1_h_t_t_p_parser.html">HTTPParser</a>*<span class="keyword">&gt;</span>(self_);</div>
 <div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;            <span class="keywordflow">switch</span> (self-&gt;header_building_state)</div>
@@ -160,7 +160,7 @@ $(document).ready(function(){initNavTree('parser_8h_source.html',''); initResiza
 <div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;            }</div>
 <div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;            <span class="keywordflow">return</span> 0;</div>
 <div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;        }</div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;        <span class="keyword">static</span> <span class="keywordtype">int</span> on_headers_complete(<a class="code" href="structhttp__parser.html">http_parser</a>* self_)</div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;        <span class="keyword">static</span> <span class="keywordtype">int</span> on_headers_complete(http_parser* self_)</div>
 <div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;        {</div>
 <div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;            <a class="code" href="structcrow_1_1_h_t_t_p_parser.html">HTTPParser</a>* <span class="keyword">self</span> = <span class="keyword">static_cast&lt;</span><a class="code" href="structcrow_1_1_h_t_t_p_parser.html">HTTPParser</a>*<span class="keyword">&gt;</span>(self_);</div>
 <div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;            <span class="keywordflow">if</span> (!self-&gt;header_field.empty())</div>
@@ -170,13 +170,13 @@ $(document).ready(function(){initNavTree('parser_8h_source.html',''); initResiza
 <div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;            <span class="keyword">self</span>-&gt;process_header();</div>
 <div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;            <span class="keywordflow">return</span> 0;</div>
 <div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;        }</div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;        <span class="keyword">static</span> <span class="keywordtype">int</span> on_body(<a class="code" href="structhttp__parser.html">http_parser</a>* self_, <span class="keyword">const</span> <span class="keywordtype">char</span>* at, <span class="keywordtype">size_t</span> length)</div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;        <span class="keyword">static</span> <span class="keywordtype">int</span> on_body(http_parser* self_, <span class="keyword">const</span> <span class="keywordtype">char</span>* at, <span class="keywordtype">size_t</span> length)</div>
 <div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;        {</div>
 <div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;            <a class="code" href="structcrow_1_1_h_t_t_p_parser.html">HTTPParser</a>* <span class="keyword">self</span> = <span class="keyword">static_cast&lt;</span><a class="code" href="structcrow_1_1_h_t_t_p_parser.html">HTTPParser</a>*<span class="keyword">&gt;</span>(self_);</div>
 <div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;            <span class="keyword">self</span>-&gt;body.insert(self-&gt;body.end(), at, at+length);</div>
 <div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;            <span class="keywordflow">return</span> 0;</div>
 <div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;        }</div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;        <span class="keyword">static</span> <span class="keywordtype">int</span> on_message_complete(<a class="code" href="structhttp__parser.html">http_parser</a>* self_)</div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;        <span class="keyword">static</span> <span class="keywordtype">int</span> on_message_complete(http_parser* self_)</div>
 <div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;        {</div>
 <div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;            <a class="code" href="structcrow_1_1_h_t_t_p_parser.html">HTTPParser</a>* <span class="keyword">self</span> = <span class="keyword">static_cast&lt;</span><a class="code" href="structcrow_1_1_h_t_t_p_parser.html">HTTPParser</a>*<span class="keyword">&gt;</span>(self_);</div>
 <div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160; </div>
@@ -196,7 +196,7 @@ $(document).ready(function(){initNavTree('parser_8h_source.html',''); initResiza
 <div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;        <span class="comment">// return false on error</span></div>
 <div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;        <span class="keywordtype">bool</span> feed(<span class="keyword">const</span> <span class="keywordtype">char</span>* buffer, <span class="keywordtype">int</span> length)</div>
 <div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;        {</div>
-<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;            <span class="keyword">const</span> <span class="keyword">static</span> <a class="code" href="structhttp__parser__settings.html">http_parser_settings</a> settings_{</div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;            <span class="keyword">const</span> <span class="keyword">static</span> http_parser_settings settings_{</div>
 <div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;                on_message_begin,</div>
 <div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;                on_url,</div>
 <div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;                <span class="keyword">nullptr</span>,</div>
@@ -250,7 +250,7 @@ $(document).ready(function(){initNavTree('parser_8h_source.html',''); initResiza
 <div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160; </div>
 <div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;        <span class="keywordtype">bool</span> check_version(<span class="keywordtype">int</span> major, <span class="keywordtype">int</span> minor)<span class="keyword"> const</span></div>
 <div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;<span class="keyword">        </span>{</div>
-<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;            <span class="keywordflow">return</span> <a class="code" href="structhttp__parser.html#ac994a4a8268652f5ce82de5bde5c3f9d">http_major</a> == major &amp;&amp; http_minor == minor;</div>
+<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;            <span class="keywordflow">return</span> http_major == major &amp;&amp; http_minor == minor;</div>
 <div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;        }</div>
 <div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160; </div>
 <div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;        std::string raw_url;</div>
@@ -268,18 +268,15 @@ $(document).ready(function(){initNavTree('parser_8h_source.html',''); initResiza
 <div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;}</div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
-<div class="ttc" id="astructhttp__parser_html"><div class="ttname"><a href="structhttp__parser.html">http_parser</a></div><div class="ttdef"><b>Definition:</b> http_parser_merged.h:204</div></div>
 <div class="ttc" id="aclasscrow_1_1query__string_html"><div class="ttname"><a href="classcrow_1_1query__string.html">crow::query_string</a></div><div class="ttdef"><b>Definition:</b> query_string.h:290</div></div>
 <div class="ttc" id="astructcrow_1_1_h_t_t_p_parser_html"><div class="ttname"><a href="structcrow_1_1_h_t_t_p_parser.html">crow::HTTPParser</a></div><div class="ttdef"><b>Definition:</b> parser.h:14</div></div>
 <div class="ttc" id="astructcrow_1_1request_html"><div class="ttname"><a href="structcrow_1_1request.html">crow::request</a></div><div class="ttdef"><b>Definition:</b> http_request.h:24</div></div>
-<div class="ttc" id="astructhttp__parser__settings_html"><div class="ttname"><a href="structhttp__parser__settings.html">http_parser_settings</a></div><div class="ttdef"><b>Definition:</b> http_parser_merged.h:234</div></div>
-<div class="ttc" id="astructhttp__parser_html_ac994a4a8268652f5ce82de5bde5c3f9d"><div class="ttname"><a href="structhttp__parser.html#ac994a4a8268652f5ce82de5bde5c3f9d">http_parser::http_major</a></div><div class="ttdeci">unsigned short http_major</div><div class="ttdef"><b>Definition:</b> http_parser_merged.h:216</div></div>
 <!-- start footer part -->
 		<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
 			<ul>
 				<li class="navelem"><a class="el" href="dir_d44c64559bbebec7f509842c48db8b23.html">include</a></li><li class="navelem"><a class="el" href="dir_d22c1cb87b72f01e1a7f207eb3bfd1ca.html">crow</a></li><li class="navelem"><b>parser.h</b></li>
 				<li class="footer">
-					Generated on Sun Oct 18 2020 for Crow by <a href="http://www.doxygen.org/index.html">
+					Generated on Mon Oct 19 2020 for Crow by <a href="http://www.doxygen.org/index.html">
 					<img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.17.
 					Dark theme by <a href="http://majerle.eu" target="_new">Tilen Majerle</a>. Edited by <a href="https://github.com/The-EDev" target="_new">Farook Al-Sammarraie</a>. All rights reserved.
 				</li>

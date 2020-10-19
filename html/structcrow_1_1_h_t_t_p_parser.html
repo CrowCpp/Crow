@@ -108,11 +108,8 @@ $(document).ready(function(){initNavTree('structcrow_1_1_h_t_t_p_parser.html',''
 Inheritance diagram for crow::HTTPParser&lt; Handler &gt;:</div>
 <div class="dyncontent">
  <div class="center">
-  <img src="structcrow_1_1_h_t_t_p_parser.png" usemap="#crow::HTTPParser_3C_20Handler_20_3E_map" alt=""/>
-  <map id="crow::HTTPParser_3C_20Handler_20_3E_map" name="crow::HTTPParser_3C_20Handler_20_3E_map">
-<area href="structhttp__parser.html" alt="http_parser" shape="rect" coords="0,0,184,24"/>
-  </map>
-</div></div>
+  <img src="structcrow_1_1_h_t_t_p_parser.png" alt=""/>
+ </div></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
@@ -147,25 +144,25 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><b>check_version</b> (in
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
 <tr class="memitem:a44a23f77710b845a920384d8c186be4e"><td class="memItemLeft" align="right" valign="top"><a id="a44a23f77710b845a920384d8c186be4e"></a>
-static int&#160;</td><td class="memItemRight" valign="bottom"><b>on_message_begin</b> (<a class="el" href="structhttp__parser.html">http_parser</a> *self_)</td></tr>
+static int&#160;</td><td class="memItemRight" valign="bottom"><b>on_message_begin</b> (http_parser *self_)</td></tr>
 <tr class="separator:a44a23f77710b845a920384d8c186be4e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1045990cfa9a0be0a0e6cf3cdf533636"><td class="memItemLeft" align="right" valign="top"><a id="a1045990cfa9a0be0a0e6cf3cdf533636"></a>
-static int&#160;</td><td class="memItemRight" valign="bottom"><b>on_url</b> (<a class="el" href="structhttp__parser.html">http_parser</a> *self_, const char *at, size_t length)</td></tr>
+static int&#160;</td><td class="memItemRight" valign="bottom"><b>on_url</b> (http_parser *self_, const char *at, size_t length)</td></tr>
 <tr class="separator:a1045990cfa9a0be0a0e6cf3cdf533636"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1b0ee8db3529fb27e5a29fb89749128d"><td class="memItemLeft" align="right" valign="top"><a id="a1b0ee8db3529fb27e5a29fb89749128d"></a>
-static int&#160;</td><td class="memItemRight" valign="bottom"><b>on_header_field</b> (<a class="el" href="structhttp__parser.html">http_parser</a> *self_, const char *at, size_t length)</td></tr>
+static int&#160;</td><td class="memItemRight" valign="bottom"><b>on_header_field</b> (http_parser *self_, const char *at, size_t length)</td></tr>
 <tr class="separator:a1b0ee8db3529fb27e5a29fb89749128d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa19462e925e68cf5525eba239491ae77"><td class="memItemLeft" align="right" valign="top"><a id="aa19462e925e68cf5525eba239491ae77"></a>
-static int&#160;</td><td class="memItemRight" valign="bottom"><b>on_header_value</b> (<a class="el" href="structhttp__parser.html">http_parser</a> *self_, const char *at, size_t length)</td></tr>
+static int&#160;</td><td class="memItemRight" valign="bottom"><b>on_header_value</b> (http_parser *self_, const char *at, size_t length)</td></tr>
 <tr class="separator:aa19462e925e68cf5525eba239491ae77"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a33dc43c79b00bc6dad4c317a42ee09a2"><td class="memItemLeft" align="right" valign="top"><a id="a33dc43c79b00bc6dad4c317a42ee09a2"></a>
-static int&#160;</td><td class="memItemRight" valign="bottom"><b>on_headers_complete</b> (<a class="el" href="structhttp__parser.html">http_parser</a> *self_)</td></tr>
+static int&#160;</td><td class="memItemRight" valign="bottom"><b>on_headers_complete</b> (http_parser *self_)</td></tr>
 <tr class="separator:a33dc43c79b00bc6dad4c317a42ee09a2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae02056c2811a0008bb4e3851a48791c3"><td class="memItemLeft" align="right" valign="top"><a id="ae02056c2811a0008bb4e3851a48791c3"></a>
-static int&#160;</td><td class="memItemRight" valign="bottom"><b>on_body</b> (<a class="el" href="structhttp__parser.html">http_parser</a> *self_, const char *at, size_t length)</td></tr>
+static int&#160;</td><td class="memItemRight" valign="bottom"><b>on_body</b> (http_parser *self_, const char *at, size_t length)</td></tr>
 <tr class="separator:ae02056c2811a0008bb4e3851a48791c3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a614c34dd524540e4853496c386a0100c"><td class="memItemLeft" align="right" valign="top"><a id="a614c34dd524540e4853496c386a0100c"></a>
-static int&#160;</td><td class="memItemRight" valign="bottom"><b>on_message_complete</b> (<a class="el" href="structhttp__parser.html">http_parser</a> *self_)</td></tr>
+static int&#160;</td><td class="memItemRight" valign="bottom"><b>on_message_complete</b> (http_parser *self_)</td></tr>
 <tr class="separator:a614c34dd524540e4853496c386a0100c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
@@ -197,46 +194,6 @@ std::string&#160;</td><td class="memItemRight" valign="bottom"><b>body</b></td><
 <tr class="memitem:a8c9ef70473ed6548872bcb217965203e"><td class="memItemLeft" align="right" valign="top"><a id="a8c9ef70473ed6548872bcb217965203e"></a>
 Handler *&#160;</td><td class="memItemRight" valign="bottom"><b>handler_</b></td></tr>
 <tr class="separator:a8c9ef70473ed6548872bcb217965203e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="inherit_header pub_attribs_structhttp__parser"><td colspan="2" onclick="javascript:toggleInherit('pub_attribs_structhttp__parser')"><img src="closed.png" alt="-"/>&#160;Public Attributes inherited from <a class="el" href="structhttp__parser.html">http_parser</a></td></tr>
-<tr class="memitem:ac6c327558547d55eb64a8aea1310cc2e inherit pub_attribs_structhttp__parser"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structhttp__parser.html#ac6c327558547d55eb64a8aea1310cc2e">type</a>: 2</td></tr>
-<tr class="separator:ac6c327558547d55eb64a8aea1310cc2e inherit pub_attribs_structhttp__parser"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5e54708e0cb3f9ced19bd829dcdeaf53 inherit pub_attribs_structhttp__parser"><td class="memItemLeft" align="right" valign="top"><a id="a5e54708e0cb3f9ced19bd829dcdeaf53"></a>
-unsigned int&#160;</td><td class="memItemRight" valign="bottom"><b>flags</b>: 6</td></tr>
-<tr class="separator:a5e54708e0cb3f9ced19bd829dcdeaf53 inherit pub_attribs_structhttp__parser"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6f5952e0b47c83aeacf64fc287fd8003 inherit pub_attribs_structhttp__parser"><td class="memItemLeft" align="right" valign="top"><a id="a6f5952e0b47c83aeacf64fc287fd8003"></a>
-unsigned int&#160;</td><td class="memItemRight" valign="bottom"><b>state</b>: 8</td></tr>
-<tr class="separator:a6f5952e0b47c83aeacf64fc287fd8003 inherit pub_attribs_structhttp__parser"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac5b254b99c6472ca19ae1f426758ce75 inherit pub_attribs_structhttp__parser"><td class="memItemLeft" align="right" valign="top"><a id="ac5b254b99c6472ca19ae1f426758ce75"></a>
-unsigned int&#160;</td><td class="memItemRight" valign="bottom"><b>header_state</b>: 8</td></tr>
-<tr class="separator:ac5b254b99c6472ca19ae1f426758ce75 inherit pub_attribs_structhttp__parser"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6f7ba706f975f447b3bf72be97facdf8 inherit pub_attribs_structhttp__parser"><td class="memItemLeft" align="right" valign="top"><a id="a6f7ba706f975f447b3bf72be97facdf8"></a>
-unsigned int&#160;</td><td class="memItemRight" valign="bottom"><b>index</b>: 8</td></tr>
-<tr class="separator:a6f7ba706f975f447b3bf72be97facdf8 inherit pub_attribs_structhttp__parser"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a78085ca896bb3b9aa1ecb0f6fddc039d inherit pub_attribs_structhttp__parser"><td class="memItemLeft" align="right" valign="top"><a id="a78085ca896bb3b9aa1ecb0f6fddc039d"></a>
-uint32_t&#160;</td><td class="memItemRight" valign="bottom"><b>nread</b></td></tr>
-<tr class="separator:a78085ca896bb3b9aa1ecb0f6fddc039d inherit pub_attribs_structhttp__parser"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7fd5a194802b1206bb773e096d291f29 inherit pub_attribs_structhttp__parser"><td class="memItemLeft" align="right" valign="top"><a id="a7fd5a194802b1206bb773e096d291f29"></a>
-uint64_t&#160;</td><td class="memItemRight" valign="bottom"><b>content_length</b></td></tr>
-<tr class="separator:a7fd5a194802b1206bb773e096d291f29 inherit pub_attribs_structhttp__parser"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac994a4a8268652f5ce82de5bde5c3f9d inherit pub_attribs_structhttp__parser"><td class="memItemLeft" align="right" valign="top">unsigned short&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structhttp__parser.html#ac994a4a8268652f5ce82de5bde5c3f9d">http_major</a></td></tr>
-<tr class="separator:ac994a4a8268652f5ce82de5bde5c3f9d inherit pub_attribs_structhttp__parser"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae8af6433c824f5348773842db62ad4ab inherit pub_attribs_structhttp__parser"><td class="memItemLeft" align="right" valign="top"><a id="ae8af6433c824f5348773842db62ad4ab"></a>
-unsigned short&#160;</td><td class="memItemRight" valign="bottom"><b>http_minor</b></td></tr>
-<tr class="separator:ae8af6433c824f5348773842db62ad4ab inherit pub_attribs_structhttp__parser"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a82f5aed92ca3566489def7bc384bab26 inherit pub_attribs_structhttp__parser"><td class="memItemLeft" align="right" valign="top"><a id="a82f5aed92ca3566489def7bc384bab26"></a>
-unsigned int&#160;</td><td class="memItemRight" valign="bottom"><b>status_code</b>: 16</td></tr>
-<tr class="separator:a82f5aed92ca3566489def7bc384bab26 inherit pub_attribs_structhttp__parser"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7955de339fafd81ad54380845913457d inherit pub_attribs_structhttp__parser"><td class="memItemLeft" align="right" valign="top"><a id="a7955de339fafd81ad54380845913457d"></a>
-unsigned int&#160;</td><td class="memItemRight" valign="bottom"><b>method</b>: 8</td></tr>
-<tr class="separator:a7955de339fafd81ad54380845913457d inherit pub_attribs_structhttp__parser"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab8638d65fa174bc1925d77e2533117fa inherit pub_attribs_structhttp__parser"><td class="memItemLeft" align="right" valign="top"><a id="ab8638d65fa174bc1925d77e2533117fa"></a>
-unsigned int&#160;</td><td class="memItemRight" valign="bottom"><b>http_errno</b>: 7</td></tr>
-<tr class="separator:ab8638d65fa174bc1925d77e2533117fa inherit pub_attribs_structhttp__parser"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a748f476eacc5ac56b84dd07dbafb42a4 inherit pub_attribs_structhttp__parser"><td class="memItemLeft" align="right" valign="top"><a id="a748f476eacc5ac56b84dd07dbafb42a4"></a>
-unsigned int&#160;</td><td class="memItemRight" valign="bottom"><b>upgrade</b>: 1</td></tr>
-<tr class="separator:a748f476eacc5ac56b84dd07dbafb42a4 inherit pub_attribs_structhttp__parser"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7e87ce57b97f60f1fdb7039a8ecb0bca inherit pub_attribs_structhttp__parser"><td class="memItemLeft" align="right" valign="top">void *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structhttp__parser.html#a7e87ce57b97f60f1fdb7039a8ecb0bca">data</a></td></tr>
-<tr class="separator:a7e87ce57b97f60f1fdb7039a8ecb0bca inherit pub_attribs_structhttp__parser"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <hr/>The documentation for this struct was generated from the following file:<ul>
 <li>/home/travis/build/mrozigor/crow/include/crow/<a class="el" href="parser_8h_source.html">parser.h</a></li>
@@ -248,7 +205,7 @@ unsigned int&#160;</td><td class="memItemRight" valign="bottom"><b>upgrade</b>: 
 			<ul>
 				<li class="navelem"><b>crow</b></li><li class="navelem"><a class="el" href="structcrow_1_1_h_t_t_p_parser.html">HTTPParser</a></li>
 				<li class="footer">
-					Generated on Sun Oct 18 2020 for Crow by <a href="http://www.doxygen.org/index.html">
+					Generated on Mon Oct 19 2020 for Crow by <a href="http://www.doxygen.org/index.html">
 					<img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.17.
 					Dark theme by <a href="http://majerle.eu" target="_new">Tilen Majerle</a>. Edited by <a href="https://github.com/The-EDev" target="_new">Farook Al-Sammarraie</a>. All rights reserved.
 				</li>

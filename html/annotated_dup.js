@@ -115,11 +115,5 @@ var annotated_dup =
       [ "TaggedRule", "classcrow_1_1_tagged_rule.html", "classcrow_1_1_tagged_rule" ],
       [ "Trie", "classcrow_1_1_trie.html", "classcrow_1_1_trie" ],
       [ "WebSocketRule", "classcrow_1_1_web_socket_rule.html", "classcrow_1_1_web_socket_rule" ]
-    ] ],
-    [ "sha1", null, [
-      [ "SHA1", "classsha1_1_1_s_h_a1.html", "classsha1_1_1_s_h_a1" ]
-    ] ],
-    [ "http_parser", "structhttp__parser.html", "structhttp__parser" ],
-    [ "http_parser_settings", "structhttp__parser__settings.html", "structhttp__parser__settings" ],
-    [ "http_parser_url", "structhttp__parser__url.html", "structhttp__parser__url" ]
+    ] ]
 ];

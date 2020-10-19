@@ -71,12 +71,10 @@ var hierarchy =
     [ "crow::detail::routing_handler_call_helper::Wrapped< Func, ArgsWrapped >::handler_type_helper< ArgsWrapped... >", "structcrow_1_1detail_1_1routing__handler__call__helper_1_1_wrapped_1_1handler__type__helper.html", null ],
     [ "crow::detail::routing_handler_call_helper::Wrapped< Func, ArgsWrapped >::handler_type_helper< const request &, Args... >", "structcrow_1_1detail_1_1routing__handler__call__helper_1_1_wrapped_1_1handler__type__helper_3_012f01fc0d25e96ed100e3017a66fd4b36.html", null ],
     [ "crow::detail::routing_handler_call_helper::Wrapped< Func, ArgsWrapped >::handler_type_helper< const request &, response &, Args... >", "structcrow_1_1detail_1_1routing__handler__call__helper_1_1_wrapped_1_1handler__type__helper_3_01e78e01f0ab35f7c7c9ae99998f83560a.html", null ],
-    [ "http_parser", "structhttp__parser.html", [
+    [ "http_parser", null, [
       [ "crow::HTTPParser< Handler >", "structcrow_1_1_h_t_t_p_parser.html", null ],
       [ "crow::HTTPParser< crow::Connection >", "structcrow_1_1_h_t_t_p_parser.html", null ]
     ] ],
-    [ "http_parser_settings", "structhttp__parser__settings.html", null ],
-    [ "http_parser_url", "structhttp__parser__url.html", null ],
     [ "crow::ILogHandler", "classcrow_1_1_i_log_handler.html", [
       [ "crow::CerrLogHandler", "classcrow_1_1_cerr_log_handler.html", null ]
     ] ],
@@ -124,7 +122,6 @@ var hierarchy =
       [ "crow::black_magic::gen_seq< 0 >", "structcrow_1_1black__magic_1_1gen__seq_3_010_01_4.html", null ]
     ] ],
     [ "crow::Server< Handler, Adaptor, Middlewares >", "classcrow_1_1_server.html", null ],
-    [ "sha1::SHA1", "classsha1_1_1_s_h_a1.html", null ],
     [ "crow::black_magic::single_tag_to_type< N >", "structcrow_1_1black__magic_1_1single__tag__to__type.html", null ],
     [ "crow::black_magic::single_tag_to_type< 1 >", "structcrow_1_1black__magic_1_1single__tag__to__type_3_011_01_4.html", null ],
     [ "crow::black_magic::single_tag_to_type< 2 >", "structcrow_1_1black__magic_1_1single__tag__to__type_3_012_01_4.html", null ],

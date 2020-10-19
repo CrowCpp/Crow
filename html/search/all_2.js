@@ -22,7 +22,7 @@ var searchData=
   ['compute_5fparameter_5ftag_5ffrom_5fargs_5flist_3c_3e_23',['compute_parameter_tag_from_args_list&lt;&gt;',['../structcrow_1_1black__magic_1_1compute__parameter__tag__from__args__list_3_4.html',1,'crow::black_magic']]],
   ['concat_24',['concat',['../structcrow_1_1black__magic_1_1concat.html',1,'crow::black_magic']]],
   ['concat_3c_20seq_3c_20i1_2e_2e_2e_20_3e_2c_20seq_3c_20i2_2e_2e_2e_20_3e_20_3e_25',['concat&lt; seq&lt; I1... &gt;, seq&lt; I2... &gt; &gt;',['../structcrow_1_1black__magic_1_1concat_3_01seq_3_01_i1_8_8_8_01_4_00_01seq_3_01_i2_8_8_8_01_4_01_4.html',1,'crow::black_magic']]],
-  ['connection_26',['Connection',['../classcrow_1_1websocket_1_1_connection.html',1,'crow::websocket::Connection&lt; Adaptor &gt;'],['../structcrow_1_1websocket_1_1connection.html',1,'crow::websocket::connection'],['../classcrow_1_1_connection.html',1,'crow::Connection&lt; Adaptor, Handler, Middlewares &gt;']]],
+  ['connection_26',['connection',['../structcrow_1_1websocket_1_1connection.html',1,'crow::websocket::connection'],['../classcrow_1_1websocket_1_1_connection.html',1,'crow::websocket::Connection&lt; Adaptor &gt;'],['../classcrow_1_1_connection.html',1,'crow::Connection&lt; Adaptor, Handler, Middlewares &gt;']]],
   ['const_5fstr_27',['const_str',['../classcrow_1_1black__magic_1_1const__str.html',1,'crow::black_magic']]],
   ['contains_28',['contains',['../structcrow_1_1black__magic_1_1contains.html',1,'crow::black_magic']]],
   ['contains_3c_20tp_20_3e_29',['contains&lt; Tp &gt;',['../structcrow_1_1black__magic_1_1contains_3_01_tp_01_4.html',1,'crow::black_magic']]],

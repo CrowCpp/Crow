@@ -166,7 +166,7 @@ $(document).ready(function(){initNavTree('websocket_8h_source.html',''); initRes
 <div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;          <span class="comment">// Sec-WebSocket-Key: dGhlIHNhbXBsZSBub25jZQ==</span></div>
 <div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;          <span class="comment">// Sec-WebSocket-Version: 13</span></div>
 <div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;                    std::string magic = req.get_header_value(<span class="stringliteral">&quot;Sec-WebSocket-Key&quot;</span>) +  <span class="stringliteral">&quot;258EAFA5-E914-47DA-95CA-C5AB0DC85B11&quot;</span>;</div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;                    <a class="code" href="classsha1_1_1_s_h_a1.html">sha1::SHA1</a> s;</div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;                    sha1::SHA1 s;</div>
 <div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;                    s.processBytes(magic.data(), magic.size());</div>
 <div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;                    uint8_t digest[20];</div>
 <div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;                    s.getDigestBytes(digest);   </div>
@@ -629,14 +629,13 @@ $(document).ready(function(){initNavTree('websocket_8h_source.html',''); initRes
 </div><!-- doc-content -->
 <div class="ttc" id="astructcrow_1_1websocket_1_1connection_html"><div class="ttname"><a href="structcrow_1_1websocket_1_1connection.html">crow::websocket::connection</a></div><div class="ttdef"><b>Definition:</b> websocket.h:21</div></div>
 <div class="ttc" id="astructcrow_1_1request_html"><div class="ttname"><a href="structcrow_1_1request.html">crow::request</a></div><div class="ttdef"><b>Definition:</b> http_request.h:24</div></div>
-<div class="ttc" id="aclasssha1_1_1_s_h_a1_html"><div class="ttname"><a href="classsha1_1_1_s_h_a1.html">sha1::SHA1</a></div><div class="ttdef"><b>Definition:</b> TinySHA1.hpp:30</div></div>
 <div class="ttc" id="aclasscrow_1_1websocket_1_1_connection_html"><div class="ttname"><a href="classcrow_1_1websocket_1_1_connection.html">crow::websocket::Connection</a></div><div class="ttdef"><b>Definition:</b> websocket.h:36</div></div>
 <!-- start footer part -->
 		<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
 			<ul>
 				<li class="navelem"><a class="el" href="dir_d44c64559bbebec7f509842c48db8b23.html">include</a></li><li class="navelem"><a class="el" href="dir_d22c1cb87b72f01e1a7f207eb3bfd1ca.html">crow</a></li><li class="navelem"><b>websocket.h</b></li>
 				<li class="footer">
-					Generated on Sun Oct 18 2020 for Crow by <a href="http://www.doxygen.org/index.html">
+					Generated on Mon Oct 19 2020 for Crow by <a href="http://www.doxygen.org/index.html">
 					<img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.17.
 					Dark theme by <a href="http://majerle.eu" target="_new">Tilen Majerle</a>. Edited by <a href="https://github.com/The-EDev" target="_new">Farook Al-Sammarraie</a>. All rights reserved.
 				</li>
