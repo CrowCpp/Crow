@@ -406,7 +406,7 @@ Gen/home/travis/build/mrozigor/crow/include/crow/http_request.h:42: warning: Mem
 /home/travis/build/mrozigor/crow/include/crow/http_server.h:42: warning: Member set_tick_function(std::chrono::milliseconds d, std::function< void()> f) (function) of class crow::Server is not documented.
 /home/travis/build/mrozigor/crow/include/crow/http_server.h:48: warning: Member on_tick() (function) of class crow::Server is not documented.
 /home/travis/build/mrozigor/crow/include/crow/http_server.h:60: warning: Member run() (function) of class crow::Server is not documented.
-/home/travis/build/mrozigor/crow/include/crow/http_server.h:171: warning: Member stop() (function) of class crow::Server is not documented.
+/home/travis/build/mrozigor/crow/include/crow/http_server.h:168: warning: Member stop() (function) of class crow::Server is not documented.
 /home/travis/build/mrozigor/crow/include/crow/socket_adaptors.h:19: warning: Member context (typedef) of class crow::SocketAdaptor is not documented.
 /home/travis/build/mrozigor/crow/include/crow/socket_adaptors.h:20: warning: Member SocketAdaptor(boost::asio::io_service &io_service, context *) (function) of class crow::SocketAdaptor is not documented.
 /home/travis/build/mrozigor/crow/include/crow/socket_adaptors.h:25: warning: Member get_io_service() (function) of class crow::SocketAdaptor is not documented.
@@ -732,8 +732,8 @@ Generating docs /home/travis/build/mrozigor/crow/include/crow/http_connection.h:
 /home/travis/build/mrozigor/crow/include/crow/websocket.h:368: warning: Member is_FIN() (function) of class crow::websocket::Connection is not documented.
 /home/travis/build/mrozigor/crow/include/crow/websocket.h:373: warning: Member opcode() (function) of class crow::websocket::Connection is not documented.
 /home/travis/build/mrozigor/crow/include/crow/websocket.h:378: warning: Member handle_fragment() (function) of class crow::websocket::Connection is not documented.
-/home/travis/build/mrozigor/crow/include/crow/websocket.h:456: warning: Member do_write() (function) of class crow::websocket::Connection is not documented.
-/home/travis/build/mrozigor/crow/include/crow/websocket.h:487: warning: Member check_destroy() (function) of class crow::websocket::Connection is not documented.
+/home/travis/build/mrozigor/crow/include/crow/websocket.h:457: warning: Member do_write() (function) of class crow::websocket::Connection is not documented.
+/home/travis/build/mrozigor/crow/include/crow/websocket.h:488: warning: Member check_destroy() (function) of class crow::websocket::Connection is not documented.
 for compound crow::detail::is_after_handle_arity_3_impl...
 Generating docs for compound crow::detail::is_before_handle_arity_3_impl...
 Generating docs for compound crow::detail::partial_context...
@@ -779,5 +779,5 @@ Generating example index...
 finalizing index lists...
 writing tag file...
 Running plantuml with JAVA...
-lookup cache used 2203/65536 hits=18846 misses=2499
+lookup cache used 2203/65536 hits=18842 misses=2499
 finished...
