@@ -22,6 +22,7 @@ var classcrow_1_1_crow =
     [ "ssl_file", "classcrow_1_1_crow.html#af9ba728b92666e91d1852b125cf12803", null ],
     [ "stop", "classcrow_1_1_crow.html#a0266672657128919ab9a067d93f3868f", null ],
     [ "tick", "classcrow_1_1_crow.html#a068042431b0be5911ee1689a285f4693", null ],
+    [ "timeout", "classcrow_1_1_crow.html#a47ed9a118820f6e6ba0b2bc37f0997fb", null ],
     [ "validate", "classcrow_1_1_crow.html#ab9a22c981e0afec0d55ee234683a6d38", null ],
     [ "wait_for_server_start", "classcrow_1_1_crow.html#a5e39821ccc9cbf8c6400fd86fc406c21", null ]
 ];

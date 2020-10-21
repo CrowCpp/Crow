@@ -123,7 +123,8 @@ template&lt;typename Adaptor &gt; </td></tr>
 <tr class="memitem:a6e435bf5275735effd32647772bdbd04"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><b>handle_upgrade</b> (const <a class="el" href="structcrow_1_1request.html">request</a> &amp;req, <a class="el" href="structcrow_1_1response.html">response</a> &amp;res, Adaptor &amp;&amp;adaptor)</td></tr>
 <tr class="separator:a6e435bf5275735effd32647772bdbd04"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9e0d9a96cd8be5374758f538cc057f26"><td class="memItemLeft" align="right" valign="top"><a id="a9e0d9a96cd8be5374758f538cc057f26"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>handle</b> (const <a class="el" href="structcrow_1_1request.html">request</a> &amp;req, <a class="el" href="structcrow_1_1response.html">response</a> &amp;res)</td></tr>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcrow_1_1_crow.html#a9e0d9a96cd8be5374758f538cc057f26">handle</a> (const <a class="el" href="structcrow_1_1request.html">request</a> &amp;req, <a class="el" href="structcrow_1_1response.html">response</a> &amp;res)</td></tr>
+<tr class="memdesc:a9e0d9a96cd8be5374758f538cc057f26"><td class="mdescLeft">&#160;</td><td class="mdescRight">Process the request and generate a response for it. <br /></td></tr>
 <tr class="separator:a9e0d9a96cd8be5374758f538cc057f26"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0f408e47d261ad55ccfd8eb5f351c22e"><td class="memItemLeft" align="right" valign="top"><a id="a0f408e47d261ad55ccfd8eb5f351c22e"></a>
 <a class="el" href="classcrow_1_1_dynamic_rule.html">DynamicRule</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>route_dynamic</b> (std::string &amp;&amp;rule)</td></tr>
@@ -133,16 +134,24 @@ template&lt;uint64_t Tag&gt; </td></tr>
 <tr class="memitem:af221cb25926e5dabc2da21a7a1c9713c"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><b>route</b> (std::string &amp;&amp;rule) -&gt; typename std::result_of&lt; decltype(&amp;Router::new_rule_tagged&lt; Tag &gt;)(<a class="el" href="classcrow_1_1_router.html">Router</a>, std::string &amp;&amp;)&gt;::type</td></tr>
 <tr class="separator:af221cb25926e5dabc2da21a7a1c9713c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a365f9c95fc2bd8bb583967f499c1f4a1"><td class="memItemLeft" align="right" valign="top"><a id="a365f9c95fc2bd8bb583967f499c1f4a1"></a>
-<a class="el" href="classcrow_1_1_crow.html">self_t</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>port</b> (std::uint16_t port)</td></tr>
+<a class="el" href="classcrow_1_1_crow.html">self_t</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcrow_1_1_crow.html#a365f9c95fc2bd8bb583967f499c1f4a1">port</a> (std::uint16_t port)</td></tr>
+<tr class="memdesc:a365f9c95fc2bd8bb583967f499c1f4a1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the port that <a class="el" href="classcrow_1_1_crow.html">Crow</a> will handle requests on. <br /></td></tr>
 <tr class="separator:a365f9c95fc2bd8bb583967f499c1f4a1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a47ed9a118820f6e6ba0b2bc37f0997fb"><td class="memItemLeft" align="right" valign="top"><a id="a47ed9a118820f6e6ba0b2bc37f0997fb"></a>
+<a class="el" href="classcrow_1_1_crow.html">self_t</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcrow_1_1_crow.html#a47ed9a118820f6e6ba0b2bc37f0997fb">timeout</a> (std::uint8_t timeout)</td></tr>
+<tr class="memdesc:a47ed9a118820f6e6ba0b2bc37f0997fb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the connection timeout in seconds (default is 5) <br /></td></tr>
+<tr class="separator:a47ed9a118820f6e6ba0b2bc37f0997fb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a75777f82b6519c86d71446eb9285d774"><td class="memItemLeft" align="right" valign="top"><a id="a75777f82b6519c86d71446eb9285d774"></a>
-<a class="el" href="classcrow_1_1_crow.html">self_t</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>bindaddr</b> (std::string bindaddr)</td></tr>
+<a class="el" href="classcrow_1_1_crow.html">self_t</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcrow_1_1_crow.html#a75777f82b6519c86d71446eb9285d774">bindaddr</a> (std::string bindaddr)</td></tr>
+<tr class="memdesc:a75777f82b6519c86d71446eb9285d774"><td class="mdescLeft">&#160;</td><td class="mdescRight">The IP address that <a class="el" href="classcrow_1_1_crow.html">Crow</a> will handle requests on (default is 0.0.0.0) <br /></td></tr>
 <tr class="separator:a75777f82b6519c86d71446eb9285d774"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0149b20b7f6c0123292286f54638d456"><td class="memItemLeft" align="right" valign="top"><a id="a0149b20b7f6c0123292286f54638d456"></a>
-<a class="el" href="classcrow_1_1_crow.html">self_t</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>multithreaded</b> ()</td></tr>
+<a class="el" href="classcrow_1_1_crow.html">self_t</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcrow_1_1_crow.html#a0149b20b7f6c0123292286f54638d456">multithreaded</a> ()</td></tr>
+<tr class="memdesc:a0149b20b7f6c0123292286f54638d456"><td class="mdescLeft">&#160;</td><td class="mdescRight">Run the server on multiple threads using all available threads. <br /></td></tr>
 <tr class="separator:a0149b20b7f6c0123292286f54638d456"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a41686e6025705c1ab379b5ec71bbf983"><td class="memItemLeft" align="right" valign="top"><a id="a41686e6025705c1ab379b5ec71bbf983"></a>
-<a class="el" href="classcrow_1_1_crow.html">self_t</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>concurrency</b> (std::uint16_t concurrency)</td></tr>
+<a class="el" href="classcrow_1_1_crow.html">self_t</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcrow_1_1_crow.html#a41686e6025705c1ab379b5ec71bbf983">concurrency</a> (std::uint16_t concurrency)</td></tr>
+<tr class="memdesc:a41686e6025705c1ab379b5ec71bbf983"><td class="mdescLeft">&#160;</td><td class="mdescRight">Run the server on multiple threads using a specific number. <br /></td></tr>
 <tr class="separator:a41686e6025705c1ab379b5ec71bbf983"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab9a22c981e0afec0d55ee234683a6d38"><td class="memItemLeft" align="right" valign="top"><a id="ab9a22c981e0afec0d55ee234683a6d38"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>validate</b> ()</td></tr>
@@ -151,10 +160,12 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>validate</b> ()</td><
 void&#160;</td><td class="memItemRight" valign="bottom"><b>notify_server_start</b> ()</td></tr>
 <tr class="separator:a6bbe76405fff487a1913c7b5fccbbb81"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a193d8b03f717234a841cd92f72c6b4b5"><td class="memItemLeft" align="right" valign="top"><a id="a193d8b03f717234a841cd92f72c6b4b5"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>run</b> ()</td></tr>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcrow_1_1_crow.html#a193d8b03f717234a841cd92f72c6b4b5">run</a> ()</td></tr>
+<tr class="memdesc:a193d8b03f717234a841cd92f72c6b4b5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Run the server. <br /></td></tr>
 <tr class="separator:a193d8b03f717234a841cd92f72c6b4b5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0266672657128919ab9a067d93f3868f"><td class="memItemLeft" align="right" valign="top"><a id="a0266672657128919ab9a067d93f3868f"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>stop</b> ()</td></tr>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcrow_1_1_crow.html#a0266672657128919ab9a067d93f3868f">stop</a> ()</td></tr>
+<tr class="memdesc:a0266672657128919ab9a067d93f3868f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Stop the server. <br /></td></tr>
 <tr class="separator:a0266672657128919ab9a067d93f3868f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a839c1e6f82d577308eb6f0d4948a4fbb"><td class="memItemLeft" align="right" valign="top"><a id="a839c1e6f82d577308eb6f0d4948a4fbb"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>debug_print</b> ()</td></tr>
