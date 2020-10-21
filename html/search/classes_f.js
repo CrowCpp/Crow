@@ -1,17 +1,13 @@
 var searchData=
 [
-  ['s_188',['S',['../structcrow_1_1black__magic_1_1_s.html',1,'crow::black_magic']]],
-  ['seq_189',['seq',['../structcrow_1_1black__magic_1_1seq.html',1,'crow::black_magic']]],
-  ['seq_3c_200_20_3e_190',['seq&lt; 0 &gt;',['../structcrow_1_1black__magic_1_1seq.html',1,'crow::black_magic']]],
-  ['seq_3c_20i1_2e_2e_2e_2c_28sizeof_2e_2e_2e_28i1_29_2bi2_29_2e_2e_2e_20_3e_191',['seq&lt; I1...,(sizeof...(I1)+I2)... &gt;',['../structcrow_1_1black__magic_1_1seq.html',1,'crow::black_magic']]],
-  ['seq_3c_3e_192',['seq&lt;&gt;',['../structcrow_1_1black__magic_1_1seq.html',1,'crow::black_magic']]],
-  ['server_193',['Server',['../classcrow_1_1_server.html',1,'crow']]],
-  ['single_5ftag_5fto_5ftype_194',['single_tag_to_type',['../structcrow_1_1black__magic_1_1single__tag__to__type.html',1,'crow::black_magic']]],
-  ['single_5ftag_5fto_5ftype_3c_201_20_3e_195',['single_tag_to_type&lt; 1 &gt;',['../structcrow_1_1black__magic_1_1single__tag__to__type_3_011_01_4.html',1,'crow::black_magic']]],
-  ['single_5ftag_5fto_5ftype_3c_202_20_3e_196',['single_tag_to_type&lt; 2 &gt;',['../structcrow_1_1black__magic_1_1single__tag__to__type_3_012_01_4.html',1,'crow::black_magic']]],
-  ['single_5ftag_5fto_5ftype_3c_203_20_3e_197',['single_tag_to_type&lt; 3 &gt;',['../structcrow_1_1black__magic_1_1single__tag__to__type_3_013_01_4.html',1,'crow::black_magic']]],
-  ['single_5ftag_5fto_5ftype_3c_204_20_3e_198',['single_tag_to_type&lt; 4 &gt;',['../structcrow_1_1black__magic_1_1single__tag__to__type_3_014_01_4.html',1,'crow::black_magic']]],
-  ['single_5ftag_5fto_5ftype_3c_205_20_3e_199',['single_tag_to_type&lt; 5 &gt;',['../structcrow_1_1black__magic_1_1single__tag__to__type_3_015_01_4.html',1,'crow::black_magic']]],
-  ['socketadaptor_200',['SocketAdaptor',['../structcrow_1_1_socket_adaptor.html',1,'crow']]],
-  ['static_5ffile_5finfo_201',['static_file_info',['../structcrow_1_1response_1_1static__file__info.html',1,'crow::response']]]
+  ['r_5fstring_192',['r_string',['../structcrow_1_1json_1_1detail_1_1r__string.html',1,'crow::json::detail']]],
+  ['req_5fhandler_5fwrapper_193',['req_handler_wrapper',['../structcrow_1_1detail_1_1routing__handler__call__helper_1_1_wrapped_1_1req__handler__wrapper.html',1,'crow::detail::routing_handler_call_helper::Wrapped']]],
+  ['request_194',['request',['../structcrow_1_1request.html',1,'crow']]],
+  ['response_195',['response',['../structcrow_1_1response.html',1,'crow']]],
+  ['router_196',['Router',['../classcrow_1_1_router.html',1,'crow']]],
+  ['routing_5fparams_197',['routing_params',['../structcrow_1_1routing__params.html',1,'crow']]],
+  ['ruleparametertraits_198',['RuleParameterTraits',['../structcrow_1_1_rule_parameter_traits.html',1,'crow']]],
+  ['ruleparametertraits_3c_20dynamicrule_20_3e_199',['RuleParameterTraits&lt; DynamicRule &gt;',['../structcrow_1_1_rule_parameter_traits.html',1,'crow']]],
+  ['ruleparametertraits_3c_20taggedrule_3c_20args_2e_2e_2e_20_3e_20_3e_200',['RuleParameterTraits&lt; TaggedRule&lt; Args... &gt; &gt;',['../structcrow_1_1_rule_parameter_traits.html',1,'crow']]],
+  ['rvalue_201',['rvalue',['../classcrow_1_1json_1_1rvalue.html',1,'crow::json']]]
 ];

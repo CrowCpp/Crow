@@ -71,6 +71,7 @@ var hierarchy =
     [ "crow::detail::routing_handler_call_helper::Wrapped< Func, ArgsWrapped >::handler_type_helper< ArgsWrapped... >", "structcrow_1_1detail_1_1routing__handler__call__helper_1_1_wrapped_1_1handler__type__helper.html", null ],
     [ "crow::detail::routing_handler_call_helper::Wrapped< Func, ArgsWrapped >::handler_type_helper< const request &, Args... >", "structcrow_1_1detail_1_1routing__handler__call__helper_1_1_wrapped_1_1handler__type__helper_3_012f01fc0d25e96ed100e3017a66fd4b36.html", null ],
     [ "crow::detail::routing_handler_call_helper::Wrapped< Func, ArgsWrapped >::handler_type_helper< const request &, response &, Args... >", "structcrow_1_1detail_1_1routing__handler__call__helper_1_1_wrapped_1_1handler__type__helper_3_01e78e01f0ab35f7c7c9ae99998f83560a.html", null ],
+    [ "crow::multipart::header", "structcrow_1_1multipart_1_1header.html", null ],
     [ "http_parser", null, [
       [ "crow::HTTPParser< Handler >", "structcrow_1_1_h_t_t_p_parser.html", null ],
       [ "crow::HTTPParser< crow::Connection >", "structcrow_1_1_h_t_t_p_parser.html", null ]
@@ -87,9 +88,11 @@ var hierarchy =
       [ "crow::json::detail::r_string", "structcrow_1_1json_1_1detail_1_1r__string.html", null ]
     ] ],
     [ "crow::logger", "classcrow_1_1logger.html", null ],
+    [ "crow::multipart::message", "structcrow_1_1multipart_1_1message.html", null ],
     [ "crow::Trie::Node", "structcrow_1_1_trie_1_1_node.html", null ],
     [ "crow::black_magic::OutOfRange", "structcrow_1_1black__magic_1_1_out_of_range.html", null ],
     [ "crow::black_magic::parameter_tag< T >", "structcrow_1_1black__magic_1_1parameter__tag.html", null ],
+    [ "crow::multipart::part", "structcrow_1_1multipart_1_1part.html", null ],
     [ "crow::detail::partial_context<>", "structcrow_1_1detail_1_1partial__context_3_4.html", null ],
     [ "crow::black_magic::pop_back< T >", "structcrow_1_1black__magic_1_1pop__back.html", null ],
     [ "crow::black_magic::pop_back<>", "structcrow_1_1black__magic_1_1pop__back_3_4.html", null ],

@@ -78,6 +78,7 @@ var annotated_dup =
         [ "rvalue", "classcrow_1_1json_1_1rvalue.html", "classcrow_1_1json_1_1rvalue" ],
         [ "wvalue", "classcrow_1_1json_1_1wvalue.html", "classcrow_1_1json_1_1wvalue" ]
       ] ],
+      [ "multipart", "namespacecrow_1_1multipart.html", "namespacecrow_1_1multipart" ],
       [ "mustache", null, [
         [ "Action", "structcrow_1_1mustache_1_1_action.html", "structcrow_1_1mustache_1_1_action" ],
         [ "invalid_template_exception", "classcrow_1_1mustache_1_1invalid__template__exception.html", "classcrow_1_1mustache_1_1invalid__template__exception" ],

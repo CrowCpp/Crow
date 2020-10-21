@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['outofrange_167',['OutOfRange',['../structcrow_1_1black__magic_1_1_out_of_range.html',1,'crow::black_magic']]]
+  ['node_179',['Node',['../structcrow_1_1_trie_1_1_node.html',1,'crow::Trie']]]
 ];
