@@ -1,5 +1,6 @@
 var NAVTREEINDEX1 =
 {
+"functions_type.html":[0,2,3],
 "functions_vars.html":[0,2,2],
 "hierarchy.html":[0,1],
 "http__connection_8h_source.html":[1,0,0,0,4],
@@ -248,6 +249,5 @@ var NAVTREEINDEX1 =
 "structcrow_1_1request.html#afff683ed63a9e4067683786c3c6218c2":[0,0,0,19,6],
 "structcrow_1_1response.html":[0,0,0,20],
 "structcrow_1_1response.html#a068269fc8b7f1df3d5421ccd384fe1f3":[0,0,0,20,10],
-"structcrow_1_1response.html#a0f4955bc5dc914d698cff5e83bca1cdb":[0,0,0,20,1],
-"structcrow_1_1response.html#a10da2e17421586b68f27ef1533ec677b":[0,0,0,20,14]
+"structcrow_1_1response.html#a0f4955bc5dc914d698cff5e83bca1cdb":[0,0,0,20,1]
 };

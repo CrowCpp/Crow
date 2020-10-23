@@ -117,7 +117,6 @@ Building example li/home/travis/build/mrozigor/crow/include/crow/websocket.h:37:
 /home/travis/build/mrozigor/crow/include/crow/routing.h:98: warning: Compound crow::detail::routing_handler_call_helper::call_params is not documented.
 /home/travis/build/mrozigor/crow/include/crow/middleware_context.h:40: warning: Compound crow::detail::context is not documented.
 /home/travis/build/mrozigor/crow/include/crow/routing.h:230: warning: Compound crow::detail::routing_handler_call_helper::Wrapped::handler_type_helper is not documented.
-/home/travis/build/mrozigor/crow/include/crow/app.h:37: warning: Compound crow::Crow is not documented.
 /home/travis/build/mrozigor/crow/include/crow/routing.h:112: warning: Compound crow::detail::routing_handler_call_helper::call< F, NInt, NUint, NDouble, NString, black_magic::S< int64_t, Args1... >, black_magic::S< Args2... > > is not documented.
 /home/travis/build/mrozigor/crow/include/crow/ci_map.h:10: warning: Compound crow::ci_hash is not documented.
 /home/travis/build/mrozigor/crow/include/crow/routing.h:134: warning: Compound crow::detail::routing_handler_call_helper::call< F, NInt, NUint, NDouble, NString, black_magic::S< double, Args1... >, black_magic::S< Args2... > > is not documented.
@@ -168,22 +167,12 @@ Building example li/home/travis/build/mrozigor/crow/include/crow/websocket.h:37:
 /home/travis/build/mrozigor/crow/include/crow/middleware.h:46: warning: Member set_cookie(const std::string &key, const std::string &value) (function) of class crow::CookieParser::context is not documented.
 /home/travis/build/mrozigor/crow/include/crow/middleware.h:35: warning: Member jar (variable) of class crow::CookieParser::context is not documented.
 /home/travis/build/mrozigor/crow/include/crow/middleware.h:36: warning: Member cookies_to_add (variable) of class crow::CookieParser::context is not documented.
-/home/travis/build/mrozigor/crow/include/crow/app.h:39: warning: Member self_t (typedef) of class crow::Crow is not documented.
-/home/travis/build/mrozigor/crow/include/crow/app.h:40: warning: Member server_t (typedef) of class crow::Crow is not documented.
-/home/travis/build/mrozigor/crow/include/crow/app.h:240: warning: Member context_t (typedef) of class crow::Crow is not documented.
-/home/travis/build/mrozigor/crow/include/crow/app.h:50: warning: Member handle_upgrade(const request &req, response &res, Adaptor &&adaptor) (function) of class crow::Crow is not documented.
-/home/travis/build/mrozigor/crow/include/crow/app.h:61: warning: Member route_dynamic(std::string &&rule) (function) of class crow::Crow is not documented.
-/home/travis/build/mrozigor/crow/include/crow/app.h:67: warning: Member route(std::string &&rule) -> typename std::result_of< decltype(&Router::new_rule_tagged< Tag >)(Router, std::string &&)>::type (function) of class crow::Crow is not documented.
-/home/travis/build/mrozigor/crow/include/crow/app.h:109: warning: Member validate() (function) of class crow::Crow is not documented.
-/home/travis/build/mrozigor/crow/include/crow/app.h:114: warning: Member notify_server_start() (function) of class crow::Crow is not documented.
-/home/travis/build/mrozigor/crow/include/crow/app.h:162: warning: Member debug_print() (function) of class crow::Crow is not documented.
-/home/travis/build/mrozigor/crow/include/crow/app.h:168: warning: Member loglevel(crow::LogLevel level) (function) of class crow::Crow is not documented.
-/home/travis/build/mrozigor/crow/include/crow/app.h:217: warning: Member ssl_file(T &&, Remain &&...) (function) of class crow::Crow is not documented.
-/home/travis/build/mrozigor/crow/include/crow/app.h:228: warning: Member ssl(T &&) (function) of class crow::Crow is not documented.
-/home/travis/build/mrozigor/crow/include/crow/app.h:242: warning: Member get_context(const request &req) (function) of class crow::Crow is not documented.
-/home/travis/build/mrozigor/crow/include/crow/app.h:250: warning: Member get_middleware() (function) of class crow::Crow is not documented.
-/home/travis/build/mrozigor/crow/include/crow/app.h:256: warning: Member tick(Duration d, Func f) (function) of class crow::Crow is not documented.
-/home/travis/build/mrozigor/crow/include/crow/app.h:262: warning: Member wait_for_server_start() (function) of class crow::Crow is not documented.
+/home/travis/build/mrozigor/crow/include/crow/app.h:278: warning: Member context_t (typedef) of class crow::Crow is not documented.
+/home/travis/build/mrozigor/crow/include/crow/app.h:202: warning: Member debug_print() (function) of class crow::Crow is not documented.
+/home/travis/build/mrozigor/crow/include/crow/app.h:255: warning: Member ssl_file(T &&, Remain &&...) (function) of class crow::Crow is not documented.
+/home/travis/build/mrozigor/crow/include/crow/app.h:266: warning: Member ssl(T &&) (function) of class crow::Crow is not documented.
+/home/travis/build/mrozigor/crow/include/crow/app.h:280: warning: Member get_context(const request &req) (function) of class crow::Crow is not documented.
+/home/travis/build/mrozigor/crow/include/crow/app.h:288: warning: Member get_middleware() (function) of class crow::Crow is not documented.
 st...
 Searching for enumerations...
 Searching for documented typedefs...
@@ -786,5 +775,5 @@ Generating example index...
 finalizing index lists...
 writing tag file...
 Running plantuml with JAVA...
-lookup cache used 2338/65536 hits=19674 misses=2653
+lookup cache used 2330/65536 hits=19673 misses=2645
 finished...
