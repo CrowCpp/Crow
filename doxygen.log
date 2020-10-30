@@ -687,8 +687,8 @@ Gen/home/travis/build/mrozigor/crow/include/crow/utility.h:437: warning: Member 
 /home/travis/build/mrozigor/crow/include/crow/mustache.h:23: warning: Member what() const (function) of class crow::mustache::invalid_template_exception is not documented.
 /home/travis/build/mrozigor/crow/include/crow/mustache.h:27: warning: Member msg (variable) of class crow::mustache::invalid_template_exception is not documented.
 /home/travis/build/mrozigor/crow/include/crow/mustache.h:55: warning: Member template_t(std::string body) (function) of class crow::mustache::template_t is not documented.
-/home/travis/build/mrozigor/crow/include/crow/mustache.h:285: warning: Member render() (function) of class crow::mustache::template_t is not documented.
-/home/travis/build/mrozigor/crow/include/crow/mustache.h:295: warning: Member render(context &ctx) (function) of class crow::mustache::template_t is not documented.
+/home/travis/build/mrozigor/crow/include/crow/mustache.h:314: warning: Member render() (function) of class crow::mustache::template_t is not documented.
+/home/travis/build/mrozigor/crow/include/crow/mustache.h:324: warning: Member render(context &ctx) (function) of class crow::mustache::template_t is not documented.
 /home/travis/build/mrozigor/crow/include/crow/utility.h:463: warning: Member parent_t (typedef) of class crow::utility::function_traits is not documented.
 /home/travis/build/mrozigor/crow/include/crow/utility.h:465: warning: Member result_type (typedef) of class crow::utility::function_traits is not documented.
 /home/travis/build/mrozigor/crow/include/crow/utility.h:467: warning: Member arg (typedef) of class crow::utility::function_traits is not documented.
@@ -775,5 +775,5 @@ Generating example index...
 finalizing index lists...
 writing tag file...
 Running plantuml with JAVA...
-lookup cache used 2330/65536 hits=19673 misses=2645
+lookup cache used 2331/65536 hits=19713 misses=2646
 finished...
