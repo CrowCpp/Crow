@@ -1346,7 +1346,7 @@ TEST_CASE("stream_response")
         std::istream is(&b);
         std::string s;
         is >> s;
-        CHECK(key_response.substr(received-n, n) == s);
+        CHECK(key_response.substr(received-n, n).compare(s) == 0);
         std::this_thread::sleep_for(std::chrono::milliseconds(20));
 
       }
