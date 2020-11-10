@@ -12,7 +12,8 @@ var classcrow_1_1websocket_1_1_connection =
     [ "opcode", "classcrow_1_1websocket_1_1_connection.html#a47a804e0269c7e70f45434f7618c6e7b", null ],
     [ "post", "classcrow_1_1websocket_1_1_connection.html#ac3d4cebfc05076982ff002b7c3186ade", null ],
     [ "send_binary", "classcrow_1_1websocket_1_1_connection.html#ae28e1265b68dfe0f4f99a68a52a57979", null ],
-    [ "send_pong", "classcrow_1_1websocket_1_1_connection.html#ab8ed4f1eba00fc2f2d9e4547391e99f5", null ],
+    [ "send_ping", "classcrow_1_1websocket_1_1_connection.html#a6c5235850fd393aa6b5875fb4ea2ea4e", null ],
+    [ "send_pong", "classcrow_1_1websocket_1_1_connection.html#ae8eaad22a072354c995bb9999efb683b", null ],
     [ "send_text", "classcrow_1_1websocket_1_1_connection.html#aa60e803417bb2d13cda3f0da7d68459f", null ],
     [ "start", "classcrow_1_1websocket_1_1_connection.html#a24f90aa6961994abef482699e7ffe037", null ]
 ];

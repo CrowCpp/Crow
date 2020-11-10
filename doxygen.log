@@ -64,8 +64,7 @@ Building file list...
 Building class list...
 Computing nesting relations for classes...
 Associating documentation with classes...
-Building example li/home/travis/build/mrozigor/crow/include/crow/websocket.h:37: warning: Compound crow::websocket::Connection is not documented.
-/home/travis/build/mrozigor/crow/include/crow/utility.h:474: warning: Compound crow::utility::function_traits< R(ClassType::*)(Args...) const > is not documented.
+Building example li/home/travis/build/mrozigor/crow/include/crow/utility.h:474: warning: Compound crow::utility::function_traits< R(ClassType::*)(Args...) const > is not documented.
 /home/travis/build/mrozigor/crow/include/crow/utility.h:457: warning: Compound crow::utility::function_traits is not documented.
 /home/travis/build/mrozigor/crow/include/crow/utility.h:442: warning: Compound crow::detail::get_index_of_element_from_tuple_by_type_impl< T, N, U, Args... > is not documented.
 /home/travis/build/mrozigor/crow/include/crow/utility.h:430: warning: Compound crow::detail::get_index_of_element_from_tuple_by_type_impl is not documented.
@@ -78,7 +77,6 @@ Building example li/home/travis/build/mrozigor/crow/include/crow/websocket.h:37:
 /home/travis/build/mrozigor/crow/include/crow/utility.h:296: warning: Compound crow::black_magic::single_tag_to_type< 5 > is not documented.
 /home/travis/build/mrozigor/crow/include/crow/utility.h:290: warning: Compound crow::black_magic::single_tag_to_type< 4 > is not documented.
 /home/travis/build/mrozigor/crow/include/crow/utility.h:284: warning: Compound crow::black_magic::single_tag_to_type< 3 > is not documented.
-/home/travis/build/mrozigor/crow/include/crow/websocket.h:22: warning: Compound crow::websocket::connection is not documented.
 /home/travis/build/mrozigor/crow/include/crow/utility.h:278: warning: Compound crow::black_magic::single_tag_to_type< 2 > is not documented.
 /home/travis/build/mrozigor/crow/include/crow/utility.h:272: warning: Compound crow::black_magic::single_tag_to_type< 1 > is not documented.
 /home/travis/build/mrozigor/crow/include/crow/utility.h:252: warning: Compound crow::black_magic::CallHelper< F, S< Args... > > is not documented.
@@ -702,28 +700,15 @@ Gen/home/travis/build/mrozigor/crow/include/crow/utility.h:437: warning: Member 
 /home/travis/build/mrozigor/crow/include/crow/utility.h:499: warning: Member result_type (typedef) of class crow::utility::function_traits< std::function< R(Args...)> > is not documented.
 /home/travis/build/mrozigor/crow/include/crow/utility.h:502: warning: Member arg (typedef) of class crow::utility::function_traits< std::function< R(Args...)> > is not documented.
 /home/travis/build/mrozigor/crow/include/crow/utility.h:497: warning: Member arity (variable) of class crow::utility::function_traits< std::function< R(Args...)> > is not documented.
-/home/travis/build/mrozigor/crow/include/crow/websocket.h:23: warning: Member send_binary(const std::string &msg)=0 (function) of class crow::websocket::connection is not documented.
-/home/travis/build/mrozigor/crow/include/crow/websocket.h:24: warning: Member send_text(const std::string &msg)=0 (function) of class crow::websocket::connection is not documented.
-/home/travis/build/mrozigor/crow/include/crow/websocket.h:25: warning: Member close(const std::string &msg="quit")=0 (function) of class crow::websocket::connection is not documented.
-/home/travis/build/mrozigor/crow/include/crow/websocket.h:28: warning: Member userdata(void *u) (function) of class crow::websocket::connection is not documented.
-/home/travis/build/mrozigor/crow/include/crow/websocket.h:29: warning: Member userdata() (function) of class crow::websocket::connection is not documented.
-/home/travis/build/mrozigor/crow/include/crow/websocket.h:39: warning: Member Connection(const crow::request &req, Adaptor &&adaptor, std::function< void(crow::websocket::connection &)> open_handler, std::function< void(crow::websocket::connection &, const std::string &, bool)> message_handler, std::function< void(crow::websocket::connection &, const std::string &)> close_handler, std::function< void(crow::websocket::connection &)> error_handler, std::function< bool(const crow::request &)> accept_handler) (function) of class crow::websocket::Connection is not documented.
-/home/travis/build/mrozigor/crow/include/crow/websocket.h:76: warning: Member dispatch(CompletionHandler handler) (function) of class crow::websocket::Connection is not documented.
-/home/travis/build/mrozigor/crow/include/crow/websocket.h:82: warning: Member post(CompletionHandler handler) (function) of class crow::websocket::Connection is not documented.
-/home/travis/build/mrozigor/crow/include/crow/websocket.h:87: warning: Member send_pong(const std::string &msg) (function) of class crow::websocket::Connection is not documented.
-/home/travis/build/mrozigor/crow/include/crow/websocket.h:98: warning: Member send_binary(const std::string &msg) override (function) of class crow::websocket::Connection is not documented.
-/home/travis/build/mrozigor/crow/include/crow/websocket.h:108: warning: Member send_text(const std::string &msg) override (function) of class crow::websocket::Connection is not documented.
-/home/travis/build/mrozigor/crow/include/crow/websocket.h:118: warning: Member close(const std::string &msg) override (function) of class crow::websocket::Connection is not documented.
-/home/travis/build/mrozigor/crow/include/crow/websocket.h:28: warning: Member userdata(void *u) (function) of class crow::websocket::connection is not documented.
-/home/travis/build/mrozigor/crow/include/crow/websocket.h:29: warning: Member userdata() (function) of class crow::websocket::connection is not documented.
-/home/travis/build/mrozigor/crow/include/crow/websocket.h:137: warning: Member build_header(int opcode, size_t size) (function) of class crow::websocket::Connection is not documented.
-/home/travis/build/mrozigor/crow/include/crow/websocket.h:160: warning: Member start(std::string &&hello) (function) of class crow::websocket::Connection is not documented.
-/home/travis/build/mrozigor/crow/include/crow/websocket.h:177: warning: Member do_read() (function) of class crow::websocket::Connection is not documented.
-/home/travis/build/mrozigor/crow/include/crow/websocket.h:368: warning: Member is_FIN() (function) of class crow::websocket::Connection is not documented.
-/home/travis/build/mrozigor/crow/include/crow/websocket.h:373: warning: Member opcode() (function) of class crow::websocket::Connection is not documented.
-/home/travis/build/mrozigor/crow/include/crow/websocket.h:378: warning: Member handle_fragment() (function) of class crow::websocket::Connection is not documented.
-/home/travis/build/mrozigor/crow/include/crow/websocket.h:457: warning: Member do_write() (function) of class crow::websocket::Connection is not documented.
-/home/travis/build/mrozigor/crow/include/crow/websocket.h:488: warning: Member check_destroy() (function) of class crow::websocket::Connection is not documented.
+/home/travis/build/mrozigor/crow/include/crow/websocket.h:24: warning: Member send_binary(const std::string &msg)=0 (function) of class crow::websocket::connection is not documented.
+/home/travis/build/mrozigor/crow/include/crow/websocket.h:25: warning: Member send_text(const std::string &msg)=0 (function) of class crow::websocket::connection is not documented.
+/home/travis/build/mrozigor/crow/include/crow/websocket.h:26: warning: Member send_ping(const std::string &msg)=0 (function) of class crow::websocket::connection is not documented.
+/home/travis/build/mrozigor/crow/include/crow/websocket.h:27: warning: Member send_pong(const std::string &msg)=0 (function) of class crow::websocket::connection is not documented.
+/home/travis/build/mrozigor/crow/include/crow/websocket.h:28: warning: Member close(const std::string &msg="quit")=0 (function) of class crow::websocket::connection is not documented.
+/home/travis/build/mrozigor/crow/include/crow/websocket.h:31: warning: Member userdata(void *u) (function) of class crow::websocket::connection is not documented.
+/home/travis/build/mrozigor/crow/include/crow/websocket.h:32: warning: Member userdata() (function) of class crow::websocket::connection is not documented.
+/home/travis/build/mrozigor/crow/include/crow/websocket.h:31: warning: Member userdata(void *u) (function) of class crow::websocket::connection is not documented.
+/home/travis/build/mrozigor/crow/include/crow/websocket.h:32: warning: Member userdata() (function) of class crow::websocket::connection is not documented.
 erating docs for compound crow::detail::get_index_of_element_from_tuple_by_type_impl< T, N, T, Args... >...
 Generating docs for compound crow::detail::get_index_of_element_from_tuple_by_type_impl< T, N, U, Args... >...
 Generating docs for compound crow::detail::is_after_handle_arity_3_impl...
@@ -775,5 +760,5 @@ Generating example index...
 finalizing index lists...
 writing tag file...
 Running plantuml with JAVA...
-lookup cache used 2333/65536 hits=19772 misses=2648
+lookup cache used 2342/65536 hits=19848 misses=2657
 finished...

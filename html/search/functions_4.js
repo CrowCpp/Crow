@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['loglevel_247',['loglevel',['../classcrow_1_1_crow.html#a846a333fb4a6be11e4de1ac730a1f68f',1,'crow::Crow']]]
+  ['is_5ffin_270',['is_FIN',['../classcrow_1_1websocket_1_1_connection.html#aff28834d3434b6d24a01830667247111',1,'crow::websocket::Connection']]]
 ];
