@@ -30,7 +30,7 @@ var searchData=
   ['contains_35',['contains',['../structcrow_1_1black__magic_1_1contains.html',1,'crow::black_magic']]],
   ['contains_3c_20tp_20_3e_36',['contains&lt; Tp &gt;',['../structcrow_1_1black__magic_1_1contains_3_01_tp_01_4.html',1,'crow::black_magic']]],
   ['contains_3c_20tp_2c_20head_2c_20rest_2e_2e_2e_20_3e_37',['contains&lt; Tp, Head, Rest... &gt;',['../structcrow_1_1black__magic_1_1contains_3_01_tp_00_01_head_00_01_rest_8_8_8_01_4.html',1,'crow::black_magic']]],
-  ['context_38',['context',['../structcrow_1_1_cookie_parser_1_1context.html',1,'crow::CookieParser::context'],['../structcrow_1_1detail_1_1context.html',1,'crow::detail::context&lt; Middlewares &gt;']]],
+  ['context_38',['context',['../structcrow_1_1detail_1_1context.html',1,'crow::detail::context&lt; Middlewares &gt;'],['../structcrow_1_1_cookie_parser_1_1context.html',1,'crow::CookieParser::context']]],
   ['context_3c_20middlewares_2e_2e_2e_20_3e_39',['context&lt; Middlewares... &gt;',['../structcrow_1_1detail_1_1context.html',1,'crow::detail']]],
   ['cookieparser_40',['CookieParser',['../structcrow_1_1_cookie_parser.html',1,'crow']]],
   ['crow_41',['Crow',['../classcrow_1_1_crow.html',1,'crow']]],
