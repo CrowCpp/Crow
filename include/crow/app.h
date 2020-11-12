@@ -121,12 +121,12 @@ namespace crow
         ///Set the server's log level
 
         ///
-        /// Possible values are:
-        /// crow::LogLevel::Debug       (0)
-        /// crow::LogLevel::Info        (1)
-        /// crow::LogLevel::Warning     (2)
-        /// crow::LogLevel::Error       (3)
-        /// crow::LogLevel::Critical    (4)
+        /// Possible values are:<br>
+        /// crow::LogLevel::Debug       (0)<br>
+        /// crow::LogLevel::Info        (1)<br>
+        /// crow::LogLevel::Warning     (2)<br>
+        /// crow::LogLevel::Error       (3)<br>
+        /// crow::LogLevel::Critical    (4)<br>
         self_t& loglevel(crow::LogLevel level)
         {
             crow::logger::setLogLevel(level);
@@ -161,7 +161,16 @@ namespace crow
         ///Run the server
         void run()
         {
+#ifndef CROW_DISABLE_STATIC_DIR
+            route<crow::black_magic::get_parameter_tag(CROW_STATIC_ENDPOINT)>(CROW_STATIC_ENDPOINT)
+            ([](const crow::request&, crow::response& res, std::string file_path_partial)
+            {
+              res.set_static_file_info(CROW_STATIC_DIRECTORY + file_path_partial);
+              res.end();
+            });
             validate();
+#endif
+
 #ifdef CROW_ENABLE_SSL
             if (use_ssl_)
             {
