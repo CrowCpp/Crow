@@ -1,6 +1,4 @@
 var searchData=
 [
-  ['route_278',['route',['../classcrow_1_1_crow.html#af221cb25926e5dabc2da21a7a1c9713c',1,'crow::Crow']]],
-  ['route_5fdynamic_279',['route_dynamic',['../classcrow_1_1_crow.html#a0f408e47d261ad55ccfd8eb5f351c22e',1,'crow::Crow']]],
-  ['run_280',['run',['../classcrow_1_1_crow.html#a193d8b03f717234a841cd92f72c6b4b5',1,'crow::Crow']]]
+  ['opcode_299',['opcode',['../classcrow_1_1websocket_1_1_connection.html#a47a804e0269c7e70f45434f7618c6e7b',1,'crow::websocket::Connection']]]
 ];

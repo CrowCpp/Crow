@@ -1,7 +1,5 @@
 var searchData=
 [
-  ['wait_5ffor_5fserver_5fstart_145',['wait_for_server_start',['../classcrow_1_1_crow.html#a5e39821ccc9cbf8c6400fd86fc406c21',1,'crow::Crow']]],
-  ['websocketrule_146',['WebSocketRule',['../classcrow_1_1_web_socket_rule.html',1,'crow']]],
-  ['wrapped_147',['Wrapped',['../structcrow_1_1detail_1_1routing__handler__call__helper_1_1_wrapped.html',1,'crow::detail::routing_handler_call_helper']]],
-  ['wvalue_148',['wvalue',['../classcrow_1_1json_1_1wvalue.html',1,'crow::json']]]
+  ['url_157',['url',['../structcrow_1_1request.html#aa3df34c56847d6d42887e73655276167',1,'crow::request']]],
+  ['url_5fparams_158',['url_params',['../structcrow_1_1request.html#a745d5a94e9e9ae1fed64674aae0194b0',1,'crow::request']]]
 ];

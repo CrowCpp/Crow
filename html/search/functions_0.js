@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['bindaddr_257',['bindaddr',['../classcrow_1_1_crow.html#a75777f82b6519c86d71446eb9285d774',1,'crow::Crow']]],
-  ['build_5fheader_258',['build_header',['../classcrow_1_1websocket_1_1_connection.html#acb61dbbdd467860fcb3b3026374dc85a',1,'crow::websocket::Connection']]]
+  ['add_273',['add',['../classcrow_1_1detail_1_1dumb__timer__queue.html#a9861970e8023769fd7f87dc91f908c97',1,'crow::detail::dumb_timer_queue']]],
+  ['add_5fheader_274',['add_header',['../structcrow_1_1response.html#a16d1a8bcec6460ba97f90b80881693b8',1,'crow::response']]]
 ];

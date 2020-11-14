@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['is_5ffin_270',['is_FIN',['../classcrow_1_1websocket_1_1_connection.html#aff28834d3434b6d24a01830667247111',1,'crow::websocket::Connection']]]
+  ['end_287',['end',['../structcrow_1_1response.html#abef42200eca49c70dc1f5140ee3603ab',1,'crow::response::end()'],['../structcrow_1_1response.html#a10da2e17421586b68f27ef1533ec677b',1,'crow::response::end(const std::string &amp;body_part)']]]
 ];

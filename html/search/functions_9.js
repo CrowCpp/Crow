@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['port_276',['port',['../classcrow_1_1_crow.html#a365f9c95fc2bd8bb583967f499c1f4a1',1,'crow::Crow']]],
-  ['post_277',['post',['../classcrow_1_1websocket_1_1_connection.html#ac3d4cebfc05076982ff002b7c3186ade',1,'crow::websocket::Connection']]]
+  ['notify_5fserver_5fstart_298',['notify_server_start',['../classcrow_1_1_crow.html#a6bbe76405fff487a1913c7b5fccbbb81',1,'crow::Crow']]]
 ];

@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['notify_5fserver_5fstart_274',['notify_server_start',['../classcrow_1_1_crow.html#a6bbe76405fff487a1913c7b5fccbbb81',1,'crow::Crow']]]
+  ['loglevel_295',['loglevel',['../classcrow_1_1_crow.html#a846a333fb4a6be11e4de1ac730a1f68f',1,'crow::Crow']]]
 ];

@@ -104,6 +104,11 @@ $(document).ready(function(){initNavTree('structcrow_1_1_socket_adaptor.html',''
 <div class="title">crow::SocketAdaptor Struct Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p>A wrapper for the asio::ip::tcp::socket and asio::ssl::stream.  
+ <a href="structcrow_1_1_socket_adaptor.html#details">More...</a></p>
+
+<p><code>#include &lt;<a class="el" href="socket__adaptors_8h_source.html">socket_adaptors.h</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
 Public Types</h2></td></tr>
@@ -120,10 +125,12 @@ Public Member Functions</h2></td></tr>
 boost::asio::io_service &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>get_io_service</b> ()</td></tr>
 <tr class="separator:a0510de3c3c993cfd8a36950b69a6700e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6c1efabfc9bf922308027f3d35c1f2c7"><td class="memItemLeft" align="right" valign="top"><a id="a6c1efabfc9bf922308027f3d35c1f2c7"></a>
-tcp::socket &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>raw_socket</b> ()</td></tr>
+tcp::socket &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structcrow_1_1_socket_adaptor.html#a6c1efabfc9bf922308027f3d35c1f2c7">raw_socket</a> ()</td></tr>
+<tr class="memdesc:a6c1efabfc9bf922308027f3d35c1f2c7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the TCP socket handling data trasfers, regardless of what layer is handling transfers on top of the socket. <br /></td></tr>
 <tr class="separator:a6c1efabfc9bf922308027f3d35c1f2c7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a70c413ce6d8f9e2fe1e4852fc07f0928"><td class="memItemLeft" align="right" valign="top"><a id="a70c413ce6d8f9e2fe1e4852fc07f0928"></a>
-tcp::socket &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>socket</b> ()</td></tr>
+tcp::socket &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structcrow_1_1_socket_adaptor.html#a70c413ce6d8f9e2fe1e4852fc07f0928">socket</a> ()</td></tr>
+<tr class="memdesc:a70c413ce6d8f9e2fe1e4852fc07f0928"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the object handling data transfers, this can be either a TCP socket or an SSL stream (if SSL is enabled). <br /></td></tr>
 <tr class="separator:a70c413ce6d8f9e2fe1e4852fc07f0928"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a23fb23ae334da14488199fe04d5ea066"><td class="memItemLeft" align="right" valign="top"><a id="a23fb23ae334da14488199fe04d5ea066"></a>
 tcp::endpoint&#160;</td><td class="memItemRight" valign="bottom"><b>remote_endpoint</b> ()</td></tr>
@@ -154,7 +161,9 @@ Public Attributes</h2></td></tr>
 tcp::socket&#160;</td><td class="memItemRight" valign="bottom"><b>socket_</b></td></tr>
 <tr class="separator:adfae304955845303cee26c31910b1f2c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<hr/>The documentation for this struct was generated from the following file:<ul>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>A wrapper for the asio::ip::tcp::socket and asio::ssl::stream. </p>
+</div><hr/>The documentation for this struct was generated from the following file:<ul>
 <li>/home/travis/build/mrozigor/crow/include/crow/<a class="el" href="socket__adaptors_8h_source.html">socket_adaptors.h</a></li>
 </ul>
 </div><!-- contents -->
@@ -164,7 +173,7 @@ tcp::socket&#160;</td><td class="memItemRight" valign="bottom"><b>socket_</b></t
 			<ul>
 				<li class="navelem"><b>crow</b></li><li class="navelem"><a class="el" href="structcrow_1_1_socket_adaptor.html">SocketAdaptor</a></li>
 				<li class="footer">
-					Generated on Fri Nov 13 2020 for Crow by <a href="http://www.doxygen.org/index.html">
+					Generated on Sat Nov 14 2020 for Crow by <a href="http://www.doxygen.org/index.html">
 					<img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.17.
 					Dark theme by <a href="http://majerle.eu" target="_new">Tilen Majerle</a>. Edited by <a href="https://github.com/The-EDev" target="_new">Farook Al-Sammarraie</a>. All rights reserved.
 				</li>

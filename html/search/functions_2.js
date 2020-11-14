@@ -1,7 +1,7 @@
 var searchData=
 [
-  ['dispatch_263',['dispatch',['../classcrow_1_1websocket_1_1_connection.html#a7a11996bd55dcc65c1c376cea1dd7b00',1,'crow::websocket::Connection']]],
-  ['do_5fread_264',['do_read',['../classcrow_1_1websocket_1_1_connection.html#addd1692463d34ff141c02c48f0b46431',1,'crow::websocket::Connection']]],
-  ['do_5fwrite_265',['do_write',['../classcrow_1_1websocket_1_1_connection.html#a7089a3814af7e3c6e6a82c22865ee852',1,'crow::websocket::Connection']]],
-  ['dump_266',['dump',['../structcrow_1_1multipart_1_1message.html#ab520f76e5beb00183657fbc502755342',1,'crow::multipart::message::dump()'],['../structcrow_1_1multipart_1_1message.html#a086eb015c51ade904f09d128323fb641',1,'crow::multipart::message::dump(int part_)']]]
+  ['check_5fdestroy_277',['check_destroy',['../classcrow_1_1websocket_1_1_connection.html#a1f3552060d7e93a3a0d0f2ea9d84a8df',1,'crow::websocket::Connection']]],
+  ['close_278',['close',['../classcrow_1_1websocket_1_1_connection.html#a210e06034d286e82a3fd090b9a239c86',1,'crow::websocket::Connection']]],
+  ['concurrency_279',['concurrency',['../classcrow_1_1_crow.html#a41686e6025705c1ab379b5ec71bbf983',1,'crow::Crow']]],
+  ['connection_280',['Connection',['../classcrow_1_1websocket_1_1_connection.html#a8c86760ae4680c1b48fb402beee51584',1,'crow::websocket::Connection']]]
 ];

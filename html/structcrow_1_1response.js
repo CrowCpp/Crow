@@ -18,6 +18,7 @@ var structcrow_1_1response =
     [ "get_header_value", "structcrow_1_1response.html#a8c35e92bc75eaa35f45e0ca6d22a8f47", null ],
     [ "is_alive", "structcrow_1_1response.html#ac29da52ee1e0b55086cd8eedd6c22da1", null ],
     [ "is_completed", "structcrow_1_1response.html#a9fb82c40e0c0844db70b7b86b4a23e9f", null ],
+    [ "is_static_type", "structcrow_1_1response.html#aff527a091cf5054e933a244b078648c1", null ],
     [ "operator=", "structcrow_1_1response.html#ad0b5402527b2c0e985d9eaf97e0e4e2f", null ],
     [ "operator=", "structcrow_1_1response.html#ae789c998922616a1a895476eb89c7844", null ],
     [ "redirect", "structcrow_1_1response.html#ac04bbe2d4f54fd717cdffdb26af3e46f", null ],
@@ -27,7 +28,6 @@ var structcrow_1_1response =
     [ "crow::Connection", "structcrow_1_1response.html#a13cd54cff7b7cea484654c3e9ace415d", null ],
     [ "body", "structcrow_1_1response.html#ae9f3cc153eac05954f1f4e599527892d", null ],
     [ "code", "structcrow_1_1response.html#aabc1f9b3264b8c5a2d05dcb409e8ff3f", null ],
-    [ "file_info", "structcrow_1_1response.html#a2f4d18f1e2b50b260e8103e47939c448", null ],
     [ "headers", "structcrow_1_1response.html#ae56cfc39f24a56748c11016842427fb3", null ],
     [ "json_value", "structcrow_1_1response.html#ad21c0b65173426d51eca46ef4d3f1106", null ]
 ];

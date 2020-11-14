@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['opcode_85',['opcode',['../classcrow_1_1websocket_1_1_connection.html#a47a804e0269c7e70f45434f7618c6e7b',1,'crow::websocket::Connection']]],
-  ['outofrange_86',['OutOfRange',['../structcrow_1_1black__magic_1_1_out_of_range.html',1,'crow::black_magic']]]
+  ['node_93',['Node',['../structcrow_1_1_trie_1_1_node.html',1,'crow::Trie']]],
+  ['notify_5fserver_5fstart_94',['notify_server_start',['../classcrow_1_1_crow.html#a6bbe76405fff487a1913c7b5fccbbb81',1,'crow::Crow']]]
 ];

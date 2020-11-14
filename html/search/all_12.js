@@ -1,5 +1,8 @@
 var searchData=
 [
-  ['validate_143',['validate',['../classcrow_1_1_crow.html#ab9a22c981e0afec0d55ee234683a6d38',1,'crow::Crow']]],
-  ['value_144',['value',['../structcrow_1_1multipart_1_1header.html#ae6c16041bbae76caa020bd8261b8889d',1,'crow::multipart::header']]]
+  ['taggedrule_152',['TaggedRule',['../classcrow_1_1_tagged_rule.html',1,'crow']]],
+  ['template_5ft_153',['template_t',['../classcrow_1_1mustache_1_1template__t.html',1,'crow::mustache']]],
+  ['tick_154',['tick',['../classcrow_1_1_crow.html#a068042431b0be5911ee1689a285f4693',1,'crow::Crow']]],
+  ['timeout_155',['timeout',['../classcrow_1_1_crow.html#a47ed9a118820f6e6ba0b2bc37f0997fb',1,'crow::Crow']]],
+  ['trie_156',['Trie',['../classcrow_1_1_trie.html',1,'crow']]]
 ];
