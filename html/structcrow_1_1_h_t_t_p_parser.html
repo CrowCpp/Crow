@@ -104,6 +104,11 @@ $(document).ready(function(){initNavTree('structcrow_1_1_h_t_t_p_parser.html',''
 <div class="title">crow::HTTPParser&lt; Handler &gt; Struct Template Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p>A wrapper for <code>nodejs/http-parser</code>.  
+ <a href="structcrow_1_1_h_t_t_p_parser.html#details">More...</a></p>
+
+<p><code>#include &lt;<a class="el" href="parser_8h_source.html">parser.h</a>&gt;</code></p>
 <div class="dynheader">
 Inheritance diagram for crow::HTTPParser&lt; Handler &gt;:</div>
 <div class="dyncontent">
@@ -117,7 +122,8 @@ Public Member Functions</h2></td></tr>
 &#160;</td><td class="memItemRight" valign="bottom"><b>HTTPParser</b> (Handler *handler)</td></tr>
 <tr class="separator:a3659702ad1b853735ae6871f57bc2229"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9ca5bdc64f7ce0ffa836c6263da0da45"><td class="memItemLeft" align="right" valign="top"><a id="a9ca5bdc64f7ce0ffa836c6263da0da45"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>feed</b> (const char *buffer, int length)</td></tr>
+bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structcrow_1_1_h_t_t_p_parser.html#a9ca5bdc64f7ce0ffa836c6263da0da45">feed</a> (const char *buffer, int length)</td></tr>
+<tr class="memdesc:a9ca5bdc64f7ce0ffa836c6263da0da45"><td class="mdescLeft">&#160;</td><td class="mdescRight">Parse a buffer into the different sections of an HTTP request. <br /></td></tr>
 <tr class="separator:a9ca5bdc64f7ce0ffa836c6263da0da45"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af0421fefc211d39c6ee676c5ba0083a5"><td class="memItemLeft" align="right" valign="top"><a id="af0421fefc211d39c6ee676c5ba0083a5"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><b>done</b> ()</td></tr>
@@ -132,7 +138,8 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>process_header</b> ()
 void&#160;</td><td class="memItemRight" valign="bottom"><b>process_message</b> ()</td></tr>
 <tr class="separator:a6aaafa15ad10e3165b547edecd66f174"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4c1e61f6ed620123661ffb95070c9ca0"><td class="memItemLeft" align="right" valign="top"><a id="a4c1e61f6ed620123661ffb95070c9ca0"></a>
-<a class="el" href="structcrow_1_1request.html">request</a>&#160;</td><td class="memItemRight" valign="bottom"><b>to_request</b> () const</td></tr>
+<a class="el" href="structcrow_1_1request.html">request</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structcrow_1_1_h_t_t_p_parser.html#a4c1e61f6ed620123661ffb95070c9ca0">to_request</a> () const</td></tr>
+<tr class="memdesc:a4c1e61f6ed620123661ffb95070c9ca0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Take the parsed HTTP request data and convert it to a <a class="el" href="structcrow_1_1request.html">crow::request</a>. <br /></td></tr>
 <tr class="separator:a4c1e61f6ed620123661ffb95070c9ca0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af1ee5e3d7c354ad27a6c7fba88411557"><td class="memItemLeft" align="right" valign="top"><a id="af1ee5e3d7c354ad27a6c7fba88411557"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><b>is_upgrade</b> () const</td></tr>
@@ -186,16 +193,24 @@ std::string&#160;</td><td class="memItemRight" valign="bottom"><b>header_value</
 ci_map&#160;</td><td class="memItemRight" valign="bottom"><b>headers</b></td></tr>
 <tr class="separator:ad27f225ecbf23f01b429646d76a1a886"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa00ec7a2a2b475ec0b2cfe3d946c9b87"><td class="memItemLeft" align="right" valign="top"><a id="aa00ec7a2a2b475ec0b2cfe3d946c9b87"></a>
-<a class="el" href="classcrow_1_1query__string.html">query_string</a>&#160;</td><td class="memItemRight" valign="bottom"><b>url_params</b></td></tr>
+<a class="el" href="classcrow_1_1query__string.html">query_string</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structcrow_1_1_h_t_t_p_parser.html#aa00ec7a2a2b475ec0b2cfe3d946c9b87">url_params</a></td></tr>
+<tr class="memdesc:aa00ec7a2a2b475ec0b2cfe3d946c9b87"><td class="mdescLeft">&#160;</td><td class="mdescRight">What comes after the <code>?</code> in the URL. <br /></td></tr>
 <tr class="separator:aa00ec7a2a2b475ec0b2cfe3d946c9b87"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a38b29e8668db22997d92a2040a40eb69"><td class="memItemLeft" align="right" valign="top"><a id="a38b29e8668db22997d92a2040a40eb69"></a>
 std::string&#160;</td><td class="memItemRight" valign="bottom"><b>body</b></td></tr>
 <tr class="separator:a38b29e8668db22997d92a2040a40eb69"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8c9ef70473ed6548872bcb217965203e"><td class="memItemLeft" align="right" valign="top"><a id="a8c9ef70473ed6548872bcb217965203e"></a>
-Handler *&#160;</td><td class="memItemRight" valign="bottom"><b>handler_</b></td></tr>
+Handler *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structcrow_1_1_h_t_t_p_parser.html#a8c9ef70473ed6548872bcb217965203e">handler_</a></td></tr>
+<tr class="memdesc:a8c9ef70473ed6548872bcb217965203e"><td class="mdescLeft">&#160;</td><td class="mdescRight">This is currently an HTTP connection object (<a class="el" href="classcrow_1_1_connection.html">crow::Connection</a>). <br /></td></tr>
 <tr class="separator:a8c9ef70473ed6548872bcb217965203e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<hr/>The documentation for this struct was generated from the following file:<ul>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><h3>template&lt;typename Handler&gt;<br />
+struct crow::HTTPParser&lt; Handler &gt;</h3>
+
+<p>A wrapper for <code>nodejs/http-parser</code>. </p>
+<p>Used to generate a <a class="el" href="structcrow_1_1request.html">crow::request</a> from the TCP socket buffer. </p>
+</div><hr/>The documentation for this struct was generated from the following file:<ul>
 <li>/home/travis/build/mrozigor/crow/include/crow/<a class="el" href="parser_8h_source.html">parser.h</a></li>
 </ul>
 </div><!-- contents -->
@@ -205,7 +220,7 @@ Handler *&#160;</td><td class="memItemRight" valign="bottom"><b>handler_</b></td
 			<ul>
 				<li class="navelem"><b>crow</b></li><li class="navelem"><a class="el" href="structcrow_1_1_h_t_t_p_parser.html">HTTPParser</a></li>
 				<li class="footer">
-					Generated on Wed Nov 18 2020 for Crow by <a href="http://www.doxygen.org/index.html">
+					Generated on Fri Nov 20 2020 for Crow by <a href="http://www.doxygen.org/index.html">
 					<img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.17.
 					Dark theme by <a href="http://majerle.eu" target="_new">Tilen Majerle</a>. Edited by <a href="https://github.com/The-EDev" target="_new">Farook Al-Sammarraie</a>. All rights reserved.
 				</li>

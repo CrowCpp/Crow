@@ -103,14 +103,19 @@ $(document).ready(function(){initNavTree('classcrow_1_1json_1_1rvalue.html','');
 <div class="title">crow::json::rvalue Class Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p>JSON read value.  
+ <a href="classcrow_1_1json_1_1rvalue.html#details">More...</a></p>
+
+<p><code>#include &lt;<a class="el" href="json_8h_source.html">json.h</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a8b4e22b077d735b29aafc1c1a7e01366"><td class="memItemLeft" align="right" valign="top"><a id="a8b4e22b077d735b29aafc1c1a7e01366"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>rvalue</b> (type t) noexcept</td></tr>
+&#160;</td><td class="memItemRight" valign="bottom"><b>rvalue</b> (type <a class="el" href="classcrow_1_1json_1_1rvalue.html#a9c9f7242e4164f4ed690e50e3cf5f4b1">t</a>) noexcept</td></tr>
 <tr class="separator:a8b4e22b077d735b29aafc1c1a7e01366"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9eb58f152c08db64e400ebf90df2889e"><td class="memItemLeft" align="right" valign="top"><a id="a9eb58f152c08db64e400ebf90df2889e"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>rvalue</b> (type t, char *s, char *e) noexcept</td></tr>
+&#160;</td><td class="memItemRight" valign="bottom"><b>rvalue</b> (type <a class="el" href="classcrow_1_1json_1_1rvalue.html#a9c9f7242e4164f4ed690e50e3cf5f4b1">t</a>, char *<a class="el" href="classcrow_1_1json_1_1rvalue.html#ad94f27a14e60af841219279f70290858">s</a>, char *e) noexcept</td></tr>
 <tr class="separator:a9eb58f152c08db64e400ebf90df2889e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a834f64380b3479a4497b2ca212559320"><td class="memItemLeft" align="right" valign="top"><a id="a834f64380b3479a4497b2ca212559320"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><b>rvalue</b> (const <a class="el" href="classcrow_1_1json_1_1rvalue.html">rvalue</a> &amp;r)</td></tr>
@@ -137,29 +142,38 @@ Public Member Functions</h2></td></tr>
 &#160;</td><td class="memItemRight" valign="bottom"><b>operator int</b> () const</td></tr>
 <tr class="separator:a372e061836bfa0a0bd1b0f1b74d5fc10"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9c9f7242e4164f4ed690e50e3cf5f4b1"><td class="memItemLeft" align="right" valign="top"><a id="a9c9f7242e4164f4ed690e50e3cf5f4b1"></a>
-type&#160;</td><td class="memItemRight" valign="bottom"><b>t</b> () const</td></tr>
+type&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcrow_1_1json_1_1rvalue.html#a9c9f7242e4164f4ed690e50e3cf5f4b1">t</a> () const</td></tr>
+<tr class="memdesc:a9c9f7242e4164f4ed690e50e3cf5f4b1"><td class="mdescLeft">&#160;</td><td class="mdescRight">The type of the JSON value. <br /></td></tr>
 <tr class="separator:a9c9f7242e4164f4ed690e50e3cf5f4b1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9bf75ffd4603990be7d0eaa192ac54fb"><td class="memItemLeft" align="right" valign="top"><a id="a9bf75ffd4603990be7d0eaa192ac54fb"></a>
-num_type&#160;</td><td class="memItemRight" valign="bottom"><b>nt</b> () const</td></tr>
+num_type&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcrow_1_1json_1_1rvalue.html#a9bf75ffd4603990be7d0eaa192ac54fb">nt</a> () const</td></tr>
+<tr class="memdesc:a9bf75ffd4603990be7d0eaa192ac54fb"><td class="mdescLeft">&#160;</td><td class="mdescRight">The number type of the JSON value. <br /></td></tr>
 <tr class="separator:a9bf75ffd4603990be7d0eaa192ac54fb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1a9a1a3616d6484bf3dcdb941cf8e6da"><td class="memItemLeft" align="right" valign="top"><a id="a1a9a1a3616d6484bf3dcdb941cf8e6da"></a>
-int64_t&#160;</td><td class="memItemRight" valign="bottom"><b>i</b> () const</td></tr>
+int64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcrow_1_1json_1_1rvalue.html#a1a9a1a3616d6484bf3dcdb941cf8e6da">i</a> () const</td></tr>
+<tr class="memdesc:a1a9a1a3616d6484bf3dcdb941cf8e6da"><td class="mdescLeft">&#160;</td><td class="mdescRight">The integer value. <br /></td></tr>
 <tr class="separator:a1a9a1a3616d6484bf3dcdb941cf8e6da"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a775273fbbe868c7c8d3a71acdb9ee276"><td class="memItemLeft" align="right" valign="top"><a id="a775273fbbe868c7c8d3a71acdb9ee276"></a>
-uint64_t&#160;</td><td class="memItemRight" valign="bottom"><b>u</b> () const</td></tr>
+uint64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcrow_1_1json_1_1rvalue.html#a775273fbbe868c7c8d3a71acdb9ee276">u</a> () const</td></tr>
+<tr class="memdesc:a775273fbbe868c7c8d3a71acdb9ee276"><td class="mdescLeft">&#160;</td><td class="mdescRight">The unsigned integer value. <br /></td></tr>
 <tr class="separator:a775273fbbe868c7c8d3a71acdb9ee276"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4a3e33d65b812ed583814a7ac2e1f448"><td class="memItemLeft" align="right" valign="top"><a id="a4a3e33d65b812ed583814a7ac2e1f448"></a>
-double&#160;</td><td class="memItemRight" valign="bottom"><b>d</b> () const</td></tr>
+double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcrow_1_1json_1_1rvalue.html#a4a3e33d65b812ed583814a7ac2e1f448">d</a> () const</td></tr>
+<tr class="memdesc:a4a3e33d65b812ed583814a7ac2e1f448"><td class="mdescLeft">&#160;</td><td class="mdescRight">The double precision floating-point number value. <br /></td></tr>
 <tr class="separator:a4a3e33d65b812ed583814a7ac2e1f448"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a61a5f98c6b0257d53c60a70eeff15490"><td class="memItemLeft" align="right" valign="top"><a id="a61a5f98c6b0257d53c60a70eeff15490"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>b</b> () const</td></tr>
+bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcrow_1_1json_1_1rvalue.html#a61a5f98c6b0257d53c60a70eeff15490">b</a> () const</td></tr>
+<tr class="memdesc:a61a5f98c6b0257d53c60a70eeff15490"><td class="mdescLeft">&#160;</td><td class="mdescRight">The boolean value. <br /></td></tr>
 <tr class="separator:a61a5f98c6b0257d53c60a70eeff15490"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8c60e32c3e25b71c794cc79a4dea466c"><td class="memItemLeft" align="right" valign="top"><a id="a8c60e32c3e25b71c794cc79a4dea466c"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>unescape</b> () const</td></tr>
-<tr class="separator:a8c60e32c3e25b71c794cc79a4dea466c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad94f27a14e60af841219279f70290858"><td class="memItemLeft" align="right" valign="top"><a id="ad94f27a14e60af841219279f70290858"></a>
-<a class="el" href="structcrow_1_1json_1_1detail_1_1r__string.html">detail::r_string</a>&#160;</td><td class="memItemRight" valign="bottom"><b>s</b> () const</td></tr>
+<a class="el" href="structcrow_1_1json_1_1detail_1_1r__string.html">detail::r_string</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcrow_1_1json_1_1rvalue.html#ad94f27a14e60af841219279f70290858">s</a> () const</td></tr>
+<tr class="memdesc:ad94f27a14e60af841219279f70290858"><td class="mdescLeft">&#160;</td><td class="mdescRight">The string value. <br /></td></tr>
 <tr class="separator:ad94f27a14e60af841219279f70290858"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8c60e32c3e25b71c794cc79a4dea466c"><td class="memItemLeft" align="right" valign="top"><a id="a8c60e32c3e25b71c794cc79a4dea466c"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcrow_1_1json_1_1rvalue.html#a8c60e32c3e25b71c794cc79a4dea466c">unescape</a> () const</td></tr>
+<tr class="memdesc:a8c60e32c3e25b71c794cc79a4dea466c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert escaped string character to their original form ("\\n" -&gt; '<br  />
+'). <br /></td></tr>
+<tr class="separator:a8c60e32c3e25b71c794cc79a4dea466c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a48ac4fff801f365fb2b82f1ed7ebe983"><td class="memItemLeft" align="right" valign="top"><a id="a48ac4fff801f365fb2b82f1ed7ebe983"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><b>has</b> (const char *str) const</td></tr>
 <tr class="separator:a48ac4fff801f365fb2b82f1ed7ebe983"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -212,7 +226,10 @@ Friends</h2></td></tr>
 std::ostream &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operator&lt;&lt;</b> (std::ostream &amp;os, const <a class="el" href="classcrow_1_1json_1_1rvalue.html">rvalue</a> &amp;r)</td></tr>
 <tr class="separator:a59b7d051c0f407eec8c8bba224d205ff"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<hr/>The documentation for this class was generated from the following file:<ul>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>JSON read value. </p>
+<p>Value can mean any json value, including a JSON object. Read means this class is used to primarily read strings into a JSON value. </p>
+</div><hr/>The documentation for this class was generated from the following file:<ul>
 <li>/home/travis/build/mrozigor/crow/include/crow/<a class="el" href="json_8h_source.html">json.h</a></li>
 </ul>
 </div><!-- contents -->
@@ -222,7 +239,7 @@ std::ostream &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operato
 			<ul>
 				<li class="navelem"><b>crow</b></li><li class="navelem"><b>json</b></li><li class="navelem"><a class="el" href="classcrow_1_1json_1_1rvalue.html">rvalue</a></li>
 				<li class="footer">
-					Generated on Wed Nov 18 2020 for Crow by <a href="http://www.doxygen.org/index.html">
+					Generated on Fri Nov 20 2020 for Crow by <a href="http://www.doxygen.org/index.html">
 					<img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.17.
 					Dark theme by <a href="http://majerle.eu" target="_new">Tilen Majerle</a>. Edited by <a href="https://github.com/The-EDev" target="_new">Farook Al-Sammarraie</a>. All rights reserved.
 				</li>

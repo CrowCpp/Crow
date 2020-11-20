@@ -103,6 +103,11 @@ $(document).ready(function(){initNavTree('classcrow_1_1json_1_1wvalue.html','');
 <div class="title">crow::json::wvalue Class Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p>JSON write value.  
+ <a href="classcrow_1_1json_1_1wvalue.html#details">More...</a></p>
+
+<p><code>#include &lt;<a class="el" href="json_8h_source.html">json.h</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
@@ -110,7 +115,8 @@ Public Member Functions</h2></td></tr>
 type&#160;</td><td class="memItemRight" valign="bottom"><b>t</b> () const</td></tr>
 <tr class="separator:a2e8d3ed2849f16bb1894c4d48cb49921"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1813a29de56af96789cc76b8cdb0dbbe"><td class="memItemLeft" align="right" valign="top"><a id="a1813a29de56af96789cc76b8cdb0dbbe"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>wvalue</b> (const <a class="el" href="classcrow_1_1json_1_1rvalue.html">rvalue</a> &amp;r)</td></tr>
+&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcrow_1_1json_1_1wvalue.html#a1813a29de56af96789cc76b8cdb0dbbe">wvalue</a> (const <a class="el" href="classcrow_1_1json_1_1rvalue.html">rvalue</a> &amp;r)</td></tr>
+<tr class="memdesc:a1813a29de56af96789cc76b8cdb0dbbe"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a write value from a read value (useful for editing JSON strings). <br /></td></tr>
 <tr class="separator:a1813a29de56af96789cc76b8cdb0dbbe"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a780a992b87a23470b99ef4b594ffd1ba"><td class="memItemLeft" align="right" valign="top"><a id="a780a992b87a23470b99ef4b594ffd1ba"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><b>wvalue</b> (<a class="el" href="classcrow_1_1json_1_1wvalue.html">wvalue</a> &amp;&amp;r)</td></tr>
@@ -119,7 +125,8 @@ type&#160;</td><td class="memItemRight" valign="bottom"><b>t</b> () const</td></
 <a class="el" href="classcrow_1_1json_1_1wvalue.html">wvalue</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operator=</b> (<a class="el" href="classcrow_1_1json_1_1wvalue.html">wvalue</a> &amp;&amp;r)</td></tr>
 <tr class="separator:aaafb5db799a2eff74cfcaddd87ebe053"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af46596998d8e639a23b401e951297b63"><td class="memItemLeft" align="right" valign="top"><a id="af46596998d8e639a23b401e951297b63"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>clear</b> ()</td></tr>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcrow_1_1json_1_1wvalue.html#af46596998d8e639a23b401e951297b63">clear</a> ()</td></tr>
+<tr class="memdesc:af46596998d8e639a23b401e951297b63"><td class="mdescLeft">&#160;</td><td class="mdescRight">Used for compatibility, same as reset() <br /></td></tr>
 <tr class="separator:af46596998d8e639a23b401e951297b63"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab13538ab6037cf427ed225b94d703ce9"><td class="memItemLeft" align="right" valign="top"><a id="ab13538ab6037cf427ed225b94d703ce9"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>reset</b> ()</td></tr>
@@ -198,7 +205,10 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>dump_internal</b> (co
 std::string&#160;</td><td class="memItemRight" valign="bottom"><b>dump</b> (const <a class="el" href="classcrow_1_1json_1_1wvalue.html">wvalue</a> &amp;v)</td></tr>
 <tr class="separator:a5ba6a4a466e9612dd301090293ec439d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<hr/>The documentation for this class was generated from the following file:<ul>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>JSON write value. </p>
+<p>Value can mean any json value, including a JSON object. Write means this class is used to primarily assemble JSON objects using keys and values and export those into a string. </p>
+</div><hr/>The documentation for this class was generated from the following file:<ul>
 <li>/home/travis/build/mrozigor/crow/include/crow/<a class="el" href="json_8h_source.html">json.h</a></li>
 </ul>
 </div><!-- contents -->
@@ -208,7 +218,7 @@ std::string&#160;</td><td class="memItemRight" valign="bottom"><b>dump</b> (cons
 			<ul>
 				<li class="navelem"><b>crow</b></li><li class="navelem"><b>json</b></li><li class="navelem"><a class="el" href="classcrow_1_1json_1_1wvalue.html">wvalue</a></li>
 				<li class="footer">
-					Generated on Wed Nov 18 2020 for Crow by <a href="http://www.doxygen.org/index.html">
+					Generated on Fri Nov 20 2020 for Crow by <a href="http://www.doxygen.org/index.html">
 					<img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.17.
 					Dark theme by <a href="http://majerle.eu" target="_new">Tilen Majerle</a>. Edited by <a href="https://github.com/The-EDev" target="_new">Farook Al-Sammarraie</a>. All rights reserved.
 				</li>

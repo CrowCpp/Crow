@@ -104,15 +104,20 @@ $(document).ready(function(){initNavTree('classcrow_1_1_base_rule.html',''); ini
 <div class="title">crow::BaseRule Class Reference<span class="mlabels"><span class="mlabel">abstract</span></span></div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p>A base class for all rules.  
+ <a href="classcrow_1_1_base_rule.html#details">More...</a></p>
+
+<p><code>#include &lt;<a class="el" href="routing_8h_source.html">routing.h</a>&gt;</code></p>
 <div class="dynheader">
 Inheritance diagram for crow::BaseRule:</div>
 <div class="dyncontent">
  <div class="center">
   <img src="classcrow_1_1_base_rule.png" usemap="#crow::BaseRule_map" alt=""/>
   <map id="crow::BaseRule_map" name="crow::BaseRule_map">
-<area href="classcrow_1_1_dynamic_rule.html" alt="crow::DynamicRule" shape="rect" coords="0,56,164,80"/>
-<area href="classcrow_1_1_tagged_rule.html" alt="crow::TaggedRule&lt; Args &gt;" shape="rect" coords="174,56,338,80"/>
-<area href="classcrow_1_1_web_socket_rule.html" alt="crow::WebSocketRule" shape="rect" coords="348,56,512,80"/>
+<area href="classcrow_1_1_dynamic_rule.html" title="A rule that can change its parameters during runtime." alt="crow::DynamicRule" shape="rect" coords="0,56,164,80"/>
+<area href="classcrow_1_1_tagged_rule.html" title="Default rule created when CROW_ROUTE is called." alt="crow::TaggedRule&lt; Args &gt;" shape="rect" coords="174,56,338,80"/>
+<area href="classcrow_1_1_web_socket_rule.html" title="A rule dealing with websockets." alt="crow::WebSocketRule" shape="rect" coords="348,56,512,80"/>
   </map>
 </div></div>
 <table class="memberdecls">
@@ -169,7 +174,10 @@ template&lt;typename T &gt; </td></tr>
 <tr class="memitem:ae4e239e90000a93c0a1e16dc4cbf8b41"><td class="memTemplItemLeft" align="right" valign="top">struct&#160;</td><td class="memTemplItemRight" valign="bottom"><b>RuleParameterTraits</b></td></tr>
 <tr class="separator:ae4e239e90000a93c0a1e16dc4cbf8b41"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<hr/>The documentation for this class was generated from the following file:<ul>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>A base class for all rules. </p>
+<p>Used to provide a common interface for code dealing with different types of rules. A Rule provides a URL, allowed HTTP methods, and handlers. </p>
+</div><hr/>The documentation for this class was generated from the following file:<ul>
 <li>/home/travis/build/mrozigor/crow/include/crow/<a class="el" href="routing_8h_source.html">routing.h</a></li>
 </ul>
 </div><!-- contents -->
@@ -179,7 +187,7 @@ template&lt;typename T &gt; </td></tr>
 			<ul>
 				<li class="navelem"><b>crow</b></li><li class="navelem"><a class="el" href="classcrow_1_1_base_rule.html">BaseRule</a></li>
 				<li class="footer">
-					Generated on Wed Nov 18 2020 for Crow by <a href="http://www.doxygen.org/index.html">
+					Generated on Fri Nov 20 2020 for Crow by <a href="http://www.doxygen.org/index.html">
 					<img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.17.
 					Dark theme by <a href="http://majerle.eu" target="_new">Tilen Majerle</a>. Edited by <a href="https://github.com/The-EDev" target="_new">Farook Al-Sammarraie</a>. All rights reserved.
 				</li>
