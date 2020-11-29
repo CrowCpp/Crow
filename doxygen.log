@@ -7,134 +7,135 @@ Searching for msc files...
 Searching for dia files...
 Searching for files to exclude
 Searching INPUT for files to process...
-Searching for files in directory /home/travis/build/mrozigor/crow/include
-Searching for files in directory /home/travis/build/mrozigor/crow/include/crow
-Searching for files in directory /home/travis/build/mrozigor/crow/include/crow/middlewares
+Searching for files in directory /home/travis/build/The-EDev/crow/include
+Searching for files in directory /home/travis/build/The-EDev/crow/include/crow
+Searching for files in directory /home/travis/build/The-EDev/crow/include/crow/middlewares
 Reading and parsing tag files
 Parsing files
-Preprocessing /home/travis/build/mrozigor/crow/include/crow/app.h...
-Parsing file /home/travis/build/mrozigor/crow/include/crow/app.h...
-Preprocessing /home/travis/build/mrozigor/crow/include/crow/ci_map.h...
-Parsing file /home/travis/build/mrozigor/crow/include/crow/ci_map.h...
-Preprocessing /home/travis/build/mrozigor/crow/include/crow/common.h...
-Parsing file /home/travis/build/mrozigor/crow/include/crow/common.h...
-Preprocessing /home/travis/build/mrozigor/crow/include/crow/dumb_timer_queue.h...
-Parsing file /home/travis/build/mrozigor/crow/include/crow/dumb_timer_queue.h...
-Preprocessing /home/travis/build/mrozigor/crow/include/crow/http_connection.h...
-Parsing file /home/travis/build/mrozigor/crow/include/crow/http_connection.h...
-Preprocessing /home/travis/build/mrozigor/crow/include/crow/http_request.h...
-Parsing file /home/travis/build/mrozigor/crow/include/crow/http_request.h...
-Preprocessing /home/travis/build/mrozigor/crow/include/crow/http_response.h...
-Parsing file /home/travis/build/mrozigor/crow/include/crow/http_response.h...
-Preprocessing /home/travis/build/mrozigor/crow/include/crow/http_server.h...
-Parsing file /home/travis/build/mrozigor/crow/include/crow/http_server.h...
-Preprocessing /home/travis/build/mrozigor/crow/include/crow/json.h...
-Parsing file /home/travis/build/mrozigor/crow/include/crow/json.h...
-Preprocessing /home/travis/build/mrozigor/crow/include/crow/logging.h...
-Parsing file /home/travis/build/mrozigor/crow/include/crow/logging.h...
-Preprocessing /home/travis/build/mrozigor/crow/include/crow/middleware_context.h...
-Parsing file /home/travis/build/mrozigor/crow/include/crow/middleware_context.h...
-Preprocessing /home/travis/build/mrozigor/crow/include/crow/middlewares/cookie_parser.h...
-Parsing file /home/travis/build/mrozigor/crow/include/crow/middlewares/cookie_parser.h...
-Preprocessing /home/travis/build/mrozigor/crow/include/crow/mime_types.h...
-Parsing file /home/travis/build/mrozigor/crow/include/crow/mime_types.h...
-Preprocessing /home/travis/build/mrozigor/crow/include/crow/multipart.h...
-Parsing file /home/travis/build/mrozigor/crow/include/crow/multipart.h...
-Preprocessing /home/travis/build/mrozigor/crow/include/crow/mustache.h...
-Parsing file /home/travis/build/mrozigor/crow/include/crow/mustache.h...
-Preprocessing /home/travis/build/mrozigor/crow/include/crow/parser.h...
-Parsing file /home/travis/build/mrozigor/crow/include/crow/parser.h...
-Preprocessing /home/travis/build/mrozigor/crow/include/crow/query_string.h...
-Parsing file /home/travis/build/mrozigor/crow/include/crow/query_string.h...
-Preprocessing /home/travis/build/mrozigor/crow/include/crow/routing.h...
-Parsing file /home/travis/build/mrozigor/crow/include/crow/routing.h...
-Preprocessing /home/travis/build/mrozigor/crow/include/crow/settings.h...
-Parsing file /home/travis/build/mrozigor/crow/include/crow/settings.h...
-Preprocessing /home/travis/build/mrozigor/crow/include/crow/socket_adaptors.h...
-Parsing file /home/travis/build/mrozigor/crow/include/crow/socket_adaptors.h...
-Preprocessing /home/travis/build/mrozigor/crow/include/crow/utility.h...
-Parsing file /home/travis/build/mrozigor/crow/include/crow/utility.h...
-Preprocessing /home/travis/build/mrozigor/crow/include/crow/websocket.h...
-Parsing file /home/travis/build/mrozigor/crow/include/crow/websocket.h...
-Preprocessing /home/travis/build/mrozigor/crow/include/crow.h...
-Parsing file /home/travis/build/mrozigor/crow/include/crow.h...
+Preprocessing /home/travis/build/The-EDev/crow/include/crow/app.h...
+Parsing file /home/travis/build/The-EDev/crow/include/crow/app.h...
+Preprocessing /home/travis/build/The-EDev/crow/include/crow/ci_map.h...
+Parsing file /home/travis/build/The-EDev/crow/include/crow/ci_map.h...
+Preprocessing /home/travis/build/The-EDev/crow/include/crow/common.h...
+Parsing file /home/travis/build/The-EDev/crow/include/crow/common.h...
+Preprocessing /home/travis/build/The-EDev/crow/include/crow/dumb_timer_queue.h...
+Parsing file /home/travis/build/The-EDev/crow/include/crow/dumb_timer_queue.h...
+Preprocessing /home/travis/build/The-EDev/crow/include/crow/http_connection.h...
+Parsing file /home/travis/build/The-EDev/crow/include/crow/http_connection.h...
+Preprocessing /home/travis/build/The-EDev/crow/include/crow/http_request.h...
+Parsing file /home/travis/build/The-EDev/crow/include/crow/http_request.h...
+Preprocessing /home/travis/build/The-EDev/crow/include/crow/http_response.h...
+Parsing file /home/travis/build/The-EDev/crow/include/crow/http_response.h...
+Preprocessing /home/travis/build/The-EDev/crow/include/crow/http_server.h...
+Parsing file /home/travis/build/The-EDev/crow/include/crow/http_server.h...
+Preprocessing /home/travis/build/The-EDev/crow/include/crow/json.h...
+Parsing file /home/travis/build/The-EDev/crow/include/crow/json.h...
+Preprocessing /home/travis/build/The-EDev/crow/include/crow/logging.h...
+Parsing file /home/travis/build/The-EDev/crow/include/crow/logging.h...
+Preprocessing /home/travis/build/The-EDev/crow/include/crow/middleware_context.h...
+Parsing file /home/travis/build/The-EDev/crow/include/crow/middleware_context.h...
+Preprocessing /home/travis/build/The-EDev/crow/include/crow/middlewares/cookie_parser.h...
+Parsing file /home/travis/build/The-EDev/crow/include/crow/middlewares/cookie_parser.h...
+Preprocessing /home/travis/build/The-EDev/crow/include/crow/mime_types.h...
+Parsing file /home/travis/build/The-EDev/crow/include/crow/mime_types.h...
+Preprocessing /home/travis/build/The-EDev/crow/include/crow/multipart.h...
+Parsing file /home/travis/build/The-EDev/crow/include/crow/multipart.h...
+Preprocessing /home/travis/build/The-EDev/crow/include/crow/mustache.h...
+Parsing file /home/travis/build/The-EDev/crow/include/crow/mustache.h...
+Preprocessing /home/travis/build/The-EDev/crow/include/crow/parser.h...
+Parsing file /home/travis/build/The-EDev/crow/include/crow/parser.h...
+Preprocessing /home/travis/build/The-EDev/crow/include/crow/query_string.h...
+Parsing file /home/travis/build/The-EDev/crow/include/crow/query_string.h...
+Preprocessing /home/travis/build/The-EDev/crow/include/crow/routing.h...
+Parsing file /home/travis/build/The-EDev/crow/include/crow/routing.h...
+Preprocessing /home/travis/build/The-EDev/crow/include/crow/settings.h...
+Parsing file /home/travis/build/The-EDev/crow/include/crow/settings.h...
+Preprocessing /home/travis/build/The-EDev/crow/include/crow/socket_adaptors.h...
+Parsing file /home/travis/build/The-EDev/crow/include/crow/socket_adaptors.h...
+Preprocessing /home/travis/build/The-EDev/crow/include/crow/utility.h...
+Parsing file /home/travis/build/The-EDev/crow/include/crow/utility.h...
+Preprocessing /home/travis/build/The-EDev/crow/include/crow/websocket.h...
+Parsing file /home/travis/build/The-EDev/crow/include/crow/websocket.h...
+Preprocessing /home/travis/build/The-EDev/crow/include/crow.h...
+Parsing file /home/travis/build/The-EDev/crow/include/crow.h...
 Building group list...
 Building directory list...
 Building namespace list...
 Building file list...
-Buildi/home/travis/build/mrozigor/crow/include/crow/utility.h:475: warning: Compound crow::utility::function_traits< R(ClassType::*)(Args...) const > is not documented.
-/home/travis/build/mrozigor/crow/include/crow/utility.h:458: warning: Compound crow::utility::function_traits is not documented.
-/home/travis/build/mrozigor/crow/include/crow/utility.h:443: warning: Compound crow::detail::get_index_of_element_from_tuple_by_type_impl< T, N, U, Args... > is not documented.
-/home/travis/build/mrozigor/crow/include/crow/utility.h:431: warning: Compound crow::detail::get_index_of_element_from_tuple_by_type_impl is not documented.
-/home/travis/build/mrozigor/crow/include/crow/utility.h:371: warning: Compound crow::black_magic::pop_back<> is not documented.
-/home/travis/build/mrozigor/crow/include/crow/utility.h:397: warning: Compound crow::black_magic::promote is not documented.
-/home/travis/build/mrozigor/crow/include/crow/utility.h:364: warning: Compound crow::black_magic::pop_back is not documented.
-/home/travis/build/mrozigor/crow/include/crow/utility.h:332: warning: Compound crow::black_magic::seq is not documented.
-/home/travis/build/mrozigor/crow/include/crow/utility.h:318: warning: Compound crow::black_magic::last_element_type is not documented.
-/home/travis/build/mrozigor/crow/include/crow/utility.h:312: warning: Compound crow::black_magic::arguments< 0 > is not documented.
-/home/travis/build/mrozigor/crow/include/crow/utility.h:297: warning: Compound crow::black_magic::single_tag_to_type< 5 > is not documented.
-/home/travis/build/mrozigor/crow/include/crow/utility.h:291: warning: Compound crow::black_magic::single_tag_to_type< 4 > is not documented.
-/home/travis/build/mrozigor/crow/include/crow/utility.h:285: warning: Compound crow::black_magic::single_tag_to_type< 3 > is not documented.
-/home/travis/build/mrozigor/crow/include/crow/utility.h:279: warning: Compound crow::black_magic::single_tag_to_type< 2 > is not documented.
-/home/travis/build/mrozigor/crow/include/crow/utility.h:273: warning: Compound crow::black_magic::single_tag_to_type< 1 > is not documented.
-/home/travis/build/mrozigor/crow/include/crow/utility.h:253: warning: Compound crow::black_magic::CallHelper< F, S< Args... > > is not documented.
-/home/travis/build/mrozigor/crow/include/crow/utility.h:241: warning: Compound crow::black_magic::S is not documented.
-/home/travis/build/mrozigor/crow/include/crow/utility.h:128: warning: Compound crow::black_magic::parameter_tag is not documented.
-/home/travis/build/mrozigor/crow/include/crow/utility.h:19: warning: Compound crow::black_magic::OutOfRange is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:581: warning: Compound crow::Trie::Node is not documented.
-/home/travis/build/mrozigor/crow/include/crow/utility.h:161: warning: Compound crow::black_magic::compute_parameter_tag_from_args_list< Arg, Args... > is not documented.
-/home/travis/build/mrozigor/crow/include/crow/mustache.h:42: warning: Compound crow::mustache::Action is not documented.
-/home/travis/build/mrozigor/crow/include/crow/middleware_context.h:33: warning: Compound crow::detail::partial_context<> is not documented.
-/home/travis/build/mrozigor/crow/include/crow/utility.h:437: warning: Compound crow::detail::get_index_of_element_from_tuple_by_type_impl< T, N, T, Args... > is not documented.
-/home/travis/build/mrozigor/crow/include/crow/http_server.h:27: warning: Compound crow::Server is not documented.
-/home/travis/build/mrozigor/crow/include/crow/utility.h:304: warning: Compound crow::black_magic::arguments is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:241: warning: Compound crow::detail::routing_handler_call_helper::Wrapped::handler_type_helper< const request &, Args... > is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:248: warning: Compound crow::detail::routing_handler_call_helper::Wrapped::handler_type_helper< const request &, response &, Args... > is not documented.
-/home/travis/build/mrozigor/crow/include/crow/middleware_context.h:17: warning: Compound crow::detail::partial_context is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:173: warning: Compound crow::detail::routing_handler_call_helper::Wrapped is not documented.
-/home/travis/build/mrozigor/crow/include/crow/mustache.h:17: warning: Compound crow::mustache::invalid_template_exception is not documented.
-/home/travis/build/mrozigor/crow/include/crow/logging.h:43: warning: Compound crow::logger is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:149: warning: Compound crow::detail::routing_handler_call_helper::call< F, NInt, NUint, NDouble, NString, black_magic::S< std::string, Args1... >, black_magic::S< Args2... > > is not documented.
-/home/travis/build/mrozigor/crow/include/crow/utility.h:155: warning: Compound crow::black_magic::compute_parameter_tag_from_args_list<> is not documented.
-/home/travis/build/mrozigor/crow/include/crow/utility.h:357: warning: Compound crow::black_magic::pop_back_helper< seq< N... >, Tuple > is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:102: warning: Compound crow::detail::routing_handler_call_helper::call_params is not documented.
-/home/travis/build/mrozigor/crow/include/crow/middleware_context.h:48: warning: Compound crow::detail::context is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:234: warning: Compound crow::detail::routing_handler_call_helper::Wrapped::handler_type_helper is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:116: warning: Compound crow::detail::routing_handler_call_helper::call< F, NInt, NUint, NDouble, NString, black_magic::S< int64_t, Args1... >, black_magic::S< Args2... > > is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:138: warning: Compound crow::detail::routing_handler_call_helper::call< F, NInt, NUint, NDouble, NString, black_magic::S< double, Args1... >, black_magic::S< Args2... > > is not documented.
-/home/travis/build/mrozigor/crow/include/crow/utility.h:497: warning: Compound crow::utility::function_traits< std::function< R(Args...)> > is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:160: warning: Compound crow::detail::routing_handler_call_helper::call< F, NInt, NUint, NDouble, NString, black_magic::S<>, black_magic::S< Args1... > > is not documented.
-/home/travis/build/mrozigor/crow/include/crow/utility.h:486: warning: Compound crow::utility::function_traits< R(ClassType::*)(Args...)> is not documented.
-/home/travis/build/mrozigor/crow/include/crow/http_connection.h:85: warning: Compound crow::detail::is_after_handle_arity_3_impl is not documented.
-/home/travis/build/mrozigor/crow/include/crow/common.h:84: warning: Compound crow::routing_params is not documented.
-/home/travis/build/mrozigor/crow/include/crow/http_connection.h:69: warning: Compound crow::detail::is_before_handle_arity_3_impl is not documented.
-/home/travis/build/mrozigor/crow/include/crow/logging.h:31: warning: Compound crow::ILogHandler is not documented.
-/home/travis/build/mrozigor/crow/include/crow/middlewares/cookie_parser.h:34: warning: Compound crow::CookieParser::context is not documented.
-/home/travis/build/mrozigor/crow/include/crow/logging.h:36: warning: Compound crow::CerrLogHandler is not documented.
-/home/travis/build/mrozigor/crow/include/crow/middlewares/cookie_parser.h:32: warning: Compound crow::CookieParser is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:95: warning: Compound crow::detail::routing_handler_call_helper::call_pair is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:127: warning: Compound crow::detail::routing_handler_call_helper::call< F, NInt, NUint, NDouble, NString, black_magic::S< uint64_t, Args1... >, black_magic::S< Args2... > > is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:193: warning: Compound crow::detail::routing_handler_call_helper::Wrapped::req_handler_wrapper is not documented.
-/home/travis/build/mrozigor/crow/include/crow/json.h:1236: warning: unable to resolve reference to 'reset()' for \ref command
-/home/travis/build/mrozigor/crow/include/crow/routing.h:27: warning: Member BaseRule(std::string rule) (function) of class crow::BaseRule is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:36: warning: Member validate()=0 (function) of class crow::BaseRule is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:37: warning: Member upgrade() (function) of class crow::BaseRule is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:44: warning: Member handle(const request &, response &, const routing_params &)=0 (function) of class crow::BaseRule is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:45: warning: Member handle_upgrade(const request &, response &res, SocketAdaptor &&) (function) of class crow::BaseRule is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:58: warning: Member get_methods() (function) of class crow::BaseRule is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:64: warning: Member foreach_method(F f) (function) of class crow::BaseRule is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:73: warning: Member rule() (function) of class crow::BaseRule is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:76: warning: Member methods_ (variable) of class crow::BaseRule is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:78: warning: Member rule_ (variable) of class crow::BaseRule is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:79: warning: Member name_ (variable) of class crow::BaseRule is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:81: warning: Member rule_to_upgrade_ (variable) of class crow::BaseRule is not documented.
-/home/travis/build/mrozigor/crow/include/crow/logging.h:38: warning: Member log(std::string message, LogLevel) override (function) of class crow::CerrLogHandler is not documented.
-/home/travis/build/mrozigor/crow/include/crow/ci_map.h:12: warning: Member operator()(const std::string &key) const (function) of class crow::ci_hash is not documented.
-/home/travis/build/mrozigor/crow/include/crow/ci_map.h:29: warning: Member operator()(const std::string &l, const std::string &r) const (function) of class crow::ci_key_eq is not documented.
-/home/travis/build/mrozigor/crow/include/crow/http_connection.h:188: warning: Member Connection(boost::asio::io_service &io_service, Handler *handler, const std::string &server_name, std::tuple< Middlewares... > *middlewares, std::function< std::string()> &get_cached_date_str_f, detail::dumb_timer_queue &timer_queue, typename Adaptor::context *adaptor_ctx_) (function) of class crow::Connection is not documented.
-/home/travis/build/mrozigor/crow/include/crow/http_connection.h:227: warning: Member start() (function) of class crow::Connection is not documented.
-/home/travis/build/mrozigor/crow/include/crow/http_connection.h:243: warning: Member handle_header() (function) of class crow::Connection is not documented.
-/home/travis/build/mrozigor/crow/include/crow/http_connection.h:255: warning: Member handle() (function) of class crow::Connection is not documented.
+Buildi/home/travis/build/The-EDev/crow/include/crow/utility.h:475: warning: Compound crow::utility::function_traits< R(ClassType::*)(Args...) const > is not documented.
+/home/travis/build/The-EDev/crow/include/crow/utility.h:458: warning: Compound crow::utility::function_traits is not documented.
+/home/travis/build/The-EDev/crow/include/crow/utility.h:443: warning: Compound crow::detail::get_index_of_element_from_tuple_by_type_impl< T, N, U, Args... > is not documented.
+/home/travis/build/The-EDev/crow/include/crow/utility.h:431: warning: Compound crow::detail::get_index_of_element_from_tuple_by_type_impl is not documented.
+/home/travis/build/The-EDev/crow/include/crow/utility.h:371: warning: Compound crow::black_magic::pop_back<> is not documented.
+/home/travis/build/The-EDev/crow/include/crow/utility.h:397: warning: Compound crow::black_magic::promote is not documented.
+/home/travis/build/The-EDev/crow/include/crow/utility.h:364: warning: Compound crow::black_magic::pop_back is not documented.
+/home/travis/build/The-EDev/crow/include/crow/utility.h:332: warning: Compound crow::black_magic::seq is not documented.
+/home/travis/build/The-EDev/crow/include/crow/utility.h:318: warning: Compound crow::black_magic::last_element_type is not documented.
+/home/travis/build/The-EDev/crow/include/crow/utility.h:312: warning: Compound crow::black_magic::arguments< 0 > is not documented.
+/home/travis/build/The-EDev/crow/include/crow/utility.h:297: warning: Compound crow::black_magic::single_tag_to_type< 5 > is not documented.
+/home/travis/build/The-EDev/crow/include/crow/utility.h:291: warning: Compound crow::black_magic::single_tag_to_type< 4 > is not documented.
+/home/travis/build/The-EDev/crow/include/crow/utility.h:285: warning: Compound crow::black_magic::single_tag_to_type< 3 > is not documented.
+/home/travis/build/The-EDev/crow/include/crow/utility.h:279: warning: Compound crow::black_magic::single_tag_to_type< 2 > is not documented.
+/home/travis/build/The-EDev/crow/include/crow/utility.h:273: warning: Compound crow::black_magic::single_tag_to_type< 1 > is not documented.
+/home/travis/build/The-EDev/crow/include/crow/utility.h:253: warning: Compound crow::black_magic::CallHelper< F, S< Args... > > is not documented.
+/home/travis/build/The-EDev/crow/include/crow/utility.h:241: warning: Compound crow::black_magic::S is not documented.
+/home/travis/build/The-EDev/crow/include/crow/utility.h:128: warning: Compound crow::black_magic::parameter_tag is not documented.
+/home/travis/build/The-EDev/crow/include/crow/utility.h:19: warning: Compound crow::black_magic::OutOfRange is not documented.
+/home/travis/build/The-EDev/crow/include/crow/routing.h:581: warning: Compound crow::Trie::Node is not documented.
+/home/travis/build/The-EDev/crow/include/crow/routing.h:248: warning: Compound crow::detail::routing_handler_call_helper::Wrapped::handler_type_helper< const request &, response &, Args... > is not documented.
+/home/travis/build/The-EDev/crow/include/crow/utility.h:161: warning: Compound crow::black_magic::compute_parameter_tag_from_args_list< Arg, Args... > is not documented.
+/home/travis/build/The-EDev/crow/include/crow/mustache.h:42: warning: Compound crow::mustache::Action is not documented.
+/home/travis/build/The-EDev/crow/include/crow/middleware_context.h:33: warning: Compound crow::detail::partial_context<> is not documented.
+/home/travis/build/The-EDev/crow/include/crow/http_response.h:22: warning: Compound crow::returnable is not documented.
+/home/travis/build/The-EDev/crow/include/crow/utility.h:437: warning: Compound crow::detail::get_index_of_element_from_tuple_by_type_impl< T, N, T, Args... > is not documented.
+/home/travis/build/The-EDev/crow/include/crow/http_server.h:27: warning: Compound crow::Server is not documented.
+/home/travis/build/The-EDev/crow/include/crow/utility.h:304: warning: Compound crow::black_magic::arguments is not documented.
+/home/travis/build/The-EDev/crow/include/crow/routing.h:241: warning: Compound crow::detail::routing_handler_call_helper::Wrapped::handler_type_helper< const request &, Args... > is not documented.
+/home/travis/build/The-EDev/crow/include/crow/middleware_context.h:17: warning: Compound crow::detail::partial_context is not documented.
+/home/travis/build/The-EDev/crow/include/crow/routing.h:173: warning: Compound crow::detail::routing_handler_call_helper::Wrapped is not documented.
+/home/travis/build/The-EDev/crow/include/crow/mustache.h:17: warning: Compound crow::mustache::invalid_template_exception is not documented.
+/home/travis/build/The-EDev/crow/include/crow/logging.h:43: warning: Compound crow::logger is not documented.
+/home/travis/build/The-EDev/crow/include/crow/routing.h:149: warning: Compound crow::detail::routing_handler_call_helper::call< F, NInt, NUint, NDouble, NString, black_magic::S< std::string, Args1... >, black_magic::S< Args2... > > is not documented.
+/home/travis/build/The-EDev/crow/include/crow/utility.h:155: warning: Compound crow::black_magic::compute_parameter_tag_from_args_list<> is not documented.
+/home/travis/build/The-EDev/crow/include/crow/utility.h:357: warning: Compound crow::black_magic::pop_back_helper< seq< N... >, Tuple > is not documented.
+/home/travis/build/The-EDev/crow/include/crow/routing.h:102: warning: Compound crow::detail::routing_handler_call_helper::call_params is not documented.
+/home/travis/build/The-EDev/crow/include/crow/middleware_context.h:48: warning: Compound crow::detail::context is not documented.
+/home/travis/build/The-EDev/crow/include/crow/routing.h:234: warning: Compound crow::detail::routing_handler_call_helper::Wrapped::handler_type_helper is not documented.
+/home/travis/build/The-EDev/crow/include/crow/routing.h:116: warning: Compound crow::detail::routing_handler_call_helper::call< F, NInt, NUint, NDouble, NString, black_magic::S< int64_t, Args1... >, black_magic::S< Args2... > > is not documented.
+/home/travis/build/The-EDev/crow/include/crow/routing.h:138: warning: Compound crow::detail::routing_handler_call_helper::call< F, NInt, NUint, NDouble, NString, black_magic::S< double, Args1... >, black_magic::S< Args2... > > is not documented.
+/home/travis/build/The-EDev/crow/include/crow/utility.h:497: warning: Compound crow::utility::function_traits< std::function< R(Args...)> > is not documented.
+/home/travis/build/The-EDev/crow/include/crow/routing.h:160: warning: Compound crow::detail::routing_handler_call_helper::call< F, NInt, NUint, NDouble, NString, black_magic::S<>, black_magic::S< Args1... > > is not documented.
+/home/travis/build/The-EDev/crow/include/crow/utility.h:486: warning: Compound crow::utility::function_traits< R(ClassType::*)(Args...)> is not documented.
+/home/travis/build/The-EDev/crow/include/crow/http_connection.h:85: warning: Compound crow::detail::is_after_handle_arity_3_impl is not documented.
+/home/travis/build/The-EDev/crow/include/crow/common.h:84: warning: Compound crow::routing_params is not documented.
+/home/travis/build/The-EDev/crow/include/crow/http_connection.h:69: warning: Compound crow::detail::is_before_handle_arity_3_impl is not documented.
+/home/travis/build/The-EDev/crow/include/crow/logging.h:31: warning: Compound crow::ILogHandler is not documented.
+/home/travis/build/The-EDev/crow/include/crow/middlewares/cookie_parser.h:34: warning: Compound crow::CookieParser::context is not documented.
+/home/travis/build/The-EDev/crow/include/crow/logging.h:36: warning: Compound crow::CerrLogHandler is not documented.
+/home/travis/build/The-EDev/crow/include/crow/middlewares/cookie_parser.h:32: warning: Compound crow::CookieParser is not documented.
+/home/travis/build/The-EDev/crow/include/crow/routing.h:95: warning: Compound crow::detail::routing_handler_call_helper::call_pair is not documented.
+/home/travis/build/The-EDev/crow/include/crow/routing.h:127: warning: Compound crow::detail::routing_handler_call_helper::call< F, NInt, NUint, NDouble, NString, black_magic::S< uint64_t, Args1... >, black_magic::S< Args2... > > is not documented.
+/home/travis/build/The-EDev/crow/include/crow/routing.h:193: warning: Compound crow::detail::routing_handler_call_helper::Wrapped::req_handler_wrapper is not documented.
+/home/travis/build/The-EDev/crow/include/crow/json.h:1236: warning: unable to resolve reference to 'reset()' for \ref command
+/home/travis/build/The-EDev/crow/include/crow/routing.h:27: warning: Member BaseRule(std::string rule) (function) of class crow::BaseRule is not documented.
+/home/travis/build/The-EDev/crow/include/crow/routing.h:36: warning: Member validate()=0 (function) of class crow::BaseRule is not documented.
+/home/travis/build/The-EDev/crow/include/crow/routing.h:37: warning: Member upgrade() (function) of class crow::BaseRule is not documented.
+/home/travis/build/The-EDev/crow/include/crow/routing.h:44: warning: Member handle(const request &, response &, const routing_params &)=0 (function) of class crow::BaseRule is not documented.
+/home/travis/build/The-EDev/crow/include/crow/routing.h:45: warning: Member handle_upgrade(const request &, response &res, SocketAdaptor &&) (function) of class crow::BaseRule is not documented.
+/home/travis/build/The-EDev/crow/include/crow/routing.h:58: warning: Member get_methods() (function) of class crow::BaseRule is not documented.
+/home/travis/build/The-EDev/crow/include/crow/routing.h:64: warning: Member foreach_method(F f) (function) of class crow::BaseRule is not documented.
+/home/travis/build/The-EDev/crow/include/crow/routing.h:73: warning: Member rule() (function) of class crow::BaseRule is not documented.
+/home/travis/build/The-EDev/crow/include/crow/routing.h:76: warning: Member methods_ (variable) of class crow::BaseRule is not documented.
+/home/travis/build/The-EDev/crow/include/crow/routing.h:78: warning: Member rule_ (variable) of class crow::BaseRule is not documented.
+/home/travis/build/The-EDev/crow/include/crow/routing.h:79: warning: Member name_ (variable) of class crow::BaseRule is not documented.
+/home/travis/build/The-EDev/crow/include/crow/routing.h:81: warning: Member rule_to_upgrade_ (variable) of class crow::BaseRule is not documented.
+/home/travis/build/The-EDev/crow/include/crow/logging.h:38: warning: Member log(std::string message, LogLevel) override (function) of class crow::CerrLogHandler is not documented.
+/home/travis/build/The-EDev/crow/include/crow/ci_map.h:12: warning: Member operator()(const std::string &key) const (function) of class crow::ci_hash is not documented.
+/home/travis/build/The-EDev/crow/include/crow/ci_map.h:29: warning: Member operator()(const std::string &l, const std::string &r) const (function) of class crow::ci_key_eq is not documented.
+/home/travis/build/The-EDev/crow/include/crow/http_connection.h:188: warning: Member Connection(boost::asio::io_service &io_service, Handler *handler, const std::string &server_name, std::tuple< Middlewares... > *middlewares, std::function< std::string()> &get_cached_date_str_f, detail::dumb_timer_queue &timer_queue, typename Adaptor::context *adaptor_ctx_) (function) of class crow::Connection is not documented.
+/home/travis/build/The-EDev/crow/include/crow/http_connection.h:227: warning: Member start() (function) of class crow::Connection is not documented.
+/home/travis/build/The-EDev/crow/include/crow/http_connection.h:243: warning: Member handle_header() (function) of class crow::Connection is not documented.
+/home/travis/build/The-EDev/crow/include/crow/http_connection.h:255: warning: Member handle() (function) of class crow::Connection is not documented.
 ng class list...
 Computing nesting relations for classes...
 Associating documentation with classes...
@@ -185,29 +186,29 @@ Generating style sheet...
 Generating search indices...
 Generating example documentation...
 Generating file sources...
-Generating code for file /home/travis/build/mrozigor/crow/include/crow.h...
-Generating code for file /home/travis/build/mrozigor/crow/include/crow/app.h...
-Generating code for file /home/travis/build/mrozigor/crow/include/crow/ci_map.h...
-Generating code for file /home/travis/build/mrozigor/crow/include/crow/common.h...
-Generating code for file /home/travis/build/mrozigor/crow/include/crow/dumb_timer_queue.h...
-Generating code for file /home/travis/build/mrozigor/crow/include/crow/http_connection.h...
-Generating code for file /home/travis/build/mrozigor/crow/include/crow/http_request.h...
-Generating code for file /home/travis/build/mrozigor/crow/include/crow/http_response.h...
-Generating code for file /home/travis/build/mrozigor/crow/include/crow/http_server.h...
-Generating code for file /home/travis/build/mrozigor/crow/include/crow/json.h...
-Generating code for file /home/travis/build/mrozigor/crow/include/crow/logging.h...
-Generating code for file /home/travis/build/mrozigor/crow/include/crow/middleware_context.h...
-Generating code for file /home/travis/build/mrozigor/crow/include/crow/middlewares/cookie_parser.h...
-Generating code for file /home/travis/build/mrozigor/crow/include/crow/mime_types.h...
-Generating code for file /home/travis/build/mrozigor/crow/include/crow/multipart.h...
-Generating code for file /home/travis/build/mrozigor/crow/include/crow/mustache.h...
-Generating code for file /home/travis/build/mrozigor/crow/include/crow/parser.h...
-Generating code for file /home/travis/build/mrozigor/crow/include/crow/query_string.h...
-Generating code for file /home/travis/build/mrozigor/crow/include/crow/routing.h...
-Generating code for file /home/travis/build/mrozigor/crow/include/crow/settings.h...
-Generating code for file /home/travis/build/mrozigor/crow/include/crow/socket_adaptors.h...
-Generating code for file /home/travis/build/mrozigor/crow/include/crow/utility.h...
-Generating code for file /home/travis/build/mrozigor/crow/include/crow/websocket.h...
+Generating code for file /home/travis/build/The-EDev/crow/include/crow.h...
+Generating code for file /home/travis/build/The-EDev/crow/include/crow/app.h...
+Generating code for file /home/travis/build/The-EDev/crow/include/crow/ci_map.h...
+Generating code for file /home/travis/build/The-EDev/crow/include/crow/common.h...
+Generating code for file /home/travis/build/The-EDev/crow/include/crow/dumb_timer_queue.h...
+Generating code for file /home/travis/build/The-EDev/crow/include/crow/http_connection.h...
+Generating code for file /home/travis/build/The-EDev/crow/include/crow/http_request.h...
+Generating code for file /home/travis/build/The-EDev/crow/include/crow/http_response.h...
+Generating code for file /home/travis/build/The-EDev/crow/include/crow/http_server.h...
+Generating code for file /home/travis/build/The-EDev/crow/include/crow/json.h...
+Generating code for file /home/travis/build/The-EDev/crow/include/crow/logging.h...
+Generating code for file /home/travis/build/The-EDev/crow/include/crow/middleware_context.h...
+Generating code for file /home/travis/build/The-EDev/crow/include/crow/middlewares/cookie_parser.h...
+Generating code for file /home/travis/build/The-EDev/crow/include/crow/mime_types.h...
+Generating code for file /home/travis/build/The-EDev/crow/include/crow/multipart.h...
+Generating code for file /home/travis/build/The-EDev/crow/include/crow/mustache.h...
+Generating code for file /home/travis/build/The-EDev/crow/include/crow/parser.h...
+Generating code for file /home/travis/build/The-EDev/crow/include/crow/query_string.h...
+Generating code for file /home/travis/build/The-EDev/crow/include/crow/routing.h...
+Generating code for file /home/travis/build/The-EDev/crow/include/crow/settings.h...
+Generating code for file /home/travis/build/The-EDev/crow/include/crow/socket_adaptors.h...
+Generating code for file /home/travis/build/The-EDev/crow/include/crow/utility.h...
+Generating code for file /home/travis/build/The-EDev/crow/include/crow/websocket.h...
 Generating file documentation...
 Generating page documentation...
 Generating group documentation...
@@ -218,228 +219,227 @@ Generating docs for compound crow::CerrLogHandler...
 Generating docs for compound crow::ci_hash...
 Generating docs for compound crow::ci_key_eq...
 Generating docs for compound crow::Connection...
-Generating docs for compound crow::Coo/home/travis/build/mrozigor/crow/include/crow/middlewares/cookie_parser.h:52: warning: Member before_handle(request &req, response &res, context &ctx) (function) of class crow::CookieParser is not documented.
-/home/travis/build/mrozigor/crow/include/crow/middlewares/cookie_parser.h:96: warning: Member after_handle(request &, response &res, context &ctx) (function) of class crow::CookieParser is not documented.
-/home/travis/build/mrozigor/crow/include/crow/middlewares/cookie_parser.h:38: warning: Member get_cookie(const std::string &key) const (function) of class crow::CookieParser::context is not documented.
-/home/travis/build/mrozigor/crow/include/crow/middlewares/cookie_parser.h:46: warning: Member set_cookie(const std::string &key, const std::string &value) (function) of class crow::CookieParser::context is not documented.
-/home/travis/build/mrozigor/crow/include/crow/middlewares/cookie_parser.h:35: warning: Member jar (variable) of class crow::CookieParser::context is not documented.
-/home/travis/build/mrozigor/crow/include/crow/middlewares/cookie_parser.h:36: warning: Member cookies_to_add (variable) of class crow::CookieParser::context is not documented.
-/home/travis/build/mrozigor/crow/include/crow/app.h:287: warning: Member context_t (typedef) of class crow::Crow is not documented.
-/home/travis/build/mrozigor/crow/include/crow/app.h:211: warning: Member debug_print() (function) of class crow::Crow is not documented.
-/home/travis/build/mrozigor/crow/include/crow/app.h:264: warning: Member ssl_file(T &&, Remain &&...) (function) of class crow::Crow is not documented.
-/home/travis/build/mrozigor/crow/include/crow/app.h:275: warning: Member ssl(T &&) (function) of class crow::Crow is not documented.
-/home/travis/build/mrozigor/crow/include/crow/app.h:289: warning: Member get_context(const request &req) (function) of class crow::Crow is not documented.
-/home/travis/build/mrozigor/crow/include/crow/app.h:297: warning: Member get_middleware() (function) of class crow::Crow is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:392: warning: Member DynamicRule(std::string rule) (function) of class crow::DynamicRule is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:397: warning: Member validate() override (function) of class crow::DynamicRule is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:405: warning: Member handle(const request &req, response &res, const routing_params &params) override (function) of class crow::DynamicRule is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:411: warning: Member operator()(Func f) (function) of class crow::DynamicRule is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:430: warning: Member wrap(Func f, black_magic::seq< Indices... >) (function) of class crow::DynamicRule is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:452: warning: Member operator()(std::string name, Func &&f) (function) of class crow::DynamicRule is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:27: warning: Member BaseRule(std::string rule) (function) of class crow::BaseRule is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:37: warning: Member upgrade() (function) of class crow::BaseRule is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:45: warning: Member handle_upgrade(const request &, response &res, SocketAdaptor &&) (function) of class crow::BaseRule is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:58: warning: Member get_methods() (function) of class crow::BaseRule is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:64: warning: Member foreach_method(F f) (function) of class crow::BaseRule is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:73: warning: Member rule() (function) of class crow::BaseRule is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:358: warning: Member websocket() (function) of class RuleParameterTraits< DynamicRule > is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:365: warning: Member name(std::string name) noexcept (function) of class RuleParameterTraits< DynamicRule > is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:371: warning: Member methods(HTTPMethod method) (function) of class RuleParameterTraits< DynamicRule > is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:378: warning: Member methods(HTTPMethod method, MethodArgs ... args_method) (function) of class RuleParameterTraits< DynamicRule > is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:357: warning: Member self_t (typedef) of class RuleParameterTraits< DynamicRule > is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:76: warning: Member methods_ (variable) of class crow::BaseRule is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:78: warning: Member rule_ (variable) of class crow::BaseRule is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:79: warning: Member name_ (variable) of class crow::BaseRule is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:81: warning: Member rule_to_upgrade_ (variable) of class crow::BaseRule is not documented.
-/home/travis/build/mrozigor/crow/include/crow/parser.h:93: warning: Member HTTPParser(Handler *handler) (function) of class crow::HTTPParser is not documented.
-/home/travis/build/mrozigor/crow/include/crow/parser.h:118: warning: Member done() (function) of class crow::HTTPParser is not documented.
-/home/travis/build/mrozigor/crow/include/crow/parser.h:123: warning: Member clear() (function) of class crow::HTTPParser is not documented.
-/home/travis/build/mrozigor/crow/include/crow/parser.h:135: warning: Member process_header() (function) of class crow::HTTPParser is not documented.
-/home/travis/build/mrozigor/crow/include/crow/parser.h:140: warning: Member process_message() (function) of class crow::HTTPParser is not documented.
-/home/travis/build/mrozigor/crow/include/crow/parser.h:151: warning: Member is_upgrade() const (function) of class crow::HTTPParser is not documented.
-/home/travis/build/mrozigor/crow/include/crow/parser.h:156: warning: Member check_version(int major, int minor) const (function) of class crow::HTTPParser is not documented.
-/home/travis/build/mrozigor/crow/include/crow/parser.h:20: warning: Member on_message_begin(http_parser *self_) (function) of class crow::HTTPParser is not documented.
-/home/travis/build/mrozigor/crow/include/crow/parser.h:26: warning: Member on_url(http_parser *self_, const char *at, size_t length) (function) of class crow::HTTPParser is not documented.
-/home/travis/build/mrozigor/crow/include/crow/parser.h:32: warning: Member on_header_field(http_parser *self_, const char *at, size_t length) (function) of class crow::HTTPParser is not documented.
-/home/travis/build/mrozigor/crow/include/crow/parser.h:51: warning: Member on_header_value(http_parser *self_, const char *at, size_t length) (function) of class crow::HTTPParser is not documented.
-/home/travis/build/mrozigor/crow/include/crow/parser.h:66: warning: Member on_headers_complete(http_parser *self_) (function) of class crow::HTTPParser is not documented.
-/home/travis/build/mrozigor/crow/include/crow/parser.h:76: warning: Member on_body(http_parser *self_, const char *at, size_t length) (function) of class crow::HTTPParser is not documented.
-/home/travis/build/mrozigor/crow/include/crow/parser.h:82: warning: Member on_message_complete(http_parser *self_) (function) of class crow::HTTPParser is not documented.
-/home/travis/build/mrozigor/crow/include/crow/parser.h:161: warning: Member raw_url (variable) of class crow::HTTPParser is not documented.
-/home/travis/build/mrozigor/crow/include/crow/parser.h:162: warning: Member url (variable) of class crow::HTTPParser is not documented.
-/home/travis/build/mrozigor/crow/include/crow/parser.h:164: warning: Member header_building_state (variable) of class crow::HTTPParser is not documented.
-/home/travis/build/mrozigor/crow/include/crow/parser.h:165: warning: Member header_field (variable) of class crow::HTTPParser is not documented.
-/home/travis/build/mrozigor/crow/include/crow/parser.h:166: warning: Member header_value (variable) of class crow::HTTPParser is not documented.
-/home/travis/build/mrozigor/crow/include/crow/parser.h:167: warning: Member headers (variable) of class crow::HTTPParser is not documented.
-/home/travis/build/mrozigor/crow/include/crow/parser.h:169: warning: Member body (variable) of class crow::HTTPParser is not documented.
-/home/travis/build/mrozigor/crow/include/crow/logging.h:33: warning: Member log(std::string message, LogLevel level)=0 (function) of class crow::ILogHandler is not documented.
-/home/travis/build/mrozigor/crow/include/crow/logging.h:67: warning: Member logger(std::string prefix, LogLevel level) (function) of class crow::logger is not documented.
-/home/travis/build/mrozigor/crow/include/crow/logging.h:84: warning: Member operator<<(T const &value) (function) of class crow::logger is not documented.
-/home/travis/build/mrozigor/crow/include/crow/logging.h:95: warning: Member setLogLevel(LogLevel level) (function) of class crow::logger is not documented.
-/home/travis/build/mrozigor/crow/include/crow/logging.h:99: warning: Member setHandler(ILogHandler *handler) (function) of class crow::logger is not documented.
-/home/travis/build/mrozigor/crow/include/crow/logging.h:103: warning: Member get_current_log_level() (function) of class crow::logger is not documented.
-/home/travis/build/mrozigor/crow/include/crow/query_string.h:301: warning: Member query_string(const query_string &qs) (function) of class crow::query_string is not documented.
-/home/travis/build/mrozigor/crow/include/crow/query_string.h:310: warning: Member operator=(const query_string &qs) (function) of class crow::query_string is not documented.
-/home/travis/build/mrozigor/crow/include/crow/query_string.h:321: warning: Member operator=(query_string &&qs) (function) of class crow::query_string is not documented.
-/home/travis/build/mrozigor/crow/include/crow/query_string.h:334: warning: Member query_string(std::string url) (function) of class crow::query_string is not documented.
-/home/travis/build/mrozigor/crow/include/crow/query_string.h:346: warning: Member clear() (function) of class crow::query_string is not documented.
-/home/travis/build/mrozigor/crow/include/crow/query_string.h:365: warning: Member get(const std::string &name) const (function) of class crow::query_string is not documented.
-/home/travis/build/mrozigor/crow/include/crow/query_string.h:371: warning: Member get_list(const std::string &name) const (function) of class crow::query_string is not documented.
-/home/travis/build/mrozigor/crow/include/crow/query_string.h:388: warning: Member get_dict(const std::string &name) const (function) of class crow::query_string is not documented.
-/home/travis/build/mrozigor/crow/include/crow/query_string.h:294: warning: Member MAX_KEY_VALUE_PAIRS_COUNT (variable) of class crow::query_string is not documented.
-/home/travis/build/mrozigor/crow/include/crow/query_string.h:352: warning: Member operator<<(std::ostream &os, const query_string &qs) (friend) of class crow::query_string is not documented.
-/home/travis/build/mrozigor/crow/include/crow/http_request.h:51: warning: Member add_header(std::string key, std::string value) (function) of class crow::request is not documented.
-/home/travis/build/mrozigor/crow/include/crow/http_request.h:56: warning: Member get_header_value(const std::string &key) const (function) of class crow::request is not documented.
-/home/travis/build/mrozigor/crow/include/crow/http_request.h:28: warning: Member method (variable) of class crow::request is not documented.
-/home/travis/build/mrozigor/crow/include/crow/http_request.h:32: warning: Member headers (variable) of class crow::request is not documented.
-/home/travis/build/mrozigor/crow/include/crow/http_request.h:33: warning: Member body (variable) of class crow::request is not documented.
-/home/travis/build/mrozigor/crow/include/crow/http_request.h:36: warning: Member middleware_context (variable) of class crow::request is not documented.
-/home/travis/build/mrozigor/crow/include/crow/http_request.h:37: warning: Member io_service (variable) of class crow::request is not documented.
-/home/travis/build/mrozigor/crow/include/crow/http_response.h:47: warning: Member get_header_value(const std::string &key) (function) of class crow::response is not documented.
-/home/travis/build/mrozigor/crow/include/crow/http_response.h:54: warning: Member response(int code) (function) of class crow::response is not documented.
-/home/travis/build/mrozigor/crow/include/crow/http_response.h:55: warning: Member response(std::string body) (function) of class crow::response is not documented.
-/home/travis/build/mrozigor/crow/include/crow/http_response.h:56: warning: Member response(json::wvalue &&json_value) (function) of class crow::response is not documented.
-/home/travis/build/mrozigor/crow/include/crow/http_response.h:60: warning: Member response(int code, std::string body) (function) of class crow::response is not documented.
-/home/travis/build/mrozigor/crow/include/crow/http_response.h:61: warning: Member response(const json::wvalue &json_value) (function) of class crow::response is not documented.
-/home/travis/build/mrozigor/crow/include/crow/http_response.h:65: warning: Member response(int code, const json::wvalue &json_value) (function) of class crow::response is not documented.
-/home/travis/build/mrozigor/crow/include/crow/http_response.h:70: warning: Member response(response &&r) (function) of class crow::response is not documented.
-/home/travis/build/mrozigor/crow/include/crow/http_response.h:77: warning: Member operator=(response &&r) noexcept (function) of class crow::response is not documented.
-/home/travis/build/mrozigor/crow/include/crow/http_response.h:93: warning: Member clear() (function) of class crow::response is not documented.
-/home/travis/build/mrozigor/crow/include/crow/http_response.h:102: warning: Member redirect(const std::string &location) (function) of class crow::response is not documented.
-/home/travis/build/mrozigor/crow/include/crow/http_response.h:108: warning: Member write(const std::string &body_part) (function) of class crow::response is not documented.
-/home/travis/build/mrozigor/crow/include/crow/http_response.h:151: warning: Member path (variable) of class crow::response::static_file_info is not documented.
-/home/travis/build/mrozigor/crow/include/crow/http_response.h:151: warning: Member statbuf (variable) of class crow::response::static_file_info is not documented.
-/home/travis/build/mrozigor/crow/include/crow/http_response.h:153: warning: Member statResult (variable) of class crow::response::static_file_info is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:913: warning: Member new_rule_dynamic(const std::string &rule) (function) of class crow::Router is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:922: warning: Member new_rule_tagged(const std::string &rule) (function) of class crow::Router is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:932: warning: Member internal_add_rule_object(const std::string &rule, BaseRule *ruleObject) (function) of class crow::Router is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:958: warning: Member validate() (function) of class crow::Router is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:978: warning: Member handle_upgrade(const request &req, response &res, Adaptor &&adaptor) (function) of class crow::Router is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:1050: warning: Member handle(const request &req, response &res) (function) of class crow::Router is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:1125: warning: Member debug_print() (function) of class crow::Router is not documented.
-/home/travis/build/mrozigor/crow/include/crow/common.h:90: warning: Member debug_print() const (function) of class crow::routing_params is not documented.
-/home/travis/build/mrozigor/crow/include/crow/common.h:108: warning: Member get(unsigned) const (function) of class crow::routing_params is not documented.
-/home/travis/build/mrozigor/crow/include/crow/common.h:113: warning: Member get(unsigned index) const (function) of class crow::routing_params is not documented.
-/home/travis/build/mrozigor/crow/include/crow/common.h:119: warning: Member get(unsigned index) const (function) of class crow::routing_params is not documented.
-/home/travis/build/mrozigor/crow/include/crow/common.h:125: warning: Member get(unsigned index) const (function) of class crow::routing_params is not documented.
-/home/travis/build/mrozigor/crow/include/crow/common.h:85: warning: Member int_params (variable) of class crow::routing_params is not documented.
-/home/travis/build/mrozigor/crow/include/crow/common.h:86: warning: Member uint_params (variable) of class crow::routing_params is not documented.
-/home/travis/build/mrozigor/crow/include/crow/common.h:87: warning: Member double_params (variable) of class crow::routing_params is not documented.
-/home/travis/build/mrozigor/crow/include/crow/common.h:88: warning: Member string_params (variable) of class crow::routing_params is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:357: warning: Member self_t (typedef) of class crow::RuleParameterTraits is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:358: warning: Member websocket() (function) of class crow::RuleParameterTraits is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:365: warning: Member name(std::string name) noexcept (function) of class crow::RuleParameterTraits is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:371: warning: Member methods(HTTPMethod method) (function) of class crow::RuleParameterTraits is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:378: warning: Member methods(HTTPMethod method, MethodArgs ... args_method) (function) of class crow::RuleParameterTraits is not documented.
-/home/travis/build/mrozigor/crow/include/crow/http_server.h:29: warning: Member Server(Handler *handler, std::string bindaddr, uint16_t port, std::tuple< Middlewares... > *middlewares=nullptr, uint16_t concurrency=1, typename Adaptor::context *adaptor_ctx=nullptr) (function) of class crow::Server is not documented.
-/home/travis/build/mrozigor/crow/include/crow/http_server.h:42: warning: Member set_tick_function(std::chrono::milliseconds d, std::function< void()> f) (function) of class crow::Server is not documented.
-/home/travis/build/mrozigor/crow/include/crow/http_server.h:48: warning: Member on_tick() (function) of class crow::Server is not documented.
-/home/travis/build/mrozigor/crow/include/crow/http_server.h:60: warning: Member run() (function) of class crow::Server is not documented.
-/home/travis/build/mrozigor/crow/include/crow/http_server.h:168: warning: Member stop() (function) of class crow::Server is not documented.
-/home/travis/build/mrozigor/crow/include/crow/socket_adaptors.h:20: warning: Member context (typedef) of class crow::SocketAdaptor is not documented.
-/home/travis/build/mrozigor/crow/include/crow/socket_adaptors.h:21: warning: Member SocketAdaptor(boost::asio::io_service &io_service, context *) (function) of class crow::SocketAdaptor is not documented.
-/home/travis/build/mrozigor/crow/include/crow/socket_adaptors.h:26: warning: Member get_io_service() (function) of class crow::SocketAdaptor is not documented.
-/home/travis/build/mrozigor/crow/include/crow/socket_adaptors.h:43: warning: Member remote_endpoint() (function) of class crow::SocketAdaptor is not documented.
-/home/travis/build/mrozigor/crow/include/crow/socket_adaptors.h:48: warning: Member is_open() (function) of class crow::SocketAdaptor is not documented.
-/home/travis/build/mrozigor/crow/include/crow/socket_adaptors.h:53: warning: Member close() (function) of class crow::SocketAdaptor is not documented.
-/home/travis/build/mrozigor/crow/include/crow/socket_adaptors.h:59: warning: Member shutdown_readwrite() (function) of class crow::SocketAdaptor is not documented.
-/home/travis/build/mrozigor/crow/include/crow/socket_adaptors.h:65: warning: Member shutdown_write() (function) of class crow::SocketAdaptor is not documented.
-/home/travis/build/mrozigor/crow/include/crow/socket_adaptors.h:71: warning: Member shutdown_read() (function) of class crow::SocketAdaptor is not documented.
-/home/travis/build/mrozigor/crow/include/crow/socket_adaptors.h:78: warning: Member start(F f) (function) of class crow::SocketAdaptor is not documented.
-/home/travis/build/mrozigor/crow/include/crow/socket_adaptors.h:83: warning: Member socket_ (variable) of class crow::SocketAdaptor is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:467: warning: Member self_t (typedef) of class crow::TaggedRule is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:357: warning: Member self_t (typedef) of class RuleParameterTraits< TaggedRule< Args... > > is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:469: warning: Member TaggedRule(std::string rule) (function) of class crow::TaggedRule is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:474: warning: Member validate() override (function) of class crow::TaggedRule is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:484: warning: Member operator()(Func &&f) (function) of class crow::TaggedRule is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:509: warning: Member operator()(Func &&f) (function) of class crow::TaggedRule is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:534: warning: Member operator()(Func &&f) (function) of class crow::TaggedRule is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:548: warning: Member operator()(std::string name, Func &&f) (function) of class crow::TaggedRule is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:554: warning: Member handle(const request &req, response &res, const routing_params &params) override (function) of class crow::TaggedRule is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:27: warning: Member BaseRule(std::string rule) (function) of class crow::BaseRule is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:37: warning: Member upgrade() (function) of class crow::BaseRule is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:45: warning: Member handle_upgrade(const request &, response &res, SocketAdaptor &&) (function) of class crow::BaseRule is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:58: warning: Member get_methods() (function) of class crow::BaseRule is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:64: warning: Member foreach_method(F f) (function) of class crow::BaseRule is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:73: warning: Member rule() (function) of class crow::BaseRule is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:358: warning: Member websocket() (function) of class RuleParameterTraits< TaggedRule< Args... > > is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:365: warning: Member name(std::string name) noexcept (function) of class RuleParameterTraits< TaggedRule< Args... > > is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:371: warning: Member methods(HTTPMethod method) (function) of class RuleParameterTraits< TaggedRule< Args... > > is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:378: warning: Member methods(HTTPMethod method, MethodArgs ... args_method) (function) of class RuleParameterTraits< TaggedRule< Args... > > is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:76: warning: Member methods_ (variable) of class crow::BaseRule is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:78: warning: Member rule_ (variable) of class crow::BaseRule is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:79: warning: Member name_ (variable) of class crow::BaseRule is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:81: warning: Member rule_to_upgrade_ (variable) of class crow::BaseRule is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:653: warning: Member validate() (function) of class crow::Trie is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:660: warning: Member find(const std::string &req_url, const Node *node=nullptr, unsigned pos=0, routing_params *params=nullptr) const (function) of class crow::Trie is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:783: warning: Member add(const std::string &url, unsigned rule_index) (function) of class crow::Trie is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:880: warning: Member debug_print() (function) of class crow::Trie is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:586: warning: Member IsSimpleNode() const (function) of class crow::Trie::Node is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:582: warning: Member rule_index (variable) of class crow::Trie::Node is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:583: warning: Member param_childrens (variable) of class crow::Trie::Node is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:584: warning: Member children (variable) of class crow::Trie::Node is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:282: warning: Member WebSocketRule(std::string rule) (function) of class crow::WebSocketRule is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:287: warning: Member validate() override (function) of class crow::WebSocketRule is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:291: warning: Member handle(const request &, response &res, const routing_params &) override (function) of class crow::WebSocketRule is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:297: warning: Member handle_upgrade(const request &req, response &, SocketAdaptor &&adaptor) override (function) of class crow::WebSocketRule is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:309: warning: Member onopen(Func f) (function) of class crow::WebSocketRule is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:316: warning: Member onmessage(Func f) (function) of class crow::WebSocketRule is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:323: warning: Member onclose(Func f) (function) of class crow::WebSocketRule is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:330: warning: Member onerror(Func f) (function) of class crow::WebSocketRule is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:337: warning: Member onaccept(Func f) (function) of class crow::WebSocketRule is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:27: warning: Member BaseRule(std::string rule) (function) of class crow::BaseRule is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:37: warning: Member upgrade() (function) of class crow::BaseRule is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:58: warning: Member get_methods() (function) of class crow::BaseRule is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:64: warning: Member foreach_method(F f) (function) of class crow::BaseRule is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:73: warning: Member rule() (function) of class crow::BaseRule is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:344: warning: Member open_handler_ (variable) of class crow::WebSocketRule is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:345: warning: Member message_handler_ (variable) of class crow::WebSocketRule is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:346: warning: Member close_handler_ (variable) of class crow::WebSocketRule is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:347: warning: Member error_handler_ (variable) of class crow::WebSocketRule is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:348: warning: Member accept_handler_ (variable) of class crow::WebSocketRule is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:76: warning: Member methods_ (variable) of class crow::BaseRule is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:78: warning: Member rule_ (variable) of class crow::BaseRule is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:79: warning: Member name_ (variable) of class crow::BaseRule is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:81: warning: Member rule_to_upgrade_ (variable) of class crow::BaseRule is not documented.
-/home/travis/build/mrozigor/crow/include/crow/utility.h:305: warning: Member subarguments (typedef) of class crow::black_magic::arguments is not documented.
-/home/travis/build/mrozigor/crow/include/crow/utility.h:306: warning: Member type (typedef) of class crow::black_magic::arguments is not documented.
-/home/travis/build/mrozigor/crow/include/crow/utility.h:313: warning: Member type (typedef) of class crow::black_magic::arguments< 0 > is not documented.
-/home/travis/build/mrozigor/crow/include/crow/utility.h:257: warning: Member __test(int) (function) of class crow::black_magic::CallHelper< F, S< Args... > > is not documented.
-/home/travis/build/mrozigor/crow/include/crow/utility.h:260: warning: Member __test(...) (function) of class crow::black_magic::CallHelper< F, S< Args... > > is not documented.
-/home/travis/build/mrozigor/crow/include/crow/utility.h:262: warning: Member value (variable) of class crow::black_magic::CallHelper< F, S< Args... > > is not documented.
-/home/travis/build/mrozigor/crow/include/crow/utility.h:162: warning: Member sub_value (variable) of class crow::black_magic::compute_parameter_tag_from_args_list< Arg, Args... > is not documented.
-/home/travis/build/mrozigor/crow/include/crow/utility.h:164: warning: Member value (variable) of class crow::black_magic::compute_parameter_tag_from_args_list< Arg, Args... > is not documented.
-/home/travis/build/mrozigor/crow/include/crow/utility.h:156: warning: Member value (variable) of class crow::black_magic::compute_parameter_tag_from_args_list<> is not documented.
-/home/travis/build/mrozigor/crow/include/crow/utility.h:332: warning: Member type (typedef) of class seq< I1...,(sizeof...(I1)+I2)... > is not documented.
-/home/travis/build/mrozigor/crow/include/crow/utility.h:35: warning: Member const_str(const char(&arr)[N]) (function) of class crow::black_magic::const_str is not documented.
-/home/travis/build/mrozigor/crow/include/crow/utility.h:38: warning: Member operator[](unsigned i) const (function) of class crow::black_magic::const_str is not documented.
-/home/travis/build/mrozigor/crow/include/crow/utility.h:42: warning: Member operator const char *() const (function) of class crow::black_magic::const_str is not documented.
-/home/travis/build/mrozigor/crow/include/crow/utility.h:46: warning: Member begin() const (function) of class crow::black_magic::const_str is not documented.
-/home/travis/build/mrozigor/crow/include/crow/utility.h:47: warning: Member end() const (function) of class crow::black_magic::const_str is not documented.
-/home/travis/build/mrozigor/crow/include/crow/utility.h:49: warning: Member size() const (function) of class crow::black_magic::const_str is not documented.
-/home/travis/build/mrozigor/crow/include/crow/utility.h:332: warning: Member type (typedef) of class seq<> is not documented.
-/home/travis/build/mrozigor/crow/include/crow/utility.h:332: warning: Member type (typedef) of class seq< 0 > is not documented.
-/home/travis/build/mrozigor/crow/include/crow/utility.h:319: warning: Member type (typedef) of class crow::black_magic::last_element_type is not documented.
-/home/travis/build/mrozigor/crow/include/crow/utility.h:20: warning: Member OutOfRange(unsigned, unsigned) (function) of class crow::black_magic::OutOfRange is not documented.
-/home/travis/build/mrozigor/crow/include/crow/utility.h:129: warning: Member value (variable) of class crow::black_magic::parameter_tag is not documented.
-/home/travis/build/mrozigor/crow/include/crow/utility.h:366: warning: Member rebind (typedef) of class crow::black_magic::pop_back is not documented.
-/home/travis/build/mrozigor/crow/include/crow/utility.h:373: warning: Member rebind (typedef) of class crow::black_magic::pop_back<> is not documented.
-/home/travis/build/mrozigor/crow/include/crow/utility.h:359: warning: Member rebind (typedef) of class crow::black_magic::pop_back_helper< seq< N... >, Tuple > is not documented.
-/home/travis/build/mrozigor/crow/include/crow/utility.h:398: warning: Member type (typedef) of class crow::black_magic::promote is not documented.
-/home/travis/build/mrozigor/crow/include/crow/utility.h:243: warning: Member push (typedef) of class crow::black_magic::S is not documented.
-/home/travis/build/mrozigor/crow/include/crow/utility.h:245: warning: Member push_back (typedef) of class crow::black_magic::S is not documented.
-/home/travis/build/mrozigor/crow/include/crow/utility.h:247: warning: Member rebind (typedef) of class crow::black_magic::S is not documented.
-/home/travis/build/mrozigor/crow/include/crow/utility.h:332: warning: Member type (typedef) of class crow::black_magic::seq is not documented.
-/home/travis/build/mrozigor/crow/include/crow/utility.h:274: warning: Member type (typedef) of class crow::black_magic::single_tag_to_type< 1 > is not documented.
-/home/travis/build/mrozigor/crow/include/crow/utility.h:280: warning: Member type (typedef) of class crow::black_magic::single_tag_to_type< 2 > is not documented.
-/home/travis/build/mrozigor/crow/include/crow/utility.h:286: warning: Member type (typedef) of class crow::black_magic::single_tag_to_type< 3 > is not documented.
-/home/travis/build/mrozigor/crow/include/crow/utility.h:292: warning: Member type (typedef) of class crow::black_magic::single_tag_to_type< 4 > is not documented.
-/home/travis/build/mrozigor/crow/include/crow/utility.h:298: warning: Member type (typedef) of class crow::black_magic::single_tag_to_type< 5 > is not documented.
-/home/travis/build/mrozigor/crow/include/crow/middleware_context.h:64: warning: Member partial (typedef) of class crow::detail::context is not documented.
-/home/travis/build/mrozigor/crow/include/crow/middleware_context.h:58: warning: Member get() (function) of class crow::detail::context is not documented.
-/home/travis/build/mrozigor/crow/include/crow/middleware_context.h:50: warning: Member after_handlers_call_helper(Container &middlewares, Context &ctx, request &req, response &res) (friend) of class crow::detail::context is not documented.
-/home/travis/build/mrozigor/crow/include/crow/middleware_context.h:52: warning: Member after_handlers_call_helper(Container &middlewares, Context &ctx, request &req, response &res) (friend) of class crow::detail::context is not documented.
-/home/travis/build/mrozigor/crow/include/crow/middleware_context.h:55: warning: Member middleware_call_helper(Container &middlewares, request &req, response &res, Context &ctx) (friend) of class crow::detail::context is not documented.
+Generating docs for compound crow::Coo/home/travis/build/The-EDev/crow/include/crow/middlewares/cookie_parser.h:52: warning: Member before_handle(request &req, response &res, context &ctx) (function) of class crow::CookieParser is not documented.
+/home/travis/build/The-EDev/crow/include/crow/middlewares/cookie_parser.h:96: warning: Member after_handle(request &, response &res, context &ctx) (function) of class crow::CookieParser is not documented.
+/home/travis/build/The-EDev/crow/include/crow/middlewares/cookie_parser.h:38: warning: Member get_cookie(const std::string &key) const (function) of class crow::CookieParser::context is not documented.
+/home/travis/build/The-EDev/crow/include/crow/middlewares/cookie_parser.h:46: warning: Member set_cookie(const std::string &key, const std::string &value) (function) of class crow::CookieParser::context is not documented.
+/home/travis/build/The-EDev/crow/include/crow/middlewares/cookie_parser.h:35: warning: Member jar (variable) of class crow::CookieParser::context is not documented.
+/home/travis/build/The-EDev/crow/include/crow/middlewares/cookie_parser.h:36: warning: Member cookies_to_add (variable) of class crow::CookieParser::context is not documented.
+/home/travis/build/The-EDev/crow/include/crow/app.h:287: warning: Member context_t (typedef) of class crow::Crow is not documented.
+/home/travis/build/The-EDev/crow/include/crow/app.h:211: warning: Member debug_print() (function) of class crow::Crow is not documented.
+/home/travis/build/The-EDev/crow/include/crow/app.h:264: warning: Member ssl_file(T &&, Remain &&...) (function) of class crow::Crow is not documented.
+/home/travis/build/The-EDev/crow/include/crow/app.h:275: warning: Member ssl(T &&) (function) of class crow::Crow is not documented.
+/home/travis/build/The-EDev/crow/include/crow/app.h:289: warning: Member get_context(const request &req) (function) of class crow::Crow is not documented.
+/home/travis/build/The-EDev/crow/include/crow/app.h:297: warning: Member get_middleware() (function) of class crow::Crow is not documented.
+/home/travis/build/The-EDev/crow/include/crow/routing.h:392: warning: Member DynamicRule(std::string rule) (function) of class crow::DynamicRule is not documented.
+/home/travis/build/The-EDev/crow/include/crow/routing.h:397: warning: Member validate() override (function) of class crow::DynamicRule is not documented.
+/home/travis/build/The-EDev/crow/include/crow/routing.h:405: warning: Member handle(const request &req, response &res, const routing_params &params) override (function) of class crow::DynamicRule is not documented.
+/home/travis/build/The-EDev/crow/include/crow/routing.h:411: warning: Member operator()(Func f) (function) of class crow::DynamicRule is not documented.
+/home/travis/build/The-EDev/crow/include/crow/routing.h:430: warning: Member wrap(Func f, black_magic::seq< Indices... >) (function) of class crow::DynamicRule is not documented.
+/home/travis/build/The-EDev/crow/include/crow/routing.h:452: warning: Member operator()(std::string name, Func &&f) (function) of class crow::DynamicRule is not documented.
+/home/travis/build/The-EDev/crow/include/crow/routing.h:27: warning: Member BaseRule(std::string rule) (function) of class crow::BaseRule is not documented.
+/home/travis/build/The-EDev/crow/include/crow/routing.h:37: warning: Member upgrade() (function) of class crow::BaseRule is not documented.
+/home/travis/build/The-EDev/crow/include/crow/routing.h:45: warning: Member handle_upgrade(const request &, response &res, SocketAdaptor &&) (function) of class crow::BaseRule is not documented.
+/home/travis/build/The-EDev/crow/include/crow/routing.h:58: warning: Member get_methods() (function) of class crow::BaseRule is not documented.
+/home/travis/build/The-EDev/crow/include/crow/routing.h:64: warning: Member foreach_method(F f) (function) of class crow::BaseRule is not documented.
+/home/travis/build/The-EDev/crow/include/crow/routing.h:73: warning: Member rule() (function) of class crow::BaseRule is not documented.
+/home/travis/build/The-EDev/crow/include/crow/routing.h:358: warning: Member websocket() (function) of class RuleParameterTraits< DynamicRule > is not documented.
+/home/travis/build/The-EDev/crow/include/crow/routing.h:365: warning: Member name(std::string name) noexcept (function) of class RuleParameterTraits< DynamicRule > is not documented.
+/home/travis/build/The-EDev/crow/include/crow/routing.h:371: warning: Member methods(HTTPMethod method) (function) of class RuleParameterTraits< DynamicRule > is not documented.
+/home/travis/build/The-EDev/crow/include/crow/routing.h:378: warning: Member methods(HTTPMethod method, MethodArgs ... args_method) (function) of class RuleParameterTraits< DynamicRule > is not documented.
+/home/travis/build/The-EDev/crow/include/crow/routing.h:357: warning: Member self_t (typedef) of class RuleParameterTraits< DynamicRule > is not documented.
+/home/travis/build/The-EDev/crow/include/crow/routing.h:76: warning: Member methods_ (variable) of class crow::BaseRule is not documented.
+/home/travis/build/The-EDev/crow/include/crow/routing.h:78: warning: Member rule_ (variable) of class crow::BaseRule is not documented.
+/home/travis/build/The-EDev/crow/include/crow/routing.h:79: warning: Member name_ (variable) of class crow::BaseRule is not documented.
+/home/travis/build/The-EDev/crow/include/crow/routing.h:81: warning: Member rule_to_upgrade_ (variable) of class crow::BaseRule is not documented.
+/home/travis/build/The-EDev/crow/include/crow/parser.h:93: warning: Member HTTPParser(Handler *handler) (function) of class crow::HTTPParser is not documented.
+/home/travis/build/The-EDev/crow/include/crow/parser.h:118: warning: Member done() (function) of class crow::HTTPParser is not documented.
+/home/travis/build/The-EDev/crow/include/crow/parser.h:123: warning: Member clear() (function) of class crow::HTTPParser is not documented.
+/home/travis/build/The-EDev/crow/include/crow/parser.h:135: warning: Member process_header() (function) of class crow::HTTPParser is not documented.
+/home/travis/build/The-EDev/crow/include/crow/parser.h:140: warning: Member process_message() (function) of class crow::HTTPParser is not documented.
+/home/travis/build/The-EDev/crow/include/crow/parser.h:151: warning: Member is_upgrade() const (function) of class crow::HTTPParser is not documented.
+/home/travis/build/The-EDev/crow/include/crow/parser.h:156: warning: Member check_version(int major, int minor) const (function) of class crow::HTTPParser is not documented.
+/home/travis/build/The-EDev/crow/include/crow/parser.h:20: warning: Member on_message_begin(http_parser *self_) (function) of class crow::HTTPParser is not documented.
+/home/travis/build/The-EDev/crow/include/crow/parser.h:26: warning: Member on_url(http_parser *self_, const char *at, size_t length) (function) of class crow::HTTPParser is not documented.
+/home/travis/build/The-EDev/crow/include/crow/parser.h:32: warning: Member on_header_field(http_parser *self_, const char *at, size_t length) (function) of class crow::HTTPParser is not documented.
+/home/travis/build/The-EDev/crow/include/crow/parser.h:51: warning: Member on_header_value(http_parser *self_, const char *at, size_t length) (function) of class crow::HTTPParser is not documented.
+/home/travis/build/The-EDev/crow/include/crow/parser.h:66: warning: Member on_headers_complete(http_parser *self_) (function) of class crow::HTTPParser is not documented.
+/home/travis/build/The-EDev/crow/include/crow/parser.h:76: warning: Member on_body(http_parser *self_, const char *at, size_t length) (function) of class crow::HTTPParser is not documented.
+/home/travis/build/The-EDev/crow/include/crow/parser.h:82: warning: Member on_message_complete(http_parser *self_) (function) of class crow::HTTPParser is not documented.
+/home/travis/build/The-EDev/crow/include/crow/parser.h:161: warning: Member raw_url (variable) of class crow::HTTPParser is not documented.
+/home/travis/build/The-EDev/crow/include/crow/parser.h:162: warning: Member url (variable) of class crow::HTTPParser is not documented.
+/home/travis/build/The-EDev/crow/include/crow/parser.h:164: warning: Member header_building_state (variable) of class crow::HTTPParser is not documented.
+/home/travis/build/The-EDev/crow/include/crow/parser.h:165: warning: Member header_field (variable) of class crow::HTTPParser is not documented.
+/home/travis/build/The-EDev/crow/include/crow/parser.h:166: warning: Member header_value (variable) of class crow::HTTPParser is not documented.
+/home/travis/build/The-EDev/crow/include/crow/parser.h:167: warning: Member headers (variable) of class crow::HTTPParser is not documented.
+/home/travis/build/The-EDev/crow/include/crow/parser.h:169: warning: Member body (variable) of class crow::HTTPParser is not documented.
+/home/travis/build/The-EDev/crow/include/crow/logging.h:33: warning: Member log(std::string message, LogLevel level)=0 (function) of class crow::ILogHandler is not documented.
+/home/travis/build/The-EDev/crow/include/crow/logging.h:67: warning: Member logger(std::string prefix, LogLevel level) (function) of class crow::logger is not documented.
+/home/travis/build/The-EDev/crow/include/crow/logging.h:84: warning: Member operator<<(T const &value) (function) of class crow::logger is not documented.
+/home/travis/build/The-EDev/crow/include/crow/logging.h:95: warning: Member setLogLevel(LogLevel level) (function) of class crow::logger is not documented.
+/home/travis/build/The-EDev/crow/include/crow/logging.h:99: warning: Member setHandler(ILogHandler *handler) (function) of class crow::logger is not documented.
+/home/travis/build/The-EDev/crow/include/crow/logging.h:103: warning: Member get_current_log_level() (function) of class crow::logger is not documented.
+/home/travis/build/The-EDev/crow/include/crow/query_string.h:301: warning: Member query_string(const query_string &qs) (function) of class crow::query_string is not documented.
+/home/travis/build/The-EDev/crow/include/crow/query_string.h:310: warning: Member operator=(const query_string &qs) (function) of class crow::query_string is not documented.
+/home/travis/build/The-EDev/crow/include/crow/query_string.h:321: warning: Member operator=(query_string &&qs) (function) of class crow::query_string is not documented.
+/home/travis/build/The-EDev/crow/include/crow/query_string.h:334: warning: Member query_string(std::string url) (function) of class crow::query_string is not documented.
+/home/travis/build/The-EDev/crow/include/crow/query_string.h:346: warning: Member clear() (function) of class crow::query_string is not documented.
+/home/travis/build/The-EDev/crow/include/crow/query_string.h:365: warning: Member get(const std::string &name) const (function) of class crow::query_string is not documented.
+/home/travis/build/The-EDev/crow/include/crow/query_string.h:371: warning: Member get_list(const std::string &name) const (function) of class crow::query_string is not documented.
+/home/travis/build/The-EDev/crow/include/crow/query_string.h:388: warning: Member get_dict(const std::string &name) const (function) of class crow::query_string is not documented.
+/home/travis/build/The-EDev/crow/include/crow/query_string.h:294: warning: Member MAX_KEY_VALUE_PAIRS_COUNT (variable) of class crow::query_string is not documented.
+/home/travis/build/The-EDev/crow/include/crow/query_string.h:352: warning: Member operator<<(std::ostream &os, const query_string &qs) (friend) of class crow::query_string is not documented.
+/home/travis/build/The-EDev/crow/include/crow/http_request.h:51: warning: Member add_header(std::string key, std::string value) (function) of class crow::request is not documented.
+/home/travis/build/The-EDev/crow/include/crow/http_request.h:56: warning: Member get_header_value(const std::string &key) const (function) of class crow::request is not documented.
+/home/travis/build/The-EDev/crow/include/crow/http_request.h:28: warning: Member method (variable) of class crow::request is not documented.
+/home/travis/build/The-EDev/crow/include/crow/http_request.h:32: warning: Member headers (variable) of class crow::request is not documented.
+/home/travis/build/The-EDev/crow/include/crow/http_request.h:33: warning: Member body (variable) of class crow::request is not documented.
+/home/travis/build/The-EDev/crow/include/crow/http_request.h:36: warning: Member middleware_context (variable) of class crow::request is not documented.
+/home/travis/build/The-EDev/crow/include/crow/http_request.h:37: warning: Member io_service (variable) of class crow::request is not documented.
+/home/travis/build/The-EDev/crow/include/crow/http_response.h:54: warning: Member get_header_value(const std::string &key) (function) of class crow::response is not documented.
+/home/travis/build/The-EDev/crow/include/crow/http_response.h:61: warning: Member response(int code) (function) of class crow::response is not documented.
+/home/travis/build/The-EDev/crow/include/crow/http_response.h:62: warning: Member response(std::string body) (function) of class crow::response is not documented.
+/home/travis/build/The-EDev/crow/include/crow/http_response.h:63: warning: Member response(json::wvalue &&json_value) (function) of class crow::response is not documented.
+/home/travis/build/The-EDev/crow/include/crow/http_response.h:67: warning: Member response(returnable &&ret_item) (function) of class crow::response is not documented.
+/home/travis/build/The-EDev/crow/include/crow/http_response.h:71: warning: Member response(returnable &ret_item) (function) of class crow::response is not documented.
+/home/travis/build/The-EDev/crow/include/crow/http_response.h:75: warning: Member response(int code, std::string body) (function) of class crow::response is not documented.
+/home/travis/build/The-EDev/crow/include/crow/http_response.h:76: warning: Member response(const json::wvalue &json_value) (function) of class crow::response is not documented.
+/home/travis/build/The-EDev/crow/include/crow/http_response.h:80: warning: Member response(int code, const json::wvalue &json_value) (function) of class crow::response is not documented.
+/home/travis/build/The-EDev/crow/include/crow/http_response.h:85: warning: Member response(response &&r) (function) of class crow::response is not documented.
+/home/travis/build/The-EDev/crow/include/crow/http_response.h:92: warning: Member operator=(response &&r) noexcept (function) of class crow::response is not documented.
+/home/travis/build/The-EDev/crow/include/crow/http_response.h:108: warning: Member clear() (function) of class crow::response is not documented.
+/home/travis/build/The-EDev/crow/include/crow/http_response.h:117: warning: Member redirect(const std::string &location) (function) of class crow::response is not documented.
+/home/travis/build/The-EDev/crow/include/crow/http_response.h:123: warning: Member write(const std::string &body_part) (function) of class crow::response is not documented.
+/home/travis/build/The-EDev/crow/include/crow/http_response.h:166: warning: Member path (variable) of class crow::response::static_file_info is not documented.
+/home/travis/build/The-EDev/crow/include/crow/http_response.h:166: warning: Member statbuf (variable) of class crow::response::static_file_info is not documented.
+/home/travis/build/The-EDev/crow/include/crow/http_response.h:168: warning: Member statResult (variable) of class crow::response::static_file_info is not documented.
+/home/travis/build/The-EDev/crow/include/crow/http_response.h:23: warning: Member dump()=0 (function) of class crow::returnable is not documented.
+/home/travis/build/The-EDev/crow/include/crow/http_response.h:24: warning: Member content_type()=0 (function) of class crow::returnable is not documented.
+/home/travis/build/The-EDev/crow/include/crow/routing.h:913: warning: Member new_rule_dynamic(const std::string &rule) (function) of class crow::Router is not documented.
+/home/travis/build/The-EDev/crow/include/crow/routing.h:922: warning: Member new_rule_tagged(const std::string &rule) (function) of class crow::Router is not documented.
+/home/travis/build/The-EDev/crow/include/crow/routing.h:932: warning: Member internal_add_rule_object(const std::string &rule, BaseRule *ruleObject) (function) of class crow::Router is not documented.
+/home/travis/build/The-EDev/crow/include/crow/routing.h:958: warning: Member validate() (function) of class crow::Router is not documented.
+/home/travis/build/The-EDev/crow/include/crow/routing.h:978: warning: Member handle_upgrade(const request &req, response &res, Adaptor &&adaptor) (function) of class crow::Router is not documented.
+/home/travis/build/The-EDev/crow/include/crow/routing.h:1050: warning: Member handle(const request &req, response &res) (function) of class crow::Router is not documented.
+/home/travis/build/The-EDev/crow/include/crow/routing.h:1125: warning: Member debug_print() (function) of class crow::Router is not documented.
+/home/travis/build/The-EDev/crow/include/crow/common.h:90: warning: Member debug_print() const (function) of class crow::routing_params is not documented.
+/home/travis/build/The-EDev/crow/include/crow/common.h:108: warning: Member get(unsigned) const (function) of class crow::routing_params is not documented.
+/home/travis/build/The-EDev/crow/include/crow/common.h:113: warning: Member get(unsigned index) const (function) of class crow::routing_params is not documented.
+/home/travis/build/The-EDev/crow/include/crow/common.h:119: warning: Member get(unsigned index) const (function) of class crow::routing_params is not documented.
+/home/travis/build/The-EDev/crow/include/crow/common.h:125: warning: Member get(unsigned index) const (function) of class crow::routing_params is not documented.
+/home/travis/build/The-EDev/crow/include/crow/common.h:85: warning: Member int_params (variable) of class crow::routing_params is not documented.
+/home/travis/build/The-EDev/crow/include/crow/common.h:86: warning: Member uint_params (variable) of class crow::routing_params is not documented.
+/home/travis/build/The-EDev/crow/include/crow/common.h:87: warning: Member double_params (variable) of class crow::routing_params is not documented.
+/home/travis/build/The-EDev/crow/include/crow/common.h:88: warning: Member string_params (variable) of class crow::routing_params is not documented.
+/home/travis/build/The-EDev/crow/include/crow/routing.h:357: warning: Member self_t (typedef) of class crow::RuleParameterTraits is not documented.
+/home/travis/build/The-EDev/crow/include/crow/routing.h:358: warning: Member websocket() (function) of class crow::RuleParameterTraits is not documented.
+/home/travis/build/The-EDev/crow/include/crow/routing.h:365: warning: Member name(std::string name) noexcept (function) of class crow::RuleParameterTraits is not documented.
+/home/travis/build/The-EDev/crow/include/crow/routing.h:371: warning: Member methods(HTTPMethod method) (function) of class crow::RuleParameterTraits is not documented.
+/home/travis/build/The-EDev/crow/include/crow/routing.h:378: warning: Member methods(HTTPMethod method, MethodArgs ... args_method) (function) of class crow::RuleParameterTraits is not documented.
+/home/travis/build/The-EDev/crow/include/crow/http_server.h:29: warning: Member Server(Handler *handler, std::string bindaddr, uint16_t port, std::tuple< Middlewares... > *middlewares=nullptr, uint16_t concurrency=1, typename Adaptor::context *adaptor_ctx=nullptr) (function) of class crow::Server is not documented.
+/home/travis/build/The-EDev/crow/include/crow/http_server.h:42: warning: Member set_tick_function(std::chrono::milliseconds d, std::function< void()> f) (function) of class crow::Server is not documented.
+/home/travis/build/The-EDev/crow/include/crow/http_server.h:48: warning: Member on_tick() (function) of class crow::Server is not documented.
+/home/travis/build/The-EDev/crow/include/crow/http_server.h:60: warning: Member run() (function) of class crow::Server is not documented.
+/home/travis/build/The-EDev/crow/include/crow/http_server.h:168: warning: Member stop() (function) of class crow::Server is not documented.
+/home/travis/build/The-EDev/crow/include/crow/socket_adaptors.h:20: warning: Member context (typedef) of class crow::SocketAdaptor is not documented.
+/home/travis/build/The-EDev/crow/include/crow/socket_adaptors.h:21: warning: Member SocketAdaptor(boost::asio::io_service &io_service, context *) (function) of class crow::SocketAdaptor is not documented.
+/home/travis/build/The-EDev/crow/include/crow/socket_adaptors.h:26: warning: Member get_io_service() (function) of class crow::SocketAdaptor is not documented.
+/home/travis/build/The-EDev/crow/include/crow/socket_adaptors.h:43: warning: Member remote_endpoint() (function) of class crow::SocketAdaptor is not documented.
+/home/travis/build/The-EDev/crow/include/crow/socket_adaptors.h:48: warning: Member is_open() (function) of class crow::SocketAdaptor is not documented.
+/home/travis/build/The-EDev/crow/include/crow/socket_adaptors.h:53: warning: Member close() (function) of class crow::SocketAdaptor is not documented.
+/home/travis/build/The-EDev/crow/include/crow/socket_adaptors.h:59: warning: Member shutdown_readwrite() (function) of class crow::SocketAdaptor is not documented.
+/home/travis/build/The-EDev/crow/include/crow/socket_adaptors.h:65: warning: Member shutdown_write() (function) of class crow::SocketAdaptor is not documented.
+/home/travis/build/The-EDev/crow/include/crow/socket_adaptors.h:71: warning: Member shutdown_read() (function) of class crow::SocketAdaptor is not documented.
+/home/travis/build/The-EDev/crow/include/crow/socket_adaptors.h:78: warning: Member start(F f) (function) of class crow::SocketAdaptor is not documented.
+/home/travis/build/The-EDev/crow/include/crow/socket_adaptors.h:83: warning: Member socket_ (variable) of class crow::SocketAdaptor is not documented.
+/home/travis/build/The-EDev/crow/include/crow/routing.h:467: warning: Member self_t (typedef) of class crow::TaggedRule is not documented.
+/home/travis/build/The-EDev/crow/include/crow/routing.h:357: warning: Member self_t (typedef) of class RuleParameterTraits< TaggedRule< Args... > > is not documented.
+/home/travis/build/The-EDev/crow/include/crow/routing.h:469: warning: Member TaggedRule(std::string rule) (function) of class crow::TaggedRule is not documented.
+/home/travis/build/The-EDev/crow/include/crow/routing.h:474: warning: Member validate() override (function) of class crow::TaggedRule is not documented.
+/home/travis/build/The-EDev/crow/include/crow/routing.h:484: warning: Member operator()(Func &&f) (function) of class crow::TaggedRule is not documented.
+/home/travis/build/The-EDev/crow/include/crow/routing.h:509: warning: Member operator()(Func &&f) (function) of class crow::TaggedRule is not documented.
+/home/travis/build/The-EDev/crow/include/crow/routing.h:534: warning: Member operator()(Func &&f) (function) of class crow::TaggedRule is not documented.
+/home/travis/build/The-EDev/crow/include/crow/routing.h:548: warning: Member operator()(std::string name, Func &&f) (function) of class crow::TaggedRule is not documented.
+/home/travis/build/The-EDev/crow/include/crow/routing.h:554: warning: Member handle(const request &req, response &res, const routing_params &params) override (function) of class crow::TaggedRule is not documented.
+/home/travis/build/The-EDev/crow/include/crow/routing.h:27: warning: Member BaseRule(std::string rule) (function) of class crow::BaseRule is not documented.
+/home/travis/build/The-EDev/crow/include/crow/routing.h:37: warning: Member upgrade() (function) of class crow::BaseRule is not documented.
+/home/travis/build/The-EDev/crow/include/crow/routing.h:45: warning: Member handle_upgrade(const request &, response &res, SocketAdaptor &&) (function) of class crow::BaseRule is not documented.
+/home/travis/build/The-EDev/crow/include/crow/routing.h:58: warning: Member get_methods() (function) of class crow::BaseRule is not documented.
+/home/travis/build/The-EDev/crow/include/crow/routing.h:64: warning: Member foreach_method(F f) (function) of class crow::BaseRule is not documented.
+/home/travis/build/The-EDev/crow/include/crow/routing.h:73: warning: Member rule() (function) of class crow::BaseRule is not documented.
+/home/travis/build/The-EDev/crow/include/crow/routing.h:358: warning: Member websocket() (function) of class RuleParameterTraits< TaggedRule< Args... > > is not documented.
+/home/travis/build/The-EDev/crow/include/crow/routing.h:365: warning: Member name(std::string name) noexcept (function) of class RuleParameterTraits< TaggedRule< Args... > > is not documented.
+/home/travis/build/The-EDev/crow/include/crow/routing.h:371: warning: Member methods(HTTPMethod method) (function) of class RuleParameterTraits< TaggedRule< Args... > > is not documented.
+/home/travis/build/The-EDev/crow/include/crow/routing.h:378: warning: Member methods(HTTPMethod method, MethodArgs ... args_method) (function) of class RuleParameterTraits< TaggedRule< Args... > > is not documented.
+/home/travis/build/The-EDev/crow/include/crow/routing.h:76: warning: Member methods_ (variable) of class crow::BaseRule is not documented.
+/home/travis/build/The-EDev/crow/include/crow/routing.h:78: warning: Member rule_ (variable) of class crow::BaseRule is not documented.
+/home/travis/build/The-EDev/crow/include/crow/routing.h:79: warning: Member name_ (variable) of class crow::BaseRule is not documented.
+/home/travis/build/The-EDev/crow/include/crow/routing.h:81: warning: Member rule_to_upgrade_ (variable) of class crow::BaseRule is not documented.
+/home/travis/build/The-EDev/crow/include/crow/routing.h:653: warning: Member validate() (function) of class crow::Trie is not documented.
+/home/travis/build/The-EDev/crow/include/crow/routing.h:660: warning: Member find(const std::string &req_url, const Node *node=nullptr, unsigned pos=0, routing_params *params=nullptr) const (function) of class crow::Trie is not documented.
+/home/travis/build/The-EDev/crow/include/crow/routing.h:783: warning: Member add(const std::string &url, unsigned rule_index) (function) of class crow::Trie is not documented.
+/home/travis/build/The-EDev/crow/include/crow/routing.h:880: warning: Member debug_print() (function) of class crow::Trie is not documented.
+/home/travis/build/The-EDev/crow/include/crow/routing.h:586: warning: Member IsSimpleNode() const (function) of class crow::Trie::Node is not documented.
+/home/travis/build/The-EDev/crow/include/crow/routing.h:582: warning: Member rule_index (variable) of class crow::Trie::Node is not documented.
+/home/travis/build/The-EDev/crow/include/crow/routing.h:583: warning: Member param_childrens (variable) of class crow::Trie::Node is not documented.
+/home/travis/build/The-EDev/crow/include/crow/routing.h:584: warning: Member children (variable) of class crow::Trie::Node is not documented.
+/home/travis/build/The-EDev/crow/include/crow/routing.h:282: warning: Member WebSocketRule(std::string rule) (function) of class crow::WebSocketRule is not documented.
+/home/travis/build/The-EDev/crow/include/crow/routing.h:287: warning: Member validate() override (function) of class crow::WebSocketRule is not documented.
+/home/travis/build/The-EDev/crow/include/crow/routing.h:291: warning: Member handle(const request &, response &res, const routing_params &) override (function) of class crow::WebSocketRule is not documented.
+/home/travis/build/The-EDev/crow/include/crow/routing.h:297: warning: Member handle_upgrade(const request &req, response &, SocketAdaptor &&adaptor) override (function) of class crow::WebSocketRule is not documented.
+/home/travis/build/The-EDev/crow/include/crow/routing.h:309: warning: Member onopen(Func f) (function) of class crow::WebSocketRule is not documented.
+/home/travis/build/The-EDev/crow/include/crow/routing.h:316: warning: Member onmessage(Func f) (function) of class crow::WebSocketRule is not documented.
+/home/travis/build/The-EDev/crow/include/crow/routing.h:323: warning: Member onclose(Func f) (function) of class crow::WebSocketRule is not documented.
+/home/travis/build/The-EDev/crow/include/crow/routing.h:330: warning: Member onerror(Func f) (function) of class crow::WebSocketRule is not documented.
+/home/travis/build/The-EDev/crow/include/crow/routing.h:337: warning: Member onaccept(Func f) (function) of class crow::WebSocketRule is not documented.
+/home/travis/build/The-EDev/crow/include/crow/routing.h:27: warning: Member BaseRule(std::string rule) (function) of class crow::BaseRule is not documented.
+/home/travis/build/The-EDev/crow/include/crow/routing.h:37: warning: Member upgrade() (function) of class crow::BaseRule is not documented.
+/home/travis/build/The-EDev/crow/include/crow/routing.h:58: warning: Member get_methods() (function) of class crow::BaseRule is not documented.
+/home/travis/build/The-EDev/crow/include/crow/routing.h:64: warning: Member foreach_method(F f) (function) of class crow::BaseRule is not documented.
+/home/travis/build/The-EDev/crow/include/crow/routing.h:73: warning: Member rule() (function) of class crow::BaseRule is not documented.
+/home/travis/build/The-EDev/crow/include/crow/routing.h:344: warning: Member open_handler_ (variable) of class crow::WebSocketRule is not documented.
+/home/travis/build/The-EDev/crow/include/crow/routing.h:345: warning: Member message_handler_ (variable) of class crow::WebSocketRule is not documented.
+/home/travis/build/The-EDev/crow/include/crow/routing.h:346: warning: Member close_handler_ (variable) of class crow::WebSocketRule is not documented.
+/home/travis/build/The-EDev/crow/include/crow/routing.h:347: warning: Member error_handler_ (variable) of class crow::WebSocketRule is not documented.
+/home/travis/build/The-EDev/crow/include/crow/routing.h:348: warning: Member accept_handler_ (variable) of class crow::WebSocketRule is not documented.
+/home/travis/build/The-EDev/crow/include/crow/routing.h:76: warning: Member methods_ (variable) of class crow::BaseRule is not documented.
+/home/travis/build/The-EDev/crow/include/crow/routing.h:78: warning: Member rule_ (variable) of class crow::BaseRule is not documented.
+/home/travis/build/The-EDev/crow/include/crow/routing.h:79: warning: Member name_ (variable) of class crow::BaseRule is not documented.
+/home/travis/build/The-EDev/crow/include/crow/routing.h:81: warning: Member rule_to_upgrade_ (variable) of class crow::BaseRule is not documented.
+/home/travis/build/The-EDev/crow/include/crow/utility.h:305: warning: Member subarguments (typedef) of class crow::black_magic::arguments is not documented.
+/home/travis/build/The-EDev/crow/include/crow/utility.h:306: warning: Member type (typedef) of class crow::black_magic::arguments is not documented.
+/home/travis/build/The-EDev/crow/include/crow/utility.h:313: warning: Member type (typedef) of class crow::black_magic::arguments< 0 > is not documented.
+/home/travis/build/The-EDev/crow/include/crow/utility.h:257: warning: Member __test(int) (function) of class crow::black_magic::CallHelper< F, S< Args... > > is not documented.
+/home/travis/build/The-EDev/crow/include/crow/utility.h:260: warning: Member __test(...) (function) of class crow::black_magic::CallHelper< F, S< Args... > > is not documented.
+/home/travis/build/The-EDev/crow/include/crow/utility.h:262: warning: Member value (variable) of class crow::black_magic::CallHelper< F, S< Args... > > is not documented.
+/home/travis/build/The-EDev/crow/include/crow/utility.h:162: warning: Member sub_value (variable) of class crow::black_magic::compute_parameter_tag_from_args_list< Arg, Args... > is not documented.
+/home/travis/build/The-EDev/crow/include/crow/utility.h:164: warning: Member value (variable) of class crow::black_magic::compute_parameter_tag_from_args_list< Arg, Args... > is not documented.
+/home/travis/build/The-EDev/crow/include/crow/utility.h:156: warning: Member value (variable) of class crow::black_magic::compute_parameter_tag_from_args_list<> is not documented.
+/home/travis/build/The-EDev/crow/include/crow/utility.h:332: warning: Member type (typedef) of class seq< I1...,(sizeof...(I1)+I2)... > is not documented.
+/home/travis/build/The-EDev/crow/include/crow/utility.h:35: warning: Member const_str(const char(&arr)[N]) (function) of class crow::black_magic::const_str is not documented.
+/home/travis/build/The-EDev/crow/include/crow/utility.h:38: warning: Member operator[](unsigned i) const (function) of class crow::black_magic::const_str is not documented.
+/home/travis/build/The-EDev/crow/include/crow/utility.h:42: warning: Member operator const char *() const (function) of class crow::black_magic::const_str is not documented.
+/home/travis/build/The-EDev/crow/include/crow/utility.h:46: warning: Member begin() const (function) of class crow::black_magic::const_str is not documented.
+/home/travis/build/The-EDev/crow/include/crow/utility.h:47: warning: Member end() const (function) of class crow::black_magic::const_str is not documented.
+/home/travis/build/The-EDev/crow/include/crow/utility.h:49: warning: Member size() const (function) of class crow::black_magic::const_str is not documented.
+/home/travis/build/The-EDev/crow/include/crow/utility.h:332: warning: Member type (typedef) of class seq<> is not documented.
+/home/travis/build/The-EDev/crow/include/crow/utility.h:332: warning: Member type (typedef) of class seq< 0 > is not documented.
+/home/travis/build/The-EDev/crow/include/crow/utility.h:319: warning: Member type (typedef) of class crow::black_magic::last_element_type is not documented.
+/home/travis/build/The-EDev/crow/include/crow/utility.h:20: warning: Member OutOfRange(unsigned, unsigned) (function) of class crow::black_magic::OutOfRange is not documented.
+/home/travis/build/The-EDev/crow/include/crow/utility.h:129: warning: Member value (variable) of class crow::black_magic::parameter_tag is not documented.
+/home/travis/build/The-EDev/crow/include/crow/utility.h:366: warning: Member rebind (typedef) of class crow::black_magic::pop_back is not documented.
+/home/travis/build/The-EDev/crow/include/crow/utility.h:373: warning: Member rebind (typedef) of class crow::black_magic::pop_back<> is not documented.
+/home/travis/build/The-EDev/crow/include/crow/utility.h:359: warning: Member rebind (typedef) of class crow::black_magic::pop_back_helper< seq< N... >, Tuple > is not documented.
+/home/travis/build/The-EDev/crow/include/crow/utility.h:398: warning: Member type (typedef) of class crow::black_magic::promote is not documented.
+/home/travis/build/The-EDev/crow/include/crow/utility.h:243: warning: Member push (typedef) of class crow::black_magic::S is not documented.
+/home/travis/build/The-EDev/crow/include/crow/utility.h:245: warning: Member push_back (typedef) of class crow::black_magic::S is not documented.
+/home/travis/build/The-EDev/crow/include/crow/utility.h:247: warning: Member rebind (typedef) of class crow::black_magic::S is not documented.
+/home/travis/build/The-EDev/crow/include/crow/utility.h:332: warning: Member type (typedef) of class crow::black_magic::seq is not documented.
+/home/travis/build/The-EDev/crow/include/crow/utility.h:274: warning: Member type (typedef) of class crow::black_magic::single_tag_to_type< 1 > is not documented.
+/home/travis/build/The-EDev/crow/include/crow/utility.h:280: warning: Member type (typedef) of class crow::black_magic::single_tag_to_type< 2 > is not documented.
+/home/travis/build/The-EDev/crow/include/crow/utility.h:286: warning: Member type (typedef) of class crow::black_magic::single_tag_to_type< 3 > is not documented.
+/home/travis/build/The-EDev/crow/include/crow/utility.h:292: warning: Member type (typedef) of class crow::black_magic::single_tag_to_type< 4 > is not documented.
+/home/travis/build/The-EDev/crow/include/crow/utility.h:298: warning: Member type (typedef) of class crow::black_magic::single_tag_to_type< 5 > is not documented.
 kieParser...
 Generating docs for nested compound crow::CookieParser::context...
 Generating docs for compound crow::Crow...
@@ -451,6 +451,7 @@ Generating docs for compound crow::query_string...
 Generating docs for compound crow::request...
 Generating docs for compound crow::response...
 Generating docs for nested compound crow::response::static_file_info...
+Generating docs for compound crow::returnable...
 Generating docs for compound crow::Router...
 Generating docs for compound crow::routing_params...
 Generating docs for compound crow::RuleParameterTraits...
@@ -502,152 +503,158 @@ Generating docs for compound crow::detail::check_before_handle_arity_3...
 Generating docs for nested compound crow::detail::check_before_handle_arity_3::get...
 Generating docs for compound crow::detail::check_before_handle_arity_3_const...
 Generating docs for nested compound crow::detail::check_before_handle_arity_3_const::get...
-Generating docs for compound crow::detail::context...
-Generating docs for c/home/travis/build/mrozigor/crow/include/crow/dumb_timer_queue.h:20: warning: Member key (typedef) of class crow::detail::dumb_timer_queue is not documented.
-/home/travis/build/mrozigor/crow/include/crow/dumb_timer_queue.h:22: warning: Member cancel(key &k) (function) of class crow::detail::dumb_timer_queue is not documented.
-/home/travis/build/mrozigor/crow/include/crow/dumb_timer_queue.h:67: warning: Member set_io_service(boost::asio::io_service &io_service) (function) of class crow::detail::dumb_timer_queue is not documented.
-/home/travis/build/mrozigor/crow/include/crow/dumb_timer_queue.h:19: warning: Member tick (variable) of class crow::detail::dumb_timer_queue is not documented.
-/home/travis/build/mrozigor/crow/include/crow/utility.h:432: warning: Member value (variable) of class crow::detail::get_index_of_element_from_tuple_by_type_impl is not documented.
-/home/travis/build/mrozigor/crow/include/crow/utility.h:438: warning: Member value (variable) of class crow::detail::get_index_of_element_from_tuple_by_type_impl< T, N, T, Args... > is not documented.
-/home/travis/build/mrozigor/crow/include/crow/utility.h:444: warning: Member value (variable) of class crow::detail::get_index_of_element_from_tuple_by_type_impl< T, N, U, Args... > is not documented.
-/home/travis/build/mrozigor/crow/include/crow/http_connection.h:87: warning: Member f(typename check_after_handle_arity_3_const< T >::template get< C > *) (function) of class crow::detail::is_after_handle_arity_3_impl is not documented.
-/home/travis/build/mrozigor/crow/include/crow/http_connection.h:90: warning: Member f(typename check_after_handle_arity_3< T >::template get< C > *) (function) of class crow::detail::is_after_handle_arity_3_impl is not documented.
-/home/travis/build/mrozigor/crow/include/crow/http_connection.h:93: warning: Member f(...) (function) of class crow::detail::is_after_handle_arity_3_impl is not documented.
-/home/travis/build/mrozigor/crow/include/crow/http_connection.h:96: warning: Member value (variable) of class crow::detail::is_after_handle_arity_3_impl is not documented.
-/home/travis/build/mrozigor/crow/include/crow/http_connection.h:71: warning: Member f(typename check_before_handle_arity_3_const< T >::template get< C > *) (function) of class crow::detail::is_before_handle_arity_3_impl is not documented.
-/home/travis/build/mrozigor/crow/include/crow/http_connection.h:74: warning: Member f(typename check_before_handle_arity_3< T >::template get< C > *) (function) of class crow::detail::is_before_handle_arity_3_impl is not documented.
-/home/travis/build/mrozigor/crow/include/crow/http_connection.h:77: warning: Member f(...) (function) of class crow::detail::is_before_handle_arity_3_impl is not documented.
-/home/travis/build/mrozigor/crow/include/crow/http_connection.h:80: warning: Member value (variable) of class crow::detail::is_before_handle_arity_3_impl is not documented.
-/home/travis/build/mrozigor/crow/include/crow/middleware_context.h:18: warning: Member parent_context (typedef) of class crow::detail::partial_context is not documented.
-/home/travis/build/mrozigor/crow/include/crow/middleware_context.h:20: warning: Member partial (typedef) of class crow::detail::partial_context is not documented.
-/home/travis/build/mrozigor/crow/include/crow/middleware_context.h:23: warning: Member get() (function) of class crow::detail::partial_context is not documented.
-/home/travis/build/mrozigor/crow/include/crow/middleware_context.h:35: warning: Member partial (typedef) of class crow::detail::partial_context<> is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:139: warning: Member operator()(F cparams) (function) of class crow::detail::routing_handler_call_helper::call< F, NInt, NUint, NDouble, NString, black_magic::S< double, Args1... >, black_magic::S< Args2... > > is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:117: warning: Member operator()(F cparams) (function) of class crow::detail::routing_handler_call_helper::call< F, NInt, NUint, NDouble, NString, black_magic::S< int64_t, Args1... >, black_magic::S< Args2... > > is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:150: warning: Member operator()(F cparams) (function) of class crow::detail::routing_handler_call_helper::call< F, NInt, NUint, NDouble, NString, black_magic::S< std::string, Args1... >, black_magic::S< Args2... > > is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:128: warning: Member operator()(F cparams) (function) of class crow::detail::routing_handler_call_helper::call< F, NInt, NUint, NDouble, NString, black_magic::S< uint64_t, Args1... >, black_magic::S< Args2... > > is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:161: warning: Member operator()(F cparams) (function) of class crow::detail::routing_handler_call_helper::call< F, NInt, NUint, NDouble, NString, black_magic::S<>, black_magic::S< Args1... > > is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:96: warning: Member type (typedef) of class crow::detail::routing_handler_call_helper::call_pair is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:97: warning: Member pos (variable) of class crow::detail::routing_handler_call_helper::call_pair is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:103: warning: Member handler (variable) of class crow::detail::routing_handler_call_helper::call_params is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:104: warning: Member params (variable) of class crow::detail::routing_handler_call_helper::call_params is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:105: warning: Member req (variable) of class crow::detail::routing_handler_call_helper::call_params is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:106: warning: Member res (variable) of class crow::detail::routing_handler_call_helper::call_params is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:175: warning: Member set_(Func f, typename std::enable_if< !std::is_same< typename std::tuple_element< 0, std::tuple< Args..., void >>::type, const request & >::value, int >::type=0) (function) of class crow::detail::routing_handler_call_helper::Wrapped is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:209: warning: Member set_(Func f, typename std::enable_if< std::is_same< typename std::tuple_element< 0, std::tuple< Args..., void >>::type, const request & >::value &&!std::is_same< typename std::tuple_element< 1, std::tuple< Args..., void, void >>::type, response & >::value, int >::type=0) (function) of class crow::detail::routing_handler_call_helper::Wrapped is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:224: warning: Member set_(Func f, typename std::enable_if< std::is_same< typename std::tuple_element< 0, std::tuple< Args..., void >>::type, const request & >::value &&std::is_same< typename std::tuple_element< 1, std::tuple< Args..., void, void >>::type, response & >::value, int >::type=0) (function) of class crow::detail::routing_handler_call_helper::Wrapped is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:255: warning: Member operator()(const request &req, response &res, const routing_params &params) (function) of class crow::detail::routing_handler_call_helper::Wrapped is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:253: warning: Member handler_ (variable) of class crow::detail::routing_handler_call_helper::Wrapped is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:235: warning: Member type (typedef) of class crow::detail::routing_handler_call_helper::Wrapped::handler_type_helper is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:236: warning: Member args_type (typedef) of class crow::detail::routing_handler_call_helper::Wrapped::handler_type_helper is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:242: warning: Member type (typedef) of class crow::detail::routing_handler_call_helper::Wrapped::handler_type_helper< const request &, Args... > is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:243: warning: Member args_type (typedef) of class crow::detail::routing_handler_call_helper::Wrapped::handler_type_helper< const request &, Args... > is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:249: warning: Member type (typedef) of class crow::detail::routing_handler_call_helper::Wrapped::handler_type_helper< const request &, response &, Args... > is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:250: warning: Member args_type (typedef) of class crow::detail::routing_handler_call_helper::Wrapped::handler_type_helper< const request &, response &, Args... > is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:194: warning: Member req_handler_wrapper(Func f) (function) of class crow::detail::routing_handler_call_helper::Wrapped::req_handler_wrapper is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:199: warning: Member operator()(const request &req, response &res, Args... args) (function) of class crow::detail::routing_handler_call_helper::Wrapped::req_handler_wrapper is not documented.
-/home/travis/build/mrozigor/crow/include/crow/routing.h:205: warning: Member f (variable) of class crow::detail::routing_handler_call_helper::Wrapped::req_handler_wrapper is not documented.
-/home/travis/build/mrozigor/crow/include/crow/json.h:225: warning: Member rvalue(type t) noexcept (function) of class crow::json::rvalue is not documented.
-/home/travis/build/mrozigor/crow/include/crow/json.h:228: warning: Member rvalue(type t, char *s, char *e) noexcept (function) of class crow::json::rvalue is not documented.
-/home/travis/build/mrozigor/crow/include/crow/json.h:236: warning: Member rvalue(const rvalue &r) (function) of class crow::json::rvalue is not documented.
-/home/travis/build/mrozigor/crow/include/crow/json.h:247: warning: Member rvalue(rvalue &&r) noexcept (function) of class crow::json::rvalue is not documented.
-/home/travis/build/mrozigor/crow/include/crow/json.h:252: warning: Member operator=(const rvalue &r) (function) of class crow::json::rvalue is not documented.
-/home/travis/build/mrozigor/crow/include/crow/json.h:263: warning: Member operator=(rvalue &&r) noexcept (function) of class crow::json::rvalue is not documented.
-/home/travis/build/mrozigor/crow/include/crow/json.h:277: warning: Member operator bool() const noexcept (function) of class crow::json::rvalue is not documented.
-/home/travis/build/mrozigor/crow/include/crow/json.h:282: warning: Member operator int64_t() const (function) of class crow::json::rvalue is not documented.
-/home/travis/build/mrozigor/crow/include/crow/json.h:287: warning: Member operator uint64_t() const (function) of class crow::json::rvalue is not documented.
-/home/travis/build/mrozigor/crow/include/crow/json.h:292: warning: Member operator int() const (function) of class crow::json::rvalue is not documented.
-/home/travis/build/mrozigor/crow/include/crow/json.h:450: warning: Member has(const char *str) const (function) of class crow::json::rvalue is not documented.
-/home/travis/build/mrozigor/crow/include/crow/json.h:455: warning: Member has(const std::string &str) const (function) of class crow::json::rvalue is not documented.
-/home/travis/build/mrozigor/crow/include/crow/json.h:481: warning: Member count(const std::string &str) (function) of class crow::json::rvalue is not documented.
-/home/travis/build/mrozigor/crow/include/crow/json.h:486: warning: Member begin() const (function) of class crow::json::rvalue is not documented.
-/home/travis/build/mrozigor/crow/include/crow/json.h:494: warning: Member end() const (function) of class crow::json::rvalue is not documented.
-/home/travis/build/mrozigor/crow/include/crow/json.h:503: warning: Member key() const (function) of class crow::json::rvalue is not documented.
-/home/travis/build/mrozigor/crow/include/crow/json.h:508: warning: Member size() const (function) of class crow::json::rvalue is not documented.
-/home/travis/build/mrozigor/crow/include/crow/json.h:519: warning: Member operator[](int index) const (function) of class crow::json::rvalue is not documented.
-/home/travis/build/mrozigor/crow/include/crow/json.h:530: warning: Member operator[](size_t index) const (function) of class crow::json::rvalue is not documented.
-/home/travis/build/mrozigor/crow/include/crow/json.h:541: warning: Member operator[](const char *str) const (function) of class crow::json::rvalue is not documented.
-/home/travis/build/mrozigor/crow/include/crow/json.h:546: warning: Member operator[](const std::string &str) const (function) of class crow::json::rvalue is not documented.
-/home/travis/build/mrozigor/crow/include/crow/json.h:583: warning: Member set_error() (function) of class crow::json::rvalue is not documented.
-/home/travis/build/mrozigor/crow/include/crow/json.h:588: warning: Member error() const (function) of class crow::json::rvalue is not documented.
-/home/travis/build/mrozigor/crow/include/crow/json.h:1167: warning: Member t() const (function) of class crow::json::wvalue is not documented.
-/home/travis/build/mrozigor/crow/include/crow/json.h:1221: warning: Member wvalue(wvalue &&r) (function) of class crow::json::wvalue is not documented.
-/home/travis/build/mrozigor/crow/include/crow/json.h:1226: warning: Member operator=(wvalue &&r) (function) of class crow::json::wvalue is not documented.
-/home/travis/build/mrozigor/crow/include/crow/json.h:1236: warning: unable to resolve reference to 'reset()' for \ref command
-/home/travis/build/mrozigor/crow/include/crow/json.h:1242: warning: Member reset() (function) of class crow::json::wvalue is not documented.
-/home/travis/build/mrozigor/crow/include/crow/json.h:1249: warning: Member operator=(std::nullptr_t) (function) of class crow::json::wvalue is not documented.
-/home/travis/build/mrozigor/crow/include/crow/json.h:1254: warning: Member operator=(bool value) (function) of class crow::json::wvalue is not documented.
-/home/travis/build/mrozigor/crow/include/crow/json.h:1264: warning: Member operator=(double value) (function) of class crow::json::wvalue is not documented.
-/home/travis/build/mrozigor/crow/include/crow/json.h:1273: warning: Member operator=(unsigned short value) (function) of class crow::json::wvalue is not documented.
-/home/travis/build/mrozigor/crow/include/crow/json.h:1282: warning: Member operator=(short value) (function) of class crow::json::wvalue is not documented.
-/home/travis/build/mrozigor/crow/include/crow/json.h:1291: warning: Member operator=(long long value) (function) of class crow::json::wvalue is not documented.
-/home/travis/build/mrozigor/crow/include/crow/json.h:1300: warning: Member operator=(long value) (function) of class crow::json::wvalue is not documented.
-/home/travis/build/mrozigor/crow/include/crow/json.h:1309: warning: Member operator=(int value) (function) of class crow::json::wvalue is not documented.
-/home/travis/build/mrozigor/crow/include/crow/json.h:1318: warning: Member operator=(unsigned long long value) (function) of class crow::json::wvalue is not documented.
-/home/travis/build/mrozigor/crow/include/crow/json.h:1327: warning: Member operator=(unsigned long value) (function) of class crow::json::wvalue is not documented.
-/home/travis/build/mrozigor/crow/include/crow/json.h:1336: warning: Member operator=(unsigned int value) (function) of class crow::json::wvalue is not documented.
-/home/travis/build/mrozigor/crow/include/crow/json.h:1345: warning: Member operator=(const char *str) (function) of class crow::json::wvalue is not documented.
-/home/travis/build/mrozigor/crow/include/crow/json.h:1353: warning: Member operator=(const std::string &str) (function) of class crow::json::wvalue is not documented.
-/home/travis/build/mrozigor/crow/include/crow/json.h:1361: warning: Member operator=(std::vector< wvalue > &&v) (function) of class crow::json::wvalue is not documented.
-/home/travis/build/mrozigor/crow/include/crow/json.h:1379: warning: Member operator=(const std::vector< T > &v) (function) of class crow::json::wvalue is not documented.
-/home/travis/build/mrozigor/crow/include/crow/json.h:1396: warning: Member operator[](unsigned index) (function) of class crow::json::wvalue is not documented.
-/home/travis/build/mrozigor/crow/include/crow/json.h:1408: warning: Member count(const std::string &str) (function) of class crow::json::wvalue is not documented.
-/home/travis/build/mrozigor/crow/include/crow/json.h:1417: warning: Member operator[](const std::string &str) (function) of class crow::json::wvalue is not documented.
-/home/travis/build/mrozigor/crow/include/crow/json.h:1430: warning: Member keys() const (function) of class crow::json::wvalue is not documented.
-/home/travis/build/mrozigor/crow/include/crow/json.h:1442: warning: Member estimate_length() const (function) of class crow::json::wvalue is not documented.
-/home/travis/build/mrozigor/crow/include/crow/json.h:1482: warning: Member dump_internal(const wvalue &v, std::string &out) (friend) of class crow::json::wvalue is not documented.
-/home/travis/build/mrozigor/crow/include/crow/json.h:1483: warning: Member dump(const wvalue &v) (friend) of class crow::json::wvalue is not documented.
-/home/travis/build/mrozigor/crow/include/crow/json.h:166: warning: Member iterator (typedef) of class crow::json::detail::r_string is not documented.
-/home/travis/build/mrozigor/crow/include/crow/json.h:167: warning: Member const_iterator (typedef) of class crow::json::detail::r_string is not documented.
-/home/travis/build/mrozigor/crow/include/crow/json.h:119: warning: Member r_string(char *s, char *e) (function) of class crow::json::detail::r_string is not documented.
-/home/travis/build/mrozigor/crow/include/crow/json.h:128: warning: Member r_string(const r_string &r) (function) of class crow::json::detail::r_string is not documented.
-/home/travis/build/mrozigor/crow/include/crow/json.h:133: warning: Member r_string(r_string &&r) (function) of class crow::json::detail::r_string is not documented.
-/home/travis/build/mrozigor/crow/include/crow/json.h:138: warning: Member operator=(r_string &&r) (function) of class crow::json::detail::r_string is not documented.
-/home/travis/build/mrozigor/crow/include/crow/json.h:148: warning: Member operator=(const r_string &r) (function) of class crow::json::detail::r_string is not documented.
-/home/travis/build/mrozigor/crow/include/crow/json.h:156: warning: Member operator std::string() const (function) of class crow::json::detail::r_string is not documented.
-/home/travis/build/mrozigor/crow/include/crow/json.h:162: warning: Member begin() const (function) of class crow::json::detail::r_string is not documented.
-/home/travis/build/mrozigor/crow/include/crow/json.h:163: warning: Member end() const (function) of class crow::json::detail::r_string is not documented.
-/home/travis/build/mrozigor/crow/include/crow/json.h:164: warning: Member size() const (function) of class crow::json::detail::r_string is not documented.
-/home/travis/build/mrozigor/crow/include/crow/json.h:171: warning: Member owned_ (variable) of class crow::json::detail::r_string is not documented.
-/home/travis/build/mrozigor/crow/include/crow/json.h:172: warning: Member operator<<(std::ostream &os, const r_string &s) (friend) of class crow::json::detail::r_string is not documented.
-/home/travis/build/mrozigor/crow/include/crow/multipart.h:13: warning: Member dd (variable) of namespace crow::multipart is not documented.
-/home/travis/build/mrozigor/crow/include/crow/multipart.h:14: warning: Member crlf (variable) of namespace crow::multipart is not documented.
-/home/travis/build/mrozigor/crow/include/crow/multipart.h:40: warning: Member get_header_value(const std::string &key) const (function) of class crow::multipart::message is not documented.
-/home/travis/build/mrozigor/crow/include/crow/multipart.h:36: warning: Member headers (variable) of class crow::multipart::message is not documented.
-/home/travis/build/mrozigor/crow/include/crow/mustache.h:47: warning: Member Action(ActionType t, int start, int end, int pos=0) (function) of class crow::mustache::Action is not documented.
-/home/travis/build/mrozigor/crow/include/crow/mustache.h:43: warning: Member start (variable) of class crow::mustache::Action is not documented.
-/home/travis/build/mrozigor/crow/include/crow/mustache.h:44: warning: Member end (variable) of class crow::mustache::Action is not documented.
-/home/travis/build/mrozigor/crow/include/crow/mustache.h:45: warning: Member pos (variable) of class crow::mustache::Action is not documented.
-/home/travis/build/mrozigor/crow/include/crow/mustache.h:46: warning: Member t (variable) of class crow::mustache::Action is not documented.
-/home/travis/build/mrozigor/crow/include/crow/mustache.h:19: warning: Member invalid_template_exception(const std::string &msg) (function) of class crow::mustache::invalid_template_exception is not documented.
-/home/travis/build/mrozigor/crow/include/crow/mustache.h:23: warning: Member what() const (function) of class crow::mustache::invalid_template_exception is not documented.
-/home/travis/build/mrozigor/crow/include/crow/mustache.h:27: warning: Member msg (variable) of class crow::mustache::invalid_template_exception is not documented.
-/home/travis/build/mrozigor/crow/include/crow/mustache.h:56: warning: Member template_t(std::string body) (function) of class crow::mustache::template_t is not documented.
-/home/travis/build/mrozigor/crow/include/crow/mustache.h:315: warning: Member render() (function) of class crow::mustache::template_t is not documented.
-/home/travis/build/mrozigor/crow/include/crow/mustache.h:325: warning: Member render(context &ctx) (function) of class crow::mustache::template_t is not documented.
-/home/travis/build/mrozigor/crow/include/crow/utility.h:464: warning: Member parent_t (typedef) of class crow::utility::function_traits is not documented.
-/home/travis/build/mrozigor/crow/include/crow/utility.h:466: warning: Member result_type (typedef) of class crow::utility::function_traits is not documented.
-/home/travis/build/mrozigor/crow/include/crow/utility.h:468: warning: Member arg (typedef) of class crow::utility::function_traits is not documented.
-/home/travis/build/mrozigor/crow/include/crow/utility.h:465: warning: Member arity (variable) of class crow::utility::function_traits is not documented.
-/home/travis/build/mrozigor/crow/include/crow/utility.h:478: warning: Member result_type (typedef) of class crow::utility::function_traits< R(ClassType::*)(Args...) const > is not documented.
-/home/travis/build/mrozigor/crow/include/crow/utility.h:481: warning: Member arg (typedef) of class crow::utility::function_traits< R(ClassType::*)(Args...) const > is not documented.
-/home/travis/build/mrozigor/crow/include/crow/utility.h:476: warning: Member arity (variable) of class crow::utility::function_traits< R(ClassType::*)(Args...) const > is not documented.
-/home/travis/build/mrozigor/crow/include/crow/utility.h:489: warning: Member result_type (typedef) of class crow::utility::function_traits< R(ClassType::*)(Args...)> is not documented.
-/home/travis/build/mrozigor/crow/include/crow/utility.h:492: warning: Member arg (typedef) of class crow::utility::function_traits< R(ClassType::*)(Args...)> is not documented.
-/home/travis/build/mrozigor/crow/include/crow/utility.h:487: warning: Member arity (variable) of class crow::utility::function_traits< R(ClassType::*)(Args...)> is not documented.
-/home/travis/build/mrozigor/crow/include/crow/utility.h:500: warning: Member result_type (typedef) of class crow::utility::function_traits< std::function< R(Args...)> > is not documented.
-/home/travis/build/mrozigor/crow/include/crow/utility.h:503: warning: Member arg (typedef) of class crow::utility::function_traits< std::function< R(Args...)> > is not documented.
-/home/travis/build/mrozigor/crow/include/crow/utility.h:498: warning: Member arity (variable) of class crow::utility::function_traits< std::function< R(Args...)> > is not documented.
-/home/travis/build/mrozigor/crow/include/crow/websocket.h:24: warning: Member send_binary(const std::string &msg)=0 (function) of class crow::websocket::connection is not documented.
-/home/travis/build/mrozigor/crow/include/crow/websocket.h:25: warning: Member send_text(const std::string &msg)=0 (function) of class crow::websocket::connection is not documented.
-/home/travis/build/mrozigor/crow/include/crow/websocket.h:26: warning: Member send_ping(const std::string &msg)=0 (function) of class crow::websocket::connection is not documented.
-/home/travis/build/mrozigor/crow/include/crow/websocket.h:27: warning: Member send_pong(const std::string &msg)=0 (function) of class crow::websocket::connection is not documented.
-/home/travis/build/mrozigor/crow/include/crow/websocket.h:28: warning: Member close(const std::string &msg="quit")=0 (function) of class crow::websocket::connection is not documented.
-/home/travis/build/mrozigor/crow/include/crow/websocket.h:31: warning: Member userdata(void *u) (function) of class crow::websocket::connection is not documented.
-/home/travis/build/mrozigor/crow/include/crow/websocket.h:32: warning: Member userdata() (function) of class crow::websocket::connection is not documented.
-/home/travis/build/mrozigor/crow/include/crow/websocket.h:31: warning: Member userdata(void *u) (function) of class crow::websocket::connection is not documented.
-/home/travis/build/mrozigor/crow/include/crow/websocket.h:32: warning: Member userdata() (function) of class crow::websocket::connection is not documented.
-ompound crow::detail::dumb_timer_queue...
+Generating docs for compou/home/travis/build/The-EDev/crow/include/crow/middleware_context.h:64: warning: Member partial (typedef) of class crow::detail::context is not documented.
+/home/travis/build/The-EDev/crow/include/crow/middleware_context.h:58: warning: Member get() (function) of class crow::detail::context is not documented.
+/home/travis/build/The-EDev/crow/include/crow/middleware_context.h:50: warning: Member after_handlers_call_helper(Container &middlewares, Context &ctx, request &req, response &res) (friend) of class crow::detail::context is not documented.
+/home/travis/build/The-EDev/crow/include/crow/middleware_context.h:52: warning: Member after_handlers_call_helper(Container &middlewares, Context &ctx, request &req, response &res) (friend) of class crow::detail::context is not documented.
+/home/travis/build/The-EDev/crow/include/crow/middleware_context.h:55: warning: Member middleware_call_helper(Container &middlewares, request &req, response &res, Context &ctx) (friend) of class crow::detail::context is not documented.
+/home/travis/build/The-EDev/crow/include/crow/dumb_timer_queue.h:20: warning: Member key (typedef) of class crow::detail::dumb_timer_queue is not documented.
+/home/travis/build/The-EDev/crow/include/crow/dumb_timer_queue.h:22: warning: Member cancel(key &k) (function) of class crow::detail::dumb_timer_queue is not documented.
+/home/travis/build/The-EDev/crow/include/crow/dumb_timer_queue.h:67: warning: Member set_io_service(boost::asio::io_service &io_service) (function) of class crow::detail::dumb_timer_queue is not documented.
+/home/travis/build/The-EDev/crow/include/crow/dumb_timer_queue.h:19: warning: Member tick (variable) of class crow::detail::dumb_timer_queue is not documented.
+/home/travis/build/The-EDev/crow/include/crow/utility.h:432: warning: Member value (variable) of class crow::detail::get_index_of_element_from_tuple_by_type_impl is not documented.
+/home/travis/build/The-EDev/crow/include/crow/utility.h:438: warning: Member value (variable) of class crow::detail::get_index_of_element_from_tuple_by_type_impl< T, N, T, Args... > is not documented.
+/home/travis/build/The-EDev/crow/include/crow/utility.h:444: warning: Member value (variable) of class crow::detail::get_index_of_element_from_tuple_by_type_impl< T, N, U, Args... > is not documented.
+/home/travis/build/The-EDev/crow/include/crow/http_connection.h:87: warning: Member f(typename check_after_handle_arity_3_const< T >::template get< C > *) (function) of class crow::detail::is_after_handle_arity_3_impl is not documented.
+/home/travis/build/The-EDev/crow/include/crow/http_connection.h:90: warning: Member f(typename check_after_handle_arity_3< T >::template get< C > *) (function) of class crow::detail::is_after_handle_arity_3_impl is not documented.
+/home/travis/build/The-EDev/crow/include/crow/http_connection.h:93: warning: Member f(...) (function) of class crow::detail::is_after_handle_arity_3_impl is not documented.
+/home/travis/build/The-EDev/crow/include/crow/http_connection.h:96: warning: Member value (variable) of class crow::detail::is_after_handle_arity_3_impl is not documented.
+/home/travis/build/The-EDev/crow/include/crow/http_connection.h:71: warning: Member f(typename check_before_handle_arity_3_const< T >::template get< C > *) (function) of class crow::detail::is_before_handle_arity_3_impl is not documented.
+/home/travis/build/The-EDev/crow/include/crow/http_connection.h:74: warning: Member f(typename check_before_handle_arity_3< T >::template get< C > *) (function) of class crow::detail::is_before_handle_arity_3_impl is not documented.
+/home/travis/build/The-EDev/crow/include/crow/http_connection.h:77: warning: Member f(...) (function) of class crow::detail::is_before_handle_arity_3_impl is not documented.
+/home/travis/build/The-EDev/crow/include/crow/http_connection.h:80: warning: Member value (variable) of class crow::detail::is_before_handle_arity_3_impl is not documented.
+/home/travis/build/The-EDev/crow/include/crow/middleware_context.h:18: warning: Member parent_context (typedef) of class crow::detail::partial_context is not documented.
+/home/travis/build/The-EDev/crow/include/crow/middleware_context.h:20: warning: Member partial (typedef) of class crow::detail::partial_context is not documented.
+/home/travis/build/The-EDev/crow/include/crow/middleware_context.h:23: warning: Member get() (function) of class crow::detail::partial_context is not documented.
+/home/travis/build/The-EDev/crow/include/crow/middleware_context.h:35: warning: Member partial (typedef) of class crow::detail::partial_context<> is not documented.
+/home/travis/build/The-EDev/crow/include/crow/routing.h:139: warning: Member operator()(F cparams) (function) of class crow::detail::routing_handler_call_helper::call< F, NInt, NUint, NDouble, NString, black_magic::S< double, Args1... >, black_magic::S< Args2... > > is not documented.
+/home/travis/build/The-EDev/crow/include/crow/routing.h:117: warning: Member operator()(F cparams) (function) of class crow::detail::routing_handler_call_helper::call< F, NInt, NUint, NDouble, NString, black_magic::S< int64_t, Args1... >, black_magic::S< Args2... > > is not documented.
+/home/travis/build/The-EDev/crow/include/crow/routing.h:150: warning: Member operator()(F cparams) (function) of class crow::detail::routing_handler_call_helper::call< F, NInt, NUint, NDouble, NString, black_magic::S< std::string, Args1... >, black_magic::S< Args2... > > is not documented.
+/home/travis/build/The-EDev/crow/include/crow/routing.h:128: warning: Member operator()(F cparams) (function) of class crow::detail::routing_handler_call_helper::call< F, NInt, NUint, NDouble, NString, black_magic::S< uint64_t, Args1... >, black_magic::S< Args2... > > is not documented.
+/home/travis/build/The-EDev/crow/include/crow/routing.h:161: warning: Member operator()(F cparams) (function) of class crow::detail::routing_handler_call_helper::call< F, NInt, NUint, NDouble, NString, black_magic::S<>, black_magic::S< Args1... > > is not documented.
+/home/travis/build/The-EDev/crow/include/crow/routing.h:96: warning: Member type (typedef) of class crow::detail::routing_handler_call_helper::call_pair is not documented.
+/home/travis/build/The-EDev/crow/include/crow/routing.h:97: warning: Member pos (variable) of class crow::detail::routing_handler_call_helper::call_pair is not documented.
+/home/travis/build/The-EDev/crow/include/crow/routing.h:103: warning: Member handler (variable) of class crow::detail::routing_handler_call_helper::call_params is not documented.
+/home/travis/build/The-EDev/crow/include/crow/routing.h:104: warning: Member params (variable) of class crow::detail::routing_handler_call_helper::call_params is not documented.
+/home/travis/build/The-EDev/crow/include/crow/routing.h:105: warning: Member req (variable) of class crow::detail::routing_handler_call_helper::call_params is not documented.
+/home/travis/build/The-EDev/crow/include/crow/routing.h:106: warning: Member res (variable) of class crow::detail::routing_handler_call_helper::call_params is not documented.
+/home/travis/build/The-EDev/crow/include/crow/routing.h:175: warning: Member set_(Func f, typename std::enable_if< !std::is_same< typename std::tuple_element< 0, std::tuple< Args..., void >>::type, const request & >::value, int >::type=0) (function) of class crow::detail::routing_handler_call_helper::Wrapped is not documented.
+/home/travis/build/The-EDev/crow/include/crow/routing.h:209: warning: Member set_(Func f, typename std::enable_if< std::is_same< typename std::tuple_element< 0, std::tuple< Args..., void >>::type, const request & >::value &&!std::is_same< typename std::tuple_element< 1, std::tuple< Args..., void, void >>::type, response & >::value, int >::type=0) (function) of class crow::detail::routing_handler_call_helper::Wrapped is not documented.
+/home/travis/build/The-EDev/crow/include/crow/routing.h:224: warning: Member set_(Func f, typename std::enable_if< std::is_same< typename std::tuple_element< 0, std::tuple< Args..., void >>::type, const request & >::value &&std::is_same< typename std::tuple_element< 1, std::tuple< Args..., void, void >>::type, response & >::value, int >::type=0) (function) of class crow::detail::routing_handler_call_helper::Wrapped is not documented.
+/home/travis/build/The-EDev/crow/include/crow/routing.h:255: warning: Member operator()(const request &req, response &res, const routing_params &params) (function) of class crow::detail::routing_handler_call_helper::Wrapped is not documented.
+/home/travis/build/The-EDev/crow/include/crow/routing.h:253: warning: Member handler_ (variable) of class crow::detail::routing_handler_call_helper::Wrapped is not documented.
+/home/travis/build/The-EDev/crow/include/crow/routing.h:235: warning: Member type (typedef) of class crow::detail::routing_handler_call_helper::Wrapped::handler_type_helper is not documented.
+/home/travis/build/The-EDev/crow/include/crow/routing.h:236: warning: Member args_type (typedef) of class crow::detail::routing_handler_call_helper::Wrapped::handler_type_helper is not documented.
+/home/travis/build/The-EDev/crow/include/crow/routing.h:242: warning: Member type (typedef) of class crow::detail::routing_handler_call_helper::Wrapped::handler_type_helper< const request &, Args... > is not documented.
+/home/travis/build/The-EDev/crow/include/crow/routing.h:243: warning: Member args_type (typedef) of class crow::detail::routing_handler_call_helper::Wrapped::handler_type_helper< const request &, Args... > is not documented.
+/home/travis/build/The-EDev/crow/include/crow/routing.h:249: warning: Member type (typedef) of class crow::detail::routing_handler_call_helper::Wrapped::handler_type_helper< const request &, response &, Args... > is not documented.
+/home/travis/build/The-EDev/crow/include/crow/routing.h:250: warning: Member args_type (typedef) of class crow::detail::routing_handler_call_helper::Wrapped::handler_type_helper< const request &, response &, Args... > is not documented.
+/home/travis/build/The-EDev/crow/include/crow/routing.h:194: warning: Member req_handler_wrapper(Func f) (function) of class crow::detail::routing_handler_call_helper::Wrapped::req_handler_wrapper is not documented.
+/home/travis/build/The-EDev/crow/include/crow/routing.h:199: warning: Member operator()(const request &req, response &res, Args... args) (function) of class crow::detail::routing_handler_call_helper::Wrapped::req_handler_wrapper is not documented.
+/home/travis/build/The-EDev/crow/include/crow/routing.h:205: warning: Member f (variable) of class crow::detail::routing_handler_call_helper::Wrapped::req_handler_wrapper is not documented.
+/home/travis/build/The-EDev/crow/include/crow/json.h:225: warning: Member rvalue(type t) noexcept (function) of class crow::json::rvalue is not documented.
+/home/travis/build/The-EDev/crow/include/crow/json.h:228: warning: Member rvalue(type t, char *s, char *e) noexcept (function) of class crow::json::rvalue is not documented.
+/home/travis/build/The-EDev/crow/include/crow/json.h:236: warning: Member rvalue(const rvalue &r) (function) of class crow::json::rvalue is not documented.
+/home/travis/build/The-EDev/crow/include/crow/json.h:247: warning: Member rvalue(rvalue &&r) noexcept (function) of class crow::json::rvalue is not documented.
+/home/travis/build/The-EDev/crow/include/crow/json.h:252: warning: Member operator=(const rvalue &r) (function) of class crow::json::rvalue is not documented.
+/home/travis/build/The-EDev/crow/include/crow/json.h:263: warning: Member operator=(rvalue &&r) noexcept (function) of class crow::json::rvalue is not documented.
+/home/travis/build/The-EDev/crow/include/crow/json.h:277: warning: Member operator bool() const noexcept (function) of class crow::json::rvalue is not documented.
+/home/travis/build/The-EDev/crow/include/crow/json.h:282: warning: Member operator int64_t() const (function) of class crow::json::rvalue is not documented.
+/home/travis/build/The-EDev/crow/include/crow/json.h:287: warning: Member operator uint64_t() const (function) of class crow::json::rvalue is not documented.
+/home/travis/build/The-EDev/crow/include/crow/json.h:292: warning: Member operator int() const (function) of class crow::json::rvalue is not documented.
+/home/travis/build/The-EDev/crow/include/crow/json.h:450: warning: Member has(const char *str) const (function) of class crow::json::rvalue is not documented.
+/home/travis/build/The-EDev/crow/include/crow/json.h:455: warning: Member has(const std::string &str) const (function) of class crow::json::rvalue is not documented.
+/home/travis/build/The-EDev/crow/include/crow/json.h:481: warning: Member count(const std::string &str) (function) of class crow::json::rvalue is not documented.
+/home/travis/build/The-EDev/crow/include/crow/json.h:486: warning: Member begin() const (function) of class crow::json::rvalue is not documented.
+/home/travis/build/The-EDev/crow/include/crow/json.h:494: warning: Member end() const (function) of class crow::json::rvalue is not documented.
+/home/travis/build/The-EDev/crow/include/crow/json.h:503: warning: Member key() const (function) of class crow::json::rvalue is not documented.
+/home/travis/build/The-EDev/crow/include/crow/json.h:508: warning: Member size() const (function) of class crow::json::rvalue is not documented.
+/home/travis/build/The-EDev/crow/include/crow/json.h:519: warning: Member operator[](int index) const (function) of class crow::json::rvalue is not documented.
+/home/travis/build/The-EDev/crow/include/crow/json.h:530: warning: Member operator[](size_t index) const (function) of class crow::json::rvalue is not documented.
+/home/travis/build/The-EDev/crow/include/crow/json.h:541: warning: Member operator[](const char *str) const (function) of class crow::json::rvalue is not documented.
+/home/travis/build/The-EDev/crow/include/crow/json.h:546: warning: Member operator[](const std::string &str) const (function) of class crow::json::rvalue is not documented.
+/home/travis/build/The-EDev/crow/include/crow/json.h:583: warning: Member set_error() (function) of class crow::json::rvalue is not documented.
+/home/travis/build/The-EDev/crow/include/crow/json.h:588: warning: Member error() const (function) of class crow::json::rvalue is not documented.
+/home/travis/build/The-EDev/crow/include/crow/json.h:1167: warning: Member t() const (function) of class crow::json::wvalue is not documented.
+/home/travis/build/The-EDev/crow/include/crow/json.h:1221: warning: Member wvalue(wvalue &&r) (function) of class crow::json::wvalue is not documented.
+/home/travis/build/The-EDev/crow/include/crow/json.h:1226: warning: Member operator=(wvalue &&r) (function) of class crow::json::wvalue is not documented.
+/home/travis/build/The-EDev/crow/include/crow/json.h:1236: warning: unable to resolve reference to 'reset()' for \ref command
+/home/travis/build/The-EDev/crow/include/crow/json.h:1242: warning: Member reset() (function) of class crow::json::wvalue is not documented.
+/home/travis/build/The-EDev/crow/include/crow/json.h:1249: warning: Member operator=(std::nullptr_t) (function) of class crow::json::wvalue is not documented.
+/home/travis/build/The-EDev/crow/include/crow/json.h:1254: warning: Member operator=(bool value) (function) of class crow::json::wvalue is not documented.
+/home/travis/build/The-EDev/crow/include/crow/json.h:1264: warning: Member operator=(double value) (function) of class crow::json::wvalue is not documented.
+/home/travis/build/The-EDev/crow/include/crow/json.h:1273: warning: Member operator=(unsigned short value) (function) of class crow::json::wvalue is not documented.
+/home/travis/build/The-EDev/crow/include/crow/json.h:1282: warning: Member operator=(short value) (function) of class crow::json::wvalue is not documented.
+/home/travis/build/The-EDev/crow/include/crow/json.h:1291: warning: Member operator=(long long value) (function) of class crow::json::wvalue is not documented.
+/home/travis/build/The-EDev/crow/include/crow/json.h:1300: warning: Member operator=(long value) (function) of class crow::json::wvalue is not documented.
+/home/travis/build/The-EDev/crow/include/crow/json.h:1309: warning: Member operator=(int value) (function) of class crow::json::wvalue is not documented.
+/home/travis/build/The-EDev/crow/include/crow/json.h:1318: warning: Member operator=(unsigned long long value) (function) of class crow::json::wvalue is not documented.
+/home/travis/build/The-EDev/crow/include/crow/json.h:1327: warning: Member operator=(unsigned long value) (function) of class crow::json::wvalue is not documented.
+/home/travis/build/The-EDev/crow/include/crow/json.h:1336: warning: Member operator=(unsigned int value) (function) of class crow::json::wvalue is not documented.
+/home/travis/build/The-EDev/crow/include/crow/json.h:1345: warning: Member operator=(const char *str) (function) of class crow::json::wvalue is not documented.
+/home/travis/build/The-EDev/crow/include/crow/json.h:1353: warning: Member operator=(const std::string &str) (function) of class crow::json::wvalue is not documented.
+/home/travis/build/The-EDev/crow/include/crow/json.h:1361: warning: Member operator=(std::vector< wvalue > &&v) (function) of class crow::json::wvalue is not documented.
+/home/travis/build/The-EDev/crow/include/crow/json.h:1379: warning: Member operator=(const std::vector< T > &v) (function) of class crow::json::wvalue is not documented.
+/home/travis/build/The-EDev/crow/include/crow/json.h:1396: warning: Member operator[](unsigned index) (function) of class crow::json::wvalue is not documented.
+/home/travis/build/The-EDev/crow/include/crow/json.h:1408: warning: Member count(const std::string &str) (function) of class crow::json::wvalue is not documented.
+/home/travis/build/The-EDev/crow/include/crow/json.h:1417: warning: Member operator[](const std::string &str) (function) of class crow::json::wvalue is not documented.
+/home/travis/build/The-EDev/crow/include/crow/json.h:1430: warning: Member keys() const (function) of class crow::json::wvalue is not documented.
+/home/travis/build/The-EDev/crow/include/crow/json.h:1442: warning: Member estimate_length() const (function) of class crow::json::wvalue is not documented.
+/home/travis/build/The-EDev/crow/include/crow/json.h:1482: warning: Member dump_internal(const wvalue &v, std::string &out) (friend) of class crow::json::wvalue is not documented.
+/home/travis/build/The-EDev/crow/include/crow/json.h:1483: warning: Member dump(const wvalue &v) (friend) of class crow::json::wvalue is not documented.
+/home/travis/build/The-EDev/crow/include/crow/json.h:166: warning: Member iterator (typedef) of class crow::json::detail::r_string is not documented.
+/home/travis/build/The-EDev/crow/include/crow/json.h:167: warning: Member const_iterator (typedef) of class crow::json::detail::r_string is not documented.
+/home/travis/build/The-EDev/crow/include/crow/json.h:119: warning: Member r_string(char *s, char *e) (function) of class crow::json::detail::r_string is not documented.
+/home/travis/build/The-EDev/crow/include/crow/json.h:128: warning: Member r_string(const r_string &r) (function) of class crow::json::detail::r_string is not documented.
+/home/travis/build/The-EDev/crow/include/crow/json.h:133: warning: Member r_string(r_string &&r) (function) of class crow::json::detail::r_string is not documented.
+/home/travis/build/The-EDev/crow/include/crow/json.h:138: warning: Member operator=(r_string &&r) (function) of class crow::json::detail::r_string is not documented.
+/home/travis/build/The-EDev/crow/include/crow/json.h:148: warning: Member operator=(const r_string &r) (function) of class crow::json::detail::r_string is not documented.
+/home/travis/build/The-EDev/crow/include/crow/json.h:156: warning: Member operator std::string() const (function) of class crow::json::detail::r_string is not documented.
+/home/travis/build/The-EDev/crow/include/crow/json.h:162: warning: Member begin() const (function) of class crow::json::detail::r_string is not documented.
+/home/travis/build/The-EDev/crow/include/crow/json.h:163: warning: Member end() const (function) of class crow::json::detail::r_string is not documented.
+/home/travis/build/The-EDev/crow/include/crow/json.h:164: warning: Member size() const (function) of class crow::json::detail::r_string is not documented.
+/home/travis/build/The-EDev/crow/include/crow/json.h:171: warning: Member owned_ (variable) of class crow::json::detail::r_string is not documented.
+/home/travis/build/The-EDev/crow/include/crow/json.h:172: warning: Member operator<<(std::ostream &os, const r_string &s) (friend) of class crow::json::detail::r_string is not documented.
+/home/travis/build/The-EDev/crow/include/crow/multipart.h:13: warning: Member dd (variable) of namespace crow::multipart is not documented.
+/home/travis/build/The-EDev/crow/include/crow/multipart.h:14: warning: Member crlf (variable) of namespace crow::multipart is not documented.
+/home/travis/build/The-EDev/crow/include/crow/multipart.h:39: warning: Member content_type() override (function) of class crow::multipart::message is not documented.
+/home/travis/build/The-EDev/crow/include/crow/multipart.h:41: warning: Member get_header_value(const std::string &key) const (function) of class crow::multipart::message is not documented.
+/home/travis/build/The-EDev/crow/include/crow/multipart.h:36: warning: Member headers (variable) of class crow::multipart::message is not documented.
+/home/travis/build/The-EDev/crow/include/crow/mustache.h:47: warning: Member Action(ActionType t, int start, int end, int pos=0) (function) of class crow::mustache::Action is not documented.
+/home/travis/build/The-EDev/crow/include/crow/mustache.h:43: warning: Member start (variable) of class crow::mustache::Action is not documented.
+/home/travis/build/The-EDev/crow/include/crow/mustache.h:44: warning: Member end (variable) of class crow::mustache::Action is not documented.
+/home/travis/build/The-EDev/crow/include/crow/mustache.h:45: warning: Member pos (variable) of class crow::mustache::Action is not documented.
+/home/travis/build/The-EDev/crow/include/crow/mustache.h:46: warning: Member t (variable) of class crow::mustache::Action is not documented.
+/home/travis/build/The-EDev/crow/include/crow/mustache.h:19: warning: Member invalid_template_exception(const std::string &msg) (function) of class crow::mustache::invalid_template_exception is not documented.
+/home/travis/build/The-EDev/crow/include/crow/mustache.h:23: warning: Member what() const (function) of class crow::mustache::invalid_template_exception is not documented.
+/home/travis/build/The-EDev/crow/include/crow/mustache.h:27: warning: Member msg (variable) of class crow::mustache::invalid_template_exception is not documented.
+/home/travis/build/The-EDev/crow/include/crow/mustache.h:56: warning: Member template_t(std::string body) (function) of class crow::mustache::template_t is not documented.
+/home/travis/build/The-EDev/crow/include/crow/mustache.h:315: warning: Member render() (function) of class crow::mustache::template_t is not documented.
+/home/travis/build/The-EDev/crow/include/crow/mustache.h:325: warning: Member render(context &ctx) (function) of class crow::mustache::template_t is not documented.
+/home/travis/build/The-EDev/crow/include/crow/utility.h:464: warning: Member parent_t (typedef) of class crow::utility::function_traits is not documented.
+/home/travis/build/The-EDev/crow/include/crow/utility.h:466: warning: Member result_type (typedef) of class crow::utility::function_traits is not documented.
+/home/travis/build/The-EDev/crow/include/crow/utility.h:468: warning: Member arg (typedef) of class crow::utility::function_traits is not documented.
+/home/travis/build/The-EDev/crow/include/crow/utility.h:465: warning: Member arity (variable) of class crow::utility::function_traits is not documented.
+/home/travis/build/The-EDev/crow/include/crow/utility.h:478: warning: Member result_type (typedef) of class crow::utility::function_traits< R(ClassType::*)(Args...) const > is not documented.
+/home/travis/build/The-EDev/crow/include/crow/utility.h:481: warning: Member arg (typedef) of class crow::utility::function_traits< R(ClassType::*)(Args...) const > is not documented.
+/home/travis/build/The-EDev/crow/include/crow/utility.h:476: warning: Member arity (variable) of class crow::utility::function_traits< R(ClassType::*)(Args...) const > is not documented.
+/home/travis/build/The-EDev/crow/include/crow/utility.h:489: warning: Member result_type (typedef) of class crow::utility::function_traits< R(ClassType::*)(Args...)> is not documented.
+/home/travis/build/The-EDev/crow/include/crow/utility.h:492: warning: Member arg (typedef) of class crow::utility::function_traits< R(ClassType::*)(Args...)> is not documented.
+/home/travis/build/The-EDev/crow/include/crow/utility.h:487: warning: Member arity (variable) of class crow::utility::function_traits< R(ClassType::*)(Args...)> is not documented.
+/home/travis/build/The-EDev/crow/include/crow/utility.h:500: warning: Member result_type (typedef) of class crow::utility::function_traits< std::function< R(Args...)> > is not documented.
+/home/travis/build/The-EDev/crow/include/crow/utility.h:503: warning: Member arg (typedef) of class crow::utility::function_traits< std::function< R(Args...)> > is not documented.
+/home/travis/build/The-EDev/crow/include/crow/utility.h:498: warning: Member arity (variable) of class crow::utility::function_traits< std::function< R(Args...)> > is not documented.
+/home/travis/build/The-EDev/crow/include/crow/websocket.h:24: warning: Member send_binary(const std::string &msg)=0 (function) of class crow::websocket::connection is not documented.
+/home/travis/build/The-EDev/crow/include/crow/websocket.h:25: warning: Member send_text(const std::string &msg)=0 (function) of class crow::websocket::connection is not documented.
+/home/travis/build/The-EDev/crow/include/crow/websocket.h:26: warning: Member send_ping(const std::string &msg)=0 (function) of class crow::websocket::connection is not documented.
+/home/travis/build/The-EDev/crow/include/crow/websocket.h:27: warning: Member send_pong(const std::string &msg)=0 (function) of class crow::websocket::connection is not documented.
+/home/travis/build/The-EDev/crow/include/crow/websocket.h:28: warning: Member close(const std::string &msg="quit")=0 (function) of class crow::websocket::connection is not documented.
+/home/travis/build/The-EDev/crow/include/crow/websocket.h:31: warning: Member userdata(void *u) (function) of class crow::websocket::connection is not documented.
+/home/travis/build/The-EDev/crow/include/crow/websocket.h:32: warning: Member userdata() (function) of class crow::websocket::connection is not documented.
+/home/travis/build/The-EDev/crow/include/crow/websocket.h:31: warning: Member userdata(void *u) (function) of class crow::websocket::connection is not documented.
+/home/travis/build/The-EDev/crow/include/crow/websocket.h:32: warning: Member userdata() (function) of class crow::websocket::connection is not documented.
+nd crow::detail::context...
+Generating docs for compound crow::detail::dumb_timer_queue...
 Generating docs for compound crow::detail::get_index_of_element_from_tuple_by_type_impl...
 Generating docs for compound crow::detail::get_index_of_element_from_tuple_by_type_impl< T, N, T, Args... >...
 Generating docs for compound crow::detail::get_index_of_element_from_tuple_by_type_impl< T, N, U, Args... >...
@@ -700,5 +707,5 @@ Generating example index...
 finalizing index lists...
 writing tag file...
 Running plantuml with JAVA...
-lookup cache used 2357/65536 hits=19545 misses=2672
+lookup cache used 2370/65536 hits=19623 misses=2687
 finished...
