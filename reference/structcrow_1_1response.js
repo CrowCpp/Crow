@@ -5,8 +5,6 @@ var structcrow_1_1response =
     [ "response", "structcrow_1_1response.html#a52e2658b1d16dcf106ed138b6396696b", null ],
     [ "response", "structcrow_1_1response.html#aab7485cb8f0efa3fcf062118476edfd5", null ],
     [ "response", "structcrow_1_1response.html#af43a564baff74506327cdd0bdb4671a2", null ],
-    [ "response", "structcrow_1_1response.html#ad933dd8e22913f8b6f7f36479e17d14a", null ],
-    [ "response", "structcrow_1_1response.html#a11d1775ef47787299ba63d4a950b085a", null ],
     [ "response", "structcrow_1_1response.html#aeee8e7dd021783524bae9bd8775bae0f", null ],
     [ "response", "structcrow_1_1response.html#a2540c242bb7c7b4c94461c2fde641ef2", null ],
     [ "response", "structcrow_1_1response.html#aec73bddf07318e59394d58c1e13cc4af", null ],
