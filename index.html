@@ -1,4 +1,6 @@
 
+
+
 <!doctype html>
 <html lang="en" class="no-js">
   <head>
@@ -7,12 +9,11 @@
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
       
-      
         <link rel="canonical" href="https://mrozigor.github.io/crow/">
       
       
       <link rel="shortcut icon" href="assets/favicon.svg">
-      <meta name="generator" content="mkdocs-1.1.2, mkdocs-material-6.1.6">
+      <meta name="generator" content="mkdocs-1.1.2, mkdocs-material-5.5.0">
     
     
       
@@ -20,11 +21,8 @@
       
     
     
-      <link rel="stylesheet" href="assets/stylesheets/main.6910b76c.min.css">
+      <link rel="stylesheet" href="assets/stylesheets/main.d2af3d17.min.css">
       
-        
-        <link rel="stylesheet" href="assets/stylesheets/palette.196e0c26.min.css">
-        
       
     
     
@@ -44,14 +42,9 @@
   </head>
   
   
-    
-    
-    
-    
-    
-    <body dir="ltr" data-md-color-scheme="" data-md-color-primary="none" data-md-color-accent="none">
-      
+    <body dir="ltr">
   
+    
     <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
     <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
     <label class="md-overlay" for="__drawer"></label>
@@ -67,9 +60,7 @@
       
     </div>
     
-      
-
-<header class="md-header" data-md-component="header">
+      <header class="md-header" data-md-component="header">
   <nav class="md-header-nav md-grid" aria-label="Header">
     <a href="https://mrozigor.github.io/crow" title="Crow" class="md-header-nav__button md-logo" aria-label="Crow">
       
@@ -102,7 +93,7 @@
   <label class="md-search__overlay" for="__search"></label>
   <div class="md-search__inner" role="search">
     <form class="md-search__form" name="search">
-      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" data-md-state="active" required>
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" data-md-state="active">
       <label class="md-search__icon md-icon" for="__search">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0116 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 019.5 16 6.5 6.5 0 013 9.5 6.5 6.5 0 019.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
@@ -143,6 +134,8 @@
     
     <div class="md-container" data-md-component="container">
       
+        
+      
       
         
           
@@ -154,12 +147,10 @@
         
   <li class="md-tabs__item">
     
+      <a href="." class="md-tabs__link md-tabs__link--active">
+        Home
+      </a>
     
-      
-    
-    <a href="." class="md-tabs__link md-tabs__link--active">
-      Home
-    </a>
   </li>
 
       
@@ -168,10 +159,10 @@
   
     <li class="md-tabs__item">
       
+        <a href="getting_started/setup/" class="md-tabs__link">
+          Getting Started
+        </a>
       
-      <a href="getting_started/setup/" class="md-tabs__link">
-        Getting Started
-      </a>
     </li>
   
 
@@ -185,10 +176,10 @@
   
     <li class="md-tabs__item">
       
+        <a href="guides/app/" class="md-tabs__link">
+          Guides
+        </a>
       
-      <a href="guides/app/" class="md-tabs__link">
-        Guides
-      </a>
     </li>
   
 
@@ -200,10 +191,10 @@
   
     <li class="md-tabs__item">
       
+        <a href="reference/index.html" class="md-tabs__link">
+          API Reference
+        </a>
       
-      <a href="reference/index.html" class="md-tabs__link">
-        API Reference
-      </a>
     </li>
   
 
@@ -220,9 +211,7 @@
               <div class="md-sidebar md-sidebar--primary" data-md-component="navigation">
                 <div class="md-sidebar__scrollwrap">
                   <div class="md-sidebar__inner">
-                    
-
-<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+                    <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
     <a href="https://mrozigor.github.io/crow" title="Crow" class="md-nav__button md-logo" aria-label="Crow">
       
@@ -263,10 +252,12 @@
     
       <label class="md-nav__link md-nav__link--active" for="__toc">
         Home
-        <span class="md-nav__icon md-icon"></span>
+        <span class="md-nav__icon md-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 9h14V7H3v2m0 4h14v-2H3v2m0 4h14v-2H3v2m16 0h2v-2h-2v2m0-10v2h2V7h-2m0 6h2v-2h-2v2z"/></svg>
+        </span>
       </label>
     
-    <a href="." class="md-nav__link md-nav__link--active">
+    <a href="." title="Home" class="md-nav__link md-nav__link--active">
       Home
     </a>
     
@@ -278,7 +269,9 @@
   
   
     <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+      </span>
       Table of contents
     </label>
     <ul class="md-nav__list" data-md-scrollfix>
@@ -379,14 +372,19 @@
 
   <li class="md-nav__item md-nav__item--nested">
     
-    <input class="md-nav__toggle md-toggle" data-md-toggle="nav-2" type="checkbox" id="nav-2" >
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-2" type="checkbox" id="nav-2">
+    
     <label class="md-nav__link" for="nav-2">
       Getting Started
-      <span class="md-nav__icon md-icon"></span>
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M8.59 16.58L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.42z"/></svg>
+      </span>
     </label>
     <nav class="md-nav" aria-label="Getting Started" data-md-level="1">
       <label class="md-nav__title" for="nav-2">
-        <span class="md-nav__icon md-icon"></span>
+        <span class="md-nav__icon md-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+        </span>
         Getting Started
       </label>
       <ul class="md-nav__list" data-md-scrollfix>
@@ -398,7 +396,7 @@
 
 
   <li class="md-nav__item">
-    <a href="getting_started/setup/" class="md-nav__link">
+    <a href="getting_started/setup/" title="Setup" class="md-nav__link">
       Setup
     </a>
   </li>
@@ -410,7 +408,7 @@
 
 
   <li class="md-nav__item">
-    <a href="getting_started/your_first_application/" class="md-nav__link">
+    <a href="getting_started/your_first_application/" title="Your First Application" class="md-nav__link">
       Your First Application
     </a>
   </li>
@@ -428,14 +426,19 @@
 
   <li class="md-nav__item md-nav__item--nested">
     
-    <input class="md-nav__toggle md-toggle" data-md-toggle="nav-3" type="checkbox" id="nav-3" >
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-3" type="checkbox" id="nav-3">
+    
     <label class="md-nav__link" for="nav-3">
       Guides
-      <span class="md-nav__icon md-icon"></span>
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M8.59 16.58L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.42z"/></svg>
+      </span>
     </label>
     <nav class="md-nav" aria-label="Guides" data-md-level="1">
       <label class="md-nav__title" for="nav-3">
-        <span class="md-nav__icon md-icon"></span>
+        <span class="md-nav__icon md-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+        </span>
         Guides
       </label>
       <ul class="md-nav__list" data-md-scrollfix>
@@ -448,14 +451,19 @@
 
   <li class="md-nav__item md-nav__item--nested">
     
-    <input class="md-nav__toggle md-toggle" data-md-toggle="nav-3-1" type="checkbox" id="nav-3-1" >
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-3-1" type="checkbox" id="nav-3-1">
+    
     <label class="md-nav__link" for="nav-3-1">
       Different parts of Crow
-      <span class="md-nav__icon md-icon"></span>
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M8.59 16.58L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.42z"/></svg>
+      </span>
     </label>
     <nav class="md-nav" aria-label="Different parts of Crow" data-md-level="2">
       <label class="md-nav__title" for="nav-3-1">
-        <span class="md-nav__icon md-icon"></span>
+        <span class="md-nav__icon md-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+        </span>
         Different parts of Crow
       </label>
       <ul class="md-nav__list" data-md-scrollfix>
@@ -467,7 +475,7 @@
 
 
   <li class="md-nav__item">
-    <a href="guides/app/" class="md-nav__link">
+    <a href="guides/app/" title="App" class="md-nav__link">
       App
     </a>
   </li>
@@ -479,7 +487,7 @@
 
 
   <li class="md-nav__item">
-    <a href="guides/routes/" class="md-nav__link">
+    <a href="guides/routes/" title="Routes" class="md-nav__link">
       Routes
     </a>
   </li>
@@ -491,7 +499,7 @@
 
 
   <li class="md-nav__item">
-    <a href="guides/logging/" class="md-nav__link">
+    <a href="guides/logging/" title="Logging" class="md-nav__link">
       Logging
     </a>
   </li>
@@ -503,7 +511,7 @@
 
 
   <li class="md-nav__item">
-    <a href="guides/json/" class="md-nav__link">
+    <a href="guides/json/" title="JSON" class="md-nav__link">
       JSON
     </a>
   </li>
@@ -515,7 +523,7 @@
 
 
   <li class="md-nav__item">
-    <a href="guides/templating/" class="md-nav__link">
+    <a href="guides/templating/" title="Templating (Mustache)" class="md-nav__link">
       Templating (Mustache)
     </a>
   </li>
@@ -527,7 +535,7 @@
 
 
   <li class="md-nav__item">
-    <a href="guides/multipart/" class="md-nav__link">
+    <a href="guides/multipart/" title="Multipart" class="md-nav__link">
       Multipart
     </a>
   </li>
@@ -539,7 +547,7 @@
 
 
   <li class="md-nav__item">
-    <a href="guides/middleware/" class="md-nav__link">
+    <a href="guides/middleware/" title="Middleware" class="md-nav__link">
       Middleware
     </a>
   </li>
@@ -551,7 +559,7 @@
 
 
   <li class="md-nav__item">
-    <a href="guides/ssl/" class="md-nav__link">
+    <a href="guides/ssl/" title="SSL" class="md-nav__link">
       SSL
     </a>
   </li>
@@ -563,7 +571,7 @@
 
 
   <li class="md-nav__item">
-    <a href="guides/static/" class="md-nav__link">
+    <a href="guides/static/" title="Static Files" class="md-nav__link">
       Static Files
     </a>
   </li>
@@ -575,7 +583,7 @@
 
 
   <li class="md-nav__item">
-    <a href="guides/websockets/" class="md-nav__link">
+    <a href="guides/websockets/" title="Websockets" class="md-nav__link">
       Websockets
     </a>
   </li>
@@ -593,14 +601,19 @@
 
   <li class="md-nav__item md-nav__item--nested">
     
-    <input class="md-nav__toggle md-toggle" data-md-toggle="nav-3-2" type="checkbox" id="nav-3-2" >
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-3-2" type="checkbox" id="nav-3-2">
+    
     <label class="md-nav__link" for="nav-3-2">
       Server setup
-      <span class="md-nav__icon md-icon"></span>
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M8.59 16.58L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.42z"/></svg>
+      </span>
     </label>
     <nav class="md-nav" aria-label="Server setup" data-md-level="2">
       <label class="md-nav__title" for="nav-3-2">
-        <span class="md-nav__icon md-icon"></span>
+        <span class="md-nav__icon md-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+        </span>
         Server setup
       </label>
       <ul class="md-nav__list" data-md-scrollfix>
@@ -612,7 +625,7 @@
 
 
   <li class="md-nav__item">
-    <a href="guides/proxies/" class="md-nav__link">
+    <a href="guides/proxies/" title="Proxies" class="md-nav__link">
       Proxies
     </a>
   </li>
@@ -624,7 +637,7 @@
 
 
   <li class="md-nav__item">
-    <a href="guides/syste/" class="md-nav__link">
+    <a href="guides/syste/" title="Systemd run on startup" class="md-nav__link">
       Systemd run on startup
     </a>
   </li>
@@ -647,14 +660,19 @@
 
   <li class="md-nav__item md-nav__item--nested">
     
-    <input class="md-nav__toggle md-toggle" data-md-toggle="nav-4" type="checkbox" id="nav-4" >
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-4" type="checkbox" id="nav-4">
+    
     <label class="md-nav__link" for="nav-4">
       API Reference
-      <span class="md-nav__icon md-icon"></span>
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M8.59 16.58L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.42z"/></svg>
+      </span>
     </label>
     <nav class="md-nav" aria-label="API Reference" data-md-level="1">
       <label class="md-nav__title" for="nav-4">
-        <span class="md-nav__icon md-icon"></span>
+        <span class="md-nav__icon md-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+        </span>
         API Reference
       </label>
       <ul class="md-nav__list" data-md-scrollfix>
@@ -666,7 +684,7 @@
 
 
   <li class="md-nav__item">
-    <a href="reference/index.html" class="md-nav__link">
+    <a href="reference/index.html" title="API Reference" class="md-nav__link">
       API Reference
     </a>
   </li>
@@ -695,7 +713,9 @@
   
   
     <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+      </span>
       Table of contents
     </label>
     <ul class="md-nav__list" data-md-scrollfix>
@@ -793,6 +813,9 @@
           <div class="md-content">
             <article class="md-content__inner md-typeset">
               
+                
+                
+                  
                 
                 
                 <h1 id="_1"></h1>
@@ -902,7 +925,7 @@ Handler arguments type check at compile time
       <nav class="md-footer-nav__inner md-grid" aria-label="Footer">
         
         
-          <a href="getting_started/setup/" class="md-footer-nav__link md-footer-nav__link--next" rel="next">
+          <a href="getting_started/setup/" title="Setup" class="md-footer-nav__link md-footer-nav__link--next" rel="next">
             <div class="md-footer-nav__title">
               <div class="md-ellipsis">
                 <span class="md-footer-nav__direction">
@@ -961,15 +984,15 @@ Handler arguments type check at compile time
       
     </div>
     
-      <script src="assets/javascripts/vendor.fd16492e.min.js"></script>
-      <script src="assets/javascripts/bundle.7836ba4d.min.js"></script><script id="__lang" type="application/json">{"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing"}</script>
+      <script src="assets/javascripts/vendor.877163d5.min.js"></script>
+      <script src="assets/javascripts/bundle.1688372e.min.js"></script><script id="__lang" type="application/json">{"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents"}</script>
       
       <script>
         app = initialize({
           base: ".",
-          features: navigation.tabs,
+          features: "navigation.tabs",
           search: Object.assign({
-            worker: "assets/javascripts/worker/search.4ac00218.min.js"
+            worker: "assets/javascripts/worker/search.a68abb33.min.js"
           }, typeof search !== "undefined" && search)
         })
       </script>
