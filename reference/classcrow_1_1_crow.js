@@ -18,6 +18,7 @@ var classcrow_1_1_crow =
     [ "route", "classcrow_1_1_crow.html#af221cb25926e5dabc2da21a7a1c9713c", null ],
     [ "route_dynamic", "classcrow_1_1_crow.html#a0f408e47d261ad55ccfd8eb5f351c22e", null ],
     [ "run", "classcrow_1_1_crow.html#a193d8b03f717234a841cd92f72c6b4b5", null ],
+    [ "server_name", "classcrow_1_1_crow.html#ae0e400a1757bd68f716b82753a5a1a73", null ],
     [ "ssl", "classcrow_1_1_crow.html#a9052f48a13c6a73b1ff516f0fc0bf2e8", null ],
     [ "ssl_file", "classcrow_1_1_crow.html#af9ba728b92666e91d1852b125cf12803", null ],
     [ "stop", "classcrow_1_1_crow.html#a0266672657128919ab9a067d93f3868f", null ],

@@ -225,12 +225,12 @@ Generating docs for nested compound crow::CookieParser::con/home/travis/build/Cr
 /home/travis/build/CrowCpp/crow/include/crow/middlewares/cookie_parser.h:46: warning: Member set_cookie(const std::string &key, const std::string &value) (function) of class crow::CookieParser::context is not documented.
 /home/travis/build/CrowCpp/crow/include/crow/middlewares/cookie_parser.h:35: warning: Member jar (variable) of class crow::CookieParser::context is not documented.
 /home/travis/build/CrowCpp/crow/include/crow/middlewares/cookie_parser.h:36: warning: Member cookies_to_add (variable) of class crow::CookieParser::context is not documented.
-/home/travis/build/CrowCpp/crow/include/crow/app.h:287: warning: Member context_t (typedef) of class crow::Crow is not documented.
-/home/travis/build/CrowCpp/crow/include/crow/app.h:211: warning: Member debug_print() (function) of class crow::Crow is not documented.
-/home/travis/build/CrowCpp/crow/include/crow/app.h:264: warning: Member ssl_file(T &&, Remain &&...) (function) of class crow::Crow is not documented.
-/home/travis/build/CrowCpp/crow/include/crow/app.h:275: warning: Member ssl(T &&) (function) of class crow::Crow is not documented.
-/home/travis/build/CrowCpp/crow/include/crow/app.h:289: warning: Member get_context(const request &req) (function) of class crow::Crow is not documented.
-/home/travis/build/CrowCpp/crow/include/crow/app.h:297: warning: Member get_middleware() (function) of class crow::Crow is not documented.
+/home/travis/build/CrowCpp/crow/include/crow/app.h:294: warning: Member context_t (typedef) of class crow::Crow is not documented.
+/home/travis/build/CrowCpp/crow/include/crow/app.h:218: warning: Member debug_print() (function) of class crow::Crow is not documented.
+/home/travis/build/CrowCpp/crow/include/crow/app.h:271: warning: Member ssl_file(T &&, Remain &&...) (function) of class crow::Crow is not documented.
+/home/travis/build/CrowCpp/crow/include/crow/app.h:282: warning: Member ssl(T &&) (function) of class crow::Crow is not documented.
+/home/travis/build/CrowCpp/crow/include/crow/app.h:296: warning: Member get_context(const request &req) (function) of class crow::Crow is not documented.
+/home/travis/build/CrowCpp/crow/include/crow/app.h:304: warning: Member get_middleware() (function) of class crow::Crow is not documented.
 /home/travis/build/CrowCpp/crow/include/crow/routing.h:392: warning: Member DynamicRule(std::string rule) (function) of class crow::DynamicRule is not documented.
 /home/travis/build/CrowCpp/crow/include/crow/routing.h:397: warning: Member validate() override (function) of class crow::DynamicRule is not documented.
 /home/travis/build/CrowCpp/crow/include/crow/routing.h:405: warning: Member handle(const request &req, response &res, const routing_params &params) override (function) of class crow::DynamicRule is not documented.
@@ -332,11 +332,11 @@ Generating docs for nested compound crow::CookieParser::con/home/travis/build/Cr
 /home/travis/build/CrowCpp/crow/include/crow/routing.h:365: warning: Member name(std::string name) noexcept (function) of class crow::RuleParameterTraits is not documented.
 /home/travis/build/CrowCpp/crow/include/crow/routing.h:371: warning: Member methods(HTTPMethod method) (function) of class crow::RuleParameterTraits is not documented.
 /home/travis/build/CrowCpp/crow/include/crow/routing.h:378: warning: Member methods(HTTPMethod method, MethodArgs ... args_method) (function) of class crow::RuleParameterTraits is not documented.
-/home/travis/build/CrowCpp/crow/include/crow/http_server.h:29: warning: Member Server(Handler *handler, std::string bindaddr, uint16_t port, std::tuple< Middlewares... > *middlewares=nullptr, uint16_t concurrency=1, typename Adaptor::context *adaptor_ctx=nullptr) (function) of class crow::Server is not documented.
-/home/travis/build/CrowCpp/crow/include/crow/http_server.h:42: warning: Member set_tick_function(std::chrono::milliseconds d, std::function< void()> f) (function) of class crow::Server is not documented.
-/home/travis/build/CrowCpp/crow/include/crow/http_server.h:48: warning: Member on_tick() (function) of class crow::Server is not documented.
-/home/travis/build/CrowCpp/crow/include/crow/http_server.h:60: warning: Member run() (function) of class crow::Server is not documented.
-/home/travis/build/CrowCpp/crow/include/crow/http_server.h:168: warning: Member stop() (function) of class crow::Server is not documented.
+/home/travis/build/CrowCpp/crow/include/crow/http_server.h:29: warning: Member Server(Handler *handler, std::string bindaddr, uint16_t port, std::string server_name="Crow/0.2", std::tuple< Middlewares... > *middlewares=nullptr, uint16_t concurrency=1, typename Adaptor::context *adaptor_ctx=nullptr) (function) of class crow::Server is not documented.
+/home/travis/build/CrowCpp/crow/include/crow/http_server.h:43: warning: Member set_tick_function(std::chrono::milliseconds d, std::function< void()> f) (function) of class crow::Server is not documented.
+/home/travis/build/CrowCpp/crow/include/crow/http_server.h:49: warning: Member on_tick() (function) of class crow::Server is not documented.
+/home/travis/build/CrowCpp/crow/include/crow/http_server.h:61: warning: Member run() (function) of class crow::Server is not documented.
+/home/travis/build/CrowCpp/crow/include/crow/http_server.h:169: warning: Member stop() (function) of class crow::Server is not documented.
 /home/travis/build/CrowCpp/crow/include/crow/socket_adaptors.h:20: warning: Member context (typedef) of class crow::SocketAdaptor is not documented.
 /home/travis/build/CrowCpp/crow/include/crow/socket_adaptors.h:21: warning: Member SocketAdaptor(boost::asio::io_service &io_service, context *) (function) of class crow::SocketAdaptor is not documented.
 /home/travis/build/CrowCpp/crow/include/crow/socket_adaptors.h:26: warning: Member get_io_service() (function) of class crow::SocketAdaptor is not documented.
@@ -700,5 +700,5 @@ Generating example index...
 finalizing index lists...
 writing tag file...
 Running plantuml with JAVA...
-lookup cache used 2357/65536 hits=19545 misses=2672
+lookup cache used 2362/65536 hits=19626 misses=2677
 finished...
