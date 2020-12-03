@@ -82,7 +82,7 @@ Computing nesting relations for /home/travis/build/CrowCpp/crow/include/crow/uti
 /home/travis/build/CrowCpp/crow/include/crow/utility.h:241: warning: Compound crow::black_magic::S is not documented.
 /home/travis/build/CrowCpp/crow/include/crow/utility.h:128: warning: Compound crow::black_magic::parameter_tag is not documented.
 /home/travis/build/CrowCpp/crow/include/crow/utility.h:19: warning: Compound crow::black_magic::OutOfRange is not documented.
-/home/travis/build/CrowCpp/crow/include/crow/routing.h:581: warning: Compound crow::Trie::Node is not documented.
+/home/travis/build/CrowCpp/crow/include/crow/routing.h:607: warning: Compound crow::Trie::Node is not documented.
 /home/travis/build/CrowCpp/crow/include/crow/utility.h:161: warning: Compound crow::black_magic::compute_parameter_tag_from_args_list< Arg, Args... > is not documented.
 /home/travis/build/CrowCpp/crow/include/crow/mustache.h:42: warning: Compound crow::mustache::Action is not documented.
 /home/travis/build/CrowCpp/crow/include/crow/middleware_context.h:33: warning: Compound crow::detail::partial_context<> is not documented.
@@ -311,13 +311,13 @@ Generating docs for nested compound crow::CookieParser::con/home/travis/build/Cr
 /home/travis/build/CrowCpp/crow/include/crow/http_response.h:151: warning: Member path (variable) of class crow::response::static_file_info is not documented.
 /home/travis/build/CrowCpp/crow/include/crow/http_response.h:151: warning: Member statbuf (variable) of class crow::response::static_file_info is not documented.
 /home/travis/build/CrowCpp/crow/include/crow/http_response.h:153: warning: Member statResult (variable) of class crow::response::static_file_info is not documented.
-/home/travis/build/CrowCpp/crow/include/crow/routing.h:913: warning: Member new_rule_dynamic(const std::string &rule) (function) of class crow::Router is not documented.
-/home/travis/build/CrowCpp/crow/include/crow/routing.h:922: warning: Member new_rule_tagged(const std::string &rule) (function) of class crow::Router is not documented.
-/home/travis/build/CrowCpp/crow/include/crow/routing.h:932: warning: Member internal_add_rule_object(const std::string &rule, BaseRule *ruleObject) (function) of class crow::Router is not documented.
-/home/travis/build/CrowCpp/crow/include/crow/routing.h:958: warning: Member validate() (function) of class crow::Router is not documented.
-/home/travis/build/CrowCpp/crow/include/crow/routing.h:978: warning: Member handle_upgrade(const request &req, response &res, Adaptor &&adaptor) (function) of class crow::Router is not documented.
-/home/travis/build/CrowCpp/crow/include/crow/routing.h:1050: warning: Member handle(const request &req, response &res) (function) of class crow::Router is not documented.
-/home/travis/build/CrowCpp/crow/include/crow/routing.h:1125: warning: Member debug_print() (function) of class crow::Router is not documented.
+/home/travis/build/CrowCpp/crow/include/crow/routing.h:939: warning: Member new_rule_dynamic(const std::string &rule) (function) of class crow::Router is not documented.
+/home/travis/build/CrowCpp/crow/include/crow/routing.h:948: warning: Member new_rule_tagged(const std::string &rule) (function) of class crow::Router is not documented.
+/home/travis/build/CrowCpp/crow/include/crow/routing.h:958: warning: Member internal_add_rule_object(const std::string &rule, BaseRule *ruleObject) (function) of class crow::Router is not documented.
+/home/travis/build/CrowCpp/crow/include/crow/routing.h:984: warning: Member validate() (function) of class crow::Router is not documented.
+/home/travis/build/CrowCpp/crow/include/crow/routing.h:1004: warning: Member handle_upgrade(const request &req, response &res, Adaptor &&adaptor) (function) of class crow::Router is not documented.
+/home/travis/build/CrowCpp/crow/include/crow/routing.h:1076: warning: Member handle(const request &req, response &res) (function) of class crow::Router is not documented.
+/home/travis/build/CrowCpp/crow/include/crow/routing.h:1151: warning: Member debug_print() (function) of class crow::Router is not documented.
 /home/travis/build/CrowCpp/crow/include/crow/common.h:90: warning: Member debug_print() const (function) of class crow::routing_params is not documented.
 /home/travis/build/CrowCpp/crow/include/crow/common.h:108: warning: Member get(unsigned) const (function) of class crow::routing_params is not documented.
 /home/travis/build/CrowCpp/crow/include/crow/common.h:113: warning: Member get(unsigned index) const (function) of class crow::routing_params is not documented.
@@ -354,9 +354,10 @@ Generating docs for nested compound crow::CookieParser::con/home/travis/build/Cr
 /home/travis/build/CrowCpp/crow/include/crow/routing.h:474: warning: Member validate() override (function) of class crow::TaggedRule is not documented.
 /home/travis/build/CrowCpp/crow/include/crow/routing.h:484: warning: Member operator()(Func &&f) (function) of class crow::TaggedRule is not documented.
 /home/travis/build/CrowCpp/crow/include/crow/routing.h:509: warning: Member operator()(Func &&f) (function) of class crow::TaggedRule is not documented.
-/home/travis/build/CrowCpp/crow/include/crow/routing.h:534: warning: Member operator()(Func &&f) (function) of class crow::TaggedRule is not documented.
-/home/travis/build/CrowCpp/crow/include/crow/routing.h:548: warning: Member operator()(std::string name, Func &&f) (function) of class crow::TaggedRule is not documented.
-/home/travis/build/CrowCpp/crow/include/crow/routing.h:554: warning: Member handle(const request &req, response &res, const routing_params &params) override (function) of class crow::TaggedRule is not documented.
+/home/travis/build/CrowCpp/crow/include/crow/routing.h:535: warning: Member operator()(Func &&f) (function) of class crow::TaggedRule is not documented.
+/home/travis/build/CrowCpp/crow/include/crow/routing.h:560: warning: Member operator()(Func &&f) (function) of class crow::TaggedRule is not documented.
+/home/travis/build/CrowCpp/crow/include/crow/routing.h:574: warning: Member operator()(std::string name, Func &&f) (function) of class crow::TaggedRule is not documented.
+/home/travis/build/CrowCpp/crow/include/crow/routing.h:580: warning: Member handle(const request &req, response &res, const routing_params &params) override (function) of class crow::TaggedRule is not documented.
 /home/travis/build/CrowCpp/crow/include/crow/routing.h:27: warning: Member BaseRule(std::string rule) (function) of class crow::BaseRule is not documented.
 /home/travis/build/CrowCpp/crow/include/crow/routing.h:37: warning: Member upgrade() (function) of class crow::BaseRule is not documented.
 /home/travis/build/CrowCpp/crow/include/crow/routing.h:45: warning: Member handle_upgrade(const request &, response &res, SocketAdaptor &&) (function) of class crow::BaseRule is not documented.
@@ -371,14 +372,14 @@ Generating docs for nested compound crow::CookieParser::con/home/travis/build/Cr
 /home/travis/build/CrowCpp/crow/include/crow/routing.h:78: warning: Member rule_ (variable) of class crow::BaseRule is not documented.
 /home/travis/build/CrowCpp/crow/include/crow/routing.h:79: warning: Member name_ (variable) of class crow::BaseRule is not documented.
 /home/travis/build/CrowCpp/crow/include/crow/routing.h:81: warning: Member rule_to_upgrade_ (variable) of class crow::BaseRule is not documented.
-/home/travis/build/CrowCpp/crow/include/crow/routing.h:653: warning: Member validate() (function) of class crow::Trie is not documented.
-/home/travis/build/CrowCpp/crow/include/crow/routing.h:660: warning: Member find(const std::string &req_url, const Node *node=nullptr, unsigned pos=0, routing_params *params=nullptr) const (function) of class crow::Trie is not documented.
-/home/travis/build/CrowCpp/crow/include/crow/routing.h:783: warning: Member add(const std::string &url, unsigned rule_index) (function) of class crow::Trie is not documented.
-/home/travis/build/CrowCpp/crow/include/crow/routing.h:880: warning: Member debug_print() (function) of class crow::Trie is not documented.
-/home/travis/build/CrowCpp/crow/include/crow/routing.h:586: warning: Member IsSimpleNode() const (function) of class crow::Trie::Node is not documented.
-/home/travis/build/CrowCpp/crow/include/crow/routing.h:582: warning: Member rule_index (variable) of class crow::Trie::Node is not documented.
-/home/travis/build/CrowCpp/crow/include/crow/routing.h:583: warning: Member param_childrens (variable) of class crow::Trie::Node is not documented.
-/home/travis/build/CrowCpp/crow/include/crow/routing.h:584: warning: Member children (variable) of class crow::Trie::Node is not documented.
+/home/travis/build/CrowCpp/crow/include/crow/routing.h:679: warning: Member validate() (function) of class crow::Trie is not documented.
+/home/travis/build/CrowCpp/crow/include/crow/routing.h:686: warning: Member find(const std::string &req_url, const Node *node=nullptr, unsigned pos=0, routing_params *params=nullptr) const (function) of class crow::Trie is not documented.
+/home/travis/build/CrowCpp/crow/include/crow/routing.h:809: warning: Member add(const std::string &url, unsigned rule_index) (function) of class crow::Trie is not documented.
+/home/travis/build/CrowCpp/crow/include/crow/routing.h:906: warning: Member debug_print() (function) of class crow::Trie is not documented.
+/home/travis/build/CrowCpp/crow/include/crow/routing.h:612: warning: Member IsSimpleNode() const (function) of class crow::Trie::Node is not documented.
+/home/travis/build/CrowCpp/crow/include/crow/routing.h:608: warning: Member rule_index (variable) of class crow::Trie::Node is not documented.
+/home/travis/build/CrowCpp/crow/include/crow/routing.h:609: warning: Member param_childrens (variable) of class crow::Trie::Node is not documented.
+/home/travis/build/CrowCpp/crow/include/crow/routing.h:610: warning: Member children (variable) of class crow::Trie::Node is not documented.
 /home/travis/build/CrowCpp/crow/include/crow/routing.h:282: warning: Member WebSocketRule(std::string rule) (function) of class crow::WebSocketRule is not documented.
 /home/travis/build/CrowCpp/crow/include/crow/routing.h:287: warning: Member validate() override (function) of class crow::WebSocketRule is not documented.
 /home/travis/build/CrowCpp/crow/include/crow/routing.h:291: warning: Member handle(const request &, response &res, const routing_params &) override (function) of class crow::WebSocketRule is not documented.
@@ -700,5 +701,5 @@ Generating example index...
 finalizing index lists...
 writing tag file...
 Running plantuml with JAVA...
-lookup cache used 2362/65536 hits=19626 misses=2677
+lookup cache used 2363/65536 hits=19747 misses=2678
 finished...

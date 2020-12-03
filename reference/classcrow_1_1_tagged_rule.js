@@ -5,7 +5,8 @@ var classcrow_1_1_tagged_rule =
     [ "handle", "classcrow_1_1_tagged_rule.html#a919704d5a12bfebb209c866d2726c855", null ],
     [ "operator()", "classcrow_1_1_tagged_rule.html#a578c5809e9b533b496a6a6eab0d1929c", null ],
     [ "operator()", "classcrow_1_1_tagged_rule.html#a9d799cbc205754526437946405794712", null ],
-    [ "operator()", "classcrow_1_1_tagged_rule.html#a811244dd43b7a5bfa536f5eab1955a7e", null ],
+    [ "operator()", "classcrow_1_1_tagged_rule.html#a29464cfa7fff2e104942c220c8a10f05", null ],
+    [ "operator()", "classcrow_1_1_tagged_rule.html#a95f1a9e8863c43d34d01c9a15881fdc2", null ],
     [ "operator()", "classcrow_1_1_tagged_rule.html#aeed24311bbc5faa60e5c07ffcad2a5de", null ],
     [ "validate", "classcrow_1_1_tagged_rule.html#aafb046bbb0f1b47c1d56bfae72ef390a", null ]
 ];
