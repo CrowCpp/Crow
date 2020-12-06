@@ -2,11 +2,11 @@
 #define CROW_LOG_LEVEL 0
 #include <sys/stat.h>
 
+#include <chrono>
 #include <iostream>
 #include <sstream>
-#include <vector>
 #include <thread>
-#include <chrono>
+#include <vector>
 
 #include "catch.hpp"
 #include "crow.h"
@@ -17,8 +17,7 @@ using namespace crow;
 
 #define LOCALHOST_ADDRESS "127.0.0.1"
 
-TEST_CASE("Rule")
-{
+TEST_CASE("Rule") {
   TaggedRule<> r("/http/");
   r.name("abc");
 
@@ -60,8 +59,7 @@ TEST_CASE("Rule")
   CHECK(2 == x);
 }
 
-TEST_CASE("ParameterTagging")
-{
+TEST_CASE("ParameterTagging") {
   static_assert(black_magic::is_valid("<int><int><int>"), "valid url");
   static_assert(!black_magic::is_valid("<int><int<<int>"), "invalid url");
   static_assert(!black_magic::is_valid("nt>"), "invalid url");
@@ -75,7 +73,7 @@ TEST_CASE("ParameterTagging")
   CHECK(6 * 6 + 6 + 1 == black_magic::get_parameter_tag("<int><int><int>"));
   CHECK(6 * 6 + 6 + 2 == black_magic::get_parameter_tag("<uint><int><int>"));
   CHECK(6 * 6 + 6 * 3 + 2 ==
-          black_magic::get_parameter_tag("<uint><double><int>"));
+        black_magic::get_parameter_tag("<uint><double><int>"));
 
   // url definition parsed in compile time, build into *one number*, and given
   // to template argument
@@ -85,8 +83,7 @@ TEST_CASE("ParameterTagging")
       "tag to type container");
 }
 
-TEST_CASE("PathRouting")
-{
+TEST_CASE("PathRouting") {
   SimpleApp app;
 
   CROW_ROUTE(app, "/file")
@@ -136,8 +133,7 @@ TEST_CASE("PathRouting")
   }
 }
 
-TEST_CASE("RoutingTest")
-{
+TEST_CASE("RoutingTest") {
   SimpleApp app;
   int A{};
   uint32_t B{};
@@ -251,8 +247,7 @@ TEST_CASE("RoutingTest")
   }
 }
 
-TEST_CASE("simple_response_routing_params")
-{
+TEST_CASE("simple_response_routing_params") {
   CHECK(100 == response(100).code);
   CHECK(200 == response("Hello there").code);
   CHECK(500 == response(500, "Internal Error?").code);
@@ -270,14 +265,12 @@ TEST_CASE("simple_response_routing_params")
   CHECK("hello" == rp.get<string>(0));
 }
 
-TEST_CASE("handler_with_response")
-{
+TEST_CASE("handler_with_response") {
   SimpleApp app;
   CROW_ROUTE(app, "/")([](const crow::request&, crow::response&) {});
 }
 
-TEST_CASE("http_method")
-{
+TEST_CASE("http_method") {
   SimpleApp app;
 
   CROW_ROUTE(app, "/").methods("POST"_method,
@@ -380,8 +373,7 @@ TEST_CASE("http_method")
   }
 }
 
-TEST_CASE("server_handling_error_request")
-{
+TEST_CASE("server_handling_error_request") {
   static char buf[2048];
   SimpleApp app;
   CROW_ROUTE(app, "/")([] { return "A"; });
@@ -409,8 +401,7 @@ TEST_CASE("server_handling_error_request")
   app.stop();
 }
 
-TEST_CASE("multi_server")
-{
+TEST_CASE("multi_server") {
   static char buf[2048];
   SimpleApp app1, app2;
   CROW_ROUTE(app1, "/").methods("GET"_method,
@@ -457,8 +448,7 @@ TEST_CASE("multi_server")
   app2.stop();
 }
 
-TEST_CASE("json_read")
-{
+TEST_CASE("json_read") {
   {
     const char* json_error_tests[] = {
         "{} 3",
@@ -541,8 +531,7 @@ TEST_CASE("json_read")
   CHECK("18446744073709551615" == os.str());
 }
 
-TEST_CASE("json_read_real")
-{
+TEST_CASE("json_read_real") {
   vector<std::string> v{"0.036303908355795146",
                         "0.18320417789757412",
                         "0.05319940476190476",
@@ -594,8 +583,7 @@ TEST_CASE("json_read_real")
   CHECK(ret);
 }
 
-TEST_CASE("json_read_unescaping")
-{
+TEST_CASE("json_read_unescaping") {
   {
     auto x = json::load(R"({"data":"\ud55c\n\t\r"})");
     if (!x) {
@@ -616,8 +604,7 @@ TEST_CASE("json_read_unescaping")
   }
 }
 
-TEST_CASE("json_write")
-{
+TEST_CASE("json_write") {
   json::wvalue x;
   x["message"] = "hello world";
   CHECK(R"({"message":"hello world"})" == json::dump(x));
@@ -627,7 +614,7 @@ TEST_CASE("json_write")
   CHECK(R"({"message":{"x":3}})" == json::dump(x));
   x["message"]["y"] = 5;
   CHECK((R"({"message":{"x":3,"y":5}})" == json::dump(x) ||
-           R"({"message":{"y":5,"x":3}})" == json::dump(x)));
+         R"({"message":{"y":5,"x":3}})" == json::dump(x)));
   x["message"] = 5.5;
   CHECK(R"({"message":5.5})" == json::dump(x));
   x["message"] = 1234567890;
@@ -651,8 +638,7 @@ TEST_CASE("json_write")
   CHECK(R"({"scores":[1,2,3]})" == json::dump(y));
 }
 
-TEST_CASE("json_copy_r_to_w_to_r")
-{
+TEST_CASE("json_copy_r_to_w_to_r") {
   json::rvalue r = json::load(
       R"({"smallint":2,"bigint":2147483647,"fp":23.43,"fpsc":2.343e1,"str":"a string","trueval":true,"falseval":false,"nullval":null,"listval":[1,2,"foo","bar"],"obj":{"member":23,"other":"baz"}})");
   json::wvalue w{r};
@@ -677,8 +663,7 @@ TEST_CASE("json_copy_r_to_w_to_r")
   CHECK("other" == x["obj"]["other"].key());
 }
 
-TEST_CASE("template_basic")
-{
+TEST_CASE("template_basic") {
   auto t = crow::mustache::compile(R"---(attack of {{name}})---");
   crow::mustache::context ctx;
   ctx["name"] = "killer tomatoes";
@@ -686,8 +671,7 @@ TEST_CASE("template_basic")
   CHECK("attack of killer tomatoes" == result);
 }
 
-TEST_CASE("template_load")
-{
+TEST_CASE("template_load") {
   crow::mustache::set_base(".");
   ofstream("test.mustache") << R"---(attack of {{name}})---";
   auto t = crow::mustache::load("test.mustache");
@@ -698,8 +682,7 @@ TEST_CASE("template_load")
   unlink("test.mustache");
 }
 
-TEST_CASE("black_magic")
-{
+TEST_CASE("black_magic") {
   using namespace black_magic;
   static_assert(
       std::is_same<void, last_element_type<int, char, void>::type>::value,
@@ -713,32 +696,25 @@ TEST_CASE("black_magic")
       "pop_back");
 }
 
-struct NullMiddleware
-{
-  struct context
-  {};
+struct NullMiddleware {
+  struct context {};
 
   template <typename AllContext>
-  void before_handle(request&, response&, context&, AllContext&)
-  {}
+  void before_handle(request&, response&, context&, AllContext&) {}
 
   template <typename AllContext>
-  void after_handle(request&, response&, context&, AllContext&)
-  {}
+  void after_handle(request&, response&, context&, AllContext&) {}
 };
 
-struct NullSimpleMiddleware
-{
-  struct context
-  {};
+struct NullSimpleMiddleware {
+  struct context {};
 
   void before_handle(request& /*req*/, response& /*res*/, context& /*ctx*/) {}
 
   void after_handle(request& /*req*/, response& /*res*/, context& /*ctx*/) {}
 };
 
-TEST_CASE("middleware_simple")
-{
+TEST_CASE("middleware_simple") {
   App<NullMiddleware, NullSimpleMiddleware> app;
   decltype(app)::server_t server(&app, LOCALHOST_ADDRESS, 45451);
   CROW_ROUTE(app, "/")
@@ -749,84 +725,68 @@ TEST_CASE("middleware_simple")
   });
 }
 
-struct IntSettingMiddleware
-{
-  struct context
-  {
+struct IntSettingMiddleware {
+  struct context {
     int val;
   };
 
   template <typename AllContext>
-  void before_handle(request&, response&, context& ctx, AllContext&)
-  {
+  void before_handle(request&, response&, context& ctx, AllContext&) {
     ctx.val = 1;
   }
 
   template <typename AllContext>
-  void after_handle(request&, response&, context& ctx, AllContext&)
-  {
+  void after_handle(request&, response&, context& ctx, AllContext&) {
     ctx.val = 2;
   }
 };
 
 std::vector<std::string> test_middleware_context_vector;
 
-struct FirstMW
-{
-  struct context
-  {
+struct FirstMW {
+  struct context {
     std::vector<string> v;
   };
 
-  void before_handle(request& /*req*/, response& /*res*/, context& ctx)
-  {
+  void before_handle(request& /*req*/, response& /*res*/, context& ctx) {
     ctx.v.push_back("1 before");
   }
 
-  void after_handle(request& /*req*/, response& /*res*/, context& ctx)
-  {
+  void after_handle(request& /*req*/, response& /*res*/, context& ctx) {
     ctx.v.push_back("1 after");
     test_middleware_context_vector = ctx.v;
   }
 };
 
-struct SecondMW
-{
-  struct context
-  {};
+struct SecondMW {
+  struct context {};
   template <typename AllContext>
-  void before_handle(request& req, response& res, context&, AllContext& all_ctx)
-  {
+  void before_handle(request& req, response& res, context&,
+                     AllContext& all_ctx) {
     all_ctx.template get<FirstMW>().v.push_back("2 before");
     if (req.url == "/break") res.end();
   }
 
   template <typename AllContext>
-  void after_handle(request&, response&, context&, AllContext& all_ctx)
-  {
+  void after_handle(request&, response&, context&, AllContext& all_ctx) {
     all_ctx.template get<FirstMW>().v.push_back("2 after");
   }
 };
 
-struct ThirdMW
-{
-  struct context
-  {};
+struct ThirdMW {
+  struct context {};
   template <typename AllContext>
-  void before_handle(request&, response&, context&, AllContext& all_ctx)
-  {
+  void before_handle(request&, response&, context&, AllContext& all_ctx) {
     all_ctx.template get<FirstMW>().v.push_back("3 before");
   }
 
   template <typename AllContext>
-  void after_handle(request&, response&, context&, AllContext& all_ctx)
-  {
+  void after_handle(request&, response&, context&, AllContext& all_ctx) {
     all_ctx.template get<FirstMW>().v.push_back("3 after");
   }
 };
 
-TEST_CASE("middleware_context")
-{
+TEST_CASE("middleware_context") {
   static char buf[2048];
   // SecondMW depends on FirstMW (it uses all_ctx.get<FirstMW>)
   // so it leads to compile error if we remove FirstMW from definition
@@ -909,8 +869,7 @@ TEST_CASE("middleware_context")
   app.stop();
 }
 
-TEST_CASE("middleware_cookieparser")
-{
+TEST_CASE("middleware_cookieparser") {
   static char buf[2048];
 
   App<CookieParser> app;
@@ -959,8 +918,7 @@ TEST_CASE("middleware_cookieparser")
   app.stop();
 }
 
-TEST_CASE("bug_quick_repeated_request")
-{
+TEST_CASE("bug_quick_repeated_request") {
   static char buf[2048];
 
   SimpleApp app;
@@ -993,8 +951,7 @@ TEST_CASE("bug_quick_repeated_request")
   app.stop();
 }
 
-TEST_CASE("simple_url_params")
-{
+TEST_CASE("simple_url_params") {
   static char buf[2048];
 
   SimpleApp app;
@@ -1096,8 +1053,7 @@ TEST_CASE("simple_url_params")
     c.close();
 
     CHECK(boost::lexical_cast<int>(last_url_params.get("int")) == 100);
-    CHECK(boost::lexical_cast<double>(last_url_params.get("double")) ==
-            123.45);
+    CHECK(boost::lexical_cast<double>(last_url_params.get("double")) == 123.45);
     CHECK(boost::lexical_cast<bool>(last_url_params.get("boolean")));
   }
   // check single array value
@@ -1135,8 +1091,7 @@ TEST_CASE("simple_url_params")
   app.stop();
 }
 
-TEST_CASE("route_dynamic")
-{
+TEST_CASE("route_dynamic") {
   SimpleApp app;
   int x = 1;
   app.route_dynamic("/")([&] {
@@ -1201,17 +1156,22 @@ TEST_CASE("route_dynamic")
   }
 }
 
-TEST_CASE("multipart")
-{
-  std::string test_string = "--CROW-BOUNDARY\r\nContent-Disposition: form-data; name=\"hello\"\r\n\r\nworld\r\n--CROW-BOUNDARY\r\nContent-Disposition: form-data; name=\"world\"\r\n\r\nhello\r\n--CROW-BOUNDARY\r\nContent-Disposition: form-data; name=\"multiline\"\r\n\r\ntext\ntext\ntext\r\n--CROW-BOUNDARY--\r\n";
+TEST_CASE("multipart") {
+  std::string test_string =
+      "--CROW-BOUNDARY\r\nContent-Disposition: form-data; "
+      "name=\"hello\"\r\n\r\nworld\r\n--CROW-BOUNDARY\r\nContent-Disposition: "
+      "form-data; "
+      "name=\"world\"\r\n\r\nhello\r\n--CROW-BOUNDARY\r\nContent-Disposition: "
+      "form-data; "
+      "name=\"multiline\"\r\n\r\ntext\ntext\ntext\r\n--CROW-BOUNDARY--\r\n";
 
   SimpleApp app;
 
   CROW_ROUTE(app, "/multipart")
-  ([](const crow::request& req, crow::response& res)
-  {
+  ([](const crow::request& req, crow::response& res) {
     multipart::message msg(req);
-    res.add_header("Content-Type", "multipart/form-data; boundary=CROW-BOUNDARY");
+    res.add_header("Content-Type",
+                   "multipart/form-data; boundary=CROW-BOUNDARY");
     res.body = msg.dump();
     res.end();
   });
@@ -1223,7 +1183,8 @@ TEST_CASE("multipart")
     response res;
 
     req.url = "/multipart";
-    req.add_header("Content-Type", "multipart/form-data; boundary=CROW-BOUNDARY");
+    req.add_header("Content-Type",
+                   "multipart/form-data; boundary=CROW-BOUNDARY");
     req.body = test_string;
 
     app.handle(req, res);
@@ -1232,9 +1193,7 @@ TEST_CASE("multipart")
   }
 }
 
-TEST_CASE("send_file")
-{
-
+TEST_CASE("send_file") {
   struct stat statbuf;
   stat("tests/img/cat.jpg", &statbuf);
 
@@ -1255,7 +1214,7 @@ TEST_CASE("send_file")
 
   app.validate();
 
-  //File not found check
+  // File not found check
   {
     request req;
     response res;
@@ -1264,11 +1223,10 @@ TEST_CASE("send_file")
 
     app.handle(req, res);
 
-
     CHECK(404 == res.code);
   }
 
-  //Headers check
+  // Headers check
   {
     request req;
     response res;
@@ -1280,42 +1238,36 @@ TEST_CASE("send_file")
     CHECK(200 == res.code);
     CHECK("image/jpeg" == res.headers.find("Content-Type")->second);
     CHECK(to_string(statbuf.st_size) ==
-            res.headers.find("Content-Length")->second);
+          res.headers.find("Content-Length")->second);
   }
 
-  //TODO test content
-
+  // TODO test content
 }
 
-TEST_CASE("stream_response")
-{
+TEST_CASE("stream_response") {
+  SimpleApp app;
 
-    SimpleApp app;
+  CROW_ROUTE(app, "/test")
+  ([](const crow::request&, crow::response& res) {
+    std::string keyword_ = "hello";
+    std::string key_response;
+    for (unsigned int i = 0; i < 250000; i++) key_response += keyword_;
 
-    CROW_ROUTE(app, "/test")
-    ([](const crow::request&, crow::response& res)
-    {
-      std::string keyword_ = "hello";
-      std::string key_response;
-      for (unsigned int i = 0; i<250000; i++)
-        key_response += keyword_;
+    res.body = key_response;
+    res.end();
+  });
 
-      res.body = key_response;
-      res.end();
-    });
+  app.validate();
 
-    app.validate();
-
-    //running the test on a separate thread to allow the client to sleep
-    std::thread runTest([&app](){
-
+  // running the test on a separate thread to allow the client to sleep
+  std::thread runTest([&app]() {
     auto _ = async(launch::async,
                    [&] { app.bindaddr(LOCALHOST_ADDRESS).port(45451).run(); });
     app.wait_for_server_start();
     asio::io_service is;
     std::string sendmsg;
 
-    //Total bytes received
+    // Total bytes received
     unsigned int received = 0;
     sendmsg = "GET /test\r\n\r\n";
     {
@@ -1329,17 +1281,15 @@ TEST_CASE("stream_response")
           asio::ip::address::from_string(LOCALHOST_ADDRESS), 45451));
       c.send(asio::buffer(sendmsg));
 
-      //consuming the headers, since we don't need those for the test
+      // consuming the headers, since we don't need those for the test
       static char buf[2048];
       c.receive(asio::buffer(buf, 2048));
 
-      //creating the string to compare against
-      for (unsigned int i = 0; i<250000; i++)
-        key_response += keyword_;
+      // creating the string to compare against
+      for (unsigned int i = 0; i < 250000; i++) key_response += keyword_;
 
       //"hello" is 5 bytes, (5*250000)/16384 = 76.2939
-      for (unsigned int i = 0; i<76; i++)
-      {
+      for (unsigned int i = 0; i < 76; i++) {
         asio::streambuf::mutable_buffers_type bufs = b.prepare(16384);
         size_t n = c.receive(bufs);
         b.commit(n);
@@ -1347,57 +1297,57 @@ TEST_CASE("stream_response")
         std::istream is(&b);
         std::string s;
         is >> s;
-        CHECK(key_response.substr(received-n, n) == s);
+        CHECK(key_response.substr(received - n, n) == s);
         std::this_thread::sleep_for(std::chrono::milliseconds(20));
-
       }
 
-      //handle the 0.2 and any errors in the earlier loop
-      while (c.available() > 0)
-      {
-          asio::streambuf::mutable_buffers_type bufs = b.prepare(16384);
-          size_t n = c.receive(bufs);
-          b.commit(n);
-          received += n;
-          std::istream is(&b);
-          std::string s;
-          is >> s;
-          CHECK(key_response.substr(received-n, n) == s);
-          std::this_thread::sleep_for(std::chrono::milliseconds(20));
+      // handle the 0.2 and any errors in the earlier loop
+      while (c.available() > 0) {
+        asio::streambuf::mutable_buffers_type bufs = b.prepare(16384);
+        size_t n = c.receive(bufs);
+        b.commit(n);
+        received += n;
+        std::istream is(&b);
+        std::string s;
+        is >> s;
+        CHECK(key_response.substr(received - n, n) == s);
+        std::this_thread::sleep_for(std::chrono::milliseconds(20));
       }
-
-
     }
     app.stop();
-    });
-    runTest.join();
+  });
+  runTest.join();
 }
 
-TEST_CASE("websocket")
-{
-  static std::string http_message = "GET /ws HTTP/1.1\r\nConnection: keep-alive, Upgrade\r\nupgrade: websocket\r\nSec-WebSocket-Key: dGhlIHNhbXBsZSBub25jZQ==\r\nSec-WebSocket-Version: 13\r\n\r\n";
+TEST_CASE("websocket") {
+  static std::string http_message =
+      "GET /ws HTTP/1.1\r\nConnection: keep-alive, Upgrade\r\nupgrade: "
+      "websocket\r\nSec-WebSocket-Key: "
+      "dGhlIHNhbXBsZSBub25jZQ==\r\nSec-WebSocket-Version: 13\r\n\r\n";
 
   static bool connected{false};
 
   SimpleApp app;
 
-  CROW_ROUTE(app, "/ws").websocket()
-  .onopen([&](websocket::connection&){
-      connected = true;
-      CROW_LOG_INFO << "Connected websocket and value is " << connected;
-  })
-  .onmessage([&](websocket::connection& conn, const std::string& message, bool isbin){
-      CROW_LOG_INFO << "Message is \"" << message << '\"';
-      if (!isbin && message == "PINGME")
+  CROW_ROUTE(app, "/ws")
+      .websocket()
+      .onopen([&](websocket::connection&) {
+        connected = true;
+        CROW_LOG_INFO << "Connected websocket and value is " << connected;
+      })
+      .onmessage([&](websocket::connection& conn, const std::string& message,
+                     bool isbin) {
+        CROW_LOG_INFO << "Message is \"" << message << '\"';
+        if (!isbin && message == "PINGME")
           conn.send_ping("");
-      else if (!isbin && message == "Hello")
+        else if (!isbin && message == "Hello")
           conn.send_text("Hello back");
-      else if (isbin && message == "Hello bin")
+        else if (isbin && message == "Hello bin")
           conn.send_binary("Hello back bin");
-  })
-  .onclose([&](websocket::connection&, const std::string&){
-      CROW_LOG_INFO << "Closing websocket";
-  });
+      })
+      .onclose([&](websocket::connection&, const std::string&) {
+        CROW_LOG_INFO << "Closing websocket";
+      });
 
   app.validate();
 
@@ -1410,12 +1360,11 @@ TEST_CASE("websocket")
   c.connect(asio::ip::tcp::endpoint(
       asio::ip::address::from_string(LOCALHOST_ADDRESS), 45451));
 
-
   char buf[2048];
 
   //----------Handshake----------
   {
-    std::fill_n (buf, 2048, 0);
+    std::fill_n(buf, 2048, 0);
     c.send(asio::buffer(http_message));
 
     c.receive(asio::buffer(buf, 2048));
@@ -1424,7 +1373,7 @@ TEST_CASE("websocket")
   }
   //----------Pong----------
   {
-    std::fill_n (buf, 2048, 0);
+    std::fill_n(buf, 2048, 0);
     char ping_message[2]("\x89");
 
     c.send(asio::buffer(ping_message, 2));
@@ -1434,9 +1383,10 @@ TEST_CASE("websocket")
   }
   //----------Ping----------
   {
-    std::fill_n (buf, 2048, 0);
-    char not_ping_message[2+6+1]("\x81\x06"
-                                 "PINGME");
+    std::fill_n(buf, 2048, 0);
+    char not_ping_message[2 + 6 + 1](
+        "\x81\x06"
+        "PINGME");
 
     c.send(asio::buffer(not_ping_message, 8));
     c.receive(asio::buffer(buf, 2048));
@@ -1445,9 +1395,10 @@ TEST_CASE("websocket")
   }
   //----------Text----------
   {
-    std::fill_n (buf, 2048, 0);
-    char text_message[2+5+1]("\x81\x05"
-                             "Hello");
+    std::fill_n(buf, 2048, 0);
+    char text_message[2 + 5 + 1](
+        "\x81\x05"
+        "Hello");
 
     c.send(asio::buffer(text_message, 7));
     c.receive(asio::buffer(buf, 2048));
@@ -1457,9 +1408,10 @@ TEST_CASE("websocket")
   }
   //----------Binary----------
   {
-    std::fill_n (buf, 2048, 0);
-    char bin_message[2+9+1]("\x82\x09"
-                            "Hello bin");
+    std::fill_n(buf, 2048, 0);
+    char bin_message[2 + 9 + 1](
+        "\x82\x09"
+        "Hello bin");
 
     c.send(asio::buffer(bin_message, 11));
     c.receive(asio::buffer(buf, 2048));
@@ -1469,10 +1421,11 @@ TEST_CASE("websocket")
   }
   //----------Masked Text----------
   {
-    std::fill_n (buf, 2048, 0);
-    char text_masked_message[2+4+5+1]("\x81\x85"
-                                      "\x67\xc6\x69\x73"
-                                      "\x2f\xa3\x05\x1f\x08");
+    std::fill_n(buf, 2048, 0);
+    char text_masked_message[2 + 4 + 5 + 1](
+        "\x81\x85"
+        "\x67\xc6\x69\x73"
+        "\x2f\xa3\x05\x1f\x08");
 
     c.send(asio::buffer(text_masked_message, 11));
     c.receive(asio::buffer(buf, 2048));
@@ -1482,10 +1435,11 @@ TEST_CASE("websocket")
   }
   //----------Masked Binary----------
   {
-    std::fill_n (buf, 2048, 0);
-    char bin_masked_message[2+4+9+1]("\x82\x89"
-                                     "\x67\xc6\x69\x73"
-                                     "\x2f\xa3\x05\x1f\x08\xe6\x0b\x1a\x09");
+    std::fill_n(buf, 2048, 0);
+    char bin_masked_message[2 + 4 + 9 + 1](
+        "\x82\x89"
+        "\x67\xc6\x69\x73"
+        "\x2f\xa3\x05\x1f\x08\xe6\x0b\x1a\x09");
 
     c.send(asio::buffer(bin_masked_message, 15));
     c.receive(asio::buffer(buf, 2048));
@@ -1495,8 +1449,10 @@ TEST_CASE("websocket")
   }
   //----------Close----------
   {
-    std::fill_n (buf, 2048, 0);
-    char close_message[10]("\x88"); //I do not know why, but the websocket code does not read this unless it's longer than 4 or so bytes
+    std::fill_n(buf, 2048, 0);
+    char close_message[10](
+        "\x88");  // I do not know why, but the websocket code does not read
+                  // this unless it's longer than 4 or so bytes
 
     c.send(asio::buffer(close_message, 10));
     c.receive(asio::buffer(buf, 2048));

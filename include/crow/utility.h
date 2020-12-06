@@ -341,7 +341,7 @@ struct pop_back_helper<seq<N...>, Tuple> {
 
 template <typename... T>
 struct pop_back  //: public pop_back_helper<typename
-                 //gen_seq<sizeof...(T)-1>::type, std::tuple<T...>>
+                 // gen_seq<sizeof...(T)-1>::type, std::tuple<T...>>
 {
   template <template <typename... Args> class U>
   using rebind =
