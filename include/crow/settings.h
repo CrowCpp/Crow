@@ -32,7 +32,6 @@
 #define CROW_STATIC_ENDPOINT "/static/<path>"
 #endif
 
-
 // compiler flags
 #if __cplusplus >= 201402L
 #define CROW_CAN_USE_CPP14
