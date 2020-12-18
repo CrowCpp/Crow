@@ -1160,7 +1160,7 @@ namespace crow
         ///
         /// Value can mean any json value, including a JSON object.
         /// Write means this class is used to primarily assemble JSON objects using keys and values and export those into a string.
-        class wvalue
+        class wvalue //TODO attempting to make this returnable resulted in a linker error, any help is appreciated
         {
             friend class crow::mustache::template_t;
         public:

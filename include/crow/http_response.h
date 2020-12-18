@@ -20,6 +20,15 @@ namespace crow
     template <typename Adaptor, typename Handler, typename ... Middlewares>
     class Connection;
 
+    struct returnable
+    {
+        std::string content_type;
+        virtual std::string dump() = 0;
+
+        returnable(std::string ctype) : content_type {ctype}
+        {}
+    };
+
     /// HTTP response
     struct response
     {
@@ -53,18 +62,29 @@ namespace crow
         response() {}
         explicit response(int code) : code(code) {}
         response(std::string body) : body(std::move(body)) {}
+        response(int code, std::string body) : code(code), body(std::move(body)) {}
         response(json::wvalue&& json_value) : json_value(std::move(json_value))
         {
-            json_mode();
-        }
-        response(int code, std::string body) : code(code), body(std::move(body)) {}
-        response(const json::wvalue& json_value) : body(json::dump(json_value))
-        {
-            json_mode();
+            set_header("Content-Type", "application/json");
         }
         response(int code, const json::wvalue& json_value) : code(code), body(json::dump(json_value))
         {
-            json_mode();
+            set_header("Content-Type", "application/json");
+        }
+        response (returnable&& value)
+        {
+            body = value.dump();
+            set_header("Content-Type",value.content_type);
+        }
+        response (returnable& value)
+        {
+            body = value.dump();
+            set_header("Content-Type",value.content_type);
+        }
+        response (int code, returnable& value) : code(code)
+        {
+            body = value.dump();
+            set_header("Content-Type",value.content_type);
         }
 
         response(response&& r)
@@ -206,12 +226,6 @@ namespace crow
             std::function<void()> complete_request_handler_;
             std::function<bool()> is_alive_helper_;
             static_file_info file_info;
-
-            /// In case of a JSON object, set the Content-Type header.
-            void json_mode()
-            {
-                set_header("Content-Type", "application/json");
-            }
 
             template<typename Stream, typename Adaptor>
             void write_streamed(Stream& is, Adaptor& adaptor)
