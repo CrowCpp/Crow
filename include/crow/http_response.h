@@ -20,6 +20,7 @@ namespace crow
     template <typename Adaptor, typename Handler, typename ... Middlewares>
     class Connection;
 
+    /// An abstract class that allows any other class to be returned by a handler.
     struct returnable
     {
         std::string content_type;
