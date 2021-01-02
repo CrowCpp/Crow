@@ -30,6 +30,7 @@ namespace crow
         std::string body; ///< The actual payload containing the response data.
         json::wvalue json_value; ///< if the response body is JSON, this would be it.
         ci_map headers; ///< HTTP headers.
+        bool compressed = true; ///< If compression is enabled and this is false, the individual response will not be compressed.
 
         /// Set the value of an existing header in the response.
         void set_header(std::string key, std::string value)

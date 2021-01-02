@@ -6,10 +6,13 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
 find_package(Tcmalloc)
 find_package(Threads)
 find_package(OpenSSL)
+find_package(ZLIB REQUIRED)
 
 if(OPENSSL_FOUND)
 	include_directories(${OPENSSL_INCLUDE_DIR})
 endif()
+
+include_directories(${ZLIB_INCLUDE_DIR})
 
 find_program(CCACHE_FOUND ccache)
 if(CCACHE_FOUND)
