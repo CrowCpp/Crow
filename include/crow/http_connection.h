@@ -358,7 +358,7 @@ namespace crow
 
             //if there is a redirection with a partial URL, treat the URL as a route.
             std::string location = res.get_header_value("Location");
-            if (location != "" && location.find("://", 0) == std::string::npos)
+            if (!location.empty() && location.find("://", 0) == std::string::npos)
             {
                 #ifdef CROW_ENABLE_SSL
                 location.insert(0, "https://" + req_.get_header_value("Host"));
