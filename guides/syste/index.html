@@ -8,11 +8,11 @@
       
       
       
+      
         <link rel="canonical" href="https://crowcpp.github.io/crow/guides/syste/">
       
-      
       <link rel="shortcut icon" href="../../assets/favicon.svg">
-      <meta name="generator" content="mkdocs-1.1.2, mkdocs-material-6.1.7">
+      <meta name="generator" content="mkdocs-1.1.2, mkdocs-material-6.2.3">
     
     
       
@@ -20,10 +20,10 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.19753c6b.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.3b61ea93.min.css">
       
         
-        <link rel="stylesheet" href="../../assets/stylesheets/palette.196e0c26.min.css">
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.39b8e14a.min.css">
         
       
     
@@ -52,10 +52,16 @@
     <body dir="ltr" data-md-color-scheme="" data-md-color-primary="none" data-md-color-accent="none">
       
   
+    
     <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
     <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
+      
+        
+        <a href="#writing-the-service-unit-file" class="md-skip">
+          Skip to content
+        </a>
       
     </div>
     <div data-md-component="announce">
@@ -75,18 +81,20 @@
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z"/></svg>
     </label>
     <div class="md-header-nav__title" data-md-component="header-title">
-      
-        <div class="md-header-nav__ellipsis">
-          <span class="md-header-nav__topic md-ellipsis">
+      <div class="md-header-nav__ellipsis">
+        <div class="md-header-nav__topic">
+          <span class="md-ellipsis">
             Crow
           </span>
-          <span class="md-header-nav__topic md-ellipsis">
+        </div>
+        <div class="md-header-nav__topic">
+          <span class="md-ellipsis">
             
               Systemd run on startup
             
           </span>
         </div>
-      
+      </div>
     </div>
     
       <label class="md-header-nav__button md-icon" for="__search">
@@ -141,17 +149,16 @@
       
         
           
-
-  
-
-<nav class="md-tabs md-tabs--active" aria-label="Tabs" data-md-component="tabs">
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
   <div class="md-tabs__inner md-grid">
     <ul class="md-tabs__list">
       
         
+  
+  
+
+
   <li class="md-tabs__item">
-    
-    
     <a href="../.." class="md-tabs__link">
       Home
     </a>
@@ -161,9 +168,12 @@
         
   
   
+
+
+  
+  
+  
     <li class="md-tabs__item">
-      
-      
       <a href="../../getting_started/setup/" class="md-tabs__link">
         Getting Started
       </a>
@@ -175,13 +185,19 @@
   
   
     
+  
+
+
+  
+  
+  
     
+
+  
   
   
     <li class="md-tabs__item">
-      
-      
-      <a href="../app/" class="md-tabs__link">
+      <a href="../app/" class="md-tabs__link md-tabs__link--active">
         Guides
       </a>
     </li>
@@ -193,9 +209,12 @@
         
   
   
+
+
+  
+  
+  
     <li class="md-tabs__item">
-      
-      
       <a href="../../reference/index.html" class="md-tabs__link">
         API Reference
       </a>
@@ -212,12 +231,18 @@
         <div class="md-main__inner md-grid">
           
             
-              <div class="md-sidebar md-sidebar--primary" data-md-component="navigation">
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="navigation" >
                 <div class="md-sidebar__scrollwrap">
                   <div class="md-sidebar__inner">
                     
 
-<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
     <a href="https://crowcpp.github.io/crow" title="Crow" class="md-nav__button md-logo" aria-label="Crow">
       
@@ -247,6 +272,7 @@
       
 
 
+
   <li class="md-nav__item">
     <a href="../.." class="md-nav__link">
       Home
@@ -259,9 +285,13 @@
       
 
 
+
+  
   <li class="md-nav__item md-nav__item--nested">
     
-    <input class="md-nav__toggle md-toggle" data-md-toggle="nav-2" type="checkbox" id="nav-2" >
+    
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-2" type="checkbox" id="nav-2" >
+    
     <label class="md-nav__link" for="nav-2">
       Getting Started
       <span class="md-nav__icon md-icon"></span>
@@ -279,6 +309,7 @@
           
 
 
+
   <li class="md-nav__item">
     <a href="../../getting_started/setup/" class="md-nav__link">
       Setup
@@ -289,6 +320,7 @@
           
           
           
+
 
 
   <li class="md-nav__item">
@@ -307,12 +339,16 @@
       
       
 
+
   
 
 
+  
   <li class="md-nav__item md-nav__item--active md-nav__item--nested">
     
-    <input class="md-nav__toggle md-toggle" data-md-toggle="nav-3" type="checkbox" id="nav-3" checked>
+    
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-3" type="checkbox" id="nav-3" checked>
+    
     <label class="md-nav__link" for="nav-3">
       Guides
       <span class="md-nav__icon md-icon"></span>
@@ -330,9 +366,13 @@
           
 
 
+
+  
   <li class="md-nav__item md-nav__item--nested">
     
-    <input class="md-nav__toggle md-toggle" data-md-toggle="nav-3-1" type="checkbox" id="nav-3-1" >
+    
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-3-1" type="checkbox" id="nav-3-1" >
+    
     <label class="md-nav__link" for="nav-3-1">
       Different parts of Crow
       <span class="md-nav__icon md-icon"></span>
@@ -350,6 +390,7 @@
           
 
 
+
   <li class="md-nav__item">
     <a href="../app/" class="md-nav__link">
       App
@@ -360,6 +401,7 @@
           
           
           
+
 
 
   <li class="md-nav__item">
@@ -374,6 +416,7 @@
           
 
 
+
   <li class="md-nav__item">
     <a href="../logging/" class="md-nav__link">
       Logging
@@ -384,6 +427,7 @@
           
           
           
+
 
 
   <li class="md-nav__item">
@@ -398,6 +442,7 @@
           
 
 
+
   <li class="md-nav__item">
     <a href="../templating/" class="md-nav__link">
       Templating (Mustache)
@@ -408,6 +453,7 @@
           
           
           
+
 
 
   <li class="md-nav__item">
@@ -422,6 +468,7 @@
           
 
 
+
   <li class="md-nav__item">
     <a href="../middleware/" class="md-nav__link">
       Middleware
@@ -432,6 +479,7 @@
           
           
           
+
 
 
   <li class="md-nav__item">
@@ -446,6 +494,7 @@
           
 
 
+
   <li class="md-nav__item">
     <a href="../static/" class="md-nav__link">
       Static Files
@@ -458,9 +507,23 @@
           
 
 
+
   <li class="md-nav__item">
     <a href="../websockets/" class="md-nav__link">
       Websockets
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+
+  <li class="md-nav__item">
+    <a href="../testing/" class="md-nav__link">
+      Writing Tests
     </a>
   </li>
 
@@ -474,12 +537,16 @@
           
           
 
+
   
 
 
+  
   <li class="md-nav__item md-nav__item--active md-nav__item--nested">
     
-    <input class="md-nav__toggle md-toggle" data-md-toggle="nav-3-2" type="checkbox" id="nav-3-2" checked>
+    
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-3-2" type="checkbox" id="nav-3-2" checked>
+    
     <label class="md-nav__link" for="nav-3-2">
       Server setup
       <span class="md-nav__icon md-icon"></span>
@@ -497,6 +564,7 @@
           
 
 
+
   <li class="md-nav__item">
     <a href="../proxies/" class="md-nav__link">
       Proxies
@@ -508,6 +576,7 @@
           
           
 
+
   
 
 
@@ -516,10 +585,37 @@
     <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
     
     
+      <label class="md-nav__link md-nav__link--active" for="__toc">
+        Systemd run on startup
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+    
     <a href="./" class="md-nav__link md-nav__link--active">
       Systemd run on startup
     </a>
     
+      
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#writing-the-service-unit-file" class="md-nav__link">
+    Writing the Service Unit File
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+    
   </li>
 
         
@@ -538,9 +634,13 @@
       
 
 
+
+  
   <li class="md-nav__item md-nav__item--nested">
     
-    <input class="md-nav__toggle md-toggle" data-md-toggle="nav-4" type="checkbox" id="nav-4" >
+    
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-4" type="checkbox" id="nav-4" >
+    
     <label class="md-nav__link" for="nav-4">
       API Reference
       <span class="md-nav__icon md-icon"></span>
@@ -556,6 +656,7 @@
           
           
           
+
 
 
   <li class="md-nav__item">
@@ -577,6 +678,35 @@
               </div>
             
             
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#writing-the-service-unit-file" class="md-nav__link">
+    Writing the Service Unit File
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
           
           <div class="md-content">
             <article class="md-content__inner md-typeset">
@@ -585,9 +715,32 @@
                 
                   <h1>Systemd run on startup</h1>
                 
-                <p><strong><em>HELP NEEDED</em></strong></p>
-                
-                  
+                <p>Using Systemd allows you to run any executable or script when the system starts. This can be useful when you don't want to re-run your Crow application every single time you restart your server.<br><br></p>
+<h2 id="writing-the-service-unit-file">Writing the Service Unit File</h2>
+<p>In order to have Systemd recognize your application, you need to create a <code>.service</code> file that explains how Systemd should handle your program.<br><br></p>
+<p>To create a service file, you need to go to <code>/etc/systemd/system</code> and create an empty text file with the extension <code>.service</code>, the file name can be anything.<br><br></p>
+<p>Once the file is created, open it using your favorite text editor and add the following:</p>
+<div class="highlight"><pre><span></span><code><span class="o">[</span>Unit<span class="o">]</span>
+<span class="nv">Description</span><span class="o">=</span>My revolutionary Crow application
+
+<span class="nv">Wants</span><span class="o">=</span>network.target
+<span class="nv">After</span><span class="o">=</span>syslog.target network-online.target
+
+<span class="o">[</span>Service<span class="o">]</span>
+<span class="nv">Type</span><span class="o">=</span>simple
+<span class="nv">ExecStart</span><span class="o">=</span>/absolute/path/to/your/executable
+<span class="nv">Restart</span><span class="o">=</span>on-failure
+<span class="nv">RestartSec</span><span class="o">=</span><span class="m">10</span>
+<span class="nv">KillMode</span><span class="o">=</span>process
+
+<span class="o">[</span>Install<span class="o">]</span>
+<span class="nv">WantedBy</span><span class="o">=</span>multi-user.target
+</code></pre></div>
+<p>You will then need to give the correct permission, this can be done by using the following command (a <code>sudo</code> maybe required):</p>
+<div class="highlight"><pre><span></span><code>chmod <span class="m">640</span> /etc/systemd/system/crowthing.service
+</code></pre></div>
+<p>And that's it! You can now use your <code>systemctl</code> controls to <code>enable</code>, <code>start</code>, <code>stop</code>, or <code>disable</code> your Crow application.<br><br></p>
+<p>If you're not familiar with Systemd, <code>systemctl enable crowthing.service</code> will allow your Crow application to run at startup, <code>start</code> will start it, and the rest is simple.</p>
                 
               
               
@@ -666,15 +819,15 @@
       
     </div>
     
-      <script src="../../assets/javascripts/vendor.0ac82a11.min.js"></script>
-      <script src="../../assets/javascripts/bundle.f81dfb4d.min.js"></script><script id="__lang" type="application/json">{"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing"}</script>
+      <script src="../../assets/javascripts/vendor.08c56446.min.js"></script>
+      <script src="../../assets/javascripts/bundle.6ced434e.min.js"></script><script id="__lang" type="application/json">{"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing"}</script>
       
       <script>
         app = initialize({
           base: "../..",
           features: navigation.tabs,
           search: Object.assign({
-            worker: "../../assets/javascripts/worker/search.4ac00218.min.js"
+            worker: "../../assets/javascripts/worker/search.8c7e0a7e.min.js"
           }, typeof search !== "undefined" && search)
         })
       </script>
