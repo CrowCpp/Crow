@@ -164,9 +164,14 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="stru
 <tr class="memitem:a068269fc8b7f1df3d5421ccd384fe1f3"><td class="memItemLeft" align="right" valign="top"><a id="a068269fc8b7f1df3d5421ccd384fe1f3"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>clear</b> ()</td></tr>
 <tr class="separator:a068269fc8b7f1df3d5421ccd384fe1f3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac04bbe2d4f54fd717cdffdb26af3e46f"><td class="memItemLeft" align="right" valign="top"><a id="ac04bbe2d4f54fd717cdffdb26af3e46f"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>redirect</b> (const std::string &amp;location)</td></tr>
+<tr class="memitem:ac04bbe2d4f54fd717cdffdb26af3e46f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structcrow_1_1response.html#ac04bbe2d4f54fd717cdffdb26af3e46f">redirect</a> (const std::string &amp;location)</td></tr>
 <tr class="separator:ac04bbe2d4f54fd717cdffdb26af3e46f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9e87a17c3cf8b434fd2a64a9b3d4b675"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structcrow_1_1response.html#a9e87a17c3cf8b434fd2a64a9b3d4b675">redirect_perm</a> (const std::string &amp;location)</td></tr>
+<tr class="separator:a9e87a17c3cf8b434fd2a64a9b3d4b675"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a760bca5f5fdee03518d59d9538ce5432"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structcrow_1_1response.html#a760bca5f5fdee03518d59d9538ce5432">moved</a> (const std::string &amp;location)</td></tr>
+<tr class="separator:a760bca5f5fdee03518d59d9538ce5432"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9ee58f8b775b2566418b298fe33c0dcc"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structcrow_1_1response.html#a9ee58f8b775b2566418b298fe33c0dcc">moved_perm</a> (const std::string &amp;location)</td></tr>
+<tr class="separator:a9ee58f8b775b2566418b298fe33c0dcc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a82bba7eaacfee514c55630a13a85410e"><td class="memItemLeft" align="right" valign="top"><a id="a82bba7eaacfee514c55630a13a85410e"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>write</b> (const std::string &amp;body_part)</td></tr>
 <tr class="separator:a82bba7eaacfee514c55630a13a85410e"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -229,7 +234,120 @@ template&lt;typename Adaptor , typename Handler , typename ... Middlewares&gt; <
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>HTTP response. </p>
-</div><hr/>The documentation for this struct was generated from the following file:<ul>
+</div><h2 class="groupheader">Member Function Documentation</h2>
+<a id="a760bca5f5fdee03518d59d9538ce5432"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a760bca5f5fdee03518d59d9538ce5432">&#9670;&nbsp;</a></span>moved()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void crow::response::moved </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>location</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Return a "Found (Moved Temporarily)" response.</p>
+<p>Location can either be a route or a full URL. </p>
+
+</div>
+</div>
+<a id="a9ee58f8b775b2566418b298fe33c0dcc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9ee58f8b775b2566418b298fe33c0dcc">&#9670;&nbsp;</a></span>moved_perm()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void crow::response::moved_perm </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>location</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Return a "Moved Permanently" response.</p>
+<p>Location can either be a route or a full URL. </p>
+
+</div>
+</div>
+<a id="ac04bbe2d4f54fd717cdffdb26af3e46f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac04bbe2d4f54fd717cdffdb26af3e46f">&#9670;&nbsp;</a></span>redirect()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void crow::response::redirect </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>location</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Return a "Temporary Redirect" response.</p>
+<p>Location can either be a route or a full URL. </p>
+
+</div>
+</div>
+<a id="a9e87a17c3cf8b434fd2a64a9b3d4b675"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9e87a17c3cf8b434fd2a64a9b3d4b675">&#9670;&nbsp;</a></span>redirect_perm()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void crow::response::redirect_perm </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>location</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Return a "Permanent Redirect" response.</p>
+<p>Location can either be a route or a full URL. </p>
+
+</div>
+</div>
+<hr/>The documentation for this struct was generated from the following file:<ul>
 <li>/home/travis/build/CrowCpp/crow/include/crow/<a class="el" href="http__response_8h_source.html">http_response.h</a></li>
 </ul>
 </div><!-- contents -->

@@ -308,11 +308,10 @@ Generating docs for nested compound crow::CookieParser::con/home/travis/build/Cr
 /home/travis/build/CrowCpp/crow/include/crow/http_response.h:70: warning: Member response(response &&r) (function) of class crow::response is not documented.
 /home/travis/build/CrowCpp/crow/include/crow/http_response.h:77: warning: Member operator=(response &&r) noexcept (function) of class crow::response is not documented.
 /home/travis/build/CrowCpp/crow/include/crow/http_response.h:93: warning: Member clear() (function) of class crow::response is not documented.
-/home/travis/build/CrowCpp/crow/include/crow/http_response.h:102: warning: Member redirect(const std::string &location) (function) of class crow::response is not documented.
-/home/travis/build/CrowCpp/crow/include/crow/http_response.h:108: warning: Member write(const std::string &body_part) (function) of class crow::response is not documented.
-/home/travis/build/CrowCpp/crow/include/crow/http_response.h:151: warning: Member path (variable) of class crow::response::static_file_info is not documented.
-/home/travis/build/CrowCpp/crow/include/crow/http_response.h:151: warning: Member statbuf (variable) of class crow::response::static_file_info is not documented.
-/home/travis/build/CrowCpp/crow/include/crow/http_response.h:153: warning: Member statResult (variable) of class crow::response::static_file_info is not documented.
+/home/travis/build/CrowCpp/crow/include/crow/http_response.h:138: warning: Member write(const std::string &body_part) (function) of class crow::response is not documented.
+/home/travis/build/CrowCpp/crow/include/crow/http_response.h:181: warning: Member path (variable) of class crow::response::static_file_info is not documented.
+/home/travis/build/CrowCpp/crow/include/crow/http_response.h:181: warning: Member statbuf (variable) of class crow::response::static_file_info is not documented.
+/home/travis/build/CrowCpp/crow/include/crow/http_response.h:183: warning: Member statResult (variable) of class crow::response::static_file_info is not documented.
 /home/travis/build/CrowCpp/crow/include/crow/routing.h:939: warning: Member new_rule_dynamic(const std::string &rule) (function) of class crow::Router is not documented.
 /home/travis/build/CrowCpp/crow/include/crow/routing.h:948: warning: Member new_rule_tagged(const std::string &rule) (function) of class crow::Router is not documented.
 /home/travis/build/CrowCpp/crow/include/crow/routing.h:958: warning: Member internal_add_rule_object(const std::string &rule, BaseRule *ruleObject) (function) of class crow::Router is not documented.
@@ -705,5 +704,5 @@ Generating example index...
 finalizing index lists...
 writing tag file...
 Running plantuml with JAVA...
-lookup cache used 2377/65536 hits=19811 misses=2694
+lookup cache used 2380/65536 hits=19871 misses=2697
 finished...
