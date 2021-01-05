@@ -18,6 +18,7 @@ theme:
         repo: fontawesome/brands/github-square
 
 markdown_extensions:
+    - admonition
     - pymdownx.highlight
     - pymdownx.superfences
     - pymdownx.inlinehilite
@@ -40,6 +41,7 @@ nav:
             - SSL: guides/ssl.md
             - Static Files: guides/static.md
             - Websockets: guides/websockets.md
+            - Writing Tests: guides/testing.md
         - Server setup:
             - Proxies: guides/proxies.md
             - Systemd run on startup: guides/syste.md
