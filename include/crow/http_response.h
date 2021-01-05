@@ -4,31 +4,20 @@
 #include <ios>
 #include <fstream>
 #include <sstream>
+#include <sys/stat.h>
 
-#include "crow/json.h"
 #include "crow/http_request.h"
 #include "crow/ci_map.h"
-
 #include "crow/socket_adaptors.h"
 #include "crow/logging.h"
 #include "crow/mime_types.h"
-#include <sys/stat.h>
+#include "crow/returnable.h"
 
 
 namespace crow
 {
     template <typename Adaptor, typename Handler, typename ... Middlewares>
     class Connection;
-
-    /// An abstract class that allows any other class to be returned by a handler.
-    struct returnable
-    {
-        std::string content_type;
-        virtual std::string dump() = 0;
-
-        returnable(std::string ctype) : content_type {ctype}
-        {}
-    };
 
     /// HTTP response
     struct response
@@ -38,7 +27,6 @@ namespace crow
 
         int code{200}; ///< The Status code for the response.
         std::string body; ///< The actual payload containing the response data.
-        json::wvalue json_value; ///< if the response body is JSON, this would be it.
         ci_map headers; ///< HTTP headers.
 
         /// Set the value of an existing header in the response.
@@ -64,14 +52,6 @@ namespace crow
         explicit response(int code) : code(code) {}
         response(std::string body) : body(std::move(body)) {}
         response(int code, std::string body) : code(code), body(std::move(body)) {}
-        response(json::wvalue&& json_value) : json_value(std::move(json_value))
-        {
-            set_header("Content-Type", "application/json");
-        }
-        response(int code, const json::wvalue& json_value) : code(code), body(json::dump(json_value))
-        {
-            set_header("Content-Type", "application/json");
-        }
         response (returnable&& value)
         {
             body = value.dump();
@@ -98,7 +78,6 @@ namespace crow
         response& operator = (response&& r) noexcept
         {
             body = std::move(r.body);
-            json_value = std::move(r.json_value);
             code = r.code;
             headers = std::move(r.headers);
             completed_ = r.completed_;
@@ -114,7 +93,6 @@ namespace crow
         void clear()
         {
             body.clear();
-            json_value.clear();
             code = 200;
             headers.clear();
             completed_ = false;

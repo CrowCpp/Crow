@@ -13,6 +13,7 @@
 #include <vector>
 
 #include "crow/settings.h"
+#include "crow/returnable.h"
 
 #if defined(__GNUG__) || defined(__clang__)
 #define crow_json_likely(x) __builtin_expect(x, 1)
@@ -1160,7 +1161,7 @@ namespace crow
         ///
         /// Value can mean any json value, including a JSON object.
         /// Write means this class is used to primarily assemble JSON objects using keys and values and export those into a string.
-        class wvalue //TODO attempting to make this returnable resulted in a linker error, any help is appreciated
+        class wvalue : public returnable
         {
             friend class crow::mustache::template_t;
         public:
@@ -1178,9 +1179,9 @@ namespace crow
             std::unique_ptr<std::unordered_map<std::string, wvalue>> o; ///< Value if type is a JSON object.
         public:
 
-            wvalue() {}
+            wvalue() : returnable("application/json") {}
             /// Create a write value from a read value (useful for editing JSON strings).
-            wvalue(const rvalue& r)
+            wvalue(const rvalue& r) : returnable("application/json")
             {
                 t_ = r.t();
                 switch(r.t())
@@ -1218,7 +1219,7 @@ namespace crow
                 }
             }
 
-            wvalue(wvalue&& r)
+            wvalue(wvalue&& r) : returnable("application/json")
             {
                 *this = std::move(r);
             }
@@ -1479,98 +1480,102 @@ namespace crow
                 return 1;
             }
 
-            friend void dump_internal(const wvalue& v, std::string& out);
-            friend std::string dump(const wvalue& v);
+        private:
+
+            inline void dump_string(const std::string& str, std::string& out)
+            {
+                out.push_back('"');
+                escape(str, out);
+                out.push_back('"');
+            }
+
+            inline void dump_internal(const wvalue& v, std::string& out)
+            {
+                switch(v.t_)
+                {
+                    case type::Null: out += "null"; break;
+                    case type::False: out += "false"; break;
+                    case type::True: out += "true"; break;
+                    case type::Number:
+                        {
+                            if (v.nt == num_type::Floating_point)
+                            {
+    #ifdef _MSC_VER
+    #define MSC_COMPATIBLE_SPRINTF(BUFFER_PTR, FORMAT_PTR, VALUE) sprintf_s((BUFFER_PTR), 128, (FORMAT_PTR), (VALUE))
+    #else
+    #define MSC_COMPATIBLE_SPRINTF(BUFFER_PTR, FORMAT_PTR, VALUE) sprintf((BUFFER_PTR), (FORMAT_PTR), (VALUE))
+    #endif
+                                char outbuf[128];
+                                MSC_COMPATIBLE_SPRINTF(outbuf, "%g", v.num.d);
+                                out += outbuf;
+    #undef MSC_COMPATIBLE_SPRINTF
+                            }
+                            else if (v.nt == num_type::Signed_integer)
+                            {
+                                out += std::to_string(v.num.si);
+                            }
+                            else
+                            {
+                                out += std::to_string(v.num.ui);
+                            }
+                        }
+                        break;
+                    case type::String: dump_string(v.s, out); break;
+                    case type::List:
+                         {
+                             out.push_back('[');
+                             if (v.l)
+                             {
+                                 bool first = true;
+                                 for(auto& x:*v.l)
+                                 {
+                                     if (!first)
+                                     {
+                                         out.push_back(',');
+                                     }
+                                     first = false;
+                                     dump_internal(x, out);
+                                 }
+                             }
+                             out.push_back(']');
+                         }
+                         break;
+                    case type::Object:
+                         {
+                             out.push_back('{');
+                             if (v.o)
+                             {
+                                 bool first = true;
+                                 for(auto& kv:*v.o)
+                                 {
+                                     if (!first)
+                                     {
+                                         out.push_back(',');
+                                     }
+                                     first = false;
+                                     dump_string(kv.first, out);
+                                     out.push_back(':');
+                                     dump_internal(kv.second, out);
+                                 }
+                             }
+                             out.push_back('}');
+                         }
+                         break;
+                }
+            }
+
+        public:
+            std::string dump()
+            {
+                std::string ret;
+                ret.reserve(estimate_length());
+                dump_internal(*this, ret);
+                return ret;
+            }
+
         };
 
-        inline void dump_string(const std::string& str, std::string& out)
-        {
-            out.push_back('"');
-            escape(str, out);
-            out.push_back('"');
-        }
-        inline void dump_internal(const wvalue& v, std::string& out)
-        {
-            switch(v.t_)
-            {
-                case type::Null: out += "null"; break;
-                case type::False: out += "false"; break;
-                case type::True: out += "true"; break;
-                case type::Number: 
-                    {
-                        if (v.nt == num_type::Floating_point)
-                        {
-#ifdef _MSC_VER
-#define MSC_COMPATIBLE_SPRINTF(BUFFER_PTR, FORMAT_PTR, VALUE) sprintf_s((BUFFER_PTR), 128, (FORMAT_PTR), (VALUE))
-#else
-#define MSC_COMPATIBLE_SPRINTF(BUFFER_PTR, FORMAT_PTR, VALUE) sprintf((BUFFER_PTR), (FORMAT_PTR), (VALUE))
-#endif
-                            char outbuf[128];
-                            MSC_COMPATIBLE_SPRINTF(outbuf, "%g", v.num.d);
-                            out += outbuf;
-#undef MSC_COMPATIBLE_SPRINTF
-                        }
-                        else if (v.nt == num_type::Signed_integer)
-                        {
-                            out += std::to_string(v.num.si);
-                        }
-                        else
-                        {
-                            out += std::to_string(v.num.ui);
-                        }
-                    }
-                    break;
-                case type::String: dump_string(v.s, out); break;
-                case type::List: 
-                     {
-                         out.push_back('[');
-                         if (v.l)
-                         {
-                             bool first = true;
-                             for(auto& x:*v.l)
-                             {
-                                 if (!first)
-                                 {
-                                     out.push_back(',');
-                                 }
-                                 first = false;
-                                 dump_internal(x, out);
-                             }
-                         }
-                         out.push_back(']');
-                     }
-                     break;
-                case type::Object:
-                     {
-                         out.push_back('{');
-                         if (v.o)
-                         {
-                             bool first = true;
-                             for(auto& kv:*v.o)
-                             {
-                                 if (!first)
-                                 {
-                                     out.push_back(',');
-                                 }
-                                 first = false;
-                                 dump_string(kv.first, out);
-                                 out.push_back(':');
-                                 dump_internal(kv.second, out);
-                             }
-                         }
-                         out.push_back('}');
-                     }
-                     break;
-            }
-        }
 
-        inline std::string dump(const wvalue& v)
-        {
-            std::string ret;
-            ret.reserve(v.estimate_length());
-            dump_internal(v, ret);
-            return ret;
-        }
 
         //std::vector<boost::asio::const_buffer> dump_ref(wvalue& v)
         //{
