@@ -1,9 +1,6 @@
 # Dependencies
 
 if(BUILD_EXAMPLES OR BUILD_TESTING)
-	find_package(Tcmalloc)
-  find_package(Threads)
-
   find_program(CCACHE_FOUND ccache)
   if(CCACHE_FOUND)
     message("Found ccache ${CCACHE_FOUND}")
@@ -12,6 +9,9 @@ if(BUILD_EXAMPLES OR BUILD_TESTING)
     set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE ccache)
     set_property(GLOBAL PROPERTY RULE_LAUNCH_LINK ccache)
   endif(CCACHE_FOUND)
+
+	find_package(Tcmalloc)
+  find_package(Threads)
 
   if (MSVC)
     set(Boost_USE_STATIC_LIBS ON)
@@ -32,5 +32,4 @@ if(BUILD_EXAMPLES)
   if(OPENSSL_FOUND)
     include_directories(${OPENSSL_INCLUDE_DIR})
   endif()
-
 endif()

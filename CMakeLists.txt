@@ -39,11 +39,11 @@ include(${CMAKE_SOURCE_DIR}/cmake/dependencies.cmake)
 # this can be alternatively (and as recommended way) done with target_include_directories()
 if(BUILD_EXAMPLES OR BUILD_TESTING)
 	set(PROJECT_INCLUDE_DIR
-		${PROJECT_SOURCE_DIR}/include
+		${CMAKE_SOURCE_DIR}/include
 	)
 
 	include_directories("${PROJECT_INCLUDE_DIR}")
-	include_directories("${PROJECT_SOURCE_DIR}")
+	include_directories("${CMAKE_SOURCE_DIR}")
 	include_directories("${CMAKE_CURRENT_BINARY_DIR}")  # To include crow_all.h
 endif()
 
@@ -51,11 +51,11 @@ endif()
 # Define Targets
 #####################################
 add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/crow_all.h
-	COMMAND python ${PROJECT_SOURCE_DIR}/scripts/merge_all.py
-	${PROJECT_SOURCE_DIR}/include
+	COMMAND python ${CMAKE_SOURCE_DIR}/scripts/merge_all.py
+	${CMAKE_SOURCE_DIR}/include
 	${CMAKE_CURRENT_BINARY_DIR}/crow_all.h
 	WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-	DEPENDS ${PROJECT_SOURCE_DIR}/include/*.h ${PROJECT_SOURCE_DIR}/include/crow/*.h ${PROJECT_SOURCE_DIR}/include/crow/middlewares/*.h
+	DEPENDS ${CMAKE_SOURCE_DIR}/include/*.h ${CMAKE_SOURCE_DIR}/include/crow/*.h ${CMAKE_SOURCE_DIR}/include/crow/middlewares/*.h
 )
 
 # Amalgamation
