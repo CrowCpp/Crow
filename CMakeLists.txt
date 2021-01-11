@@ -24,8 +24,8 @@ endif()
 #####################################
 # Define Options
 #####################################
-option(BUILD_EXAMPLES "Builds the examples in the project" OFF)
-option(BUILD_TESTING  "Builds the tests in the project"    OFF)
+option(BUILD_EXAMPLES "Builds the examples in the project" ON)
+option(BUILD_TESTING  "Builds the tests in the project"    ON)
 
 #####################################
 # Define CMake Module Imports
