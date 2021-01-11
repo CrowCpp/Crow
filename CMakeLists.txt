@@ -30,8 +30,8 @@ option(BUILD_TESTING  "Builds the tests in the project"    OFF)
 #####################################
 # Define CMake Module Imports
 #####################################
-include(${CMAKE_SOURCE_DIR}/cmake/compiler_options.cmake)
 include(${CMAKE_SOURCE_DIR}/cmake/dependencies.cmake)
+include(${CMAKE_SOURCE_DIR}/cmake/compiler_options.cmake)
 
 #####################################
 # Define project-wide imports

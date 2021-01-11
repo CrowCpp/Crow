@@ -23,7 +23,6 @@ if(BUILD_EXAMPLES OR BUILD_TESTING)
   if(Boost_FOUND)
     include_directories(${Boost_INCLUDE_DIR})
   endif()
-
 endif()
 
 if(BUILD_EXAMPLES)

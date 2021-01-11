@@ -5,7 +5,7 @@ if(MSVC)
   list(APPEND compiler_options 
     /W4
     /permissive-
-    $<$<CONFIG:RELEASE>:/O2 /Ob2 >
+    $<$<CONFIG:RELEASE>:/O2 /Ob2>
     $<$<CONFIG:MINSIZEREL>:/O1 /Ob1>
     $<$<CONFIG:RELWITHDEBINFO>:/Zi /O2 /Ob1>
     $<$<CONFIG:DEBUG>:/Zi /Ob0 /Od /RTC1>)
@@ -23,6 +23,3 @@ else(MSVC)
     $<$<CONFIG:DEBUG>:-pg>)
 
 endif()
-
-# This can also be done with target_compile_options() [recommended]
-set(CMAKE_CXX_FLAGS "${compiler_options}")
