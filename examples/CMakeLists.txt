@@ -16,6 +16,7 @@ else ()
   target_compile_options(helloworld PRIVATE "${compiler_options}")
   target_link_libraries(helloworld PUBLIC ${REQUIRED_LIBRARIES})
 
+  # If OpenSSL is not found, the example won't be built
   if (OPENSSL_FOUND)
     add_executable(example_ssl ssl/example_ssl.cpp)
     target_compile_options(example_ssl PRIVATE "${compiler_options}")

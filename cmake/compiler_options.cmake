@@ -17,9 +17,6 @@ else(MSVC)
     -Wextra
     -Wpedantic
     $<$<CONFIG:RELEASE>:-O2>
-    $<$<CONFIG:DEBUG>:-O0>
-    $<$<CONFIG:DEBUG>:-g>
-    $<$<CONFIG:DEBUG>:-p>
-    $<$<CONFIG:DEBUG>:-pg>)
+    $<$<CONFIG:DEBUG>:-O0 -g -p -pg>)
 
 endif()

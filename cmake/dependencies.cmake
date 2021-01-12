@@ -10,14 +10,14 @@ if(BUILD_EXAMPLES OR BUILD_TESTING)
     set_property(GLOBAL PROPERTY RULE_LAUNCH_LINK ccache)
   endif(CCACHE_FOUND)
 
-	find_package(Tcmalloc)
+  find_package(Tcmalloc)
   find_package(Threads)
 
   if (MSVC)
     set(Boost_USE_STATIC_LIBS ON)
-    find_package( Boost 1.52 COMPONENTS system thread regex REQUIRED )
+    find_package( Boost 1.64.0 COMPONENTS system thread regex REQUIRED )
   else()
-    find_package( Boost 1.52 COMPONENTS system thread REQUIRED )
+    find_package( Boost 1.64.0 COMPONENTS system thread REQUIRED )
   endif()
 
   if(Boost_FOUND)
@@ -26,7 +26,8 @@ if(BUILD_EXAMPLES OR BUILD_TESTING)
 endif()
 
 if(BUILD_EXAMPLES)
-  # OpenSSL is required at runtime dynamically by examples
+  # OpenSSL is needed at runtime dynamically by some examples
+  # if it isn't installed, the examples won't be built
   find_package(OpenSSL)
   if(OPENSSL_FOUND)
     include_directories(${OPENSSL_INCLUDE_DIR})
