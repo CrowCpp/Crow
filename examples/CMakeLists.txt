@@ -21,6 +21,8 @@ else ()
     add_executable(example_ssl ssl/example_ssl.cpp)
     target_compile_options(example_ssl PRIVATE "${compiler_options}")
     target_link_libraries(example_ssl PUBLIC ${REQUIRED_LIBRARIES} ${OPENSSL_LIBRARIES})
+  else()
+    message(STATUS "example_ssl Example deactivated - OpenSSL was not found")
   endif()
 
   add_executable(example_websocket websocket/example_ws.cpp)
