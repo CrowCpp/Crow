@@ -10,8 +10,7 @@ set(TEST_SRCS
 )
 
 add_executable(mustachetest ${TEST_SRCS})
-set_target_properties(mustachetest PROPERTIES COMPILE_FLAGS "-Wall -Werror -std=c++14")
-
+target_compile_options(mustachetest PRIVATE "${compiler_options}")
 file(COPY DIRECTORY . DESTINATION ${CMAKE_CURRENT_BINARY_DIR} FILES_MATCHING PATTERN "*.json")
 
 add_custom_command(OUTPUT test.py
