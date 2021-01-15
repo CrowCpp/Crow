@@ -206,7 +206,7 @@ namespace crow
                                 switch(ctx.t())
                                 {
                                     case json::type::Number:
-                                        out += json::dump(ctx);
+                                        out += ctx.dump();
                                         break;
                                     case json::type::String:
                                         if (action.t == ActionType::Tag)

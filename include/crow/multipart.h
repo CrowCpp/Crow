@@ -1,9 +1,11 @@
 #pragma once
+
 #include <string>
 #include <vector>
 #include <sstream>
+
 #include "crow/http_request.h"
-#include "crow/http_response.h"
+#include "crow/returnable.h"
 
 namespace crow
 {
@@ -31,7 +33,7 @@ namespace crow
         };
 
         ///The parsed multipart request/response
-        struct message
+        struct message : public returnable
         {
             ci_map headers;
             std::string boundary; ///< The text boundary that separates different `parts`
@@ -43,7 +45,7 @@ namespace crow
             }
 
             ///Represent all parts as a string (**does not include message headers**)
-            const std::string dump()
+            std::string dump() override
             {
                 std::stringstream str;
                 std::string delimiter = dd + boundary;
@@ -58,7 +60,7 @@ namespace crow
             }
 
             ///Represent an individual part as a string
-            const std::string dump(int part_)
+            std::string dump(int part_)
             {
                 std::stringstream str;
                 part item = parts[part_];
@@ -78,11 +80,12 @@ namespace crow
 
             ///Default constructor using default values
             message(const ci_map& headers, const std::string& boundary, const std::vector<part>& sections)
-              : headers(headers), boundary(boundary), parts(sections){}
+              : returnable("multipart/form-data"), headers(headers), boundary(boundary), parts(sections){}
 
             ///Create a multipart message from a request data
             message(const request& req)
-              : headers(req.headers),
+              : returnable("multipart/form-data"),
+                headers(req.headers),
                 boundary(get_boundary(get_header_value("Content-Type"))),
                 parts(parse_body(req.body))
             {}

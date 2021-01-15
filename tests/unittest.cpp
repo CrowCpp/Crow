@@ -620,35 +620,35 @@ TEST_CASE("json_write")
 {
   json::wvalue x;
   x["message"] = "hello world";
-  CHECK(R"({"message":"hello world"})" == json::dump(x));
+  CHECK(R"({"message":"hello world"})" == x.dump());
   x["message"] = std::string("string value");
-  CHECK(R"({"message":"string value"})" == json::dump(x));
+  CHECK(R"({"message":"string value"})" == x.dump());
   x["message"]["x"] = 3;
-  CHECK(R"({"message":{"x":3}})" == json::dump(x));
+  CHECK(R"({"message":{"x":3}})" == x.dump());
   x["message"]["y"] = 5;
-  CHECK((R"({"message":{"x":3,"y":5}})" == json::dump(x) ||
-           R"({"message":{"y":5,"x":3}})" == json::dump(x)));
+  CHECK((R"({"message":{"x":3,"y":5}})" == x.dump() ||
+           R"({"message":{"y":5,"x":3}})" == x.dump()));
   x["message"] = 5.5;
-  CHECK(R"({"message":5.5})" == json::dump(x));
+  CHECK(R"({"message":5.5})" == x.dump());
   x["message"] = 1234567890;
-  CHECK(R"({"message":1234567890})" == json::dump(x));
+  CHECK(R"({"message":1234567890})" == x.dump());
 
   json::wvalue y;
   y["scores"][0] = 1;
   y["scores"][1] = "king";
   y["scores"][2] = 3.5;
-  CHECK(R"({"scores":[1,"king",3.5]})" == json::dump(y));
+  CHECK(R"({"scores":[1,"king",3.5]})" == y.dump());
 
   y["scores"][2][0] = "real";
   y["scores"][2][1] = false;
   y["scores"][2][2] = true;
-  CHECK(R"({"scores":[1,"king",["real",false,true]]})" == json::dump(y));
+  CHECK(R"({"scores":[1,"king",["real",false,true]]})" == y.dump());
 
   y["scores"]["a"]["b"]["c"] = nullptr;
-  CHECK(R"({"scores":{"a":{"b":{"c":null}}}})" == json::dump(y));
+  CHECK(R"({"scores":{"a":{"b":{"c":null}}}})" == y.dump());
 
   y["scores"] = std::vector<int>{1, 2, 3};
-  CHECK(R"({"scores":[1,2,3]})" == json::dump(y));
+  CHECK(R"({"scores":[1,2,3]})" == y.dump());
 }
 
 TEST_CASE("json_copy_r_to_w_to_r")
@@ -657,7 +657,7 @@ TEST_CASE("json_copy_r_to_w_to_r")
       R"({"smallint":2,"bigint":2147483647,"fp":23.43,"fpsc":2.343e1,"str":"a string","trueval":true,"falseval":false,"nullval":null,"listval":[1,2,"foo","bar"],"obj":{"member":23,"other":"baz"}})");
   json::wvalue w{r};
   json::rvalue x =
-      json::load(json::dump(w));  // why no copy-ctor wvalue -> rvalue?
+      json::load(w.dump());  // why no copy-ctor wvalue -> rvalue?
   CHECK(2 == x["smallint"]);
   CHECK(2147483647 == x["bigint"]);
   CHECK(23.43 == x["fp"]);

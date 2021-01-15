@@ -19,6 +19,10 @@ CROW_ROUTE(app, "/add/<int>/<int>")
 });
 ```
 you can see the first `<int>` is defined as `a` and the second as `b`. If you were to run this and call `http://example.com/add/1/2`, the result would be a page with `3`. Exciting!
+
+##Methods
+You can change the HTTP methods the route uses from just the default `GET` by using `method()`, your route macro should look like `CROW_ROUTE(app, "/add/<int>/<int>").methods(crow::HTTPMethod::GET, crow::HTTPMethod::PATCH)` or `CROW_ROUTE(app, "/add/<int>/<int>").methods("GET"_method, "PATCH"_method)`.
+
 ##Handler
 Basically a piece of code that gets executed whenever the client calls the associated route, usually in the form of a [lambda expression](https://en.cppreference.com/w/cpp/language/lambda). It can be as simple as `#!cpp ([](){return "Hello World"})`.<br><br>
 
@@ -40,5 +44,26 @@ For more information on `crow::response` go [here](../../reference/structcrow_1_
 
 ###return statement
 A `crow::response` is very strictly tied to a route. If you can have something in a response constructor, you can return it in a handler.<br><br>
-The main return type is `std::string`. although you could also return a `crow::json::wvalue` directly. ***(Support for more data types including third party libraries is coming soon)***<br><br>
+The main return type is `std::string`. although you could also return a `crow::json::wvalue` or `crow::multipart::message` directly.<br><br>
 For more information on the specific constructors for a `crow::response` go [here](../../reference/structcrow_1_1response.html).
+
+##Returning custom classes
+If you have your own class you want to return (without converting it to string and returning that), you can use the `crow::returnable` class.<br>
+to use the returnable class, you only need your class to publicly extend `crow::returnable`, add a `dump()` method that returns your class as an `std::string`, and add a constructor that has a `Content-Type` header as a string argument.<br><br>
+
+your class should look like the following:
+```cpp
+class a : public crow::returnable 
+{
+    a() : returnable("text/plain"){};
+
+    ...
+    ...
+    ...
+
+    std::string dump() override
+    {
+        return this.as_string();
+    }
+}
+```
