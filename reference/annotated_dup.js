@@ -108,6 +108,7 @@ var annotated_dup =
       [ "query_string", "classcrow_1_1query__string.html", "classcrow_1_1query__string" ],
       [ "request", "structcrow_1_1request.html", "structcrow_1_1request" ],
       [ "response", "structcrow_1_1response.html", "structcrow_1_1response" ],
+      [ "returnable", "structcrow_1_1returnable.html", "structcrow_1_1returnable" ],
       [ "Router", "classcrow_1_1_router.html", "classcrow_1_1_router" ],
       [ "routing_params", "structcrow_1_1routing__params.html", "structcrow_1_1routing__params" ],
       [ "RuleParameterTraits", "structcrow_1_1_rule_parameter_traits.html", "structcrow_1_1_rule_parameter_traits" ],

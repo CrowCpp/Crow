@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['raw_5furl_369',['raw_url',['../structcrow_1_1request.html#a72f5504a56f9ba70d7d33f86aaf9bc8a',1,'crow::request']]],
-  ['remoteipaddress_370',['remoteIpAddress',['../structcrow_1_1request.html#ac43969a0c47f6477f88f4b49bcab423b',1,'crow::request']]]
+  ['s_5f_371',['s_',['../structcrow_1_1json_1_1detail_1_1r__string.html#a9a0a048fb2cb904e8336926817947448',1,'crow::json::detail::r_string']]]
 ];

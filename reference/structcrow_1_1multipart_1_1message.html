@@ -108,20 +108,29 @@ $(document).ready(function(){initNavTree('structcrow_1_1multipart_1_1message.htm
  <a href="structcrow_1_1multipart_1_1message.html#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="multipart_8h_source.html">multipart.h</a>&gt;</code></p>
+<div class="dynheader">
+Inheritance diagram for crow::multipart::message:</div>
+<div class="dyncontent">
+ <div class="center">
+  <img src="structcrow_1_1multipart_1_1message.png" usemap="#crow::multipart::message_map" alt=""/>
+  <map id="crow::multipart::message_map" name="crow::multipart::message_map">
+<area href="structcrow_1_1returnable.html" title="An abstract class that allows any other class to be returned by a handler." alt="crow::returnable" shape="rect" coords="0,0,148,24"/>
+  </map>
+</div></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a6096bf07a476710b1d4bd5855bf96be3"><td class="memItemLeft" align="right" valign="top"><a id="a6096bf07a476710b1d4bd5855bf96be3"></a>
 const std::string &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>get_header_value</b> (const std::string &amp;key) const</td></tr>
 <tr class="separator:a6096bf07a476710b1d4bd5855bf96be3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab520f76e5beb00183657fbc502755342"><td class="memItemLeft" align="right" valign="top"><a id="ab520f76e5beb00183657fbc502755342"></a>
-const std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structcrow_1_1multipart_1_1message.html#ab520f76e5beb00183657fbc502755342">dump</a> ()</td></tr>
-<tr class="memdesc:ab520f76e5beb00183657fbc502755342"><td class="mdescLeft">&#160;</td><td class="mdescRight">Represent all parts as a string (<b>does not include message headers</b>) <br /></td></tr>
-<tr class="separator:ab520f76e5beb00183657fbc502755342"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a086eb015c51ade904f09d128323fb641"><td class="memItemLeft" align="right" valign="top"><a id="a086eb015c51ade904f09d128323fb641"></a>
-const std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structcrow_1_1multipart_1_1message.html#a086eb015c51ade904f09d128323fb641">dump</a> (int part_)</td></tr>
-<tr class="memdesc:a086eb015c51ade904f09d128323fb641"><td class="mdescLeft">&#160;</td><td class="mdescRight">Represent an individual part as a string. <br /></td></tr>
-<tr class="separator:a086eb015c51ade904f09d128323fb641"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1162e2fe1d00cf30dbe7112860c8d1e8"><td class="memItemLeft" align="right" valign="top"><a id="a1162e2fe1d00cf30dbe7112860c8d1e8"></a>
+std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structcrow_1_1multipart_1_1message.html#a1162e2fe1d00cf30dbe7112860c8d1e8">dump</a> () override</td></tr>
+<tr class="memdesc:a1162e2fe1d00cf30dbe7112860c8d1e8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Represent all parts as a string (<b>does not include message headers</b>) <br /></td></tr>
+<tr class="separator:a1162e2fe1d00cf30dbe7112860c8d1e8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3304c558c40fd11560b6045eeb116edd"><td class="memItemLeft" align="right" valign="top"><a id="a3304c558c40fd11560b6045eeb116edd"></a>
+std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structcrow_1_1multipart_1_1message.html#a3304c558c40fd11560b6045eeb116edd">dump</a> (int part_)</td></tr>
+<tr class="memdesc:a3304c558c40fd11560b6045eeb116edd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Represent an individual part as a string. <br /></td></tr>
+<tr class="separator:a3304c558c40fd11560b6045eeb116edd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0007fa0cadffae1a8d16fac169d1527b"><td class="memItemLeft" align="right" valign="top"><a id="a0007fa0cadffae1a8d16fac169d1527b"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structcrow_1_1multipart_1_1message.html#a0007fa0cadffae1a8d16fac169d1527b">message</a> (const ci_map &amp;headers, const std::string &amp;<a class="el" href="structcrow_1_1multipart_1_1message.html#a56eb4bbf64d4930663ac4d5dd7b77d34">boundary</a>, const std::vector&lt; <a class="el" href="structcrow_1_1multipart_1_1part.html">part</a> &gt; &amp;sections)</td></tr>
 <tr class="memdesc:a0007fa0cadffae1a8d16fac169d1527b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default constructor using default values. <br /></td></tr>
@@ -130,6 +139,10 @@ const std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="e
 &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structcrow_1_1multipart_1_1message.html#a32946a0f39a8d024aaf4643116a7561b">message</a> (const <a class="el" href="structcrow_1_1request.html">request</a> &amp;req)</td></tr>
 <tr class="memdesc:a32946a0f39a8d024aaf4643116a7561b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a multipart message from a request data. <br /></td></tr>
 <tr class="separator:a32946a0f39a8d024aaf4643116a7561b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="inherit_header pub_methods_structcrow_1_1returnable"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_structcrow_1_1returnable')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="structcrow_1_1returnable.html">crow::returnable</a></td></tr>
+<tr class="memitem:a33a00f3824916ae43f3b644d376c9353 inherit pub_methods_structcrow_1_1returnable"><td class="memItemLeft" align="right" valign="top"><a id="a33a00f3824916ae43f3b644d376c9353"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>returnable</b> (std::string ctype)</td></tr>
+<tr class="separator:a33a00f3824916ae43f3b644d376c9353 inherit pub_methods_structcrow_1_1returnable"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
@@ -144,6 +157,10 @@ std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
 std::vector&lt; <a class="el" href="structcrow_1_1multipart_1_1part.html">part</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structcrow_1_1multipart_1_1message.html#a05e9cf3feb60f4534af334b2dd5eadf2">parts</a></td></tr>
 <tr class="memdesc:a05e9cf3feb60f4534af334b2dd5eadf2"><td class="mdescLeft">&#160;</td><td class="mdescRight">The individual parts of the message. <br /></td></tr>
 <tr class="separator:a05e9cf3feb60f4534af334b2dd5eadf2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="inherit_header pub_attribs_structcrow_1_1returnable"><td colspan="2" onclick="javascript:toggleInherit('pub_attribs_structcrow_1_1returnable')"><img src="closed.png" alt="-"/>&#160;Public Attributes inherited from <a class="el" href="structcrow_1_1returnable.html">crow::returnable</a></td></tr>
+<tr class="memitem:a6f2c817b02551d6fb002a91b5587ba34 inherit pub_attribs_structcrow_1_1returnable"><td class="memItemLeft" align="right" valign="top"><a id="a6f2c817b02551d6fb002a91b5587ba34"></a>
+std::string&#160;</td><td class="memItemRight" valign="bottom"><b>content_type</b></td></tr>
+<tr class="separator:a6f2c817b02551d6fb002a91b5587ba34 inherit pub_attribs_structcrow_1_1returnable"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>The parsed multipart request/response. </p>
@@ -157,7 +174,7 @@ std::vector&lt; <a class="el" href="structcrow_1_1multipart_1_1part.html">part</
 			<ul>
 				<li class="navelem"><b>crow</b></li><li class="navelem"><a class="el" href="namespacecrow_1_1multipart.html">multipart</a></li><li class="navelem"><a class="el" href="structcrow_1_1multipart_1_1message.html">message</a></li>
 				<li class="footer">
-					Generated on Thu Jan 14 2021 for Crow by <a href="http://www.doxygen.org/index.html">
+					Generated on Fri Jan 15 2021 for Crow by <a href="http://www.doxygen.org/index.html">
 					<img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.17.
 					Dark theme by <a href="http://majerle.eu" target="_new">Tilen Majerle</a>. Edited by <a href="https://github.com/The-EDev" target="_new">Farook Al-Sammarraie</a>. All rights reserved.
 				</li>

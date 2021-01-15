@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['params_367',['params',['../structcrow_1_1multipart_1_1header.html#a18422d09aac9c5d5751799862d41a73c',1,'crow::multipart::header']]],
-  ['parts_368',['parts',['../structcrow_1_1multipart_1_1message.html#a05e9cf3feb60f4534af334b2dd5eadf2',1,'crow::multipart::message']]]
+  ['raw_5furl_369',['raw_url',['../structcrow_1_1request.html#a72f5504a56f9ba70d7d33f86aaf9bc8a',1,'crow::request']]],
+  ['remoteipaddress_370',['remoteIpAddress',['../structcrow_1_1request.html#ac43969a0c47f6477f88f4b49bcab423b',1,'crow::request']]]
 ];

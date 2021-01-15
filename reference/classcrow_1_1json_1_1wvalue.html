@@ -108,6 +108,15 @@ $(document).ready(function(){initNavTree('classcrow_1_1json_1_1wvalue.html','');
  <a href="classcrow_1_1json_1_1wvalue.html#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="json_8h_source.html">json.h</a>&gt;</code></p>
+<div class="dynheader">
+Inheritance diagram for crow::json::wvalue:</div>
+<div class="dyncontent">
+ <div class="center">
+  <img src="classcrow_1_1json_1_1wvalue.png" usemap="#crow::json::wvalue_map" alt=""/>
+  <map id="crow::json::wvalue_map" name="crow::json::wvalue_map">
+<area href="structcrow_1_1returnable.html" title="An abstract class that allows any other class to be returned by a handler." alt="crow::returnable" shape="rect" coords="0,0,115,24"/>
+  </map>
+</div></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
@@ -192,18 +201,26 @@ std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bott
 <tr class="memitem:a5af23d208ed3d066a0fb5339350978c6"><td class="memItemLeft" align="right" valign="top"><a id="a5af23d208ed3d066a0fb5339350978c6"></a>
 size_t&#160;</td><td class="memItemRight" valign="bottom"><b>estimate_length</b> () const</td></tr>
 <tr class="separator:a5af23d208ed3d066a0fb5339350978c6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3c1d23310e96667629f0a74de09f46ba"><td class="memItemLeft" align="right" valign="top"><a id="a3c1d23310e96667629f0a74de09f46ba"></a>
+std::string&#160;</td><td class="memItemRight" valign="bottom"><b>dump</b> ()</td></tr>
+<tr class="separator:a3c1d23310e96667629f0a74de09f46ba"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="inherit_header pub_methods_structcrow_1_1returnable"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_structcrow_1_1returnable')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="structcrow_1_1returnable.html">crow::returnable</a></td></tr>
+<tr class="memitem:a33a00f3824916ae43f3b644d376c9353 inherit pub_methods_structcrow_1_1returnable"><td class="memItemLeft" align="right" valign="top"><a id="a33a00f3824916ae43f3b644d376c9353"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>returnable</b> (std::string ctype)</td></tr>
+<tr class="separator:a33a00f3824916ae43f3b644d376c9353 inherit pub_methods_structcrow_1_1returnable"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="friends"></a>
 Friends</h2></td></tr>
 <tr class="memitem:aedfa8358796846a88c67b51d3b280461"><td class="memItemLeft" align="right" valign="top"><a id="aedfa8358796846a88c67b51d3b280461"></a>
 class&#160;</td><td class="memItemRight" valign="bottom"><b>crow::mustache::template_t</b></td></tr>
 <tr class="separator:aedfa8358796846a88c67b51d3b280461"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae0b02e7e067c9c3e602f94d070229748"><td class="memItemLeft" align="right" valign="top"><a id="ae0b02e7e067c9c3e602f94d070229748"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>dump_internal</b> (const <a class="el" href="classcrow_1_1json_1_1wvalue.html">wvalue</a> &amp;v, std::string &amp;out)</td></tr>
-<tr class="separator:ae0b02e7e067c9c3e602f94d070229748"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5ba6a4a466e9612dd301090293ec439d"><td class="memItemLeft" align="right" valign="top"><a id="a5ba6a4a466e9612dd301090293ec439d"></a>
-std::string&#160;</td><td class="memItemRight" valign="bottom"><b>dump</b> (const <a class="el" href="classcrow_1_1json_1_1wvalue.html">wvalue</a> &amp;v)</td></tr>
-<tr class="separator:a5ba6a4a466e9612dd301090293ec439d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="inherited"></a>
+Additional Inherited Members</h2></td></tr>
+<tr class="inherit_header pub_attribs_structcrow_1_1returnable"><td colspan="2" onclick="javascript:toggleInherit('pub_attribs_structcrow_1_1returnable')"><img src="closed.png" alt="-"/>&#160;Public Attributes inherited from <a class="el" href="structcrow_1_1returnable.html">crow::returnable</a></td></tr>
+<tr class="memitem:a6f2c817b02551d6fb002a91b5587ba34 inherit pub_attribs_structcrow_1_1returnable"><td class="memItemLeft" align="right" valign="top"><a id="a6f2c817b02551d6fb002a91b5587ba34"></a>
+std::string&#160;</td><td class="memItemRight" valign="bottom"><b>content_type</b></td></tr>
+<tr class="separator:a6f2c817b02551d6fb002a91b5587ba34 inherit pub_attribs_structcrow_1_1returnable"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>JSON write value. </p>
@@ -218,7 +235,7 @@ std::string&#160;</td><td class="memItemRight" valign="bottom"><b>dump</b> (cons
 			<ul>
 				<li class="navelem"><b>crow</b></li><li class="navelem"><b>json</b></li><li class="navelem"><a class="el" href="classcrow_1_1json_1_1wvalue.html">wvalue</a></li>
 				<li class="footer">
-					Generated on Thu Jan 14 2021 for Crow by <a href="http://www.doxygen.org/index.html">
+					Generated on Fri Jan 15 2021 for Crow by <a href="http://www.doxygen.org/index.html">
 					<img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.17.
 					Dark theme by <a href="http://majerle.eu" target="_new">Tilen Majerle</a>. Edited by <a href="https://github.com/The-EDev" target="_new">Farook Al-Sammarraie</a>. All rights reserved.
 				</li>

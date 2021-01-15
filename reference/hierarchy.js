@@ -88,7 +88,6 @@ var hierarchy =
       [ "crow::json::detail::r_string", "structcrow_1_1json_1_1detail_1_1r__string.html", null ]
     ] ],
     [ "crow::logger", "classcrow_1_1logger.html", null ],
-    [ "crow::multipart::message", "structcrow_1_1multipart_1_1message.html", null ],
     [ "crow::Trie::Node", "structcrow_1_1_trie_1_1_node.html", null ],
     [ "crow::black_magic::OutOfRange", "structcrow_1_1black__magic_1_1_out_of_range.html", null ],
     [ "crow::black_magic::parameter_tag< T >", "structcrow_1_1black__magic_1_1parameter__tag.html", null ],
@@ -103,6 +102,10 @@ var hierarchy =
     [ "crow::detail::routing_handler_call_helper::Wrapped< Func, ArgsWrapped >::req_handler_wrapper< Req, Args >", "structcrow_1_1detail_1_1routing__handler__call__helper_1_1_wrapped_1_1req__handler__wrapper.html", null ],
     [ "crow::request", "structcrow_1_1request.html", null ],
     [ "crow::response", "structcrow_1_1response.html", null ],
+    [ "crow::returnable", "structcrow_1_1returnable.html", [
+      [ "crow::json::wvalue", "classcrow_1_1json_1_1wvalue.html", null ],
+      [ "crow::multipart::message", "structcrow_1_1multipart_1_1message.html", null ]
+    ] ],
     [ "crow::Router", "classcrow_1_1_router.html", null ],
     [ "crow::routing_params", "structcrow_1_1routing__params.html", null ],
     [ "crow::RuleParameterTraits< T >", "structcrow_1_1_rule_parameter_traits.html", null ],
@@ -145,6 +148,5 @@ var hierarchy =
     [ "type", null, [
       [ "crow::black_magic::contains< Tp, Head, Rest... >", "structcrow_1_1black__magic_1_1contains_3_01_tp_00_01_head_00_01_rest_8_8_8_01_4.html", null ]
     ] ],
-    [ "crow::detail::routing_handler_call_helper::Wrapped< Func, ArgsWrapped >", "structcrow_1_1detail_1_1routing__handler__call__helper_1_1_wrapped.html", null ],
-    [ "crow::json::wvalue", "classcrow_1_1json_1_1wvalue.html", null ]
+    [ "crow::detail::routing_handler_call_helper::Wrapped< Func, ArgsWrapped >", "structcrow_1_1detail_1_1routing__handler__call__helper_1_1_wrapped.html", null ]
 ];

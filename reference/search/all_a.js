@@ -1,7 +1,7 @@
 var searchData=
 [
-  ['last_5felement_5ftype_95',['last_element_type',['../structcrow_1_1black__magic_1_1last__element__type.html',1,'crow::black_magic']]],
-  ['last_5felement_5ftype_3c_3e_96',['last_element_type&lt;&gt;',['../structcrow_1_1black__magic_1_1last__element__type_3_4.html',1,'crow::black_magic']]],
-  ['logger_97',['logger',['../classcrow_1_1logger.html',1,'crow']]],
-  ['loglevel_98',['loglevel',['../classcrow_1_1_crow.html#a846a333fb4a6be11e4de1ac730a1f68f',1,'crow::Crow']]]
+  ['message_98',['message',['../structcrow_1_1multipart_1_1message.html',1,'crow::multipart::message'],['../structcrow_1_1multipart_1_1message.html#a0007fa0cadffae1a8d16fac169d1527b',1,'crow::multipart::message::message(const ci_map &amp;headers, const std::string &amp;boundary, const std::vector&lt; part &gt; &amp;sections)'],['../structcrow_1_1multipart_1_1message.html#a32946a0f39a8d024aaf4643116a7561b',1,'crow::multipart::message::message(const request &amp;req)']]],
+  ['moved_99',['moved',['../structcrow_1_1response.html#a760bca5f5fdee03518d59d9538ce5432',1,'crow::response']]],
+  ['moved_5fperm_100',['moved_perm',['../structcrow_1_1response.html#a9ee58f8b775b2566418b298fe33c0dcc',1,'crow::response']]],
+  ['multithreaded_101',['multithreaded',['../classcrow_1_1_crow.html#a0149b20b7f6c0123292286f54638d456',1,'crow::Crow']]]
 ];
