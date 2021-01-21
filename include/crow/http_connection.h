@@ -379,6 +379,7 @@ namespace crow
                     default:
                         break;
                 }
+            }
 
             //if there is a redirection with a partial URL, treat the URL as a route.
             std::string location = res.get_header_value("Location");
