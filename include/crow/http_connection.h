@@ -357,7 +357,6 @@ namespace crow
                 (*middlewares_, ctx_, req_, res);
             }
 
-
             std::string accept_encoding = req_.get_header_value("Accept-Encoding");
             if (!accept_encoding.empty() && res.compressed)
             {
@@ -380,6 +379,17 @@ namespace crow
                     default:
                         break;
                 }
+
+            //if there is a redirection with a partial URL, treat the URL as a route.
+            std::string location = res.get_header_value("Location");
+            if (!location.empty() && location.find("://", 0) == std::string::npos)
+            {
+                #ifdef CROW_ENABLE_SSL
+                location.insert(0, "https://" + req_.get_header_value("Host"));
+                #else
+                location.insert(0, "http://" + req_.get_header_value("Host"));
+                #endif
+                res.set_header("location", location);
             }
 
            prepare_buffers();
@@ -415,8 +425,11 @@ namespace crow
 
                 {300, "HTTP/1.1 300 Multiple Choices\r\n"},
                 {301, "HTTP/1.1 301 Moved Permanently\r\n"},
-                {302, "HTTP/1.1 302 Moved Temporarily\r\n"},
+                {302, "HTTP/1.1 302 Found\r\n"},
+                {303, "HTTP/1.1 303 See Other\r\n"},
                 {304, "HTTP/1.1 304 Not Modified\r\n"},
+                {307, "HTTP/1.1 307 Temporary Redirect\r\n"},
+                {308, "HTTP/1.1 308 Permanent Redirect\r\n"},
 
                 {400, "HTTP/1.1 400 Bad Request\r\n"},
                 {401, "HTTP/1.1 401 Unauthorized\r\n"},

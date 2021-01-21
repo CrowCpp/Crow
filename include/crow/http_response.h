@@ -100,7 +100,37 @@ namespace crow
             completed_ = false;
         }
 
+        /// Return a "Temporary Redirect" response.
+        ///
+        /// Location can either be a route or a full URL.
         void redirect(const std::string& location)
+        {
+            code = 307;
+            set_header("Location", location);
+        }
+
+        /// Return a "Permanent Redirect" response.
+        ///
+        /// Location can either be a route or a full URL.
+        void redirect_perm(const std::string& location)
+        {
+            code = 308;
+            set_header("Location", location);
+        }
+
+        /// Return a "Found (Moved Temporarily)" response.
+        ///
+        /// Location can either be a route or a full URL.
+        void moved(const std::string& location)
+        {
+            code = 302;
+            set_header("Location", location);
+        }
+
+        /// Return a "Moved Permanently" response.
+        ///
+        /// Location can either be a route or a full URL.
+        void moved_perm(const std::string& location)
         {
             code = 301;
             set_header("Location", location);

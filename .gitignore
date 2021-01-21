@@ -47,3 +47,6 @@ html/
 *.cxxflags
 *.files
 *.includes
+
+#VS-Code
+.vscode

@@ -26,8 +26,8 @@ namespace crow
     struct request
     {
         HTTPMethod method;
-        std::string raw_url; ///< The full URL containing the host.
-        std::string url; ///< The Endpoint.
+        std::string raw_url; ///< The full URL containing the `?` and URL parameters.
+        std::string url; ///< The endpoint without any parameters.
         query_string url_params; ///< The parameters associated with the request. (everything after the `?`)
         ci_map headers;
         std::string body;

@@ -6,10 +6,9 @@ set(TEST_SRCS
 )
 
 add_executable(unittest ${TEST_SRCS})
-target_link_libraries(unittest ${Boost_LIBRARIES})
-target_link_libraries(unittest ${CMAKE_THREAD_LIBS_INIT})
-target_link_libraries(unittest ${ZLIB_LIBRARIES})
-set_target_properties(unittest PROPERTIES COMPILE_FLAGS "-Wall -Werror -std=c++14")
+target_link_libraries(unittest ${Boost_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} ${ZLIB_LIBRARIES})
+# set target compile options as defined in the cmake/compiler_options.cmake Module
+target_compile_options(unittest PRIVATE ${compiler_options})
 
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
   set_target_properties(unittest PROPERTIES COMPILE_FLAGS "--coverage -fprofile-arcs -ftest-coverage")
