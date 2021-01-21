@@ -158,6 +158,7 @@ namespace crow
         void set_static_file_info(std::string path){
             file_info.path = path;
             file_info.statResult = stat(file_info.path.c_str(), &file_info.statbuf);
+            compressed = false;
             if (file_info.statResult == 0)
             {
                 std::size_t last_dot = path.find_last_of(".");
