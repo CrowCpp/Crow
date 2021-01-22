@@ -44,14 +44,14 @@ If you've downloaded `crow_all.h`, you can skip to step 4.
 To build a crow Project, do the following:
 
 ###GCC (G++)
- - Release: `g++ main.cpp -lpthread -lboost_system`.
- - Debug: `g++ main.cpp -ggdb -lpthread -lboost_system -D CROW_ENABLE_DEBUG`.
- - SSL: `g++ main.cpp -lssl -lcrypto -lpthread -lboost_system -D CROW_ENABLE_SSL`.
+ - Release: `g++ main.cpp -lpthread -lboost_system -lz`.
+ - Debug: `g++ main.cpp -ggdb -lpthread -lboost_system -lz -D CROW_ENABLE_DEBUG`.
+ - SSL: `g++ main.cpp -lssl -lcrypto -lpthread -lboost_system -lz -D CROW_ENABLE_SSL`.
 
 ###Clang
- - Release: `clang++ main.cpp -lpthread -lboost_system`.
- - Debug: `clang++ main.cpp -g -lpthread -lboost_system -DCROW_ENABLE_DEBUG`.
- - SSL: `clang++ main.cpp -lssl -lcrypto -lpthread -lboost_system -DCROW_ENABLE_SSL`.
+ - Release: `clang++ main.cpp -lpthread -lboost_system -lz`.
+ - Debug: `clang++ main.cpp -g -lpthread -lboost_system -lz -DCROW_ENABLE_DEBUG`.
+ - SSL: `clang++ main.cpp -lssl -lcrypto -lpthread -lboost_system -lz -DCROW_ENABLE_SSL`.
 
 ###Microsoft Visual Studio
 ***Help needed***
@@ -61,6 +61,7 @@ To build a crow Project, do the following:
 Add the following to your `CMakeLists.txt`:
 ``` cmake linenums="1"
 find_package(Threads)
+find_package(ZLIB)
 find_package(OpenSSL)
 
 if(OPENSSL_FOUND)
