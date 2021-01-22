@@ -28,6 +28,7 @@ namespace crow
         int code{200}; ///< The Status code for the response.
         std::string body; ///< The actual payload containing the response data.
         ci_map headers; ///< HTTP headers.
+        bool compressed = true; ///< If compression is enabled and this is false, the individual response will not be compressed.
 
         /// Set the value of an existing header in the response.
         void set_header(std::string key, std::string value)
@@ -186,6 +187,7 @@ namespace crow
         void set_static_file_info(std::string path){
             file_info.path = path;
             file_info.statResult = stat(file_info.path.c_str(), &file_info.statbuf);
+            compressed = false;
             if (file_info.statResult == 0)
             {
                 std::size_t last_dot = path.find_last_of(".");

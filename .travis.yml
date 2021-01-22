@@ -32,6 +32,7 @@ addons:
       - doxygen
       - mkdocs
       - graphviz
+      - zlib1g-dev
 
 before_install:
   - if [ "$TRAVIS_COMPILER" == "gcc" -a "$TRAVIS_CPU_ARCH" == "amd64" ]; then export PUSH_COVERAGE=ON; fi

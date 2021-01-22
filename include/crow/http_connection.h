@@ -16,6 +16,7 @@
 #include "crow/dumb_timer_queue.h"
 #include "crow/middleware_context.h"
 #include "crow/socket_adaptors.h"
+#include "crow/compression.h"
 
 namespace crow
 {
@@ -354,6 +355,30 @@ namespace crow
                     decltype(ctx_),
                     decltype(*middlewares_)>
                 (*middlewares_, ctx_, req_, res);
+            }
+
+            std::string accept_encoding = req_.get_header_value("Accept-Encoding");
+            if (!accept_encoding.empty() && res.compressed)
+            {
+                switch (handler_->compression_algorithm())
+                {
+                    case compression::DEFLATE:
+                        if (accept_encoding.find("deflate") != std::string::npos)
+                        {
+                            res.body = compression::compress_string(res.body, compression::algorithm::DEFLATE);
+                            res.set_header("Content-Encoding", "deflate");
+                        }
+                        break;
+                    case compression::GZIP:
+                        if (accept_encoding.find("gzip") != std::string::npos)
+                        {
+                            res.body = compression::compress_string(res.body, compression::algorithm::GZIP);
+                            res.set_header("Content-Encoding", "gzip");
+                        }
+                        break;
+                    default:
+                        break;
+                }
             }
 
             //if there is a redirection with a partial URL, treat the URL as a route.

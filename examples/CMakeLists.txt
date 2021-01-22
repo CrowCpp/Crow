@@ -5,6 +5,7 @@ project (crow_examples)
 list(APPEND REQUIRED_LIBRARIES 
   ${Boost_LIBRARIES}
   ${CMAKE_THREAD_LIBS_INIT}
+  z
 )
 
 if (MSVC)
@@ -15,6 +16,10 @@ else ()
   add_executable(helloworld helloworld.cpp)
   target_compile_options(helloworld PRIVATE "${compiler_options}")
   target_link_libraries(helloworld PUBLIC ${REQUIRED_LIBRARIES})
+
+  add_executable(example_compression example_compression.cpp)
+  target_compile_options(example_compression PRIVATE "${compiler_options}")
+  target_link_libraries(example_compression ${REQUIRED_LIBRARIES})
 
   # If OpenSSL is not found, the example won't be built
   if (OPENSSL_FOUND)
