@@ -4,6 +4,7 @@ var dir_d22c1cb87b72f01e1a7f207eb3bfd1ca =
     [ "app.h", "app_8h_source.html", null ],
     [ "ci_map.h", "ci__map_8h_source.html", null ],
     [ "common.h", "common_8h_source.html", null ],
+    [ "compression.h", "compression_8h_source.html", null ],
     [ "dumb_timer_queue.h", "dumb__timer__queue_8h_source.html", null ],
     [ "http_connection.h", "http__connection_8h_source.html", null ],
     [ "http_request.h", "http__request_8h_source.html", null ],

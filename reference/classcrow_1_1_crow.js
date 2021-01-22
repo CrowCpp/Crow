@@ -5,6 +5,7 @@ var classcrow_1_1_crow =
     [ "server_t", "classcrow_1_1_crow.html#a5df810d2619e31c2f024cc4e45898997", null ],
     [ "Crow", "classcrow_1_1_crow.html#a7a6ce30b00d6d2beb901ffbb3160c137", null ],
     [ "bindaddr", "classcrow_1_1_crow.html#a75777f82b6519c86d71446eb9285d774", null ],
+    [ "compression_algorithm", "classcrow_1_1_crow.html#a261b73d1f1f463856cceee2c589cbbf4", null ],
     [ "concurrency", "classcrow_1_1_crow.html#a41686e6025705c1ab379b5ec71bbf983", null ],
     [ "debug_print", "classcrow_1_1_crow.html#a839c1e6f82d577308eb6f0d4948a4fbb", null ],
     [ "get_context", "classcrow_1_1_crow.html#ab9f401a95ab8fdc6ec65d542899954cc", null ],
@@ -26,6 +27,7 @@ var classcrow_1_1_crow =
     [ "stop", "classcrow_1_1_crow.html#a0266672657128919ab9a067d93f3868f", null ],
     [ "tick", "classcrow_1_1_crow.html#a068042431b0be5911ee1689a285f4693", null ],
     [ "timeout", "classcrow_1_1_crow.html#a47ed9a118820f6e6ba0b2bc37f0997fb", null ],
+    [ "use_compression", "classcrow_1_1_crow.html#ae53a1544edf04f08eeb2e35f01dc25d3", null ],
     [ "validate", "classcrow_1_1_crow.html#ab9a22c981e0afec0d55ee234683a6d38", null ],
     [ "wait_for_server_start", "classcrow_1_1_crow.html#a5e39821ccc9cbf8c6400fd86fc406c21", null ]
 ];
