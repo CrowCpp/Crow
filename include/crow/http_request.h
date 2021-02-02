@@ -5,6 +5,7 @@
 #include "crow/common.h"
 #include "crow/ci_map.h"
 #include "crow/query_string.h"
+#include "crow/socket_adaptors.h"
 
 namespace crow
 {
@@ -35,6 +36,7 @@ namespace crow
 
         void* middleware_context{};
         boost::asio::io_service* io_service{};
+        SocketAdaptor* adaptor;
 
         /// Construct an empty request. (sets the method to `GET`)
         request()

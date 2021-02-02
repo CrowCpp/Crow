@@ -232,10 +232,21 @@ namespace crow
             }
         }
 
+        template<typename Adaptor>
+        void send_chunk(Adaptor& adaptor, const std::string& data)
+        {
+            manual_ = true;
+            end();
+            std::vector<boost::asio::const_buffer> buffers;
+            buffers.push_back(boost::asio::buffer(data));
+            write_buffer_list(buffers, adaptor);
+        }
+
         private:
             bool completed_{};
             std::function<void()> complete_request_handler_;
             std::function<bool()> is_alive_helper_;
+            bool manual_ = false;
             static_file_info file_info;
 
             template<typename Stream, typename Adaptor>

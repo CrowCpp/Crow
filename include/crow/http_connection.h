@@ -319,6 +319,7 @@ namespace crow
                 ctx_ = detail::context<Middlewares...>();
                 req.middleware_context = (void*)&ctx_;
                 req.io_service = &adaptor_.get_io_service();
+                req.adaptor = &adaptor_;
                 detail::middleware_call_helper<0, decltype(ctx_), decltype(*middlewares_), Middlewares...>(*middlewares_, req, res, ctx_);
 
                 if (!res.completed_)
@@ -393,15 +394,22 @@ namespace crow
                 res.set_header("location", location);
             }
 
-           prepare_buffers();
-            CROW_LOG_INFO << "Response: " << this << ' ' << req_.raw_url << ' ' << res.code << ' ' << close_connection_;
-            if (res.is_static_type())
+            prepare_buffers();
+            CROW_LOG_INFO << "Response: " << this << ' ' << req_.raw_url << ' ' << res.code << (res.manual_ ? " Manual " : " ") << close_connection_;
+            if (!res.manual_)
             {
-                do_write_static();
-            }else {
-                do_write_general();
+                if (res.is_static_type())
+                {
+                    do_write_static();
+                }else {
+                    do_write_general();
+                }
             }
-
+            else
+            {
+                is_writing = true;
+                boost::asio::write(adaptor_.socket(), buffers_);
+            }
         }
 
     private:
@@ -472,7 +480,7 @@ namespace crow
 
             }
 
-            if (!res.headers.count("content-length"))
+            if (!res.headers.count("content-length") && !res.manual_)
             {
                 content_length_ = std::to_string(res.body.size());
                 static std::string content_length_tag = "Content-Length: ";
