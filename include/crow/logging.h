@@ -51,7 +51,7 @@ namespace crow
 
                 tm my_tm;
 
-#if defined(_MSC_VER) or defined(__MINGW32__)
+#if defined(_MSC_VER) || defined(__MINGW32__)
                 gmtime_s(&my_tm, &t);
 #else
                 gmtime_r(&t, &my_tm);

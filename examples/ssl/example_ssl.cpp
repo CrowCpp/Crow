@@ -4,6 +4,7 @@
 int main()
 {
     crow::SimpleApp app;
+    http_connection_flags f;
 
     CROW_ROUTE(app, "/")
     ([]() {
