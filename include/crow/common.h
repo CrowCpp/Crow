@@ -6,7 +6,6 @@
 #include <iostream>
 #include "crow/utility.h"
 
-#undef DELETE
 namespace crow
 {
     enum class HTTPMethod
