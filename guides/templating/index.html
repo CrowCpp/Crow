@@ -768,7 +768,7 @@
 <li>Context</li>
 </ul>
 <h3 id="page">Page</h3>
-<p>The HTML page (including the mustache tags). It is usually loaded into <code>crow::mustache::template_t</code>. It needs to be placed in <code>templates</code> directory (relative to where the crow executable is).<br><br></p>
+<p>The HTML page (including the mustache tags). It is usually loaded into <code>crow::mustache::template_t</code>. It needs to be placed in the <em>templates directory</em> which should be directly inside the current working directory of the crow executable.<br><br></p>
 <p>For more information on how to formulate a template, see <a href="http://mustache.github.io/mustache.5.html">this mustache manual</a>.</p>
 <h3 id="context">Context</h3>
 <p>A JSON object containing the tags as keys and their values. <code>crow::mustache::context</code> is actually a <a href="../json#wvalue">crow::json::wvalue</a>.</p>

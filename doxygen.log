@@ -81,7 +81,7 @@ Parsing file /home/travis/build/CrowCpp/crow/include/c/home/travis/build/CrowCpp
 /home/travis/build/CrowCpp/crow/include/crow/routing.h:607: warning: Compound crow::Trie::Node is not documented.
 /home/travis/build/CrowCpp/crow/include/crow/routing.h:248: warning: Compound crow::detail::routing_handler_call_helper::Wrapped::handler_type_helper< const request &, response &, Args... > is not documented.
 /home/travis/build/CrowCpp/crow/include/crow/utility.h:161: warning: Compound crow::black_magic::compute_parameter_tag_from_args_list< Arg, Args... > is not documented.
-/home/travis/build/CrowCpp/crow/include/crow/mustache.h:42: warning: Compound crow::mustache::Action is not documented.
+/home/travis/build/CrowCpp/crow/include/crow/mustache.h:43: warning: Compound crow::mustache::Action is not documented.
 /home/travis/build/CrowCpp/crow/include/crow/middleware_context.h:33: warning: Compound crow::detail::partial_context<> is not documented.
 /home/travis/build/CrowCpp/crow/include/crow/utility.h:437: warning: Compound crow::detail::get_index_of_element_from_tuple_by_type_impl< T, N, T, Args... > is not documented.
 /home/travis/build/CrowCpp/crow/include/crow/http_server.h:27: warning: Compound crow::Server is not documented.
@@ -89,7 +89,7 @@ Parsing file /home/travis/build/CrowCpp/crow/include/c/home/travis/build/CrowCpp
 /home/travis/build/CrowCpp/crow/include/crow/routing.h:241: warning: Compound crow::detail::routing_handler_call_helper::Wrapped::handler_type_helper< const request &, Args... > is not documented.
 /home/travis/build/CrowCpp/crow/include/crow/middleware_context.h:17: warning: Compound crow::detail::partial_context is not documented.
 /home/travis/build/CrowCpp/crow/include/crow/routing.h:173: warning: Compound crow::detail::routing_handler_call_helper::Wrapped is not documented.
-/home/travis/build/CrowCpp/crow/include/crow/mustache.h:17: warning: Compound crow::mustache::invalid_template_exception is not documented.
+/home/travis/build/CrowCpp/crow/include/crow/mustache.h:18: warning: Compound crow::mustache::invalid_template_exception is not documented.
 /home/travis/build/CrowCpp/crow/include/crow/logging.h:43: warning: Compound crow::logger is not documented.
 /home/travis/build/CrowCpp/crow/include/crow/routing.h:149: warning: Compound crow::detail::routing_handler_call_helper::call< F, NInt, NUint, NDouble, NString, black_magic::S< std::string, Args1... >, black_magic::S< Args2... > > is not documented.
 /home/travis/build/CrowCpp/crow/include/crow/utility.h:155: warning: Compound crow::black_magic::compute_parameter_tag_from_args_list<> is not documented.
@@ -627,17 +627,17 @@ Generating docs for nested compound crow::detail/home/travis/build/CrowCpp/crow/
 /home/travis/build/CrowCpp/crow/include/crow/returnable.h:13: warning: Member returnable(std::string ctype) (function) of class crow::returnable is not documented.
 /home/travis/build/CrowCpp/crow/include/crow/multipart.h:38: warning: Member headers (variable) of class crow::multipart::message is not documented.
 /home/travis/build/CrowCpp/crow/include/crow/returnable.h:10: warning: Member content_type (variable) of class crow::returnable is not documented.
-/home/travis/build/CrowCpp/crow/include/crow/mustache.h:47: warning: Member Action(ActionType t, int start, int end, int pos=0) (function) of class crow::mustache::Action is not documented.
-/home/travis/build/CrowCpp/crow/include/crow/mustache.h:43: warning: Member start (variable) of class crow::mustache::Action is not documented.
-/home/travis/build/CrowCpp/crow/include/crow/mustache.h:44: warning: Member end (variable) of class crow::mustache::Action is not documented.
-/home/travis/build/CrowCpp/crow/include/crow/mustache.h:45: warning: Member pos (variable) of class crow::mustache::Action is not documented.
-/home/travis/build/CrowCpp/crow/include/crow/mustache.h:46: warning: Member t (variable) of class crow::mustache::Action is not documented.
-/home/travis/build/CrowCpp/crow/include/crow/mustache.h:19: warning: Member invalid_template_exception(const std::string &msg) (function) of class crow::mustache::invalid_template_exception is not documented.
-/home/travis/build/CrowCpp/crow/include/crow/mustache.h:23: warning: Member what() const (function) of class crow::mustache::invalid_template_exception is not documented.
-/home/travis/build/CrowCpp/crow/include/crow/mustache.h:27: warning: Member msg (variable) of class crow::mustache::invalid_template_exception is not documented.
-/home/travis/build/CrowCpp/crow/include/crow/mustache.h:56: warning: Member template_t(std::string body) (function) of class crow::mustache::template_t is not documented.
-/home/travis/build/CrowCpp/crow/include/crow/mustache.h:315: warning: Member render() (function) of class crow::mustache::template_t is not documented.
-/home/travis/build/CrowCpp/crow/include/crow/mustache.h:325: warning: Member render(context &ctx) (function) of class crow::mustache::template_t is not documented.
+/home/travis/build/CrowCpp/crow/include/crow/mustache.h:48: warning: Member Action(ActionType t, int start, int end, int pos=0) (function) of class crow::mustache::Action is not documented.
+/home/travis/build/CrowCpp/crow/include/crow/mustache.h:44: warning: Member start (variable) of class crow::mustache::Action is not documented.
+/home/travis/build/CrowCpp/crow/include/crow/mustache.h:45: warning: Member end (variable) of class crow::mustache::Action is not documented.
+/home/travis/build/CrowCpp/crow/include/crow/mustache.h:46: warning: Member pos (variable) of class crow::mustache::Action is not documented.
+/home/travis/build/CrowCpp/crow/include/crow/mustache.h:47: warning: Member t (variable) of class crow::mustache::Action is not documented.
+/home/travis/build/CrowCpp/crow/include/crow/mustache.h:20: warning: Member invalid_template_exception(const std::string &msg) (function) of class crow::mustache::invalid_template_exception is not documented.
+/home/travis/build/CrowCpp/crow/include/crow/mustache.h:24: warning: Member what() const (function) of class crow::mustache::invalid_template_exception is not documented.
+/home/travis/build/CrowCpp/crow/include/crow/mustache.h:28: warning: Member msg (variable) of class crow::mustache::invalid_template_exception is not documented.
+/home/travis/build/CrowCpp/crow/include/crow/mustache.h:57: warning: Member template_t(std::string body) (function) of class crow::mustache::template_t is not documented.
+/home/travis/build/CrowCpp/crow/include/crow/mustache.h:316: warning: Member render() (function) of class crow::mustache::template_t is not documented.
+/home/travis/build/CrowCpp/crow/include/crow/mustache.h:326: warning: Member render(context &ctx) (function) of class crow::mustache::template_t is not documented.
 /home/travis/build/CrowCpp/crow/include/crow/utility.h:464: warning: Member parent_t (typedef) of class crow::utility::function_traits is not documented.
 /home/travis/build/CrowCpp/crow/include/crow/utility.h:466: warning: Member result_type (typedef) of class crow::utility::function_traits is not documented.
 /home/travis/build/CrowCpp/crow/include/crow/utility.h:468: warning: Member arg (typedef) of class crow::utility::function_traits is not documented.
@@ -719,5 +719,5 @@ Generating example index...
 finalizing index lists...
 writing tag file...
 Running plantuml with JAVA...
-lookup cache used 2398/65536 hits=19968 misses=2717
+lookup cache used 2399/65536 hits=19970 misses=2718
 finished...
