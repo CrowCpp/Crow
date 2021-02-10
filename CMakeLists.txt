@@ -7,7 +7,7 @@ cmake_minimum_required(VERSION 3.15.0 FATAL_ERROR)
 project (crow_all LANGUAGES CXX)
 
 # Define the module path
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake/")
 
 # Set required C++ Standard
 set(CMAKE_CXX_STANDARD 11)
@@ -27,8 +27,8 @@ option(BUILD_TESTING  "Builds the tests in the project"    ON)
 #####################################
 # Define CMake Module Imports
 #####################################
-include(${CMAKE_SOURCE_DIR}/cmake/dependencies.cmake)
-include(${CMAKE_SOURCE_DIR}/cmake/compiler_options.cmake)
+include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/dependencies.cmake)
+include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/compiler_options.cmake)
 
 #####################################
 # Define project-wide imports
@@ -36,11 +36,11 @@ include(${CMAKE_SOURCE_DIR}/cmake/compiler_options.cmake)
 # this can be alternatively (and as recommended way) done with target_include_directories()
 if(BUILD_EXAMPLES OR BUILD_TESTING)
 	set(PROJECT_INCLUDE_DIR
-		${CMAKE_SOURCE_DIR}/include
+		${CMAKE_CURRENT_SOURCE_DIR}/include
 	)
 
 	include_directories("${PROJECT_INCLUDE_DIR}")
-	include_directories("${CMAKE_SOURCE_DIR}")
+	include_directories("${CMAKE_CURRENT_SOURCE_DIR}")
 	include_directories("${CMAKE_CURRENT_BINARY_DIR}")  # To include crow_all.h
 endif()
 
@@ -48,11 +48,11 @@ endif()
 # Define Targets
 #####################################
 add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/crow_all.h
-	COMMAND python ${CMAKE_SOURCE_DIR}/scripts/merge_all.py
-	${CMAKE_SOURCE_DIR}/include
+	COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/scripts/merge_all.py
+	${CMAKE_CURRENT_SOURCE_DIR}/include
 	${CMAKE_CURRENT_BINARY_DIR}/crow_all.h
 	WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-	DEPENDS ${CMAKE_SOURCE_DIR}/include/*.h ${CMAKE_SOURCE_DIR}/include/crow/*.h ${CMAKE_SOURCE_DIR}/include/crow/middlewares/*.h
+	DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/include/*.h ${CMAKE_CURRENT_SOURCE_DIR}/include/crow/*.h ${CMAKE_CURRENT_SOURCE_DIR}/include/crow/middlewares/*.h
 )
 
 # Amalgamation
