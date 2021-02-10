@@ -44,8 +44,8 @@ namespace crow
             int end;
             int pos;
             ActionType t;
-            Action(ActionType t, int start, int end, int pos = 0) 
-                : start(start), end(end), pos(pos), t(t)
+            Action(ActionType t, size_t start, size_t end, size_t pos = 0) 
+                : start((int)start), end((int)end), pos((int)pos), t(t)
             {}
         };
 
@@ -347,11 +347,11 @@ namespace crow
                     size_t idx = body_.find(tag_open, current);
                     if (idx == body_.npos)
                     {
-                        fragments_.emplace_back(current, body_.size());
+                        fragments_.emplace_back((int)current, (int)body_.size());
                         actions_.emplace_back(ActionType::Ignore, 0, 0);
                         break;
                     }
-                    fragments_.emplace_back(current, idx);
+                    fragments_.emplace_back((int)current, (int)idx);
 
                     idx += tag_open.size();
                     size_t endIdx = body_.find(tag_close, idx);
@@ -371,7 +371,7 @@ namespace crow
                             idx++;
                             while(body_[idx] == ' ') idx++;
                             while(body_[endIdx-1] == ' ') endIdx--;
-                            blockPositions.emplace_back(actions_.size());
+                            blockPositions.emplace_back((int)actions_.size());
                             actions_.emplace_back(ActionType::OpenBlock, idx, endIdx);
                             break;
                         case '/':
@@ -396,7 +396,7 @@ namespace crow
                             idx++;
                             while(body_[idx] == ' ') idx++;
                             while(body_[endIdx-1] == ' ') endIdx--;
-                            blockPositions.emplace_back(actions_.size());
+                            blockPositions.emplace_back((int)actions_.size());
                             actions_.emplace_back(ActionType::ElseBlock, idx, endIdx);
                             break;
                         case '!':
