@@ -176,6 +176,12 @@ namespace crow
                     !std::is_same<typename std::tuple_element<0, std::tuple<Args..., void>>::type, const request&>::value
                 , int>::type = 0)
                 {
+#ifdef _MSC_VER
+                    static_assert(
+                        std::is_convertible<typename std::result_of<Func(Args...)>::type,
+                                crow::response>::value,
+                        "supplied callback must return type that can be cast to crow::response and cannot be void");
+#endif
                     handler_ = (
 #ifdef CROW_CAN_USE_CPP14
                         [f = std::move(f)]
