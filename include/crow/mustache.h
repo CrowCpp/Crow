@@ -5,6 +5,7 @@
 #include <iterator>
 #include <functional>
 #include "crow/json.h"
+#include "crow/logging.h"
 namespace crow
 {
     namespace mustache
@@ -556,7 +557,10 @@ namespace crow
             path += filename;
             std::ifstream inf(path);
             if (!inf)
+            {
+                CROW_LOG_WARNING << "Template \"" << filename << "\" not found.";
                 return {};
+            }
             return {std::istreambuf_iterator<char>(inf), std::istreambuf_iterator<char>()};
         }
 
