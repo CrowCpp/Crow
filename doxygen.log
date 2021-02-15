@@ -306,10 +306,10 @@ Generating /home/travis/build/CrowCpp/crow/include/crow/routing.h:27: warning: M
 /home/travis/build/CrowCpp/crow/include/crow/http_response.h:72: warning: Member response(response &&r) (function) of class crow::response is not documented.
 /home/travis/build/CrowCpp/crow/include/crow/http_response.h:79: warning: Member operator=(response &&r) noexcept (function) of class crow::response is not documented.
 /home/travis/build/CrowCpp/crow/include/crow/http_response.h:94: warning: Member clear() (function) of class crow::response is not documented.
-/home/travis/build/CrowCpp/crow/include/crow/http_response.h:138: warning: Member write(const std::string &body_part) (function) of class crow::response is not documented.
-/home/travis/build/CrowCpp/crow/include/crow/http_response.h:181: warning: Member path (variable) of class crow::response::static_file_info is not documented.
-/home/travis/build/CrowCpp/crow/include/crow/http_response.h:181: warning: Member statbuf (variable) of class crow::response::static_file_info is not documented.
-/home/travis/build/CrowCpp/crow/include/crow/http_response.h:183: warning: Member statResult (variable) of class crow::response::static_file_info is not documented.
+/home/travis/build/CrowCpp/crow/include/crow/http_response.h:139: warning: Member write(const std::string &body_part) (function) of class crow::response is not documented.
+/home/travis/build/CrowCpp/crow/include/crow/http_response.h:182: warning: Member path (variable) of class crow::response::static_file_info is not documented.
+/home/travis/build/CrowCpp/crow/include/crow/http_response.h:182: warning: Member statbuf (variable) of class crow::response::static_file_info is not documented.
+/home/travis/build/CrowCpp/crow/include/crow/http_response.h:184: warning: Member statResult (variable) of class crow::response::static_file_info is not documented.
 /home/travis/build/CrowCpp/crow/include/crow/returnable.h:11: warning: Member dump()=0 (function) of class crow::returnable is not documented.
 /home/travis/build/CrowCpp/crow/include/crow/returnable.h:13: warning: Member returnable(std::string ctype) (function) of class crow::returnable is not documented.
 /home/travis/build/CrowCpp/crow/include/crow/returnable.h:10: warning: Member content_type (variable) of class crow::returnable is not documented.
@@ -719,5 +719,5 @@ Generating example index...
 finalizing index lists...
 writing tag file...
 Running plantuml with JAVA...
-lookup cache used 2399/65536 hits=19970 misses=2718
+lookup cache used 2401/65536 hits=19978 misses=2720
 finished...

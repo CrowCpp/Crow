@@ -198,229 +198,230 @@ $(document).ready(function(){initNavTree('http__response_8h_source.html',''); in
 <div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;            <a class="code" href="structcrow_1_1response.html#aabc1f9b3264b8c5a2d05dcb409e8ff3f">code</a> = 200;</div>
 <div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;            <a class="code" href="structcrow_1_1response.html#ae56cfc39f24a56748c11016842427fb3">headers</a>.clear();</div>
 <div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;            completed_ = <span class="keyword">false</span>;</div>
-<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;        }</div>
-<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;<span class="comment">        /// Return a &quot;Temporary Redirect&quot; response.</span></div>
-<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;<span class="comment">        ///</span></div>
-<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;<span class="comment">        /// Location can either be a route or a full URL.</span></div>
-<div class="line"><a name="l00105"></a><span class="lineno"><a class="line" href="structcrow_1_1response.html#ac04bbe2d4f54fd717cdffdb26af3e46f">  105</a></span>&#160;<span class="comment"></span>        <span class="keywordtype">void</span> <a class="code" href="structcrow_1_1response.html#ac04bbe2d4f54fd717cdffdb26af3e46f">redirect</a>(<span class="keyword">const</span> std::string&amp; location)</div>
-<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;        {</div>
-<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;            <a class="code" href="structcrow_1_1response.html#aabc1f9b3264b8c5a2d05dcb409e8ff3f">code</a> = 307;</div>
-<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;            <a class="code" href="structcrow_1_1response.html#ab2b9a9b9795fa6330bd47b66a716cb0b">set_header</a>(<span class="stringliteral">&quot;Location&quot;</span>, location);</div>
-<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;        }</div>
-<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;<span class="comment">        /// Return a &quot;Permanent Redirect&quot; response.</span></div>
-<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;<span class="comment">        ///</span></div>
-<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;<span class="comment">        /// Location can either be a route or a full URL.</span></div>
-<div class="line"><a name="l00114"></a><span class="lineno"><a class="line" href="structcrow_1_1response.html#a9e87a17c3cf8b434fd2a64a9b3d4b675">  114</a></span>&#160;<span class="comment"></span>        <span class="keywordtype">void</span> <a class="code" href="structcrow_1_1response.html#a9e87a17c3cf8b434fd2a64a9b3d4b675">redirect_perm</a>(<span class="keyword">const</span> std::string&amp; location)</div>
-<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;        {</div>
-<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;            <a class="code" href="structcrow_1_1response.html#aabc1f9b3264b8c5a2d05dcb409e8ff3f">code</a> = 308;</div>
-<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;            <a class="code" href="structcrow_1_1response.html#ab2b9a9b9795fa6330bd47b66a716cb0b">set_header</a>(<span class="stringliteral">&quot;Location&quot;</span>, location);</div>
-<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;        }</div>
-<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;<span class="comment">        /// Return a &quot;Found (Moved Temporarily)&quot; response.</span></div>
-<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;<span class="comment">        ///</span></div>
-<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;<span class="comment">        /// Location can either be a route or a full URL.</span></div>
-<div class="line"><a name="l00123"></a><span class="lineno"><a class="line" href="structcrow_1_1response.html#a760bca5f5fdee03518d59d9538ce5432">  123</a></span>&#160;<span class="comment"></span>        <span class="keywordtype">void</span> <a class="code" href="structcrow_1_1response.html#a760bca5f5fdee03518d59d9538ce5432">moved</a>(<span class="keyword">const</span> std::string&amp; location)</div>
-<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;        {</div>
-<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;            <a class="code" href="structcrow_1_1response.html#aabc1f9b3264b8c5a2d05dcb409e8ff3f">code</a> = 302;</div>
-<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;            <a class="code" href="structcrow_1_1response.html#ab2b9a9b9795fa6330bd47b66a716cb0b">set_header</a>(<span class="stringliteral">&quot;Location&quot;</span>, location);</div>
-<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;        }</div>
-<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;<span class="comment">        /// Return a &quot;Moved Permanently&quot; response.</span></div>
-<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;<span class="comment">        ///</span></div>
-<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;<span class="comment">        /// Location can either be a route or a full URL.</span></div>
-<div class="line"><a name="l00132"></a><span class="lineno"><a class="line" href="structcrow_1_1response.html#a9ee58f8b775b2566418b298fe33c0dcc">  132</a></span>&#160;<span class="comment"></span>        <span class="keywordtype">void</span> <a class="code" href="structcrow_1_1response.html#a9ee58f8b775b2566418b298fe33c0dcc">moved_perm</a>(<span class="keyword">const</span> std::string&amp; location)</div>
-<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;        {</div>
-<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;            <a class="code" href="structcrow_1_1response.html#aabc1f9b3264b8c5a2d05dcb409e8ff3f">code</a> = 301;</div>
-<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;            <a class="code" href="structcrow_1_1response.html#ab2b9a9b9795fa6330bd47b66a716cb0b">set_header</a>(<span class="stringliteral">&quot;Location&quot;</span>, location);</div>
-<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;        }</div>
-<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160; </div>
-<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;        <span class="keywordtype">void</span> write(<span class="keyword">const</span> std::string&amp; body_part)</div>
-<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;        {</div>
-<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;            <a class="code" href="structcrow_1_1response.html#ae9f3cc153eac05954f1f4e599527892d">body</a> += body_part;</div>
-<div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160;        }</div>
-<div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160;<span class="comment">        /// Set the response completion flag and call the handler (to send the response).</span></div>
-<div class="line"><a name="l00144"></a><span class="lineno"><a class="line" href="structcrow_1_1response.html#abef42200eca49c70dc1f5140ee3603ab">  144</a></span>&#160;<span class="comment"></span>        <span class="keywordtype">void</span> <a class="code" href="structcrow_1_1response.html#abef42200eca49c70dc1f5140ee3603ab">end</a>()</div>
-<div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160;        {</div>
-<div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;            <span class="keywordflow">if</span> (!completed_)</div>
-<div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;            {</div>
-<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;                completed_ = <span class="keyword">true</span>;</div>
-<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160; </div>
-<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;                <span class="keywordflow">if</span> (complete_request_handler_)</div>
-<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;                {</div>
-<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;                    complete_request_handler_();</div>
-<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;                }</div>
-<div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160;            }</div>
-<div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;        }</div>
-<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;<span class="comment">        /// Same as end() except it adds a body part right before ending.</span></div>
-<div class="line"><a name="l00158"></a><span class="lineno"><a class="line" href="structcrow_1_1response.html#a10da2e17421586b68f27ef1533ec677b">  158</a></span>&#160;<span class="comment"></span>        <span class="keywordtype">void</span> <a class="code" href="structcrow_1_1response.html#a10da2e17421586b68f27ef1533ec677b">end</a>(<span class="keyword">const</span> std::string&amp; body_part)</div>
-<div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;        {</div>
-<div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;            <a class="code" href="structcrow_1_1response.html#ae9f3cc153eac05954f1f4e599527892d">body</a> += body_part;</div>
-<div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;            <a class="code" href="structcrow_1_1response.html#abef42200eca49c70dc1f5140ee3603ab">end</a>();</div>
-<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;        }</div>
-<div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;<span class="comment">        /// Check if the connection is still alive (usually by checking the socket status).</span></div>
-<div class="line"><a name="l00165"></a><span class="lineno"><a class="line" href="structcrow_1_1response.html#ac29da52ee1e0b55086cd8eedd6c22da1">  165</a></span>&#160;<span class="comment"></span>        <span class="keywordtype">bool</span> <a class="code" href="structcrow_1_1response.html#ac29da52ee1e0b55086cd8eedd6c22da1">is_alive</a>()</div>
-<div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160;        {</div>
-<div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;            <span class="keywordflow">return</span> is_alive_helper_ &amp;&amp; is_alive_helper_();</div>
-<div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;        }</div>
-<div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;<span class="comment">        /// Check whether the response has a static file defined.</span></div>
-<div class="line"><a name="l00171"></a><span class="lineno"><a class="line" href="structcrow_1_1response.html#aff527a091cf5054e933a244b078648c1">  171</a></span>&#160;<span class="comment"></span>        <span class="keywordtype">bool</span> <a class="code" href="structcrow_1_1response.html#aff527a091cf5054e933a244b078648c1">is_static_type</a>()</div>
-<div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;        {</div>
-<div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160;            <span class="keywordflow">return</span> file_info.path.size();</div>
-<div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160;        }</div>
-<div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00176"></a><span class="lineno">  176</span>&#160;<span class="comment">        /// This constains metadata (coming from the `stat` command) related to any static files associated with this response.</span></div>
-<div class="line"><a name="l00177"></a><span class="lineno">  177</span>&#160;<span class="comment"></span><span class="comment"></span> </div>
-<div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160;<span class="comment">        /// Either a static file or a string body can be returned as 1 response.</span></div>
-<div class="line"><a name="l00179"></a><span class="lineno">  179</span>&#160;<span class="comment">        ///</span></div>
-<div class="line"><a name="l00180"></a><span class="lineno"><a class="line" href="structcrow_1_1response_1_1static__file__info.html">  180</a></span>&#160;<span class="comment"></span>        <span class="keyword">struct </span><a class="code" href="structcrow_1_1response_1_1static__file__info.html">static_file_info</a>{</div>
-<div class="line"><a name="l00181"></a><span class="lineno">  181</span>&#160;            std::string path = <span class="stringliteral">&quot;&quot;</span>;</div>
-<div class="line"><a name="l00182"></a><span class="lineno">  182</span>&#160;            <span class="keyword">struct </span>stat statbuf;</div>
-<div class="line"><a name="l00183"></a><span class="lineno">  183</span>&#160;            <span class="keywordtype">int</span> statResult;</div>
-<div class="line"><a name="l00184"></a><span class="lineno">  184</span>&#160;        };</div>
-<div class="line"><a name="l00185"></a><span class="lineno">  185</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00186"></a><span class="lineno">  186</span>&#160;<span class="comment">        ///Return a static file as the response body</span></div>
-<div class="line"><a name="l00187"></a><span class="lineno"><a class="line" href="structcrow_1_1response.html#a8f5e5caa08c3e658bccd03996e1a778a">  187</a></span>&#160;<span class="comment"></span>        <span class="keywordtype">void</span> <a class="code" href="structcrow_1_1response.html#a8f5e5caa08c3e658bccd03996e1a778a">set_static_file_info</a>(std::string path){</div>
-<div class="line"><a name="l00188"></a><span class="lineno">  188</span>&#160;            file_info.path = path;</div>
-<div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160;            file_info.statResult = stat(file_info.path.c_str(), &amp;file_info.statbuf);</div>
-<div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160;            <a class="code" href="structcrow_1_1response.html#af87163fd1c7e18650c7691e07f58c7de">compressed</a> = <span class="keyword">false</span>;</div>
-<div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160;            <span class="keywordflow">if</span> (file_info.statResult == 0)</div>
-<div class="line"><a name="l00192"></a><span class="lineno">  192</span>&#160;            {</div>
-<div class="line"><a name="l00193"></a><span class="lineno">  193</span>&#160;                std::size_t last_dot = path.find_last_of(<span class="stringliteral">&quot;.&quot;</span>);</div>
-<div class="line"><a name="l00194"></a><span class="lineno">  194</span>&#160;                std::string extension = path.substr(last_dot+1);</div>
-<div class="line"><a name="l00195"></a><span class="lineno">  195</span>&#160;                std::string mimeType = <span class="stringliteral">&quot;&quot;</span>;</div>
-<div class="line"><a name="l00196"></a><span class="lineno">  196</span>&#160;                <a class="code" href="structcrow_1_1response.html#aabc1f9b3264b8c5a2d05dcb409e8ff3f">code</a> = 200;</div>
-<div class="line"><a name="l00197"></a><span class="lineno">  197</span>&#160;                this-&gt;<a class="code" href="structcrow_1_1response.html#a16d1a8bcec6460ba97f90b80881693b8">add_header</a>(<span class="stringliteral">&quot;Content-length&quot;</span>, std::to_string(file_info.statbuf.st_size));</div>
-<div class="line"><a name="l00198"></a><span class="lineno">  198</span>&#160; </div>
-<div class="line"><a name="l00199"></a><span class="lineno">  199</span>&#160;                <span class="keywordflow">if</span> (extension != <span class="stringliteral">&quot;&quot;</span>){</div>
-<div class="line"><a name="l00200"></a><span class="lineno">  200</span>&#160;                    mimeType = mime_types[extension];</div>
-<div class="line"><a name="l00201"></a><span class="lineno">  201</span>&#160;                    <span class="keywordflow">if</span> (mimeType != <span class="stringliteral">&quot;&quot;</span>)</div>
-<div class="line"><a name="l00202"></a><span class="lineno">  202</span>&#160;                        this-&gt; <a class="code" href="structcrow_1_1response.html#a16d1a8bcec6460ba97f90b80881693b8">add_header</a>(<span class="stringliteral">&quot;Content-Type&quot;</span>, mimeType);</div>
-<div class="line"><a name="l00203"></a><span class="lineno">  203</span>&#160;                    <span class="keywordflow">else</span></div>
-<div class="line"><a name="l00204"></a><span class="lineno">  204</span>&#160;                        this-&gt; <a class="code" href="structcrow_1_1response.html#a16d1a8bcec6460ba97f90b80881693b8">add_header</a>(<span class="stringliteral">&quot;content-Type&quot;</span>, <span class="stringliteral">&quot;text/plain&quot;</span>);</div>
-<div class="line"><a name="l00205"></a><span class="lineno">  205</span>&#160;                }</div>
-<div class="line"><a name="l00206"></a><span class="lineno">  206</span>&#160;            }</div>
-<div class="line"><a name="l00207"></a><span class="lineno">  207</span>&#160;            <span class="keywordflow">else</span></div>
-<div class="line"><a name="l00208"></a><span class="lineno">  208</span>&#160;            {</div>
-<div class="line"><a name="l00209"></a><span class="lineno">  209</span>&#160;                code = 404;</div>
-<div class="line"><a name="l00210"></a><span class="lineno">  210</span>&#160;                this-&gt;<a class="code" href="structcrow_1_1response.html#abef42200eca49c70dc1f5140ee3603ab">end</a>();</div>
-<div class="line"><a name="l00211"></a><span class="lineno">  211</span>&#160;            }</div>
-<div class="line"><a name="l00212"></a><span class="lineno">  212</span>&#160;        }</div>
-<div class="line"><a name="l00213"></a><span class="lineno">  213</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00214"></a><span class="lineno">  214</span>&#160;<span class="comment">        /// Stream a static file.</span></div>
-<div class="line"><a name="l00215"></a><span class="lineno">  215</span>&#160;<span class="comment"></span>        <span class="keyword">template</span>&lt;<span class="keyword">typename</span> Adaptor&gt;</div>
-<div class="line"><a name="l00216"></a><span class="lineno"><a class="line" href="structcrow_1_1response.html#a502e26a7a9eac28d779a73c6b39431f2">  216</a></span>&#160;        <span class="keywordtype">void</span> <a class="code" href="structcrow_1_1response.html#a502e26a7a9eac28d779a73c6b39431f2">do_stream_file</a>(Adaptor&amp; adaptor)</div>
-<div class="line"><a name="l00217"></a><span class="lineno">  217</span>&#160;        {</div>
-<div class="line"><a name="l00218"></a><span class="lineno">  218</span>&#160;            <span class="keywordflow">if</span> (file_info.statResult == 0)</div>
-<div class="line"><a name="l00219"></a><span class="lineno">  219</span>&#160;            {</div>
-<div class="line"><a name="l00220"></a><span class="lineno">  220</span>&#160;                std::ifstream is(file_info.path.c_str(), std::ios::in | std::ios::binary);</div>
-<div class="line"><a name="l00221"></a><span class="lineno">  221</span>&#160;                write_streamed(is, adaptor);</div>
-<div class="line"><a name="l00222"></a><span class="lineno">  222</span>&#160;            }</div>
-<div class="line"><a name="l00223"></a><span class="lineno">  223</span>&#160;        }</div>
-<div class="line"><a name="l00224"></a><span class="lineno">  224</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00225"></a><span class="lineno">  225</span>&#160;<span class="comment">        /// Stream the response body (send the body in chunks).</span></div>
-<div class="line"><a name="l00226"></a><span class="lineno">  226</span>&#160;<span class="comment"></span>        <span class="keyword">template</span>&lt;<span class="keyword">typename</span> Adaptor&gt;</div>
-<div class="line"><a name="l00227"></a><span class="lineno"><a class="line" href="structcrow_1_1response.html#a35a2324a75247f1ea1305b4b2ad0083e">  227</a></span>&#160;        <span class="keywordtype">void</span> <a class="code" href="structcrow_1_1response.html#a35a2324a75247f1ea1305b4b2ad0083e">do_stream_body</a>(Adaptor&amp; adaptor)</div>
-<div class="line"><a name="l00228"></a><span class="lineno">  228</span>&#160;        {</div>
-<div class="line"><a name="l00229"></a><span class="lineno">  229</span>&#160;            <span class="keywordflow">if</span> (<a class="code" href="structcrow_1_1response.html#ae9f3cc153eac05954f1f4e599527892d">body</a>.length() &gt; 0)</div>
-<div class="line"><a name="l00230"></a><span class="lineno">  230</span>&#160;            {</div>
-<div class="line"><a name="l00231"></a><span class="lineno">  231</span>&#160;                write_streamed_string(<a class="code" href="structcrow_1_1response.html#ae9f3cc153eac05954f1f4e599527892d">body</a>, adaptor);</div>
-<div class="line"><a name="l00232"></a><span class="lineno">  232</span>&#160;            }</div>
-<div class="line"><a name="l00233"></a><span class="lineno">  233</span>&#160;        }</div>
-<div class="line"><a name="l00234"></a><span class="lineno">  234</span>&#160; </div>
-<div class="line"><a name="l00235"></a><span class="lineno">  235</span>&#160;        <span class="keyword">private</span>:</div>
-<div class="line"><a name="l00236"></a><span class="lineno">  236</span>&#160;            <span class="keywordtype">bool</span> completed_{};</div>
-<div class="line"><a name="l00237"></a><span class="lineno">  237</span>&#160;            std::function&lt;void()&gt; complete_request_handler_;</div>
-<div class="line"><a name="l00238"></a><span class="lineno">  238</span>&#160;            std::function&lt;bool()&gt; is_alive_helper_;</div>
-<div class="line"><a name="l00239"></a><span class="lineno">  239</span>&#160;            static_file_info file_info;</div>
-<div class="line"><a name="l00240"></a><span class="lineno">  240</span>&#160; </div>
-<div class="line"><a name="l00241"></a><span class="lineno">  241</span>&#160;            <span class="keyword">template</span>&lt;<span class="keyword">typename</span> Stream, <span class="keyword">typename</span> Adaptor&gt;</div>
-<div class="line"><a name="l00242"></a><span class="lineno">  242</span>&#160;            <span class="keywordtype">void</span> write_streamed(Stream&amp; is, Adaptor&amp; adaptor)</div>
-<div class="line"><a name="l00243"></a><span class="lineno">  243</span>&#160;            {</div>
-<div class="line"><a name="l00244"></a><span class="lineno">  244</span>&#160;                <span class="keywordtype">char</span> buf[16384];</div>
-<div class="line"><a name="l00245"></a><span class="lineno">  245</span>&#160;                <span class="keywordflow">while</span> (is.read(buf, <span class="keyword">sizeof</span>(buf)).gcount() &gt; 0)</div>
-<div class="line"><a name="l00246"></a><span class="lineno">  246</span>&#160;                {</div>
-<div class="line"><a name="l00247"></a><span class="lineno">  247</span>&#160;                    std::vector&lt;asio::const_buffer&gt; buffers;</div>
-<div class="line"><a name="l00248"></a><span class="lineno">  248</span>&#160;                    buffers.push_back(boost::asio::buffer(buf));</div>
-<div class="line"><a name="l00249"></a><span class="lineno">  249</span>&#160;                    write_buffer_list(buffers, adaptor);</div>
-<div class="line"><a name="l00250"></a><span class="lineno">  250</span>&#160;                }</div>
-<div class="line"><a name="l00251"></a><span class="lineno">  251</span>&#160;            }</div>
-<div class="line"><a name="l00252"></a><span class="lineno">  252</span>&#160; </div>
-<div class="line"><a name="l00253"></a><span class="lineno">  253</span>&#160;            <span class="comment">//THIS METHOD DOES MODIFY THE BODY, AS IN IT EMPTIES IT</span></div>
-<div class="line"><a name="l00254"></a><span class="lineno">  254</span>&#160;            <span class="keyword">template</span>&lt;<span class="keyword">typename</span> Adaptor&gt;</div>
-<div class="line"><a name="l00255"></a><span class="lineno">  255</span>&#160;            <span class="keywordtype">void</span> write_streamed_string(std::string&amp; is, Adaptor&amp; adaptor)</div>
-<div class="line"><a name="l00256"></a><span class="lineno">  256</span>&#160;            {</div>
-<div class="line"><a name="l00257"></a><span class="lineno">  257</span>&#160;                std::string buf;</div>
-<div class="line"><a name="l00258"></a><span class="lineno">  258</span>&#160;                std::vector&lt;asio::const_buffer&gt; buffers;</div>
-<div class="line"><a name="l00259"></a><span class="lineno">  259</span>&#160; </div>
-<div class="line"><a name="l00260"></a><span class="lineno">  260</span>&#160;                <span class="keywordflow">while</span> (is.length() &gt; 16384)</div>
-<div class="line"><a name="l00261"></a><span class="lineno">  261</span>&#160;                {</div>
-<div class="line"><a name="l00262"></a><span class="lineno">  262</span>&#160;                    <span class="comment">//buf.reserve(16385);</span></div>
-<div class="line"><a name="l00263"></a><span class="lineno">  263</span>&#160;                    buf = is.substr(0, 16384);</div>
-<div class="line"><a name="l00264"></a><span class="lineno">  264</span>&#160;                    is = is.substr(16384);</div>
-<div class="line"><a name="l00265"></a><span class="lineno">  265</span>&#160;                    push_and_write(buffers, buf, adaptor);</div>
-<div class="line"><a name="l00266"></a><span class="lineno">  266</span>&#160;                }</div>
-<div class="line"><a name="l00267"></a><span class="lineno">  267</span>&#160;                <span class="comment">//Collect whatever is left (less than 16KB) and send it down the socket</span></div>
-<div class="line"><a name="l00268"></a><span class="lineno">  268</span>&#160;                <span class="comment">//buf.reserve(is.length());</span></div>
-<div class="line"><a name="l00269"></a><span class="lineno">  269</span>&#160;                buf = is;</div>
-<div class="line"><a name="l00270"></a><span class="lineno">  270</span>&#160;                is.clear();</div>
-<div class="line"><a name="l00271"></a><span class="lineno">  271</span>&#160;                push_and_write(buffers, buf, adaptor);</div>
-<div class="line"><a name="l00272"></a><span class="lineno">  272</span>&#160;            }</div>
-<div class="line"><a name="l00273"></a><span class="lineno">  273</span>&#160; </div>
-<div class="line"><a name="l00274"></a><span class="lineno">  274</span>&#160;            <span class="keyword">template</span>&lt;<span class="keyword">typename</span> Adaptor&gt;</div>
-<div class="line"><a name="l00275"></a><span class="lineno">  275</span>&#160;            <span class="keyword">inline</span> <span class="keywordtype">void</span> push_and_write(std::vector&lt;asio::const_buffer&gt;&amp; buffers, std::string&amp; buf, Adaptor&amp; adaptor)</div>
-<div class="line"><a name="l00276"></a><span class="lineno">  276</span>&#160;            {</div>
-<div class="line"><a name="l00277"></a><span class="lineno">  277</span>&#160;                buffers.clear();</div>
-<div class="line"><a name="l00278"></a><span class="lineno">  278</span>&#160;                buffers.push_back(boost::asio::buffer(buf));</div>
-<div class="line"><a name="l00279"></a><span class="lineno">  279</span>&#160;                write_buffer_list(buffers, adaptor);</div>
-<div class="line"><a name="l00280"></a><span class="lineno">  280</span>&#160;            }</div>
-<div class="line"><a name="l00281"></a><span class="lineno">  281</span>&#160; </div>
-<div class="line"><a name="l00282"></a><span class="lineno">  282</span>&#160;            <span class="keyword">template</span>&lt;<span class="keyword">typename</span> Adaptor&gt;</div>
-<div class="line"><a name="l00283"></a><span class="lineno">  283</span>&#160;            <span class="keyword">inline</span> <span class="keywordtype">void</span> write_buffer_list(std::vector&lt;asio::const_buffer&gt;&amp; buffers, Adaptor&amp; adaptor)</div>
-<div class="line"><a name="l00284"></a><span class="lineno">  284</span>&#160;            {</div>
-<div class="line"><a name="l00285"></a><span class="lineno">  285</span>&#160;                boost::asio::write(adaptor.socket(), buffers, [<span class="keyword">this</span>](std::error_code ec, std::size_t)</div>
-<div class="line"><a name="l00286"></a><span class="lineno">  286</span>&#160;                {</div>
-<div class="line"><a name="l00287"></a><span class="lineno">  287</span>&#160;                    if (!ec)</div>
-<div class="line"><a name="l00288"></a><span class="lineno">  288</span>&#160;                    {</div>
-<div class="line"><a name="l00289"></a><span class="lineno">  289</span>&#160;                        return false;</div>
-<div class="line"><a name="l00290"></a><span class="lineno">  290</span>&#160;                    }</div>
-<div class="line"><a name="l00291"></a><span class="lineno">  291</span>&#160;                    <span class="keywordflow">else</span></div>
-<div class="line"><a name="l00292"></a><span class="lineno">  292</span>&#160;                    {</div>
-<div class="line"><a name="l00293"></a><span class="lineno">  293</span>&#160;                        CROW_LOG_ERROR &lt;&lt; ec &lt;&lt; <span class="stringliteral">&quot; - happened while sending buffers&quot;</span>;</div>
-<div class="line"><a name="l00294"></a><span class="lineno">  294</span>&#160;                        this-&gt;end();</div>
-<div class="line"><a name="l00295"></a><span class="lineno">  295</span>&#160;                        return true;</div>
-<div class="line"><a name="l00296"></a><span class="lineno">  296</span>&#160;                    }</div>
-<div class="line"><a name="l00297"></a><span class="lineno">  297</span>&#160;                });</div>
-<div class="line"><a name="l00298"></a><span class="lineno">  298</span>&#160;            }</div>
-<div class="line"><a name="l00299"></a><span class="lineno">  299</span>&#160; </div>
-<div class="line"><a name="l00300"></a><span class="lineno">  300</span>&#160;    };</div>
-<div class="line"><a name="l00301"></a><span class="lineno">  301</span>&#160;}</div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;            file_info = static_file_info{};</div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;        }</div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;<span class="comment">        /// Return a &quot;Temporary Redirect&quot; response.</span></div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;<span class="comment">        ///</span></div>
+<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;<span class="comment">        /// Location can either be a route or a full URL.</span></div>
+<div class="line"><a name="l00106"></a><span class="lineno"><a class="line" href="structcrow_1_1response.html#ac04bbe2d4f54fd717cdffdb26af3e46f">  106</a></span>&#160;<span class="comment"></span>        <span class="keywordtype">void</span> <a class="code" href="structcrow_1_1response.html#ac04bbe2d4f54fd717cdffdb26af3e46f">redirect</a>(<span class="keyword">const</span> std::string&amp; location)</div>
+<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;        {</div>
+<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;            <a class="code" href="structcrow_1_1response.html#aabc1f9b3264b8c5a2d05dcb409e8ff3f">code</a> = 307;</div>
+<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;            <a class="code" href="structcrow_1_1response.html#ab2b9a9b9795fa6330bd47b66a716cb0b">set_header</a>(<span class="stringliteral">&quot;Location&quot;</span>, location);</div>
+<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;        }</div>
+<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;<span class="comment">        /// Return a &quot;Permanent Redirect&quot; response.</span></div>
+<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;<span class="comment">        ///</span></div>
+<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;<span class="comment">        /// Location can either be a route or a full URL.</span></div>
+<div class="line"><a name="l00115"></a><span class="lineno"><a class="line" href="structcrow_1_1response.html#a9e87a17c3cf8b434fd2a64a9b3d4b675">  115</a></span>&#160;<span class="comment"></span>        <span class="keywordtype">void</span> <a class="code" href="structcrow_1_1response.html#a9e87a17c3cf8b434fd2a64a9b3d4b675">redirect_perm</a>(<span class="keyword">const</span> std::string&amp; location)</div>
+<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;        {</div>
+<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;            <a class="code" href="structcrow_1_1response.html#aabc1f9b3264b8c5a2d05dcb409e8ff3f">code</a> = 308;</div>
+<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;            <a class="code" href="structcrow_1_1response.html#ab2b9a9b9795fa6330bd47b66a716cb0b">set_header</a>(<span class="stringliteral">&quot;Location&quot;</span>, location);</div>
+<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;        }</div>
+<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;<span class="comment">        /// Return a &quot;Found (Moved Temporarily)&quot; response.</span></div>
+<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;<span class="comment">        ///</span></div>
+<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;<span class="comment">        /// Location can either be a route or a full URL.</span></div>
+<div class="line"><a name="l00124"></a><span class="lineno"><a class="line" href="structcrow_1_1response.html#a760bca5f5fdee03518d59d9538ce5432">  124</a></span>&#160;<span class="comment"></span>        <span class="keywordtype">void</span> <a class="code" href="structcrow_1_1response.html#a760bca5f5fdee03518d59d9538ce5432">moved</a>(<span class="keyword">const</span> std::string&amp; location)</div>
+<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;        {</div>
+<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;            <a class="code" href="structcrow_1_1response.html#aabc1f9b3264b8c5a2d05dcb409e8ff3f">code</a> = 302;</div>
+<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;            <a class="code" href="structcrow_1_1response.html#ab2b9a9b9795fa6330bd47b66a716cb0b">set_header</a>(<span class="stringliteral">&quot;Location&quot;</span>, location);</div>
+<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;        }</div>
+<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;<span class="comment">        /// Return a &quot;Moved Permanently&quot; response.</span></div>
+<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;<span class="comment">        ///</span></div>
+<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;<span class="comment">        /// Location can either be a route or a full URL.</span></div>
+<div class="line"><a name="l00133"></a><span class="lineno"><a class="line" href="structcrow_1_1response.html#a9ee58f8b775b2566418b298fe33c0dcc">  133</a></span>&#160;<span class="comment"></span>        <span class="keywordtype">void</span> <a class="code" href="structcrow_1_1response.html#a9ee58f8b775b2566418b298fe33c0dcc">moved_perm</a>(<span class="keyword">const</span> std::string&amp; location)</div>
+<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;        {</div>
+<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;            <a class="code" href="structcrow_1_1response.html#aabc1f9b3264b8c5a2d05dcb409e8ff3f">code</a> = 301;</div>
+<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;            <a class="code" href="structcrow_1_1response.html#ab2b9a9b9795fa6330bd47b66a716cb0b">set_header</a>(<span class="stringliteral">&quot;Location&quot;</span>, location);</div>
+<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;        }</div>
+<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160; </div>
+<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;        <span class="keywordtype">void</span> write(<span class="keyword">const</span> std::string&amp; body_part)</div>
+<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;        {</div>
+<div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160;            <a class="code" href="structcrow_1_1response.html#ae9f3cc153eac05954f1f4e599527892d">body</a> += body_part;</div>
+<div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160;        }</div>
+<div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160;<span class="comment">        /// Set the response completion flag and call the handler (to send the response).</span></div>
+<div class="line"><a name="l00145"></a><span class="lineno"><a class="line" href="structcrow_1_1response.html#abef42200eca49c70dc1f5140ee3603ab">  145</a></span>&#160;<span class="comment"></span>        <span class="keywordtype">void</span> <a class="code" href="structcrow_1_1response.html#abef42200eca49c70dc1f5140ee3603ab">end</a>()</div>
+<div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;        {</div>
+<div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;            <span class="keywordflow">if</span> (!completed_)</div>
+<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;            {</div>
+<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;                completed_ = <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160; </div>
+<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;                <span class="keywordflow">if</span> (complete_request_handler_)</div>
+<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;                {</div>
+<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;                    complete_request_handler_();</div>
+<div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160;                }</div>
+<div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;            }</div>
+<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;        }</div>
+<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160;<span class="comment">        /// Same as end() except it adds a body part right before ending.</span></div>
+<div class="line"><a name="l00159"></a><span class="lineno"><a class="line" href="structcrow_1_1response.html#a10da2e17421586b68f27ef1533ec677b">  159</a></span>&#160;<span class="comment"></span>        <span class="keywordtype">void</span> <a class="code" href="structcrow_1_1response.html#a10da2e17421586b68f27ef1533ec677b">end</a>(<span class="keyword">const</span> std::string&amp; body_part)</div>
+<div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;        {</div>
+<div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;            <a class="code" href="structcrow_1_1response.html#ae9f3cc153eac05954f1f4e599527892d">body</a> += body_part;</div>
+<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;            <a class="code" href="structcrow_1_1response.html#abef42200eca49c70dc1f5140ee3603ab">end</a>();</div>
+<div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;        }</div>
+<div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;<span class="comment">        /// Check if the connection is still alive (usually by checking the socket status).</span></div>
+<div class="line"><a name="l00166"></a><span class="lineno"><a class="line" href="structcrow_1_1response.html#ac29da52ee1e0b55086cd8eedd6c22da1">  166</a></span>&#160;<span class="comment"></span>        <span class="keywordtype">bool</span> <a class="code" href="structcrow_1_1response.html#ac29da52ee1e0b55086cd8eedd6c22da1">is_alive</a>()</div>
+<div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;        {</div>
+<div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;            <span class="keywordflow">return</span> is_alive_helper_ &amp;&amp; is_alive_helper_();</div>
+<div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;        }</div>
+<div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160;<span class="comment">        /// Check whether the response has a static file defined.</span></div>
+<div class="line"><a name="l00172"></a><span class="lineno"><a class="line" href="structcrow_1_1response.html#aff527a091cf5054e933a244b078648c1">  172</a></span>&#160;<span class="comment"></span>        <span class="keywordtype">bool</span> <a class="code" href="structcrow_1_1response.html#aff527a091cf5054e933a244b078648c1">is_static_type</a>()</div>
+<div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160;        {</div>
+<div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160;            <span class="keywordflow">return</span> file_info.path.size();</div>
+<div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160;        }</div>
+<div class="line"><a name="l00176"></a><span class="lineno">  176</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00177"></a><span class="lineno">  177</span>&#160;<span class="comment">        /// This constains metadata (coming from the `stat` command) related to any static files associated with this response.</span></div>
+<div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160;<span class="comment"></span><span class="comment"></span> </div>
+<div class="line"><a name="l00179"></a><span class="lineno">  179</span>&#160;<span class="comment">        /// Either a static file or a string body can be returned as 1 response.</span></div>
+<div class="line"><a name="l00180"></a><span class="lineno">  180</span>&#160;<span class="comment">        ///</span></div>
+<div class="line"><a name="l00181"></a><span class="lineno"><a class="line" href="structcrow_1_1response_1_1static__file__info.html">  181</a></span>&#160;<span class="comment"></span>        <span class="keyword">struct </span><a class="code" href="structcrow_1_1response_1_1static__file__info.html">static_file_info</a>{</div>
+<div class="line"><a name="l00182"></a><span class="lineno">  182</span>&#160;            std::string path = <span class="stringliteral">&quot;&quot;</span>;</div>
+<div class="line"><a name="l00183"></a><span class="lineno">  183</span>&#160;            <span class="keyword">struct </span>stat statbuf;</div>
+<div class="line"><a name="l00184"></a><span class="lineno">  184</span>&#160;            <span class="keywordtype">int</span> statResult;</div>
+<div class="line"><a name="l00185"></a><span class="lineno">  185</span>&#160;        };</div>
+<div class="line"><a name="l00186"></a><span class="lineno">  186</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00187"></a><span class="lineno">  187</span>&#160;<span class="comment">        ///Return a static file as the response body</span></div>
+<div class="line"><a name="l00188"></a><span class="lineno"><a class="line" href="structcrow_1_1response.html#a8f5e5caa08c3e658bccd03996e1a778a">  188</a></span>&#160;<span class="comment"></span>        <span class="keywordtype">void</span> <a class="code" href="structcrow_1_1response.html#a8f5e5caa08c3e658bccd03996e1a778a">set_static_file_info</a>(std::string path){</div>
+<div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160;            file_info.path = path;</div>
+<div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160;            file_info.statResult = stat(file_info.path.c_str(), &amp;file_info.statbuf);</div>
+<div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160;            <a class="code" href="structcrow_1_1response.html#af87163fd1c7e18650c7691e07f58c7de">compressed</a> = <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00192"></a><span class="lineno">  192</span>&#160;            <span class="keywordflow">if</span> (file_info.statResult == 0)</div>
+<div class="line"><a name="l00193"></a><span class="lineno">  193</span>&#160;            {</div>
+<div class="line"><a name="l00194"></a><span class="lineno">  194</span>&#160;                std::size_t last_dot = path.find_last_of(<span class="stringliteral">&quot;.&quot;</span>);</div>
+<div class="line"><a name="l00195"></a><span class="lineno">  195</span>&#160;                std::string extension = path.substr(last_dot+1);</div>
+<div class="line"><a name="l00196"></a><span class="lineno">  196</span>&#160;                std::string mimeType = <span class="stringliteral">&quot;&quot;</span>;</div>
+<div class="line"><a name="l00197"></a><span class="lineno">  197</span>&#160;                <a class="code" href="structcrow_1_1response.html#aabc1f9b3264b8c5a2d05dcb409e8ff3f">code</a> = 200;</div>
+<div class="line"><a name="l00198"></a><span class="lineno">  198</span>&#160;                this-&gt;<a class="code" href="structcrow_1_1response.html#a16d1a8bcec6460ba97f90b80881693b8">add_header</a>(<span class="stringliteral">&quot;Content-length&quot;</span>, std::to_string(file_info.statbuf.st_size));</div>
+<div class="line"><a name="l00199"></a><span class="lineno">  199</span>&#160; </div>
+<div class="line"><a name="l00200"></a><span class="lineno">  200</span>&#160;                <span class="keywordflow">if</span> (extension != <span class="stringliteral">&quot;&quot;</span>){</div>
+<div class="line"><a name="l00201"></a><span class="lineno">  201</span>&#160;                    mimeType = mime_types[extension];</div>
+<div class="line"><a name="l00202"></a><span class="lineno">  202</span>&#160;                    <span class="keywordflow">if</span> (mimeType != <span class="stringliteral">&quot;&quot;</span>)</div>
+<div class="line"><a name="l00203"></a><span class="lineno">  203</span>&#160;                        this-&gt; <a class="code" href="structcrow_1_1response.html#a16d1a8bcec6460ba97f90b80881693b8">add_header</a>(<span class="stringliteral">&quot;Content-Type&quot;</span>, mimeType);</div>
+<div class="line"><a name="l00204"></a><span class="lineno">  204</span>&#160;                    <span class="keywordflow">else</span></div>
+<div class="line"><a name="l00205"></a><span class="lineno">  205</span>&#160;                        this-&gt; <a class="code" href="structcrow_1_1response.html#a16d1a8bcec6460ba97f90b80881693b8">add_header</a>(<span class="stringliteral">&quot;content-Type&quot;</span>, <span class="stringliteral">&quot;text/plain&quot;</span>);</div>
+<div class="line"><a name="l00206"></a><span class="lineno">  206</span>&#160;                }</div>
+<div class="line"><a name="l00207"></a><span class="lineno">  207</span>&#160;            }</div>
+<div class="line"><a name="l00208"></a><span class="lineno">  208</span>&#160;            <span class="keywordflow">else</span></div>
+<div class="line"><a name="l00209"></a><span class="lineno">  209</span>&#160;            {</div>
+<div class="line"><a name="l00210"></a><span class="lineno">  210</span>&#160;                code = 404;</div>
+<div class="line"><a name="l00211"></a><span class="lineno">  211</span>&#160;                this-&gt;<a class="code" href="structcrow_1_1response.html#abef42200eca49c70dc1f5140ee3603ab">end</a>();</div>
+<div class="line"><a name="l00212"></a><span class="lineno">  212</span>&#160;            }</div>
+<div class="line"><a name="l00213"></a><span class="lineno">  213</span>&#160;        }</div>
+<div class="line"><a name="l00214"></a><span class="lineno">  214</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00215"></a><span class="lineno">  215</span>&#160;<span class="comment">        /// Stream a static file.</span></div>
+<div class="line"><a name="l00216"></a><span class="lineno">  216</span>&#160;<span class="comment"></span>        <span class="keyword">template</span>&lt;<span class="keyword">typename</span> Adaptor&gt;</div>
+<div class="line"><a name="l00217"></a><span class="lineno"><a class="line" href="structcrow_1_1response.html#a502e26a7a9eac28d779a73c6b39431f2">  217</a></span>&#160;        <span class="keywordtype">void</span> <a class="code" href="structcrow_1_1response.html#a502e26a7a9eac28d779a73c6b39431f2">do_stream_file</a>(Adaptor&amp; adaptor)</div>
+<div class="line"><a name="l00218"></a><span class="lineno">  218</span>&#160;        {</div>
+<div class="line"><a name="l00219"></a><span class="lineno">  219</span>&#160;            <span class="keywordflow">if</span> (file_info.statResult == 0)</div>
+<div class="line"><a name="l00220"></a><span class="lineno">  220</span>&#160;            {</div>
+<div class="line"><a name="l00221"></a><span class="lineno">  221</span>&#160;                std::ifstream is(file_info.path.c_str(), std::ios::in | std::ios::binary);</div>
+<div class="line"><a name="l00222"></a><span class="lineno">  222</span>&#160;                write_streamed(is, adaptor);</div>
+<div class="line"><a name="l00223"></a><span class="lineno">  223</span>&#160;            }</div>
+<div class="line"><a name="l00224"></a><span class="lineno">  224</span>&#160;        }</div>
+<div class="line"><a name="l00225"></a><span class="lineno">  225</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00226"></a><span class="lineno">  226</span>&#160;<span class="comment">        /// Stream the response body (send the body in chunks).</span></div>
+<div class="line"><a name="l00227"></a><span class="lineno">  227</span>&#160;<span class="comment"></span>        <span class="keyword">template</span>&lt;<span class="keyword">typename</span> Adaptor&gt;</div>
+<div class="line"><a name="l00228"></a><span class="lineno"><a class="line" href="structcrow_1_1response.html#a35a2324a75247f1ea1305b4b2ad0083e">  228</a></span>&#160;        <span class="keywordtype">void</span> <a class="code" href="structcrow_1_1response.html#a35a2324a75247f1ea1305b4b2ad0083e">do_stream_body</a>(Adaptor&amp; adaptor)</div>
+<div class="line"><a name="l00229"></a><span class="lineno">  229</span>&#160;        {</div>
+<div class="line"><a name="l00230"></a><span class="lineno">  230</span>&#160;            <span class="keywordflow">if</span> (<a class="code" href="structcrow_1_1response.html#ae9f3cc153eac05954f1f4e599527892d">body</a>.length() &gt; 0)</div>
+<div class="line"><a name="l00231"></a><span class="lineno">  231</span>&#160;            {</div>
+<div class="line"><a name="l00232"></a><span class="lineno">  232</span>&#160;                write_streamed_string(<a class="code" href="structcrow_1_1response.html#ae9f3cc153eac05954f1f4e599527892d">body</a>, adaptor);</div>
+<div class="line"><a name="l00233"></a><span class="lineno">  233</span>&#160;            }</div>
+<div class="line"><a name="l00234"></a><span class="lineno">  234</span>&#160;        }</div>
+<div class="line"><a name="l00235"></a><span class="lineno">  235</span>&#160; </div>
+<div class="line"><a name="l00236"></a><span class="lineno">  236</span>&#160;        <span class="keyword">private</span>:</div>
+<div class="line"><a name="l00237"></a><span class="lineno">  237</span>&#160;            <span class="keywordtype">bool</span> completed_{};</div>
+<div class="line"><a name="l00238"></a><span class="lineno">  238</span>&#160;            std::function&lt;void()&gt; complete_request_handler_;</div>
+<div class="line"><a name="l00239"></a><span class="lineno">  239</span>&#160;            std::function&lt;bool()&gt; is_alive_helper_;</div>
+<div class="line"><a name="l00240"></a><span class="lineno">  240</span>&#160;            static_file_info file_info;</div>
+<div class="line"><a name="l00241"></a><span class="lineno">  241</span>&#160; </div>
+<div class="line"><a name="l00242"></a><span class="lineno">  242</span>&#160;            <span class="keyword">template</span>&lt;<span class="keyword">typename</span> Stream, <span class="keyword">typename</span> Adaptor&gt;</div>
+<div class="line"><a name="l00243"></a><span class="lineno">  243</span>&#160;            <span class="keywordtype">void</span> write_streamed(Stream&amp; is, Adaptor&amp; adaptor)</div>
+<div class="line"><a name="l00244"></a><span class="lineno">  244</span>&#160;            {</div>
+<div class="line"><a name="l00245"></a><span class="lineno">  245</span>&#160;                <span class="keywordtype">char</span> buf[16384];</div>
+<div class="line"><a name="l00246"></a><span class="lineno">  246</span>&#160;                <span class="keywordflow">while</span> (is.read(buf, <span class="keyword">sizeof</span>(buf)).gcount() &gt; 0)</div>
+<div class="line"><a name="l00247"></a><span class="lineno">  247</span>&#160;                {</div>
+<div class="line"><a name="l00248"></a><span class="lineno">  248</span>&#160;                    std::vector&lt;asio::const_buffer&gt; buffers;</div>
+<div class="line"><a name="l00249"></a><span class="lineno">  249</span>&#160;                    buffers.push_back(boost::asio::buffer(buf));</div>
+<div class="line"><a name="l00250"></a><span class="lineno">  250</span>&#160;                    write_buffer_list(buffers, adaptor);</div>
+<div class="line"><a name="l00251"></a><span class="lineno">  251</span>&#160;                }</div>
+<div class="line"><a name="l00252"></a><span class="lineno">  252</span>&#160;            }</div>
+<div class="line"><a name="l00253"></a><span class="lineno">  253</span>&#160; </div>
+<div class="line"><a name="l00254"></a><span class="lineno">  254</span>&#160;            <span class="comment">//THIS METHOD DOES MODIFY THE BODY, AS IN IT EMPTIES IT</span></div>
+<div class="line"><a name="l00255"></a><span class="lineno">  255</span>&#160;            <span class="keyword">template</span>&lt;<span class="keyword">typename</span> Adaptor&gt;</div>
+<div class="line"><a name="l00256"></a><span class="lineno">  256</span>&#160;            <span class="keywordtype">void</span> write_streamed_string(std::string&amp; is, Adaptor&amp; adaptor)</div>
+<div class="line"><a name="l00257"></a><span class="lineno">  257</span>&#160;            {</div>
+<div class="line"><a name="l00258"></a><span class="lineno">  258</span>&#160;                std::string buf;</div>
+<div class="line"><a name="l00259"></a><span class="lineno">  259</span>&#160;                std::vector&lt;asio::const_buffer&gt; buffers;</div>
+<div class="line"><a name="l00260"></a><span class="lineno">  260</span>&#160; </div>
+<div class="line"><a name="l00261"></a><span class="lineno">  261</span>&#160;                <span class="keywordflow">while</span> (is.length() &gt; 16384)</div>
+<div class="line"><a name="l00262"></a><span class="lineno">  262</span>&#160;                {</div>
+<div class="line"><a name="l00263"></a><span class="lineno">  263</span>&#160;                    <span class="comment">//buf.reserve(16385);</span></div>
+<div class="line"><a name="l00264"></a><span class="lineno">  264</span>&#160;                    buf = is.substr(0, 16384);</div>
+<div class="line"><a name="l00265"></a><span class="lineno">  265</span>&#160;                    is = is.substr(16384);</div>
+<div class="line"><a name="l00266"></a><span class="lineno">  266</span>&#160;                    push_and_write(buffers, buf, adaptor);</div>
+<div class="line"><a name="l00267"></a><span class="lineno">  267</span>&#160;                }</div>
+<div class="line"><a name="l00268"></a><span class="lineno">  268</span>&#160;                <span class="comment">//Collect whatever is left (less than 16KB) and send it down the socket</span></div>
+<div class="line"><a name="l00269"></a><span class="lineno">  269</span>&#160;                <span class="comment">//buf.reserve(is.length());</span></div>
+<div class="line"><a name="l00270"></a><span class="lineno">  270</span>&#160;                buf = is;</div>
+<div class="line"><a name="l00271"></a><span class="lineno">  271</span>&#160;                is.clear();</div>
+<div class="line"><a name="l00272"></a><span class="lineno">  272</span>&#160;                push_and_write(buffers, buf, adaptor);</div>
+<div class="line"><a name="l00273"></a><span class="lineno">  273</span>&#160;            }</div>
+<div class="line"><a name="l00274"></a><span class="lineno">  274</span>&#160; </div>
+<div class="line"><a name="l00275"></a><span class="lineno">  275</span>&#160;            <span class="keyword">template</span>&lt;<span class="keyword">typename</span> Adaptor&gt;</div>
+<div class="line"><a name="l00276"></a><span class="lineno">  276</span>&#160;            <span class="keyword">inline</span> <span class="keywordtype">void</span> push_and_write(std::vector&lt;asio::const_buffer&gt;&amp; buffers, std::string&amp; buf, Adaptor&amp; adaptor)</div>
+<div class="line"><a name="l00277"></a><span class="lineno">  277</span>&#160;            {</div>
+<div class="line"><a name="l00278"></a><span class="lineno">  278</span>&#160;                buffers.clear();</div>
+<div class="line"><a name="l00279"></a><span class="lineno">  279</span>&#160;                buffers.push_back(boost::asio::buffer(buf));</div>
+<div class="line"><a name="l00280"></a><span class="lineno">  280</span>&#160;                write_buffer_list(buffers, adaptor);</div>
+<div class="line"><a name="l00281"></a><span class="lineno">  281</span>&#160;            }</div>
+<div class="line"><a name="l00282"></a><span class="lineno">  282</span>&#160; </div>
+<div class="line"><a name="l00283"></a><span class="lineno">  283</span>&#160;            <span class="keyword">template</span>&lt;<span class="keyword">typename</span> Adaptor&gt;</div>
+<div class="line"><a name="l00284"></a><span class="lineno">  284</span>&#160;            <span class="keyword">inline</span> <span class="keywordtype">void</span> write_buffer_list(std::vector&lt;asio::const_buffer&gt;&amp; buffers, Adaptor&amp; adaptor)</div>
+<div class="line"><a name="l00285"></a><span class="lineno">  285</span>&#160;            {</div>
+<div class="line"><a name="l00286"></a><span class="lineno">  286</span>&#160;                boost::asio::write(adaptor.socket(), buffers, [<span class="keyword">this</span>](std::error_code ec, std::size_t)</div>
+<div class="line"><a name="l00287"></a><span class="lineno">  287</span>&#160;                {</div>
+<div class="line"><a name="l00288"></a><span class="lineno">  288</span>&#160;                    if (!ec)</div>
+<div class="line"><a name="l00289"></a><span class="lineno">  289</span>&#160;                    {</div>
+<div class="line"><a name="l00290"></a><span class="lineno">  290</span>&#160;                        return false;</div>
+<div class="line"><a name="l00291"></a><span class="lineno">  291</span>&#160;                    }</div>
+<div class="line"><a name="l00292"></a><span class="lineno">  292</span>&#160;                    <span class="keywordflow">else</span></div>
+<div class="line"><a name="l00293"></a><span class="lineno">  293</span>&#160;                    {</div>
+<div class="line"><a name="l00294"></a><span class="lineno">  294</span>&#160;                        CROW_LOG_ERROR &lt;&lt; ec &lt;&lt; <span class="stringliteral">&quot; - happened while sending buffers&quot;</span>;</div>
+<div class="line"><a name="l00295"></a><span class="lineno">  295</span>&#160;                        this-&gt;end();</div>
+<div class="line"><a name="l00296"></a><span class="lineno">  296</span>&#160;                        return true;</div>
+<div class="line"><a name="l00297"></a><span class="lineno">  297</span>&#160;                    }</div>
+<div class="line"><a name="l00298"></a><span class="lineno">  298</span>&#160;                });</div>
+<div class="line"><a name="l00299"></a><span class="lineno">  299</span>&#160;            }</div>
+<div class="line"><a name="l00300"></a><span class="lineno">  300</span>&#160; </div>
+<div class="line"><a name="l00301"></a><span class="lineno">  301</span>&#160;    };</div>
+<div class="line"><a name="l00302"></a><span class="lineno">  302</span>&#160;}</div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
-<div class="ttc" id="astructcrow_1_1response_html_a8f5e5caa08c3e658bccd03996e1a778a"><div class="ttname"><a href="structcrow_1_1response.html#a8f5e5caa08c3e658bccd03996e1a778a">crow::response::set_static_file_info</a></div><div class="ttdeci">void set_static_file_info(std::string path)</div><div class="ttdoc">Return a static file as the response body.</div><div class="ttdef"><b>Definition:</b> http_response.h:187</div></div>
+<div class="ttc" id="astructcrow_1_1response_html_a8f5e5caa08c3e658bccd03996e1a778a"><div class="ttname"><a href="structcrow_1_1response.html#a8f5e5caa08c3e658bccd03996e1a778a">crow::response::set_static_file_info</a></div><div class="ttdeci">void set_static_file_info(std::string path)</div><div class="ttdoc">Return a static file as the response body.</div><div class="ttdef"><b>Definition:</b> http_response.h:188</div></div>
 <div class="ttc" id="astructcrow_1_1response_html_af87163fd1c7e18650c7691e07f58c7de"><div class="ttname"><a href="structcrow_1_1response.html#af87163fd1c7e18650c7691e07f58c7de">crow::response::compressed</a></div><div class="ttdeci">bool compressed</div><div class="ttdoc">If compression is enabled and this is false, the individual response will not be compressed.</div><div class="ttdef"><b>Definition:</b> http_response.h:31</div></div>
-<div class="ttc" id="astructcrow_1_1response_html_ac29da52ee1e0b55086cd8eedd6c22da1"><div class="ttname"><a href="structcrow_1_1response.html#ac29da52ee1e0b55086cd8eedd6c22da1">crow::response::is_alive</a></div><div class="ttdeci">bool is_alive()</div><div class="ttdoc">Check if the connection is still alive (usually by checking the socket status).</div><div class="ttdef"><b>Definition:</b> http_response.h:165</div></div>
-<div class="ttc" id="astructcrow_1_1response_1_1static__file__info_html"><div class="ttname"><a href="structcrow_1_1response_1_1static__file__info.html">crow::response::static_file_info</a></div><div class="ttdoc">This constains metadata (coming from the stat command) related to any static files associated with th...</div><div class="ttdef"><b>Definition:</b> http_response.h:180</div></div>
-<div class="ttc" id="astructcrow_1_1response_html_ac04bbe2d4f54fd717cdffdb26af3e46f"><div class="ttname"><a href="structcrow_1_1response.html#ac04bbe2d4f54fd717cdffdb26af3e46f">crow::response::redirect</a></div><div class="ttdeci">void redirect(const std::string &amp;location)</div><div class="ttdef"><b>Definition:</b> http_response.h:105</div></div>
+<div class="ttc" id="astructcrow_1_1response_html_ac29da52ee1e0b55086cd8eedd6c22da1"><div class="ttname"><a href="structcrow_1_1response.html#ac29da52ee1e0b55086cd8eedd6c22da1">crow::response::is_alive</a></div><div class="ttdeci">bool is_alive()</div><div class="ttdoc">Check if the connection is still alive (usually by checking the socket status).</div><div class="ttdef"><b>Definition:</b> http_response.h:166</div></div>
+<div class="ttc" id="astructcrow_1_1response_1_1static__file__info_html"><div class="ttname"><a href="structcrow_1_1response_1_1static__file__info.html">crow::response::static_file_info</a></div><div class="ttdoc">This constains metadata (coming from the stat command) related to any static files associated with th...</div><div class="ttdef"><b>Definition:</b> http_response.h:181</div></div>
+<div class="ttc" id="astructcrow_1_1response_html_ac04bbe2d4f54fd717cdffdb26af3e46f"><div class="ttname"><a href="structcrow_1_1response.html#ac04bbe2d4f54fd717cdffdb26af3e46f">crow::response::redirect</a></div><div class="ttdeci">void redirect(const std::string &amp;location)</div><div class="ttdef"><b>Definition:</b> http_response.h:106</div></div>
 <div class="ttc" id="astructcrow_1_1response_html_ae56cfc39f24a56748c11016842427fb3"><div class="ttname"><a href="structcrow_1_1response.html#ae56cfc39f24a56748c11016842427fb3">crow::response::headers</a></div><div class="ttdeci">ci_map headers</div><div class="ttdoc">HTTP headers.</div><div class="ttdef"><b>Definition:</b> http_response.h:30</div></div>
-<div class="ttc" id="astructcrow_1_1response_html_a10da2e17421586b68f27ef1533ec677b"><div class="ttname"><a href="structcrow_1_1response.html#a10da2e17421586b68f27ef1533ec677b">crow::response::end</a></div><div class="ttdeci">void end(const std::string &amp;body_part)</div><div class="ttdoc">Same as end() except it adds a body part right before ending.</div><div class="ttdef"><b>Definition:</b> http_response.h:158</div></div>
-<div class="ttc" id="astructcrow_1_1response_html_aff527a091cf5054e933a244b078648c1"><div class="ttname"><a href="structcrow_1_1response.html#aff527a091cf5054e933a244b078648c1">crow::response::is_static_type</a></div><div class="ttdeci">bool is_static_type()</div><div class="ttdoc">Check whether the response has a static file defined.</div><div class="ttdef"><b>Definition:</b> http_response.h:171</div></div>
+<div class="ttc" id="astructcrow_1_1response_html_a10da2e17421586b68f27ef1533ec677b"><div class="ttname"><a href="structcrow_1_1response.html#a10da2e17421586b68f27ef1533ec677b">crow::response::end</a></div><div class="ttdeci">void end(const std::string &amp;body_part)</div><div class="ttdoc">Same as end() except it adds a body part right before ending.</div><div class="ttdef"><b>Definition:</b> http_response.h:159</div></div>
+<div class="ttc" id="astructcrow_1_1response_html_aff527a091cf5054e933a244b078648c1"><div class="ttname"><a href="structcrow_1_1response.html#aff527a091cf5054e933a244b078648c1">crow::response::is_static_type</a></div><div class="ttdeci">bool is_static_type()</div><div class="ttdoc">Check whether the response has a static file defined.</div><div class="ttdef"><b>Definition:</b> http_response.h:172</div></div>
 <div class="ttc" id="aclasscrow_1_1_connection_html"><div class="ttname"><a href="classcrow_1_1_connection.html">crow::Connection</a></div><div class="ttdoc">An HTTP connection.</div><div class="ttdef"><b>Definition:</b> http_connection.h:185</div></div>
 <div class="ttc" id="astructcrow_1_1response_html_aabc1f9b3264b8c5a2d05dcb409e8ff3f"><div class="ttname"><a href="structcrow_1_1response.html#aabc1f9b3264b8c5a2d05dcb409e8ff3f">crow::response::code</a></div><div class="ttdeci">int code</div><div class="ttdoc">The Status code for the response.</div><div class="ttdef"><b>Definition:</b> http_response.h:28</div></div>
 <div class="ttc" id="astructcrow_1_1response_html_a9fb82c40e0c0844db70b7b86b4a23e9f"><div class="ttname"><a href="structcrow_1_1response.html#a9fb82c40e0c0844db70b7b86b4a23e9f">crow::response::is_completed</a></div><div class="ttdeci">bool is_completed() const noexcept</div><div class="ttdoc">Check if the response has completed (whether response.end() has been called)</div><div class="ttdef"><b>Definition:</b> http_response.h:89</div></div>
-<div class="ttc" id="astructcrow_1_1response_html_a502e26a7a9eac28d779a73c6b39431f2"><div class="ttname"><a href="structcrow_1_1response.html#a502e26a7a9eac28d779a73c6b39431f2">crow::response::do_stream_file</a></div><div class="ttdeci">void do_stream_file(Adaptor &amp;adaptor)</div><div class="ttdoc">Stream a static file.</div><div class="ttdef"><b>Definition:</b> http_response.h:216</div></div>
+<div class="ttc" id="astructcrow_1_1response_html_a502e26a7a9eac28d779a73c6b39431f2"><div class="ttname"><a href="structcrow_1_1response.html#a502e26a7a9eac28d779a73c6b39431f2">crow::response::do_stream_file</a></div><div class="ttdeci">void do_stream_file(Adaptor &amp;adaptor)</div><div class="ttdoc">Stream a static file.</div><div class="ttdef"><b>Definition:</b> http_response.h:217</div></div>
 <div class="ttc" id="astructcrow_1_1response_html"><div class="ttname"><a href="structcrow_1_1response.html">crow::response</a></div><div class="ttdoc">HTTP response.</div><div class="ttdef"><b>Definition:</b> http_response.h:23</div></div>
-<div class="ttc" id="astructcrow_1_1response_html_a35a2324a75247f1ea1305b4b2ad0083e"><div class="ttname"><a href="structcrow_1_1response.html#a35a2324a75247f1ea1305b4b2ad0083e">crow::response::do_stream_body</a></div><div class="ttdeci">void do_stream_body(Adaptor &amp;adaptor)</div><div class="ttdoc">Stream the response body (send the body in chunks).</div><div class="ttdef"><b>Definition:</b> http_response.h:227</div></div>
-<div class="ttc" id="astructcrow_1_1response_html_a760bca5f5fdee03518d59d9538ce5432"><div class="ttname"><a href="structcrow_1_1response.html#a760bca5f5fdee03518d59d9538ce5432">crow::response::moved</a></div><div class="ttdeci">void moved(const std::string &amp;location)</div><div class="ttdef"><b>Definition:</b> http_response.h:123</div></div>
-<div class="ttc" id="astructcrow_1_1response_html_a9e87a17c3cf8b434fd2a64a9b3d4b675"><div class="ttname"><a href="structcrow_1_1response.html#a9e87a17c3cf8b434fd2a64a9b3d4b675">crow::response::redirect_perm</a></div><div class="ttdeci">void redirect_perm(const std::string &amp;location)</div><div class="ttdef"><b>Definition:</b> http_response.h:114</div></div>
-<div class="ttc" id="astructcrow_1_1response_html_a9ee58f8b775b2566418b298fe33c0dcc"><div class="ttname"><a href="structcrow_1_1response.html#a9ee58f8b775b2566418b298fe33c0dcc">crow::response::moved_perm</a></div><div class="ttdeci">void moved_perm(const std::string &amp;location)</div><div class="ttdef"><b>Definition:</b> http_response.h:132</div></div>
+<div class="ttc" id="astructcrow_1_1response_html_a35a2324a75247f1ea1305b4b2ad0083e"><div class="ttname"><a href="structcrow_1_1response.html#a35a2324a75247f1ea1305b4b2ad0083e">crow::response::do_stream_body</a></div><div class="ttdeci">void do_stream_body(Adaptor &amp;adaptor)</div><div class="ttdoc">Stream the response body (send the body in chunks).</div><div class="ttdef"><b>Definition:</b> http_response.h:228</div></div>
+<div class="ttc" id="astructcrow_1_1response_html_a760bca5f5fdee03518d59d9538ce5432"><div class="ttname"><a href="structcrow_1_1response.html#a760bca5f5fdee03518d59d9538ce5432">crow::response::moved</a></div><div class="ttdeci">void moved(const std::string &amp;location)</div><div class="ttdef"><b>Definition:</b> http_response.h:124</div></div>
+<div class="ttc" id="astructcrow_1_1response_html_a9e87a17c3cf8b434fd2a64a9b3d4b675"><div class="ttname"><a href="structcrow_1_1response.html#a9e87a17c3cf8b434fd2a64a9b3d4b675">crow::response::redirect_perm</a></div><div class="ttdeci">void redirect_perm(const std::string &amp;location)</div><div class="ttdef"><b>Definition:</b> http_response.h:115</div></div>
+<div class="ttc" id="astructcrow_1_1response_html_a9ee58f8b775b2566418b298fe33c0dcc"><div class="ttname"><a href="structcrow_1_1response.html#a9ee58f8b775b2566418b298fe33c0dcc">crow::response::moved_perm</a></div><div class="ttdeci">void moved_perm(const std::string &amp;location)</div><div class="ttdef"><b>Definition:</b> http_response.h:133</div></div>
 <div class="ttc" id="astructcrow_1_1response_html_a16d1a8bcec6460ba97f90b80881693b8"><div class="ttname"><a href="structcrow_1_1response.html#a16d1a8bcec6460ba97f90b80881693b8">crow::response::add_header</a></div><div class="ttdeci">void add_header(std::string key, std::string value)</div><div class="ttdoc">Add a new header to the response.</div><div class="ttdef"><b>Definition:</b> http_response.h:41</div></div>
-<div class="ttc" id="astructcrow_1_1response_html_abef42200eca49c70dc1f5140ee3603ab"><div class="ttname"><a href="structcrow_1_1response.html#abef42200eca49c70dc1f5140ee3603ab">crow::response::end</a></div><div class="ttdeci">void end()</div><div class="ttdoc">Set the response completion flag and call the handler (to send the response).</div><div class="ttdef"><b>Definition:</b> http_response.h:144</div></div>
+<div class="ttc" id="astructcrow_1_1response_html_abef42200eca49c70dc1f5140ee3603ab"><div class="ttname"><a href="structcrow_1_1response.html#abef42200eca49c70dc1f5140ee3603ab">crow::response::end</a></div><div class="ttdeci">void end()</div><div class="ttdoc">Set the response completion flag and call the handler (to send the response).</div><div class="ttdef"><b>Definition:</b> http_response.h:145</div></div>
 <div class="ttc" id="astructcrow_1_1response_html_ab2b9a9b9795fa6330bd47b66a716cb0b"><div class="ttname"><a href="structcrow_1_1response.html#ab2b9a9b9795fa6330bd47b66a716cb0b">crow::response::set_header</a></div><div class="ttdeci">void set_header(std::string key, std::string value)</div><div class="ttdoc">Set the value of an existing header in the response.</div><div class="ttdef"><b>Definition:</b> http_response.h:34</div></div>
 <div class="ttc" id="astructcrow_1_1response_html_ae9f3cc153eac05954f1f4e599527892d"><div class="ttname"><a href="structcrow_1_1response.html#ae9f3cc153eac05954f1f4e599527892d">crow::response::body</a></div><div class="ttdeci">std::string body</div><div class="ttdoc">The actual payload containing the response data.</div><div class="ttdef"><b>Definition:</b> http_response.h:29</div></div>
 <!-- start footer part -->
@@ -428,7 +429,7 @@ $(document).ready(function(){initNavTree('http__response_8h_source.html',''); in
 			<ul>
 				<li class="navelem"><a class="el" href="dir_d44c64559bbebec7f509842c48db8b23.html">include</a></li><li class="navelem"><a class="el" href="dir_d22c1cb87b72f01e1a7f207eb3bfd1ca.html">crow</a></li><li class="navelem"><b>http_response.h</b></li>
 				<li class="footer">
-					Generated on Thu Feb 11 2021 for Crow by <a href="http://www.doxygen.org/index.html">
+					Generated on Mon Feb 15 2021 for Crow by <a href="http://www.doxygen.org/index.html">
 					<img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.17.
 					Dark theme by <a href="http://majerle.eu" target="_new">Tilen Majerle</a>. Edited by <a href="https://github.com/The-EDev" target="_new">Farook Al-Sammarraie</a>. All rights reserved.
 				</li>

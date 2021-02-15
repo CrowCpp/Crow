@@ -722,19 +722,19 @@
                 <p>Unit tests can be written in 2 ways for a Crow application.<br><br></p>
 <h2 id="the-handler-method">The handler method</h2>
 <p>Crow Allows users to handle requests that may not come from the network. This is done by calling the <code>handle(req, res)</code> method and providing a request and response objects. Which causes crow to identify and run the appropriate handler, returning the resulting response.</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span> 1
- 2
- 3
- 4
- 5
- 6
- 7
- 8
- 9
-10
-11
-12
-13</pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>  <span class="n">CROW_ROUTE</span><span class="p">(</span><span class="n">app</span><span class="p">,</span> <span class="s">&quot;/place&quot;</span><span class="p">)</span>
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
+<span class="normal"> 2</span>
+<span class="normal"> 3</span>
+<span class="normal"> 4</span>
+<span class="normal"> 5</span>
+<span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span>
+<span class="normal">11</span>
+<span class="normal">12</span>
+<span class="normal">13</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>  <span class="n">CROW_ROUTE</span><span class="p">(</span><span class="n">app</span><span class="p">,</span> <span class="s">&quot;/place&quot;</span><span class="p">)</span>
   <span class="p">([]</span> <span class="p">{</span> <span class="k">return</span> <span class="s">&quot;hi&quot;</span><span class="p">;</span> <span class="p">});</span>
 
   <span class="n">app</span><span class="p">.</span><span class="n">validate</span><span class="p">();</span>  <span class="c1">//Used to make sure all the route handlers are in order.</span>
@@ -759,27 +759,27 @@
 </div>
 <h2 id="the-client-method">The client method</h2>
 <p>This method involves creating a simple <a href="https://think-async.com/Asio/">ASIO</a> client that sends the request and receives the response. It is considerably more complex than the earlier method, but it is both more realistic and includes post handle operations.</p>
-<p><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span> 1
- 2
- 3
- 4
- 5
- 6
- 7
- 8
- 9
-10
-11
-12
-13
-14
-15
-16
-17
-18
-19
-20
-21</pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>  <span class="k">static</span> <span class="kt">char</span> <span class="n">buf</span><span class="p">[</span><span class="mi">2048</span><span class="p">];</span>
+<p><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
+<span class="normal"> 2</span>
+<span class="normal"> 3</span>
+<span class="normal"> 4</span>
+<span class="normal"> 5</span>
+<span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span>
+<span class="normal">11</span>
+<span class="normal">12</span>
+<span class="normal">13</span>
+<span class="normal">14</span>
+<span class="normal">15</span>
+<span class="normal">16</span>
+<span class="normal">17</span>
+<span class="normal">18</span>
+<span class="normal">19</span>
+<span class="normal">20</span>
+<span class="normal">21</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>  <span class="k">static</span> <span class="kt">char</span> <span class="n">buf</span><span class="p">[</span><span class="mi">2048</span><span class="p">];</span>
   <span class="n">SimpleApp</span> <span class="n">app</span><span class="p">;</span>
   <span class="n">CROW_ROUTE</span><span class="p">(</span><span class="n">app</span><span class="p">,</span> <span class="s">&quot;/&quot;</span><span class="p">)([]</span> <span class="p">{</span> <span class="k">return</span> <span class="s">&quot;A&quot;</span><span class="p">;</span> <span class="p">});</span>
 
