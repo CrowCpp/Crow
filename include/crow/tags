@@ -1,0 +1,1156 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_OUTPUT_FILESEP	slash	/slash or backslash/
+!_TAG_OUTPUT_MODE	u-ctags	/u-ctags or e-ctags/
+!_TAG_PROGRAM_AUTHOR	Universal Ctags Team	//
+!_TAG_PROGRAM_NAME	Universal Ctags	/Derived from Exuberant Ctags/
+!_TAG_PROGRAM_URL	https://ctags.io/	/official site/
+!_TAG_PROGRAM_VERSION	0.0.0	/a3c87ab5/
+Action	mustache.h	/^            Action(ActionType t, int start, int end, int pos = 0) $/;"	f	struct:crow::mustache::Action
+Action	mustache.h	/^        struct Action$/;"	s	namespace:crow::mustache
+ActionType	mustache.h	/^        enum class ActionType$/;"	g	namespace:crow::mustache
+AfterMinus	json.h	/^                        AfterMinus,$/;"	e	enum:crow::json::load_nocopy_internal::Parser::decode_number::NumberParsingState
+App	app.h	/^    using App = Crow<Middlewares...>;$/;"	t	namespace:crow	typeref:typename:Crow<Middlewares...>
+BaseRule	routing.h	/^        BaseRule(std::string rule)$/;"	f	class:crow::BaseRule
+BaseRule	routing.h	/^    class BaseRule$/;"	c	namespace:crow
+CONNECT	common.h	/^        CONNECT,$/;"	e	enum:crow::HTTPMethod
+CRITICAL	logging.h	/^        CRITICAL,$/;"	e	enum:crow::LogLevel
+CROW_ARRAY_SIZE	http_parser_merged.h	/^# define CROW_ARRAY_SIZE(/;"	d
+CROW_BIT_AT	http_parser_merged.h	/^# define CROW_BIT_AT(/;"	d
+CROW_CALLBACK_DATA	http_parser_merged.h	/^#define CROW_CALLBACK_DATA(/;"	d
+CROW_CALLBACK_DATA_	http_parser_merged.h	/^#define CROW_CALLBACK_DATA_(/;"	d
+CROW_CALLBACK_DATA_NOADVANCE	http_parser_merged.h	/^#define CROW_CALLBACK_DATA_NOADVANCE(/;"	d
+CROW_CALLBACK_NOTIFY	http_parser_merged.h	/^#define CROW_CALLBACK_NOTIFY(/;"	d
+CROW_CALLBACK_NOTIFY_	http_parser_merged.h	/^#define CROW_CALLBACK_NOTIFY_(/;"	d
+CROW_CALLBACK_NOTIFY_NOADVANCE	http_parser_merged.h	/^#define CROW_CALLBACK_NOTIFY_NOADVANCE(/;"	d
+CROW_CAN_USE_CPP14	settings.h	/^#define CROW_CAN_USE_CPP14$/;"	d
+CROW_CHUNKED	http_parser_merged.h	/^#define CROW_CHUNKED /;"	d
+CROW_CLOSE	http_parser_merged.h	/^#define CROW_CLOSE /;"	d
+CROW_CONNECTION	http_parser_merged.h	/^#define CROW_CONNECTION /;"	d
+CROW_CONTENT_LENGTH	http_parser_merged.h	/^#define CROW_CONTENT_LENGTH /;"	d
+CROW_CR	http_parser_merged.h	/^#define CROW_CR /;"	d
+CROW_ELEM_AT	http_parser_merged.h	/^# define CROW_ELEM_AT(/;"	d
+CROW_ENABLE_LOGGING	settings.h	/^#define CROW_ENABLE_LOGGING$/;"	d
+CROW_HTTP_ERRNO_GEN	http_parser_merged.h	/^#define CROW_HTTP_ERRNO_GEN(/;"	d
+CROW_HTTP_ERRNO_MAP	http_parser_merged.h	/^  CROW_HTTP_ERRNO_MAP(CROW_HTTP_ERRNO_GEN)$/;"	e	enum:http_errno
+CROW_HTTP_ERRNO_MAP	http_parser_merged.h	/^#define CROW_HTTP_ERRNO_MAP(/;"	d
+CROW_HTTP_MAX_HEADER_SIZE	http_parser_merged.h	/^# define CROW_HTTP_MAX_HEADER_SIZE /;"	d
+CROW_HTTP_METHOD_MAP	http_parser_merged.h	/^  CROW_HTTP_METHOD_MAP(CROW_XX)$/;"	e	enum:http_method
+CROW_HTTP_METHOD_MAP	http_parser_merged.h	/^#define CROW_HTTP_METHOD_MAP(/;"	d
+CROW_HTTP_PARSER_ERRNO	http_parser_merged.h	/^#define CROW_HTTP_PARSER_ERRNO(/;"	d
+CROW_HTTP_PARSER_STRICT	http_parser_merged.h	/^# define CROW_HTTP_PARSER_STRICT /;"	d
+CROW_HTTP_PARSER_VERSION_MAJOR	http_parser_merged.h	/^#define CROW_HTTP_PARSER_VERSION_MAJOR /;"	d
+CROW_HTTP_PARSER_VERSION_MINOR	http_parser_merged.h	/^#define CROW_HTTP_PARSER_VERSION_MINOR /;"	d
+CROW_HTTP_PARSER_VERSION_PATCH	http_parser_merged.h	/^#define CROW_HTTP_PARSER_VERSION_PATCH /;"	d
+CROW_HTTP_STRERROR_GEN	http_parser_merged.h	/^#define CROW_HTTP_STRERROR_GEN(/;"	d
+CROW_INTERNAL_PARAMETER_TAG	utility.h	/^#define CROW_INTERNAL_PARAMETER_TAG(/;"	d
+CROW_INTERNAL_PROMOTE_TYPE	utility.h	/^#define CROW_INTERNAL_PROMOTE_TYPE(/;"	d
+CROW_IS_ALPHA	http_parser_merged.h	/^#define CROW_IS_ALPHA(/;"	d
+CROW_IS_ALPHANUM	http_parser_merged.h	/^#define CROW_IS_ALPHANUM(/;"	d
+CROW_IS_HEX	http_parser_merged.h	/^#define CROW_IS_HEX(/;"	d
+CROW_IS_HOST_CHAR	http_parser_merged.h	/^#define CROW_IS_HOST_CHAR(/;"	d
+CROW_IS_MARK	http_parser_merged.h	/^#define CROW_IS_MARK(/;"	d
+CROW_IS_NUM	http_parser_merged.h	/^#define CROW_IS_NUM(/;"	d
+CROW_IS_URL_CHAR	http_parser_merged.h	/^#define CROW_IS_URL_CHAR(/;"	d
+CROW_IS_USERINFO_CHAR	http_parser_merged.h	/^#define CROW_IS_USERINFO_CHAR(/;"	d
+CROW_KEEP_ALIVE	http_parser_merged.h	/^#define CROW_KEEP_ALIVE /;"	d
+CROW_LF	http_parser_merged.h	/^#define CROW_LF /;"	d
+CROW_LOG_CRITICAL	logging.h	/^#define CROW_LOG_CRITICAL /;"	d
+CROW_LOG_DEBUG	logging.h	/^#define CROW_LOG_DEBUG /;"	d
+CROW_LOG_ERROR	logging.h	/^#define CROW_LOG_ERROR /;"	d
+CROW_LOG_INFO	logging.h	/^#define CROW_LOG_INFO /;"	d
+CROW_LOG_LEVEL	settings.h	/^#define CROW_LOG_LEVEL /;"	d
+CROW_LOG_WARNING	logging.h	/^#define CROW_LOG_WARNING /;"	d
+CROW_LOWER	http_parser_merged.h	/^#define CROW_LOWER(/;"	d
+CROW_MARK	http_parser_merged.h	/^#define CROW_MARK(/;"	d
+CROW_MIN	http_parser_merged.h	/^# define CROW_MIN(/;"	d
+CROW_MSVC_WORKAROUND	settings.h	/^#define CROW_MSVC_WORKAROUND$/;"	d
+CROW_NEW_MESSAGE	http_parser_merged.h	/^# define CROW_NEW_MESSAGE(/;"	d
+CROW_PARSING_HEADER	http_parser_merged.h	/^#define CROW_PARSING_HEADER(/;"	d
+CROW_PROXY_CONNECTION	http_parser_merged.h	/^#define CROW_PROXY_CONNECTION /;"	d
+CROW_QS_HEX2DEC	query_string.h	/^#define CROW_QS_HEX2DEC(/;"	d
+CROW_QS_ISHEX	query_string.h	/^#define CROW_QS_ISHEX(/;"	d
+CROW_QS_ISQSCHR	query_string.h	/^#define CROW_QS_ISQSCHR(/;"	d
+CROW_ROUTE	app.h	/^#define CROW_ROUTE(/;"	d
+CROW_SET_ERRNO	http_parser_merged.h	/^#define CROW_SET_ERRNO(/;"	d
+CROW_STATIC_DIRECTORY	settings.h	/^#define CROW_STATIC_DIRECTORY /;"	d
+CROW_STATIC_ENDPOINT	settings.h	/^#define CROW_STATIC_ENDPOINT /;"	d
+CROW_STRICT_CHECK	http_parser_merged.h	/^# define CROW_STRICT_CHECK(/;"	d
+CROW_T	http_parser_merged.h	/^# define CROW_T(/;"	d
+CROW_TOKEN	http_parser_merged.h	/^#define CROW_TOKEN(/;"	d
+CROW_TRANSFER_ENCODING	http_parser_merged.h	/^#define CROW_TRANSFER_ENCODING /;"	d
+CROW_ULLONG_MAX	http_parser_merged.h	/^# define CROW_ULLONG_MAX /;"	d
+CROW_UPGRADE	http_parser_merged.h	/^#define CROW_UPGRADE /;"	d
+CROW_XX	http_parser_merged.h	/^#define CROW_XX(/;"	d
+CROW_http_parser_h	http_parser_merged.h	/^#define CROW_http_parser_h$/;"	d
+CROW_start_state	http_parser_merged.h	/^#define CROW_start_state /;"	d
+CerrLogHandler	logging.h	/^    class CerrLogHandler : public ILogHandler {$/;"	c	namespace:crow
+CloseBlock	mustache.h	/^            CloseBlock,$/;"	e	enum:crow::mustache::ActionType
+Concat	utility.h	/^        using Concat = Invoke<concat<S1, S2>>;$/;"	t	namespace:crow	typeref:typename:Invoke<concat<S1,S2>>
+Connect	common.h	/^        Connect,$/;"	e	enum:crow::HTTPMethod
+Connection	http_connection.h	/^        Connection($/;"	f	class:crow::Connection
+Connection	http_connection.h	/^    class Connection$/;"	c	namespace:crow
+Connection	websocket.h	/^				Connection(const crow::request& req, Adaptor&& adaptor, $/;"	f	class:crow::websocket::Connection
+Connection	websocket.h	/^        class Connection : public connection$/;"	c	namespace:crow::websocket
+CookieParser	middlewares/cookie_parser.h	/^    struct CookieParser$/;"	s	namespace:crow
+Critical	logging.h	/^        Critical,$/;"	e	enum:crow::LogLevel
+Crow	app.h	/^        Crow()$/;"	f	class:crow::Crow
+Crow	app.h	/^    class Crow$/;"	c	namespace:crow
+CurrentMW	http_connection.h	/^            using CurrentMW = typename std::tuple_element<N, typename std::remove_reference<Cont/;"	t	function:crow::detail::after_handlers_call_helper	typeref:typename:std::tuple_element<N,typename std::remove_reference<Container>::type>::type
+DEBUG	logging.h	/^        DEBUG = 0,$/;"	e	enum:crow::LogLevel
+DEFLATE	compression.h	/^            DEFLATE = 15,$/;"	e	enum:crow::compression::algorithm
+DELETE	common.h	/^        DELETE = 0,$/;"	e	enum:crow::HTTPMethod
+DOUBLE	common.h	/^        DOUBLE,$/;"	e	enum:crow::ParamType
+Debug	logging.h	/^        Debug = 0,$/;"	e	enum:crow::LogLevel
+Delete	common.h	/^        Delete = 0,$/;"	e	enum:crow::HTTPMethod
+Digits	json.h	/^                        Digits,$/;"	e	enum:crow::json::load_nocopy_internal::Parser::decode_number::NumberParsingState
+DigitsAfterE	json.h	/^                        DigitsAfterE,$/;"	e	enum:crow::json::load_nocopy_internal::Parser::decode_number::NumberParsingState
+DigitsAfterPoints	json.h	/^                        DigitsAfterPoints,$/;"	e	enum:crow::json::load_nocopy_internal::Parser::decode_number::NumberParsingState
+E	json.h	/^                        E,$/;"	e	enum:crow::json::load_nocopy_internal::Parser::decode_number::NumberParsingState
+ERROR	logging.h	/^        ERROR,$/;"	e	enum:crow::LogLevel
+ElseBlock	mustache.h	/^            ElseBlock,$/;"	e	enum:crow::mustache::ActionType
+Error	logging.h	/^        Error,$/;"	e	enum:crow::LogLevel
+F_CHUNKED	http_parser_merged.h	/^  { F_CHUNKED               = 1 << 0$/;"	e	enum:http_connection_flags
+F_CONNECTION_CLOSE	http_parser_merged.h	/^  , F_CONNECTION_CLOSE      = 1 << 2$/;"	e	enum:http_connection_flags
+F_CONNECTION_KEEP_ALIVE	http_parser_merged.h	/^  , F_CONNECTION_KEEP_ALIVE = 1 << 1$/;"	e	enum:http_connection_flags
+F_SKIPBODY	http_parser_merged.h	/^  , F_SKIPBODY              = 1 << 5$/;"	e	enum:http_connection_flags
+F_TRAILING	http_parser_merged.h	/^  , F_TRAILING              = 1 << 3$/;"	e	enum:http_connection_flags
+F_UPGRADE	http_parser_merged.h	/^  , F_UPGRADE               = 1 << 4$/;"	e	enum:http_connection_flags
+False	json.h	/^            False,$/;"	e	enum:crow::json::type
+Floating_point	json.h	/^            Floating_point,$/;"	e	enum:crow::json::num_type
+GET	common.h	/^        GET,$/;"	e	enum:crow::HTTPMethod
+GET_IO_SERVICE	socket_adaptors.h	/^#define GET_IO_SERVICE(/;"	d
+GZIP	compression.h	/^            GZIP = 15|16,$/;"	e	enum:crow::compression::algorithm
+GenSeq	utility.h	/^        template<unsigned N> using GenSeq = Invoke<gen_seq<N>>;$/;"	t	namespace:crow	typeref:typename:Invoke<gen_seq<N>>
+Get	common.h	/^        Get,$/;"	e	enum:crow::HTTPMethod
+HEAD	common.h	/^        HEAD,$/;"	e	enum:crow::HTTPMethod
+HTTPMethod	common.h	/^    enum class HTTPMethod$/;"	g	namespace:crow
+HTTPParser	parser.h	/^        HTTPParser(Handler* handler) :$/;"	f	struct:crow::HTTPParser
+HTTPParser	parser.h	/^    struct HTTPParser : public http_parser$/;"	s	namespace:crow
+HTTP_BOTH	http_parser_merged.h	/^enum http_parser_type { HTTP_REQUEST, HTTP_RESPONSE, HTTP_BOTH };$/;"	e	enum:http_parser_type
+HTTP_REQUEST	http_parser_merged.h	/^enum http_parser_type { HTTP_REQUEST, HTTP_RESPONSE, HTTP_BOTH };$/;"	e	enum:http_parser_type
+HTTP_RESPONSE	http_parser_merged.h	/^enum http_parser_type { HTTP_REQUEST, HTTP_RESPONSE, HTTP_BOTH };$/;"	e	enum:http_parser_type
+Head	common.h	/^        Head,$/;"	e	enum:crow::HTTPMethod
+ILogHandler	logging.h	/^    class ILogHandler {$/;"	c	namespace:crow
+INFO	logging.h	/^        INFO,$/;"	e	enum:crow::LogLevel
+INT	common.h	/^        INT,$/;"	e	enum:crow::ParamType
+Ignore	mustache.h	/^            Ignore,$/;"	e	enum:crow::mustache::ActionType
+Info	logging.h	/^        Info,$/;"	e	enum:crow::LogLevel
+InternalMethodCount	common.h	/^        InternalMethodCount,$/;"	e	enum:crow::HTTPMethod
+Invalid	json.h	/^                        Invalid,$/;"	e	enum:crow::json::load_nocopy_internal::Parser::decode_number::NumberParsingState
+Invoke	utility.h	/^        template<class T> using Invoke = typename T::type;$/;"	t	namespace:crow	typeref:typename:T::type
+LeftRotate	TinySHA1.hpp	/^		inline static uint32_t LeftRotate(uint32_t value, size_t count) {$/;"	f	class:sha1::SHA1	typeref:typename:uint32_t
+Len16	websocket.h	/^            Len16,$/;"	e	enum:crow::websocket::WebSocketReadState
+Len64	websocket.h	/^            Len64,$/;"	e	enum:crow::websocket::WebSocketReadState
+List	json.h	/^            List,$/;"	e	enum:crow::json::type
+LogLevel	logging.h	/^    enum class LogLevel$/;"	g	namespace:crow
+MAX	common.h	/^        MAX$/;"	e	enum:crow::ParamType
+MAX_KEY_VALUE_PAIRS_COUNT	query_string.h	/^        static const int MAX_KEY_VALUE_PAIRS_COUNT = 256;$/;"	m	class:crow::query_string	typeref:typename:const int
+MSC_COMPATIBLE_SPRINTF	json.h	/^    #define MSC_COMPATIBLE_SPRINTF(/;"	d
+Mask	websocket.h	/^            Mask,$/;"	e	enum:crow::websocket::WebSocketReadState
+MiniHeader	websocket.h	/^            MiniHeader,$/;"	e	enum:crow::websocket::WebSocketReadState
+Minus	json.h	/^                        Minus,$/;"	e	enum:crow::json::load_nocopy_internal::Parser::decode_number::NumberParsingState
+Null	json.h	/^            Null$/;"	e	enum:crow::json::num_type
+Null	json.h	/^            Null,$/;"	e	enum:crow::json::type
+Number	json.h	/^            Number,$/;"	e	enum:crow::json::type
+NumberParsingState	json.h	/^                    enum NumberParsingState$/;"	g	function:crow::json::load_nocopy_internal::Parser::decode_number
+OPTIONS	common.h	/^        OPTIONS,$/;"	e	enum:crow::HTTPMethod
+Object	json.h	/^            Object,$/;"	e	enum:crow::json::type
+OpenBlock	mustache.h	/^            OpenBlock,$/;"	e	enum:crow::mustache::ActionType
+Options	common.h	/^        Options,$/;"	e	enum:crow::HTTPMethod
+OutOfRange	utility.h	/^            OutOfRange(unsigned \/*pos*\/, unsigned \/*length*\/) {}$/;"	f	struct:crow::black_magic::OutOfRange
+OutOfRange	utility.h	/^        struct OutOfRange$/;"	s	namespace:crow::black_magic
+PATCH	common.h	/^        PATCH,$/;"	e	enum:crow::HTTPMethod
+PATH	common.h	/^        PATH,$/;"	e	enum:crow::ParamType
+POST	common.h	/^        POST,$/;"	e	enum:crow::HTTPMethod
+PURGE	common.h	/^        PURGE,$/;"	e	enum:crow::HTTPMethod
+PUT	common.h	/^        PUT,$/;"	e	enum:crow::HTTPMethod
+ParamType	common.h	/^    enum class ParamType$/;"	g	namespace:crow
+Parser	json.h	/^                Parser(char* data, size_t \/*size*\/)$/;"	f	struct:crow::json::load_nocopy_internal::Parser
+Parser	json.h	/^            struct Parser$/;"	s	function:crow::json::load_nocopy_internal
+Partial	mustache.h	/^            Partial,$/;"	e	enum:crow::mustache::ActionType
+Patch	common.h	/^        Patch,$/;"	e	enum:crow::HTTPMethod
+Payload	websocket.h	/^            Payload,$/;"	e	enum:crow::websocket::WebSocketReadState
+Post	common.h	/^        Post,$/;"	e	enum:crow::HTTPMethod
+Pred	json.h	/^                struct Pred $/;"	s	function:crow::json::rvalue::has
+Pred	json.h	/^                struct Pred $/;"	s	function:crow::json::rvalue::operator []
+Purge	common.h	/^        Purge,$/;"	e	enum:crow::HTTPMethod
+Put	common.h	/^        Put,$/;"	e	enum:crow::HTTPMethod
+S	utility.h	/^        struct S$/;"	s	namespace:crow::black_magic
+SHA1	TinySHA1.hpp	/^		SHA1(){ reset(); }$/;"	f	class:sha1::SHA1
+SHA1	TinySHA1.hpp	/^		SHA1(const SHA1& s) { *this = s; }$/;"	f	class:sha1::SHA1
+SHA1	TinySHA1.hpp	/^	class SHA1$/;"	c	namespace:sha1
+SSLAdaptor	socket_adaptors.h	/^        SSLAdaptor(boost::asio::io_service& io_service, context* ctx)$/;"	f	struct:crow::SSLAdaptor
+SSLAdaptor	socket_adaptors.h	/^    struct SSLAdaptor$/;"	s	namespace:crow
+STRING	common.h	/^        STRING,$/;"	e	enum:crow::ParamType
+Server	http_server.h	/^    Server(Handler* handler, std::string bindaddr, uint16_t port, std::string server_name = "Cro/;"	f	class:crow::Server
+Server	http_server.h	/^    class Server$/;"	c	namespace:crow
+Signed_integer	json.h	/^            Signed_integer,$/;"	e	enum:crow::json::num_type
+SimpleApp	app.h	/^    using SimpleApp = Crow<>;$/;"	t	namespace:crow	typeref:typename:Crow<>
+SocketAdaptor	socket_adaptors.h	/^        SocketAdaptor(boost::asio::io_service& io_service, context*)$/;"	f	struct:crow::SocketAdaptor
+SocketAdaptor	socket_adaptors.h	/^    struct SocketAdaptor$/;"	s	namespace:crow
+String	json.h	/^            String,$/;"	e	enum:crow::json::type
+TRACE	common.h	/^        TRACE,$/;"	e	enum:crow::HTTPMethod
+Tag	mustache.h	/^            Tag,$/;"	e	enum:crow::mustache::ActionType
+Trace	common.h	/^        Trace,$/;"	e	enum:crow::HTTPMethod
+True	json.h	/^            True,$/;"	e	enum:crow::json::type
+UF_FRAGMENT	http_parser_merged.h	/^  , UF_FRAGMENT         = 5$/;"	e	enum:http_parser_url_fields
+UF_HOST	http_parser_merged.h	/^  , UF_HOST             = 1$/;"	e	enum:http_parser_url_fields
+UF_MAX	http_parser_merged.h	/^  , UF_MAX              = 7$/;"	e	enum:http_parser_url_fields
+UF_PATH	http_parser_merged.h	/^  , UF_PATH             = 3$/;"	e	enum:http_parser_url_fields
+UF_PORT	http_parser_merged.h	/^  , UF_PORT             = 2$/;"	e	enum:http_parser_url_fields
+UF_QUERY	http_parser_merged.h	/^  , UF_QUERY            = 4$/;"	e	enum:http_parser_url_fields
+UF_SCHEMA	http_parser_merged.h	/^  { UF_SCHEMA           = 0$/;"	e	enum:http_parser_url_fields
+UF_USERINFO	http_parser_merged.h	/^  , UF_USERINFO         = 6$/;"	e	enum:http_parser_url_fields
+UINT	common.h	/^        UINT,$/;"	e	enum:crow::ParamType
+UnescapeTag	mustache.h	/^            UnescapeTag,$/;"	e	enum:crow::mustache::ActionType
+Unsigned_integer	json.h	/^            Unsigned_integer,$/;"	e	enum:crow::json::num_type
+WARNING	logging.h	/^        WARNING,$/;"	e	enum:crow::LogLevel
+Warning	logging.h	/^        Warning,$/;"	e	enum:crow::LogLevel
+WebSocketReadState	websocket.h	/^        enum class WebSocketReadState$/;"	g	namespace:crow::websocket
+ZeroFirst	json.h	/^                        ZeroFirst,$/;"	e	enum:crow::json::load_nocopy_internal::Parser::decode_number::NumberParsingState
+_TINY_SHA1_HPP_	TinySHA1.hpp	/^#define _TINY_SHA1_HPP_$/;"	d
+__anon078191b50102	json.h	/^                            {$/;"	f	function:crow::json::escape	file:
+__anon078191b50202	json.h	/^                                        {$/;"	f	function:crow::json::rvalue::unescape	file:
+__anon078191b50302	json.h	/^                                        {$/;"	f	function:crow::json::load_nocopy_internal::Parser::decode_string	file:
+__anon078191b5040a	json.h	/^            union {$/;"	u	class:crow::json::wvalue
+__anon0f19963c0102	app.h	/^            {$/;"	f	function:crow::Crow::run	file:
+__anon4202a6290102	http_response.h	/^                {$/;"	f	function:crow::response::write_buffer_list	file:
+__anon46a1c8fa0108	http_parser_merged.h	/^  struct {$/;"	s	struct:http_parser_url
+__anon46a1c8fa0208	http_parser_merged.h	/^static struct {$/;"	s	function:http_errno_name
+__anon46a1c8fa0308	http_parser_merged.h	/^static struct {$/;"	s	function:http_errno_description
+__anon8a1bd0820102	websocket.h	/^                    dispatch([this, msg]{$/;"	f	function:crow::websocket::Connection::send_ping	file:
+__anon8a1bd0820202	websocket.h	/^                    dispatch([this, msg]{$/;"	f	function:crow::websocket::Connection::send_pong	file:
+__anon8a1bd0820302	websocket.h	/^                    dispatch([this, msg]{$/;"	f	function:crow::websocket::Connection::send_binary	file:
+__anon8a1bd0820402	websocket.h	/^                    dispatch([this, msg]{$/;"	f	function:crow::websocket::Connection::send_text	file:
+__anon8a1bd0820502	websocket.h	/^                    dispatch([this, msg]{$/;"	f	function:crow::websocket::Connection::close	file:
+__anon8a1bd0820602	websocket.h	/^                                    {$/;"	f	function:crow::websocket::Connection::do_read	file:
+__anon8a1bd0820702	websocket.h	/^                                    {$/;"	f	function:crow::websocket::Connection::do_read	file:
+__anon8a1bd0820802	websocket.h	/^                                    {$/;"	f	function:crow::websocket::Connection::do_read	file:
+__anon8a1bd0820902	websocket.h	/^                                        {$/;"	f	function:crow::websocket::Connection::do_read	file:
+__anon8a1bd0820a02	websocket.h	/^                                    {$/;"	f	function:crow::websocket::Connection::do_read	file:
+__anon8a1bd0820b02	websocket.h	/^                            {$/;"	f	function:crow::websocket::Connection::do_write	file:
+__anona0e21aaa0102	http_connection.h	/^            adaptor_.start([this](const boost::system::error_code& ec) {$/;"	f	function:crow::Connection::start	file:
+__anona0e21aaa0202	http_connection.h	/^                res.complete_request_handler_ = []{};$/;"	f	function:crow::Connection::handle	file:
+__anona0e21aaa0302	http_connection.h	/^                res.is_alive_helper_ = [this]()->bool{ return adaptor_.is_open(); };$/;"	f	function:crow::Connection::handle	typeref:typename:bool	file:
+__anona0e21aaa0402	http_connection.h	/^                    res.complete_request_handler_ = [this]{ this->complete_request(); };$/;"	f	function:crow::Connection::handle	file:
+__anona0e21aaa0502	http_connection.h	/^                {$/;"	f	function:crow::Connection::do_read	file:
+__anona0e21aaa0602	http_connection.h	/^                {$/;"	f	function:crow::Connection::do_write	file:
+__anona0e21aaa0702	http_connection.h	/^            {$/;"	f	function:crow::Connection::start_deadline	file:
+__anond9765ab10102	http_server.h	/^                    {$/;"	f	function:crow::Server::on_tick	file:
+__anond9765ab10202	http_server.h	/^                        std::async(std::launch::async, [this, i, &init_count]{$/;"	f	function:crow::Server::run	file:
+__anond9765ab10302	http_server.h	/^                            {$/;"	f	function:crow::Server::run::__anond9765ab10202	file:
+__anond9765ab10402	http_server.h	/^                            {$/;"	f	function:crow::Server::run::__anond9765ab10202	typeref:typename:std::string	file:
+__anond9765ab10502	http_server.h	/^                            handler = [&](const boost::system::error_code& ec){$/;"	f	function:crow::Server::run::__anond9765ab10202	file:
+__anond9765ab10602	http_server.h	/^                        {$/;"	f	function:crow::Server::run	file:
+__anond9765ab10702	http_server.h	/^                [&](const boost::system::error_code& \/*error*\/, int \/*signal_number*\/){$/;"	f	function:crow::Server::run	file:
+__anond9765ab10802	http_server.h	/^            std::thread([this]{$/;"	f	function:crow::Server::run	file:
+__anond9765ab10902	http_server.h	/^                {$/;"	f	function:crow::Server::do_accept	file:
+__anond9765ab10a02	http_server.h	/^                        {$/;"	f	function:crow::Server::do_accept::__anond9765ab10902	file:
+__anonf08408c10102	socket_adaptors.h	/^                    [f](const boost::system::error_code& ec) {$/;"	f	function:crow::SSLAdaptor::start	file:
+accept_handler_	websocket.h	/^				std::function<bool(const crow::request&)> accept_handler_;$/;"	m	class:crow::websocket::Connection	typeref:typename:std::function<bool (const crow::request &)>
+acceptor_	http_server.h	/^        tcp::acceptor acceptor_;$/;"	m	class:crow::Server	typeref:typename:tcp::acceptor
+actions_	mustache.h	/^            std::vector<Action> actions_;$/;"	m	class:crow::mustache::template_t	typeref:typename:std::vector<Action>
+adaptor_	http_connection.h	/^        Adaptor adaptor_;$/;"	m	class:crow::Connection	typeref:typename:Adaptor
+adaptor_	websocket.h	/^				Adaptor adaptor_;$/;"	m	class:crow::websocket::Connection	typeref:typename:Adaptor
+adaptor_ctx_	http_server.h	/^        typename Adaptor::context* adaptor_ctx_;$/;"	m	class:crow::Server	typeref:typename:Adaptor::context *
+add	dumb_timer_queue.h	/^            key add(std::function<void()> f)$/;"	f	class:crow::detail::dumb_timer_queue	typeref:typename:key
+add_header	http_request.h	/^        void add_header(std::string key, std::string value)$/;"	f	struct:crow::request	typeref:typename:void
+add_header	http_response.h	/^        void add_header(std::string key, std::string value)$/;"	f	struct:crow::response	typeref:typename:void
+add_keep_alive_	http_connection.h	/^        bool add_keep_alive_{};$/;"	m	class:crow::Connection	typeref:typename:bool
+after_handle	middlewares/cookie_parser.h	/^        void after_handle(request& \/*req*\/, response& res, context& ctx)$/;"	f	struct:crow::CookieParser	typeref:typename:void
+after_handler_call	http_connection.h	/^        after_handler_call(MW& mw, request& req, response& res, Context& ctx, ParentContext& \/*/;"	f	namespace:crow::detail	typeref:typename:std::enable_if<is_after_handle_arity_3_impl<MW>::value>::type
+after_handlers_call_helper	http_connection.h	/^        after_handlers_call_helper(Container& \/*middlewares*\/, Context& \/*context*\/, request/;"	f	namespace:crow::detail	typeref:typename:std::enable_if<(N<0)>::type
+after_handlers_call_helper	http_connection.h	/^        typename std::enable_if<(N==0)>::type after_handlers_call_helper(Container& middlewares,/;"	f	namespace:crow::detail	typeref:typename:std::enable_if<(N==0)>::type
+after_handlers_call_helper	http_connection.h	/^        typename std::enable_if<(N>0)>::type after_handlers_call_helper(Container& middlewares, /;"	f	namespace:crow::detail	typeref:typename:std::enable_if<(N>0)>::type
+algorithm	compression.h	/^        enum algorithm$/;"	g	namespace:crow::compression
+arg	utility.h	/^            using arg = typename parent_t::template arg<i>;$/;"	t	struct:utility::function_traits	typeref:typename:parent_t::template arg<i>
+arg	utility.h	/^            using arg = typename std::tuple_element<i, std::tuple<Args...>>::type;$/;"	t	namespace:utility	typeref:typename:std::tuple_element<i,std::tuple<Args...>>::type
+arg	utility.h	/^            using arg = typename std::tuple_element<i, std::tuple<Args...>>::type;$/;"	t	struct:utility::function_traits	typeref:typename:std::tuple_element<i,std::tuple<Args...>>::type
+arguments	utility.h	/^        struct arguments$/;"	s	namespace:crow
+arguments	utility.h	/^        struct arguments<0>$/;"	s	namespace:crow
+arity	utility.h	/^            static const size_t arity = parent_t::arity;$/;"	m	struct:utility::function_traits	typeref:typename:const size_t
+arity	utility.h	/^            static const size_t arity = sizeof...(Args);$/;"	m	struct:utility::function_traits	typeref:typename:const size_t
+b	json.h	/^            bool b() const$/;"	f	class:crow::json::rvalue	typeref:typename:bool
+base64encode	utility.h	/^        inline static std::string base64encode(const char* data, size_t size, const char* key = /;"	f	typeref:typename:std::string
+base64encode_urlsafe	utility.h	/^        inline static std::string base64encode_urlsafe(const char* data, size_t size)$/;"	f	typeref:typename:std::string
+before_handle	middlewares/cookie_parser.h	/^        void before_handle(request& req, response& res, context& ctx)$/;"	f	struct:crow::CookieParser	typeref:typename:void
+before_handler_call	http_connection.h	/^        before_handler_call(MW& mw, request& req, response& res, Context& ctx, ParentContext& \//;"	f	namespace:crow::detail	typeref:typename:std::enable_if<is_before_handle_arity_3_impl<MW>::value>::type
+begin	json.h	/^                const char* begin() const { return s_; }$/;"	f	struct:crow::json::detail::r_string	typeref:typename:const char *
+begin	json.h	/^            rvalue* begin() const $/;"	f	class:crow::json::rvalue	typeref:typename:rvalue *
+begin	utility.h	/^            constexpr const char* begin() const { return begin_; }$/;"	f	class:crow::black_magic::const_str	typeref:typename:const char *
+begin_	utility.h	/^            const char * const begin_;$/;"	m	class:crow::black_magic::const_str	typeref:typename:const char * const
+bindaddr	app.h	/^        self_t& bindaddr(std::string bindaddr)$/;"	f	class:crow::Crow	typeref:typename:self_t &
+bindaddr_	app.h	/^        std::string bindaddr_ = "0.0.0.0";$/;"	m	class:crow::Crow	typeref:typename:std::string
+bindaddr_	http_server.h	/^        std::string bindaddr_;$/;"	m	class:crow::Server	typeref:typename:std::string
+black_magic	utility.h	/^    namespace black_magic$/;"	n	namespace:crow
+body	http_request.h	/^        std::string body;$/;"	m	struct:crow::request	typeref:typename:std::string
+body	http_response.h	/^        std::string body; \/\/\/< The actual payload containing the response data.$/;"	m	struct:crow::response	typeref:typename:std::string
+body	multipart.h	/^            std::string body; \/\/\/< The actual data in the part$/;"	m	struct:crow::multipart::part	typeref:typename:std::string
+body	parser.h	/^        std::string body;$/;"	m	struct:crow::HTTPParser	typeref:typename:std::string
+body_	mustache.h	/^            std::string body_;$/;"	m	class:crow::mustache::template_t	typeref:typename:std::string
+boundary	multipart.h	/^            std::string boundary; \/\/\/< The text boundary that separates different `parts`$/;"	m	struct:crow::multipart::message	typeref:typename:std::string
+buffer_	http_connection.h	/^        boost::array<char, 4096> buffer_;$/;"	m	class:crow::Connection	typeref:typename:boost::array<char,4096>
+buffer_	websocket.h	/^                boost::array<char, 4096> buffer_;$/;"	m	class:crow::websocket::Connection	typeref:typename:boost::array<char,4096>
+buffers_	http_connection.h	/^        std::vector<boost::asio::const_buffer> buffers_;$/;"	m	class:crow::Connection	typeref:typename:std::vector<boost::asio::const_buffer>
+build_header	websocket.h	/^                std::string build_header(int opcode, size_t size)$/;"	f	class:crow::websocket::Connection	typeref:typename:std::string
+cached_bit	json.h	/^            static const int cached_bit = 2;$/;"	m	class:crow::json::rvalue	typeref:typename:const int
+call	routing.h	/^            struct call$/;"	s	namespace:crow::detail::routing_handler_call_helper
+call_pair	routing.h	/^            struct call_pair$/;"	s	namespace:crow::detail::routing_handler_call_helper
+call_params	routing.h	/^            struct call_params$/;"	s	namespace:crow::detail::routing_handler_call_helper
+cancel	dumb_timer_queue.h	/^            void cancel(key& k)$/;"	f	class:crow::detail::dumb_timer_queue	typeref:typename:void
+cancel_deadline_timer	http_connection.h	/^        void cancel_deadline_timer()$/;"	f	class:crow::Connection	typeref:typename:void
+check_after_handle_arity_3	http_connection.h	/^        struct check_after_handle_arity_3$/;"	s	namespace:crow::detail
+check_after_handle_arity_3_const	http_connection.h	/^        struct check_after_handle_arity_3_const$/;"	s	namespace:crow::detail
+check_before_handle_arity_3	http_connection.h	/^        struct check_before_handle_arity_3$/;"	s	namespace:crow::detail
+check_before_handle_arity_3_const	http_connection.h	/^        struct check_before_handle_arity_3_const$/;"	s	namespace:crow::detail
+check_destroy	http_connection.h	/^        void check_destroy()$/;"	f	class:crow::Connection	typeref:typename:void
+check_destroy	websocket.h	/^                void check_destroy()$/;"	f	class:crow::websocket::Connection	typeref:typename:void
+check_version	parser.h	/^        bool check_version(int major, int minor) const$/;"	f	struct:crow::HTTPParser	typeref:typename:bool
+ci_hash	ci_map.h	/^    struct ci_hash$/;"	s	namespace:crow
+ci_key_eq	ci_map.h	/^    struct ci_key_eq$/;"	s	namespace:crow
+ci_map	ci_map.h	/^    using ci_map = std::unordered_multimap<std::string, std::string, ci_hash, ci_key_eq>;$/;"	t	namespace:crow	typeref:typename:std::unordered_multimap<std::string,std::string,ci_hash,ci_key_eq>
+clear	http_response.h	/^        void clear()$/;"	f	struct:crow::response	typeref:typename:void
+clear	json.h	/^            void clear()$/;"	f	class:crow::json::wvalue	typeref:typename:void
+clear	parser.h	/^        void clear()$/;"	f	struct:crow::HTTPParser	typeref:typename:void
+clear	query_string.h	/^        void clear() $/;"	f	class:crow::query_string	typeref:typename:void
+close	socket_adaptors.h	/^        void close()$/;"	f	struct:crow::SSLAdaptor	typeref:typename:void
+close	socket_adaptors.h	/^        void close()$/;"	f	struct:crow::SocketAdaptor	typeref:typename:void
+close	websocket.h	/^                void close(const std::string& msg) override$/;"	f	class:crow::websocket::Connection	typeref:typename:void
+close_connection_	http_connection.h	/^        bool close_connection_ = false;$/;"	m	class:crow::Connection	typeref:typename:bool
+close_connection_	websocket.h	/^                bool close_connection_{false};$/;"	m	class:crow::websocket::Connection	typeref:typename:bool
+close_handler_	websocket.h	/^				std::function<void(crow::websocket::connection&, const std::string&)> close_handler_;$/;"	m	class:crow::websocket::Connection	typeref:typename:std::function<void (crow::websocket::connection &,const std::string &)>
+code	http_response.h	/^        int code{200}; \/\/\/< The Status code for the response.$/;"	m	struct:crow::response	typeref:typename:int
+comp_algorithm_	app.h	/^        compression::algorithm comp_algorithm_;$/;"	m	class:crow::Crow	typeref:typename:compression::algorithm
+compile	mustache.h	/^        inline template_t compile(const std::string& body)$/;"	f	namespace:crow::mustache	typeref:typename:template_t
+complete_request	http_connection.h	/^        void complete_request()$/;"	f	class:crow::Connection	typeref:typename:void
+complete_request_handler_	http_response.h	/^            std::function<void()> complete_request_handler_;$/;"	m	struct:crow::response	typeref:typename:std::function<void ()>
+completed_	http_response.h	/^            bool completed_{};$/;"	m	struct:crow::response	typeref:typename:bool
+compress_string	compression.h	/^        inline std::string compress_string(std::string const & str, algorithm algo)$/;"	f	namespace:crow::compression	typeref:typename:std::string
+compressed	http_response.h	/^        bool compressed = true; \/\/\/< If compression is enabled and this is false, the individ/;"	m	struct:crow::response	typeref:typename:bool
+compression	compression.h	/^    namespace compression$/;"	n	namespace:crow
+compression_algorithm	app.h	/^        compression::algorithm compression_algorithm()$/;"	f	class:crow::Crow	typeref:typename:compression::algorithm
+compute_parameter_tag_from_args_list	utility.h	/^        struct compute_parameter_tag_from_args_list<>$/;"	s	namespace:crow::black_magic
+compute_parameter_tag_from_args_list	utility.h	/^        struct compute_parameter_tag_from_args_list<Arg, Args...>$/;"	s	namespace:crow::black_magic
+concat	utility.h	/^        struct concat<seq<I1...>, seq<I2...>>$/;"	s	namespace:crow
+concurrency	app.h	/^        self_t& concurrency(std::uint16_t concurrency)$/;"	f	class:crow::Crow	typeref:typename:self_t &
+concurrency_	app.h	/^        uint16_t concurrency_ = 1;$/;"	m	class:crow::Crow	typeref:typename:uint16_t
+concurrency_	http_server.h	/^        uint16_t concurrency_{1};$/;"	m	class:crow::Server	typeref:typename:uint16_t
+connection	websocket.h	/^		struct connection$/;"	s	namespace:crow::websocket
+connectionCount	http_connection.h	/^    static std::atomic<int> connectionCount;$/;"	v	namespace:crow	typeref:typename:std::atomic<int>
+const_iterator	json.h	/^                using const_iterator = const char*;$/;"	t	struct:crow::json::detail::r_string	typeref:typename:const char *
+const_str	utility.h	/^                constexpr const_str( const char(&arr)[N] ) : begin_(arr), size_(N - 1) {$/;"	f	class:crow::black_magic::const_str
+const_str	utility.h	/^        class const_str$/;"	c	namespace:crow::black_magic
+constexpr	settings.h	/^#define constexpr /;"	d
+consume	json.h	/^                bool consume(char c)$/;"	f	struct:crow::json::load_nocopy_internal::Parser	typeref:typename:bool
+contains	utility.h	/^        struct contains : std::true_type {};$/;"	s	namespace:crow
+contains	utility.h	/^        struct contains<Tp, Head, Rest...>$/;"	s	namespace:crow
+contains	utility.h	/^        struct contains<Tp> : std::false_type {};$/;"	s	namespace:crow
+content_length	http_parser_merged.h	/^  uint64_t content_length; \/* # bytes in body (0 if no Content-Length header) *\/$/;"	m	struct:http_parser	typeref:typename:uint64_t
+content_length_	http_connection.h	/^        std::string content_length_;$/;"	m	class:crow::Connection	typeref:typename:std::string
+content_type	returnable.h	/^    std::string content_type;$/;"	m	struct:crow::returnable	typeref:typename:std::string
+context	middleware_context.h	/^        struct context : private partial_context<Middlewares...>$/;"	s	namespace:crow::detail
+context	middlewares/cookie_parser.h	/^        struct context$/;"	s	struct:crow::CookieParser
+context	mustache.h	/^        using context = json::wvalue;$/;"	t	namespace:crow::mustache	typeref:typename:json::wvalue
+context	socket_adaptors.h	/^        using context = boost::asio::ssl::context;$/;"	t	struct:crow::SSLAdaptor	typeref:typename:boost::asio::ssl::context
+context	socket_adaptors.h	/^        using context = void;$/;"	t	struct:crow::SocketAdaptor	typeref:typename:void
+context_t	app.h	/^        using context_t = detail::context<Middlewares...>;$/;"	t	class:crow::Crow	typeref:typename:detail::context<Middlewares...>
+cookies_to_add	middlewares/cookie_parser.h	/^            std::unordered_map<std::string, std::string> cookies_to_add;$/;"	m	struct:crow::CookieParser::context	typeref:typename:std::unordered_map<std::string,std::string>
+copy_l	json.h	/^            void copy_l(const rvalue& r)$/;"	f	class:crow::json::rvalue	typeref:typename:void
+count	json.h	/^            int count(const std::string& str)$/;"	f	class:crow::json::rvalue	typeref:typename:int
+count	json.h	/^            int count(const std::string& str)$/;"	f	class:crow::json::wvalue	typeref:typename:int
+crlf	multipart.h	/^        const std::string crlf = "\\r\\n";$/;"	v	namespace:crow::multipart	typeref:typename:const std::string
+crow	app.h	/^namespace crow$/;"	n
+crow	ci_map.h	/^namespace crow$/;"	n
+crow	common.h	/^namespace crow$/;"	n
+crow	compression.h	/^namespace crow$/;"	n
+crow	dumb_timer_queue.h	/^namespace crow$/;"	n
+crow	http_connection.h	/^namespace crow$/;"	n
+crow	http_request.h	/^namespace crow$/;"	n
+crow	http_response.h	/^namespace crow$/;"	n
+crow	http_server.h	/^namespace crow$/;"	n
+crow	json.h	/^namespace crow$/;"	n
+crow	logging.h	/^namespace crow$/;"	n
+crow	middleware_context.h	/^namespace crow$/;"	n
+crow	middlewares/cookie_parser.h	/^namespace crow$/;"	n
+crow	mime_types.h	/^namespace crow {$/;"	n
+crow	multipart.h	/^namespace crow$/;"	n
+crow	mustache.h	/^namespace crow$/;"	n
+crow	parser.h	/^namespace crow$/;"	n
+crow	query_string.h	/^namespace crow $/;"	n
+crow	query_string.h	/^namespace crow$/;"	n
+crow	returnable.h	/^namespace crow$/;"	n
+crow	routing.h	/^namespace crow$/;"	n
+crow	socket_adaptors.h	/^namespace crow$/;"	n
+crow	utility.h	/^namespace crow$/;"	n
+crow	websocket.h	/^namespace crow$/;"	n
+crow_json_likely	json.h	/^#define crow_json_likely(/;"	d
+crow_json_unlikely	json.h	/^#define crow_json_unlikely(/;"	d
+ctx_	http_connection.h	/^        detail::context<Middlewares...> ctx_;$/;"	m	class:crow::Connection	typeref:typename:detail::context<Middlewares...>
+cv_started_	app.h	/^        std::condition_variable cv_started_;$/;"	m	class:crow::Crow	typeref:typename:std::condition_variable
+d	json.h	/^              double d;$/;"	m	union:crow::json::wvalue::__anon078191b5040a	typeref:typename:double
+d	json.h	/^            double d() const$/;"	f	class:crow::json::rvalue	typeref:typename:double
+data	http_parser_merged.h	/^  void *data; \/* A pointer to get hook to the "connection" or "socket" object *\/$/;"	m	struct:http_parser	typeref:typename:void *
+data	json.h	/^                char* data;$/;"	m	struct:crow::json::load_nocopy_internal::Parser	typeref:typename:char *
+date_str_	http_connection.h	/^        std::string date_str_;$/;"	m	class:crow::Connection	typeref:typename:std::string
+dd	multipart.h	/^        const std::string dd = "--";$/;"	v	namespace:crow::multipart	typeref:typename:const std::string
+debug_print	app.h	/^        void debug_print()$/;"	f	class:crow::Crow	typeref:typename:void
+debug_print	common.h	/^        void debug_print() const$/;"	f	struct:crow::routing_params	typeref:typename:void
+decode_list	json.h	/^                rvalue decode_list()$/;"	f	struct:crow::json::load_nocopy_internal::Parser	typeref:typename:rvalue
+decode_number	json.h	/^                rvalue decode_number()$/;"	f	struct:crow::json::load_nocopy_internal::Parser	typeref:typename:rvalue
+decode_object	json.h	/^                rvalue decode_object()$/;"	f	struct:crow::json::load_nocopy_internal::Parser	typeref:typename:rvalue
+decode_string	json.h	/^                rvalue decode_string()$/;"	f	struct:crow::json::load_nocopy_internal::Parser	typeref:typename:rvalue
+decode_value	json.h	/^                rvalue decode_value()$/;"	f	struct:crow::json::load_nocopy_internal::Parser	typeref:typename:rvalue
+decompress_string	compression.h	/^        inline std::string decompress_string(std::string const & deflated_string)$/;"	f	namespace:crow::compression	typeref:typename:std::string
+default_loader	mustache.h	/^        inline std::string default_loader(const std::string& filename)$/;"	f	namespace:crow::mustache	typeref:typename:std::string
+description	http_parser_merged.h	/^  const char *description;$/;"	m	struct:http_errno_description::__anon46a1c8fa0308	typeref:typename:const char *
+description	http_parser_merged.h	/^  const char *description;$/;"	m	struct:http_errno_name::__anon46a1c8fa0208	typeref:typename:const char *
+detail	dumb_timer_queue.h	/^    namespace detail $/;"	n	namespace:crow
+detail	http_connection.h	/^    namespace detail$/;"	n	namespace:crow
+detail	json.h	/^        namespace detail $/;"	n	namespace:crow::json
+detail	json.h	/^        namespace detail {$/;"	n	namespace:crow::json
+detail	middleware_context.h	/^    namespace detail$/;"	n	namespace:crow
+detail	mustache.h	/^        namespace detail$/;"	n	namespace:crow::mustache
+detail	routing.h	/^    namespace detail$/;"	n	namespace:crow
+detail	utility.h	/^    namespace detail$/;"	n
+determine_num_type	json.h	/^            void determine_num_type()$/;"	f	class:crow::json::rvalue	typeref:typename:void
+digest32_t	TinySHA1.hpp	/^		typedef uint32_t digest32_t[5];$/;"	t	class:sha1::SHA1	typeref:typename:uint32_t[5]
+digest8_t	TinySHA1.hpp	/^		typedef uint8_t digest8_t[20];$/;"	t	class:sha1::SHA1	typeref:typename:uint8_t[20]
+dispatch	http_request.h	/^        void dispatch(CompletionHandler handler)$/;"	f	struct:crow::request	typeref:typename:void
+dispatch	websocket.h	/^                void dispatch(CompletionHandler handler)$/;"	f	class:crow::websocket::Connection	typeref:typename:void
+do_accept	http_server.h	/^        void do_accept()$/;"	f	class:crow::Server	typeref:typename:void
+do_read	http_connection.h	/^        void do_read()$/;"	f	class:crow::Connection	typeref:typename:void
+do_read	websocket.h	/^                void do_read()$/;"	f	class:crow::websocket::Connection	typeref:typename:void
+do_stream_body	http_response.h	/^        void do_stream_body(Adaptor& adaptor)$/;"	f	struct:crow::response	typeref:typename:void
+do_stream_file	http_response.h	/^        void do_stream_file(Adaptor& adaptor)$/;"	f	struct:crow::response	typeref:typename:void
+do_write	http_connection.h	/^        void do_write()$/;"	f	class:crow::Connection	typeref:typename:void
+do_write	websocket.h	/^                void do_write()$/;"	f	class:crow::websocket::Connection	typeref:typename:void
+do_write_general	http_connection.h	/^        void do_write_general()$/;"	f	class:crow::Connection	typeref:typename:void
+do_write_static	http_connection.h	/^        void do_write_static()$/;"	f	class:crow::Connection	typeref:typename:void
+done	parser.h	/^        bool done()$/;"	f	struct:crow::HTTPParser	typeref:typename:bool
+double_params	common.h	/^        std::vector<double> double_params;$/;"	m	struct:crow::routing_params	typeref:typename:std::vector<double>
+dq_	dumb_timer_queue.h	/^            std::deque<std::pair<decltype(std::chrono::steady_clock::now()), std::function<void(/;"	m	class:crow::detail::dumb_timer_queue	typeref:typename:std::deque<std::pair<decltype (std::chrono::steady_clock::now ()),std::function<void ()>>>
+dumb_timer_queue	dumb_timer_queue.h	/^            dumb_timer_queue() noexcept$/;"	f	class:crow::detail::dumb_timer_queue
+dumb_timer_queue	dumb_timer_queue.h	/^        class dumb_timer_queue$/;"	c	namespace:crow::detail
+dump	json.h	/^            std::string dump()$/;"	f	class:crow::json::wvalue	typeref:typename:std::string
+dump	multipart.h	/^            std::string dump() override$/;"	f	struct:crow::multipart::message	typeref:typename:std::string
+dump	multipart.h	/^            std::string dump(int part_)$/;"	f	struct:crow::multipart::message	typeref:typename:std::string
+dump_internal	json.h	/^            inline void dump_internal(const wvalue& v, std::string& out)$/;"	f	class:crow::json::wvalue	typeref:typename:void
+dump_string	json.h	/^            inline void dump_string(const std::string& str, std::string& out)$/;"	f	class:crow::json::wvalue	typeref:typename:void
+e_	json.h	/^                mutable char* e_; \/\/\/< End.$/;"	m	struct:crow::json::detail::r_string	typeref:typename:char *
+emplace_back	json.h	/^            void emplace_back(rvalue&& v)$/;"	f	class:crow::json::rvalue	typeref:typename:void
+empty_context	utility.h	/^        struct empty_context$/;"	s	namespace:crow
+end	http_response.h	/^        void end()$/;"	f	struct:crow::response	typeref:typename:void
+end	http_response.h	/^        void end(const std::string& body_part)$/;"	f	struct:crow::response	typeref:typename:void
+end	json.h	/^                const char* end() const { return e_; }$/;"	f	struct:crow::json::detail::r_string	typeref:typename:const char *
+end	json.h	/^            rvalue* end() const $/;"	f	class:crow::json::rvalue	typeref:typename:rvalue *
+end	mustache.h	/^            int end;$/;"	m	struct:crow::mustache::Action	typeref:typename:int
+end	utility.h	/^            constexpr const char* end() const { return begin_ + size_; }$/;"	f	class:crow::black_magic::const_str	typeref:typename:const char *
+end_	json.h	/^            mutable char* end_;$/;"	m	class:crow::json::rvalue	typeref:typename:char *
+error	json.h	/^            bool error() const$/;"	f	class:crow::json::rvalue	typeref:typename:bool
+error_bit	json.h	/^            static const int error_bit = 4;$/;"	m	class:crow::json::rvalue	typeref:typename:const int
+error_handler_	websocket.h	/^				std::function<void(crow::websocket::connection&)> error_handler_;$/;"	m	class:crow::websocket::Connection	typeref:typename:std::function<void (crow::websocket::connection &)>
+error_occured_	websocket.h	/^                bool error_occured_{false};$/;"	m	class:crow::websocket::Connection	typeref:typename:bool
+escape	json.h	/^        inline std::string escape(const std::string& str)$/;"	f	namespace:crow::json	typeref:typename:std::string
+escape	json.h	/^        inline void escape(const std::string& str, std::string& ret)$/;"	f	namespace:crow::json	typeref:typename:void
+escape	mustache.h	/^            void escape(const std::string& in, std::string& out)$/;"	f	class:crow::mustache::template_t	typeref:typename:void
+estimate_length	json.h	/^            size_t estimate_length() const$/;"	f	class:crow::json::wvalue	typeref:typename:size_t
+feed	parser.h	/^        bool feed(const char* buffer, int length)$/;"	f	struct:crow::HTTPParser	typeref:typename:bool
+field_data	http_parser_merged.h	/^  } field_data[UF_MAX];$/;"	m	struct:http_parser_url	typeref:struct:http_parser_url::__anon46a1c8fa0108[]
+field_set	http_parser_merged.h	/^  uint16_t field_set;           \/* Bitmask of (1 << UF_*) values *\/$/;"	m	struct:http_parser_url	typeref:typename:uint16_t
+file_info	http_response.h	/^            static_file_info file_info;$/;"	m	struct:crow::response	typeref:typename:static_file_info
+find_closing_tag	utility.h	/^        constexpr unsigned find_closing_tag(const_str s, unsigned p)$/;"	f	namespace:crow::black_magic	typeref:typename:unsigned
+find_closing_tag_runtime	utility.h	/^        static inline unsigned find_closing_tag_runtime(const char* s, unsigned p)$/;"	f	namespace:crow::black_magic	typeref:typename:unsigned
+find_context	mustache.h	/^            auto find_context(const std::string& name, const std::vector<context*>& stack, bool /;"	f	class:crow::mustache::template_t	typeref:typename:std::pair<bool,context &>
+flags	http_parser_merged.h	/^  unsigned int flags : 6;        \/* F_* values from 'flags' enum; semi-public *\/$/;"	m	struct:http_parser	typeref:typename:unsigned int:6
+force	json.h	/^                void force(char* s, uint32_t length)$/;"	f	struct:crow::json::detail::r_string	typeref:typename:void
+foreach_method	routing.h	/^        void foreach_method(F f)$/;"	f	class:crow::BaseRule	typeref:typename:void
+fragment_	websocket.h	/^                std::string fragment_;$/;"	m	class:crow::websocket::Connection	typeref:typename:std::string
+fragments_	mustache.h	/^            std::vector<std::pair<int,int>> fragments_;$/;"	m	class:crow::mustache::template_t	typeref:typename:std::vector<std::pair<int,int>>
+function_traits	utility.h	/^        struct function_traits : public function_traits<decltype(&T::operator())>$/;"	s	namespace:utility
+function_traits	utility.h	/^        struct function_traits<R(ClassType::*)(Args...) const>$/;"	s	namespace:utility
+function_traits	utility.h	/^        struct function_traits<R(ClassType::*)(Args...)>$/;"	s	namespace:utility
+gen_seq	utility.h	/^        struct gen_seq : Concat<GenSeq<N\/2>, GenSeq<N - N\/2>>{};$/;"	s	namespace:crow
+gen_seq	utility.h	/^        template<> struct gen_seq<0> : seq<>{};$/;"	s	namespace:crow
+gen_seq	utility.h	/^        template<> struct gen_seq<1> : seq<0>{};$/;"	s	namespace:crow
+get	common.h	/^    inline double routing_params::get<double>(unsigned index) const$/;"	f	class:crow::routing_params	typeref:typename:double
+get	common.h	/^    inline int64_t routing_params::get<int64_t>(unsigned index) const$/;"	f	class:crow::routing_params	typeref:typename:int64_t
+get	common.h	/^    inline std::string routing_params::get<std::string>(unsigned index) const$/;"	f	class:crow::routing_params	typeref:typename:std::string
+get	common.h	/^    inline uint64_t routing_params::get<uint64_t>(unsigned index) const$/;"	f	class:crow::routing_params	typeref:typename:uint64_t
+get	http_connection.h	/^            struct get$/;"	s	struct:crow::detail::check_after_handle_arity_3
+get	http_connection.h	/^            struct get$/;"	s	struct:crow::detail::check_after_handle_arity_3_const
+get	http_connection.h	/^            struct get$/;"	s	struct:crow::detail::check_before_handle_arity_3
+get	http_connection.h	/^            struct get$/;"	s	struct:crow::detail::check_before_handle_arity_3_const
+get	middleware_context.h	/^            typename T::context& get()$/;"	f	struct:crow::detail::context	typeref:typename:T::context &
+get	middleware_context.h	/^            typename T::context& get()$/;"	f	struct:crow::detail::partial_context	typeref:typename:T::context &
+get	query_string.h	/^        char* get (const std::string& name) const$/;"	f	class:crow::query_string	typeref:typename:char *
+getDigest	TinySHA1.hpp	/^		const uint32_t* getDigest(digest32_t digest) {$/;"	f	class:sha1::SHA1	typeref:typename:const uint32_t *
+getDigestBytes	TinySHA1.hpp	/^		const uint8_t* getDigestBytes(digest8_t digest) {$/;"	f	class:sha1::SHA1	typeref:typename:const uint8_t *
+get_boundary	multipart.h	/^            std::string get_boundary(const std::string& header)$/;"	f	struct:crow::multipart::message	typeref:typename:std::string
+get_cached_date_str	http_connection.h	/^        std::function<std::string()>& get_cached_date_str;$/;"	m	class:crow::Connection	typeref:typename:std::function<std::string ()> &
+get_cached_date_str_pool_	http_server.h	/^        std::vector<std::function<std::string()>> get_cached_date_str_pool_;$/;"	m	class:crow::Server	typeref:typename:std::vector<std::function<std::string ()>>
+get_context	app.h	/^        typename T::context& get_context(const request& req)$/;"	f	class:crow::Crow	typeref:typename:T::context &
+get_cookie	middlewares/cookie_parser.h	/^            std::string get_cookie(const std::string& key) const$/;"	f	struct:crow::CookieParser::context	typeref:typename:std::string
+get_current_log_level	logging.h	/^            static LogLevel get_current_log_level() {$/;"	f	class:crow::logger	typeref:typename:LogLevel
+get_dict	query_string.h	/^        std::unordered_map<std::string, std::string> get_dict (const std::string& name) const$/;"	f	class:crow::query_string	typeref:typename:std::unordered_map<std::string,std::string>
+get_element_by_type	utility.h	/^        T& get_element_by_type(std::tuple<Args...>& t)$/;"	f	namespace:utility	typeref:typename:T &
+get_handler_ref	logging.h	/^            static ILogHandler*& get_handler_ref()$/;"	f	class:crow::logger	typeref:typename:ILogHandler * &
+get_header_value	http_request.h	/^        const std::string& get_header_value(const std::string& key) const$/;"	f	struct:crow::request	typeref:typename:const std::string &
+get_header_value	http_request.h	/^    inline const std::string& get_header_value(const T& headers, const std::string& key)$/;"	f	namespace:crow	typeref:typename:const std::string &
+get_header_value	http_response.h	/^        const std::string& get_header_value(const std::string& key)$/;"	f	struct:crow::response	typeref:typename:const std::string &
+get_header_value	multipart.h	/^            const std::string& get_header_value(const std::string& key) const$/;"	f	struct:crow::multipart::message	typeref:typename:const std::string &
+get_index_of_element_from_tuple_by_type_impl	utility.h	/^        struct get_index_of_element_from_tuple_by_type_impl$/;"	s	namespace:detail
+get_index_of_element_from_tuple_by_type_impl	utility.h	/^        struct get_index_of_element_from_tuple_by_type_impl<T, N, T, Args...>$/;"	s	namespace:detail
+get_index_of_element_from_tuple_by_type_impl	utility.h	/^        struct get_index_of_element_from_tuple_by_type_impl<T, N, U, Args...>$/;"	s	namespace:detail
+get_io_service	socket_adaptors.h	/^        boost::asio::io_service& get_io_service()$/;"	f	struct:crow::SSLAdaptor	typeref:typename:boost::asio::io_service &
+get_io_service	socket_adaptors.h	/^        boost::asio::io_service& get_io_service()$/;"	f	struct:crow::SocketAdaptor	typeref:typename:boost::asio::io_service &
+get_list	query_string.h	/^        std::vector<char*> get_list (const std::string& name) const$/;"	f	class:crow::query_string	typeref:typename:std::vector<char * >
+get_loader_ref	mustache.h	/^            inline std::function<std::string (std::string)>& get_loader_ref()$/;"	f	namespace:crow::mustache::detail	typeref:typename:std::function<std::string (std::string)> &
+get_log_level_ref	logging.h	/^            static LogLevel& get_log_level_ref()$/;"	f	class:crow::logger	typeref:typename:LogLevel &
+get_methods	routing.h	/^        uint32_t get_methods()$/;"	f	class:crow::BaseRule	typeref:typename:uint32_t
+get_middleware	app.h	/^        T& get_middleware()$/;"	f	class:crow::Crow	typeref:typename:T &
+get_parameter_tag	utility.h	/^        constexpr uint64_t get_parameter_tag(const_str s, unsigned p = 0)$/;"	f	namespace:crow::black_magic	typeref:typename:uint64_t
+get_parameter_tag_runtime	utility.h	/^        static inline uint64_t get_parameter_tag_runtime(const char* s, unsigned p = 0)$/;"	f	namespace:crow::black_magic	typeref:typename:uint64_t
+get_template_base_directory_ref	mustache.h	/^            inline std::string& get_template_base_directory_ref()$/;"	f	namespace:crow::mustache::detail	typeref:typename:std::string &
+get_type_str	json.h	/^        inline const char* get_type_str(type t) {$/;"	f	namespace:crow::json	typeref:typename:const char *
+h_C	http_parser_merged.h	/^  , h_C$/;"	e	enum:header_states
+h_CO	http_parser_merged.h	/^  , h_CO$/;"	e	enum:header_states
+h_CON	http_parser_merged.h	/^  , h_CON$/;"	e	enum:header_states
+h_connection	http_parser_merged.h	/^  , h_connection$/;"	e	enum:header_states
+h_connection_close	http_parser_merged.h	/^  , h_connection_close$/;"	e	enum:header_states
+h_connection_keep_alive	http_parser_merged.h	/^  , h_connection_keep_alive$/;"	e	enum:header_states
+h_content_length	http_parser_merged.h	/^  , h_content_length$/;"	e	enum:header_states
+h_general	http_parser_merged.h	/^  { h_general = 0$/;"	e	enum:header_states
+h_matching_connection	http_parser_merged.h	/^  , h_matching_connection$/;"	e	enum:header_states
+h_matching_connection_close	http_parser_merged.h	/^  , h_matching_connection_close$/;"	e	enum:header_states
+h_matching_connection_keep_alive	http_parser_merged.h	/^  , h_matching_connection_keep_alive$/;"	e	enum:header_states
+h_matching_content_length	http_parser_merged.h	/^  , h_matching_content_length$/;"	e	enum:header_states
+h_matching_proxy_connection	http_parser_merged.h	/^  , h_matching_proxy_connection$/;"	e	enum:header_states
+h_matching_transfer_encoding	http_parser_merged.h	/^  , h_matching_transfer_encoding$/;"	e	enum:header_states
+h_matching_transfer_encoding_chunked	http_parser_merged.h	/^  , h_matching_transfer_encoding_chunked$/;"	e	enum:header_states
+h_matching_upgrade	http_parser_merged.h	/^  , h_matching_upgrade$/;"	e	enum:header_states
+h_transfer_encoding	http_parser_merged.h	/^  , h_transfer_encoding$/;"	e	enum:header_states
+h_transfer_encoding_chunked	http_parser_merged.h	/^  , h_transfer_encoding_chunked$/;"	e	enum:header_states
+h_upgrade	http_parser_merged.h	/^  , h_upgrade$/;"	e	enum:header_states
+handle	app.h	/^        void handle(const request& req, response& res)$/;"	f	class:crow::Crow	typeref:typename:void
+handle	http_connection.h	/^        void handle()$/;"	f	class:crow::Connection	typeref:typename:void
+handle_fragment	websocket.h	/^                void handle_fragment()$/;"	f	class:crow::websocket::Connection	typeref:typename:void
+handle_header	http_connection.h	/^        void handle_header()$/;"	f	class:crow::Connection	typeref:typename:void
+handle_upgrade	app.h	/^        void handle_upgrade(const request& req, response& res, Adaptor&& adaptor)$/;"	f	class:crow::Crow	typeref:typename:void
+handle_upgrade	routing.h	/^        virtual void handle_upgrade(const request&, response& res, SSLAdaptor&&)$/;"	f	class:crow::BaseRule	typeref:typename:void
+handle_upgrade	routing.h	/^        virtual void handle_upgrade(const request&, response& res, SocketAdaptor&&)$/;"	f	class:crow::BaseRule	typeref:typename:void
+handler	routing.h	/^                H1& handler;$/;"	m	struct:crow::detail::routing_handler_call_helper::call_params	typeref:typename:H1 &
+handler_	http_connection.h	/^        Handler* handler_;$/;"	m	class:crow::Connection	typeref:typename:Handler *
+handler_	http_server.h	/^        Handler* handler_;$/;"	m	class:crow::Server	typeref:typename:Handler *
+handler_	parser.h	/^        Handler* handler_; \/\/\/< This is currently an HTTP connection object (\\ref crow.Conne/;"	m	struct:crow::HTTPParser	typeref:typename:Handler *
+has	json.h	/^            bool has(const char* str) const$/;"	f	class:crow::json::rvalue	typeref:typename:bool
+has	json.h	/^            bool has(const std::string& str) const$/;"	f	class:crow::json::rvalue	typeref:typename:bool
+has_mask_	websocket.h	/^                bool has_mask_{false};$/;"	m	class:crow::websocket::Connection	typeref:typename:bool
+has_recv_close_	websocket.h	/^                bool has_recv_close_{false};$/;"	m	class:crow::websocket::Connection	typeref:typename:bool
+has_sent_close_	websocket.h	/^                bool has_sent_close_{false};$/;"	m	class:crow::websocket::Connection	typeref:typename:bool
+header	multipart.h	/^        struct header$/;"	s	namespace:crow::multipart
+header_building_state	parser.h	/^        int header_building_state = 0;$/;"	m	struct:crow::HTTPParser	typeref:typename:int
+header_field	parser.h	/^        std::string header_field;$/;"	m	struct:crow::HTTPParser	typeref:typename:std::string
+header_state	http_parser_merged.h	/^  unsigned int header_state : 8; \/* enum header_state from http_parser.c *\/$/;"	m	struct:http_parser	typeref:typename:unsigned int:8
+header_states	http_parser_merged.h	/^enum header_states$/;"	g
+header_value	parser.h	/^        std::string header_value;$/;"	m	struct:crow::HTTPParser	typeref:typename:std::string
+headers	http_request.h	/^        ci_map headers;$/;"	m	struct:crow::request	typeref:typename:ci_map
+headers	http_response.h	/^        ci_map headers; \/\/\/< HTTP headers.$/;"	m	struct:crow::response	typeref:typename:ci_map
+headers	multipart.h	/^            ci_map headers;$/;"	m	struct:crow::multipart::message	typeref:typename:ci_map
+headers	multipart.h	/^            std::vector<header> headers; \/\/\/< (optional) The first part before the data, Cont/;"	m	struct:crow::multipart::part	typeref:typename:std::vector<header>
+headers	parser.h	/^        ci_map headers;$/;"	m	struct:crow::HTTPParser	typeref:typename:ci_map
+http_body_is_final	http_parser_merged.h	/^http_body_is_final(const struct http_parser *parser) {$/;"	f	typeref:typename:int
+http_cb	http_parser_merged.h	/^typedef int (*http_cb) (http_parser*);$/;"	t	typeref:typename:int (*)(http_parser *)
+http_connection_flags	http_parser_merged.h	/^enum http_connection_flags$/;"	g
+http_data_cb	http_parser_merged.h	/^typedef int (*http_data_cb) (http_parser*, const char *at, size_t length);$/;"	t	typeref:typename:int (*)(http_parser *,const char * at,size_t length)
+http_errno	http_parser_merged.h	/^  unsigned int http_errno : 7;$/;"	m	struct:http_parser	typeref:typename:unsigned int:7
+http_errno	http_parser_merged.h	/^enum http_errno {$/;"	g
+http_errno_description	http_parser_merged.h	/^http_errno_description(enum http_errno err) {$/;"	f	typeref:typename:const char *
+http_errno_name	http_parser_merged.h	/^http_errno_name(enum http_errno err) {$/;"	f	typeref:typename:const char *
+http_host_state	http_parser_merged.h	/^enum http_host_state$/;"	g
+http_major	http_parser_merged.h	/^  unsigned short http_major;$/;"	m	struct:http_parser	typeref:typename:unsigned short
+http_message_needs_eof	http_parser_merged.h	/^http_message_needs_eof (const http_parser *parser)$/;"	f	typeref:typename:int
+http_method	http_parser_merged.h	/^enum http_method$/;"	g
+http_method_str	http_parser_merged.h	/^http_method_str (enum http_method m)$/;"	f	typeref:typename:const char *
+http_minor	http_parser_merged.h	/^  unsigned short http_minor;$/;"	m	struct:http_parser	typeref:typename:unsigned short
+http_parse_host	http_parser_merged.h	/^http_parse_host(const char * buf, struct http_parser_url *u, int found_at) {$/;"	f	typeref:typename:int
+http_parse_host_char	http_parser_merged.h	/^http_parse_host_char(enum http_host_state s, const char ch) {$/;"	f	typeref:enum:http_host_state
+http_parser	http_parser_merged.h	/^struct http_parser {$/;"	s
+http_parser	http_parser_merged.h	/^typedef struct http_parser http_parser;$/;"	t	typeref:struct:http_parser
+http_parser_execute	http_parser_merged.h	/^inline size_t http_parser_execute (http_parser *parser,$/;"	f	typeref:typename:size_t
+http_parser_init	http_parser_merged.h	/^http_parser_init (http_parser *parser, enum http_parser_type t)$/;"	f	typeref:typename:void
+http_parser_parse_url	http_parser_merged.h	/^http_parser_parse_url(const char *buf, size_t buflen, int is_connect,$/;"	f	typeref:typename:int
+http_parser_pause	http_parser_merged.h	/^http_parser_pause(http_parser *parser, int paused) {$/;"	f	typeref:typename:void
+http_parser_settings	http_parser_merged.h	/^struct http_parser_settings {$/;"	s
+http_parser_settings	http_parser_merged.h	/^typedef struct http_parser_settings http_parser_settings;$/;"	t	typeref:struct:http_parser_settings
+http_parser_type	http_parser_merged.h	/^enum http_parser_type { HTTP_REQUEST, HTTP_RESPONSE, HTTP_BOTH };$/;"	g
+http_parser_url	http_parser_merged.h	/^struct http_parser_url {$/;"	s
+http_parser_url_fields	http_parser_merged.h	/^enum http_parser_url_fields$/;"	g
+http_parser_version	http_parser_merged.h	/^http_parser_version(void) {$/;"	f	typeref:typename:unsigned long
+http_should_keep_alive	http_parser_merged.h	/^http_should_keep_alive (const http_parser *parser)$/;"	f	typeref:typename:int
+i	json.h	/^            int64_t i() const$/;"	f	class:crow::json::rvalue	typeref:typename:int64_t
+index	http_parser_merged.h	/^  unsigned int index : 8;        \/* index into current matcher *\/$/;"	m	struct:http_parser	typeref:typename:unsigned int:8
+int16_t	http_parser_merged.h	/^typedef __int16 int16_t;$/;"	t	typeref:typename:__int16
+int32_t	http_parser_merged.h	/^typedef __int32 int32_t;$/;"	t	typeref:typename:__int32
+int64_t	http_parser_merged.h	/^typedef __int64 int64_t;$/;"	t	typeref:typename:__int64
+int8_t	http_parser_merged.h	/^typedef __int8 int8_t;$/;"	t	typeref:typename:__int8
+int_params	common.h	/^        std::vector<int64_t> int_params;$/;"	m	struct:crow::routing_params	typeref:typename:std::vector<int64_t>
+invalid_template_exception	mustache.h	/^            invalid_template_exception(const std::string& msg)$/;"	f	class:crow::mustache::invalid_template_exception
+invalid_template_exception	mustache.h	/^        class invalid_template_exception : public std::exception$/;"	c	namespace:crow::mustache
+io_service	http_request.h	/^        boost::asio::io_service* io_service{};$/;"	m	struct:crow::request	typeref:typename:boost::asio::io_service *
+io_service_	dumb_timer_queue.h	/^            boost::asio::io_service* io_service_{};$/;"	m	class:crow::detail::dumb_timer_queue	typeref:typename:boost::asio::io_service *
+io_service_	http_server.h	/^        asio::io_service io_service_;$/;"	m	class:crow::Server	typeref:typename:asio::io_service
+io_service_pool_	http_server.h	/^        std::vector<std::unique_ptr<asio::io_service>> io_service_pool_;$/;"	m	class:crow::Server	typeref:typename:std::vector<std::unique_ptr<asio::io_service>>
+isTagInsideObjectBlock	mustache.h	/^          bool isTagInsideObjectBlock(const int& current, const std::vector<context*>& stack)$/;"	f	class:crow::mustache::template_t	typeref:typename:bool
+is_FIN	websocket.h	/^                bool is_FIN()$/;"	f	class:crow::websocket::Connection	typeref:typename:bool
+is_after_handle_arity_3_impl	http_connection.h	/^        struct is_after_handle_arity_3_impl$/;"	s	namespace:crow::detail
+is_alive	http_response.h	/^        bool is_alive()$/;"	f	struct:crow::response	typeref:typename:bool
+is_alive_helper_	http_response.h	/^            std::function<bool()> is_alive_helper_;$/;"	m	struct:crow::response	typeref:typename:std::function<bool ()>
+is_before_handle_arity_3_impl	http_connection.h	/^        struct is_before_handle_arity_3_impl$/;"	s	namespace:crow::detail
+is_binary_	websocket.h	/^                bool is_binary_;$/;"	m	class:crow::websocket::Connection	typeref:typename:bool
+is_cached	json.h	/^            bool is_cached() const$/;"	f	class:crow::json::rvalue	typeref:typename:bool
+is_close_handler_called_	websocket.h	/^                bool is_close_handler_called_{false};$/;"	m	class:crow::websocket::Connection	typeref:typename:bool
+is_completed	http_response.h	/^        bool is_completed() const noexcept$/;"	f	struct:crow::response	typeref:typename:bool
+is_equ_n	utility.h	/^        constexpr bool is_equ_n(const_str a, unsigned ai, const_str b, unsigned bi, unsigned n)$/;"	f	namespace:crow::black_magic	typeref:typename:bool
+is_equ_p	utility.h	/^        constexpr bool is_equ_p(const char* a, const char* b, unsigned n)$/;"	f	namespace:crow::black_magic	typeref:typename:bool
+is_float	utility.h	/^        constexpr bool is_float(const_str s, unsigned i)$/;"	f	namespace:crow::black_magic	typeref:typename:bool
+is_int	utility.h	/^        constexpr bool is_int(const_str s, unsigned i)$/;"	f	namespace:crow::black_magic	typeref:typename:bool
+is_open	socket_adaptors.h	/^        bool is_open()$/;"	f	struct:crow::SSLAdaptor	typeref:typename:bool
+is_open	socket_adaptors.h	/^        bool is_open()$/;"	f	struct:crow::SocketAdaptor	typeref:typename:bool
+is_parameter_tag_compatible	utility.h	/^        static inline bool is_parameter_tag_compatible(uint64_t a, uint64_t b)$/;"	f	namespace:crow::black_magic	typeref:typename:bool
+is_path	utility.h	/^        constexpr bool is_path(const_str s, unsigned i)$/;"	f	namespace:crow::black_magic	typeref:typename:bool
+is_reading	http_connection.h	/^        bool is_reading{};$/;"	m	class:crow::Connection	typeref:typename:bool
+is_reading	websocket.h	/^                bool is_reading{false};$/;"	m	class:crow::websocket::Connection	typeref:typename:bool
+is_static_type	http_response.h	/^        bool is_static_type()$/;"	f	struct:crow::response	typeref:typename:bool
+is_str	utility.h	/^        constexpr bool is_str(const_str s, unsigned i)$/;"	f	namespace:crow::black_magic	typeref:typename:bool
+is_uint	utility.h	/^        constexpr bool is_uint(const_str s, unsigned i)$/;"	f	namespace:crow::black_magic	typeref:typename:bool
+is_upgrade	parser.h	/^		bool is_upgrade() const$/;"	f	struct:crow::HTTPParser	typeref:typename:bool
+is_valid	utility.h	/^        constexpr bool is_valid(const_str s, unsigned i = 0, int f = 0)$/;"	f	namespace:crow::black_magic	typeref:typename:bool
+is_writing	http_connection.h	/^        bool is_writing{};$/;"	m	class:crow::Connection	typeref:typename:bool
+iterator	json.h	/^                using iterator = const char*;$/;"	t	struct:crow::json::detail::r_string	typeref:typename:const char *
+jar	middlewares/cookie_parser.h	/^            std::unordered_map<std::string, std::string> jar;$/;"	m	struct:crow::CookieParser::context	typeref:typename:std::unordered_map<std::string,std::string>
+json	json.h	/^    namespace json$/;"	n	namespace:crow
+key	dumb_timer_queue.h	/^            using key = std::pair<dumb_timer_queue*, int>;$/;"	t	class:crow::detail::dumb_timer_queue	typeref:typename:std::pair<dumb_timer_queue *,int>
+key	json.h	/^            const detail::r_string& key() const$/;"	f	class:crow::json::rvalue	typeref:typename:const detail::r_string &
+key_	json.h	/^            detail::r_string key_;$/;"	m	class:crow::json::rvalue	typeref:typename:detail::r_string
+key_value_pairs_	query_string.h	/^        std::vector<char*> key_value_pairs_;$/;"	m	class:crow::query_string	typeref:typename:std::vector<char * >
+keys	json.h	/^            std::vector<std::string> keys() const $/;"	f	class:crow::json::wvalue	typeref:typename:std::vector<std::string>
+l	json.h	/^            std::unique_ptr<std::vector<wvalue>> l; \/\/\/< Value if type is a list.$/;"	m	class:crow::json::wvalue	typeref:typename:std::unique_ptr<std::vector<wvalue>>
+l_	json.h	/^            std::unique_ptr<rvalue[]> l_;$/;"	m	class:crow::json::rvalue	typeref:typename:std::unique_ptr<rvalue[]>
+last_element_type	utility.h	/^        struct last_element_type$/;"	s	namespace:crow
+last_element_type	utility.h	/^        struct last_element_type<>$/;"	s	namespace:crow
+len	http_parser_merged.h	/^    uint16_t len;               \/* Length of run in buffer *\/$/;"	m	struct:http_parser_url::__anon46a1c8fa0108	typeref:typename:uint16_t
+level_	logging.h	/^            LogLevel level_;$/;"	m	class:crow::logger	typeref:typename:LogLevel
+load	json.h	/^        inline rvalue load(const char* data)$/;"	f	namespace:crow::json	typeref:typename:rvalue
+load	json.h	/^        inline rvalue load(const char* data, size_t size)$/;"	f	namespace:crow::json	typeref:typename:rvalue
+load	json.h	/^        inline rvalue load(const std::string& str)$/;"	f	namespace:crow::json	typeref:typename:rvalue
+load	mustache.h	/^        inline template_t load(const std::string& filename)$/;"	f	namespace:crow::mustache	typeref:typename:template_t
+load_nocopy_internal	json.h	/^        inline rvalue load_nocopy_internal(char* data, size_t size)$/;"	f	namespace:crow::json	typeref:typename:rvalue
+load_text	mustache.h	/^        inline std::string load_text(const std::string& filename)$/;"	f	namespace:crow::mustache	typeref:typename:std::string
+log	logging.h	/^            void log(std::string message, LogLevel \/*level*\/) override {$/;"	f	class:crow::CerrLogHandler	typeref:typename:void
+logger	logging.h	/^            logger(std::string prefix, LogLevel level) : level_(level) {$/;"	f	class:crow::logger
+logger	logging.h	/^    class logger {$/;"	c	namespace:crow
+loglevel	app.h	/^        self_t& loglevel(crow::LogLevel level)$/;"	f	class:crow::Crow	typeref:typename:self_t &
+lremain_	json.h	/^            uint16_t lremain_;$/;"	m	class:crow::json::rvalue	typeref:typename:uint16_t
+lsize_	json.h	/^            uint32_t lsize_;$/;"	m	class:crow::json::rvalue	typeref:typename:uint32_t
+m_block	TinySHA1.hpp	/^		uint8_t m_block[64];$/;"	m	class:sha1::SHA1	typeref:typename:uint8_t[64]
+m_blockByteIndex	TinySHA1.hpp	/^		size_t m_blockByteIndex;$/;"	m	class:sha1::SHA1	typeref:typename:size_t
+m_byteCount	TinySHA1.hpp	/^		size_t m_byteCount;$/;"	m	class:sha1::SHA1	typeref:typename:size_t
+m_digest	TinySHA1.hpp	/^		digest32_t m_digest;$/;"	m	class:sha1::SHA1	typeref:typename:digest32_t
+mask_	websocket.h	/^                uint32_t mask_;$/;"	m	class:crow::websocket::Connection	typeref:typename:uint32_t
+message	multipart.h	/^            message(const ci_map& headers, const std::string& boundary, const std::vector<part>&/;"	f	struct:crow::multipart::message
+message	multipart.h	/^            message(const request& req)$/;"	f	struct:crow::multipart::message
+message	multipart.h	/^        struct message : public returnable$/;"	s	namespace:crow::multipart
+message_	websocket.h	/^                std::string message_;$/;"	m	class:crow::websocket::Connection	typeref:typename:std::string
+message_handler_	websocket.h	/^				std::function<void(crow::websocket::connection&, const std::string&, bool)> message_handler_/;"	m	class:crow::websocket::Connection	typeref:typename:std::function<void (crow::websocket::connection &,const std::string &,bool)>
+method	http_parser_merged.h	/^  unsigned int method : 8;       \/* requests only *\/$/;"	m	struct:http_parser	typeref:typename:unsigned int:8
+method	http_request.h	/^        HTTPMethod method;$/;"	m	struct:crow::request	typeref:typename:HTTPMethod
+method_name	common.h	/^    inline std::string method_name(HTTPMethod method)$/;"	f	namespace:crow	typeref:typename:std::string
+methods_	routing.h	/^        uint32_t methods_{1<<(int)HTTPMethod::Get};$/;"	m	class:crow::BaseRule	typeref:typename:uint32_t
+middleware_call_helper	http_connection.h	/^        bool middleware_call_helper(Container& \/*middlewares*\/, request& \/*req*\/, response& /;"	f	namespace:crow::detail	typeref:typename:bool
+middleware_call_helper	http_connection.h	/^        bool middleware_call_helper(Container& middlewares, request& req, response& res, Context/;"	f	namespace:crow::detail	typeref:typename:bool
+middleware_context	http_request.h	/^        void* middleware_context{};$/;"	m	struct:crow::request	typeref:typename:void *
+middlewares_	app.h	/^        std::tuple<Middlewares...> middlewares_;$/;"	m	class:crow::Crow	typeref:typename:std::tuple<Middlewares...>
+middlewares_	http_connection.h	/^        std::tuple<Middlewares...>* middlewares_;$/;"	m	class:crow::Connection	typeref:typename:std::tuple<Middlewares...> *
+middlewares_	http_server.h	/^        std::tuple<Middlewares...>* middlewares_;$/;"	m	class:crow::Server	typeref:typename:std::tuple<Middlewares...> *
+mime_types	mime_types.h	/^    std::unordered_map<std::string, std::string> mime_types {$/;"	v	namespace:crow	typeref:typename:std::unordered_map<std::string,std::string>
+mini_header_	websocket.h	/^                uint16_t mini_header_;$/;"	m	class:crow::websocket::Connection	typeref:typename:uint16_t
+moved	http_response.h	/^        void moved(const std::string& location)$/;"	f	struct:crow::response	typeref:typename:void
+moved_perm	http_response.h	/^        void moved_perm(const std::string& location)$/;"	f	struct:crow::response	typeref:typename:void
+msg	mustache.h	/^            std::string msg;$/;"	m	class:crow::mustache::invalid_template_exception	typeref:typename:std::string
+multipart	multipart.h	/^    namespace multipart$/;"	n	namespace:crow
+multithreaded	app.h	/^        self_t& multithreaded()$/;"	f	class:crow::Crow	typeref:typename:self_t &
+mustache	json.h	/^    namespace mustache$/;"	n	namespace:crow
+mustache	mustache.h	/^    namespace mustache$/;"	n	namespace:crow
+name	http_parser_merged.h	/^  const char *name;$/;"	m	struct:http_errno_description::__anon46a1c8fa0308	typeref:typename:const char *
+name	http_parser_merged.h	/^  const char *name;$/;"	m	struct:http_errno_name::__anon46a1c8fa0208	typeref:typename:const char *
+name_	routing.h	/^        std::string name_;$/;"	m	class:crow::BaseRule	typeref:typename:std::string
+need_to_call_after_handlers_	http_connection.h	/^        bool need_to_call_after_handlers_{};$/;"	m	class:crow::Connection	typeref:typename:bool
+need_to_start_read_after_complete_	http_connection.h	/^        bool need_to_start_read_after_complete_{};$/;"	m	class:crow::Connection	typeref:typename:bool
+noexcept	settings.h	/^#define noexcept /;"	d
+notify_server_start	app.h	/^        void notify_server_start()$/;"	f	class:crow::Crow	typeref:typename:void
+nread	http_parser_merged.h	/^  uint32_t nread;          \/* # bytes read in various scenarios *\/$/;"	m	struct:http_parser	typeref:typename:uint32_t
+nt	json.h	/^            num_type nt() const$/;"	f	class:crow::json::rvalue	typeref:typename:num_type
+nt	json.h	/^            num_type nt{num_type::Null}; \/\/\/< The specific type of the number if \\ref t_ is /;"	m	class:crow::json::wvalue	typeref:typename:num_type
+nt_	json.h	/^            num_type nt_{num_type::Null};$/;"	m	class:crow::json::rvalue	typeref:typename:num_type
+num	json.h	/^            } num; \/\/\/< Value if type is a number.$/;"	m	class:crow::json::wvalue	typeref:union:crow::json::wvalue::__anon078191b5040a
+num_type	json.h	/^        enum class num_type : char {$/;"	g	namespace:crow::json	typeref:typename:char
+o	json.h	/^            std::unique_ptr<std::unordered_map<std::string, wvalue>> o; \/\/\/< Value if type is/;"	m	class:crow::json::wvalue	typeref:typename:std::unique_ptr<std::unordered_map<std::string,wvalue>>
+off	http_parser_merged.h	/^    uint16_t off;               \/* Offset into buffer in which field starts *\/$/;"	m	struct:http_parser_url::__anon46a1c8fa0108	typeref:typename:uint16_t
+on_body	http_parser_merged.h	/^  http_data_cb on_body;$/;"	m	struct:http_parser_settings	typeref:typename:http_data_cb
+on_body	parser.h	/^        static int on_body(http_parser* self_, const char* at, size_t length)$/;"	f	struct:crow::HTTPParser	typeref:typename:int
+on_header_field	http_parser_merged.h	/^  http_data_cb on_header_field;$/;"	m	struct:http_parser_settings	typeref:typename:http_data_cb
+on_header_field	parser.h	/^        static int on_header_field(http_parser* self_, const char* at, size_t length)$/;"	f	struct:crow::HTTPParser	typeref:typename:int
+on_header_value	http_parser_merged.h	/^  http_data_cb on_header_value;$/;"	m	struct:http_parser_settings	typeref:typename:http_data_cb
+on_header_value	parser.h	/^        static int on_header_value(http_parser* self_, const char* at, size_t length)$/;"	f	struct:crow::HTTPParser	typeref:typename:int
+on_headers_complete	http_parser_merged.h	/^  http_cb      on_headers_complete;$/;"	m	struct:http_parser_settings	typeref:typename:http_cb
+on_headers_complete	parser.h	/^        static int on_headers_complete(http_parser* self_)$/;"	f	struct:crow::HTTPParser	typeref:typename:int
+on_message_begin	http_parser_merged.h	/^  http_cb      on_message_begin;$/;"	m	struct:http_parser_settings	typeref:typename:http_cb
+on_message_begin	parser.h	/^        static int on_message_begin(http_parser* self_)$/;"	f	struct:crow::HTTPParser	typeref:typename:int
+on_message_complete	http_parser_merged.h	/^  http_cb      on_message_complete;$/;"	m	struct:http_parser_settings	typeref:typename:http_cb
+on_message_complete	parser.h	/^        static int on_message_complete(http_parser* self_)$/;"	f	struct:crow::HTTPParser	typeref:typename:int
+on_status	http_parser_merged.h	/^  http_data_cb on_status;$/;"	m	struct:http_parser_settings	typeref:typename:http_data_cb
+on_tick	http_server.h	/^        void on_tick()$/;"	f	class:crow::Server	typeref:typename:void
+on_url	http_parser_merged.h	/^  http_data_cb on_url;$/;"	m	struct:http_parser_settings	typeref:typename:http_data_cb
+on_url	parser.h	/^        static int on_url(http_parser* self_, const char* at, size_t length)$/;"	f	struct:crow::HTTPParser	typeref:typename:int
+opcode	websocket.h	/^                int opcode()$/;"	f	class:crow::websocket::Connection	typeref:typename:int
+open_handler_	websocket.h	/^				std::function<void(crow::websocket::connection&)> open_handler_;$/;"	m	class:crow::websocket::Connection	typeref:typename:std::function<void (crow::websocket::connection &)>
+operator !=	json.h	/^        inline bool operator != (const rvalue& l, const std::string& r)$/;"	f	namespace:crow::json	typeref:typename:bool
+operator !=	json.h	/^        inline bool operator != (const rvalue& l, double r)$/;"	f	namespace:crow::json	typeref:typename:bool
+operator !=	json.h	/^        inline bool operator != (const std::string& l, const rvalue& r)$/;"	f	namespace:crow::json	typeref:typename:bool
+operator !=	json.h	/^        inline bool operator != (double l, const rvalue& r)$/;"	f	namespace:crow::json	typeref:typename:bool
+operator ()	ci_map.h	/^        bool operator()(const std::string& l, const std::string& r) const$/;"	f	struct:crow::ci_key_eq	typeref:typename:bool
+operator ()	ci_map.h	/^        size_t operator()(const std::string& key) const$/;"	f	struct:crow::ci_hash	typeref:typename:size_t
+operator ()	json.h	/^                    bool operator()(const rvalue& l, const rvalue& r) const$/;"	f	struct:crow::json::rvalue::has::Pred	typeref:typename:bool
+operator ()	json.h	/^                    bool operator()(const rvalue& l, const rvalue& r) const$/;"	f	struct:crow::json::rvalue::operator []::Pred	typeref:typename:bool
+operator ()	json.h	/^                    bool operator()(const rvalue& l, const std::string& r) const$/;"	f	struct:crow::json::rvalue::has::Pred	typeref:typename:bool
+operator ()	json.h	/^                    bool operator()(const rvalue& l, const std::string& r) const$/;"	f	struct:crow::json::rvalue::operator []::Pred	typeref:typename:bool
+operator ()	json.h	/^                    bool operator()(const std::string& l, const rvalue& r) const$/;"	f	struct:crow::json::rvalue::has::Pred	typeref:typename:bool
+operator ()	json.h	/^                    bool operator()(const std::string& l, const rvalue& r) const$/;"	f	struct:crow::json::rvalue::operator []::Pred	typeref:typename:bool
+operator <	json.h	/^            inline bool operator < (const r_string& l, const r_string& r)$/;"	f	namespace:crow::json::detail	typeref:typename:bool
+operator <	json.h	/^            inline bool operator < (const r_string& l, const std::string& r)$/;"	f	namespace:crow::json::detail	typeref:typename:bool
+operator <<	json.h	/^                friend std::ostream& operator << (std::ostream& os, const r_string& s)$/;"	f	namespace:crow::json::detail	typeref:typename:std::ostream &
+operator <<	json.h	/^            friend std::ostream& operator <<(std::ostream& os, const rvalue& r)$/;"	f	namespace:crow::json	typeref:typename:std::ostream &
+operator <<	logging.h	/^            logger& operator<<(T const &value) {$/;"	f	class:crow::logger	typeref:typename:logger &
+operator <<	query_string.h	/^        friend std::ostream& operator<<(std::ostream& os, const query_string& qs)$/;"	f	namespace:crow	typeref:typename:std::ostream &
+operator =	TinySHA1.hpp	/^		const SHA1& operator = (const SHA1& s) {$/;"	f	class:sha1::SHA1	typeref:typename:const SHA1 &
+operator =	http_response.h	/^        response& operator = (response&& r) noexcept$/;"	f	struct:crow::response	typeref:typename:response &
+operator =	json.h	/^                r_string& operator = (const r_string& r)$/;"	f	struct:crow::json::detail::r_string	typeref:typename:r_string &
+operator =	json.h	/^                r_string& operator = (r_string&& r)$/;"	f	struct:crow::json::detail::r_string	typeref:typename:r_string &
+operator =	json.h	/^            rvalue& operator = (const rvalue& r)$/;"	f	class:crow::json::rvalue	typeref:typename:rvalue &
+operator =	json.h	/^            rvalue& operator = (rvalue&& r) noexcept$/;"	f	class:crow::json::rvalue	typeref:typename:rvalue &
+operator =	json.h	/^            wvalue& operator = (bool value)$/;"	f	class:crow::json::wvalue	typeref:typename:wvalue &
+operator =	json.h	/^            wvalue& operator = (double value)$/;"	f	class:crow::json::wvalue	typeref:typename:wvalue &
+operator =	json.h	/^            wvalue& operator = (int value)$/;"	f	class:crow::json::wvalue	typeref:typename:wvalue &
+operator =	json.h	/^            wvalue& operator = (long long value)$/;"	f	class:crow::json::wvalue	typeref:typename:wvalue &
+operator =	json.h	/^            wvalue& operator = (long value)$/;"	f	class:crow::json::wvalue	typeref:typename:wvalue &
+operator =	json.h	/^            wvalue& operator = (short value)$/;"	f	class:crow::json::wvalue	typeref:typename:wvalue &
+operator =	json.h	/^            wvalue& operator = (std::nullptr_t)$/;"	f	class:crow::json::wvalue	typeref:typename:wvalue &
+operator =	json.h	/^            wvalue& operator = (unsigned int value)$/;"	f	class:crow::json::wvalue	typeref:typename:wvalue &
+operator =	json.h	/^            wvalue& operator = (unsigned long long value)$/;"	f	class:crow::json::wvalue	typeref:typename:wvalue &
+operator =	json.h	/^            wvalue& operator = (unsigned long value)$/;"	f	class:crow::json::wvalue	typeref:typename:wvalue &
+operator =	json.h	/^            wvalue& operator = (unsigned short value)$/;"	f	class:crow::json::wvalue	typeref:typename:wvalue &
+operator =	json.h	/^            wvalue& operator = (wvalue&& r)$/;"	f	class:crow::json::wvalue	typeref:typename:wvalue &
+operator =	json.h	/^            wvalue& operator=(const char* str)$/;"	f	class:crow::json::wvalue	typeref:typename:wvalue &
+operator =	json.h	/^            wvalue& operator=(const std::string& str)$/;"	f	class:crow::json::wvalue	typeref:typename:wvalue &
+operator =	json.h	/^            wvalue& operator=(const std::vector<T>& v)$/;"	f	class:crow::json::wvalue	typeref:typename:wvalue &
+operator =	json.h	/^            wvalue& operator=(std::vector<wvalue>&& v)$/;"	f	class:crow::json::wvalue	typeref:typename:wvalue &
+operator =	query_string.h	/^        query_string& operator = (const query_string& qs)$/;"	f	class:crow::query_string	typeref:typename:query_string &
+operator =	query_string.h	/^        query_string& operator = (query_string&& qs)$/;"	f	class:crow::query_string	typeref:typename:query_string &
+operator ==	json.h	/^            inline bool operator == (const r_string& l, const r_string& r)$/;"	f	namespace:crow::json::detail	typeref:typename:bool
+operator ==	json.h	/^            inline bool operator == (const r_string& l, const std::string& r)$/;"	f	namespace:crow::json::detail	typeref:typename:bool
+operator ==	json.h	/^        inline bool operator == (const rvalue& l, const std::string& r)$/;"	f	namespace:crow::json	typeref:typename:bool
+operator ==	json.h	/^        inline bool operator == (const rvalue& l, double r)$/;"	f	namespace:crow::json	typeref:typename:bool
+operator ==	json.h	/^        inline bool operator == (const std::string& l, const rvalue& r)$/;"	f	namespace:crow::json	typeref:typename:bool
+operator ==	json.h	/^        inline bool operator == (double l, const rvalue& r)$/;"	f	namespace:crow::json	typeref:typename:bool
+operator >	json.h	/^            inline bool operator > (const r_string& l, const std::string& r)$/;"	f	namespace:crow::json::detail	typeref:typename:bool
+operator []	json.h	/^            const rvalue& operator[](const char* str) const$/;"	f	class:crow::json::rvalue	typeref:typename:const rvalue &
+operator []	json.h	/^            const rvalue& operator[](const std::string& str) const$/;"	f	class:crow::json::rvalue	typeref:typename:const rvalue &
+operator []	json.h	/^            const rvalue& operator[](int index) const$/;"	f	class:crow::json::rvalue	typeref:typename:const rvalue &
+operator []	json.h	/^            const rvalue& operator[](size_t index) const$/;"	f	class:crow::json::rvalue	typeref:typename:const rvalue &
+operator []	json.h	/^            wvalue& operator[](const std::string& str)$/;"	f	class:crow::json::wvalue	typeref:typename:wvalue &
+operator []	json.h	/^            wvalue& operator[](unsigned index)$/;"	f	class:crow::json::wvalue	typeref:typename:wvalue &
+operator []	utility.h	/^            constexpr char operator[]( unsigned i ) const { $/;"	f	class:crow::black_magic::const_str	typeref:typename:char
+operator int64_t	json.h	/^            explicit operator int64_t() const$/;"	f	class:crow::json::rvalue
+operator std::string	json.h	/^                operator std::string () const$/;"	f	struct:crow::json::detail::r_string
+operator uint64_t	json.h	/^            explicit operator uint64_t() const$/;"	f	class:crow::json::rvalue
+option_	json.h	/^            mutable uint8_t option_{0};$/;"	m	class:crow::json::rvalue	typeref:typename:uint8_t
+owned_	json.h	/^                uint8_t owned_{0};$/;"	m	struct:crow::json::detail::r_string	typeref:typename:uint8_t
+pad	multipart.h	/^            inline std::string pad (std::string& string, const char& padding = '"')$/;"	f	struct:crow::multipart::message	typeref:typename:std::string
+parameter_tag	utility.h	/^        struct parameter_tag$/;"	s	namespace:crow::black_magic
+params	multipart.h	/^                std::unordered_map<std::string, std::string> params; \/\/\/< The parameters of t/;"	m	struct:crow::multipart::header	typeref:typename:std::unordered_map<std::string,std::string>
+params	routing.h	/^                const routing_params& params;$/;"	m	struct:crow::detail::routing_handler_call_helper::call_params	typeref:typename:const routing_params &
+parent_context	middleware_context.h	/^            using parent_context = typename black_magic::pop_back<Middlewares...>::template rebi/;"	t	struct:crow::detail::partial_context	typeref:typename:black_magic::pop_back<Middlewares...>::template rebind<::crow::detail::partial_context>
+parent_context_t	http_connection.h	/^            using parent_context_t = typename Context::template partial<N-1>;$/;"	t	function:crow::detail::after_handlers_call_helper	typeref:typename:Context::template partial<N-1>
+parent_context_t	http_connection.h	/^            using parent_context_t = typename Context::template partial<N-1>;$/;"	t	function:crow::detail::middleware_call_helper	typeref:typename:Context::template partial<N-1>
+parent_t	utility.h	/^            using parent_t = function_traits<decltype(&T::operator())>;$/;"	t	struct:utility::function_traits
+parse	json.h	/^                rvalue parse()$/;"	f	struct:crow::json::load_nocopy_internal::Parser	typeref:typename:rvalue
+parse	mustache.h	/^            void parse()$/;"	f	class:crow::mustache::template_t	typeref:typename:void
+parse_body	multipart.h	/^            std::vector<part> parse_body(std::string body)$/;"	f	struct:crow::multipart::message	typeref:typename:std::vector<part>
+parse_section	multipart.h	/^            part parse_section(std::string& section)$/;"	f	struct:crow::multipart::message	typeref:typename:part
+parse_section_head	multipart.h	/^            void parse_section_head(std::string& lines, part& part)$/;"	f	struct:crow::multipart::message	typeref:typename:void
+parse_url_char	http_parser_merged.h	/^parse_url_char(enum state s, const char ch)$/;"	f	typeref:enum:state
+parser_	http_connection.h	/^        HTTPParser<Connection> parser_;$/;"	m	class:crow::Connection	typeref:typename:HTTPParser<Connection>
+part	multipart.h	/^        struct part$/;"	s	namespace:crow::multipart
+partial	middleware_context.h	/^            using partial = partial_context;$/;"	t	struct:crow::detail::partial_context	typeref:typename:partial_context
+partial	middleware_context.h	/^            using partial = typename partial_context<Middlewares...>::template partial<N>;$/;"	t	struct:crow::detail::context	typeref:typename:partial_context<Middlewares...>::template partial<N>
+partial	middleware_context.h	/^            using partial = typename std::conditional<N == sizeof...(Middlewares)-1, partial_con/;"	t	struct:crow::detail::partial_context
+partial_context	middleware_context.h	/^        struct partial_context$/;"	s	namespace:crow::detail
+partial_context	middleware_context.h	/^        struct partial_context<>$/;"	s	namespace:crow::detail
+parts	multipart.h	/^            std::vector<part> parts; \/\/\/< The individual parts of the message$/;"	m	struct:crow::multipart::message	typeref:typename:std::vector<part>
+path	http_response.h	/^            std::string path = "";$/;"	m	struct:crow::response::static_file_info	typeref:typename:std::string
+pick_io_service	http_server.h	/^        asio::io_service& pick_io_service()$/;"	f	class:crow::Server	typeref:typename:asio::io_service &
+pong_received_	websocket.h	/^                bool pong_received_{false};$/;"	m	class:crow::websocket::Connection	typeref:typename:bool
+pop_back	utility.h	/^        struct pop_back \/\/: public pop_back_helper<typename gen_seq<sizeof...(T)-1>::type, std/;"	s	namespace:crow
+pop_back	utility.h	/^        struct pop_back<>$/;"	s	namespace:crow
+pop_back_helper	utility.h	/^        struct pop_back_helper<seq<N...>, Tuple>$/;"	s	namespace:crow
+port	app.h	/^        self_t& port(std::uint16_t port)$/;"	f	class:crow::Crow	typeref:typename:self_t &
+port	http_parser_merged.h	/^  uint16_t port;                \/* Converted UF_PORT string *\/$/;"	m	struct:http_parser_url	typeref:typename:uint16_t
+port_	app.h	/^        uint16_t port_ = 80;$/;"	m	class:crow::Crow	typeref:typename:uint16_t
+port_	http_server.h	/^        uint16_t port_;$/;"	m	class:crow::Server	typeref:typename:uint16_t
+pos	mustache.h	/^            int pos;$/;"	m	struct:crow::mustache::Action	typeref:typename:int
+pos	routing.h	/^                static const int pos = Pos;$/;"	m	struct:crow::detail::routing_handler_call_helper::call_pair	typeref:typename:const int
+post	http_request.h	/^        void post(CompletionHandler handler)$/;"	f	struct:crow::request	typeref:typename:void
+post	websocket.h	/^                void post(CompletionHandler handler)$/;"	f	class:crow::websocket::Connection	typeref:typename:void
+prepare_buffers	http_connection.h	/^        void prepare_buffers()$/;"	f	class:crow::Connection	typeref:typename:void
+process	dumb_timer_queue.h	/^            void process()$/;"	f	class:crow::detail::dumb_timer_queue	typeref:typename:void
+processBlock	TinySHA1.hpp	/^		SHA1& processBlock(const void* const start, const void* const end) {$/;"	f	class:sha1::SHA1	typeref:typename:SHA1 &
+processBlock	TinySHA1.hpp	/^		void processBlock() {$/;"	f	class:sha1::SHA1	typeref:typename:void
+processByte	TinySHA1.hpp	/^		SHA1& processByte(uint8_t octet) {$/;"	f	class:sha1::SHA1	typeref:typename:SHA1 &
+processBytes	TinySHA1.hpp	/^		SHA1& processBytes(const void* const data, size_t len) {$/;"	f	class:sha1::SHA1	typeref:typename:SHA1 &
+process_header	parser.h	/^        void process_header()$/;"	f	struct:crow::HTTPParser	typeref:typename:void
+process_message	parser.h	/^        void process_message()$/;"	f	struct:crow::HTTPParser	typeref:typename:void
+promote	utility.h	/^        struct promote$/;"	s	namespace:crow
+promote_t	utility.h	/^        using promote_t = typename promote<T>::type;$/;"	t	namespace:crow	typeref:typename:promote<T>::type
+push	utility.h	/^            using push = S<U, T...>;$/;"	t	struct:crow::black_magic::S	typeref:typename:S<U,T...>
+push_and_write	http_response.h	/^            inline void push_and_write(std::vector<asio::const_buffer>& buffers, std::string& bu/;"	f	struct:crow::response	typeref:typename:void
+push_back	utility.h	/^            using push_back = S<T..., U>;$/;"	t	struct:crow::black_magic::S	typeref:typename:S<T...,U>
+qs_decode	query_string.h	/^inline int qs_decode(char * qs)$/;"	f	namespace:crow	typeref:typename:int
+qs_dict_name2kv	query_string.h	/^inline boost::optional<std::pair<std::string, std::string>> qs_dict_name2kv(const char * dict_na/;"	f	namespace:crow	typeref:typename:boost::optional<std::pair<std::string,std::string>>
+qs_k2v	query_string.h	/^inline char * qs_k2v(const char * key, char * const * qs_kv, int qs_kv_size, int nth = 0)$/;"	f	namespace:crow	typeref:typename:char *
+qs_parse	query_string.h	/^inline int qs_parse(char * qs, char * qs_kv[], int qs_kv_size)$/;"	f	namespace:crow	typeref:typename:int
+qs_scanvalue	query_string.h	/^inline char * qs_scanvalue(const char * key, const char * qs, char * val, size_t val_len)$/;"	f	namespace:crow	typeref:typename:char *
+qs_strncmp	query_string.h	/^inline int qs_strncmp(const char * s, const char * qs, size_t n)$/;"	f	namespace:crow	typeref:typename:int
+query_string	query_string.h	/^        query_string()$/;"	f	class:crow::query_string
+query_string	query_string.h	/^        query_string(const query_string& qs)$/;"	f	class:crow::query_string
+query_string	query_string.h	/^        query_string(std::string url)$/;"	f	class:crow::query_string
+query_string	query_string.h	/^    class query_string$/;"	c	namespace:crow
+r_string	json.h	/^                r_string() {};$/;"	f	struct:crow::json::detail::r_string
+r_string	json.h	/^                r_string(char* s, char* e)$/;"	f	struct:crow::json::detail::r_string
+r_string	json.h	/^                r_string(const r_string& r)$/;"	f	struct:crow::json::detail::r_string
+r_string	json.h	/^                r_string(r_string&& r)$/;"	f	struct:crow::json::detail::r_string
+r_string	json.h	/^            struct r_string $/;"	s	namespace:crow::json::detail
+raw_socket	socket_adaptors.h	/^        raw_socket()$/;"	f	struct:crow::SSLAdaptor	typeref:typename:tcp::socket::lowest_layer_type &
+raw_socket	socket_adaptors.h	/^        tcp::socket& raw_socket()$/;"	f	struct:crow::SocketAdaptor	typeref:typename:tcp::socket &
+raw_url	http_request.h	/^        std::string raw_url; \/\/\/< The full URL containing the `?` and URL parameters.$/;"	m	struct:crow::request	typeref:typename:std::string
+raw_url	parser.h	/^        std::string raw_url;$/;"	m	struct:crow::HTTPParser	typeref:typename:std::string
+rebind	utility.h	/^            using rebind = U<>;$/;"	t	struct:crow::pop_back	typeref:typename:U<>
+rebind	utility.h	/^            using rebind = U<T...>;$/;"	t	struct:crow::black_magic::S	typeref:typename:U<T...>
+rebind	utility.h	/^            using rebind = U<typename std::tuple_element<N, Tuple>::type...>;$/;"	t	struct:crow::pop_back_helper	typeref:typename:U<typename std::tuple_element<N,Tuple>::type...>
+rebind	utility.h	/^            using rebind = typename pop_back_helper<typename gen_seq<sizeof...(T)-1>::type, std:/;"	t	struct:crow::pop_back
+redirect	http_response.h	/^        void redirect(const std::string& location)$/;"	f	struct:crow::response	typeref:typename:void
+redirect_perm	http_response.h	/^        void redirect_perm(const std::string& location)$/;"	f	struct:crow::response	typeref:typename:void
+remaining_length16_	websocket.h	/^                uint16_t remaining_length16_{0};$/;"	m	class:crow::websocket::Connection	typeref:typename:uint16_t
+remaining_length_	websocket.h	/^                uint64_t remaining_length_{0};$/;"	m	class:crow::websocket::Connection	typeref:typename:uint64_t
+remoteIpAddress	http_request.h	/^        std::string remoteIpAddress; \/\/\/< The IP address from which the request was sent.$/;"	m	struct:crow::request	typeref:typename:std::string
+remote_endpoint	socket_adaptors.h	/^        tcp::endpoint remote_endpoint()$/;"	f	struct:crow::SSLAdaptor	typeref:typename:tcp::endpoint
+remote_endpoint	socket_adaptors.h	/^        tcp::endpoint remote_endpoint()$/;"	f	struct:crow::SocketAdaptor	typeref:typename:tcp::endpoint
+render	mustache.h	/^            std::string render()$/;"	f	class:crow::mustache::template_t	typeref:typename:std::string
+render	mustache.h	/^            std::string render(context& ctx)$/;"	f	class:crow::mustache::template_t	typeref:typename:std::string
+render_fragment	mustache.h	/^            void render_fragment(const std::pair<int, int> fragment, int indent, std::string& ou/;"	f	class:crow::mustache::template_t	typeref:typename:void
+render_internal	mustache.h	/^            void render_internal(int actionBegin, int actionEnd, std::vector<context*>& stack, s/;"	f	class:crow::mustache::template_t	typeref:typename:void
+req	routing.h	/^                const request& req;$/;"	m	struct:crow::detail::routing_handler_call_helper::call_params	typeref:typename:const request &
+req_	http_connection.h	/^        request req_;$/;"	m	class:crow::Connection	typeref:typename:request
+request	http_request.h	/^        request()$/;"	f	struct:crow::request
+request	http_request.h	/^        request(HTTPMethod method, std::string raw_url, std::string url, query_string url_params/;"	f	struct:crow::request
+request	http_request.h	/^    struct request$/;"	s	namespace:crow
+requires_in_range	utility.h	/^        constexpr unsigned requires_in_range( unsigned i, unsigned len )$/;"	f	namespace:crow::black_magic	typeref:typename:unsigned
+res	http_connection.h	/^        response res;$/;"	m	class:crow::Connection	typeref:typename:response
+res	routing.h	/^                response& res;$/;"	m	struct:crow::detail::routing_handler_call_helper::call_params	typeref:typename:response &
+res_body_copy_	http_connection.h	/^        std::string res_body_copy_;$/;"	m	class:crow::Connection	typeref:typename:std::string
+res_stream_threshold_	http_connection.h	/^        const unsigned res_stream_threshold_ = 1048576;$/;"	m	class:crow::Connection	typeref:typename:const unsigned
+reset	TinySHA1.hpp	/^		SHA1& reset() {$/;"	f	class:sha1::SHA1	typeref:typename:SHA1 &
+reset	json.h	/^            void reset()$/;"	f	class:crow::json::wvalue	typeref:typename:void
+response	http_response.h	/^        explicit response(int code) : code(code) {}$/;"	f	struct:crow::response
+response	http_response.h	/^        response (int code, returnable& value) : code(code)$/;"	f	struct:crow::response
+response	http_response.h	/^        response (returnable& value)$/;"	f	struct:crow::response
+response	http_response.h	/^        response (returnable&& value)$/;"	f	struct:crow::response
+response	http_response.h	/^        response() {}$/;"	f	struct:crow::response
+response	http_response.h	/^        response(int code, std::string body) : code(code), body(std::move(body)) {}$/;"	f	struct:crow::response
+response	http_response.h	/^        response(response&& r)$/;"	f	struct:crow::response
+response	http_response.h	/^        response(std::string body) : body(std::move(body)) {}$/;"	f	struct:crow::response
+response	http_response.h	/^    struct response$/;"	s	namespace:crow
+result_type	utility.h	/^            typedef R result_type;$/;"	t	struct:utility::function_traits	typeref:typename:R
+result_type	utility.h	/^            typedef R result_type;$/;"	v	namespace:utility	typeref:struct:function_traits typedef R
+result_type	utility.h	/^            using result_type = typename parent_t::result_type;$/;"	t	struct:utility::function_traits	typeref:typename:parent_t::result_type
+returnable	returnable.h	/^    returnable(std::string ctype) : content_type {ctype}$/;"	f	struct:crow::returnable
+returnable	returnable.h	/^struct returnable$/;"	s	namespace:crow
+roundrobin_index_	http_server.h	/^        unsigned int roundrobin_index_{};$/;"	m	class:crow::Server	typeref:typename:unsigned int
+route	app.h	/^        auto route(std::string&& rule)$/;"	f	class:crow::Crow	typeref:typename:std::result_of<decltype (& Router::new_rule_tagged<Tag>)(Router,std::string &&)>::type
+route_dynamic	app.h	/^        DynamicRule& route_dynamic(std::string&& rule)$/;"	f	class:crow::Crow	typeref:typename:DynamicRule &
+router_	app.h	/^        Router router_;$/;"	m	class:crow::Crow	typeref:typename:Router
+routing_handler_call_helper	routing.h	/^        namespace routing_handler_call_helper$/;"	n	namespace:crow::detail
+routing_params	common.h	/^    struct routing_params$/;"	s	namespace:crow
+rule	routing.h	/^        const std::string& rule() { return rule_; }$/;"	f	class:crow::BaseRule	typeref:typename:const std::string &
+rule_	routing.h	/^        std::string rule_;$/;"	m	class:crow::BaseRule	typeref:typename:std::string
+rule_to_upgrade_	routing.h	/^        std::unique_ptr<BaseRule> rule_to_upgrade_;$/;"	m	class:crow::BaseRule	typeref:typename:std::unique_ptr<BaseRule>
+run	app.h	/^        void run()$/;"	f	class:crow::Crow	typeref:typename:void
+run	http_server.h	/^        void run()$/;"	f	class:crow::Server	typeref:typename:void
+rvalue	json.h	/^            rvalue() noexcept : option_{error_bit} $/;"	f	class:crow::json::rvalue
+rvalue	json.h	/^            rvalue(const rvalue& r)$/;"	f	class:crow::json::rvalue
+rvalue	json.h	/^            rvalue(rvalue&& r) noexcept$/;"	f	class:crow::json::rvalue
+rvalue	json.h	/^            rvalue(type t) noexcept$/;"	f	class:crow::json::rvalue
+rvalue	json.h	/^            rvalue(type t, char* s, char* e)  noexcept$/;"	f	class:crow::json::rvalue
+rvalue	json.h	/^        class rvalue$/;"	c	namespace:crow::json
+s	json.h	/^            detail::r_string s() const$/;"	f	class:crow::json::rvalue	typeref:typename:detail::r_string
+s	json.h	/^            std::string s; \/\/\/< Value if type is a string.$/;"	m	class:crow::json::wvalue	typeref:typename:std::string
+s_	json.h	/^                char* s_; \/\/\/< Start.$/;"	m	struct:crow::json::detail::r_string	typeref:typename:char *
+s_body_identity	http_parser_merged.h	/^  , s_body_identity$/;"	e	enum:state
+s_body_identity_eof	http_parser_merged.h	/^  , s_body_identity_eof$/;"	e	enum:state
+s_chunk_data	http_parser_merged.h	/^  , s_chunk_data$/;"	e	enum:state
+s_chunk_data_almost_done	http_parser_merged.h	/^  , s_chunk_data_almost_done$/;"	e	enum:state
+s_chunk_data_done	http_parser_merged.h	/^  , s_chunk_data_done$/;"	e	enum:state
+s_chunk_parameters	http_parser_merged.h	/^  , s_chunk_parameters$/;"	e	enum:state
+s_chunk_size	http_parser_merged.h	/^  , s_chunk_size$/;"	e	enum:state
+s_chunk_size_almost_done	http_parser_merged.h	/^  , s_chunk_size_almost_done$/;"	e	enum:state
+s_chunk_size_start	http_parser_merged.h	/^  , s_chunk_size_start$/;"	e	enum:state
+s_dead	http_parser_merged.h	/^  { s_dead = 1 \/* important that this is > 0 *\/$/;"	e	enum:state
+s_header_almost_done	http_parser_merged.h	/^  , s_header_almost_done$/;"	e	enum:state
+s_header_field	http_parser_merged.h	/^  , s_header_field$/;"	e	enum:state
+s_header_field_start	http_parser_merged.h	/^  , s_header_field_start$/;"	e	enum:state
+s_header_value	http_parser_merged.h	/^  , s_header_value$/;"	e	enum:state
+s_header_value_discard_lws	http_parser_merged.h	/^  , s_header_value_discard_lws$/;"	e	enum:state
+s_header_value_discard_ws	http_parser_merged.h	/^  , s_header_value_discard_ws$/;"	e	enum:state
+s_header_value_discard_ws_almost_done	http_parser_merged.h	/^  , s_header_value_discard_ws_almost_done$/;"	e	enum:state
+s_header_value_lws	http_parser_merged.h	/^  , s_header_value_lws$/;"	e	enum:state
+s_header_value_start	http_parser_merged.h	/^  , s_header_value_start$/;"	e	enum:state
+s_headers_almost_done	http_parser_merged.h	/^  , s_headers_almost_done$/;"	e	enum:state
+s_headers_done	http_parser_merged.h	/^  , s_headers_done$/;"	e	enum:state
+s_http_host	http_parser_merged.h	/^  , s_http_host$/;"	e	enum:http_host_state
+s_http_host_dead	http_parser_merged.h	/^    s_http_host_dead = 1$/;"	e	enum:http_host_state
+s_http_host_port	http_parser_merged.h	/^  , s_http_host_port$/;"	e	enum:http_host_state
+s_http_host_port_start	http_parser_merged.h	/^  , s_http_host_port_start$/;"	e	enum:http_host_state
+s_http_host_start	http_parser_merged.h	/^  , s_http_host_start$/;"	e	enum:http_host_state
+s_http_host_v6	http_parser_merged.h	/^  , s_http_host_v6$/;"	e	enum:http_host_state
+s_http_host_v6_end	http_parser_merged.h	/^  , s_http_host_v6_end$/;"	e	enum:http_host_state
+s_http_host_v6_start	http_parser_merged.h	/^  , s_http_host_v6_start$/;"	e	enum:http_host_state
+s_http_userinfo	http_parser_merged.h	/^  , s_http_userinfo$/;"	e	enum:http_host_state
+s_http_userinfo_start	http_parser_merged.h	/^  , s_http_userinfo_start$/;"	e	enum:http_host_state
+s_message_done	http_parser_merged.h	/^  , s_message_done$/;"	e	enum:state
+s_req_first_http_major	http_parser_merged.h	/^  , s_req_first_http_major$/;"	e	enum:state
+s_req_first_http_minor	http_parser_merged.h	/^  , s_req_first_http_minor$/;"	e	enum:state
+s_req_fragment	http_parser_merged.h	/^  , s_req_fragment$/;"	e	enum:state
+s_req_fragment_start	http_parser_merged.h	/^  , s_req_fragment_start$/;"	e	enum:state
+s_req_http_H	http_parser_merged.h	/^  , s_req_http_H$/;"	e	enum:state
+s_req_http_HT	http_parser_merged.h	/^  , s_req_http_HT$/;"	e	enum:state
+s_req_http_HTT	http_parser_merged.h	/^  , s_req_http_HTT$/;"	e	enum:state
+s_req_http_HTTP	http_parser_merged.h	/^  , s_req_http_HTTP$/;"	e	enum:state
+s_req_http_major	http_parser_merged.h	/^  , s_req_http_major$/;"	e	enum:state
+s_req_http_minor	http_parser_merged.h	/^  , s_req_http_minor$/;"	e	enum:state
+s_req_http_start	http_parser_merged.h	/^  , s_req_http_start$/;"	e	enum:state
+s_req_line_almost_done	http_parser_merged.h	/^  , s_req_line_almost_done$/;"	e	enum:state
+s_req_method	http_parser_merged.h	/^  , s_req_method$/;"	e	enum:state
+s_req_path	http_parser_merged.h	/^  , s_req_path$/;"	e	enum:state
+s_req_query_string	http_parser_merged.h	/^  , s_req_query_string$/;"	e	enum:state
+s_req_query_string_start	http_parser_merged.h	/^  , s_req_query_string_start$/;"	e	enum:state
+s_req_schema	http_parser_merged.h	/^  , s_req_schema$/;"	e	enum:state
+s_req_schema_slash	http_parser_merged.h	/^  , s_req_schema_slash$/;"	e	enum:state
+s_req_schema_slash_slash	http_parser_merged.h	/^  , s_req_schema_slash_slash$/;"	e	enum:state
+s_req_server	http_parser_merged.h	/^  , s_req_server$/;"	e	enum:state
+s_req_server_start	http_parser_merged.h	/^  , s_req_server_start$/;"	e	enum:state
+s_req_server_with_at	http_parser_merged.h	/^  , s_req_server_with_at$/;"	e	enum:state
+s_req_spaces_before_url	http_parser_merged.h	/^  , s_req_spaces_before_url$/;"	e	enum:state
+s_res_H	http_parser_merged.h	/^  , s_res_H$/;"	e	enum:state
+s_res_HT	http_parser_merged.h	/^  , s_res_HT$/;"	e	enum:state
+s_res_HTT	http_parser_merged.h	/^  , s_res_HTT$/;"	e	enum:state
+s_res_HTTP	http_parser_merged.h	/^  , s_res_HTTP$/;"	e	enum:state
+s_res_first_http_major	http_parser_merged.h	/^  , s_res_first_http_major$/;"	e	enum:state
+s_res_first_http_minor	http_parser_merged.h	/^  , s_res_first_http_minor$/;"	e	enum:state
+s_res_first_status_code	http_parser_merged.h	/^  , s_res_first_status_code$/;"	e	enum:state
+s_res_http_major	http_parser_merged.h	/^  , s_res_http_major$/;"	e	enum:state
+s_res_http_minor	http_parser_merged.h	/^  , s_res_http_minor$/;"	e	enum:state
+s_res_line_almost_done	http_parser_merged.h	/^  , s_res_line_almost_done$/;"	e	enum:state
+s_res_or_resp_H	http_parser_merged.h	/^  , s_res_or_resp_H$/;"	e	enum:state
+s_res_status	http_parser_merged.h	/^  , s_res_status$/;"	e	enum:state
+s_res_status_code	http_parser_merged.h	/^  , s_res_status_code$/;"	e	enum:state
+s_res_status_start	http_parser_merged.h	/^  , s_res_status_start$/;"	e	enum:state
+s_start_req	http_parser_merged.h	/^  , s_start_req$/;"	e	enum:state
+s_start_req_or_res	http_parser_merged.h	/^  , s_start_req_or_res$/;"	e	enum:state
+s_start_res	http_parser_merged.h	/^  , s_start_res$/;"	e	enum:state
+self_t	app.h	/^        using self_t = Crow;$/;"	t	class:crow::Crow	typeref:typename:Crow
+send_binary	websocket.h	/^                void send_binary(const std::string& msg) override$/;"	f	class:crow::websocket::Connection	typeref:typename:void
+send_ping	websocket.h	/^                void send_ping(const std::string& msg) override$/;"	f	class:crow::websocket::Connection	typeref:typename:void
+send_pong	websocket.h	/^                void send_pong(const std::string& msg) override$/;"	f	class:crow::websocket::Connection	typeref:typename:void
+send_text	websocket.h	/^                void send_text(const std::string& msg) override$/;"	f	class:crow::websocket::Connection	typeref:typename:void
+sending_buffers_	websocket.h	/^                std::vector<std::string> sending_buffers_;$/;"	m	class:crow::websocket::Connection	typeref:typename:std::vector<std::string>
+seq	utility.h	/^        template<unsigned...> struct seq{ using type = seq; };$/;"	s	namespace:crow
+server_	app.h	/^        std::unique_ptr<server_t> server_;$/;"	m	class:crow::Crow	typeref:typename:std::unique_ptr<server_t>
+server_name	app.h	/^        self_t& server_name(std::string server_name)$/;"	f	class:crow::Crow	typeref:typename:self_t &
+server_name_	app.h	/^        std::string server_name_ = "Crow\/0.2";$/;"	m	class:crow::Crow	typeref:typename:std::string
+server_name_	http_connection.h	/^        const std::string& server_name_;$/;"	m	class:crow::Connection	typeref:typename:const std::string &
+server_name_	http_server.h	/^        std::string server_name_;$/;"	m	class:crow::Server	typeref:typename:std::string
+server_started_	app.h	/^        bool server_started_{false};$/;"	m	class:crow::Crow	typeref:typename:bool
+server_t	app.h	/^        using server_t = Server<Crow, SocketAdaptor, Middlewares...>;$/;"	t	class:crow::Crow	typeref:typename:Server<Crow,SocketAdaptor,Middlewares...>
+setHandler	logging.h	/^            static void setHandler(ILogHandler* handler) {$/;"	f	class:crow::logger	typeref:typename:void
+setLogLevel	logging.h	/^            static void setLogLevel(LogLevel level) {$/;"	f	class:crow::logger	typeref:typename:void
+set_base	mustache.h	/^        inline void set_base(const std::string& path)$/;"	f	namespace:crow::mustache	typeref:typename:void
+set_cached	json.h	/^            void set_cached() const$/;"	f	class:crow::json::rvalue	typeref:typename:void
+set_cookie	middlewares/cookie_parser.h	/^            void set_cookie(const std::string& key, const std::string& value)$/;"	f	struct:crow::CookieParser::context	typeref:typename:void
+set_error	json.h	/^            void set_error()$/;"	f	class:crow::json::rvalue	typeref:typename:void
+set_header	http_response.h	/^        void set_header(std::string key, std::string value)$/;"	f	struct:crow::response	typeref:typename:void
+set_io_service	dumb_timer_queue.h	/^            void set_io_service(boost::asio::io_service& io_service)$/;"	f	class:crow::detail::dumb_timer_queue	typeref:typename:void
+set_loader	mustache.h	/^        inline void set_loader(std::function<std::string(std::string)> loader)$/;"	f	namespace:crow::mustache	typeref:typename:void
+set_static_file_info	http_response.h	/^        void set_static_file_info(std::string path){$/;"	f	struct:crow::response	typeref:typename:void
+set_tick_function	http_server.h	/^        void set_tick_function(std::chrono::milliseconds d, std::function<void()> f)$/;"	f	class:crow::Server	typeref:typename:void
+sha1	TinySHA1.hpp	/^namespace sha1$/;"	n
+shutdown_read	socket_adaptors.h	/^        void shutdown_read()$/;"	f	struct:crow::SSLAdaptor	typeref:typename:void
+shutdown_read	socket_adaptors.h	/^        void shutdown_read()$/;"	f	struct:crow::SocketAdaptor	typeref:typename:void
+shutdown_readwrite	socket_adaptors.h	/^        void shutdown_readwrite()$/;"	f	struct:crow::SSLAdaptor	typeref:typename:void
+shutdown_readwrite	socket_adaptors.h	/^        void shutdown_readwrite()$/;"	f	struct:crow::SocketAdaptor	typeref:typename:void
+shutdown_write	socket_adaptors.h	/^        void shutdown_write()$/;"	f	struct:crow::SSLAdaptor	typeref:typename:void
+shutdown_write	socket_adaptors.h	/^        void shutdown_write()$/;"	f	struct:crow::SocketAdaptor	typeref:typename:void
+si	json.h	/^              int64_t si;$/;"	m	union:crow::json::wvalue::__anon078191b5040a	typeref:typename:int64_t
+signal_add	app.h	/^        self_t& signal_add(int signal_number)$/;"	f	class:crow::Crow	typeref:typename:self_t &
+signal_add	http_server.h	/^        void signal_add(int signal_number)$/;"	f	class:crow::Server	typeref:typename:void
+signal_clear	app.h	/^        self_t& signal_clear()$/;"	f	class:crow::Crow	typeref:typename:self_t &
+signal_clear	http_server.h	/^        void signal_clear()$/;"	f	class:crow::Server	typeref:typename:void
+signals_	app.h	/^        std::vector<int> signals_{SIGINT, SIGTERM};$/;"	m	class:crow::Crow	typeref:typename:std::vector<int>
+signals_	http_server.h	/^        boost::asio::signal_set signals_;$/;"	m	class:crow::Server	typeref:typename:boost::asio::signal_set
+single_tag_to_type	utility.h	/^        struct single_tag_to_type$/;"	s	namespace:crow
+single_tag_to_type	utility.h	/^        struct single_tag_to_type<1>$/;"	s	namespace:crow
+single_tag_to_type	utility.h	/^        struct single_tag_to_type<2>$/;"	s	namespace:crow
+single_tag_to_type	utility.h	/^        struct single_tag_to_type<3>$/;"	s	namespace:crow
+single_tag_to_type	utility.h	/^        struct single_tag_to_type<4>$/;"	s	namespace:crow
+single_tag_to_type	utility.h	/^        struct single_tag_to_type<5>$/;"	s	namespace:crow
+size	json.h	/^                size_t size() const { return end() - begin(); }$/;"	f	struct:crow::json::detail::r_string	typeref:typename:size_t
+size	json.h	/^            size_t size() const$/;"	f	class:crow::json::rvalue	typeref:typename:size_t
+size	utility.h	/^            constexpr unsigned size() const { $/;"	f	class:crow::black_magic::const_str	typeref:typename:unsigned
+size_	utility.h	/^            unsigned size_;$/;"	m	class:crow::black_magic::const_str	typeref:typename:unsigned
+socket	http_connection.h	/^        decltype(std::declval<Adaptor>().raw_socket())& socket()$/;"	f	class:crow::Connection	typeref:typename:decltype (std::declval<Adaptor> ().raw_socket ())&
+socket	socket_adaptors.h	/^        boost::asio::ssl::stream<tcp::socket>& socket()$/;"	f	struct:crow::SSLAdaptor	typeref:typename:boost::asio::ssl::stream<tcp::socket> &
+socket	socket_adaptors.h	/^        tcp::socket& socket()$/;"	f	struct:crow::SocketAdaptor	typeref:typename:tcp::socket &
+socket_	socket_adaptors.h	/^        tcp::socket socket_;$/;"	m	struct:crow::SocketAdaptor	typeref:typename:tcp::socket
+ssl	app.h	/^        self_t& ssl(T&&)$/;"	f	class:crow::Crow	typeref:typename:self_t &
+ssl	app.h	/^        self_t& ssl(boost::asio::ssl::context&& ctx)$/;"	f	class:crow::Crow	typeref:typename:self_t &
+ssl_context_	app.h	/^        ssl_context_t ssl_context_{boost::asio::ssl::context::sslv23};$/;"	m	class:crow::Crow	typeref:typename:ssl_context_t
+ssl_context_	http_server.h	/^        boost::asio::ssl::context ssl_context_{boost::asio::ssl::context::sslv23};$/;"	m	class:crow::Server	typeref:typename:boost::asio::ssl::context
+ssl_context_t	app.h	/^    using ssl_context_t = boost::asio::ssl::context;$/;"	t	namespace:crow	typeref:typename:boost::asio::ssl::context
+ssl_file	app.h	/^        self_t& ssl_file(T&&, Remain&&...)$/;"	f	class:crow::Crow	typeref:typename:self_t &
+ssl_file	app.h	/^        self_t& ssl_file(const std::string& crt_filename, const std::string& key_filename)$/;"	f	class:crow::Crow	typeref:typename:self_t &
+ssl_file	app.h	/^        self_t& ssl_file(const std::string& pem_filename)$/;"	f	class:crow::Crow	typeref:typename:self_t &
+ssl_server_	app.h	/^        std::unique_ptr<ssl_server_t> ssl_server_;$/;"	m	class:crow::Crow	typeref:typename:std::unique_ptr<ssl_server_t>
+ssl_server_t	app.h	/^        using ssl_server_t = Server<Crow, SSLAdaptor, Middlewares...>;$/;"	t	class:crow::Crow	typeref:typename:Server<Crow,SSLAdaptor,Middlewares...>
+ssl_socket_	socket_adaptors.h	/^        std::unique_ptr<boost::asio::ssl::stream<tcp::socket>> ssl_socket_;$/;"	m	struct:crow::SSLAdaptor	typeref:typename:std::unique_ptr<boost::asio::ssl::stream<tcp::socket>>
+ssl_socket_t	socket_adaptors.h	/^        using ssl_socket_t = boost::asio::ssl::stream<tcp::socket>;$/;"	t	struct:crow::SSLAdaptor	typeref:typename:boost::asio::ssl::stream<tcp::socket>
+start	http_connection.h	/^        void start()$/;"	f	class:crow::Connection	typeref:typename:void
+start	mustache.h	/^            int start;$/;"	m	struct:crow::mustache::Action	typeref:typename:int
+start	socket_adaptors.h	/^        void start(F f)$/;"	f	struct:crow::SSLAdaptor	typeref:typename:void
+start	socket_adaptors.h	/^        void start(F f)$/;"	f	struct:crow::SocketAdaptor	typeref:typename:void
+start	websocket.h	/^                void start(std::string&& hello)$/;"	f	class:crow::websocket::Connection	typeref:typename:void
+start_	json.h	/^            mutable char* start_;$/;"	m	class:crow::json::rvalue	typeref:typename:char *
+start_deadline	http_connection.h	/^        void start_deadline(\/*int timeout = 5*\/)$/;"	f	class:crow::Connection	typeref:typename:void
+start_mutex_	app.h	/^        std::mutex start_mutex_;$/;"	m	class:crow::Crow	typeref:typename:std::mutex
+statResult	http_response.h	/^            int statResult;$/;"	m	struct:crow::response::static_file_info	typeref:typename:int
+statbuf	http_response.h	/^            struct stat statbuf;$/;"	m	struct:crow::response::static_file_info	typeref:struct:stat
+state	http_parser_merged.h	/^  unsigned int state : 8;        \/* enum state from http_parser.c *\/$/;"	m	struct:http_parser	typeref:typename:unsigned int:8
+state	http_parser_merged.h	/^enum state$/;"	g
+state_	websocket.h	/^                WebSocketReadState state_{WebSocketReadState::MiniHeader};$/;"	m	class:crow::websocket::Connection	typeref:typename:WebSocketReadState
+static_file_info	http_response.h	/^        struct static_file_info{$/;"	s	struct:crow::response
+status_code	http_parser_merged.h	/^  unsigned int status_code : 16; \/* responses only *\/$/;"	m	struct:http_parser	typeref:typename:unsigned int:16
+step_	dumb_timer_queue.h	/^            int step_{};$/;"	m	class:crow::detail::dumb_timer_queue	typeref:typename:int
+stop	app.h	/^        void stop()$/;"	f	class:crow::Crow	typeref:typename:void
+stop	http_server.h	/^        void stop()$/;"	f	class:crow::Server	typeref:typename:void
+string_params	common.h	/^        std::vector<std::string> string_params;$/;"	m	struct:crow::routing_params	typeref:typename:std::vector<std::string>
+stringstream_	logging.h	/^            std::ostringstream stringstream_;$/;"	m	class:crow::logger	typeref:typename:std::ostringstream
+sub_value	utility.h	/^            static const int sub_value = $/;"	m	struct:crow::black_magic::compute_parameter_tag_from_args_list	typeref:typename:const int
+subarguments	utility.h	/^            using subarguments = typename arguments<Tag\/6>::type;$/;"	t	struct:crow::arguments	typeref:typename:arguments<Tag/6>::type
+t	json.h	/^            type t() const { return t_; }$/;"	f	class:crow::json::wvalue	typeref:typename:type
+t	json.h	/^            type t() const$/;"	f	class:crow::json::rvalue	typeref:typename:type
+t	mustache.h	/^            ActionType t;$/;"	m	struct:crow::mustache::Action	typeref:typename:ActionType
+t_	json.h	/^            type t_;$/;"	m	class:crow::json::rvalue	typeref:typename:type
+t_	json.h	/^            type t_{type::Null}; \/\/\/< The type of the value.$/;"	m	class:crow::json::wvalue	typeref:typename:type
+tag_name	mustache.h	/^            std::string tag_name(const Action& action)$/;"	f	class:crow::mustache::template_t	typeref:typename:std::string
+tcp	http_connection.h	/^    using tcp = asio::ip::tcp;$/;"	t	namespace:crow	typeref:typename:asio::ip::tcp
+tcp	http_server.h	/^    using tcp = asio::ip::tcp;$/;"	t	namespace:crow	typeref:typename:asio::ip::tcp
+tcp	socket_adaptors.h	/^    using tcp = asio::ip::tcp;$/;"	t	namespace:crow	typeref:typename:asio::ip::tcp
+template_t	mustache.h	/^            template_t(std::string body)$/;"	f	class:crow::mustache::template_t
+template_t	mustache.h	/^        class template_t $/;"	c	namespace:crow::mustache
+tick	app.h	/^        self_t& tick(Duration d, Func f) {$/;"	f	class:crow::Crow	typeref:typename:self_t &
+tick	app.h	/^    int detail::dumb_timer_queue::tick = 5;$/;"	m	class:crow::detail::dumb_timer_queue	typeref:typename:int
+tick	dumb_timer_queue.h	/^            static int tick;$/;"	m	class:crow::detail::dumb_timer_queue	typeref:typename:int
+tick_function_	app.h	/^        std::function<void()> tick_function_;$/;"	m	class:crow::Crow	typeref:typename:std::function<void ()>
+tick_function_	http_server.h	/^        std::function<void()> tick_function_;$/;"	m	class:crow::Server	typeref:typename:std::function<void ()>
+tick_interval_	app.h	/^        std::chrono::milliseconds tick_interval_;$/;"	m	class:crow::Crow	typeref:typename:std::chrono::milliseconds
+tick_interval_	http_server.h	/^        std::chrono::milliseconds tick_interval_;$/;"	m	class:crow::Server	typeref:typename:std::chrono::milliseconds
+tick_timer_	http_server.h	/^        boost::asio::deadline_timer tick_timer_;$/;"	m	class:crow::Server	typeref:typename:boost::asio::deadline_timer
+timeout	app.h	/^        self_t& timeout(std::uint8_t timeout)$/;"	f	class:crow::Crow	typeref:typename:self_t &
+timer_cancel_key_	http_connection.h	/^        detail::dumb_timer_queue::key timer_cancel_key_;$/;"	m	class:crow::Connection	typeref:typename:detail::dumb_timer_queue::key
+timer_queue	http_connection.h	/^        detail::dumb_timer_queue& timer_queue;$/;"	m	class:crow::Connection	typeref:typename:detail::dumb_timer_queue &
+timer_queue_pool_	http_server.h	/^        std::vector<detail::dumb_timer_queue*> timer_queue_pool_;$/;"	m	class:crow::Server	typeref:typename:std::vector<detail::dumb_timer_queue * >
+timestamp	logging.h	/^            static std::string timestamp()$/;"	f	class:crow::logger	typeref:typename:std::string
+to_request	parser.h	/^        request to_request() const$/;"	f	struct:crow::HTTPParser	typeref:typename:request
+trim	multipart.h	/^            inline std::string trim (std::string& string, const char& excess = '"')$/;"	f	struct:crow::multipart::message	typeref:typename:std::string
+type	http_parser_merged.h	/^  unsigned int type : 2;         \/* enum http_parser_type *\/$/;"	m	struct:http_parser	typeref:typename:unsigned int:2
+type	json.h	/^        enum class type : char$/;"	g	namespace:crow::json	typeref:typename:char
+type	routing.h	/^                using type = T;$/;"	t	struct:crow::detail::routing_handler_call_helper::call_pair	typeref:typename:T
+type	utility.h	/^            using type = $/;"	t	struct:crow::arguments	typeref:typename:subarguments::template push<typename single_tag_to_type<Tag%6>::type>
+type	utility.h	/^            using type = S<>;$/;"	t	struct:crow::arguments	typeref:typename:S<>
+type	utility.h	/^            using type = T;$/;"	t	struct:crow::promote	typeref:typename:T
+type	utility.h	/^            using type = double;$/;"	t	struct:crow::single_tag_to_type	typeref:typename:double
+type	utility.h	/^            using type = int64_t;$/;"	t	struct:crow::single_tag_to_type	typeref:typename:int64_t
+type	utility.h	/^            using type = std::string;$/;"	t	struct:crow::single_tag_to_type	typeref:typename:std::string
+type	utility.h	/^            using type = typename std::tuple_element<sizeof...(T)-1, std::tuple<T...>>::type;$/;"	t	struct:crow::last_element_type
+type	utility.h	/^            using type = uint64_t;$/;"	t	struct:crow::single_tag_to_type	typeref:typename:uint64_t
+type	utility.h	/^        template<unsigned...> struct seq{ using type = seq; };$/;"	t	struct:crow::seq	typeref:typename:seq
+u	json.h	/^            uint64_t u() const$/;"	f	class:crow::json::rvalue	typeref:typename:uint64_t
+ui	json.h	/^              uint64_t ui {};$/;"	m	union:crow::json::wvalue::__anon078191b5040a	typeref:typename:uint64_t
+uint16_t	http_parser_merged.h	/^typedef unsigned __int16 uint16_t;$/;"	t	typeref:typename:unsigned __int16
+uint32_t	http_parser_merged.h	/^typedef unsigned __int32 uint32_t;$/;"	t	typeref:typename:unsigned __int32
+uint64_t	http_parser_merged.h	/^typedef unsigned __int64 uint64_t;$/;"	t	typeref:typename:unsigned __int64
+uint8_t	http_parser_merged.h	/^typedef unsigned __int8 uint8_t;$/;"	t	typeref:typename:unsigned __int8
+uint_params	common.h	/^        std::vector<uint64_t> uint_params;$/;"	m	struct:crow::routing_params	typeref:typename:std::vector<uint64_t>
+unescape	json.h	/^            void unescape() const$/;"	f	class:crow::json::rvalue	typeref:typename:void
+upgrade	http_parser_merged.h	/^  unsigned int upgrade : 1;$/;"	m	struct:http_parser	typeref:typename:unsigned int:1
+upgrade	routing.h	/^        std::unique_ptr<BaseRule> upgrade()$/;"	f	class:crow::BaseRule	typeref:typename:std::unique_ptr<BaseRule>
+url	http_request.h	/^        std::string url; \/\/\/< The endpoint without any parameters.$/;"	m	struct:crow::request	typeref:typename:std::string
+url	parser.h	/^        std::string url;$/;"	m	struct:crow::HTTPParser	typeref:typename:std::string
+url_	query_string.h	/^        std::string url_;$/;"	m	class:crow::query_string	typeref:typename:std::string
+url_params	http_request.h	/^        query_string url_params; \/\/\/< The parameters associated with the request. (everything/;"	m	struct:crow::request	typeref:typename:query_string
+url_params	parser.h	/^        query_string url_params; \/\/\/< What comes after the `?` in the URL.$/;"	m	struct:crow::HTTPParser	typeref:typename:query_string
+use_compression	app.h	/^        self_t& use_compression(compression::algorithm algorithm)$/;"	f	class:crow::Crow	typeref:typename:self_t &
+use_ssl_	app.h	/^        bool use_ssl_{false};$/;"	m	class:crow::Crow	typeref:typename:bool
+use_ssl_	http_server.h	/^        bool use_ssl_{false};$/;"	m	class:crow::Server	typeref:typename:bool
+userdata	websocket.h	/^            void userdata(void* u) { userdata_ = u; }$/;"	f	struct:crow::websocket::connection	typeref:typename:void
+userdata	websocket.h	/^            void* userdata() { return userdata_; }$/;"	f	struct:crow::websocket::connection	typeref:typename:void *
+userdata_	websocket.h	/^            void* userdata_;$/;"	m	struct:crow::websocket::connection	typeref:typename:void *
+utility	utility.h	/^    namespace utility$/;"	n
+validate	app.h	/^        void validate()$/;"	f	class:crow::Crow	typeref:typename:void
+value	http_connection.h	/^            static const bool value = decltype(f<T>(nullptr))::value;$/;"	m	struct:crow::detail::is_after_handle_arity_3_impl	typeref:typename:const bool
+value	http_connection.h	/^            static const bool value = decltype(f<T>(nullptr))::value;$/;"	m	struct:crow::detail::is_before_handle_arity_3_impl	typeref:typename:const bool
+value	multipart.h	/^                std::pair<std::string, std::string> value; \/\/\/< The first part of the header,/;"	m	struct:crow::multipart::header	typeref:typename:std::pair<std::string,std::string>
+value	utility.h	/^            static const int value = $/;"	m	struct:crow::black_magic::compute_parameter_tag_from_args_list	typeref:typename:const int
+value	utility.h	/^            static const int value = 0;$/;"	m	struct:crow::black_magic::compute_parameter_tag_from_args_list	typeref:typename:const int
+value	utility.h	/^            static const int value = 0;$/;"	m	struct:crow::black_magic::parameter_tag	typeref:typename:const int
+value	utility.h	/^            static constexpr auto value = N;$/;"	m	struct:detail::get_index_of_element_from_tuple_by_type_impl	typeref:typename:auto
+value	utility.h	/^            static constexpr auto value = get_index_of_element_from_tuple_by_type_impl<T, N + 1,/;"	m	struct:detail::get_index_of_element_from_tuple_by_type_impl	typeref:typename:auto
+value	utility.h	/^            static constexpr bool value = sizeof(__test<F, Args...>(0)) == sizeof(char);$/;"	v	namespace:crow::black_magic	typeref:typename:bool
+wait_for_server_start	app.h	/^        void wait_for_server_start()$/;"	f	class:crow::Crow	typeref:typename:void
+websocket	websocket.h	/^    namespace websocket$/;"	n	namespace:crow
+what	mustache.h	/^            virtual const char* what() const throw()$/;"	f	class:crow::mustache::invalid_template_exception	typeref:typename:const char *
+write	http_response.h	/^        void write(const std::string& body_part)$/;"	f	struct:crow::response	typeref:typename:void
+write_buffer_list	http_response.h	/^            inline void write_buffer_list(std::vector<asio::const_buffer>& buffers, Adaptor& ada/;"	f	struct:crow::response	typeref:typename:void
+write_buffers_	websocket.h	/^                std::vector<std::string> write_buffers_;$/;"	m	class:crow::websocket::Connection	typeref:typename:std::vector<std::string>
+write_streamed	http_response.h	/^            void write_streamed(Stream& is, Adaptor& adaptor)$/;"	f	struct:crow::response	typeref:typename:void
+write_streamed_string	http_response.h	/^            void write_streamed_string(std::string& is, Adaptor& adaptor)$/;"	f	struct:crow::response	typeref:typename:void
+ws_skip	json.h	/^                void ws_skip()$/;"	f	struct:crow::json::load_nocopy_internal::Parser	typeref:typename:void
+wvalue	json.h	/^            wvalue() : returnable("application\/json") {}$/;"	f	class:crow::json::wvalue
+wvalue	json.h	/^            wvalue(const rvalue& r) : returnable("application\/json")$/;"	f	class:crow::json::wvalue
+wvalue	json.h	/^            wvalue(wvalue&& r) : returnable("application\/json")$/;"	f	class:crow::json::wvalue
+wvalue	json.h	/^        class wvalue : public returnable$/;"	c	namespace:crow::json
+~BaseRule	routing.h	/^        virtual ~BaseRule()$/;"	f	class:crow::BaseRule
+~Connection	http_connection.h	/^        ~Connection()$/;"	f	class:crow::Connection
+~SHA1	TinySHA1.hpp	/^		virtual ~SHA1() {}$/;"	f	class:sha1::SHA1
+~connection	websocket.h	/^            virtual ~connection(){}$/;"	f	struct:crow::websocket::connection
+~logger	logging.h	/^            ~logger() {$/;"	f	class:crow::logger
+~r_string	json.h	/^                ~r_string()$/;"	f	struct:crow::json::detail::r_string
+~returnable	returnable.h	/^    virtual ~returnable(){};$/;"	f	struct:crow::returnable

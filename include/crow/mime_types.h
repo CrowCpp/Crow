@@ -3,6 +3,8 @@
 #include <string>
 
 namespace crow {
+
+#ifdef CROW_MAIN_
     std::unordered_map<std::string, std::string> mime_types {
         {"shtml", "text/html"},
         {"htm", "text/html"},
@@ -113,4 +115,7 @@ namespace crow {
         {"wmv", "video/x-ms-wmv"},
         {"avi", "video/x-msvideo"}
     };
+#else
+    extern std::unordered_map<std::string, std::string> mime_types;
+#endif
 }

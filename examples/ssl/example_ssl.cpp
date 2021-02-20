@@ -1,4 +1,5 @@
 #define CROW_ENABLE_SSL
+#define CROW_MAIN_
 #include "crow.h"
 
 int main()

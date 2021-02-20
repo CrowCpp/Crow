@@ -29,7 +29,10 @@
 
 namespace crow
 {
+#ifdef CROW_MAIN_
     int detail::dumb_timer_queue::tick = 5;
+#endif
+
 #ifdef CROW_ENABLE_SSL
     using ssl_context_t = boost::asio::ssl::context;
 #endif
