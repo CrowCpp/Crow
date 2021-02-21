@@ -97,6 +97,7 @@ namespace crow
             code = 200;
             headers.clear();
             completed_ = false;
+            file_info = static_file_info{};
         }
 
         /// Return a "Temporary Redirect" response.

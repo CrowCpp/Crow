@@ -10,7 +10,7 @@ There are 2 components of a mustache template implementation:
 - Context
 
 ###Page
-The HTML page (including the mustache tags). It is usually loaded into `crow::mustache::template_t`. It needs to be placed in `templates` directory (relative to where the crow executable is).<br><br>
+The HTML page (including the mustache tags). It is usually loaded into `crow::mustache::template_t`. It needs to be placed in the *templates directory* which should be directly inside the current working directory of the crow executable.<br><br>
 
 For more information on how to formulate a template, see [this mustache manual](http://mustache.github.io/mustache.5.html).
 
