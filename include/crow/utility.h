@@ -510,29 +510,29 @@ template <typename F, typename Set>
             auto it = ret.begin();
             while(size >= 3)
             {
-                *it++ = key[(((unsigned char)*data)&0xFC)>>2];
-                unsigned char h = (((unsigned char)*data++) & 0x03) << 4;
-                *it++ = key[h|((((unsigned char)*data)&0xF0)>>4)];
-                h = (((unsigned char)*data++) & 0x0F) << 2;
-                *it++ = key[h|((((unsigned char)*data)&0xC0)>>6)];
-                *it++ = key[((unsigned char)*data++)&0x3F];
+                *it++ = key[(static_cast<unsigned char>(*data)&0xFC)>>2];
+                unsigned char h = (static_cast<unsigned char>(*data++) & 0x03) << 4;
+                *it++ = key[h|((static_cast<unsigned char>(*data)&0xF0)>>4)];
+                h = (static_cast<unsigned char>(*data++) & 0x0F) << 2;
+                *it++ = key[h|((static_cast<unsigned char>(*data)&0xC0)>>6)];
+                *it++ = key[static_cast<unsigned char>(*data++)&0x3F];
 
                 size -= 3;
             }
             if (size == 1)
             {
-                *it++ = key[(((unsigned char)*data)&0xFC)>>2];
-                unsigned char h = (((unsigned char)*data++) & 0x03) << 4;
+                *it++ = key[(static_cast<unsigned char>(*data)&0xFC)>>2];
+                unsigned char h = (static_cast<unsigned char>(*data++) & 0x03) << 4;
                 *it++ = key[h];
                 *it++ = '=';
                 *it++ = '=';
             }
             else if (size == 2)
             {
-                *it++ = key[(((unsigned char)*data)&0xFC)>>2];
-                unsigned char h = (((unsigned char)*data++) & 0x03) << 4;
-                *it++ = key[h|((((unsigned char)*data)&0xF0)>>4)];
-                h = (((unsigned char)*data++) & 0x0F) << 2;
+                *it++ = key[(static_cast<unsigned char>(*data)&0xFC)>>2];
+                unsigned char h = (static_cast<unsigned char>(*data++) & 0x03) << 4;
+                *it++ = key[h|((static_cast<unsigned char>(*data)&0xF0)>>4)];
+                h = (static_cast<unsigned char>(*data++) & 0x0F) << 2;
                 *it++ = key[h];
                 *it++ = '=';
             }

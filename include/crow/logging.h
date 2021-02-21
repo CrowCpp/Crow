@@ -108,7 +108,7 @@ namespace crow
             //
             static LogLevel& get_log_level_ref()
             {
-                static LogLevel current_level = (LogLevel)CROW_LOG_LEVEL;
+                static LogLevel current_level = static_cast<LogLevel>(CROW_LOG_LEVEL);
                 return current_level;
             }
             static ILogHandler*& get_handler_ref()

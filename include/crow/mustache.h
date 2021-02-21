@@ -45,7 +45,7 @@ namespace crow
             int pos;
             ActionType t;
             Action(ActionType t, size_t start, size_t end, size_t pos = 0) 
-                : start((int)start), end((int)end), pos((int)pos), t(t)
+                : start(static_cast<int>(start)), end(static_cast<int>(end)), pos(static_cast<int>(pos)), t(t)
             {}
         };
 
@@ -75,7 +75,7 @@ namespace crow
                 empty_str = "";
 
                 int dotPosition = name.find(".");
-                if (dotPosition == (int)name.npos)
+                if (dotPosition == static_cast<int>(name.npos))
                 {
                     for(auto it = stack.rbegin(); it != stack.rend(); ++it)
                     {
@@ -90,7 +90,7 @@ namespace crow
                 {
                     std::vector<int> dotPositions;
                     dotPositions.push_back(-1);
-                    while(dotPosition != (int)name.npos)
+                    while(dotPosition != static_cast<int>(name.npos))
                     {
                         dotPositions.push_back(dotPosition);
                         dotPosition = name.find(".", dotPosition+1);
@@ -98,7 +98,7 @@ namespace crow
                     dotPositions.push_back(name.size());
                     std::vector<std::string> names;
                     names.reserve(dotPositions.size()-1);
-                    for(int i = 1; i < (int)dotPositions.size(); i ++)
+                    for(int i = 1; i < static_cast<int>(dotPositions.size()); i ++)
                         names.emplace_back(name.substr(dotPositions[i-1]+1, dotPositions[i]-dotPositions[i-1]-1));
 
                     for(auto it = stack.rbegin(); it != stack.rend(); ++it)
@@ -215,7 +215,7 @@ namespace crow
                                             out += ctx.s;
                                         break;
                                     default:
-                                        throw std::runtime_error("not implemented tag type" + boost::lexical_cast<std::string>((int)ctx.t()));
+                                        throw std::runtime_error("not implemented tag type" + boost::lexical_cast<std::string>(static_cast<int>(ctx.t())));
                                 }
                             }
                             break;
@@ -281,7 +281,7 @@ namespace crow
                                         current = action.pos;
                                         break;
                                     default:
-                                        throw std::runtime_error("{{#: not implemented context type: " + boost::lexical_cast<std::string>((int)ctx.t()));
+                                        throw std::runtime_error("{{#: not implemented context type: " + boost::lexical_cast<std::string>(static_cast<int>(ctx.t())));
                                         break;
                                 }
                                 break;
@@ -290,7 +290,7 @@ namespace crow
                             stack.pop_back();
                             break;
                         default:
-                            throw std::runtime_error("not implemented " + boost::lexical_cast<std::string>((int)action.t));
+                            throw std::runtime_error("not implemented " + boost::lexical_cast<std::string>(static_cast<int>(action.t)));
                     }
                     current++;
                 }
@@ -304,7 +304,7 @@ namespace crow
                     for(int i = fragment.first; i < fragment.second; i ++)
                     {
                         out += body_[i];
-                        if (body_[i] == '\n' && i+1 != (int)body_.size())
+                        if (body_[i] == '\n' && i+1 != static_cast<int>(body_.size()))
                             out.insert(out.size(), indent, ' ');
                     }
                 }
@@ -347,11 +347,11 @@ namespace crow
                     size_t idx = body_.find(tag_open, current);
                     if (idx == body_.npos)
                     {
-                        fragments_.emplace_back((int)current, (int)body_.size());
+                        fragments_.emplace_back(static_cast<int>(current), static_cast<int>(body_.size()));
                         actions_.emplace_back(ActionType::Ignore, 0, 0);
                         break;
                     }
-                    fragments_.emplace_back((int)current, (int)idx);
+                    fragments_.emplace_back(static_cast<int>(current), static_cast<int>(idx));
 
                     idx += tag_open.size();
                     size_t endIdx = body_.find(tag_close, idx);
@@ -371,7 +371,7 @@ namespace crow
                             idx++;
                             while(body_[idx] == ' ') idx++;
                             while(body_[endIdx-1] == ' ') endIdx--;
-                            blockPositions.emplace_back((int)actions_.size());
+                            blockPositions.emplace_back(static_cast<int>(actions_.size()));
                             actions_.emplace_back(ActionType::OpenBlock, idx, endIdx);
                             break;
                         case '/':
@@ -396,7 +396,7 @@ namespace crow
                             idx++;
                             while(body_[idx] == ' ') idx++;
                             while(body_[endIdx-1] == ' ') endIdx--;
-                            blockPositions.emplace_back((int)actions_.size());
+                            blockPositions.emplace_back(static_cast<int>(actions_.size()));
                             actions_.emplace_back(ActionType::ElseBlock, idx, endIdx);
                             break;
                         case '!':
@@ -480,7 +480,7 @@ namespace crow
                         continue;
                     auto& fragment_before = fragments_[i];
                     auto& fragment_after = fragments_[i+1];
-                    bool is_last_action = i == (int)actions_.size()-2;
+                    bool is_last_action = i == static_cast<int>(actions_.size())-2;
                     bool all_space_before = true;
                     int j, k;
                     for(j = fragment_before.second-1;j >= fragment_before.first;j--)
@@ -496,7 +496,7 @@ namespace crow
                     if (!all_space_before && body_[j] != '\n')
                         continue;
                     bool all_space_after = true;
-                    for(k = fragment_after.first; k < (int)body_.size() && k < fragment_after.second; k ++)
+                    for(k = fragment_after.first; k < static_cast<int>(body_.size()) && k < fragment_after.second; k ++)
                     {
                         if (body_[k] != ' ')
                         {
@@ -511,7 +511,7 @@ namespace crow
                                 body_[k] == '\n' 
                             || 
                                 (body_[k] == '\r' && 
-                                k + 1 < (int)body_.size() && 
+                                k + 1 < static_cast<int>(body_.size()) && 
                                 body_[k+1] == '\n')))
                         continue;
                     if (actions_[i].t == ActionType::Partial)
