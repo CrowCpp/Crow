@@ -1075,8 +1075,15 @@ public:
 
         void handle(const request& req, response& res)
         {
+            HTTPMethod method_actual = req.method;
             if (req.method >= HTTPMethod::InternalMethodCount)
                 return;
+            else if (req.method == HTTPMethod::HEAD)
+            {
+                method_actual = HTTPMethod::GET;
+                res.head = true;
+            }
+
             auto& per_method = per_methods_[(int)req.method];
             auto& trie = per_method.trie;
             auto& rules = per_method.rules;
