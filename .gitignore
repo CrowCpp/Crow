@@ -22,6 +22,7 @@
 
 example
 unittest
+Testing/*
 
 *.swp
 *.gcov
