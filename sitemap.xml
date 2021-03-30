@@ -1,67 +1,67 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url>
      <loc>https://crowcpp.github.io/crow/</loc>
-     <lastmod>2021-02-15</lastmod>
+     <lastmod>2021-03-30</lastmod>
      <changefreq>daily</changefreq>
     </url><url>
      <loc>https://crowcpp.github.io/crow/getting_started/setup/</loc>
-     <lastmod>2021-02-15</lastmod>
+     <lastmod>2021-03-30</lastmod>
      <changefreq>daily</changefreq>
     </url><url>
      <loc>https://crowcpp.github.io/crow/getting_started/your_first_application/</loc>
-     <lastmod>2021-02-15</lastmod>
+     <lastmod>2021-03-30</lastmod>
      <changefreq>daily</changefreq>
     </url><url>
      <loc>https://crowcpp.github.io/crow/guides/app/</loc>
-     <lastmod>2021-02-15</lastmod>
+     <lastmod>2021-03-30</lastmod>
      <changefreq>daily</changefreq>
     </url><url>
      <loc>https://crowcpp.github.io/crow/guides/routes/</loc>
-     <lastmod>2021-02-15</lastmod>
+     <lastmod>2021-03-30</lastmod>
      <changefreq>daily</changefreq>
     </url><url>
      <loc>https://crowcpp.github.io/crow/guides/logging/</loc>
-     <lastmod>2021-02-15</lastmod>
+     <lastmod>2021-03-30</lastmod>
      <changefreq>daily</changefreq>
     </url><url>
      <loc>https://crowcpp.github.io/crow/guides/json/</loc>
-     <lastmod>2021-02-15</lastmod>
+     <lastmod>2021-03-30</lastmod>
      <changefreq>daily</changefreq>
     </url><url>
      <loc>https://crowcpp.github.io/crow/guides/templating/</loc>
-     <lastmod>2021-02-15</lastmod>
+     <lastmod>2021-03-30</lastmod>
      <changefreq>daily</changefreq>
     </url><url>
      <loc>https://crowcpp.github.io/crow/guides/multipart/</loc>
-     <lastmod>2021-02-15</lastmod>
+     <lastmod>2021-03-30</lastmod>
      <changefreq>daily</changefreq>
     </url><url>
      <loc>https://crowcpp.github.io/crow/guides/middleware/</loc>
-     <lastmod>2021-02-15</lastmod>
+     <lastmod>2021-03-30</lastmod>
      <changefreq>daily</changefreq>
     </url><url>
      <loc>https://crowcpp.github.io/crow/guides/ssl/</loc>
-     <lastmod>2021-02-15</lastmod>
+     <lastmod>2021-03-30</lastmod>
      <changefreq>daily</changefreq>
     </url><url>
      <loc>https://crowcpp.github.io/crow/guides/static/</loc>
-     <lastmod>2021-02-15</lastmod>
+     <lastmod>2021-03-30</lastmod>
      <changefreq>daily</changefreq>
     </url><url>
      <loc>https://crowcpp.github.io/crow/guides/websockets/</loc>
-     <lastmod>2021-02-15</lastmod>
+     <lastmod>2021-03-30</lastmod>
      <changefreq>daily</changefreq>
     </url><url>
      <loc>https://crowcpp.github.io/crow/guides/testing/</loc>
-     <lastmod>2021-02-15</lastmod>
+     <lastmod>2021-03-30</lastmod>
      <changefreq>daily</changefreq>
     </url><url>
      <loc>https://crowcpp.github.io/crow/guides/proxies/</loc>
-     <lastmod>2021-02-15</lastmod>
+     <lastmod>2021-03-30</lastmod>
      <changefreq>daily</changefreq>
     </url><url>
      <loc>https://crowcpp.github.io/crow/guides/syste/</loc>
-     <lastmod>2021-02-15</lastmod>
+     <lastmod>2021-03-30</lastmod>
      <changefreq>daily</changefreq>
     </url>
 </urlset>
