@@ -4,7 +4,7 @@
 
 namespace crow {
 
-#ifdef CROW_MAIN_
+#ifdef CROW_MAIN
     std::unordered_map<std::string, std::string> mime_types {
         {"shtml", "text/html"},
         {"htm", "text/html"},

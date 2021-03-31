@@ -29,7 +29,7 @@
 
 namespace crow
 {
-#ifdef CROW_MAIN_
+#ifdef CROW_MAIN
     int detail::dumb_timer_queue::tick = 5;
 #endif
 

@@ -1,4 +1,4 @@
-#define CROW_MAIN_
+#define CROW_MAIN
 #include "crow_all.h"
 
 #include <sstream>

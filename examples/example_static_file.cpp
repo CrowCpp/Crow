@@ -1,6 +1,6 @@
 //#define CROW_STATIC_DRIECTORY "alternative_directory/"
 //#define CROW_STATIC_ENDPOINT "/alternative_endpoint/<path>"
-#define CROW_MAIN_
+#define CROW_MAIN
 #include "crow.h"
 
 int main()
