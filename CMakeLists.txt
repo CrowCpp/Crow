@@ -48,7 +48,7 @@ endif()
 # Define Targets
 #####################################
 add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/crow_all.h
-	COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/scripts/merge_all.py
+	COMMAND python3 ${CMAKE_CURRENT_SOURCE_DIR}/scripts/merge_all.py
 	${CMAKE_CURRENT_SOURCE_DIR}/include
 	${CMAKE_CURRENT_BINARY_DIR}/crow_all.h
 	WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
