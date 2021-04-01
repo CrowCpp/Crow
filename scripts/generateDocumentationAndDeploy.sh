@@ -2,7 +2,7 @@
 ################################################################################
 # Title         : generateDocumentationAndDeploy.sh
 # Date created  : 2016/02/22
-# Notes         :
+# Notes         : This script was modified to suit Crow and work with mkdocs and Drone.io CI.
 __AUTHOR__="Jeroen de Bruijn"
 # Preconditions:
 # - Packages doxygen doxygen-doc doxygen-latex doxygen-gui graphviz
@@ -13,12 +13,12 @@ __AUTHOR__="Jeroen de Bruijn"
 #   create a gh-pages branch.
 #
 # Required global variables:
-# - TRAVIS_BUILD_NUMBER : The number of the current build.
-# - TRAVIS_COMMIT       : The commit that the current build is testing.
-# - DOXYFILE            : The Doxygen configuration file.
-# - GH_REPO_NAME        : The name of the repository.
-# - GH_REPO_REF         : The GitHub reference to the repository.
-# - GH_REPO_TOKEN       : Secure token to the github repository.
+# - ~TRAVIS_BUILD_NUMBER~ DRONE_BUILD_NUMBER : The number of the current build.
+# - ~TRAVIS_COMMIT~ DRONE_COMMIT             : The commit that the current build is testing.
+# - DOXYFILE                                 : The Doxygen configuration file.
+# - GH_REPO_NAME                             : The name of the repository.
+# - GH_REPO_REF                              : The GitHub reference to the repository.
+# - GH_REPO_TOKEN                            : Secure token to the github repository.
 #
 # For information on how to encrypt variables for Travis CI please go to
 # https://docs.travis-ci.com/user/environment-variables/#Encrypted-Variables
@@ -51,9 +51,9 @@ cd $GH_REPO_NAME
 ##### Configure git.
 # Set the push default to simple i.e. push only the current branch.
 git config --global push.default simple
-# Pretend to be an user called Travis CI.
-git config user.name "Travis CI"
-git config user.email "travis@travis-ci.org"
+# Pretend to be an user called Drone CI.
+git config user.name "Drone CI"
+git config user.email "drone@drone.io"
 
 # Remove everything currently in the gh-pages branch.
 # GitHub is smart enough to know which files have changed and which files have
@@ -107,7 +107,7 @@ if [ -d "reference" ] && [ -f "index.html" ]; then
 
     # Commit the added files with a title and description containing the Travis CI
     # build number and the GitHub commit reference that issued this build.
-    git commit -m "Deploy code docs to GitHub Pages Travis build: ${TRAVIS_BUILD_NUMBER}" -m "Commit: ${TRAVIS_COMMIT}"
+    git commit -m "Deploy code docs to GitHub Pages Drone build: ${DRONE_BUILD_NUMBER}" -m "Commit: ${DRONE_COMMIT}"
 
     # Force push to the remote gh-pages branch.
     # The ouput is redirected to /dev/null to hide any sensitive credential data
