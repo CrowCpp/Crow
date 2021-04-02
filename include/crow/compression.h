@@ -19,7 +19,7 @@ namespace crow
             GZIP = 15|16,
         };
 
-        std::string compress_string(std::string const & str, algorithm algo)
+        inline std::string compress_string(std::string const & str, algorithm algo)
         {
             std::string compressed_str;
             z_stream stream{};
@@ -56,7 +56,7 @@ namespace crow
             return compressed_str;
         }
 
-        std::string decompress_string(std::string const & deflated_string)
+        inline std::string decompress_string(std::string const & deflated_string)
         {
             std::string inflated_string;
             Bytef tmp[8192];

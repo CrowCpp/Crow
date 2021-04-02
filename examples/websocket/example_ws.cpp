@@ -1,3 +1,4 @@
+#define CROW_MAIN
 #include "crow.h"
 #include <unordered_set>
 #include <mutex>
