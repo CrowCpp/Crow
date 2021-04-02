@@ -200,7 +200,7 @@ namespace crow
                     else if (size < 0x10000)
                     {
                         buf[1] += 126;
-                        *(uint16_t*)(buf+2) = htons((uint16_t)size);
+                        *(uint16_t*)(buf+2) = htons(static_cast<uint16_t>(size));
                         return {buf, buf+4};
                     }
                     else
@@ -344,7 +344,7 @@ namespace crow
                                         ) 
                                     {
                                         is_reading = false;
-                                        remaining_length_ = ((1==ntohl(1)) ? (remaining_length_) : ((uint64_t)ntohl((remaining_length_) & 0xFFFFFFFF) << 32) | ntohl((remaining_length_) >> 32));
+                                        remaining_length_ = ((1==ntohl(1)) ? (remaining_length_) : (static_cast<uint64_t>(ntohl((remaining_length_) & 0xFFFFFFFF)) << 32) | ntohl((remaining_length_) >> 32));
 #ifdef CROW_ENABLE_DEBUG
                                         if (!ec && bytes_transferred != 8)
                                         {
