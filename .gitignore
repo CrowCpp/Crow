@@ -22,6 +22,8 @@
 
 example
 unittest
+Testing/*
+include/crow/tags
 
 *.swp
 *.gcov
