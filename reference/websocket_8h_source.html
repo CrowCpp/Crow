@@ -301,7 +301,7 @@ $(document).ready(function(){initNavTree('websocket_8h_source.html',''); initRes
 <div class="line"><a name="l00200"></a><span class="lineno">  200</span>&#160;                    <span class="keywordflow">else</span> <span class="keywordflow">if</span> (size &lt; 0x10000)</div>
 <div class="line"><a name="l00201"></a><span class="lineno">  201</span>&#160;                    {</div>
 <div class="line"><a name="l00202"></a><span class="lineno">  202</span>&#160;                        buf[1] += 126;</div>
-<div class="line"><a name="l00203"></a><span class="lineno">  203</span>&#160;                        *(uint16_t*)(buf+2) = htons((uint16_t)size);</div>
+<div class="line"><a name="l00203"></a><span class="lineno">  203</span>&#160;                        *(uint16_t*)(buf+2) = htons(<span class="keyword">static_cast&lt;</span>uint16_t<span class="keyword">&gt;</span>(size));</div>
 <div class="line"><a name="l00204"></a><span class="lineno">  204</span>&#160;                        <span class="keywordflow">return</span> {buf, buf+4};</div>
 <div class="line"><a name="l00205"></a><span class="lineno">  205</span>&#160;                    }</div>
 <div class="line"><a name="l00206"></a><span class="lineno">  206</span>&#160;                    <span class="keywordflow">else</span></div>
@@ -445,7 +445,7 @@ $(document).ready(function(){initNavTree('websocket_8h_source.html',''); initRes
 <div class="line"><a name="l00344"></a><span class="lineno">  344</span>&#160;                                        ) </div>
 <div class="line"><a name="l00345"></a><span class="lineno">  345</span>&#160;                                    {</div>
 <div class="line"><a name="l00346"></a><span class="lineno">  346</span>&#160;                                        is_reading = false;</div>
-<div class="line"><a name="l00347"></a><span class="lineno">  347</span>&#160;                                        remaining_length_ = ((1==ntohl(1)) ? (remaining_length_) : ((uint64_t)ntohl((remaining_length_) &amp; 0xFFFFFFFF) &lt;&lt; 32) | ntohl((remaining_length_) &gt;&gt; 32));</div>
+<div class="line"><a name="l00347"></a><span class="lineno">  347</span>&#160;                                        remaining_length_ = ((1==ntohl(1)) ? (remaining_length_) : (static_cast&lt;uint64_t&gt;(ntohl((remaining_length_) &amp; 0xFFFFFFFF)) &lt;&lt; 32) | ntohl((remaining_length_) &gt;&gt; 32));</div>
 <div class="line"><a name="l00348"></a><span class="lineno">  348</span>&#160;#ifdef CROW_ENABLE_DEBUG</div>
 <div class="line"><a name="l00349"></a><span class="lineno">  349</span>&#160;                                        if (!ec &amp;&amp; bytes_transferred != 8)</div>
 <div class="line"><a name="l00350"></a><span class="lineno">  350</span>&#160;                                        {</div>
@@ -744,7 +744,7 @@ $(document).ready(function(){initNavTree('websocket_8h_source.html',''); initRes
 			<ul>
 				<li class="navelem"><a class="el" href="dir_d44c64559bbebec7f509842c48db8b23.html">include</a></li><li class="navelem"><a class="el" href="dir_d22c1cb87b72f01e1a7f207eb3bfd1ca.html">crow</a></li><li class="navelem"><b>websocket.h</b></li>
 				<li class="footer">
-					Generated on Thu Apr 1 2021 for Crow by <a href="http://www.doxygen.org/index.html">
+					Generated on Fri Apr 2 2021 for Crow by <a href="http://www.doxygen.org/index.html">
 					<img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.17.
 					Dark theme by <a href="http://majerle.eu" target="_new">Tilen Majerle</a>. Edited by <a href="https://github.com/The-EDev" target="_new">Farook Al-Sammarraie</a>. All rights reserved.
 				</li>

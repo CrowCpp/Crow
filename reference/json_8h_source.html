@@ -273,7 +273,7 @@ $(document).ready(function(){initNavTree('json_8h_source.html',''); initResizabl
 <div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;<span class="comment"></span>                uint8_t owned_{0};</div>
 <div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160;                <span class="keyword">friend</span> std::ostream&amp; operator &lt;&lt; (std::ostream&amp; os, <span class="keyword">const</span> <a class="code" href="structcrow_1_1json_1_1detail_1_1r__string.html">r_string</a>&amp; s)</div>
 <div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160;                {</div>
-<div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160;                    os &lt;&lt; (std::string)s;</div>
+<div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160;                    os &lt;&lt; static_cast&lt;std::string&gt;(s);</div>
 <div class="line"><a name="l00176"></a><span class="lineno">  176</span>&#160;                    <span class="keywordflow">return</span> os;</div>
 <div class="line"><a name="l00177"></a><span class="lineno">  177</span>&#160;                }</div>
 <div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160;            <span class="keyword">private</span>:</div>
@@ -393,7 +393,7 @@ $(document).ready(function(){initNavTree('json_8h_source.html',''); initResizabl
 <div class="line"><a name="l00292"></a><span class="lineno">  292</span>&#160; </div>
 <div class="line"><a name="l00293"></a><span class="lineno">  293</span>&#160;            <span class="keyword">explicit</span> <span class="keyword">operator</span> int()<span class="keyword"> const</span></div>
 <div class="line"><a name="l00294"></a><span class="lineno">  294</span>&#160;<span class="keyword">            </span>{</div>
-<div class="line"><a name="l00295"></a><span class="lineno">  295</span>&#160;                <span class="keywordflow">return</span> (<span class="keywordtype">int</span>)<a class="code" href="classcrow_1_1json_1_1rvalue.html#a1a9a1a3616d6484bf3dcdb941cf8e6da">i</a>();</div>
+<div class="line"><a name="l00295"></a><span class="lineno">  295</span>&#160;                <span class="keywordflow">return</span> <span class="keyword">static_cast&lt;</span><span class="keywordtype">int</span><span class="keyword">&gt;</span>(<a class="code" href="classcrow_1_1json_1_1rvalue.html#a1a9a1a3616d6484bf3dcdb941cf8e6da">i</a>());</div>
 <div class="line"><a name="l00296"></a><span class="lineno">  296</span>&#160;            }</div>
 <div class="line"><a name="l00297"></a><span class="lineno">  297</span>&#160;<span class="comment"></span> </div>
 <div class="line"><a name="l00298"></a><span class="lineno">  298</span>&#160;<span class="comment">            /// The type of the JSON value.</span></div>
@@ -623,7 +623,7 @@ $(document).ready(function(){initNavTree('json_8h_source.html',''); initResizabl
 <div class="line"><a name="l00522"></a><span class="lineno">  522</span>&#160;<span class="preprocessor">#ifndef CROW_JSON_NO_ERROR_CHECK</span></div>
 <div class="line"><a name="l00523"></a><span class="lineno">  523</span>&#160;                <span class="keywordflow">if</span> (<a class="code" href="classcrow_1_1json_1_1rvalue.html#a9c9f7242e4164f4ed690e50e3cf5f4b1">t</a>() != type::List)</div>
 <div class="line"><a name="l00524"></a><span class="lineno">  524</span>&#160;                    <span class="keywordflow">throw</span> std::runtime_error(<span class="stringliteral">&quot;value is not a list&quot;</span>);</div>
-<div class="line"><a name="l00525"></a><span class="lineno">  525</span>&#160;                <span class="keywordflow">if</span> (index &gt;= (<span class="keywordtype">int</span>)lsize_ || index &lt; 0)</div>
+<div class="line"><a name="l00525"></a><span class="lineno">  525</span>&#160;                <span class="keywordflow">if</span> (index &gt;= <span class="keyword">static_cast&lt;</span><span class="keywordtype">int</span><span class="keyword">&gt;</span>(lsize_) || index &lt; 0)</div>
 <div class="line"><a name="l00526"></a><span class="lineno">  526</span>&#160;                    <span class="keywordflow">throw</span> std::runtime_error(<span class="stringliteral">&quot;list out of bound&quot;</span>);</div>
 <div class="line"><a name="l00527"></a><span class="lineno">  527</span>&#160;<span class="preprocessor">#endif</span></div>
 <div class="line"><a name="l00528"></a><span class="lineno">  528</span>&#160;                <span class="keywordflow">return</span> l_[index];</div>
@@ -1006,7 +1006,7 @@ $(document).ready(function(){initNavTree('json_8h_source.html',''); initResizabl
 <div class="line"><a name="l00905"></a><span class="lineno">  905</span>&#160;                        <span class="keywordflow">switch</span>(*data)</div>
 <div class="line"><a name="l00906"></a><span class="lineno">  906</span>&#160;                        {</div>
 <div class="line"><a name="l00907"></a><span class="lineno">  907</span>&#160;                            <span class="keywordflow">case</span> <span class="charliteral">&#39;0&#39;</span>:</div>
-<div class="line"><a name="l00908"></a><span class="lineno">  908</span>&#160;                                state = (NumberParsingState)<span class="stringliteral">&quot;\2\2\7\3\4\6\6&quot;</span>[state];</div>
+<div class="line"><a name="l00908"></a><span class="lineno">  908</span>&#160;                                state = <span class="keyword">static_cast&lt;</span>NumberParsingState<span class="keyword">&gt;</span>(<span class="stringliteral">&quot;\2\2\7\3\4\6\6&quot;</span>[state]);</div>
 <div class="line"><a name="l00909"></a><span class="lineno">  909</span>&#160;                                <span class="comment">/*if (state == NumberParsingState::Minus || state == NumberParsingState::AfterMinus)</span></div>
 <div class="line"><a name="l00910"></a><span class="lineno">  910</span>&#160;<span class="comment">                                {</span></div>
 <div class="line"><a name="l00911"></a><span class="lineno">  911</span>&#160;<span class="comment">                                    state = NumberParsingState::ZeroFirst;</span></div>
@@ -1027,7 +1027,7 @@ $(document).ready(function(){initNavTree('json_8h_source.html',''); initResizabl
 <div class="line"><a name="l00926"></a><span class="lineno">  926</span>&#160;                            <span class="keywordflow">case</span> <span class="charliteral">&#39;1&#39;</span>: <span class="keywordflow">case</span> <span class="charliteral">&#39;2&#39;</span>: <span class="keywordflow">case</span> <span class="charliteral">&#39;3&#39;</span>: </div>
 <div class="line"><a name="l00927"></a><span class="lineno">  927</span>&#160;                            <span class="keywordflow">case</span> <span class="charliteral">&#39;4&#39;</span>: <span class="keywordflow">case</span> <span class="charliteral">&#39;5&#39;</span>: <span class="keywordflow">case</span> <span class="charliteral">&#39;6&#39;</span>: </div>
 <div class="line"><a name="l00928"></a><span class="lineno">  928</span>&#160;                            <span class="keywordflow">case</span> <span class="charliteral">&#39;7&#39;</span>: <span class="keywordflow">case</span> <span class="charliteral">&#39;8&#39;</span>: <span class="keywordflow">case</span> <span class="charliteral">&#39;9&#39;</span>:</div>
-<div class="line"><a name="l00929"></a><span class="lineno">  929</span>&#160;                                state = (NumberParsingState)<span class="stringliteral">&quot;\3\3\7\3\4\6\6&quot;</span>[state];</div>
+<div class="line"><a name="l00929"></a><span class="lineno">  929</span>&#160;                                state = <span class="keyword">static_cast&lt;</span>NumberParsingState<span class="keyword">&gt;</span>(<span class="stringliteral">&quot;\3\3\7\3\4\6\6&quot;</span>[state]);</div>
 <div class="line"><a name="l00930"></a><span class="lineno">  930</span>&#160;                                <span class="keywordflow">while</span>(*(data+1) &gt;= <span class="charliteral">&#39;0&#39;</span> &amp;&amp; *(data+1) &lt;= <span class="charliteral">&#39;9&#39;</span>) data++;</div>
 <div class="line"><a name="l00931"></a><span class="lineno">  931</span>&#160;                                <span class="comment">/*if (state == NumberParsingState::Minus || state == NumberParsingState::AfterMinus)</span></div>
 <div class="line"><a name="l00932"></a><span class="lineno">  932</span>&#160;<span class="comment">                                {</span></div>
@@ -1047,7 +1047,7 @@ $(document).ready(function(){initNavTree('json_8h_source.html',''); initResizabl
 <div class="line"><a name="l00946"></a><span class="lineno">  946</span>&#160;<span class="comment">                                    return {};*/</span></div>
 <div class="line"><a name="l00947"></a><span class="lineno">  947</span>&#160;                                <span class="keywordflow">break</span>;</div>
 <div class="line"><a name="l00948"></a><span class="lineno">  948</span>&#160;                            <span class="keywordflow">case</span> <span class="charliteral">&#39;.&#39;</span>:</div>
-<div class="line"><a name="l00949"></a><span class="lineno">  949</span>&#160;                                state = (NumberParsingState)<span class="stringliteral">&quot;\7\7\4\4\7\7\7&quot;</span>[state];</div>
+<div class="line"><a name="l00949"></a><span class="lineno">  949</span>&#160;                                state = <span class="keyword">static_cast&lt;</span>NumberParsingState<span class="keyword">&gt;</span>(<span class="stringliteral">&quot;\7\7\4\4\7\7\7&quot;</span>[state]);</div>
 <div class="line"><a name="l00950"></a><span class="lineno">  950</span>&#160;                                <span class="comment">/*</span></div>
 <div class="line"><a name="l00951"></a><span class="lineno">  951</span>&#160;<span class="comment">                                if (state == NumberParsingState::Digits || state == NumberParsingState::ZeroFirst)</span></div>
 <div class="line"><a name="l00952"></a><span class="lineno">  952</span>&#160;<span class="comment">                                {</span></div>
@@ -1058,7 +1058,7 @@ $(document).ready(function(){initNavTree('json_8h_source.html',''); initResizabl
 <div class="line"><a name="l00957"></a><span class="lineno">  957</span>&#160;<span class="comment">                                */</span></div>
 <div class="line"><a name="l00958"></a><span class="lineno">  958</span>&#160;                                <span class="keywordflow">break</span>;</div>
 <div class="line"><a name="l00959"></a><span class="lineno">  959</span>&#160;                            <span class="keywordflow">case</span> <span class="charliteral">&#39;-&#39;</span>:</div>
-<div class="line"><a name="l00960"></a><span class="lineno">  960</span>&#160;                                state = (NumberParsingState)<span class="stringliteral">&quot;\1\7\7\7\7\6\7&quot;</span>[state];</div>
+<div class="line"><a name="l00960"></a><span class="lineno">  960</span>&#160;                                state = <span class="keyword">static_cast&lt;</span>NumberParsingState<span class="keyword">&gt;</span>(<span class="stringliteral">&quot;\1\7\7\7\7\6\7&quot;</span>[state]);</div>
 <div class="line"><a name="l00961"></a><span class="lineno">  961</span>&#160;                                <span class="comment">/*if (state == NumberParsingState::Minus)</span></div>
 <div class="line"><a name="l00962"></a><span class="lineno">  962</span>&#160;<span class="comment">                                {</span></div>
 <div class="line"><a name="l00963"></a><span class="lineno">  963</span>&#160;<span class="comment">                                    state = NumberParsingState::AfterMinus;</span></div>
@@ -1071,7 +1071,7 @@ $(document).ready(function(){initNavTree('json_8h_source.html',''); initResizabl
 <div class="line"><a name="l00970"></a><span class="lineno">  970</span>&#160;<span class="comment">                                    return {};*/</span></div>
 <div class="line"><a name="l00971"></a><span class="lineno">  971</span>&#160;                                <span class="keywordflow">break</span>;</div>
 <div class="line"><a name="l00972"></a><span class="lineno">  972</span>&#160;                            <span class="keywordflow">case</span> <span class="charliteral">&#39;+&#39;</span>:</div>
-<div class="line"><a name="l00973"></a><span class="lineno">  973</span>&#160;                                state = (NumberParsingState)<span class="stringliteral">&quot;\7\7\7\7\7\6\7&quot;</span>[state];</div>
+<div class="line"><a name="l00973"></a><span class="lineno">  973</span>&#160;                                state = <span class="keyword">static_cast&lt;</span>NumberParsingState<span class="keyword">&gt;</span>(<span class="stringliteral">&quot;\7\7\7\7\7\6\7&quot;</span>[state]);</div>
 <div class="line"><a name="l00974"></a><span class="lineno">  974</span>&#160;                                <span class="comment">/*if (state == NumberParsingState::E)</span></div>
 <div class="line"><a name="l00975"></a><span class="lineno">  975</span>&#160;<span class="comment">                                {</span></div>
 <div class="line"><a name="l00976"></a><span class="lineno">  976</span>&#160;<span class="comment">                                    state = NumberParsingState::DigitsAfterE;</span></div>
@@ -1080,7 +1080,7 @@ $(document).ready(function(){initNavTree('json_8h_source.html',''); initResizabl
 <div class="line"><a name="l00979"></a><span class="lineno">  979</span>&#160;<span class="comment">                                    return {};*/</span></div>
 <div class="line"><a name="l00980"></a><span class="lineno">  980</span>&#160;                                <span class="keywordflow">break</span>;</div>
 <div class="line"><a name="l00981"></a><span class="lineno">  981</span>&#160;                            <span class="keywordflow">case</span> <span class="charliteral">&#39;e&#39;</span>: <span class="keywordflow">case</span> <span class="charliteral">&#39;E&#39;</span>:</div>
-<div class="line"><a name="l00982"></a><span class="lineno">  982</span>&#160;                                state = (NumberParsingState)<span class="stringliteral">&quot;\7\7\7\5\5\7\7&quot;</span>[state];</div>
+<div class="line"><a name="l00982"></a><span class="lineno">  982</span>&#160;                                state = <span class="keyword">static_cast&lt;</span>NumberParsingState<span class="keyword">&gt;</span>(<span class="stringliteral">&quot;\7\7\7\5\5\7\7&quot;</span>[state]);</div>
 <div class="line"><a name="l00983"></a><span class="lineno">  983</span>&#160;                                <span class="comment">/*if (state == NumberParsingState::Digits || </span></div>
 <div class="line"><a name="l00984"></a><span class="lineno">  984</span>&#160;<span class="comment">                                    state == NumberParsingState::DigitsAfterPoints)</span></div>
 <div class="line"><a name="l00985"></a><span class="lineno">  985</span>&#160;<span class="comment">                                {</span></div>
@@ -1710,7 +1710,7 @@ $(document).ready(function(){initNavTree('json_8h_source.html',''); initResizabl
 			<ul>
 				<li class="navelem"><a class="el" href="dir_d44c64559bbebec7f509842c48db8b23.html">include</a></li><li class="navelem"><a class="el" href="dir_d22c1cb87b72f01e1a7f207eb3bfd1ca.html">crow</a></li><li class="navelem"><b>json.h</b></li>
 				<li class="footer">
-					Generated on Thu Apr 1 2021 for Crow by <a href="http://www.doxygen.org/index.html">
+					Generated on Fri Apr 2 2021 for Crow by <a href="http://www.doxygen.org/index.html">
 					<img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.17.
 					Dark theme by <a href="http://majerle.eu" target="_new">Tilen Majerle</a>. Edited by <a href="https://github.com/The-EDev" target="_new">Farook Al-Sammarraie</a>. All rights reserved.
 				</li>

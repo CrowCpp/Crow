@@ -611,29 +611,29 @@ $(document).ready(function(){initNavTree('utility_8h_source.html',''); initResiz
 <div class="line"><a name="l00510"></a><span class="lineno">  510</span>&#160;            <span class="keyword">auto</span> it = ret.begin();</div>
 <div class="line"><a name="l00511"></a><span class="lineno">  511</span>&#160;            <span class="keywordflow">while</span>(size &gt;= 3)</div>
 <div class="line"><a name="l00512"></a><span class="lineno">  512</span>&#160;            {</div>
-<div class="line"><a name="l00513"></a><span class="lineno">  513</span>&#160;                *it++ = key[(((<span class="keywordtype">unsigned</span> char)*data)&amp;0xFC)&gt;&gt;2];</div>
-<div class="line"><a name="l00514"></a><span class="lineno">  514</span>&#160;                <span class="keywordtype">unsigned</span> <span class="keywordtype">char</span> h = (((<span class="keywordtype">unsigned</span> char)*data++) &amp; 0x03) &lt;&lt; 4;</div>
-<div class="line"><a name="l00515"></a><span class="lineno">  515</span>&#160;                *it++ = key[h|((((<span class="keywordtype">unsigned</span> char)*data)&amp;0xF0)&gt;&gt;4)];</div>
-<div class="line"><a name="l00516"></a><span class="lineno">  516</span>&#160;                h = (((<span class="keywordtype">unsigned</span> char)*data++) &amp; 0x0F) &lt;&lt; 2;</div>
-<div class="line"><a name="l00517"></a><span class="lineno">  517</span>&#160;                *it++ = key[h|((((<span class="keywordtype">unsigned</span> char)*data)&amp;0xC0)&gt;&gt;6)];</div>
-<div class="line"><a name="l00518"></a><span class="lineno">  518</span>&#160;                *it++ = key[((<span class="keywordtype">unsigned</span> char)*data++)&amp;0x3F];</div>
+<div class="line"><a name="l00513"></a><span class="lineno">  513</span>&#160;                *it++ = key[(<span class="keyword">static_cast&lt;</span><span class="keywordtype">unsigned</span> <span class="keywordtype">char</span><span class="keyword">&gt;</span>(*data)&amp;0xFC)&gt;&gt;2];</div>
+<div class="line"><a name="l00514"></a><span class="lineno">  514</span>&#160;                <span class="keywordtype">unsigned</span> <span class="keywordtype">char</span> h = (<span class="keyword">static_cast&lt;</span><span class="keywordtype">unsigned</span> <span class="keywordtype">char</span><span class="keyword">&gt;</span>(*data++) &amp; 0x03) &lt;&lt; 4;</div>
+<div class="line"><a name="l00515"></a><span class="lineno">  515</span>&#160;                *it++ = key[h|((<span class="keyword">static_cast&lt;</span><span class="keywordtype">unsigned</span> <span class="keywordtype">char</span><span class="keyword">&gt;</span>(*data)&amp;0xF0)&gt;&gt;4)];</div>
+<div class="line"><a name="l00516"></a><span class="lineno">  516</span>&#160;                h = (<span class="keyword">static_cast&lt;</span><span class="keywordtype">unsigned</span> <span class="keywordtype">char</span><span class="keyword">&gt;</span>(*data++) &amp; 0x0F) &lt;&lt; 2;</div>
+<div class="line"><a name="l00517"></a><span class="lineno">  517</span>&#160;                *it++ = key[h|((<span class="keyword">static_cast&lt;</span><span class="keywordtype">unsigned</span> <span class="keywordtype">char</span><span class="keyword">&gt;</span>(*data)&amp;0xC0)&gt;&gt;6)];</div>
+<div class="line"><a name="l00518"></a><span class="lineno">  518</span>&#160;                *it++ = key[<span class="keyword">static_cast&lt;</span><span class="keywordtype">unsigned</span> <span class="keywordtype">char</span><span class="keyword">&gt;</span>(*data++)&amp;0x3F];</div>
 <div class="line"><a name="l00519"></a><span class="lineno">  519</span>&#160; </div>
 <div class="line"><a name="l00520"></a><span class="lineno">  520</span>&#160;                size -= 3;</div>
 <div class="line"><a name="l00521"></a><span class="lineno">  521</span>&#160;            }</div>
 <div class="line"><a name="l00522"></a><span class="lineno">  522</span>&#160;            <span class="keywordflow">if</span> (size == 1)</div>
 <div class="line"><a name="l00523"></a><span class="lineno">  523</span>&#160;            {</div>
-<div class="line"><a name="l00524"></a><span class="lineno">  524</span>&#160;                *it++ = key[(((<span class="keywordtype">unsigned</span> char)*data)&amp;0xFC)&gt;&gt;2];</div>
-<div class="line"><a name="l00525"></a><span class="lineno">  525</span>&#160;                <span class="keywordtype">unsigned</span> <span class="keywordtype">char</span> h = (((<span class="keywordtype">unsigned</span> char)*data++) &amp; 0x03) &lt;&lt; 4;</div>
+<div class="line"><a name="l00524"></a><span class="lineno">  524</span>&#160;                *it++ = key[(<span class="keyword">static_cast&lt;</span><span class="keywordtype">unsigned</span> <span class="keywordtype">char</span><span class="keyword">&gt;</span>(*data)&amp;0xFC)&gt;&gt;2];</div>
+<div class="line"><a name="l00525"></a><span class="lineno">  525</span>&#160;                <span class="keywordtype">unsigned</span> <span class="keywordtype">char</span> h = (<span class="keyword">static_cast&lt;</span><span class="keywordtype">unsigned</span> <span class="keywordtype">char</span><span class="keyword">&gt;</span>(*data++) &amp; 0x03) &lt;&lt; 4;</div>
 <div class="line"><a name="l00526"></a><span class="lineno">  526</span>&#160;                *it++ = key[h];</div>
 <div class="line"><a name="l00527"></a><span class="lineno">  527</span>&#160;                *it++ = <span class="charliteral">&#39;=&#39;</span>;</div>
 <div class="line"><a name="l00528"></a><span class="lineno">  528</span>&#160;                *it++ = <span class="charliteral">&#39;=&#39;</span>;</div>
 <div class="line"><a name="l00529"></a><span class="lineno">  529</span>&#160;            }</div>
 <div class="line"><a name="l00530"></a><span class="lineno">  530</span>&#160;            <span class="keywordflow">else</span> <span class="keywordflow">if</span> (size == 2)</div>
 <div class="line"><a name="l00531"></a><span class="lineno">  531</span>&#160;            {</div>
-<div class="line"><a name="l00532"></a><span class="lineno">  532</span>&#160;                *it++ = key[(((<span class="keywordtype">unsigned</span> char)*data)&amp;0xFC)&gt;&gt;2];</div>
-<div class="line"><a name="l00533"></a><span class="lineno">  533</span>&#160;                <span class="keywordtype">unsigned</span> <span class="keywordtype">char</span> h = (((<span class="keywordtype">unsigned</span> char)*data++) &amp; 0x03) &lt;&lt; 4;</div>
-<div class="line"><a name="l00534"></a><span class="lineno">  534</span>&#160;                *it++ = key[h|((((<span class="keywordtype">unsigned</span> char)*data)&amp;0xF0)&gt;&gt;4)];</div>
-<div class="line"><a name="l00535"></a><span class="lineno">  535</span>&#160;                h = (((<span class="keywordtype">unsigned</span> char)*data++) &amp; 0x0F) &lt;&lt; 2;</div>
+<div class="line"><a name="l00532"></a><span class="lineno">  532</span>&#160;                *it++ = key[(<span class="keyword">static_cast&lt;</span><span class="keywordtype">unsigned</span> <span class="keywordtype">char</span><span class="keyword">&gt;</span>(*data)&amp;0xFC)&gt;&gt;2];</div>
+<div class="line"><a name="l00533"></a><span class="lineno">  533</span>&#160;                <span class="keywordtype">unsigned</span> <span class="keywordtype">char</span> h = (<span class="keyword">static_cast&lt;</span><span class="keywordtype">unsigned</span> <span class="keywordtype">char</span><span class="keyword">&gt;</span>(*data++) &amp; 0x03) &lt;&lt; 4;</div>
+<div class="line"><a name="l00534"></a><span class="lineno">  534</span>&#160;                *it++ = key[h|((<span class="keyword">static_cast&lt;</span><span class="keywordtype">unsigned</span> <span class="keywordtype">char</span><span class="keyword">&gt;</span>(*data)&amp;0xF0)&gt;&gt;4)];</div>
+<div class="line"><a name="l00535"></a><span class="lineno">  535</span>&#160;                h = (<span class="keyword">static_cast&lt;</span><span class="keywordtype">unsigned</span> <span class="keywordtype">char</span><span class="keyword">&gt;</span>(*data++) &amp; 0x0F) &lt;&lt; 2;</div>
 <div class="line"><a name="l00536"></a><span class="lineno">  536</span>&#160;                *it++ = key[h];</div>
 <div class="line"><a name="l00537"></a><span class="lineno">  537</span>&#160;                *it++ = <span class="charliteral">&#39;=&#39;</span>;</div>
 <div class="line"><a name="l00538"></a><span class="lineno">  538</span>&#160;            }</div>
@@ -679,7 +679,7 @@ $(document).ready(function(){initNavTree('utility_8h_source.html',''); initResiz
 			<ul>
 				<li class="navelem"><a class="el" href="dir_d44c64559bbebec7f509842c48db8b23.html">include</a></li><li class="navelem"><a class="el" href="dir_d22c1cb87b72f01e1a7f207eb3bfd1ca.html">crow</a></li><li class="navelem"><b>utility.h</b></li>
 				<li class="footer">
-					Generated on Thu Apr 1 2021 for Crow by <a href="http://www.doxygen.org/index.html">
+					Generated on Fri Apr 2 2021 for Crow by <a href="http://www.doxygen.org/index.html">
 					<img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.17.
 					Dark theme by <a href="http://majerle.eu" target="_new">Tilen Majerle</a>. Edited by <a href="https://github.com/The-EDev" target="_new">Farook Al-Sammarraie</a>. All rights reserved.
 				</li>

@@ -169,16 +169,16 @@ Sorting lists.../drone/src/include/crow/json.h:1237: warning: unable to resolve 
 /drone/src/include/crow/middlewares/cookie_parser.h:46: warning: Member set_cookie(const std::string &key, const std::string &value) (function) of class crow::CookieParser::context is not documented.
 /drone/src/include/crow/middlewares/cookie_parser.h:35: warning: Member jar (variable) of class crow::CookieParser::context is not documented.
 /drone/src/include/crow/middlewares/cookie_parser.h:36: warning: Member cookies_to_add (variable) of class crow::CookieParser::context is not documented.
-/drone/src/include/crow/app.h:324: warning: Member context_t (typedef) of class crow::Crow is not documented.
-/drone/src/include/crow/app.h:86: warning: Member signal_clear() (function) of class crow::Crow is not documented.
-/drone/src/include/crow/app.h:92: warning: Member signal_add(int signal_number) (function) of class crow::Crow is not documented.
-/drone/src/include/crow/app.h:164: warning: Member use_compression(compression::algorithm algorithm) (function) of class crow::Crow is not documented.
-/drone/src/include/crow/app.h:171: warning: Member compression_algorithm() (function) of class crow::Crow is not documented.
-/drone/src/include/crow/app.h:248: warning: Member debug_print() (function) of class crow::Crow is not documented.
-/drone/src/include/crow/app.h:301: warning: Member ssl_file(T &&, Remain &&...) (function) of class crow::Crow is not documented.
-/drone/src/include/crow/app.h:312: warning: Member ssl(T &&) (function) of class crow::Crow is not documented.
-/drone/src/include/crow/app.h:326: warning: Member get_context(const request &req) (function) of class crow::Crow is not documented.
-/drone/src/include/crow/app.h:334: warning: Member get_middleware() (function) of class crow::Crow is not documented.
+/drone/src/include/crow/app.h:327: warning: Member context_t (typedef) of class crow::Crow is not documented.
+/drone/src/include/crow/app.h:89: warning: Member signal_clear() (function) of class crow::Crow is not documented.
+/drone/src/include/crow/app.h:95: warning: Member signal_add(int signal_number) (function) of class crow::Crow is not documented.
+/drone/src/include/crow/app.h:167: warning: Member use_compression(compression::algorithm algorithm) (function) of class crow::Crow is not documented.
+/drone/src/include/crow/app.h:174: warning: Member compression_algorithm() (function) of class crow::Crow is not documented.
+/drone/src/include/crow/app.h:251: warning: Member debug_print() (function) of class crow::Crow is not documented.
+/drone/src/include/crow/app.h:304: warning: Member ssl_file(T &&, Remain &&...) (function) of class crow::Crow is not documented.
+/drone/src/include/crow/app.h:315: warning: Member ssl(T &&) (function) of class crow::Crow is not documented.
+/drone/src/include/crow/app.h:329: warning: Member get_context(const request &req) (function) of class crow::Crow is not documented.
+/drone/src/include/crow/app.h:337: warning: Member get_middleware() (function) of class crow::Crow is not documented.
 /drone/src/include/crow/routing.h:392: warning: Member DynamicRule(std::string rule) (function) of class crow::DynamicRule is not documented.
 /drone/src/include/crow/routing.h:397: warning: Member validate() override (function) of class crow::DynamicRule is not documented.
 /drone/src/include/crow/routing.h:405: warning: Member handle(const request &req, response &res, const routing_params &params) override (function) of class crow::DynamicRule is not documented.
@@ -479,10 +479,10 @@ Generating do/drone/src/include/crow/utility.h:257: warning: Member __test(int) 
 /drone/src/include/crow/middleware_context.h:50: warning: Member after_handlers_call_helper(Container &middlewares, Context &ctx, request &req, response &res) (friend) of class crow::detail::context is not documented.
 /drone/src/include/crow/middleware_context.h:52: warning: Member after_handlers_call_helper(Container &middlewares, Context &ctx, request &req, response &res) (friend) of class crow::detail::context is not documented.
 /drone/src/include/crow/middleware_context.h:55: warning: Member middleware_call_helper(Container &middlewares, request &req, response &res, Context &ctx) (friend) of class crow::detail::context is not documented.
-/drone/src/include/crow/dumb_timer_queue.h:20: warning: Member key (typedef) of class crow::detail::dumb_timer_queue is not documented.
-/drone/src/include/crow/dumb_timer_queue.h:22: warning: Member cancel(key &k) (function) of class crow::detail::dumb_timer_queue is not documented.
-/drone/src/include/crow/dumb_timer_queue.h:67: warning: Member set_io_service(boost::asio::io_service &io_service) (function) of class crow::detail::dumb_timer_queue is not documented.
-/drone/src/include/crow/dumb_timer_queue.h:19: warning: Member tick (variable) of class crow::detail::dumb_timer_queue is not documented.
+/drone/src/include/crow/dumb_timer_queue.h:21: warning: Member key (typedef) of class crow::detail::dumb_timer_queue is not documented.
+/drone/src/include/crow/dumb_timer_queue.h:23: warning: Member cancel(key &k) (function) of class crow::detail::dumb_timer_queue is not documented.
+/drone/src/include/crow/dumb_timer_queue.h:68: warning: Member set_io_service(boost::asio::io_service &io_service) (function) of class crow::detail::dumb_timer_queue is not documented.
+/drone/src/include/crow/dumb_timer_queue.h:20: warning: Member tick (variable) of class crow::detail::dumb_timer_queue is not documented.
 /drone/src/include/crow/utility.h:432: warning: Member value (variable) of class crow::detail::get_index_of_element_from_tuple_by_type_impl is not documented.
 /drone/src/include/crow/utility.h:438: warning: Member value (variable) of class crow::detail::get_index_of_element_from_tuple_by_type_impl< T, N, T, Args... > is not documented.
 /drone/src/include/crow/utility.h:444: warning: Member value (variable) of class crow::detail::get_index_of_element_from_tuple_by_type_impl< T, N, U, Args... > is not documented.
@@ -644,7 +644,7 @@ Generating docs for compound crow::detail::routing_handler_call_helper::call< F,
 /drone/src/include/crow/returnable.h:13: warning: Member returnable(std::string ctype) (function) of class crow::returnable is not documented.
 /drone/src/include/crow/multipart.h:38: warning: Member headers (variable) of class crow::multipart::message is not documented.
 /drone/src/include/crow/returnable.h:10: warning: Member content_type (variable) of class crow::returnable is not documented.
-/drone/src/include/crow/mustache.h:48: warning: Member Action(ActionType t, int start, int end, int pos=0) (function) of class crow::mustache::Action is not documented.
+/drone/src/include/crow/mustache.h:48: warning: Member Action(ActionType t, size_t start, size_t end, size_t pos=0) (function) of class crow::mustache::Action is not documented.
 /drone/src/include/crow/mustache.h:44: warning: Member start (variable) of class crow::mustache::Action is not documented.
 /drone/src/include/crow/mustache.h:45: warning: Member end (variable) of class crow::mustache::Action is not documented.
 /drone/src/include/crow/mustache.h:46: warning: Member pos (variable) of class crow::mustache::Action is not documented.
@@ -719,5 +719,5 @@ Generating example index...
 finalizing index lists...
 writing tag file...
 Running plantuml with JAVA...
-lookup cache used 2401/65536 hits=19978 misses=2720
+lookup cache used 2395/65536 hits=19944 misses=2709
 finished...
