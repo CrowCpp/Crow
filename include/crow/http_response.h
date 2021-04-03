@@ -29,7 +29,7 @@ namespace crow
         std::string body; ///< The actual payload containing the response data.
         ci_map headers; ///< HTTP headers.
         bool compressed = true; ///< If compression is enabled and this is false, the individual response will not be compressed.
-        bool head = false; ///< Whether this is a response to a HEAD request
+        bool no_body = false; ///< Whether this is a response to a HEAD or OPTIONS request. (or anything not meant to have a body)
 
         /// Set the value of an existing header in the response.
         void set_header(std::string key, std::string value)

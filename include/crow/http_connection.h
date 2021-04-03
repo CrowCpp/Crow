@@ -357,7 +357,7 @@ namespace crow
                 (*middlewares_, ctx_, req_, res);
             }
 
-            if (res.head)
+            if (res.no_body)
             {
                 res.body = "";
             }
@@ -477,7 +477,7 @@ namespace crow
 
             }
 
-            if (!res.headers.count("content-length"))
+            if (!res.no_body && !res.headers.count("content-length"))
             {
                 content_length_ = std::to_string(res.body.size());
                 static std::string content_length_tag = "Content-Length: ";
