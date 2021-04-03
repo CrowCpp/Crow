@@ -23,6 +23,10 @@ you can see the first `<int>` is defined as `a` and the second as `b`. If you we
 ##Methods
 You can change the HTTP methods the route uses from just the default `GET` by using `method()`, your route macro should look like `CROW_ROUTE(app, "/add/<int>/<int>").methods(crow::HTTPMethod::GET, crow::HTTPMethod::PATCH)` or `CROW_ROUTE(app, "/add/<int>/<int>").methods("GET"_method, "PATCH"_method)`.
 
+!!! note
+
+    Crow handles `HEAD` and `OPTIONS` methods automatically. So adding those to your handler has no effect.
+
 ##Handler
 Basically a piece of code that gets executed whenever the client calls the associated route, usually in the form of a [lambda expression](https://en.cppreference.com/w/cpp/language/lambda). It can be as simple as `#!cpp ([](){return "Hello World"})`.<br><br>
 
