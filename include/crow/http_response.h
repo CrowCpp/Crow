@@ -29,8 +29,8 @@ namespace crow
         std::string body; ///< The actual payload containing the response data.
         ci_map headers; ///< HTTP headers.
         bool compressed = true; ///< If compression is enabled and this is false, the individual response will not be compressed.
-        bool head = false; ///< Whether this is a response to a HEAD request.
-        bool no_length = false; ///< Whether Crow should automatically add a "Content-Length" header.
+        bool is_head_response = false; ///< Whether this is a response to a HEAD request.
+        bool manual_length_header = false; ///< Whether Crow should automatically add a "Content-Length" header.
 
         /// Set the value of an existing header in the response.
         void set_header(std::string key, std::string value)
@@ -149,11 +149,11 @@ namespace crow
             if (!completed_)
             {
                 completed_ = true;
-                if (head)
+                if (is_head_response)
                 {
                     set_header("Content-Length", std::to_string(body.size()));
                     body = "";
-                    no_length = true;
+                    manual_length_header = true;
                 }
                 if (complete_request_handler_)
                 {
