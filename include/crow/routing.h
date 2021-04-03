@@ -624,7 +624,13 @@ namespace crow
         {
         }
 
-private:
+        ///Check whether or not the trie is empty.
+        bool is_empty()
+        {
+            return nodes_.size() > 1;
+        }
+
+    private:
         void optimizeNode(Node* node)
         {
             for(auto x : node->param_childrens)
@@ -675,7 +681,7 @@ private:
             optimizeNode(head());
         }
 
-public:
+    public:
         void validate()
         {
             if (!head()->IsSimpleNode())
@@ -1000,6 +1006,7 @@ public:
             }
         }
 
+        //TODO maybe add actual_method
         template <typename Adaptor>
         void handle_upgrade(const request& req, response& res, Adaptor&& adaptor)
         {
@@ -1075,9 +1082,63 @@ public:
 
         void handle(const request& req, response& res)
         {
+            HTTPMethod method_actual = req.method;
             if (req.method >= HTTPMethod::InternalMethodCount)
                 return;
-            auto& per_method = per_methods_[static_cast<int>(req.method)];
+            else if (req.method == HTTPMethod::HEAD)
+            {
+                method_actual = HTTPMethod::GET;
+                res.is_head_response = true;
+            }
+            else if (req.method == HTTPMethod::OPTIONS)
+            {
+                std::string allow = "OPTIONS, HEAD, ";
+
+                if (req.url == "/*")
+                {
+                    for(int i = 0; i < static_cast<int>(HTTPMethod::InternalMethodCount); i ++)
+                    {
+                        if (per_methods_[i].trie.is_empty())
+                        {
+                            allow += method_name(static_cast<HTTPMethod>(i)) + ", ";
+                        }
+                    }
+                        allow = allow.substr(0, allow.size()-2);
+                        res = response(204);
+                        res.set_header("Allow", allow);
+                        res.manual_length_header = true;
+                        res.end();
+                        return;
+                }
+                else
+                {
+                    for(int i = 0; i < static_cast<int>(HTTPMethod::InternalMethodCount); i ++)
+                    {
+                        if (per_methods_[i].trie.find(req.url).first)
+                        {
+                            allow += method_name(static_cast<HTTPMethod>(i)) + ", ";
+                        }
+                    }
+                    if (allow != "OPTIONS, HEAD, ")
+                    {
+                        allow = allow.substr(0, allow.size()-2);
+                        res = response(204);
+                        res.set_header("Allow", allow);
+                        res.manual_length_header = true;
+                        res.end();
+                        return;
+                    }
+                    else
+                    {
+                        CROW_LOG_DEBUG << "Cannot match rules " << req.url;
+                        res = response(404);
+                        res.end();
+                        return;
+                    }
+                }
+            }
+
+            auto& per_method = per_methods_[static_cast<int>(method_actual)];
             auto& trie = per_method.trie;
             auto& rules = per_method.rules;
 
@@ -1091,7 +1152,7 @@ public:
                 {
                     if (per_method.trie.find(req.url).first)
                     {
-                        CROW_LOG_DEBUG << "Cannot match method " << req.url << " " << method_name(req.method);
+                        CROW_LOG_DEBUG << "Cannot match method " << req.url << " " << method_name(method_actual);
                         res = response(405);
                         res.end();
                         return;
