@@ -1234,7 +1234,7 @@ static const int8_t unhex[256] =
           goto error;
         }
 
-        parser->method = (enum http_method) 0;
+        parser->method = static_cast<http_method>(0);
         parser->index = 1;
         switch (ch) {
           case 'C': parser->method = HTTP_CONNECT; /* or COPY, CHECKOUT */ break;
@@ -1357,7 +1357,7 @@ static const int8_t unhex[256] =
           parser->state = s_req_server_start;
         }
 
-        parser->state = parse_url_char((enum state)parser->state, ch);
+        parser->state = parse_url_char(static_cast<state>(parser->state), ch);
         if (parser->state == s_dead) {
           CROW_SET_ERRNO(HPE_INVALID_URL);
           goto error;
@@ -1379,7 +1379,7 @@ static const int8_t unhex[256] =
             CROW_SET_ERRNO(HPE_INVALID_URL);
             goto error;
           default:
-            parser->state = parse_url_char((enum state)parser->state, ch);
+            parser->state = parse_url_char(static_cast<state>(parser->state), ch);
             if (parser->state == s_dead) {
               CROW_SET_ERRNO(HPE_INVALID_URL);
               goto error;
@@ -1412,7 +1412,7 @@ static const int8_t unhex[256] =
             CROW_CALLBACK_DATA(url);
             break;
           default:
-            parser->state = parse_url_char((enum state)parser->state, ch);
+            parser->state = parse_url_char(static_cast<state>(parser->state), ch);
             if (parser->state == s_dead) {
               CROW_SET_ERRNO(HPE_INVALID_URL);
               goto error;
@@ -2086,7 +2086,7 @@ static const int8_t unhex[256] =
         assert(parser->nread == 1);
         assert(parser->flags & F_CHUNKED);
 
-        unhex_val = unhex[(unsigned char)ch];
+        unhex_val = unhex[static_cast<unsigned char>(ch)];
         if (unhex_val == -1) {
           CROW_SET_ERRNO(HPE_INVALID_CHUNK_SIZE);
           goto error;
@@ -2108,7 +2108,7 @@ static const int8_t unhex[256] =
           break;
         }
 
-        unhex_val = unhex[(unsigned char)ch];
+        unhex_val = unhex[static_cast<unsigned char>(ch)];
 
         if (unhex_val == -1) {
           if (ch == ';' || ch == ' ') {
@@ -2567,7 +2567,7 @@ http_parser_parse_url(const char *buf, size_t buflen, int is_connect,
       return 1;
     }
 
-    u->port = (uint16_t) v;
+    u->port = static_cast<uint16_t>(v);
   }
 
   return 0;

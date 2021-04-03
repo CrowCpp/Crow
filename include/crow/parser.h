@@ -145,7 +145,7 @@ namespace crow
         /// Take the parsed HTTP request data and convert it to a \ref crow.request
         request to_request() const
         {
-            return request{(HTTPMethod)method, std::move(raw_url), std::move(url), std::move(url_params), std::move(headers), std::move(body)};
+            return request{static_cast<HTTPMethod>(method), std::move(raw_url), std::move(url), std::move(url_params), std::move(headers), std::move(body)};
         }
 
 		bool is_upgrade() const

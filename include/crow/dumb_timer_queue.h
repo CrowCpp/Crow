@@ -12,6 +12,7 @@ namespace crow
 {
     namespace detail 
     {
+
         /// Fast timer queue for fixed tick value.
         class dumb_timer_queue
         {
@@ -26,7 +27,7 @@ namespace crow
                 if (!self)
                     return;
 
-                unsigned int index = (unsigned int)(k.second - self->step_);
+                unsigned int index = static_cast<unsigned>(k.second - self->step_);
                 if (index < self->dq_.size())
                     self->dq_[index].second = nullptr;
             }

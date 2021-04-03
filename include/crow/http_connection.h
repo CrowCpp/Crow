@@ -317,7 +317,7 @@ namespace crow
                 res.is_alive_helper_ = [this]()->bool{ return adaptor_.is_open(); };
 
                 ctx_ = detail::context<Middlewares...>();
-                req.middleware_context = (void*)&ctx_;
+                req.middleware_context = static_cast<void*>(&ctx_);
                 req.io_service = &adaptor_.get_io_service();
                 detail::middleware_call_helper<0, decltype(ctx_), decltype(*middlewares_), Middlewares...>(*middlewares_, req, res, ctx_);
 
@@ -351,7 +351,7 @@ namespace crow
 
                 // call all after_handler of middlewares
                 detail::after_handlers_call_helper<
-                    ((int)sizeof...(Middlewares)-1),
+                    (static_cast<int>(sizeof...(Middlewares))-1),
                     decltype(ctx_),
                     decltype(*middlewares_)>
                 (*middlewares_, ctx_, req_, res);

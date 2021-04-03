@@ -172,7 +172,7 @@ namespace crow
                 uint8_t owned_{0};
                 friend std::ostream& operator << (std::ostream& os, const r_string& s)
                 {
-                    os << (std::string)s;
+                    os << static_cast<std::string>(s);
                     return os;
                 }
             private:
@@ -292,7 +292,7 @@ namespace crow
 
             explicit operator int() const
             {
-                return (int)i();
+                return static_cast<int>(i());
             }
 
             /// The type of the JSON value.
@@ -522,7 +522,7 @@ namespace crow
 #ifndef CROW_JSON_NO_ERROR_CHECK
                 if (t() != type::List)
                     throw std::runtime_error("value is not a list");
-                if (index >= (int)lsize_ || index < 0)
+                if (index >= static_cast<int>(lsize_) || index < 0)
                     throw std::runtime_error("list out of bound");
 #endif
                 return l_[index];
@@ -905,7 +905,7 @@ namespace crow
                         switch(*data)
                         {
                             case '0':
-                                state = (NumberParsingState)"\2\2\7\3\4\6\6"[state];
+                                state = static_cast<NumberParsingState>("\2\2\7\3\4\6\6"[state]);
                                 /*if (state == NumberParsingState::Minus || state == NumberParsingState::AfterMinus)
                                 {
                                     state = NumberParsingState::ZeroFirst;
@@ -926,7 +926,7 @@ namespace crow
                             case '1': case '2': case '3': 
                             case '4': case '5': case '6': 
                             case '7': case '8': case '9':
-                                state = (NumberParsingState)"\3\3\7\3\4\6\6"[state];
+                                state = static_cast<NumberParsingState>("\3\3\7\3\4\6\6"[state]);
                                 while(*(data+1) >= '0' && *(data+1) <= '9') data++;
                                 /*if (state == NumberParsingState::Minus || state == NumberParsingState::AfterMinus)
                                 {
@@ -946,7 +946,7 @@ namespace crow
                                     return {};*/
                                 break;
                             case '.':
-                                state = (NumberParsingState)"\7\7\4\4\7\7\7"[state];
+                                state = static_cast<NumberParsingState>("\7\7\4\4\7\7\7"[state]);
                                 /*
                                 if (state == NumberParsingState::Digits || state == NumberParsingState::ZeroFirst)
                                 {
@@ -957,7 +957,7 @@ namespace crow
                                 */
                                 break;
                             case '-':
-                                state = (NumberParsingState)"\1\7\7\7\7\6\7"[state];
+                                state = static_cast<NumberParsingState>("\1\7\7\7\7\6\7"[state]);
                                 /*if (state == NumberParsingState::Minus)
                                 {
                                     state = NumberParsingState::AfterMinus;
@@ -970,7 +970,7 @@ namespace crow
                                     return {};*/
                                 break;
                             case '+':
-                                state = (NumberParsingState)"\7\7\7\7\7\6\7"[state];
+                                state = static_cast<NumberParsingState>("\7\7\7\7\7\6\7"[state]);
                                 /*if (state == NumberParsingState::E)
                                 {
                                     state = NumberParsingState::DigitsAfterE;
@@ -979,7 +979,7 @@ namespace crow
                                     return {};*/
                                 break;
                             case 'e': case 'E':
-                                state = (NumberParsingState)"\7\7\7\5\5\7\7"[state];
+                                state = static_cast<NumberParsingState>("\7\7\7\5\5\7\7"[state]);
                                 /*if (state == NumberParsingState::Digits || 
                                     state == NumberParsingState::DigitsAfterPoints)
                                 {

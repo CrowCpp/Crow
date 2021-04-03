@@ -1,0 +1,163 @@
+kind: pipeline
+type: docker
+name: amd64-pull
+
+platform:
+  os: linux
+  arch: amd64
+
+steps:
+- name: build-and-test
+  image: ubuntu:focal
+  environment:
+    COVERALLS_REPO_TOKEN:
+      from_secret: coveralls_token
+
+  commands:
+  - export DEBIAN_FRONTEND=noninteractive
+  - apt-get -y update
+  - apt-get -y install libboost-all-dev doxygen mkdocs graphviz zlib1g-dev gcc clang make cmake python3 python3-pip git
+  - pip3 install mkdocs-material cpp-coveralls
+  - export CC=/usr/bin/gcc
+  - export CXX=/usr/bin/g++
+  - mkdir build
+  - cd build
+  - cmake ..
+  - make -j4 && ctest -V -j4
+  - cd ..
+  - export CC=/usr/bin/clang
+  - export CXX=/usr/bin/clang++
+  - mkdir build-clang
+  - cd build-clang
+  - cmake ..
+  - make -j4 && ctest -V -j4
+  - cd ..
+  - coveralls -i include --exclude-pattern .*/http_parser_merged.h --exclude-pattern .*/TinySHA1.hpp --gcov-options '\-lp'
+
+trigger:
+  branch:
+  - master
+  event:
+  - pull_request
+
+---
+kind: pipeline
+type: docker
+name: arm64-pull
+
+platform:
+  os: linux
+  arch: arm64
+
+steps:
+- name: build-and-test
+  image: ubuntu:focal
+  commands:
+  - export DEBIAN_FRONTEND=noninteractive
+  - apt-get -y update
+  - apt-get -y install libboost-all-dev zlib1g-dev gcc clang make cmake python3
+  - mkdir build
+  - cd build
+  - cmake --version
+  - cmake ..
+  - make -j4 && ctest -V -j4
+  - cd ..
+  - export CC=/usr/bin/clang
+  - export CXX=/usr/bin/clang++
+  - mkdir build-clang
+  - cd build-clang
+  - cmake ..
+  - make -j4 && ctest -V -j4
+
+trigger:
+  branch:
+  - master
+  event:
+  - pull_request
+
+---
+kind: pipeline
+type: docker
+name: amd64-master
+
+platform:
+  os: linux
+  arch: amd64
+
+steps:
+- name: build-and-test
+  image: ubuntu:focal
+  environment:
+    COVERALLS_REPO_TOKEN:
+      from_secret: coveralls_token
+    GH_REPO_TOKEN:
+      from_secret: repo_token
+    GH_REPO_NAME: crow
+    GH_REPO_REF: github.com/crowcpp/crow.git
+    THEME_REPO_REF: github.com/crowcpp/darxygen.git
+
+  commands:
+  - export DRONE_BUILD_DIR=$PWD
+  - export DEBIAN_FRONTEND=noninteractive
+  - export DOXYFILE=$DRONE_BUILD_DIR/Doxyfile
+  - apt-get -y update
+  - apt-get -y install libboost-all-dev doxygen mkdocs graphviz zlib1g-dev gcc clang make cmake python3 python3-pip git
+  - pip3 install mkdocs-material cpp-coveralls
+  - export CC=/usr/bin/gcc
+  - export CXX=/usr/bin/g++
+  - mkdir build
+  - cd build
+  - cmake ..
+  - make -j4 && ctest -V -j4
+  - cd ..
+  - export CC=/usr/bin/clang
+  - export CXX=/usr/bin/clang++
+  - mkdir build-clang
+  - cd build-clang
+  - cmake ..
+  - make -j4 && ctest -V -j4
+  - cd ..
+  - coveralls -i include --exclude-pattern .*/http_parser_merged.h --exclude-pattern .*/TinySHA1.hpp --gcov-options '\-lp'
+  - chmod +x scripts/generateDocumentationAndDeploy.sh
+  - ./scripts/generateDocumentationAndDeploy.sh
+
+trigger:
+  branch:
+  - master
+  event:
+  - push
+
+---
+kind: pipeline
+type: docker
+name: arm64-master
+
+platform:
+  os: linux
+  arch: arm64
+
+steps:
+- name: build-and-test
+  image: ubuntu:focal
+  commands:
+  - export DEBIAN_FRONTEND=noninteractive
+  - apt-get -y update
+  - apt-get -y install libboost-all-dev zlib1g-dev gcc clang make cmake python3
+  - mkdir build
+  - cd build
+  - cmake --version
+  - cmake ..
+  - make -j4 && ctest -V -j4
+  - cd ..
+  - export CC=/usr/bin/clang
+  - export CXX=/usr/bin/clang++
+  - mkdir build-clang
+  - cd build-clang
+  - cmake ..
+  - make -j4 && ctest -V -j4
+
+trigger:
+  branch:
+  - master
+  event:
+  - push
