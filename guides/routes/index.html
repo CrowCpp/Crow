@@ -844,6 +844,10 @@ It's worth nothing that the parameters also need to be defined in the handler, a
 you can see the first <code>&lt;int&gt;</code> is defined as <code>a</code> and the second as <code>b</code>. If you were to run this and call <code>http://example.com/add/1/2</code>, the result would be a page with <code>3</code>. Exciting!</p>
 <h2 id="methods">Methods</h2>
 <p>You can change the HTTP methods the route uses from just the default <code>GET</code> by using <code>method()</code>, your route macro should look like <code>CROW_ROUTE(app, "/add/&lt;int&gt;/&lt;int&gt;").methods(crow::HTTPMethod::GET, crow::HTTPMethod::PATCH)</code> or <code>CROW_ROUTE(app, "/add/&lt;int&gt;/&lt;int&gt;").methods("GET"_method, "PATCH"_method)</code>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Crow handles <code>HEAD</code> and <code>OPTIONS</code> methods automatically. So adding those to your handler has no effect.</p>
+</div>
 <h2 id="handler">Handler</h2>
 <p>Basically a piece of code that gets executed whenever the client calls the associated route, usually in the form of a <a href="https://en.cppreference.com/w/cpp/language/lambda">lambda expression</a>. It can be as simple as <code class="highlight"><span class="p">([](){</span><span class="k">return</span> <span class="s">&quot;Hello World&quot;</span><span class="p">})</span></code>.<br><br></p>
 <h3 id="request">Request</h3>

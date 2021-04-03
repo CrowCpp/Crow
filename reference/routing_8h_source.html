@@ -724,553 +724,614 @@ $(document).ready(function(){initNavTree('routing_8h_source.html',''); initResiz
 <div class="line"><a name="l00623"></a><span class="lineno">  623</span>&#160;        <a class="code" href="classcrow_1_1_trie.html">Trie</a>() : nodes_(1)</div>
 <div class="line"><a name="l00624"></a><span class="lineno">  624</span>&#160;        {</div>
 <div class="line"><a name="l00625"></a><span class="lineno">  625</span>&#160;        }</div>
-<div class="line"><a name="l00626"></a><span class="lineno">  626</span>&#160; </div>
-<div class="line"><a name="l00627"></a><span class="lineno">  627</span>&#160;<span class="keyword">private</span>:</div>
-<div class="line"><a name="l00628"></a><span class="lineno">  628</span>&#160;        <span class="keywordtype">void</span> optimizeNode(Node* node)</div>
+<div class="line"><a name="l00626"></a><span class="lineno">  626</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00627"></a><span class="lineno">  627</span>&#160;<span class="comment">        ///Check whether or not the trie is empty.</span></div>
+<div class="line"><a name="l00628"></a><span class="lineno"><a class="line" href="classcrow_1_1_trie.html#af2cada415bae6140779323f453a5a146">  628</a></span>&#160;<span class="comment"></span>        <span class="keywordtype">bool</span> <a class="code" href="classcrow_1_1_trie.html#af2cada415bae6140779323f453a5a146">is_empty</a>()</div>
 <div class="line"><a name="l00629"></a><span class="lineno">  629</span>&#160;        {</div>
-<div class="line"><a name="l00630"></a><span class="lineno">  630</span>&#160;            <span class="keywordflow">for</span>(<span class="keyword">auto</span> x : node-&gt;param_childrens)</div>
-<div class="line"><a name="l00631"></a><span class="lineno">  631</span>&#160;            {</div>
-<div class="line"><a name="l00632"></a><span class="lineno">  632</span>&#160;                <span class="keywordflow">if</span> (!x)</div>
-<div class="line"><a name="l00633"></a><span class="lineno">  633</span>&#160;                    <span class="keywordflow">continue</span>;</div>
-<div class="line"><a name="l00634"></a><span class="lineno">  634</span>&#160;                Node* child = &amp;nodes_[x];</div>
-<div class="line"><a name="l00635"></a><span class="lineno">  635</span>&#160;                optimizeNode(child);</div>
-<div class="line"><a name="l00636"></a><span class="lineno">  636</span>&#160;            }</div>
-<div class="line"><a name="l00637"></a><span class="lineno">  637</span>&#160;            <span class="keywordflow">if</span> (node-&gt;children.empty())</div>
-<div class="line"><a name="l00638"></a><span class="lineno">  638</span>&#160;                <span class="keywordflow">return</span>;</div>
-<div class="line"><a name="l00639"></a><span class="lineno">  639</span>&#160;            <span class="keywordtype">bool</span> mergeWithChild = <span class="keyword">true</span>;</div>
-<div class="line"><a name="l00640"></a><span class="lineno">  640</span>&#160;            <span class="keywordflow">for</span>(<span class="keyword">auto</span>&amp; kv : node-&gt;children)</div>
-<div class="line"><a name="l00641"></a><span class="lineno">  641</span>&#160;            {</div>
-<div class="line"><a name="l00642"></a><span class="lineno">  642</span>&#160;                Node* child = &amp;nodes_[kv.second];</div>
-<div class="line"><a name="l00643"></a><span class="lineno">  643</span>&#160;                <span class="keywordflow">if</span> (!child-&gt;IsSimpleNode())</div>
-<div class="line"><a name="l00644"></a><span class="lineno">  644</span>&#160;                {</div>
-<div class="line"><a name="l00645"></a><span class="lineno">  645</span>&#160;                    mergeWithChild = <span class="keyword">false</span>;</div>
-<div class="line"><a name="l00646"></a><span class="lineno">  646</span>&#160;                    <span class="keywordflow">break</span>;</div>
-<div class="line"><a name="l00647"></a><span class="lineno">  647</span>&#160;                }</div>
-<div class="line"><a name="l00648"></a><span class="lineno">  648</span>&#160;            }</div>
-<div class="line"><a name="l00649"></a><span class="lineno">  649</span>&#160;            <span class="keywordflow">if</span> (mergeWithChild)</div>
-<div class="line"><a name="l00650"></a><span class="lineno">  650</span>&#160;            {</div>
-<div class="line"><a name="l00651"></a><span class="lineno">  651</span>&#160;                decltype(node-&gt;children) merged;</div>
-<div class="line"><a name="l00652"></a><span class="lineno">  652</span>&#160;                for(auto&amp; kv : node-&gt;children)</div>
-<div class="line"><a name="l00653"></a><span class="lineno">  653</span>&#160;                {</div>
-<div class="line"><a name="l00654"></a><span class="lineno">  654</span>&#160;                    Node* child = &amp;nodes_[kv.second];</div>
-<div class="line"><a name="l00655"></a><span class="lineno">  655</span>&#160;                    <span class="keywordflow">for</span>(<span class="keyword">auto</span>&amp; child_kv : child-&gt;children)</div>
-<div class="line"><a name="l00656"></a><span class="lineno">  656</span>&#160;                    {</div>
-<div class="line"><a name="l00657"></a><span class="lineno">  657</span>&#160;                        merged[kv.first + child_kv.first] = child_kv.second;</div>
-<div class="line"><a name="l00658"></a><span class="lineno">  658</span>&#160;                    }</div>
-<div class="line"><a name="l00659"></a><span class="lineno">  659</span>&#160;                }</div>
-<div class="line"><a name="l00660"></a><span class="lineno">  660</span>&#160;                node-&gt;children = std::move(merged);</div>
-<div class="line"><a name="l00661"></a><span class="lineno">  661</span>&#160;                optimizeNode(node);</div>
-<div class="line"><a name="l00662"></a><span class="lineno">  662</span>&#160;            }</div>
-<div class="line"><a name="l00663"></a><span class="lineno">  663</span>&#160;            <span class="keywordflow">else</span></div>
-<div class="line"><a name="l00664"></a><span class="lineno">  664</span>&#160;            {</div>
-<div class="line"><a name="l00665"></a><span class="lineno">  665</span>&#160;                <span class="keywordflow">for</span>(<span class="keyword">auto</span>&amp; kv : node-&gt;children)</div>
-<div class="line"><a name="l00666"></a><span class="lineno">  666</span>&#160;                {</div>
-<div class="line"><a name="l00667"></a><span class="lineno">  667</span>&#160;                    Node* child = &amp;nodes_[kv.second];</div>
-<div class="line"><a name="l00668"></a><span class="lineno">  668</span>&#160;                    optimizeNode(child);</div>
-<div class="line"><a name="l00669"></a><span class="lineno">  669</span>&#160;                }</div>
-<div class="line"><a name="l00670"></a><span class="lineno">  670</span>&#160;            }</div>
-<div class="line"><a name="l00671"></a><span class="lineno">  671</span>&#160;        }</div>
-<div class="line"><a name="l00672"></a><span class="lineno">  672</span>&#160; </div>
-<div class="line"><a name="l00673"></a><span class="lineno">  673</span>&#160;        <span class="keywordtype">void</span> optimize()</div>
-<div class="line"><a name="l00674"></a><span class="lineno">  674</span>&#160;        {</div>
-<div class="line"><a name="l00675"></a><span class="lineno">  675</span>&#160;            optimizeNode(head());</div>
-<div class="line"><a name="l00676"></a><span class="lineno">  676</span>&#160;        }</div>
-<div class="line"><a name="l00677"></a><span class="lineno">  677</span>&#160; </div>
-<div class="line"><a name="l00678"></a><span class="lineno">  678</span>&#160;<span class="keyword">public</span>:</div>
-<div class="line"><a name="l00679"></a><span class="lineno">  679</span>&#160;        <span class="keywordtype">void</span> validate()</div>
+<div class="line"><a name="l00630"></a><span class="lineno">  630</span>&#160;            <span class="keywordflow">return</span> nodes_.size() &gt; 1;</div>
+<div class="line"><a name="l00631"></a><span class="lineno">  631</span>&#160;        }</div>
+<div class="line"><a name="l00632"></a><span class="lineno">  632</span>&#160; </div>
+<div class="line"><a name="l00633"></a><span class="lineno">  633</span>&#160;    <span class="keyword">private</span>:</div>
+<div class="line"><a name="l00634"></a><span class="lineno">  634</span>&#160;        <span class="keywordtype">void</span> optimizeNode(Node* node)</div>
+<div class="line"><a name="l00635"></a><span class="lineno">  635</span>&#160;        {</div>
+<div class="line"><a name="l00636"></a><span class="lineno">  636</span>&#160;            <span class="keywordflow">for</span>(<span class="keyword">auto</span> x : node-&gt;param_childrens)</div>
+<div class="line"><a name="l00637"></a><span class="lineno">  637</span>&#160;            {</div>
+<div class="line"><a name="l00638"></a><span class="lineno">  638</span>&#160;                <span class="keywordflow">if</span> (!x)</div>
+<div class="line"><a name="l00639"></a><span class="lineno">  639</span>&#160;                    <span class="keywordflow">continue</span>;</div>
+<div class="line"><a name="l00640"></a><span class="lineno">  640</span>&#160;                Node* child = &amp;nodes_[x];</div>
+<div class="line"><a name="l00641"></a><span class="lineno">  641</span>&#160;                optimizeNode(child);</div>
+<div class="line"><a name="l00642"></a><span class="lineno">  642</span>&#160;            }</div>
+<div class="line"><a name="l00643"></a><span class="lineno">  643</span>&#160;            <span class="keywordflow">if</span> (node-&gt;children.empty())</div>
+<div class="line"><a name="l00644"></a><span class="lineno">  644</span>&#160;                <span class="keywordflow">return</span>;</div>
+<div class="line"><a name="l00645"></a><span class="lineno">  645</span>&#160;            <span class="keywordtype">bool</span> mergeWithChild = <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00646"></a><span class="lineno">  646</span>&#160;            <span class="keywordflow">for</span>(<span class="keyword">auto</span>&amp; kv : node-&gt;children)</div>
+<div class="line"><a name="l00647"></a><span class="lineno">  647</span>&#160;            {</div>
+<div class="line"><a name="l00648"></a><span class="lineno">  648</span>&#160;                Node* child = &amp;nodes_[kv.second];</div>
+<div class="line"><a name="l00649"></a><span class="lineno">  649</span>&#160;                <span class="keywordflow">if</span> (!child-&gt;IsSimpleNode())</div>
+<div class="line"><a name="l00650"></a><span class="lineno">  650</span>&#160;                {</div>
+<div class="line"><a name="l00651"></a><span class="lineno">  651</span>&#160;                    mergeWithChild = <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00652"></a><span class="lineno">  652</span>&#160;                    <span class="keywordflow">break</span>;</div>
+<div class="line"><a name="l00653"></a><span class="lineno">  653</span>&#160;                }</div>
+<div class="line"><a name="l00654"></a><span class="lineno">  654</span>&#160;            }</div>
+<div class="line"><a name="l00655"></a><span class="lineno">  655</span>&#160;            <span class="keywordflow">if</span> (mergeWithChild)</div>
+<div class="line"><a name="l00656"></a><span class="lineno">  656</span>&#160;            {</div>
+<div class="line"><a name="l00657"></a><span class="lineno">  657</span>&#160;                decltype(node-&gt;children) merged;</div>
+<div class="line"><a name="l00658"></a><span class="lineno">  658</span>&#160;                for(auto&amp; kv : node-&gt;children)</div>
+<div class="line"><a name="l00659"></a><span class="lineno">  659</span>&#160;                {</div>
+<div class="line"><a name="l00660"></a><span class="lineno">  660</span>&#160;                    Node* child = &amp;nodes_[kv.second];</div>
+<div class="line"><a name="l00661"></a><span class="lineno">  661</span>&#160;                    <span class="keywordflow">for</span>(<span class="keyword">auto</span>&amp; child_kv : child-&gt;children)</div>
+<div class="line"><a name="l00662"></a><span class="lineno">  662</span>&#160;                    {</div>
+<div class="line"><a name="l00663"></a><span class="lineno">  663</span>&#160;                        merged[kv.first + child_kv.first] = child_kv.second;</div>
+<div class="line"><a name="l00664"></a><span class="lineno">  664</span>&#160;                    }</div>
+<div class="line"><a name="l00665"></a><span class="lineno">  665</span>&#160;                }</div>
+<div class="line"><a name="l00666"></a><span class="lineno">  666</span>&#160;                node-&gt;children = std::move(merged);</div>
+<div class="line"><a name="l00667"></a><span class="lineno">  667</span>&#160;                optimizeNode(node);</div>
+<div class="line"><a name="l00668"></a><span class="lineno">  668</span>&#160;            }</div>
+<div class="line"><a name="l00669"></a><span class="lineno">  669</span>&#160;            <span class="keywordflow">else</span></div>
+<div class="line"><a name="l00670"></a><span class="lineno">  670</span>&#160;            {</div>
+<div class="line"><a name="l00671"></a><span class="lineno">  671</span>&#160;                <span class="keywordflow">for</span>(<span class="keyword">auto</span>&amp; kv : node-&gt;children)</div>
+<div class="line"><a name="l00672"></a><span class="lineno">  672</span>&#160;                {</div>
+<div class="line"><a name="l00673"></a><span class="lineno">  673</span>&#160;                    Node* child = &amp;nodes_[kv.second];</div>
+<div class="line"><a name="l00674"></a><span class="lineno">  674</span>&#160;                    optimizeNode(child);</div>
+<div class="line"><a name="l00675"></a><span class="lineno">  675</span>&#160;                }</div>
+<div class="line"><a name="l00676"></a><span class="lineno">  676</span>&#160;            }</div>
+<div class="line"><a name="l00677"></a><span class="lineno">  677</span>&#160;        }</div>
+<div class="line"><a name="l00678"></a><span class="lineno">  678</span>&#160; </div>
+<div class="line"><a name="l00679"></a><span class="lineno">  679</span>&#160;        <span class="keywordtype">void</span> optimize()</div>
 <div class="line"><a name="l00680"></a><span class="lineno">  680</span>&#160;        {</div>
-<div class="line"><a name="l00681"></a><span class="lineno">  681</span>&#160;            <span class="keywordflow">if</span> (!head()-&gt;IsSimpleNode())</div>
-<div class="line"><a name="l00682"></a><span class="lineno">  682</span>&#160;                <span class="keywordflow">throw</span> std::runtime_error(<span class="stringliteral">&quot;Internal error: Trie header should be simple!&quot;</span>);</div>
-<div class="line"><a name="l00683"></a><span class="lineno">  683</span>&#160;            optimize();</div>
-<div class="line"><a name="l00684"></a><span class="lineno">  684</span>&#160;        }</div>
-<div class="line"><a name="l00685"></a><span class="lineno">  685</span>&#160; </div>
-<div class="line"><a name="l00686"></a><span class="lineno">  686</span>&#160;        std::pair&lt;unsigned, routing_params&gt; find(<span class="keyword">const</span> std::string&amp; req_url, <span class="keyword">const</span> Node* node = <span class="keyword">nullptr</span>, <span class="keywordtype">unsigned</span> pos = 0, routing_params* params = <span class="keyword">nullptr</span>)<span class="keyword"> const</span></div>
-<div class="line"><a name="l00687"></a><span class="lineno">  687</span>&#160;<span class="keyword">        </span>{</div>
-<div class="line"><a name="l00688"></a><span class="lineno">  688</span>&#160;            routing_params empty;</div>
-<div class="line"><a name="l00689"></a><span class="lineno">  689</span>&#160;            <span class="keywordflow">if</span> (params == <span class="keyword">nullptr</span>)</div>
-<div class="line"><a name="l00690"></a><span class="lineno">  690</span>&#160;                params = &amp;empty;</div>
+<div class="line"><a name="l00681"></a><span class="lineno">  681</span>&#160;            optimizeNode(head());</div>
+<div class="line"><a name="l00682"></a><span class="lineno">  682</span>&#160;        }</div>
+<div class="line"><a name="l00683"></a><span class="lineno">  683</span>&#160; </div>
+<div class="line"><a name="l00684"></a><span class="lineno">  684</span>&#160;    <span class="keyword">public</span>:</div>
+<div class="line"><a name="l00685"></a><span class="lineno">  685</span>&#160;        <span class="keywordtype">void</span> validate()</div>
+<div class="line"><a name="l00686"></a><span class="lineno">  686</span>&#160;        {</div>
+<div class="line"><a name="l00687"></a><span class="lineno">  687</span>&#160;            <span class="keywordflow">if</span> (!head()-&gt;IsSimpleNode())</div>
+<div class="line"><a name="l00688"></a><span class="lineno">  688</span>&#160;                <span class="keywordflow">throw</span> std::runtime_error(<span class="stringliteral">&quot;Internal error: Trie header should be simple!&quot;</span>);</div>
+<div class="line"><a name="l00689"></a><span class="lineno">  689</span>&#160;            optimize();</div>
+<div class="line"><a name="l00690"></a><span class="lineno">  690</span>&#160;        }</div>
 <div class="line"><a name="l00691"></a><span class="lineno">  691</span>&#160; </div>
-<div class="line"><a name="l00692"></a><span class="lineno">  692</span>&#160;            <span class="keywordtype">unsigned</span> found{};</div>
-<div class="line"><a name="l00693"></a><span class="lineno">  693</span>&#160;            routing_params match_params;</div>
-<div class="line"><a name="l00694"></a><span class="lineno">  694</span>&#160; </div>
-<div class="line"><a name="l00695"></a><span class="lineno">  695</span>&#160;            <span class="keywordflow">if</span> (node == <span class="keyword">nullptr</span>)</div>
-<div class="line"><a name="l00696"></a><span class="lineno">  696</span>&#160;                node = head();</div>
-<div class="line"><a name="l00697"></a><span class="lineno">  697</span>&#160;            <span class="keywordflow">if</span> (pos == req_url.size())</div>
-<div class="line"><a name="l00698"></a><span class="lineno">  698</span>&#160;                <span class="keywordflow">return</span> {node-&gt;rule_index, *params};</div>
-<div class="line"><a name="l00699"></a><span class="lineno">  699</span>&#160; </div>
-<div class="line"><a name="l00700"></a><span class="lineno">  700</span>&#160;            <span class="keyword">auto</span> update_found = [&amp;found, &amp;match_params](std::pair&lt;unsigned, routing_params&gt;&amp; ret)</div>
-<div class="line"><a name="l00701"></a><span class="lineno">  701</span>&#160;            {</div>
-<div class="line"><a name="l00702"></a><span class="lineno">  702</span>&#160;                <span class="keywordflow">if</span> (ret.first &amp;&amp; (!found || found &gt; ret.first))</div>
-<div class="line"><a name="l00703"></a><span class="lineno">  703</span>&#160;                {</div>
-<div class="line"><a name="l00704"></a><span class="lineno">  704</span>&#160;                    found = ret.first;</div>
-<div class="line"><a name="l00705"></a><span class="lineno">  705</span>&#160;                    match_params = std::move(ret.second);</div>
-<div class="line"><a name="l00706"></a><span class="lineno">  706</span>&#160;                }</div>
-<div class="line"><a name="l00707"></a><span class="lineno">  707</span>&#160;            };</div>
-<div class="line"><a name="l00708"></a><span class="lineno">  708</span>&#160; </div>
-<div class="line"><a name="l00709"></a><span class="lineno">  709</span>&#160;            <span class="keywordflow">if</span> (node-&gt;param_childrens[<span class="keyword">static_cast&lt;</span><span class="keywordtype">int</span><span class="keyword">&gt;</span>(ParamType::INT)])</div>
-<div class="line"><a name="l00710"></a><span class="lineno">  710</span>&#160;            {</div>
-<div class="line"><a name="l00711"></a><span class="lineno">  711</span>&#160;                <span class="keywordtype">char</span> c = req_url[pos];</div>
-<div class="line"><a name="l00712"></a><span class="lineno">  712</span>&#160;                <span class="keywordflow">if</span> ((c &gt;= <span class="charliteral">&#39;0&#39;</span> &amp;&amp; c &lt;= <span class="charliteral">&#39;9&#39;</span>) || c == <span class="charliteral">&#39;+&#39;</span> || c == <span class="charliteral">&#39;-&#39;</span>)</div>
-<div class="line"><a name="l00713"></a><span class="lineno">  713</span>&#160;                {</div>
-<div class="line"><a name="l00714"></a><span class="lineno">  714</span>&#160;                    <span class="keywordtype">char</span>* eptr;</div>
-<div class="line"><a name="l00715"></a><span class="lineno">  715</span>&#160;                    errno = 0;</div>
-<div class="line"><a name="l00716"></a><span class="lineno">  716</span>&#160;                    <span class="keywordtype">long</span> <span class="keywordtype">long</span> <span class="keywordtype">int</span> value = strtoll(req_url.data()+pos, &amp;eptr, 10);</div>
-<div class="line"><a name="l00717"></a><span class="lineno">  717</span>&#160;                    <span class="keywordflow">if</span> (errno != ERANGE &amp;&amp; eptr != req_url.data()+pos)</div>
-<div class="line"><a name="l00718"></a><span class="lineno">  718</span>&#160;                    {</div>
-<div class="line"><a name="l00719"></a><span class="lineno">  719</span>&#160;                        params-&gt;int_params.push_back(value);</div>
-<div class="line"><a name="l00720"></a><span class="lineno">  720</span>&#160;                        <span class="keyword">auto</span> ret = find(req_url, &amp;nodes_[node-&gt;param_childrens[<span class="keyword">static_cast&lt;</span><span class="keywordtype">int</span><span class="keyword">&gt;</span>(ParamType::INT)]], eptr - req_url.data(), params);</div>
-<div class="line"><a name="l00721"></a><span class="lineno">  721</span>&#160;                        update_found(ret);</div>
-<div class="line"><a name="l00722"></a><span class="lineno">  722</span>&#160;                        params-&gt;int_params.pop_back();</div>
-<div class="line"><a name="l00723"></a><span class="lineno">  723</span>&#160;                    }</div>
-<div class="line"><a name="l00724"></a><span class="lineno">  724</span>&#160;                }</div>
-<div class="line"><a name="l00725"></a><span class="lineno">  725</span>&#160;            }</div>
-<div class="line"><a name="l00726"></a><span class="lineno">  726</span>&#160; </div>
-<div class="line"><a name="l00727"></a><span class="lineno">  727</span>&#160;            <span class="keywordflow">if</span> (node-&gt;param_childrens[<span class="keyword">static_cast&lt;</span><span class="keywordtype">int</span><span class="keyword">&gt;</span>(ParamType::UINT)])</div>
-<div class="line"><a name="l00728"></a><span class="lineno">  728</span>&#160;            {</div>
-<div class="line"><a name="l00729"></a><span class="lineno">  729</span>&#160;                <span class="keywordtype">char</span> c = req_url[pos];</div>
-<div class="line"><a name="l00730"></a><span class="lineno">  730</span>&#160;                <span class="keywordflow">if</span> ((c &gt;= <span class="charliteral">&#39;0&#39;</span> &amp;&amp; c &lt;= <span class="charliteral">&#39;9&#39;</span>) || c == <span class="charliteral">&#39;+&#39;</span>)</div>
-<div class="line"><a name="l00731"></a><span class="lineno">  731</span>&#160;                {</div>
-<div class="line"><a name="l00732"></a><span class="lineno">  732</span>&#160;                    <span class="keywordtype">char</span>* eptr;</div>
-<div class="line"><a name="l00733"></a><span class="lineno">  733</span>&#160;                    errno = 0;</div>
-<div class="line"><a name="l00734"></a><span class="lineno">  734</span>&#160;                    <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> <span class="keywordtype">long</span> <span class="keywordtype">int</span> value = strtoull(req_url.data()+pos, &amp;eptr, 10);</div>
-<div class="line"><a name="l00735"></a><span class="lineno">  735</span>&#160;                    <span class="keywordflow">if</span> (errno != ERANGE &amp;&amp; eptr != req_url.data()+pos)</div>
-<div class="line"><a name="l00736"></a><span class="lineno">  736</span>&#160;                    {</div>
-<div class="line"><a name="l00737"></a><span class="lineno">  737</span>&#160;                        params-&gt;uint_params.push_back(value);</div>
-<div class="line"><a name="l00738"></a><span class="lineno">  738</span>&#160;                        <span class="keyword">auto</span> ret = find(req_url, &amp;nodes_[node-&gt;param_childrens[<span class="keyword">static_cast&lt;</span><span class="keywordtype">int</span><span class="keyword">&gt;</span>(ParamType::UINT)]], eptr - req_url.data(), params);</div>
-<div class="line"><a name="l00739"></a><span class="lineno">  739</span>&#160;                        update_found(ret);</div>
-<div class="line"><a name="l00740"></a><span class="lineno">  740</span>&#160;                        params-&gt;uint_params.pop_back();</div>
-<div class="line"><a name="l00741"></a><span class="lineno">  741</span>&#160;                    }</div>
-<div class="line"><a name="l00742"></a><span class="lineno">  742</span>&#160;                }</div>
-<div class="line"><a name="l00743"></a><span class="lineno">  743</span>&#160;            }</div>
-<div class="line"><a name="l00744"></a><span class="lineno">  744</span>&#160; </div>
-<div class="line"><a name="l00745"></a><span class="lineno">  745</span>&#160;            <span class="keywordflow">if</span> (node-&gt;param_childrens[<span class="keyword">static_cast&lt;</span><span class="keywordtype">int</span><span class="keyword">&gt;</span>(ParamType::DOUBLE)])</div>
-<div class="line"><a name="l00746"></a><span class="lineno">  746</span>&#160;            {</div>
-<div class="line"><a name="l00747"></a><span class="lineno">  747</span>&#160;                <span class="keywordtype">char</span> c = req_url[pos];</div>
-<div class="line"><a name="l00748"></a><span class="lineno">  748</span>&#160;                <span class="keywordflow">if</span> ((c &gt;= <span class="charliteral">&#39;0&#39;</span> &amp;&amp; c &lt;= <span class="charliteral">&#39;9&#39;</span>) || c == <span class="charliteral">&#39;+&#39;</span> || c == <span class="charliteral">&#39;-&#39;</span> || c == <span class="charliteral">&#39;.&#39;</span>)</div>
-<div class="line"><a name="l00749"></a><span class="lineno">  749</span>&#160;                {</div>
-<div class="line"><a name="l00750"></a><span class="lineno">  750</span>&#160;                    <span class="keywordtype">char</span>* eptr;</div>
-<div class="line"><a name="l00751"></a><span class="lineno">  751</span>&#160;                    errno = 0;</div>
-<div class="line"><a name="l00752"></a><span class="lineno">  752</span>&#160;                    <span class="keywordtype">double</span> value = strtod(req_url.data()+pos, &amp;eptr);</div>
-<div class="line"><a name="l00753"></a><span class="lineno">  753</span>&#160;                    <span class="keywordflow">if</span> (errno != ERANGE &amp;&amp; eptr != req_url.data()+pos)</div>
-<div class="line"><a name="l00754"></a><span class="lineno">  754</span>&#160;                    {</div>
-<div class="line"><a name="l00755"></a><span class="lineno">  755</span>&#160;                        params-&gt;double_params.push_back(value);</div>
-<div class="line"><a name="l00756"></a><span class="lineno">  756</span>&#160;                        <span class="keyword">auto</span> ret = find(req_url, &amp;nodes_[node-&gt;param_childrens[<span class="keyword">static_cast&lt;</span><span class="keywordtype">int</span><span class="keyword">&gt;</span>(ParamType::DOUBLE)]], eptr - req_url.data(), params);</div>
-<div class="line"><a name="l00757"></a><span class="lineno">  757</span>&#160;                        update_found(ret);</div>
-<div class="line"><a name="l00758"></a><span class="lineno">  758</span>&#160;                        params-&gt;double_params.pop_back();</div>
-<div class="line"><a name="l00759"></a><span class="lineno">  759</span>&#160;                    }</div>
-<div class="line"><a name="l00760"></a><span class="lineno">  760</span>&#160;                }</div>
-<div class="line"><a name="l00761"></a><span class="lineno">  761</span>&#160;            }</div>
-<div class="line"><a name="l00762"></a><span class="lineno">  762</span>&#160; </div>
-<div class="line"><a name="l00763"></a><span class="lineno">  763</span>&#160;            <span class="keywordflow">if</span> (node-&gt;param_childrens[<span class="keyword">static_cast&lt;</span><span class="keywordtype">int</span><span class="keyword">&gt;</span>(ParamType::STRING)])</div>
-<div class="line"><a name="l00764"></a><span class="lineno">  764</span>&#160;            {</div>
-<div class="line"><a name="l00765"></a><span class="lineno">  765</span>&#160;                <span class="keywordtype">size_t</span> epos = pos;</div>
-<div class="line"><a name="l00766"></a><span class="lineno">  766</span>&#160;                <span class="keywordflow">for</span>(; epos &lt; req_url.size(); epos ++)</div>
-<div class="line"><a name="l00767"></a><span class="lineno">  767</span>&#160;                {</div>
-<div class="line"><a name="l00768"></a><span class="lineno">  768</span>&#160;                    <span class="keywordflow">if</span> (req_url[epos] == <span class="charliteral">&#39;/&#39;</span>)</div>
-<div class="line"><a name="l00769"></a><span class="lineno">  769</span>&#160;                        <span class="keywordflow">break</span>;</div>
-<div class="line"><a name="l00770"></a><span class="lineno">  770</span>&#160;                }</div>
-<div class="line"><a name="l00771"></a><span class="lineno">  771</span>&#160; </div>
-<div class="line"><a name="l00772"></a><span class="lineno">  772</span>&#160;                <span class="keywordflow">if</span> (epos != pos)</div>
+<div class="line"><a name="l00692"></a><span class="lineno">  692</span>&#160;        std::pair&lt;unsigned, routing_params&gt; find(<span class="keyword">const</span> std::string&amp; req_url, <span class="keyword">const</span> Node* node = <span class="keyword">nullptr</span>, <span class="keywordtype">unsigned</span> pos = 0, routing_params* params = <span class="keyword">nullptr</span>)<span class="keyword"> const</span></div>
+<div class="line"><a name="l00693"></a><span class="lineno">  693</span>&#160;<span class="keyword">        </span>{</div>
+<div class="line"><a name="l00694"></a><span class="lineno">  694</span>&#160;            routing_params empty;</div>
+<div class="line"><a name="l00695"></a><span class="lineno">  695</span>&#160;            <span class="keywordflow">if</span> (params == <span class="keyword">nullptr</span>)</div>
+<div class="line"><a name="l00696"></a><span class="lineno">  696</span>&#160;                params = &amp;empty;</div>
+<div class="line"><a name="l00697"></a><span class="lineno">  697</span>&#160; </div>
+<div class="line"><a name="l00698"></a><span class="lineno">  698</span>&#160;            <span class="keywordtype">unsigned</span> found{};</div>
+<div class="line"><a name="l00699"></a><span class="lineno">  699</span>&#160;            routing_params match_params;</div>
+<div class="line"><a name="l00700"></a><span class="lineno">  700</span>&#160; </div>
+<div class="line"><a name="l00701"></a><span class="lineno">  701</span>&#160;            <span class="keywordflow">if</span> (node == <span class="keyword">nullptr</span>)</div>
+<div class="line"><a name="l00702"></a><span class="lineno">  702</span>&#160;                node = head();</div>
+<div class="line"><a name="l00703"></a><span class="lineno">  703</span>&#160;            <span class="keywordflow">if</span> (pos == req_url.size())</div>
+<div class="line"><a name="l00704"></a><span class="lineno">  704</span>&#160;                <span class="keywordflow">return</span> {node-&gt;rule_index, *params};</div>
+<div class="line"><a name="l00705"></a><span class="lineno">  705</span>&#160; </div>
+<div class="line"><a name="l00706"></a><span class="lineno">  706</span>&#160;            <span class="keyword">auto</span> update_found = [&amp;found, &amp;match_params](std::pair&lt;unsigned, routing_params&gt;&amp; ret)</div>
+<div class="line"><a name="l00707"></a><span class="lineno">  707</span>&#160;            {</div>
+<div class="line"><a name="l00708"></a><span class="lineno">  708</span>&#160;                <span class="keywordflow">if</span> (ret.first &amp;&amp; (!found || found &gt; ret.first))</div>
+<div class="line"><a name="l00709"></a><span class="lineno">  709</span>&#160;                {</div>
+<div class="line"><a name="l00710"></a><span class="lineno">  710</span>&#160;                    found = ret.first;</div>
+<div class="line"><a name="l00711"></a><span class="lineno">  711</span>&#160;                    match_params = std::move(ret.second);</div>
+<div class="line"><a name="l00712"></a><span class="lineno">  712</span>&#160;                }</div>
+<div class="line"><a name="l00713"></a><span class="lineno">  713</span>&#160;            };</div>
+<div class="line"><a name="l00714"></a><span class="lineno">  714</span>&#160; </div>
+<div class="line"><a name="l00715"></a><span class="lineno">  715</span>&#160;            <span class="keywordflow">if</span> (node-&gt;param_childrens[<span class="keyword">static_cast&lt;</span><span class="keywordtype">int</span><span class="keyword">&gt;</span>(ParamType::INT)])</div>
+<div class="line"><a name="l00716"></a><span class="lineno">  716</span>&#160;            {</div>
+<div class="line"><a name="l00717"></a><span class="lineno">  717</span>&#160;                <span class="keywordtype">char</span> c = req_url[pos];</div>
+<div class="line"><a name="l00718"></a><span class="lineno">  718</span>&#160;                <span class="keywordflow">if</span> ((c &gt;= <span class="charliteral">&#39;0&#39;</span> &amp;&amp; c &lt;= <span class="charliteral">&#39;9&#39;</span>) || c == <span class="charliteral">&#39;+&#39;</span> || c == <span class="charliteral">&#39;-&#39;</span>)</div>
+<div class="line"><a name="l00719"></a><span class="lineno">  719</span>&#160;                {</div>
+<div class="line"><a name="l00720"></a><span class="lineno">  720</span>&#160;                    <span class="keywordtype">char</span>* eptr;</div>
+<div class="line"><a name="l00721"></a><span class="lineno">  721</span>&#160;                    errno = 0;</div>
+<div class="line"><a name="l00722"></a><span class="lineno">  722</span>&#160;                    <span class="keywordtype">long</span> <span class="keywordtype">long</span> <span class="keywordtype">int</span> value = strtoll(req_url.data()+pos, &amp;eptr, 10);</div>
+<div class="line"><a name="l00723"></a><span class="lineno">  723</span>&#160;                    <span class="keywordflow">if</span> (errno != ERANGE &amp;&amp; eptr != req_url.data()+pos)</div>
+<div class="line"><a name="l00724"></a><span class="lineno">  724</span>&#160;                    {</div>
+<div class="line"><a name="l00725"></a><span class="lineno">  725</span>&#160;                        params-&gt;int_params.push_back(value);</div>
+<div class="line"><a name="l00726"></a><span class="lineno">  726</span>&#160;                        <span class="keyword">auto</span> ret = find(req_url, &amp;nodes_[node-&gt;param_childrens[<span class="keyword">static_cast&lt;</span><span class="keywordtype">int</span><span class="keyword">&gt;</span>(ParamType::INT)]], eptr - req_url.data(), params);</div>
+<div class="line"><a name="l00727"></a><span class="lineno">  727</span>&#160;                        update_found(ret);</div>
+<div class="line"><a name="l00728"></a><span class="lineno">  728</span>&#160;                        params-&gt;int_params.pop_back();</div>
+<div class="line"><a name="l00729"></a><span class="lineno">  729</span>&#160;                    }</div>
+<div class="line"><a name="l00730"></a><span class="lineno">  730</span>&#160;                }</div>
+<div class="line"><a name="l00731"></a><span class="lineno">  731</span>&#160;            }</div>
+<div class="line"><a name="l00732"></a><span class="lineno">  732</span>&#160; </div>
+<div class="line"><a name="l00733"></a><span class="lineno">  733</span>&#160;            <span class="keywordflow">if</span> (node-&gt;param_childrens[<span class="keyword">static_cast&lt;</span><span class="keywordtype">int</span><span class="keyword">&gt;</span>(ParamType::UINT)])</div>
+<div class="line"><a name="l00734"></a><span class="lineno">  734</span>&#160;            {</div>
+<div class="line"><a name="l00735"></a><span class="lineno">  735</span>&#160;                <span class="keywordtype">char</span> c = req_url[pos];</div>
+<div class="line"><a name="l00736"></a><span class="lineno">  736</span>&#160;                <span class="keywordflow">if</span> ((c &gt;= <span class="charliteral">&#39;0&#39;</span> &amp;&amp; c &lt;= <span class="charliteral">&#39;9&#39;</span>) || c == <span class="charliteral">&#39;+&#39;</span>)</div>
+<div class="line"><a name="l00737"></a><span class="lineno">  737</span>&#160;                {</div>
+<div class="line"><a name="l00738"></a><span class="lineno">  738</span>&#160;                    <span class="keywordtype">char</span>* eptr;</div>
+<div class="line"><a name="l00739"></a><span class="lineno">  739</span>&#160;                    errno = 0;</div>
+<div class="line"><a name="l00740"></a><span class="lineno">  740</span>&#160;                    <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> <span class="keywordtype">long</span> <span class="keywordtype">int</span> value = strtoull(req_url.data()+pos, &amp;eptr, 10);</div>
+<div class="line"><a name="l00741"></a><span class="lineno">  741</span>&#160;                    <span class="keywordflow">if</span> (errno != ERANGE &amp;&amp; eptr != req_url.data()+pos)</div>
+<div class="line"><a name="l00742"></a><span class="lineno">  742</span>&#160;                    {</div>
+<div class="line"><a name="l00743"></a><span class="lineno">  743</span>&#160;                        params-&gt;uint_params.push_back(value);</div>
+<div class="line"><a name="l00744"></a><span class="lineno">  744</span>&#160;                        <span class="keyword">auto</span> ret = find(req_url, &amp;nodes_[node-&gt;param_childrens[<span class="keyword">static_cast&lt;</span><span class="keywordtype">int</span><span class="keyword">&gt;</span>(ParamType::UINT)]], eptr - req_url.data(), params);</div>
+<div class="line"><a name="l00745"></a><span class="lineno">  745</span>&#160;                        update_found(ret);</div>
+<div class="line"><a name="l00746"></a><span class="lineno">  746</span>&#160;                        params-&gt;uint_params.pop_back();</div>
+<div class="line"><a name="l00747"></a><span class="lineno">  747</span>&#160;                    }</div>
+<div class="line"><a name="l00748"></a><span class="lineno">  748</span>&#160;                }</div>
+<div class="line"><a name="l00749"></a><span class="lineno">  749</span>&#160;            }</div>
+<div class="line"><a name="l00750"></a><span class="lineno">  750</span>&#160; </div>
+<div class="line"><a name="l00751"></a><span class="lineno">  751</span>&#160;            <span class="keywordflow">if</span> (node-&gt;param_childrens[<span class="keyword">static_cast&lt;</span><span class="keywordtype">int</span><span class="keyword">&gt;</span>(ParamType::DOUBLE)])</div>
+<div class="line"><a name="l00752"></a><span class="lineno">  752</span>&#160;            {</div>
+<div class="line"><a name="l00753"></a><span class="lineno">  753</span>&#160;                <span class="keywordtype">char</span> c = req_url[pos];</div>
+<div class="line"><a name="l00754"></a><span class="lineno">  754</span>&#160;                <span class="keywordflow">if</span> ((c &gt;= <span class="charliteral">&#39;0&#39;</span> &amp;&amp; c &lt;= <span class="charliteral">&#39;9&#39;</span>) || c == <span class="charliteral">&#39;+&#39;</span> || c == <span class="charliteral">&#39;-&#39;</span> || c == <span class="charliteral">&#39;.&#39;</span>)</div>
+<div class="line"><a name="l00755"></a><span class="lineno">  755</span>&#160;                {</div>
+<div class="line"><a name="l00756"></a><span class="lineno">  756</span>&#160;                    <span class="keywordtype">char</span>* eptr;</div>
+<div class="line"><a name="l00757"></a><span class="lineno">  757</span>&#160;                    errno = 0;</div>
+<div class="line"><a name="l00758"></a><span class="lineno">  758</span>&#160;                    <span class="keywordtype">double</span> value = strtod(req_url.data()+pos, &amp;eptr);</div>
+<div class="line"><a name="l00759"></a><span class="lineno">  759</span>&#160;                    <span class="keywordflow">if</span> (errno != ERANGE &amp;&amp; eptr != req_url.data()+pos)</div>
+<div class="line"><a name="l00760"></a><span class="lineno">  760</span>&#160;                    {</div>
+<div class="line"><a name="l00761"></a><span class="lineno">  761</span>&#160;                        params-&gt;double_params.push_back(value);</div>
+<div class="line"><a name="l00762"></a><span class="lineno">  762</span>&#160;                        <span class="keyword">auto</span> ret = find(req_url, &amp;nodes_[node-&gt;param_childrens[<span class="keyword">static_cast&lt;</span><span class="keywordtype">int</span><span class="keyword">&gt;</span>(ParamType::DOUBLE)]], eptr - req_url.data(), params);</div>
+<div class="line"><a name="l00763"></a><span class="lineno">  763</span>&#160;                        update_found(ret);</div>
+<div class="line"><a name="l00764"></a><span class="lineno">  764</span>&#160;                        params-&gt;double_params.pop_back();</div>
+<div class="line"><a name="l00765"></a><span class="lineno">  765</span>&#160;                    }</div>
+<div class="line"><a name="l00766"></a><span class="lineno">  766</span>&#160;                }</div>
+<div class="line"><a name="l00767"></a><span class="lineno">  767</span>&#160;            }</div>
+<div class="line"><a name="l00768"></a><span class="lineno">  768</span>&#160; </div>
+<div class="line"><a name="l00769"></a><span class="lineno">  769</span>&#160;            <span class="keywordflow">if</span> (node-&gt;param_childrens[<span class="keyword">static_cast&lt;</span><span class="keywordtype">int</span><span class="keyword">&gt;</span>(ParamType::STRING)])</div>
+<div class="line"><a name="l00770"></a><span class="lineno">  770</span>&#160;            {</div>
+<div class="line"><a name="l00771"></a><span class="lineno">  771</span>&#160;                <span class="keywordtype">size_t</span> epos = pos;</div>
+<div class="line"><a name="l00772"></a><span class="lineno">  772</span>&#160;                <span class="keywordflow">for</span>(; epos &lt; req_url.size(); epos ++)</div>
 <div class="line"><a name="l00773"></a><span class="lineno">  773</span>&#160;                {</div>
-<div class="line"><a name="l00774"></a><span class="lineno">  774</span>&#160;                    params-&gt;string_params.push_back(req_url.substr(pos, epos-pos));</div>
-<div class="line"><a name="l00775"></a><span class="lineno">  775</span>&#160;                    <span class="keyword">auto</span> ret = find(req_url, &amp;nodes_[node-&gt;param_childrens[<span class="keyword">static_cast&lt;</span><span class="keywordtype">int</span><span class="keyword">&gt;</span>(ParamType::STRING)]], epos, params);</div>
-<div class="line"><a name="l00776"></a><span class="lineno">  776</span>&#160;                    update_found(ret);</div>
-<div class="line"><a name="l00777"></a><span class="lineno">  777</span>&#160;                    params-&gt;string_params.pop_back();</div>
-<div class="line"><a name="l00778"></a><span class="lineno">  778</span>&#160;                }</div>
-<div class="line"><a name="l00779"></a><span class="lineno">  779</span>&#160;            }</div>
-<div class="line"><a name="l00780"></a><span class="lineno">  780</span>&#160; </div>
-<div class="line"><a name="l00781"></a><span class="lineno">  781</span>&#160;            <span class="keywordflow">if</span> (node-&gt;param_childrens[<span class="keyword">static_cast&lt;</span><span class="keywordtype">int</span><span class="keyword">&gt;</span>(ParamType::PATH)])</div>
-<div class="line"><a name="l00782"></a><span class="lineno">  782</span>&#160;            {</div>
-<div class="line"><a name="l00783"></a><span class="lineno">  783</span>&#160;                <span class="keywordtype">size_t</span> epos = req_url.size();</div>
-<div class="line"><a name="l00784"></a><span class="lineno">  784</span>&#160; </div>
-<div class="line"><a name="l00785"></a><span class="lineno">  785</span>&#160;                <span class="keywordflow">if</span> (epos != pos)</div>
-<div class="line"><a name="l00786"></a><span class="lineno">  786</span>&#160;                {</div>
-<div class="line"><a name="l00787"></a><span class="lineno">  787</span>&#160;                    params-&gt;string_params.push_back(req_url.substr(pos, epos-pos));</div>
-<div class="line"><a name="l00788"></a><span class="lineno">  788</span>&#160;                    <span class="keyword">auto</span> ret = find(req_url, &amp;nodes_[node-&gt;param_childrens[<span class="keyword">static_cast&lt;</span><span class="keywordtype">int</span><span class="keyword">&gt;</span>(ParamType::PATH)]], epos, params);</div>
-<div class="line"><a name="l00789"></a><span class="lineno">  789</span>&#160;                    update_found(ret);</div>
-<div class="line"><a name="l00790"></a><span class="lineno">  790</span>&#160;                    params-&gt;string_params.pop_back();</div>
-<div class="line"><a name="l00791"></a><span class="lineno">  791</span>&#160;                }</div>
-<div class="line"><a name="l00792"></a><span class="lineno">  792</span>&#160;            }</div>
-<div class="line"><a name="l00793"></a><span class="lineno">  793</span>&#160; </div>
-<div class="line"><a name="l00794"></a><span class="lineno">  794</span>&#160;            <span class="keywordflow">for</span>(<span class="keyword">auto</span>&amp; kv : node-&gt;children)</div>
-<div class="line"><a name="l00795"></a><span class="lineno">  795</span>&#160;            {</div>
-<div class="line"><a name="l00796"></a><span class="lineno">  796</span>&#160;                <span class="keyword">const</span> std::string&amp; fragment = kv.first;</div>
-<div class="line"><a name="l00797"></a><span class="lineno">  797</span>&#160;                <span class="keyword">const</span> Node* child = &amp;nodes_[kv.second];</div>
-<div class="line"><a name="l00798"></a><span class="lineno">  798</span>&#160; </div>
-<div class="line"><a name="l00799"></a><span class="lineno">  799</span>&#160;                <span class="keywordflow">if</span> (req_url.compare(pos, fragment.size(), fragment) == 0)</div>
-<div class="line"><a name="l00800"></a><span class="lineno">  800</span>&#160;                {</div>
-<div class="line"><a name="l00801"></a><span class="lineno">  801</span>&#160;                    <span class="keyword">auto</span> ret = find(req_url, child, pos + fragment.size(), params);</div>
-<div class="line"><a name="l00802"></a><span class="lineno">  802</span>&#160;                    update_found(ret);</div>
-<div class="line"><a name="l00803"></a><span class="lineno">  803</span>&#160;                }</div>
-<div class="line"><a name="l00804"></a><span class="lineno">  804</span>&#160;            }</div>
-<div class="line"><a name="l00805"></a><span class="lineno">  805</span>&#160; </div>
-<div class="line"><a name="l00806"></a><span class="lineno">  806</span>&#160;            <span class="keywordflow">return</span> {found, match_params};</div>
-<div class="line"><a name="l00807"></a><span class="lineno">  807</span>&#160;        }</div>
-<div class="line"><a name="l00808"></a><span class="lineno">  808</span>&#160; </div>
-<div class="line"><a name="l00809"></a><span class="lineno">  809</span>&#160;        <span class="keywordtype">void</span> add(<span class="keyword">const</span> std::string&amp; url, <span class="keywordtype">unsigned</span> rule_index)</div>
-<div class="line"><a name="l00810"></a><span class="lineno">  810</span>&#160;        {</div>
-<div class="line"><a name="l00811"></a><span class="lineno">  811</span>&#160;            <span class="keywordtype">unsigned</span> idx{0};</div>
-<div class="line"><a name="l00812"></a><span class="lineno">  812</span>&#160; </div>
-<div class="line"><a name="l00813"></a><span class="lineno">  813</span>&#160;            <span class="keywordflow">for</span>(<span class="keywordtype">unsigned</span> i = 0; i &lt; url.size(); i ++)</div>
-<div class="line"><a name="l00814"></a><span class="lineno">  814</span>&#160;            {</div>
-<div class="line"><a name="l00815"></a><span class="lineno">  815</span>&#160;                <span class="keywordtype">char</span> c = url[i];</div>
-<div class="line"><a name="l00816"></a><span class="lineno">  816</span>&#160;                <span class="keywordflow">if</span> (c == <span class="charliteral">&#39;&lt;&#39;</span>)</div>
-<div class="line"><a name="l00817"></a><span class="lineno">  817</span>&#160;                {</div>
-<div class="line"><a name="l00818"></a><span class="lineno">  818</span>&#160;                    <span class="keyword">static</span> <span class="keyword">struct </span>ParamTraits</div>
-<div class="line"><a name="l00819"></a><span class="lineno">  819</span>&#160;                    {</div>
-<div class="line"><a name="l00820"></a><span class="lineno">  820</span>&#160;                        ParamType type;</div>
-<div class="line"><a name="l00821"></a><span class="lineno">  821</span>&#160;                        std::string name;</div>
-<div class="line"><a name="l00822"></a><span class="lineno">  822</span>&#160;                    } paramTraits[] =</div>
-<div class="line"><a name="l00823"></a><span class="lineno">  823</span>&#160;                    {</div>
-<div class="line"><a name="l00824"></a><span class="lineno">  824</span>&#160;                        { ParamType::INT, <span class="stringliteral">&quot;&lt;int&gt;&quot;</span> },</div>
-<div class="line"><a name="l00825"></a><span class="lineno">  825</span>&#160;                        { ParamType::UINT, <span class="stringliteral">&quot;&lt;uint&gt;&quot;</span> },</div>
-<div class="line"><a name="l00826"></a><span class="lineno">  826</span>&#160;                        { ParamType::DOUBLE, <span class="stringliteral">&quot;&lt;float&gt;&quot;</span> },</div>
-<div class="line"><a name="l00827"></a><span class="lineno">  827</span>&#160;                        { ParamType::DOUBLE, <span class="stringliteral">&quot;&lt;double&gt;&quot;</span> },</div>
-<div class="line"><a name="l00828"></a><span class="lineno">  828</span>&#160;                        { ParamType::STRING, <span class="stringliteral">&quot;&lt;str&gt;&quot;</span> },</div>
-<div class="line"><a name="l00829"></a><span class="lineno">  829</span>&#160;                        { ParamType::STRING, <span class="stringliteral">&quot;&lt;string&gt;&quot;</span> },</div>
-<div class="line"><a name="l00830"></a><span class="lineno">  830</span>&#160;                        { ParamType::PATH, <span class="stringliteral">&quot;&lt;path&gt;&quot;</span> },</div>
-<div class="line"><a name="l00831"></a><span class="lineno">  831</span>&#160;                    };</div>
-<div class="line"><a name="l00832"></a><span class="lineno">  832</span>&#160; </div>
-<div class="line"><a name="l00833"></a><span class="lineno">  833</span>&#160;                    <span class="keywordflow">for</span>(<span class="keyword">auto</span>&amp; x:paramTraits)</div>
-<div class="line"><a name="l00834"></a><span class="lineno">  834</span>&#160;                    {</div>
-<div class="line"><a name="l00835"></a><span class="lineno">  835</span>&#160;                        <span class="keywordflow">if</span> (url.compare(i, x.name.size(), x.name) == 0)</div>
-<div class="line"><a name="l00836"></a><span class="lineno">  836</span>&#160;                        {</div>
-<div class="line"><a name="l00837"></a><span class="lineno">  837</span>&#160;                            <span class="keywordflow">if</span> (!nodes_[idx].param_childrens[<span class="keyword">static_cast&lt;</span><span class="keywordtype">int</span><span class="keyword">&gt;</span>(x.type)])</div>
-<div class="line"><a name="l00838"></a><span class="lineno">  838</span>&#160;                            {</div>
-<div class="line"><a name="l00839"></a><span class="lineno">  839</span>&#160;                                <span class="keyword">auto</span> new_node_idx = new_node();</div>
-<div class="line"><a name="l00840"></a><span class="lineno">  840</span>&#160;                                nodes_[idx].param_childrens[<span class="keyword">static_cast&lt;</span><span class="keywordtype">int</span><span class="keyword">&gt;</span>(x.type)] = new_node_idx;</div>
-<div class="line"><a name="l00841"></a><span class="lineno">  841</span>&#160;                            }</div>
-<div class="line"><a name="l00842"></a><span class="lineno">  842</span>&#160;                            idx = nodes_[idx].param_childrens[<span class="keyword">static_cast&lt;</span><span class="keywordtype">int</span><span class="keyword">&gt;</span>(x.type)];</div>
-<div class="line"><a name="l00843"></a><span class="lineno">  843</span>&#160;                            i += x.name.size();</div>
-<div class="line"><a name="l00844"></a><span class="lineno">  844</span>&#160;                            <span class="keywordflow">break</span>;</div>
-<div class="line"><a name="l00845"></a><span class="lineno">  845</span>&#160;                        }</div>
-<div class="line"><a name="l00846"></a><span class="lineno">  846</span>&#160;                    }</div>
-<div class="line"><a name="l00847"></a><span class="lineno">  847</span>&#160; </div>
-<div class="line"><a name="l00848"></a><span class="lineno">  848</span>&#160;                    i --;</div>
-<div class="line"><a name="l00849"></a><span class="lineno">  849</span>&#160;                }</div>
-<div class="line"><a name="l00850"></a><span class="lineno">  850</span>&#160;                <span class="keywordflow">else</span></div>
-<div class="line"><a name="l00851"></a><span class="lineno">  851</span>&#160;                {</div>
-<div class="line"><a name="l00852"></a><span class="lineno">  852</span>&#160;                    std::string piece(&amp;c, 1);</div>
-<div class="line"><a name="l00853"></a><span class="lineno">  853</span>&#160;                    <span class="keywordflow">if</span> (!nodes_[idx].children.count(piece))</div>
-<div class="line"><a name="l00854"></a><span class="lineno">  854</span>&#160;                    {</div>
-<div class="line"><a name="l00855"></a><span class="lineno">  855</span>&#160;                        <span class="keyword">auto</span> new_node_idx = new_node();</div>
-<div class="line"><a name="l00856"></a><span class="lineno">  856</span>&#160;                        nodes_[idx].children.emplace(piece, new_node_idx);</div>
-<div class="line"><a name="l00857"></a><span class="lineno">  857</span>&#160;                    }</div>
-<div class="line"><a name="l00858"></a><span class="lineno">  858</span>&#160;                    idx = nodes_[idx].children[piece];</div>
-<div class="line"><a name="l00859"></a><span class="lineno">  859</span>&#160;                }</div>
-<div class="line"><a name="l00860"></a><span class="lineno">  860</span>&#160;            }</div>
-<div class="line"><a name="l00861"></a><span class="lineno">  861</span>&#160;            <span class="keywordflow">if</span> (nodes_[idx].rule_index)</div>
-<div class="line"><a name="l00862"></a><span class="lineno">  862</span>&#160;                <span class="keywordflow">throw</span> std::runtime_error(<span class="stringliteral">&quot;handler already exists for &quot;</span> + url);</div>
-<div class="line"><a name="l00863"></a><span class="lineno">  863</span>&#160;            nodes_[idx].rule_index = rule_index;</div>
-<div class="line"><a name="l00864"></a><span class="lineno">  864</span>&#160;        }</div>
-<div class="line"><a name="l00865"></a><span class="lineno">  865</span>&#160;    <span class="keyword">private</span>:</div>
-<div class="line"><a name="l00866"></a><span class="lineno">  866</span>&#160;        <span class="keywordtype">void</span> debug_node_print(Node* n, <span class="keywordtype">int</span> level)</div>
-<div class="line"><a name="l00867"></a><span class="lineno">  867</span>&#160;        {</div>
-<div class="line"><a name="l00868"></a><span class="lineno">  868</span>&#160;            <span class="keywordflow">for</span>(<span class="keywordtype">int</span> i = 0; i &lt; static_cast&lt;int&gt;(ParamType::MAX); i ++)</div>
-<div class="line"><a name="l00869"></a><span class="lineno">  869</span>&#160;            {</div>
-<div class="line"><a name="l00870"></a><span class="lineno">  870</span>&#160;                <span class="keywordflow">if</span> (n-&gt;param_childrens[i])</div>
-<div class="line"><a name="l00871"></a><span class="lineno">  871</span>&#160;                {</div>
-<div class="line"><a name="l00872"></a><span class="lineno">  872</span>&#160;                    CROW_LOG_DEBUG &lt;&lt; std::string(2*level, <span class="charliteral">&#39; &#39;</span>) <span class="comment">/*&lt;&lt; &quot;(&quot;&lt;&lt;n-&gt;param_childrens[i]&lt;&lt;&quot;) &quot;*/</span>;</div>
-<div class="line"><a name="l00873"></a><span class="lineno">  873</span>&#160;                    <span class="keywordflow">switch</span>(<span class="keyword">static_cast&lt;</span>ParamType<span class="keyword">&gt;</span>(i))</div>
-<div class="line"><a name="l00874"></a><span class="lineno">  874</span>&#160;                    {</div>
-<div class="line"><a name="l00875"></a><span class="lineno">  875</span>&#160;                        <span class="keywordflow">case</span> ParamType::INT:</div>
-<div class="line"><a name="l00876"></a><span class="lineno">  876</span>&#160;                            CROW_LOG_DEBUG &lt;&lt; <span class="stringliteral">&quot;&lt;int&gt;&quot;</span>;</div>
-<div class="line"><a name="l00877"></a><span class="lineno">  877</span>&#160;                            <span class="keywordflow">break</span>;</div>
-<div class="line"><a name="l00878"></a><span class="lineno">  878</span>&#160;                        <span class="keywordflow">case</span> ParamType::UINT:</div>
-<div class="line"><a name="l00879"></a><span class="lineno">  879</span>&#160;                            CROW_LOG_DEBUG &lt;&lt; <span class="stringliteral">&quot;&lt;uint&gt;&quot;</span>;</div>
-<div class="line"><a name="l00880"></a><span class="lineno">  880</span>&#160;                            <span class="keywordflow">break</span>;</div>
-<div class="line"><a name="l00881"></a><span class="lineno">  881</span>&#160;                        <span class="keywordflow">case</span> ParamType::DOUBLE:</div>
-<div class="line"><a name="l00882"></a><span class="lineno">  882</span>&#160;                            CROW_LOG_DEBUG &lt;&lt; <span class="stringliteral">&quot;&lt;float&gt;&quot;</span>;</div>
+<div class="line"><a name="l00774"></a><span class="lineno">  774</span>&#160;                    <span class="keywordflow">if</span> (req_url[epos] == <span class="charliteral">&#39;/&#39;</span>)</div>
+<div class="line"><a name="l00775"></a><span class="lineno">  775</span>&#160;                        <span class="keywordflow">break</span>;</div>
+<div class="line"><a name="l00776"></a><span class="lineno">  776</span>&#160;                }</div>
+<div class="line"><a name="l00777"></a><span class="lineno">  777</span>&#160; </div>
+<div class="line"><a name="l00778"></a><span class="lineno">  778</span>&#160;                <span class="keywordflow">if</span> (epos != pos)</div>
+<div class="line"><a name="l00779"></a><span class="lineno">  779</span>&#160;                {</div>
+<div class="line"><a name="l00780"></a><span class="lineno">  780</span>&#160;                    params-&gt;string_params.push_back(req_url.substr(pos, epos-pos));</div>
+<div class="line"><a name="l00781"></a><span class="lineno">  781</span>&#160;                    <span class="keyword">auto</span> ret = find(req_url, &amp;nodes_[node-&gt;param_childrens[<span class="keyword">static_cast&lt;</span><span class="keywordtype">int</span><span class="keyword">&gt;</span>(ParamType::STRING)]], epos, params);</div>
+<div class="line"><a name="l00782"></a><span class="lineno">  782</span>&#160;                    update_found(ret);</div>
+<div class="line"><a name="l00783"></a><span class="lineno">  783</span>&#160;                    params-&gt;string_params.pop_back();</div>
+<div class="line"><a name="l00784"></a><span class="lineno">  784</span>&#160;                }</div>
+<div class="line"><a name="l00785"></a><span class="lineno">  785</span>&#160;            }</div>
+<div class="line"><a name="l00786"></a><span class="lineno">  786</span>&#160; </div>
+<div class="line"><a name="l00787"></a><span class="lineno">  787</span>&#160;            <span class="keywordflow">if</span> (node-&gt;param_childrens[<span class="keyword">static_cast&lt;</span><span class="keywordtype">int</span><span class="keyword">&gt;</span>(ParamType::PATH)])</div>
+<div class="line"><a name="l00788"></a><span class="lineno">  788</span>&#160;            {</div>
+<div class="line"><a name="l00789"></a><span class="lineno">  789</span>&#160;                <span class="keywordtype">size_t</span> epos = req_url.size();</div>
+<div class="line"><a name="l00790"></a><span class="lineno">  790</span>&#160; </div>
+<div class="line"><a name="l00791"></a><span class="lineno">  791</span>&#160;                <span class="keywordflow">if</span> (epos != pos)</div>
+<div class="line"><a name="l00792"></a><span class="lineno">  792</span>&#160;                {</div>
+<div class="line"><a name="l00793"></a><span class="lineno">  793</span>&#160;                    params-&gt;string_params.push_back(req_url.substr(pos, epos-pos));</div>
+<div class="line"><a name="l00794"></a><span class="lineno">  794</span>&#160;                    <span class="keyword">auto</span> ret = find(req_url, &amp;nodes_[node-&gt;param_childrens[<span class="keyword">static_cast&lt;</span><span class="keywordtype">int</span><span class="keyword">&gt;</span>(ParamType::PATH)]], epos, params);</div>
+<div class="line"><a name="l00795"></a><span class="lineno">  795</span>&#160;                    update_found(ret);</div>
+<div class="line"><a name="l00796"></a><span class="lineno">  796</span>&#160;                    params-&gt;string_params.pop_back();</div>
+<div class="line"><a name="l00797"></a><span class="lineno">  797</span>&#160;                }</div>
+<div class="line"><a name="l00798"></a><span class="lineno">  798</span>&#160;            }</div>
+<div class="line"><a name="l00799"></a><span class="lineno">  799</span>&#160; </div>
+<div class="line"><a name="l00800"></a><span class="lineno">  800</span>&#160;            <span class="keywordflow">for</span>(<span class="keyword">auto</span>&amp; kv : node-&gt;children)</div>
+<div class="line"><a name="l00801"></a><span class="lineno">  801</span>&#160;            {</div>
+<div class="line"><a name="l00802"></a><span class="lineno">  802</span>&#160;                <span class="keyword">const</span> std::string&amp; fragment = kv.first;</div>
+<div class="line"><a name="l00803"></a><span class="lineno">  803</span>&#160;                <span class="keyword">const</span> Node* child = &amp;nodes_[kv.second];</div>
+<div class="line"><a name="l00804"></a><span class="lineno">  804</span>&#160; </div>
+<div class="line"><a name="l00805"></a><span class="lineno">  805</span>&#160;                <span class="keywordflow">if</span> (req_url.compare(pos, fragment.size(), fragment) == 0)</div>
+<div class="line"><a name="l00806"></a><span class="lineno">  806</span>&#160;                {</div>
+<div class="line"><a name="l00807"></a><span class="lineno">  807</span>&#160;                    <span class="keyword">auto</span> ret = find(req_url, child, pos + fragment.size(), params);</div>
+<div class="line"><a name="l00808"></a><span class="lineno">  808</span>&#160;                    update_found(ret);</div>
+<div class="line"><a name="l00809"></a><span class="lineno">  809</span>&#160;                }</div>
+<div class="line"><a name="l00810"></a><span class="lineno">  810</span>&#160;            }</div>
+<div class="line"><a name="l00811"></a><span class="lineno">  811</span>&#160; </div>
+<div class="line"><a name="l00812"></a><span class="lineno">  812</span>&#160;            <span class="keywordflow">return</span> {found, match_params};</div>
+<div class="line"><a name="l00813"></a><span class="lineno">  813</span>&#160;        }</div>
+<div class="line"><a name="l00814"></a><span class="lineno">  814</span>&#160; </div>
+<div class="line"><a name="l00815"></a><span class="lineno">  815</span>&#160;        <span class="keywordtype">void</span> add(<span class="keyword">const</span> std::string&amp; url, <span class="keywordtype">unsigned</span> rule_index)</div>
+<div class="line"><a name="l00816"></a><span class="lineno">  816</span>&#160;        {</div>
+<div class="line"><a name="l00817"></a><span class="lineno">  817</span>&#160;            <span class="keywordtype">unsigned</span> idx{0};</div>
+<div class="line"><a name="l00818"></a><span class="lineno">  818</span>&#160; </div>
+<div class="line"><a name="l00819"></a><span class="lineno">  819</span>&#160;            <span class="keywordflow">for</span>(<span class="keywordtype">unsigned</span> i = 0; i &lt; url.size(); i ++)</div>
+<div class="line"><a name="l00820"></a><span class="lineno">  820</span>&#160;            {</div>
+<div class="line"><a name="l00821"></a><span class="lineno">  821</span>&#160;                <span class="keywordtype">char</span> c = url[i];</div>
+<div class="line"><a name="l00822"></a><span class="lineno">  822</span>&#160;                <span class="keywordflow">if</span> (c == <span class="charliteral">&#39;&lt;&#39;</span>)</div>
+<div class="line"><a name="l00823"></a><span class="lineno">  823</span>&#160;                {</div>
+<div class="line"><a name="l00824"></a><span class="lineno">  824</span>&#160;                    <span class="keyword">static</span> <span class="keyword">struct </span>ParamTraits</div>
+<div class="line"><a name="l00825"></a><span class="lineno">  825</span>&#160;                    {</div>
+<div class="line"><a name="l00826"></a><span class="lineno">  826</span>&#160;                        ParamType type;</div>
+<div class="line"><a name="l00827"></a><span class="lineno">  827</span>&#160;                        std::string name;</div>
+<div class="line"><a name="l00828"></a><span class="lineno">  828</span>&#160;                    } paramTraits[] =</div>
+<div class="line"><a name="l00829"></a><span class="lineno">  829</span>&#160;                    {</div>
+<div class="line"><a name="l00830"></a><span class="lineno">  830</span>&#160;                        { ParamType::INT, <span class="stringliteral">&quot;&lt;int&gt;&quot;</span> },</div>
+<div class="line"><a name="l00831"></a><span class="lineno">  831</span>&#160;                        { ParamType::UINT, <span class="stringliteral">&quot;&lt;uint&gt;&quot;</span> },</div>
+<div class="line"><a name="l00832"></a><span class="lineno">  832</span>&#160;                        { ParamType::DOUBLE, <span class="stringliteral">&quot;&lt;float&gt;&quot;</span> },</div>
+<div class="line"><a name="l00833"></a><span class="lineno">  833</span>&#160;                        { ParamType::DOUBLE, <span class="stringliteral">&quot;&lt;double&gt;&quot;</span> },</div>
+<div class="line"><a name="l00834"></a><span class="lineno">  834</span>&#160;                        { ParamType::STRING, <span class="stringliteral">&quot;&lt;str&gt;&quot;</span> },</div>
+<div class="line"><a name="l00835"></a><span class="lineno">  835</span>&#160;                        { ParamType::STRING, <span class="stringliteral">&quot;&lt;string&gt;&quot;</span> },</div>
+<div class="line"><a name="l00836"></a><span class="lineno">  836</span>&#160;                        { ParamType::PATH, <span class="stringliteral">&quot;&lt;path&gt;&quot;</span> },</div>
+<div class="line"><a name="l00837"></a><span class="lineno">  837</span>&#160;                    };</div>
+<div class="line"><a name="l00838"></a><span class="lineno">  838</span>&#160; </div>
+<div class="line"><a name="l00839"></a><span class="lineno">  839</span>&#160;                    <span class="keywordflow">for</span>(<span class="keyword">auto</span>&amp; x:paramTraits)</div>
+<div class="line"><a name="l00840"></a><span class="lineno">  840</span>&#160;                    {</div>
+<div class="line"><a name="l00841"></a><span class="lineno">  841</span>&#160;                        <span class="keywordflow">if</span> (url.compare(i, x.name.size(), x.name) == 0)</div>
+<div class="line"><a name="l00842"></a><span class="lineno">  842</span>&#160;                        {</div>
+<div class="line"><a name="l00843"></a><span class="lineno">  843</span>&#160;                            <span class="keywordflow">if</span> (!nodes_[idx].param_childrens[<span class="keyword">static_cast&lt;</span><span class="keywordtype">int</span><span class="keyword">&gt;</span>(x.type)])</div>
+<div class="line"><a name="l00844"></a><span class="lineno">  844</span>&#160;                            {</div>
+<div class="line"><a name="l00845"></a><span class="lineno">  845</span>&#160;                                <span class="keyword">auto</span> new_node_idx = new_node();</div>
+<div class="line"><a name="l00846"></a><span class="lineno">  846</span>&#160;                                nodes_[idx].param_childrens[<span class="keyword">static_cast&lt;</span><span class="keywordtype">int</span><span class="keyword">&gt;</span>(x.type)] = new_node_idx;</div>
+<div class="line"><a name="l00847"></a><span class="lineno">  847</span>&#160;                            }</div>
+<div class="line"><a name="l00848"></a><span class="lineno">  848</span>&#160;                            idx = nodes_[idx].param_childrens[<span class="keyword">static_cast&lt;</span><span class="keywordtype">int</span><span class="keyword">&gt;</span>(x.type)];</div>
+<div class="line"><a name="l00849"></a><span class="lineno">  849</span>&#160;                            i += x.name.size();</div>
+<div class="line"><a name="l00850"></a><span class="lineno">  850</span>&#160;                            <span class="keywordflow">break</span>;</div>
+<div class="line"><a name="l00851"></a><span class="lineno">  851</span>&#160;                        }</div>
+<div class="line"><a name="l00852"></a><span class="lineno">  852</span>&#160;                    }</div>
+<div class="line"><a name="l00853"></a><span class="lineno">  853</span>&#160; </div>
+<div class="line"><a name="l00854"></a><span class="lineno">  854</span>&#160;                    i --;</div>
+<div class="line"><a name="l00855"></a><span class="lineno">  855</span>&#160;                }</div>
+<div class="line"><a name="l00856"></a><span class="lineno">  856</span>&#160;                <span class="keywordflow">else</span></div>
+<div class="line"><a name="l00857"></a><span class="lineno">  857</span>&#160;                {</div>
+<div class="line"><a name="l00858"></a><span class="lineno">  858</span>&#160;                    std::string piece(&amp;c, 1);</div>
+<div class="line"><a name="l00859"></a><span class="lineno">  859</span>&#160;                    <span class="keywordflow">if</span> (!nodes_[idx].children.count(piece))</div>
+<div class="line"><a name="l00860"></a><span class="lineno">  860</span>&#160;                    {</div>
+<div class="line"><a name="l00861"></a><span class="lineno">  861</span>&#160;                        <span class="keyword">auto</span> new_node_idx = new_node();</div>
+<div class="line"><a name="l00862"></a><span class="lineno">  862</span>&#160;                        nodes_[idx].children.emplace(piece, new_node_idx);</div>
+<div class="line"><a name="l00863"></a><span class="lineno">  863</span>&#160;                    }</div>
+<div class="line"><a name="l00864"></a><span class="lineno">  864</span>&#160;                    idx = nodes_[idx].children[piece];</div>
+<div class="line"><a name="l00865"></a><span class="lineno">  865</span>&#160;                }</div>
+<div class="line"><a name="l00866"></a><span class="lineno">  866</span>&#160;            }</div>
+<div class="line"><a name="l00867"></a><span class="lineno">  867</span>&#160;            <span class="keywordflow">if</span> (nodes_[idx].rule_index)</div>
+<div class="line"><a name="l00868"></a><span class="lineno">  868</span>&#160;                <span class="keywordflow">throw</span> std::runtime_error(<span class="stringliteral">&quot;handler already exists for &quot;</span> + url);</div>
+<div class="line"><a name="l00869"></a><span class="lineno">  869</span>&#160;            nodes_[idx].rule_index = rule_index;</div>
+<div class="line"><a name="l00870"></a><span class="lineno">  870</span>&#160;        }</div>
+<div class="line"><a name="l00871"></a><span class="lineno">  871</span>&#160;    <span class="keyword">private</span>:</div>
+<div class="line"><a name="l00872"></a><span class="lineno">  872</span>&#160;        <span class="keywordtype">void</span> debug_node_print(Node* n, <span class="keywordtype">int</span> level)</div>
+<div class="line"><a name="l00873"></a><span class="lineno">  873</span>&#160;        {</div>
+<div class="line"><a name="l00874"></a><span class="lineno">  874</span>&#160;            <span class="keywordflow">for</span>(<span class="keywordtype">int</span> i = 0; i &lt; static_cast&lt;int&gt;(ParamType::MAX); i ++)</div>
+<div class="line"><a name="l00875"></a><span class="lineno">  875</span>&#160;            {</div>
+<div class="line"><a name="l00876"></a><span class="lineno">  876</span>&#160;                <span class="keywordflow">if</span> (n-&gt;param_childrens[i])</div>
+<div class="line"><a name="l00877"></a><span class="lineno">  877</span>&#160;                {</div>
+<div class="line"><a name="l00878"></a><span class="lineno">  878</span>&#160;                    CROW_LOG_DEBUG &lt;&lt; std::string(2*level, <span class="charliteral">&#39; &#39;</span>) <span class="comment">/*&lt;&lt; &quot;(&quot;&lt;&lt;n-&gt;param_childrens[i]&lt;&lt;&quot;) &quot;*/</span>;</div>
+<div class="line"><a name="l00879"></a><span class="lineno">  879</span>&#160;                    <span class="keywordflow">switch</span>(<span class="keyword">static_cast&lt;</span>ParamType<span class="keyword">&gt;</span>(i))</div>
+<div class="line"><a name="l00880"></a><span class="lineno">  880</span>&#160;                    {</div>
+<div class="line"><a name="l00881"></a><span class="lineno">  881</span>&#160;                        <span class="keywordflow">case</span> ParamType::INT:</div>
+<div class="line"><a name="l00882"></a><span class="lineno">  882</span>&#160;                            CROW_LOG_DEBUG &lt;&lt; <span class="stringliteral">&quot;&lt;int&gt;&quot;</span>;</div>
 <div class="line"><a name="l00883"></a><span class="lineno">  883</span>&#160;                            <span class="keywordflow">break</span>;</div>
-<div class="line"><a name="l00884"></a><span class="lineno">  884</span>&#160;                        <span class="keywordflow">case</span> ParamType::STRING:</div>
-<div class="line"><a name="l00885"></a><span class="lineno">  885</span>&#160;                            CROW_LOG_DEBUG &lt;&lt; <span class="stringliteral">&quot;&lt;str&gt;&quot;</span>;</div>
+<div class="line"><a name="l00884"></a><span class="lineno">  884</span>&#160;                        <span class="keywordflow">case</span> ParamType::UINT:</div>
+<div class="line"><a name="l00885"></a><span class="lineno">  885</span>&#160;                            CROW_LOG_DEBUG &lt;&lt; <span class="stringliteral">&quot;&lt;uint&gt;&quot;</span>;</div>
 <div class="line"><a name="l00886"></a><span class="lineno">  886</span>&#160;                            <span class="keywordflow">break</span>;</div>
-<div class="line"><a name="l00887"></a><span class="lineno">  887</span>&#160;                        <span class="keywordflow">case</span> ParamType::PATH:</div>
-<div class="line"><a name="l00888"></a><span class="lineno">  888</span>&#160;                            CROW_LOG_DEBUG &lt;&lt; <span class="stringliteral">&quot;&lt;path&gt;&quot;</span>;</div>
+<div class="line"><a name="l00887"></a><span class="lineno">  887</span>&#160;                        <span class="keywordflow">case</span> ParamType::DOUBLE:</div>
+<div class="line"><a name="l00888"></a><span class="lineno">  888</span>&#160;                            CROW_LOG_DEBUG &lt;&lt; <span class="stringliteral">&quot;&lt;float&gt;&quot;</span>;</div>
 <div class="line"><a name="l00889"></a><span class="lineno">  889</span>&#160;                            <span class="keywordflow">break</span>;</div>
-<div class="line"><a name="l00890"></a><span class="lineno">  890</span>&#160;                        <span class="keywordflow">default</span>:</div>
-<div class="line"><a name="l00891"></a><span class="lineno">  891</span>&#160;                            CROW_LOG_DEBUG &lt;&lt; <span class="stringliteral">&quot;&lt;ERROR&gt;&quot;</span>;</div>
+<div class="line"><a name="l00890"></a><span class="lineno">  890</span>&#160;                        <span class="keywordflow">case</span> ParamType::STRING:</div>
+<div class="line"><a name="l00891"></a><span class="lineno">  891</span>&#160;                            CROW_LOG_DEBUG &lt;&lt; <span class="stringliteral">&quot;&lt;str&gt;&quot;</span>;</div>
 <div class="line"><a name="l00892"></a><span class="lineno">  892</span>&#160;                            <span class="keywordflow">break</span>;</div>
-<div class="line"><a name="l00893"></a><span class="lineno">  893</span>&#160;                    }</div>
-<div class="line"><a name="l00894"></a><span class="lineno">  894</span>&#160; </div>
-<div class="line"><a name="l00895"></a><span class="lineno">  895</span>&#160;                    debug_node_print(&amp;nodes_[n-&gt;param_childrens[i]], level+1);</div>
-<div class="line"><a name="l00896"></a><span class="lineno">  896</span>&#160;                }</div>
-<div class="line"><a name="l00897"></a><span class="lineno">  897</span>&#160;            }</div>
-<div class="line"><a name="l00898"></a><span class="lineno">  898</span>&#160;            <span class="keywordflow">for</span>(<span class="keyword">auto</span>&amp; kv : n-&gt;children)</div>
-<div class="line"><a name="l00899"></a><span class="lineno">  899</span>&#160;            {</div>
-<div class="line"><a name="l00900"></a><span class="lineno">  900</span>&#160;                CROW_LOG_DEBUG &lt;&lt; std::string(2*level, <span class="charliteral">&#39; &#39;</span>) <span class="comment">/*&lt;&lt; &quot;(&quot; &lt;&lt; kv.second &lt;&lt; &quot;) &quot;*/</span> &lt;&lt; kv.first;</div>
-<div class="line"><a name="l00901"></a><span class="lineno">  901</span>&#160;                debug_node_print(&amp;nodes_[kv.second], level+1);</div>
-<div class="line"><a name="l00902"></a><span class="lineno">  902</span>&#160;            }</div>
-<div class="line"><a name="l00903"></a><span class="lineno">  903</span>&#160;        }</div>
-<div class="line"><a name="l00904"></a><span class="lineno">  904</span>&#160; </div>
-<div class="line"><a name="l00905"></a><span class="lineno">  905</span>&#160;    <span class="keyword">public</span>:</div>
-<div class="line"><a name="l00906"></a><span class="lineno">  906</span>&#160;        <span class="keywordtype">void</span> debug_print()</div>
-<div class="line"><a name="l00907"></a><span class="lineno">  907</span>&#160;        {</div>
-<div class="line"><a name="l00908"></a><span class="lineno">  908</span>&#160;            debug_node_print(head(), 0);</div>
+<div class="line"><a name="l00893"></a><span class="lineno">  893</span>&#160;                        <span class="keywordflow">case</span> ParamType::PATH:</div>
+<div class="line"><a name="l00894"></a><span class="lineno">  894</span>&#160;                            CROW_LOG_DEBUG &lt;&lt; <span class="stringliteral">&quot;&lt;path&gt;&quot;</span>;</div>
+<div class="line"><a name="l00895"></a><span class="lineno">  895</span>&#160;                            <span class="keywordflow">break</span>;</div>
+<div class="line"><a name="l00896"></a><span class="lineno">  896</span>&#160;                        <span class="keywordflow">default</span>:</div>
+<div class="line"><a name="l00897"></a><span class="lineno">  897</span>&#160;                            CROW_LOG_DEBUG &lt;&lt; <span class="stringliteral">&quot;&lt;ERROR&gt;&quot;</span>;</div>
+<div class="line"><a name="l00898"></a><span class="lineno">  898</span>&#160;                            <span class="keywordflow">break</span>;</div>
+<div class="line"><a name="l00899"></a><span class="lineno">  899</span>&#160;                    }</div>
+<div class="line"><a name="l00900"></a><span class="lineno">  900</span>&#160; </div>
+<div class="line"><a name="l00901"></a><span class="lineno">  901</span>&#160;                    debug_node_print(&amp;nodes_[n-&gt;param_childrens[i]], level+1);</div>
+<div class="line"><a name="l00902"></a><span class="lineno">  902</span>&#160;                }</div>
+<div class="line"><a name="l00903"></a><span class="lineno">  903</span>&#160;            }</div>
+<div class="line"><a name="l00904"></a><span class="lineno">  904</span>&#160;            <span class="keywordflow">for</span>(<span class="keyword">auto</span>&amp; kv : n-&gt;children)</div>
+<div class="line"><a name="l00905"></a><span class="lineno">  905</span>&#160;            {</div>
+<div class="line"><a name="l00906"></a><span class="lineno">  906</span>&#160;                CROW_LOG_DEBUG &lt;&lt; std::string(2*level, <span class="charliteral">&#39; &#39;</span>) <span class="comment">/*&lt;&lt; &quot;(&quot; &lt;&lt; kv.second &lt;&lt; &quot;) &quot;*/</span> &lt;&lt; kv.first;</div>
+<div class="line"><a name="l00907"></a><span class="lineno">  907</span>&#160;                debug_node_print(&amp;nodes_[kv.second], level+1);</div>
+<div class="line"><a name="l00908"></a><span class="lineno">  908</span>&#160;            }</div>
 <div class="line"><a name="l00909"></a><span class="lineno">  909</span>&#160;        }</div>
 <div class="line"><a name="l00910"></a><span class="lineno">  910</span>&#160; </div>
-<div class="line"><a name="l00911"></a><span class="lineno">  911</span>&#160;    <span class="keyword">private</span>:</div>
-<div class="line"><a name="l00912"></a><span class="lineno">  912</span>&#160;        <span class="keyword">const</span> Node* head()<span class="keyword"> const</span></div>
-<div class="line"><a name="l00913"></a><span class="lineno">  913</span>&#160;<span class="keyword">        </span>{</div>
-<div class="line"><a name="l00914"></a><span class="lineno">  914</span>&#160;            <span class="keywordflow">return</span> &amp;nodes_.front();</div>
+<div class="line"><a name="l00911"></a><span class="lineno">  911</span>&#160;    <span class="keyword">public</span>:</div>
+<div class="line"><a name="l00912"></a><span class="lineno">  912</span>&#160;        <span class="keywordtype">void</span> debug_print()</div>
+<div class="line"><a name="l00913"></a><span class="lineno">  913</span>&#160;        {</div>
+<div class="line"><a name="l00914"></a><span class="lineno">  914</span>&#160;            debug_node_print(head(), 0);</div>
 <div class="line"><a name="l00915"></a><span class="lineno">  915</span>&#160;        }</div>
 <div class="line"><a name="l00916"></a><span class="lineno">  916</span>&#160; </div>
-<div class="line"><a name="l00917"></a><span class="lineno">  917</span>&#160;        Node* head()</div>
-<div class="line"><a name="l00918"></a><span class="lineno">  918</span>&#160;        {</div>
-<div class="line"><a name="l00919"></a><span class="lineno">  919</span>&#160;            <span class="keywordflow">return</span> &amp;nodes_.front();</div>
-<div class="line"><a name="l00920"></a><span class="lineno">  920</span>&#160;        }</div>
-<div class="line"><a name="l00921"></a><span class="lineno">  921</span>&#160; </div>
-<div class="line"><a name="l00922"></a><span class="lineno">  922</span>&#160;        <span class="keywordtype">unsigned</span> new_node()</div>
-<div class="line"><a name="l00923"></a><span class="lineno">  923</span>&#160;        {</div>
-<div class="line"><a name="l00924"></a><span class="lineno">  924</span>&#160;            nodes_.resize(nodes_.size()+1);</div>
-<div class="line"><a name="l00925"></a><span class="lineno">  925</span>&#160;            <span class="keywordflow">return</span> nodes_.size() - 1;</div>
+<div class="line"><a name="l00917"></a><span class="lineno">  917</span>&#160;    <span class="keyword">private</span>:</div>
+<div class="line"><a name="l00918"></a><span class="lineno">  918</span>&#160;        <span class="keyword">const</span> Node* head()<span class="keyword"> const</span></div>
+<div class="line"><a name="l00919"></a><span class="lineno">  919</span>&#160;<span class="keyword">        </span>{</div>
+<div class="line"><a name="l00920"></a><span class="lineno">  920</span>&#160;            <span class="keywordflow">return</span> &amp;nodes_.front();</div>
+<div class="line"><a name="l00921"></a><span class="lineno">  921</span>&#160;        }</div>
+<div class="line"><a name="l00922"></a><span class="lineno">  922</span>&#160; </div>
+<div class="line"><a name="l00923"></a><span class="lineno">  923</span>&#160;        Node* head()</div>
+<div class="line"><a name="l00924"></a><span class="lineno">  924</span>&#160;        {</div>
+<div class="line"><a name="l00925"></a><span class="lineno">  925</span>&#160;            <span class="keywordflow">return</span> &amp;nodes_.front();</div>
 <div class="line"><a name="l00926"></a><span class="lineno">  926</span>&#160;        }</div>
 <div class="line"><a name="l00927"></a><span class="lineno">  927</span>&#160; </div>
-<div class="line"><a name="l00928"></a><span class="lineno">  928</span>&#160;        std::vector&lt;Node&gt; nodes_;</div>
-<div class="line"><a name="l00929"></a><span class="lineno">  929</span>&#160;    };</div>
-<div class="line"><a name="l00930"></a><span class="lineno">  930</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00931"></a><span class="lineno">  931</span>&#160;<span class="comment">    /// Handles matching requests to existing rules and upgrade requests.</span></div>
-<div class="line"><a name="l00932"></a><span class="lineno"><a class="line" href="classcrow_1_1_router.html">  932</a></span>&#160;<span class="comment"></span>    <span class="keyword">class </span><a class="code" href="classcrow_1_1_router.html">Router</a></div>
-<div class="line"><a name="l00933"></a><span class="lineno">  933</span>&#160;    {</div>
-<div class="line"><a name="l00934"></a><span class="lineno">  934</span>&#160;    <span class="keyword">public</span>:</div>
-<div class="line"><a name="l00935"></a><span class="lineno">  935</span>&#160;        <a class="code" href="classcrow_1_1_router.html">Router</a>()</div>
-<div class="line"><a name="l00936"></a><span class="lineno">  936</span>&#160;        {</div>
-<div class="line"><a name="l00937"></a><span class="lineno">  937</span>&#160;        }</div>
-<div class="line"><a name="l00938"></a><span class="lineno">  938</span>&#160; </div>
-<div class="line"><a name="l00939"></a><span class="lineno">  939</span>&#160;        <a class="code" href="classcrow_1_1_dynamic_rule.html">DynamicRule</a>&amp; new_rule_dynamic(<span class="keyword">const</span> std::string&amp; rule)</div>
-<div class="line"><a name="l00940"></a><span class="lineno">  940</span>&#160;        {</div>
-<div class="line"><a name="l00941"></a><span class="lineno">  941</span>&#160;            <span class="keyword">auto</span> ruleObject = <span class="keyword">new</span> <a class="code" href="classcrow_1_1_dynamic_rule.html">DynamicRule</a>(rule);</div>
-<div class="line"><a name="l00942"></a><span class="lineno">  942</span>&#160;            all_rules_.emplace_back(ruleObject);</div>
-<div class="line"><a name="l00943"></a><span class="lineno">  943</span>&#160; </div>
-<div class="line"><a name="l00944"></a><span class="lineno">  944</span>&#160;            <span class="keywordflow">return</span> *ruleObject;</div>
-<div class="line"><a name="l00945"></a><span class="lineno">  945</span>&#160;        }</div>
-<div class="line"><a name="l00946"></a><span class="lineno">  946</span>&#160; </div>
-<div class="line"><a name="l00947"></a><span class="lineno">  947</span>&#160;        <span class="keyword">template</span> &lt;u<span class="keywordtype">int</span>64_t N&gt;</div>
-<div class="line"><a name="l00948"></a><span class="lineno">  948</span>&#160;        <span class="keyword">typename</span> <a class="code" href="structcrow_1_1black__magic_1_1arguments.html">black_magic::arguments&lt;N&gt;::type::template</a> rebind&lt;TaggedRule&gt;&amp; new_rule_tagged(<span class="keyword">const</span> std::string&amp; rule)</div>
-<div class="line"><a name="l00949"></a><span class="lineno">  949</span>&#160;        {</div>
-<div class="line"><a name="l00950"></a><span class="lineno">  950</span>&#160;            <span class="keyword">using</span> RuleT = <span class="keyword">typename</span> <a class="code" href="structcrow_1_1black__magic_1_1arguments.html">black_magic::arguments&lt;N&gt;::type::template</a> rebind&lt;TaggedRule&gt;;</div>
-<div class="line"><a name="l00951"></a><span class="lineno">  951</span>&#160; </div>
-<div class="line"><a name="l00952"></a><span class="lineno">  952</span>&#160;            <span class="keyword">auto</span> ruleObject = <span class="keyword">new</span> RuleT(rule);</div>
-<div class="line"><a name="l00953"></a><span class="lineno">  953</span>&#160;            all_rules_.emplace_back(ruleObject);</div>
-<div class="line"><a name="l00954"></a><span class="lineno">  954</span>&#160; </div>
-<div class="line"><a name="l00955"></a><span class="lineno">  955</span>&#160;            <span class="keywordflow">return</span> *ruleObject;</div>
-<div class="line"><a name="l00956"></a><span class="lineno">  956</span>&#160;        }</div>
+<div class="line"><a name="l00928"></a><span class="lineno">  928</span>&#160;        <span class="keywordtype">unsigned</span> new_node()</div>
+<div class="line"><a name="l00929"></a><span class="lineno">  929</span>&#160;        {</div>
+<div class="line"><a name="l00930"></a><span class="lineno">  930</span>&#160;            nodes_.resize(nodes_.size()+1);</div>
+<div class="line"><a name="l00931"></a><span class="lineno">  931</span>&#160;            <span class="keywordflow">return</span> nodes_.size() - 1;</div>
+<div class="line"><a name="l00932"></a><span class="lineno">  932</span>&#160;        }</div>
+<div class="line"><a name="l00933"></a><span class="lineno">  933</span>&#160; </div>
+<div class="line"><a name="l00934"></a><span class="lineno">  934</span>&#160;        std::vector&lt;Node&gt; nodes_;</div>
+<div class="line"><a name="l00935"></a><span class="lineno">  935</span>&#160;    };</div>
+<div class="line"><a name="l00936"></a><span class="lineno">  936</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00937"></a><span class="lineno">  937</span>&#160;<span class="comment">    /// Handles matching requests to existing rules and upgrade requests.</span></div>
+<div class="line"><a name="l00938"></a><span class="lineno"><a class="line" href="classcrow_1_1_router.html">  938</a></span>&#160;<span class="comment"></span>    <span class="keyword">class </span><a class="code" href="classcrow_1_1_router.html">Router</a></div>
+<div class="line"><a name="l00939"></a><span class="lineno">  939</span>&#160;    {</div>
+<div class="line"><a name="l00940"></a><span class="lineno">  940</span>&#160;    <span class="keyword">public</span>:</div>
+<div class="line"><a name="l00941"></a><span class="lineno">  941</span>&#160;        <a class="code" href="classcrow_1_1_router.html">Router</a>()</div>
+<div class="line"><a name="l00942"></a><span class="lineno">  942</span>&#160;        {</div>
+<div class="line"><a name="l00943"></a><span class="lineno">  943</span>&#160;        }</div>
+<div class="line"><a name="l00944"></a><span class="lineno">  944</span>&#160; </div>
+<div class="line"><a name="l00945"></a><span class="lineno">  945</span>&#160;        <a class="code" href="classcrow_1_1_dynamic_rule.html">DynamicRule</a>&amp; new_rule_dynamic(<span class="keyword">const</span> std::string&amp; rule)</div>
+<div class="line"><a name="l00946"></a><span class="lineno">  946</span>&#160;        {</div>
+<div class="line"><a name="l00947"></a><span class="lineno">  947</span>&#160;            <span class="keyword">auto</span> ruleObject = <span class="keyword">new</span> <a class="code" href="classcrow_1_1_dynamic_rule.html">DynamicRule</a>(rule);</div>
+<div class="line"><a name="l00948"></a><span class="lineno">  948</span>&#160;            all_rules_.emplace_back(ruleObject);</div>
+<div class="line"><a name="l00949"></a><span class="lineno">  949</span>&#160; </div>
+<div class="line"><a name="l00950"></a><span class="lineno">  950</span>&#160;            <span class="keywordflow">return</span> *ruleObject;</div>
+<div class="line"><a name="l00951"></a><span class="lineno">  951</span>&#160;        }</div>
+<div class="line"><a name="l00952"></a><span class="lineno">  952</span>&#160; </div>
+<div class="line"><a name="l00953"></a><span class="lineno">  953</span>&#160;        <span class="keyword">template</span> &lt;u<span class="keywordtype">int</span>64_t N&gt;</div>
+<div class="line"><a name="l00954"></a><span class="lineno">  954</span>&#160;        <span class="keyword">typename</span> <a class="code" href="structcrow_1_1black__magic_1_1arguments.html">black_magic::arguments&lt;N&gt;::type::template</a> rebind&lt;TaggedRule&gt;&amp; new_rule_tagged(<span class="keyword">const</span> std::string&amp; rule)</div>
+<div class="line"><a name="l00955"></a><span class="lineno">  955</span>&#160;        {</div>
+<div class="line"><a name="l00956"></a><span class="lineno">  956</span>&#160;            <span class="keyword">using</span> RuleT = <span class="keyword">typename</span> <a class="code" href="structcrow_1_1black__magic_1_1arguments.html">black_magic::arguments&lt;N&gt;::type::template</a> rebind&lt;TaggedRule&gt;;</div>
 <div class="line"><a name="l00957"></a><span class="lineno">  957</span>&#160; </div>
-<div class="line"><a name="l00958"></a><span class="lineno">  958</span>&#160;        <span class="keywordtype">void</span> internal_add_rule_object(<span class="keyword">const</span> std::string&amp; rule, <a class="code" href="classcrow_1_1_base_rule.html">BaseRule</a>* ruleObject)</div>
-<div class="line"><a name="l00959"></a><span class="lineno">  959</span>&#160;        {</div>
-<div class="line"><a name="l00960"></a><span class="lineno">  960</span>&#160;            <span class="keywordtype">bool</span> has_trailing_slash = <span class="keyword">false</span>;</div>
-<div class="line"><a name="l00961"></a><span class="lineno">  961</span>&#160;            std::string rule_without_trailing_slash;</div>
-<div class="line"><a name="l00962"></a><span class="lineno">  962</span>&#160;            <span class="keywordflow">if</span> (rule.size() &gt; 1 &amp;&amp; rule.back() == <span class="charliteral">&#39;/&#39;</span>)</div>
-<div class="line"><a name="l00963"></a><span class="lineno">  963</span>&#160;            {</div>
-<div class="line"><a name="l00964"></a><span class="lineno">  964</span>&#160;                has_trailing_slash = <span class="keyword">true</span>;</div>
-<div class="line"><a name="l00965"></a><span class="lineno">  965</span>&#160;                rule_without_trailing_slash = rule;</div>
-<div class="line"><a name="l00966"></a><span class="lineno">  966</span>&#160;                rule_without_trailing_slash.pop_back();</div>
-<div class="line"><a name="l00967"></a><span class="lineno">  967</span>&#160;            }</div>
-<div class="line"><a name="l00968"></a><span class="lineno">  968</span>&#160; </div>
-<div class="line"><a name="l00969"></a><span class="lineno">  969</span>&#160;            ruleObject-&gt;foreach_method([&amp;](<span class="keywordtype">int</span> method)</div>
-<div class="line"><a name="l00970"></a><span class="lineno">  970</span>&#160;                    {</div>
-<div class="line"><a name="l00971"></a><span class="lineno">  971</span>&#160;                        per_methods_[method].rules.emplace_back(ruleObject);</div>
-<div class="line"><a name="l00972"></a><span class="lineno">  972</span>&#160;                        per_methods_[method].trie.add(rule, per_methods_[method].rules.size() - 1);</div>
-<div class="line"><a name="l00973"></a><span class="lineno">  973</span>&#160; </div>
-<div class="line"><a name="l00974"></a><span class="lineno">  974</span>&#160;                        <span class="comment">// directory case:</span></div>
-<div class="line"><a name="l00975"></a><span class="lineno">  975</span>&#160;                        <span class="comment">//   request to &#39;/about&#39; url matches &#39;/about/&#39; rule</span></div>
-<div class="line"><a name="l00976"></a><span class="lineno">  976</span>&#160;                        if (has_trailing_slash)</div>
-<div class="line"><a name="l00977"></a><span class="lineno">  977</span>&#160;                        {</div>
-<div class="line"><a name="l00978"></a><span class="lineno">  978</span>&#160;                            per_methods_[method].trie.add(rule_without_trailing_slash, RULE_SPECIAL_REDIRECT_SLASH);</div>
-<div class="line"><a name="l00979"></a><span class="lineno">  979</span>&#160;                        }</div>
-<div class="line"><a name="l00980"></a><span class="lineno">  980</span>&#160;                    });</div>
-<div class="line"><a name="l00981"></a><span class="lineno">  981</span>&#160; </div>
-<div class="line"><a name="l00982"></a><span class="lineno">  982</span>&#160;        }</div>
-<div class="line"><a name="l00983"></a><span class="lineno">  983</span>&#160; </div>
-<div class="line"><a name="l00984"></a><span class="lineno">  984</span>&#160;        <span class="keywordtype">void</span> validate()</div>
-<div class="line"><a name="l00985"></a><span class="lineno">  985</span>&#160;        {</div>
-<div class="line"><a name="l00986"></a><span class="lineno">  986</span>&#160;            <span class="keywordflow">for</span>(<span class="keyword">auto</span>&amp; rule:all_rules_)</div>
-<div class="line"><a name="l00987"></a><span class="lineno">  987</span>&#160;            {</div>
-<div class="line"><a name="l00988"></a><span class="lineno">  988</span>&#160;                <span class="keywordflow">if</span> (rule)</div>
-<div class="line"><a name="l00989"></a><span class="lineno">  989</span>&#160;                {</div>
-<div class="line"><a name="l00990"></a><span class="lineno">  990</span>&#160;                    <span class="keyword">auto</span> upgraded = rule-&gt;upgrade();</div>
-<div class="line"><a name="l00991"></a><span class="lineno">  991</span>&#160;                    <span class="keywordflow">if</span> (upgraded)</div>
-<div class="line"><a name="l00992"></a><span class="lineno">  992</span>&#160;                        rule = std::move(upgraded);</div>
-<div class="line"><a name="l00993"></a><span class="lineno">  993</span>&#160;                    rule-&gt;validate();</div>
-<div class="line"><a name="l00994"></a><span class="lineno">  994</span>&#160;                    internal_add_rule_object(rule-&gt;rule(), rule.get());</div>
-<div class="line"><a name="l00995"></a><span class="lineno">  995</span>&#160;                }</div>
-<div class="line"><a name="l00996"></a><span class="lineno">  996</span>&#160;            }</div>
-<div class="line"><a name="l00997"></a><span class="lineno">  997</span>&#160;            <span class="keywordflow">for</span>(<span class="keyword">auto</span>&amp; per_method:per_methods_)</div>
-<div class="line"><a name="l00998"></a><span class="lineno">  998</span>&#160;            {</div>
-<div class="line"><a name="l00999"></a><span class="lineno">  999</span>&#160;                per_method.trie.validate();</div>
-<div class="line"><a name="l01000"></a><span class="lineno"> 1000</span>&#160;            }</div>
-<div class="line"><a name="l01001"></a><span class="lineno"> 1001</span>&#160;        }</div>
-<div class="line"><a name="l01002"></a><span class="lineno"> 1002</span>&#160; </div>
-<div class="line"><a name="l01003"></a><span class="lineno"> 1003</span>&#160;        <span class="keyword">template</span> &lt;<span class="keyword">typename</span> Adaptor&gt;</div>
-<div class="line"><a name="l01004"></a><span class="lineno"> 1004</span>&#160;        <span class="keywordtype">void</span> handle_upgrade(<span class="keyword">const</span> <a class="code" href="structcrow_1_1request.html">request</a>&amp; req, <a class="code" href="structcrow_1_1response.html">response</a>&amp; res, Adaptor&amp;&amp; adaptor)</div>
-<div class="line"><a name="l01005"></a><span class="lineno"> 1005</span>&#160;        {</div>
-<div class="line"><a name="l01006"></a><span class="lineno"> 1006</span>&#160;            <span class="keywordflow">if</span> (req.method &gt;= HTTPMethod::InternalMethodCount)</div>
-<div class="line"><a name="l01007"></a><span class="lineno"> 1007</span>&#160;                <span class="keywordflow">return</span>;</div>
+<div class="line"><a name="l00958"></a><span class="lineno">  958</span>&#160;            <span class="keyword">auto</span> ruleObject = <span class="keyword">new</span> RuleT(rule);</div>
+<div class="line"><a name="l00959"></a><span class="lineno">  959</span>&#160;            all_rules_.emplace_back(ruleObject);</div>
+<div class="line"><a name="l00960"></a><span class="lineno">  960</span>&#160; </div>
+<div class="line"><a name="l00961"></a><span class="lineno">  961</span>&#160;            <span class="keywordflow">return</span> *ruleObject;</div>
+<div class="line"><a name="l00962"></a><span class="lineno">  962</span>&#160;        }</div>
+<div class="line"><a name="l00963"></a><span class="lineno">  963</span>&#160; </div>
+<div class="line"><a name="l00964"></a><span class="lineno">  964</span>&#160;        <span class="keywordtype">void</span> internal_add_rule_object(<span class="keyword">const</span> std::string&amp; rule, <a class="code" href="classcrow_1_1_base_rule.html">BaseRule</a>* ruleObject)</div>
+<div class="line"><a name="l00965"></a><span class="lineno">  965</span>&#160;        {</div>
+<div class="line"><a name="l00966"></a><span class="lineno">  966</span>&#160;            <span class="keywordtype">bool</span> has_trailing_slash = <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00967"></a><span class="lineno">  967</span>&#160;            std::string rule_without_trailing_slash;</div>
+<div class="line"><a name="l00968"></a><span class="lineno">  968</span>&#160;            <span class="keywordflow">if</span> (rule.size() &gt; 1 &amp;&amp; rule.back() == <span class="charliteral">&#39;/&#39;</span>)</div>
+<div class="line"><a name="l00969"></a><span class="lineno">  969</span>&#160;            {</div>
+<div class="line"><a name="l00970"></a><span class="lineno">  970</span>&#160;                has_trailing_slash = <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00971"></a><span class="lineno">  971</span>&#160;                rule_without_trailing_slash = rule;</div>
+<div class="line"><a name="l00972"></a><span class="lineno">  972</span>&#160;                rule_without_trailing_slash.pop_back();</div>
+<div class="line"><a name="l00973"></a><span class="lineno">  973</span>&#160;            }</div>
+<div class="line"><a name="l00974"></a><span class="lineno">  974</span>&#160; </div>
+<div class="line"><a name="l00975"></a><span class="lineno">  975</span>&#160;            ruleObject-&gt;foreach_method([&amp;](<span class="keywordtype">int</span> method)</div>
+<div class="line"><a name="l00976"></a><span class="lineno">  976</span>&#160;                    {</div>
+<div class="line"><a name="l00977"></a><span class="lineno">  977</span>&#160;                        per_methods_[method].rules.emplace_back(ruleObject);</div>
+<div class="line"><a name="l00978"></a><span class="lineno">  978</span>&#160;                        per_methods_[method].trie.add(rule, per_methods_[method].rules.size() - 1);</div>
+<div class="line"><a name="l00979"></a><span class="lineno">  979</span>&#160; </div>
+<div class="line"><a name="l00980"></a><span class="lineno">  980</span>&#160;                        <span class="comment">// directory case:</span></div>
+<div class="line"><a name="l00981"></a><span class="lineno">  981</span>&#160;                        <span class="comment">//   request to &#39;/about&#39; url matches &#39;/about/&#39; rule</span></div>
+<div class="line"><a name="l00982"></a><span class="lineno">  982</span>&#160;                        if (has_trailing_slash)</div>
+<div class="line"><a name="l00983"></a><span class="lineno">  983</span>&#160;                        {</div>
+<div class="line"><a name="l00984"></a><span class="lineno">  984</span>&#160;                            per_methods_[method].trie.add(rule_without_trailing_slash, RULE_SPECIAL_REDIRECT_SLASH);</div>
+<div class="line"><a name="l00985"></a><span class="lineno">  985</span>&#160;                        }</div>
+<div class="line"><a name="l00986"></a><span class="lineno">  986</span>&#160;                    });</div>
+<div class="line"><a name="l00987"></a><span class="lineno">  987</span>&#160; </div>
+<div class="line"><a name="l00988"></a><span class="lineno">  988</span>&#160;        }</div>
+<div class="line"><a name="l00989"></a><span class="lineno">  989</span>&#160; </div>
+<div class="line"><a name="l00990"></a><span class="lineno">  990</span>&#160;        <span class="keywordtype">void</span> validate()</div>
+<div class="line"><a name="l00991"></a><span class="lineno">  991</span>&#160;        {</div>
+<div class="line"><a name="l00992"></a><span class="lineno">  992</span>&#160;            <span class="keywordflow">for</span>(<span class="keyword">auto</span>&amp; rule:all_rules_)</div>
+<div class="line"><a name="l00993"></a><span class="lineno">  993</span>&#160;            {</div>
+<div class="line"><a name="l00994"></a><span class="lineno">  994</span>&#160;                <span class="keywordflow">if</span> (rule)</div>
+<div class="line"><a name="l00995"></a><span class="lineno">  995</span>&#160;                {</div>
+<div class="line"><a name="l00996"></a><span class="lineno">  996</span>&#160;                    <span class="keyword">auto</span> upgraded = rule-&gt;upgrade();</div>
+<div class="line"><a name="l00997"></a><span class="lineno">  997</span>&#160;                    <span class="keywordflow">if</span> (upgraded)</div>
+<div class="line"><a name="l00998"></a><span class="lineno">  998</span>&#160;                        rule = std::move(upgraded);</div>
+<div class="line"><a name="l00999"></a><span class="lineno">  999</span>&#160;                    rule-&gt;validate();</div>
+<div class="line"><a name="l01000"></a><span class="lineno"> 1000</span>&#160;                    internal_add_rule_object(rule-&gt;rule(), rule.get());</div>
+<div class="line"><a name="l01001"></a><span class="lineno"> 1001</span>&#160;                }</div>
+<div class="line"><a name="l01002"></a><span class="lineno"> 1002</span>&#160;            }</div>
+<div class="line"><a name="l01003"></a><span class="lineno"> 1003</span>&#160;            <span class="keywordflow">for</span>(<span class="keyword">auto</span>&amp; per_method:per_methods_)</div>
+<div class="line"><a name="l01004"></a><span class="lineno"> 1004</span>&#160;            {</div>
+<div class="line"><a name="l01005"></a><span class="lineno"> 1005</span>&#160;                per_method.trie.validate();</div>
+<div class="line"><a name="l01006"></a><span class="lineno"> 1006</span>&#160;            }</div>
+<div class="line"><a name="l01007"></a><span class="lineno"> 1007</span>&#160;        }</div>
 <div class="line"><a name="l01008"></a><span class="lineno"> 1008</span>&#160; </div>
-<div class="line"><a name="l01009"></a><span class="lineno"> 1009</span>&#160;            <span class="keyword">auto</span>&amp; per_method = per_methods_[<span class="keyword">static_cast&lt;</span><span class="keywordtype">int</span><span class="keyword">&gt;</span>(req.method)];</div>
-<div class="line"><a name="l01010"></a><span class="lineno"> 1010</span>&#160;            <span class="keyword">auto</span>&amp; rules = per_method.rules;</div>
-<div class="line"><a name="l01011"></a><span class="lineno"> 1011</span>&#160;            <span class="keywordtype">unsigned</span> rule_index = per_method.trie.find(req.<a class="code" href="structcrow_1_1request.html#aa3df34c56847d6d42887e73655276167">url</a>).first;</div>
-<div class="line"><a name="l01012"></a><span class="lineno"> 1012</span>&#160; </div>
-<div class="line"><a name="l01013"></a><span class="lineno"> 1013</span>&#160;            <span class="keywordflow">if</span> (!rule_index)</div>
-<div class="line"><a name="l01014"></a><span class="lineno"> 1014</span>&#160;            {</div>
-<div class="line"><a name="l01015"></a><span class="lineno"> 1015</span>&#160;                <span class="keywordflow">for</span> (<span class="keyword">auto</span>&amp; per_method: per_methods_)</div>
-<div class="line"><a name="l01016"></a><span class="lineno"> 1016</span>&#160;                {</div>
-<div class="line"><a name="l01017"></a><span class="lineno"> 1017</span>&#160;                    <span class="keywordflow">if</span> (per_method.trie.find(req.<a class="code" href="structcrow_1_1request.html#aa3df34c56847d6d42887e73655276167">url</a>).first)</div>
-<div class="line"><a name="l01018"></a><span class="lineno"> 1018</span>&#160;                    {</div>
-<div class="line"><a name="l01019"></a><span class="lineno"> 1019</span>&#160;                        CROW_LOG_DEBUG &lt;&lt; <span class="stringliteral">&quot;Cannot match method &quot;</span> &lt;&lt; req.<a class="code" href="structcrow_1_1request.html#aa3df34c56847d6d42887e73655276167">url</a> &lt;&lt; <span class="stringliteral">&quot; &quot;</span> &lt;&lt; method_name(req.method);</div>
-<div class="line"><a name="l01020"></a><span class="lineno"> 1020</span>&#160;                        res = <a class="code" href="structcrow_1_1response.html">response</a>(405);</div>
-<div class="line"><a name="l01021"></a><span class="lineno"> 1021</span>&#160;                        res.<a class="code" href="structcrow_1_1response.html#abef42200eca49c70dc1f5140ee3603ab">end</a>();</div>
-<div class="line"><a name="l01022"></a><span class="lineno"> 1022</span>&#160;                        <span class="keywordflow">return</span>;</div>
-<div class="line"><a name="l01023"></a><span class="lineno"> 1023</span>&#160;                    }</div>
-<div class="line"><a name="l01024"></a><span class="lineno"> 1024</span>&#160;                }</div>
-<div class="line"><a name="l01025"></a><span class="lineno"> 1025</span>&#160; </div>
-<div class="line"><a name="l01026"></a><span class="lineno"> 1026</span>&#160;                CROW_LOG_INFO &lt;&lt; <span class="stringliteral">&quot;Cannot match rules &quot;</span> &lt;&lt; req.<a class="code" href="structcrow_1_1request.html#aa3df34c56847d6d42887e73655276167">url</a>;</div>
-<div class="line"><a name="l01027"></a><span class="lineno"> 1027</span>&#160;                res = <a class="code" href="structcrow_1_1response.html">response</a>(404);</div>
-<div class="line"><a name="l01028"></a><span class="lineno"> 1028</span>&#160;                res.<a class="code" href="structcrow_1_1response.html#abef42200eca49c70dc1f5140ee3603ab">end</a>();</div>
-<div class="line"><a name="l01029"></a><span class="lineno"> 1029</span>&#160;                <span class="keywordflow">return</span>;</div>
-<div class="line"><a name="l01030"></a><span class="lineno"> 1030</span>&#160;            }</div>
-<div class="line"><a name="l01031"></a><span class="lineno"> 1031</span>&#160; </div>
-<div class="line"><a name="l01032"></a><span class="lineno"> 1032</span>&#160;            <span class="keywordflow">if</span> (rule_index &gt;= rules.size())</div>
-<div class="line"><a name="l01033"></a><span class="lineno"> 1033</span>&#160;                <span class="keywordflow">throw</span> std::runtime_error(<span class="stringliteral">&quot;Trie internal structure corrupted!&quot;</span>);</div>
-<div class="line"><a name="l01034"></a><span class="lineno"> 1034</span>&#160; </div>
-<div class="line"><a name="l01035"></a><span class="lineno"> 1035</span>&#160;            <span class="keywordflow">if</span> (rule_index == RULE_SPECIAL_REDIRECT_SLASH)</div>
-<div class="line"><a name="l01036"></a><span class="lineno"> 1036</span>&#160;            {</div>
-<div class="line"><a name="l01037"></a><span class="lineno"> 1037</span>&#160;                CROW_LOG_INFO &lt;&lt; <span class="stringliteral">&quot;Redirecting to a url with trailing slash: &quot;</span> &lt;&lt; req.<a class="code" href="structcrow_1_1request.html#aa3df34c56847d6d42887e73655276167">url</a>;</div>
-<div class="line"><a name="l01038"></a><span class="lineno"> 1038</span>&#160;                res = <a class="code" href="structcrow_1_1response.html">response</a>(301);</div>
-<div class="line"><a name="l01039"></a><span class="lineno"> 1039</span>&#160; </div>
-<div class="line"><a name="l01040"></a><span class="lineno"> 1040</span>&#160;                <span class="comment">// TODO absolute url building</span></div>
-<div class="line"><a name="l01041"></a><span class="lineno"> 1041</span>&#160;                <span class="keywordflow">if</span> (req.get_header_value(<span class="stringliteral">&quot;Host&quot;</span>).empty())</div>
-<div class="line"><a name="l01042"></a><span class="lineno"> 1042</span>&#160;                {</div>
-<div class="line"><a name="l01043"></a><span class="lineno"> 1043</span>&#160;                    res.<a class="code" href="structcrow_1_1response.html#a16d1a8bcec6460ba97f90b80881693b8">add_header</a>(<span class="stringliteral">&quot;Location&quot;</span>, req.<a class="code" href="structcrow_1_1request.html#aa3df34c56847d6d42887e73655276167">url</a> + <span class="stringliteral">&quot;/&quot;</span>);</div>
-<div class="line"><a name="l01044"></a><span class="lineno"> 1044</span>&#160;                }</div>
-<div class="line"><a name="l01045"></a><span class="lineno"> 1045</span>&#160;                <span class="keywordflow">else</span></div>
-<div class="line"><a name="l01046"></a><span class="lineno"> 1046</span>&#160;                {</div>
-<div class="line"><a name="l01047"></a><span class="lineno"> 1047</span>&#160;                    res.<a class="code" href="structcrow_1_1response.html#a16d1a8bcec6460ba97f90b80881693b8">add_header</a>(<span class="stringliteral">&quot;Location&quot;</span>, <span class="stringliteral">&quot;http://&quot;</span> + req.get_header_value(<span class="stringliteral">&quot;Host&quot;</span>) + req.<a class="code" href="structcrow_1_1request.html#aa3df34c56847d6d42887e73655276167">url</a> + <span class="stringliteral">&quot;/&quot;</span>);</div>
-<div class="line"><a name="l01048"></a><span class="lineno"> 1048</span>&#160;                }</div>
-<div class="line"><a name="l01049"></a><span class="lineno"> 1049</span>&#160;                res.<a class="code" href="structcrow_1_1response.html#abef42200eca49c70dc1f5140ee3603ab">end</a>();</div>
-<div class="line"><a name="l01050"></a><span class="lineno"> 1050</span>&#160;                <span class="keywordflow">return</span>;</div>
-<div class="line"><a name="l01051"></a><span class="lineno"> 1051</span>&#160;            }</div>
-<div class="line"><a name="l01052"></a><span class="lineno"> 1052</span>&#160; </div>
-<div class="line"><a name="l01053"></a><span class="lineno"> 1053</span>&#160;            CROW_LOG_DEBUG &lt;&lt; <span class="stringliteral">&quot;Matched rule (upgrade) &#39;&quot;</span> &lt;&lt; rules[rule_index]-&gt;rule_ &lt;&lt; <span class="stringliteral">&quot;&#39; &quot;</span> &lt;&lt; <span class="keyword">static_cast&lt;</span>uint32_t<span class="keyword">&gt;</span>(req.method) &lt;&lt; <span class="stringliteral">&quot; / &quot;</span> &lt;&lt; rules[rule_index]-&gt;get_methods();</div>
-<div class="line"><a name="l01054"></a><span class="lineno"> 1054</span>&#160; </div>
-<div class="line"><a name="l01055"></a><span class="lineno"> 1055</span>&#160;            <span class="comment">// any uncaught exceptions become 500s</span></div>
-<div class="line"><a name="l01056"></a><span class="lineno"> 1056</span>&#160;            <span class="keywordflow">try</span></div>
-<div class="line"><a name="l01057"></a><span class="lineno"> 1057</span>&#160;            {</div>
-<div class="line"><a name="l01058"></a><span class="lineno"> 1058</span>&#160;                rules[rule_index]-&gt;handle_upgrade(req, res, std::move(adaptor));</div>
-<div class="line"><a name="l01059"></a><span class="lineno"> 1059</span>&#160;            }</div>
-<div class="line"><a name="l01060"></a><span class="lineno"> 1060</span>&#160;            <span class="keywordflow">catch</span>(std::exception&amp; e)</div>
-<div class="line"><a name="l01061"></a><span class="lineno"> 1061</span>&#160;            {</div>
-<div class="line"><a name="l01062"></a><span class="lineno"> 1062</span>&#160;                CROW_LOG_ERROR &lt;&lt; <span class="stringliteral">&quot;An uncaught exception occurred: &quot;</span> &lt;&lt; e.what();</div>
-<div class="line"><a name="l01063"></a><span class="lineno"> 1063</span>&#160;                res = <a class="code" href="structcrow_1_1response.html">response</a>(500);</div>
-<div class="line"><a name="l01064"></a><span class="lineno"> 1064</span>&#160;                res.<a class="code" href="structcrow_1_1response.html#abef42200eca49c70dc1f5140ee3603ab">end</a>();</div>
-<div class="line"><a name="l01065"></a><span class="lineno"> 1065</span>&#160;                <span class="keywordflow">return</span>;</div>
+<div class="line"><a name="l01009"></a><span class="lineno"> 1009</span>&#160;        <span class="comment">//TODO maybe add actual_method</span></div>
+<div class="line"><a name="l01010"></a><span class="lineno"> 1010</span>&#160;        <span class="keyword">template</span> &lt;<span class="keyword">typename</span> Adaptor&gt;</div>
+<div class="line"><a name="l01011"></a><span class="lineno"> 1011</span>&#160;        <span class="keywordtype">void</span> handle_upgrade(<span class="keyword">const</span> <a class="code" href="structcrow_1_1request.html">request</a>&amp; req, <a class="code" href="structcrow_1_1response.html">response</a>&amp; res, Adaptor&amp;&amp; adaptor)</div>
+<div class="line"><a name="l01012"></a><span class="lineno"> 1012</span>&#160;        {</div>
+<div class="line"><a name="l01013"></a><span class="lineno"> 1013</span>&#160;            <span class="keywordflow">if</span> (req.method &gt;= HTTPMethod::InternalMethodCount)</div>
+<div class="line"><a name="l01014"></a><span class="lineno"> 1014</span>&#160;                <span class="keywordflow">return</span>;</div>
+<div class="line"><a name="l01015"></a><span class="lineno"> 1015</span>&#160; </div>
+<div class="line"><a name="l01016"></a><span class="lineno"> 1016</span>&#160;            <span class="keyword">auto</span>&amp; per_method = per_methods_[<span class="keyword">static_cast&lt;</span><span class="keywordtype">int</span><span class="keyword">&gt;</span>(req.method)];</div>
+<div class="line"><a name="l01017"></a><span class="lineno"> 1017</span>&#160;            <span class="keyword">auto</span>&amp; rules = per_method.rules;</div>
+<div class="line"><a name="l01018"></a><span class="lineno"> 1018</span>&#160;            <span class="keywordtype">unsigned</span> rule_index = per_method.trie.find(req.<a class="code" href="structcrow_1_1request.html#aa3df34c56847d6d42887e73655276167">url</a>).first;</div>
+<div class="line"><a name="l01019"></a><span class="lineno"> 1019</span>&#160; </div>
+<div class="line"><a name="l01020"></a><span class="lineno"> 1020</span>&#160;            <span class="keywordflow">if</span> (!rule_index)</div>
+<div class="line"><a name="l01021"></a><span class="lineno"> 1021</span>&#160;            {</div>
+<div class="line"><a name="l01022"></a><span class="lineno"> 1022</span>&#160;                <span class="keywordflow">for</span> (<span class="keyword">auto</span>&amp; per_method: per_methods_)</div>
+<div class="line"><a name="l01023"></a><span class="lineno"> 1023</span>&#160;                {</div>
+<div class="line"><a name="l01024"></a><span class="lineno"> 1024</span>&#160;                    <span class="keywordflow">if</span> (per_method.trie.find(req.<a class="code" href="structcrow_1_1request.html#aa3df34c56847d6d42887e73655276167">url</a>).first)</div>
+<div class="line"><a name="l01025"></a><span class="lineno"> 1025</span>&#160;                    {</div>
+<div class="line"><a name="l01026"></a><span class="lineno"> 1026</span>&#160;                        CROW_LOG_DEBUG &lt;&lt; <span class="stringliteral">&quot;Cannot match method &quot;</span> &lt;&lt; req.<a class="code" href="structcrow_1_1request.html#aa3df34c56847d6d42887e73655276167">url</a> &lt;&lt; <span class="stringliteral">&quot; &quot;</span> &lt;&lt; method_name(req.method);</div>
+<div class="line"><a name="l01027"></a><span class="lineno"> 1027</span>&#160;                        res = <a class="code" href="structcrow_1_1response.html">response</a>(405);</div>
+<div class="line"><a name="l01028"></a><span class="lineno"> 1028</span>&#160;                        res.<a class="code" href="structcrow_1_1response.html#abef42200eca49c70dc1f5140ee3603ab">end</a>();</div>
+<div class="line"><a name="l01029"></a><span class="lineno"> 1029</span>&#160;                        <span class="keywordflow">return</span>;</div>
+<div class="line"><a name="l01030"></a><span class="lineno"> 1030</span>&#160;                    }</div>
+<div class="line"><a name="l01031"></a><span class="lineno"> 1031</span>&#160;                }</div>
+<div class="line"><a name="l01032"></a><span class="lineno"> 1032</span>&#160; </div>
+<div class="line"><a name="l01033"></a><span class="lineno"> 1033</span>&#160;                CROW_LOG_INFO &lt;&lt; <span class="stringliteral">&quot;Cannot match rules &quot;</span> &lt;&lt; req.<a class="code" href="structcrow_1_1request.html#aa3df34c56847d6d42887e73655276167">url</a>;</div>
+<div class="line"><a name="l01034"></a><span class="lineno"> 1034</span>&#160;                res = <a class="code" href="structcrow_1_1response.html">response</a>(404);</div>
+<div class="line"><a name="l01035"></a><span class="lineno"> 1035</span>&#160;                res.<a class="code" href="structcrow_1_1response.html#abef42200eca49c70dc1f5140ee3603ab">end</a>();</div>
+<div class="line"><a name="l01036"></a><span class="lineno"> 1036</span>&#160;                <span class="keywordflow">return</span>;</div>
+<div class="line"><a name="l01037"></a><span class="lineno"> 1037</span>&#160;            }</div>
+<div class="line"><a name="l01038"></a><span class="lineno"> 1038</span>&#160; </div>
+<div class="line"><a name="l01039"></a><span class="lineno"> 1039</span>&#160;            <span class="keywordflow">if</span> (rule_index &gt;= rules.size())</div>
+<div class="line"><a name="l01040"></a><span class="lineno"> 1040</span>&#160;                <span class="keywordflow">throw</span> std::runtime_error(<span class="stringliteral">&quot;Trie internal structure corrupted!&quot;</span>);</div>
+<div class="line"><a name="l01041"></a><span class="lineno"> 1041</span>&#160; </div>
+<div class="line"><a name="l01042"></a><span class="lineno"> 1042</span>&#160;            <span class="keywordflow">if</span> (rule_index == RULE_SPECIAL_REDIRECT_SLASH)</div>
+<div class="line"><a name="l01043"></a><span class="lineno"> 1043</span>&#160;            {</div>
+<div class="line"><a name="l01044"></a><span class="lineno"> 1044</span>&#160;                CROW_LOG_INFO &lt;&lt; <span class="stringliteral">&quot;Redirecting to a url with trailing slash: &quot;</span> &lt;&lt; req.<a class="code" href="structcrow_1_1request.html#aa3df34c56847d6d42887e73655276167">url</a>;</div>
+<div class="line"><a name="l01045"></a><span class="lineno"> 1045</span>&#160;                res = <a class="code" href="structcrow_1_1response.html">response</a>(301);</div>
+<div class="line"><a name="l01046"></a><span class="lineno"> 1046</span>&#160; </div>
+<div class="line"><a name="l01047"></a><span class="lineno"> 1047</span>&#160;                <span class="comment">// TODO absolute url building</span></div>
+<div class="line"><a name="l01048"></a><span class="lineno"> 1048</span>&#160;                <span class="keywordflow">if</span> (req.get_header_value(<span class="stringliteral">&quot;Host&quot;</span>).empty())</div>
+<div class="line"><a name="l01049"></a><span class="lineno"> 1049</span>&#160;                {</div>
+<div class="line"><a name="l01050"></a><span class="lineno"> 1050</span>&#160;                    res.<a class="code" href="structcrow_1_1response.html#a16d1a8bcec6460ba97f90b80881693b8">add_header</a>(<span class="stringliteral">&quot;Location&quot;</span>, req.<a class="code" href="structcrow_1_1request.html#aa3df34c56847d6d42887e73655276167">url</a> + <span class="stringliteral">&quot;/&quot;</span>);</div>
+<div class="line"><a name="l01051"></a><span class="lineno"> 1051</span>&#160;                }</div>
+<div class="line"><a name="l01052"></a><span class="lineno"> 1052</span>&#160;                <span class="keywordflow">else</span></div>
+<div class="line"><a name="l01053"></a><span class="lineno"> 1053</span>&#160;                {</div>
+<div class="line"><a name="l01054"></a><span class="lineno"> 1054</span>&#160;                    res.<a class="code" href="structcrow_1_1response.html#a16d1a8bcec6460ba97f90b80881693b8">add_header</a>(<span class="stringliteral">&quot;Location&quot;</span>, <span class="stringliteral">&quot;http://&quot;</span> + req.get_header_value(<span class="stringliteral">&quot;Host&quot;</span>) + req.<a class="code" href="structcrow_1_1request.html#aa3df34c56847d6d42887e73655276167">url</a> + <span class="stringliteral">&quot;/&quot;</span>);</div>
+<div class="line"><a name="l01055"></a><span class="lineno"> 1055</span>&#160;                }</div>
+<div class="line"><a name="l01056"></a><span class="lineno"> 1056</span>&#160;                res.<a class="code" href="structcrow_1_1response.html#abef42200eca49c70dc1f5140ee3603ab">end</a>();</div>
+<div class="line"><a name="l01057"></a><span class="lineno"> 1057</span>&#160;                <span class="keywordflow">return</span>;</div>
+<div class="line"><a name="l01058"></a><span class="lineno"> 1058</span>&#160;            }</div>
+<div class="line"><a name="l01059"></a><span class="lineno"> 1059</span>&#160; </div>
+<div class="line"><a name="l01060"></a><span class="lineno"> 1060</span>&#160;            CROW_LOG_DEBUG &lt;&lt; <span class="stringliteral">&quot;Matched rule (upgrade) &#39;&quot;</span> &lt;&lt; rules[rule_index]-&gt;rule_ &lt;&lt; <span class="stringliteral">&quot;&#39; &quot;</span> &lt;&lt; <span class="keyword">static_cast&lt;</span>uint32_t<span class="keyword">&gt;</span>(req.method) &lt;&lt; <span class="stringliteral">&quot; / &quot;</span> &lt;&lt; rules[rule_index]-&gt;get_methods();</div>
+<div class="line"><a name="l01061"></a><span class="lineno"> 1061</span>&#160; </div>
+<div class="line"><a name="l01062"></a><span class="lineno"> 1062</span>&#160;            <span class="comment">// any uncaught exceptions become 500s</span></div>
+<div class="line"><a name="l01063"></a><span class="lineno"> 1063</span>&#160;            <span class="keywordflow">try</span></div>
+<div class="line"><a name="l01064"></a><span class="lineno"> 1064</span>&#160;            {</div>
+<div class="line"><a name="l01065"></a><span class="lineno"> 1065</span>&#160;                rules[rule_index]-&gt;handle_upgrade(req, res, std::move(adaptor));</div>
 <div class="line"><a name="l01066"></a><span class="lineno"> 1066</span>&#160;            }</div>
-<div class="line"><a name="l01067"></a><span class="lineno"> 1067</span>&#160;            <span class="keywordflow">catch</span>(...)</div>
+<div class="line"><a name="l01067"></a><span class="lineno"> 1067</span>&#160;            <span class="keywordflow">catch</span>(std::exception&amp; e)</div>
 <div class="line"><a name="l01068"></a><span class="lineno"> 1068</span>&#160;            {</div>
-<div class="line"><a name="l01069"></a><span class="lineno"> 1069</span>&#160;                CROW_LOG_ERROR &lt;&lt; <span class="stringliteral">&quot;An uncaught exception occurred. The type was unknown so no information was available.&quot;</span>;</div>
+<div class="line"><a name="l01069"></a><span class="lineno"> 1069</span>&#160;                CROW_LOG_ERROR &lt;&lt; <span class="stringliteral">&quot;An uncaught exception occurred: &quot;</span> &lt;&lt; e.what();</div>
 <div class="line"><a name="l01070"></a><span class="lineno"> 1070</span>&#160;                res = <a class="code" href="structcrow_1_1response.html">response</a>(500);</div>
 <div class="line"><a name="l01071"></a><span class="lineno"> 1071</span>&#160;                res.<a class="code" href="structcrow_1_1response.html#abef42200eca49c70dc1f5140ee3603ab">end</a>();</div>
 <div class="line"><a name="l01072"></a><span class="lineno"> 1072</span>&#160;                <span class="keywordflow">return</span>;</div>
 <div class="line"><a name="l01073"></a><span class="lineno"> 1073</span>&#160;            }</div>
-<div class="line"><a name="l01074"></a><span class="lineno"> 1074</span>&#160;        }</div>
-<div class="line"><a name="l01075"></a><span class="lineno"> 1075</span>&#160; </div>
-<div class="line"><a name="l01076"></a><span class="lineno"> 1076</span>&#160;        <span class="keywordtype">void</span> handle(<span class="keyword">const</span> <a class="code" href="structcrow_1_1request.html">request</a>&amp; req, <a class="code" href="structcrow_1_1response.html">response</a>&amp; res)</div>
-<div class="line"><a name="l01077"></a><span class="lineno"> 1077</span>&#160;        {</div>
-<div class="line"><a name="l01078"></a><span class="lineno"> 1078</span>&#160;            <span class="keywordflow">if</span> (req.method &gt;= HTTPMethod::InternalMethodCount)</div>
+<div class="line"><a name="l01074"></a><span class="lineno"> 1074</span>&#160;            <span class="keywordflow">catch</span>(...)</div>
+<div class="line"><a name="l01075"></a><span class="lineno"> 1075</span>&#160;            {</div>
+<div class="line"><a name="l01076"></a><span class="lineno"> 1076</span>&#160;                CROW_LOG_ERROR &lt;&lt; <span class="stringliteral">&quot;An uncaught exception occurred. The type was unknown so no information was available.&quot;</span>;</div>
+<div class="line"><a name="l01077"></a><span class="lineno"> 1077</span>&#160;                res = <a class="code" href="structcrow_1_1response.html">response</a>(500);</div>
+<div class="line"><a name="l01078"></a><span class="lineno"> 1078</span>&#160;                res.<a class="code" href="structcrow_1_1response.html#abef42200eca49c70dc1f5140ee3603ab">end</a>();</div>
 <div class="line"><a name="l01079"></a><span class="lineno"> 1079</span>&#160;                <span class="keywordflow">return</span>;</div>
-<div class="line"><a name="l01080"></a><span class="lineno"> 1080</span>&#160;            <span class="keyword">auto</span>&amp; per_method = per_methods_[<span class="keyword">static_cast&lt;</span><span class="keywordtype">int</span><span class="keyword">&gt;</span>(req.method)];</div>
-<div class="line"><a name="l01081"></a><span class="lineno"> 1081</span>&#160;            <span class="keyword">auto</span>&amp; trie = per_method.trie;</div>
-<div class="line"><a name="l01082"></a><span class="lineno"> 1082</span>&#160;            <span class="keyword">auto</span>&amp; rules = per_method.rules;</div>
-<div class="line"><a name="l01083"></a><span class="lineno"> 1083</span>&#160; </div>
-<div class="line"><a name="l01084"></a><span class="lineno"> 1084</span>&#160;            <span class="keyword">auto</span> found = trie.find(req.<a class="code" href="structcrow_1_1request.html#aa3df34c56847d6d42887e73655276167">url</a>);</div>
-<div class="line"><a name="l01085"></a><span class="lineno"> 1085</span>&#160; </div>
-<div class="line"><a name="l01086"></a><span class="lineno"> 1086</span>&#160;            <span class="keywordtype">unsigned</span> rule_index = found.first;</div>
-<div class="line"><a name="l01087"></a><span class="lineno"> 1087</span>&#160; </div>
-<div class="line"><a name="l01088"></a><span class="lineno"> 1088</span>&#160;            <span class="keywordflow">if</span> (!rule_index)</div>
+<div class="line"><a name="l01080"></a><span class="lineno"> 1080</span>&#160;            }</div>
+<div class="line"><a name="l01081"></a><span class="lineno"> 1081</span>&#160;        }</div>
+<div class="line"><a name="l01082"></a><span class="lineno"> 1082</span>&#160; </div>
+<div class="line"><a name="l01083"></a><span class="lineno"> 1083</span>&#160;        <span class="keywordtype">void</span> handle(<span class="keyword">const</span> <a class="code" href="structcrow_1_1request.html">request</a>&amp; req, <a class="code" href="structcrow_1_1response.html">response</a>&amp; res)</div>
+<div class="line"><a name="l01084"></a><span class="lineno"> 1084</span>&#160;        {</div>
+<div class="line"><a name="l01085"></a><span class="lineno"> 1085</span>&#160;            HTTPMethod method_actual = req.method;</div>
+<div class="line"><a name="l01086"></a><span class="lineno"> 1086</span>&#160;            <span class="keywordflow">if</span> (req.method &gt;= HTTPMethod::InternalMethodCount)</div>
+<div class="line"><a name="l01087"></a><span class="lineno"> 1087</span>&#160;                <span class="keywordflow">return</span>;</div>
+<div class="line"><a name="l01088"></a><span class="lineno"> 1088</span>&#160;            <span class="keywordflow">else</span> <span class="keywordflow">if</span> (req.method == HTTPMethod::HEAD)</div>
 <div class="line"><a name="l01089"></a><span class="lineno"> 1089</span>&#160;            {</div>
-<div class="line"><a name="l01090"></a><span class="lineno"> 1090</span>&#160;                <span class="keywordflow">for</span> (<span class="keyword">auto</span>&amp; per_method: per_methods_)</div>
-<div class="line"><a name="l01091"></a><span class="lineno"> 1091</span>&#160;                {</div>
-<div class="line"><a name="l01092"></a><span class="lineno"> 1092</span>&#160;                    <span class="keywordflow">if</span> (per_method.trie.find(req.<a class="code" href="structcrow_1_1request.html#aa3df34c56847d6d42887e73655276167">url</a>).first)</div>
-<div class="line"><a name="l01093"></a><span class="lineno"> 1093</span>&#160;                    {</div>
-<div class="line"><a name="l01094"></a><span class="lineno"> 1094</span>&#160;                        CROW_LOG_DEBUG &lt;&lt; <span class="stringliteral">&quot;Cannot match method &quot;</span> &lt;&lt; req.<a class="code" href="structcrow_1_1request.html#aa3df34c56847d6d42887e73655276167">url</a> &lt;&lt; <span class="stringliteral">&quot; &quot;</span> &lt;&lt; method_name(req.method);</div>
-<div class="line"><a name="l01095"></a><span class="lineno"> 1095</span>&#160;                        res = <a class="code" href="structcrow_1_1response.html">response</a>(405);</div>
-<div class="line"><a name="l01096"></a><span class="lineno"> 1096</span>&#160;                        res.<a class="code" href="structcrow_1_1response.html#abef42200eca49c70dc1f5140ee3603ab">end</a>();</div>
-<div class="line"><a name="l01097"></a><span class="lineno"> 1097</span>&#160;                        <span class="keywordflow">return</span>;</div>
-<div class="line"><a name="l01098"></a><span class="lineno"> 1098</span>&#160;                    }</div>
-<div class="line"><a name="l01099"></a><span class="lineno"> 1099</span>&#160;                }</div>
-<div class="line"><a name="l01100"></a><span class="lineno"> 1100</span>&#160; </div>
-<div class="line"><a name="l01101"></a><span class="lineno"> 1101</span>&#160;                CROW_LOG_DEBUG &lt;&lt; <span class="stringliteral">&quot;Cannot match rules &quot;</span> &lt;&lt; req.<a class="code" href="structcrow_1_1request.html#aa3df34c56847d6d42887e73655276167">url</a>;</div>
-<div class="line"><a name="l01102"></a><span class="lineno"> 1102</span>&#160;                res = <a class="code" href="structcrow_1_1response.html">response</a>(404);</div>
-<div class="line"><a name="l01103"></a><span class="lineno"> 1103</span>&#160;                res.<a class="code" href="structcrow_1_1response.html#abef42200eca49c70dc1f5140ee3603ab">end</a>();</div>
-<div class="line"><a name="l01104"></a><span class="lineno"> 1104</span>&#160;                <span class="keywordflow">return</span>;</div>
-<div class="line"><a name="l01105"></a><span class="lineno"> 1105</span>&#160;            }</div>
-<div class="line"><a name="l01106"></a><span class="lineno"> 1106</span>&#160; </div>
-<div class="line"><a name="l01107"></a><span class="lineno"> 1107</span>&#160;            <span class="keywordflow">if</span> (rule_index &gt;= rules.size())</div>
-<div class="line"><a name="l01108"></a><span class="lineno"> 1108</span>&#160;                <span class="keywordflow">throw</span> std::runtime_error(<span class="stringliteral">&quot;Trie internal structure corrupted!&quot;</span>);</div>
-<div class="line"><a name="l01109"></a><span class="lineno"> 1109</span>&#160; </div>
-<div class="line"><a name="l01110"></a><span class="lineno"> 1110</span>&#160;            <span class="keywordflow">if</span> (rule_index == RULE_SPECIAL_REDIRECT_SLASH)</div>
-<div class="line"><a name="l01111"></a><span class="lineno"> 1111</span>&#160;            {</div>
-<div class="line"><a name="l01112"></a><span class="lineno"> 1112</span>&#160;                CROW_LOG_INFO &lt;&lt; <span class="stringliteral">&quot;Redirecting to a url with trailing slash: &quot;</span> &lt;&lt; req.<a class="code" href="structcrow_1_1request.html#aa3df34c56847d6d42887e73655276167">url</a>;</div>
-<div class="line"><a name="l01113"></a><span class="lineno"> 1113</span>&#160;                res = <a class="code" href="structcrow_1_1response.html">response</a>(301);</div>
-<div class="line"><a name="l01114"></a><span class="lineno"> 1114</span>&#160; </div>
-<div class="line"><a name="l01115"></a><span class="lineno"> 1115</span>&#160;                <span class="comment">// TODO absolute url building</span></div>
-<div class="line"><a name="l01116"></a><span class="lineno"> 1116</span>&#160;                <span class="keywordflow">if</span> (req.get_header_value(<span class="stringliteral">&quot;Host&quot;</span>).empty())</div>
-<div class="line"><a name="l01117"></a><span class="lineno"> 1117</span>&#160;                {</div>
-<div class="line"><a name="l01118"></a><span class="lineno"> 1118</span>&#160;                    res.<a class="code" href="structcrow_1_1response.html#a16d1a8bcec6460ba97f90b80881693b8">add_header</a>(<span class="stringliteral">&quot;Location&quot;</span>, req.<a class="code" href="structcrow_1_1request.html#aa3df34c56847d6d42887e73655276167">url</a> + <span class="stringliteral">&quot;/&quot;</span>);</div>
-<div class="line"><a name="l01119"></a><span class="lineno"> 1119</span>&#160;                }</div>
-<div class="line"><a name="l01120"></a><span class="lineno"> 1120</span>&#160;                <span class="keywordflow">else</span></div>
-<div class="line"><a name="l01121"></a><span class="lineno"> 1121</span>&#160;                {</div>
-<div class="line"><a name="l01122"></a><span class="lineno"> 1122</span>&#160;                    res.<a class="code" href="structcrow_1_1response.html#a16d1a8bcec6460ba97f90b80881693b8">add_header</a>(<span class="stringliteral">&quot;Location&quot;</span>, <span class="stringliteral">&quot;http://&quot;</span> + req.get_header_value(<span class="stringliteral">&quot;Host&quot;</span>) + req.<a class="code" href="structcrow_1_1request.html#aa3df34c56847d6d42887e73655276167">url</a> + <span class="stringliteral">&quot;/&quot;</span>);</div>
-<div class="line"><a name="l01123"></a><span class="lineno"> 1123</span>&#160;                }</div>
-<div class="line"><a name="l01124"></a><span class="lineno"> 1124</span>&#160;                res.<a class="code" href="structcrow_1_1response.html#abef42200eca49c70dc1f5140ee3603ab">end</a>();</div>
-<div class="line"><a name="l01125"></a><span class="lineno"> 1125</span>&#160;                <span class="keywordflow">return</span>;</div>
-<div class="line"><a name="l01126"></a><span class="lineno"> 1126</span>&#160;            }</div>
-<div class="line"><a name="l01127"></a><span class="lineno"> 1127</span>&#160; </div>
-<div class="line"><a name="l01128"></a><span class="lineno"> 1128</span>&#160;            CROW_LOG_DEBUG &lt;&lt; <span class="stringliteral">&quot;Matched rule &#39;&quot;</span> &lt;&lt; rules[rule_index]-&gt;rule_ &lt;&lt; <span class="stringliteral">&quot;&#39; &quot;</span> &lt;&lt; <span class="keyword">static_cast&lt;</span>uint32_t<span class="keyword">&gt;</span>(req.method) &lt;&lt; <span class="stringliteral">&quot; / &quot;</span> &lt;&lt; rules[rule_index]-&gt;get_methods();</div>
-<div class="line"><a name="l01129"></a><span class="lineno"> 1129</span>&#160; </div>
-<div class="line"><a name="l01130"></a><span class="lineno"> 1130</span>&#160;            <span class="comment">// any uncaught exceptions become 500s</span></div>
-<div class="line"><a name="l01131"></a><span class="lineno"> 1131</span>&#160;            <span class="keywordflow">try</span></div>
-<div class="line"><a name="l01132"></a><span class="lineno"> 1132</span>&#160;            {</div>
-<div class="line"><a name="l01133"></a><span class="lineno"> 1133</span>&#160;                rules[rule_index]-&gt;handle(req, res, found.second);</div>
-<div class="line"><a name="l01134"></a><span class="lineno"> 1134</span>&#160;            }</div>
-<div class="line"><a name="l01135"></a><span class="lineno"> 1135</span>&#160;            <span class="keywordflow">catch</span>(std::exception&amp; e)</div>
-<div class="line"><a name="l01136"></a><span class="lineno"> 1136</span>&#160;            {</div>
-<div class="line"><a name="l01137"></a><span class="lineno"> 1137</span>&#160;                CROW_LOG_ERROR &lt;&lt; <span class="stringliteral">&quot;An uncaught exception occurred: &quot;</span> &lt;&lt; e.what();</div>
-<div class="line"><a name="l01138"></a><span class="lineno"> 1138</span>&#160;                res = <a class="code" href="structcrow_1_1response.html">response</a>(500);</div>
-<div class="line"><a name="l01139"></a><span class="lineno"> 1139</span>&#160;                res.<a class="code" href="structcrow_1_1response.html#abef42200eca49c70dc1f5140ee3603ab">end</a>();</div>
-<div class="line"><a name="l01140"></a><span class="lineno"> 1140</span>&#160;                <span class="keywordflow">return</span>;</div>
-<div class="line"><a name="l01141"></a><span class="lineno"> 1141</span>&#160;            }</div>
-<div class="line"><a name="l01142"></a><span class="lineno"> 1142</span>&#160;            <span class="keywordflow">catch</span>(...)</div>
-<div class="line"><a name="l01143"></a><span class="lineno"> 1143</span>&#160;            {</div>
-<div class="line"><a name="l01144"></a><span class="lineno"> 1144</span>&#160;                CROW_LOG_ERROR &lt;&lt; <span class="stringliteral">&quot;An uncaught exception occurred. The type was unknown so no information was available.&quot;</span>;</div>
-<div class="line"><a name="l01145"></a><span class="lineno"> 1145</span>&#160;                res = <a class="code" href="structcrow_1_1response.html">response</a>(500);</div>
-<div class="line"><a name="l01146"></a><span class="lineno"> 1146</span>&#160;                res.<a class="code" href="structcrow_1_1response.html#abef42200eca49c70dc1f5140ee3603ab">end</a>();</div>
-<div class="line"><a name="l01147"></a><span class="lineno"> 1147</span>&#160;                <span class="keywordflow">return</span>;</div>
-<div class="line"><a name="l01148"></a><span class="lineno"> 1148</span>&#160;            }</div>
-<div class="line"><a name="l01149"></a><span class="lineno"> 1149</span>&#160;        }</div>
-<div class="line"><a name="l01150"></a><span class="lineno"> 1150</span>&#160; </div>
-<div class="line"><a name="l01151"></a><span class="lineno"> 1151</span>&#160;        <span class="keywordtype">void</span> debug_print()</div>
-<div class="line"><a name="l01152"></a><span class="lineno"> 1152</span>&#160;        {</div>
-<div class="line"><a name="l01153"></a><span class="lineno"> 1153</span>&#160;            <span class="keywordflow">for</span>(<span class="keywordtype">int</span> i = 0; i &lt; static_cast&lt;int&gt;(HTTPMethod::InternalMethodCount); i ++)</div>
-<div class="line"><a name="l01154"></a><span class="lineno"> 1154</span>&#160;            {</div>
-<div class="line"><a name="l01155"></a><span class="lineno"> 1155</span>&#160;                CROW_LOG_DEBUG &lt;&lt; method_name(static_cast&lt;HTTPMethod&gt;(i));</div>
-<div class="line"><a name="l01156"></a><span class="lineno"> 1156</span>&#160;                per_methods_[i].trie.debug_print();</div>
-<div class="line"><a name="l01157"></a><span class="lineno"> 1157</span>&#160;            }</div>
-<div class="line"><a name="l01158"></a><span class="lineno"> 1158</span>&#160;        }</div>
-<div class="line"><a name="l01159"></a><span class="lineno"> 1159</span>&#160; </div>
-<div class="line"><a name="l01160"></a><span class="lineno"> 1160</span>&#160;    <span class="keyword">private</span>:</div>
-<div class="line"><a name="l01161"></a><span class="lineno"> 1161</span>&#160;        <span class="keyword">struct </span>PerMethod</div>
-<div class="line"><a name="l01162"></a><span class="lineno"> 1162</span>&#160;        {</div>
-<div class="line"><a name="l01163"></a><span class="lineno"> 1163</span>&#160;            std::vector&lt;BaseRule*&gt; rules;</div>
-<div class="line"><a name="l01164"></a><span class="lineno"> 1164</span>&#160;            <a class="code" href="classcrow_1_1_trie.html">Trie</a> trie;</div>
-<div class="line"><a name="l01165"></a><span class="lineno"> 1165</span>&#160; </div>
-<div class="line"><a name="l01166"></a><span class="lineno"> 1166</span>&#160;            <span class="comment">// rule index 0, 1 has special meaning; preallocate it to avoid duplication.</span></div>
-<div class="line"><a name="l01167"></a><span class="lineno"> 1167</span>&#160;            PerMethod() : rules(2) {}</div>
-<div class="line"><a name="l01168"></a><span class="lineno"> 1168</span>&#160;        };</div>
-<div class="line"><a name="l01169"></a><span class="lineno"> 1169</span>&#160;        std::array&lt;PerMethod, static_cast&lt;int&gt;(HTTPMethod::InternalMethodCount)&gt; per_methods_;</div>
-<div class="line"><a name="l01170"></a><span class="lineno"> 1170</span>&#160;        std::vector&lt;std::unique_ptr&lt;BaseRule&gt;&gt; all_rules_;</div>
-<div class="line"><a name="l01171"></a><span class="lineno"> 1171</span>&#160;    };</div>
-<div class="line"><a name="l01172"></a><span class="lineno"> 1172</span>&#160;}</div>
+<div class="line"><a name="l01090"></a><span class="lineno"> 1090</span>&#160;                method_actual = HTTPMethod::GET;</div>
+<div class="line"><a name="l01091"></a><span class="lineno"> 1091</span>&#160;                res.<a class="code" href="structcrow_1_1response.html#a42e68ba33c040b10d3bc49392193f415">is_head_response</a> = <span class="keyword">true</span>;</div>
+<div class="line"><a name="l01092"></a><span class="lineno"> 1092</span>&#160;            }</div>
+<div class="line"><a name="l01093"></a><span class="lineno"> 1093</span>&#160;            <span class="keywordflow">else</span> <span class="keywordflow">if</span> (req.method == HTTPMethod::OPTIONS)</div>
+<div class="line"><a name="l01094"></a><span class="lineno"> 1094</span>&#160;            {</div>
+<div class="line"><a name="l01095"></a><span class="lineno"> 1095</span>&#160;                std::string allow = <span class="stringliteral">&quot;OPTIONS, HEAD, &quot;</span>;</div>
+<div class="line"><a name="l01096"></a><span class="lineno"> 1096</span>&#160; </div>
+<div class="line"><a name="l01097"></a><span class="lineno"> 1097</span>&#160;                <span class="keywordflow">if</span> (req.<a class="code" href="structcrow_1_1request.html#aa3df34c56847d6d42887e73655276167">url</a> == <span class="stringliteral">&quot;/*&quot;</span>)</div>
+<div class="line"><a name="l01098"></a><span class="lineno"> 1098</span>&#160;                {</div>
+<div class="line"><a name="l01099"></a><span class="lineno"> 1099</span>&#160;                    <span class="keywordflow">for</span>(<span class="keywordtype">int</span> i = 0; i &lt; static_cast&lt;int&gt;(HTTPMethod::InternalMethodCount); i ++)</div>
+<div class="line"><a name="l01100"></a><span class="lineno"> 1100</span>&#160;                    {</div>
+<div class="line"><a name="l01101"></a><span class="lineno"> 1101</span>&#160;                        <span class="keywordflow">if</span> (per_methods_[i].trie.is_empty())</div>
+<div class="line"><a name="l01102"></a><span class="lineno"> 1102</span>&#160;                        {</div>
+<div class="line"><a name="l01103"></a><span class="lineno"> 1103</span>&#160;                            allow += method_name(<span class="keyword">static_cast&lt;</span>HTTPMethod<span class="keyword">&gt;</span>(i)) + <span class="stringliteral">&quot;, &quot;</span>;</div>
+<div class="line"><a name="l01104"></a><span class="lineno"> 1104</span>&#160;                        }</div>
+<div class="line"><a name="l01105"></a><span class="lineno"> 1105</span>&#160;                    }</div>
+<div class="line"><a name="l01106"></a><span class="lineno"> 1106</span>&#160;                        allow = allow.substr(0, allow.size()-2);</div>
+<div class="line"><a name="l01107"></a><span class="lineno"> 1107</span>&#160;                        res = <a class="code" href="structcrow_1_1response.html">response</a>(204);</div>
+<div class="line"><a name="l01108"></a><span class="lineno"> 1108</span>&#160;                        res.<a class="code" href="structcrow_1_1response.html#ab2b9a9b9795fa6330bd47b66a716cb0b">set_header</a>(<span class="stringliteral">&quot;Allow&quot;</span>, allow);</div>
+<div class="line"><a name="l01109"></a><span class="lineno"> 1109</span>&#160;                        res.<a class="code" href="structcrow_1_1response.html#a95f300c05782e1934dad522b6d6588cf">manual_length_header</a> = <span class="keyword">true</span>;</div>
+<div class="line"><a name="l01110"></a><span class="lineno"> 1110</span>&#160;                        res.<a class="code" href="structcrow_1_1response.html#abef42200eca49c70dc1f5140ee3603ab">end</a>();</div>
+<div class="line"><a name="l01111"></a><span class="lineno"> 1111</span>&#160;                        <span class="keywordflow">return</span>;</div>
+<div class="line"><a name="l01112"></a><span class="lineno"> 1112</span>&#160;                }</div>
+<div class="line"><a name="l01113"></a><span class="lineno"> 1113</span>&#160;                <span class="keywordflow">else</span></div>
+<div class="line"><a name="l01114"></a><span class="lineno"> 1114</span>&#160;                {</div>
+<div class="line"><a name="l01115"></a><span class="lineno"> 1115</span>&#160;                    <span class="keywordflow">for</span>(<span class="keywordtype">int</span> i = 0; i &lt; static_cast&lt;int&gt;(HTTPMethod::InternalMethodCount); i ++)</div>
+<div class="line"><a name="l01116"></a><span class="lineno"> 1116</span>&#160;                    {</div>
+<div class="line"><a name="l01117"></a><span class="lineno"> 1117</span>&#160;                        <span class="keywordflow">if</span> (per_methods_[i].trie.find(req.<a class="code" href="structcrow_1_1request.html#aa3df34c56847d6d42887e73655276167">url</a>).first)</div>
+<div class="line"><a name="l01118"></a><span class="lineno"> 1118</span>&#160;                        {</div>
+<div class="line"><a name="l01119"></a><span class="lineno"> 1119</span>&#160;                            allow += method_name(<span class="keyword">static_cast&lt;</span>HTTPMethod<span class="keyword">&gt;</span>(i)) + <span class="stringliteral">&quot;, &quot;</span>;</div>
+<div class="line"><a name="l01120"></a><span class="lineno"> 1120</span>&#160;                        }</div>
+<div class="line"><a name="l01121"></a><span class="lineno"> 1121</span>&#160;                    }</div>
+<div class="line"><a name="l01122"></a><span class="lineno"> 1122</span>&#160;                    <span class="keywordflow">if</span> (allow != <span class="stringliteral">&quot;OPTIONS, HEAD, &quot;</span>)</div>
+<div class="line"><a name="l01123"></a><span class="lineno"> 1123</span>&#160;                    {</div>
+<div class="line"><a name="l01124"></a><span class="lineno"> 1124</span>&#160;                        allow = allow.substr(0, allow.size()-2);</div>
+<div class="line"><a name="l01125"></a><span class="lineno"> 1125</span>&#160;                        res = <a class="code" href="structcrow_1_1response.html">response</a>(204);</div>
+<div class="line"><a name="l01126"></a><span class="lineno"> 1126</span>&#160;                        res.<a class="code" href="structcrow_1_1response.html#ab2b9a9b9795fa6330bd47b66a716cb0b">set_header</a>(<span class="stringliteral">&quot;Allow&quot;</span>, allow);</div>
+<div class="line"><a name="l01127"></a><span class="lineno"> 1127</span>&#160;                        res.<a class="code" href="structcrow_1_1response.html#a95f300c05782e1934dad522b6d6588cf">manual_length_header</a> = <span class="keyword">true</span>;</div>
+<div class="line"><a name="l01128"></a><span class="lineno"> 1128</span>&#160;                        res.<a class="code" href="structcrow_1_1response.html#abef42200eca49c70dc1f5140ee3603ab">end</a>();</div>
+<div class="line"><a name="l01129"></a><span class="lineno"> 1129</span>&#160;                        <span class="keywordflow">return</span>;</div>
+<div class="line"><a name="l01130"></a><span class="lineno"> 1130</span>&#160;                    }</div>
+<div class="line"><a name="l01131"></a><span class="lineno"> 1131</span>&#160;                    <span class="keywordflow">else</span></div>
+<div class="line"><a name="l01132"></a><span class="lineno"> 1132</span>&#160;                    {</div>
+<div class="line"><a name="l01133"></a><span class="lineno"> 1133</span>&#160;                        CROW_LOG_DEBUG &lt;&lt; <span class="stringliteral">&quot;Cannot match rules &quot;</span> &lt;&lt; req.<a class="code" href="structcrow_1_1request.html#aa3df34c56847d6d42887e73655276167">url</a>;</div>
+<div class="line"><a name="l01134"></a><span class="lineno"> 1134</span>&#160;                        res = <a class="code" href="structcrow_1_1response.html">response</a>(404);</div>
+<div class="line"><a name="l01135"></a><span class="lineno"> 1135</span>&#160;                        res.<a class="code" href="structcrow_1_1response.html#abef42200eca49c70dc1f5140ee3603ab">end</a>();</div>
+<div class="line"><a name="l01136"></a><span class="lineno"> 1136</span>&#160;                        <span class="keywordflow">return</span>;</div>
+<div class="line"><a name="l01137"></a><span class="lineno"> 1137</span>&#160;                    }</div>
+<div class="line"><a name="l01138"></a><span class="lineno"> 1138</span>&#160;                }</div>
+<div class="line"><a name="l01139"></a><span class="lineno"> 1139</span>&#160;            }</div>
+<div class="line"><a name="l01140"></a><span class="lineno"> 1140</span>&#160; </div>
+<div class="line"><a name="l01141"></a><span class="lineno"> 1141</span>&#160;            <span class="keyword">auto</span>&amp; per_method = per_methods_[<span class="keyword">static_cast&lt;</span><span class="keywordtype">int</span><span class="keyword">&gt;</span>(method_actual)];</div>
+<div class="line"><a name="l01142"></a><span class="lineno"> 1142</span>&#160;            <span class="keyword">auto</span>&amp; trie = per_method.trie;</div>
+<div class="line"><a name="l01143"></a><span class="lineno"> 1143</span>&#160;            <span class="keyword">auto</span>&amp; rules = per_method.rules;</div>
+<div class="line"><a name="l01144"></a><span class="lineno"> 1144</span>&#160; </div>
+<div class="line"><a name="l01145"></a><span class="lineno"> 1145</span>&#160;            <span class="keyword">auto</span> found = trie.find(req.<a class="code" href="structcrow_1_1request.html#aa3df34c56847d6d42887e73655276167">url</a>);</div>
+<div class="line"><a name="l01146"></a><span class="lineno"> 1146</span>&#160; </div>
+<div class="line"><a name="l01147"></a><span class="lineno"> 1147</span>&#160;            <span class="keywordtype">unsigned</span> rule_index = found.first;</div>
+<div class="line"><a name="l01148"></a><span class="lineno"> 1148</span>&#160; </div>
+<div class="line"><a name="l01149"></a><span class="lineno"> 1149</span>&#160;            <span class="keywordflow">if</span> (!rule_index)</div>
+<div class="line"><a name="l01150"></a><span class="lineno"> 1150</span>&#160;            {</div>
+<div class="line"><a name="l01151"></a><span class="lineno"> 1151</span>&#160;                <span class="keywordflow">for</span> (<span class="keyword">auto</span>&amp; per_method: per_methods_)</div>
+<div class="line"><a name="l01152"></a><span class="lineno"> 1152</span>&#160;                {</div>
+<div class="line"><a name="l01153"></a><span class="lineno"> 1153</span>&#160;                    <span class="keywordflow">if</span> (per_method.trie.find(req.<a class="code" href="structcrow_1_1request.html#aa3df34c56847d6d42887e73655276167">url</a>).first)</div>
+<div class="line"><a name="l01154"></a><span class="lineno"> 1154</span>&#160;                    {</div>
+<div class="line"><a name="l01155"></a><span class="lineno"> 1155</span>&#160;                        CROW_LOG_DEBUG &lt;&lt; <span class="stringliteral">&quot;Cannot match method &quot;</span> &lt;&lt; req.<a class="code" href="structcrow_1_1request.html#aa3df34c56847d6d42887e73655276167">url</a> &lt;&lt; <span class="stringliteral">&quot; &quot;</span> &lt;&lt; method_name(method_actual);</div>
+<div class="line"><a name="l01156"></a><span class="lineno"> 1156</span>&#160;                        res = <a class="code" href="structcrow_1_1response.html">response</a>(405);</div>
+<div class="line"><a name="l01157"></a><span class="lineno"> 1157</span>&#160;                        res.<a class="code" href="structcrow_1_1response.html#abef42200eca49c70dc1f5140ee3603ab">end</a>();</div>
+<div class="line"><a name="l01158"></a><span class="lineno"> 1158</span>&#160;                        <span class="keywordflow">return</span>;</div>
+<div class="line"><a name="l01159"></a><span class="lineno"> 1159</span>&#160;                    }</div>
+<div class="line"><a name="l01160"></a><span class="lineno"> 1160</span>&#160;                }</div>
+<div class="line"><a name="l01161"></a><span class="lineno"> 1161</span>&#160; </div>
+<div class="line"><a name="l01162"></a><span class="lineno"> 1162</span>&#160;                CROW_LOG_DEBUG &lt;&lt; <span class="stringliteral">&quot;Cannot match rules &quot;</span> &lt;&lt; req.<a class="code" href="structcrow_1_1request.html#aa3df34c56847d6d42887e73655276167">url</a>;</div>
+<div class="line"><a name="l01163"></a><span class="lineno"> 1163</span>&#160;                res = <a class="code" href="structcrow_1_1response.html">response</a>(404);</div>
+<div class="line"><a name="l01164"></a><span class="lineno"> 1164</span>&#160;                res.<a class="code" href="structcrow_1_1response.html#abef42200eca49c70dc1f5140ee3603ab">end</a>();</div>
+<div class="line"><a name="l01165"></a><span class="lineno"> 1165</span>&#160;                <span class="keywordflow">return</span>;</div>
+<div class="line"><a name="l01166"></a><span class="lineno"> 1166</span>&#160;            }</div>
+<div class="line"><a name="l01167"></a><span class="lineno"> 1167</span>&#160; </div>
+<div class="line"><a name="l01168"></a><span class="lineno"> 1168</span>&#160;            <span class="keywordflow">if</span> (rule_index &gt;= rules.size())</div>
+<div class="line"><a name="l01169"></a><span class="lineno"> 1169</span>&#160;                <span class="keywordflow">throw</span> std::runtime_error(<span class="stringliteral">&quot;Trie internal structure corrupted!&quot;</span>);</div>
+<div class="line"><a name="l01170"></a><span class="lineno"> 1170</span>&#160; </div>
+<div class="line"><a name="l01171"></a><span class="lineno"> 1171</span>&#160;            <span class="keywordflow">if</span> (rule_index == RULE_SPECIAL_REDIRECT_SLASH)</div>
+<div class="line"><a name="l01172"></a><span class="lineno"> 1172</span>&#160;            {</div>
+<div class="line"><a name="l01173"></a><span class="lineno"> 1173</span>&#160;                CROW_LOG_INFO &lt;&lt; <span class="stringliteral">&quot;Redirecting to a url with trailing slash: &quot;</span> &lt;&lt; req.<a class="code" href="structcrow_1_1request.html#aa3df34c56847d6d42887e73655276167">url</a>;</div>
+<div class="line"><a name="l01174"></a><span class="lineno"> 1174</span>&#160;                res = <a class="code" href="structcrow_1_1response.html">response</a>(301);</div>
+<div class="line"><a name="l01175"></a><span class="lineno"> 1175</span>&#160; </div>
+<div class="line"><a name="l01176"></a><span class="lineno"> 1176</span>&#160;                <span class="comment">// TODO absolute url building</span></div>
+<div class="line"><a name="l01177"></a><span class="lineno"> 1177</span>&#160;                <span class="keywordflow">if</span> (req.get_header_value(<span class="stringliteral">&quot;Host&quot;</span>).empty())</div>
+<div class="line"><a name="l01178"></a><span class="lineno"> 1178</span>&#160;                {</div>
+<div class="line"><a name="l01179"></a><span class="lineno"> 1179</span>&#160;                    res.<a class="code" href="structcrow_1_1response.html#a16d1a8bcec6460ba97f90b80881693b8">add_header</a>(<span class="stringliteral">&quot;Location&quot;</span>, req.<a class="code" href="structcrow_1_1request.html#aa3df34c56847d6d42887e73655276167">url</a> + <span class="stringliteral">&quot;/&quot;</span>);</div>
+<div class="line"><a name="l01180"></a><span class="lineno"> 1180</span>&#160;                }</div>
+<div class="line"><a name="l01181"></a><span class="lineno"> 1181</span>&#160;                <span class="keywordflow">else</span></div>
+<div class="line"><a name="l01182"></a><span class="lineno"> 1182</span>&#160;                {</div>
+<div class="line"><a name="l01183"></a><span class="lineno"> 1183</span>&#160;                    res.<a class="code" href="structcrow_1_1response.html#a16d1a8bcec6460ba97f90b80881693b8">add_header</a>(<span class="stringliteral">&quot;Location&quot;</span>, <span class="stringliteral">&quot;http://&quot;</span> + req.get_header_value(<span class="stringliteral">&quot;Host&quot;</span>) + req.<a class="code" href="structcrow_1_1request.html#aa3df34c56847d6d42887e73655276167">url</a> + <span class="stringliteral">&quot;/&quot;</span>);</div>
+<div class="line"><a name="l01184"></a><span class="lineno"> 1184</span>&#160;                }</div>
+<div class="line"><a name="l01185"></a><span class="lineno"> 1185</span>&#160;                res.<a class="code" href="structcrow_1_1response.html#abef42200eca49c70dc1f5140ee3603ab">end</a>();</div>
+<div class="line"><a name="l01186"></a><span class="lineno"> 1186</span>&#160;                <span class="keywordflow">return</span>;</div>
+<div class="line"><a name="l01187"></a><span class="lineno"> 1187</span>&#160;            }</div>
+<div class="line"><a name="l01188"></a><span class="lineno"> 1188</span>&#160; </div>
+<div class="line"><a name="l01189"></a><span class="lineno"> 1189</span>&#160;            CROW_LOG_DEBUG &lt;&lt; <span class="stringliteral">&quot;Matched rule &#39;&quot;</span> &lt;&lt; rules[rule_index]-&gt;rule_ &lt;&lt; <span class="stringliteral">&quot;&#39; &quot;</span> &lt;&lt; <span class="keyword">static_cast&lt;</span>uint32_t<span class="keyword">&gt;</span>(req.method) &lt;&lt; <span class="stringliteral">&quot; / &quot;</span> &lt;&lt; rules[rule_index]-&gt;get_methods();</div>
+<div class="line"><a name="l01190"></a><span class="lineno"> 1190</span>&#160; </div>
+<div class="line"><a name="l01191"></a><span class="lineno"> 1191</span>&#160;            <span class="comment">// any uncaught exceptions become 500s</span></div>
+<div class="line"><a name="l01192"></a><span class="lineno"> 1192</span>&#160;            <span class="keywordflow">try</span></div>
+<div class="line"><a name="l01193"></a><span class="lineno"> 1193</span>&#160;            {</div>
+<div class="line"><a name="l01194"></a><span class="lineno"> 1194</span>&#160;                rules[rule_index]-&gt;handle(req, res, found.second);</div>
+<div class="line"><a name="l01195"></a><span class="lineno"> 1195</span>&#160;            }</div>
+<div class="line"><a name="l01196"></a><span class="lineno"> 1196</span>&#160;            <span class="keywordflow">catch</span>(std::exception&amp; e)</div>
+<div class="line"><a name="l01197"></a><span class="lineno"> 1197</span>&#160;            {</div>
+<div class="line"><a name="l01198"></a><span class="lineno"> 1198</span>&#160;                CROW_LOG_ERROR &lt;&lt; <span class="stringliteral">&quot;An uncaught exception occurred: &quot;</span> &lt;&lt; e.what();</div>
+<div class="line"><a name="l01199"></a><span class="lineno"> 1199</span>&#160;                res = <a class="code" href="structcrow_1_1response.html">response</a>(500);</div>
+<div class="line"><a name="l01200"></a><span class="lineno"> 1200</span>&#160;                res.<a class="code" href="structcrow_1_1response.html#abef42200eca49c70dc1f5140ee3603ab">end</a>();</div>
+<div class="line"><a name="l01201"></a><span class="lineno"> 1201</span>&#160;                <span class="keywordflow">return</span>;</div>
+<div class="line"><a name="l01202"></a><span class="lineno"> 1202</span>&#160;            }</div>
+<div class="line"><a name="l01203"></a><span class="lineno"> 1203</span>&#160;            <span class="keywordflow">catch</span>(...)</div>
+<div class="line"><a name="l01204"></a><span class="lineno"> 1204</span>&#160;            {</div>
+<div class="line"><a name="l01205"></a><span class="lineno"> 1205</span>&#160;                CROW_LOG_ERROR &lt;&lt; <span class="stringliteral">&quot;An uncaught exception occurred. The type was unknown so no information was available.&quot;</span>;</div>
+<div class="line"><a name="l01206"></a><span class="lineno"> 1206</span>&#160;                res = <a class="code" href="structcrow_1_1response.html">response</a>(500);</div>
+<div class="line"><a name="l01207"></a><span class="lineno"> 1207</span>&#160;                res.<a class="code" href="structcrow_1_1response.html#abef42200eca49c70dc1f5140ee3603ab">end</a>();</div>
+<div class="line"><a name="l01208"></a><span class="lineno"> 1208</span>&#160;                <span class="keywordflow">return</span>;</div>
+<div class="line"><a name="l01209"></a><span class="lineno"> 1209</span>&#160;            }</div>
+<div class="line"><a name="l01210"></a><span class="lineno"> 1210</span>&#160;        }</div>
+<div class="line"><a name="l01211"></a><span class="lineno"> 1211</span>&#160; </div>
+<div class="line"><a name="l01212"></a><span class="lineno"> 1212</span>&#160;        <span class="keywordtype">void</span> debug_print()</div>
+<div class="line"><a name="l01213"></a><span class="lineno"> 1213</span>&#160;        {</div>
+<div class="line"><a name="l01214"></a><span class="lineno"> 1214</span>&#160;            <span class="keywordflow">for</span>(<span class="keywordtype">int</span> i = 0; i &lt; static_cast&lt;int&gt;(HTTPMethod::InternalMethodCount); i ++)</div>
+<div class="line"><a name="l01215"></a><span class="lineno"> 1215</span>&#160;            {</div>
+<div class="line"><a name="l01216"></a><span class="lineno"> 1216</span>&#160;                CROW_LOG_DEBUG &lt;&lt; method_name(static_cast&lt;HTTPMethod&gt;(i));</div>
+<div class="line"><a name="l01217"></a><span class="lineno"> 1217</span>&#160;                per_methods_[i].trie.debug_print();</div>
+<div class="line"><a name="l01218"></a><span class="lineno"> 1218</span>&#160;            }</div>
+<div class="line"><a name="l01219"></a><span class="lineno"> 1219</span>&#160;        }</div>
+<div class="line"><a name="l01220"></a><span class="lineno"> 1220</span>&#160; </div>
+<div class="line"><a name="l01221"></a><span class="lineno"> 1221</span>&#160;    <span class="keyword">private</span>:</div>
+<div class="line"><a name="l01222"></a><span class="lineno"> 1222</span>&#160;        <span class="keyword">struct </span>PerMethod</div>
+<div class="line"><a name="l01223"></a><span class="lineno"> 1223</span>&#160;        {</div>
+<div class="line"><a name="l01224"></a><span class="lineno"> 1224</span>&#160;            std::vector&lt;BaseRule*&gt; rules;</div>
+<div class="line"><a name="l01225"></a><span class="lineno"> 1225</span>&#160;            <a class="code" href="classcrow_1_1_trie.html">Trie</a> trie;</div>
+<div class="line"><a name="l01226"></a><span class="lineno"> 1226</span>&#160; </div>
+<div class="line"><a name="l01227"></a><span class="lineno"> 1227</span>&#160;            <span class="comment">// rule index 0, 1 has special meaning; preallocate it to avoid duplication.</span></div>
+<div class="line"><a name="l01228"></a><span class="lineno"> 1228</span>&#160;            PerMethod() : rules(2) {}</div>
+<div class="line"><a name="l01229"></a><span class="lineno"> 1229</span>&#160;        };</div>
+<div class="line"><a name="l01230"></a><span class="lineno"> 1230</span>&#160;        std::array&lt;PerMethod, static_cast&lt;int&gt;(HTTPMethod::InternalMethodCount)&gt; per_methods_;</div>
+<div class="line"><a name="l01231"></a><span class="lineno"> 1231</span>&#160;        std::vector&lt;std::unique_ptr&lt;BaseRule&gt;&gt; all_rules_;</div>
+<div class="line"><a name="l01232"></a><span class="lineno"> 1232</span>&#160;    };</div>
+<div class="line"><a name="l01233"></a><span class="lineno"> 1233</span>&#160;}</div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <div class="ttc" id="astructcrow_1_1_trie_1_1_node_html"><div class="ttname"><a href="structcrow_1_1_trie_1_1_node.html">crow::Trie::Node</a></div><div class="ttdef"><b>Definition:</b> routing.h:606</div></div>
@@ -1295,20 +1356,24 @@ $(document).ready(function(){initNavTree('routing_8h_source.html',''); initResiz
 <div class="ttc" id="astructcrow_1_1black__magic_1_1gen__seq_html"><div class="ttname"><a href="structcrow_1_1black__magic_1_1gen__seq.html">crow::black_magic::gen_seq</a></div><div class="ttdef"><b>Definition:</b> utility.h:343</div></div>
 <div class="ttc" id="astructcrow_1_1_socket_adaptor_html"><div class="ttname"><a href="structcrow_1_1_socket_adaptor.html">crow::SocketAdaptor</a></div><div class="ttdoc">A wrapper for the asio::ip::tcp::socket and asio::ssl::stream.</div><div class="ttdef"><b>Definition:</b> socket_adaptors.h:18</div></div>
 <div class="ttc" id="aclasscrow_1_1_base_rule_html"><div class="ttname"><a href="classcrow_1_1_base_rule.html">crow::BaseRule</a></div><div class="ttdoc">A base class for all rules.</div><div class="ttdef"><b>Definition:</b> routing.h:24</div></div>
-<div class="ttc" id="astructcrow_1_1response_html_a16d1a8bcec6460ba97f90b80881693b8"><div class="ttname"><a href="structcrow_1_1response.html#a16d1a8bcec6460ba97f90b80881693b8">crow::response::add_header</a></div><div class="ttdeci">void add_header(std::string key, std::string value)</div><div class="ttdoc">Add a new header to the response.</div><div class="ttdef"><b>Definition:</b> http_response.h:41</div></div>
+<div class="ttc" id="astructcrow_1_1response_html_a16d1a8bcec6460ba97f90b80881693b8"><div class="ttname"><a href="structcrow_1_1response.html#a16d1a8bcec6460ba97f90b80881693b8">crow::response::add_header</a></div><div class="ttdeci">void add_header(std::string key, std::string value)</div><div class="ttdoc">Add a new header to the response.</div><div class="ttdef"><b>Definition:</b> http_response.h:43</div></div>
+<div class="ttc" id="astructcrow_1_1response_html_a95f300c05782e1934dad522b6d6588cf"><div class="ttname"><a href="structcrow_1_1response.html#a95f300c05782e1934dad522b6d6588cf">crow::response::manual_length_header</a></div><div class="ttdeci">bool manual_length_header</div><div class="ttdoc">Whether Crow should automatically add a &quot;Content-Length&quot; header.</div><div class="ttdef"><b>Definition:</b> http_response.h:33</div></div>
 <div class="ttc" id="astructcrow_1_1detail_1_1routing__handler__call__helper_1_1call__pair_html"><div class="ttname"><a href="structcrow_1_1detail_1_1routing__handler__call__helper_1_1call__pair.html">crow::detail::routing_handler_call_helper::call_pair</a></div><div class="ttdef"><b>Definition:</b> routing.h:94</div></div>
+<div class="ttc" id="aclasscrow_1_1_trie_html_af2cada415bae6140779323f453a5a146"><div class="ttname"><a href="classcrow_1_1_trie.html#af2cada415bae6140779323f453a5a146">crow::Trie::is_empty</a></div><div class="ttdeci">bool is_empty()</div><div class="ttdoc">Check whether or not the trie is empty.</div><div class="ttdef"><b>Definition:</b> routing.h:628</div></div>
 <div class="ttc" id="astructcrow_1_1detail_1_1routing__handler__call__helper_1_1_wrapped_1_1req__handler__wrapper_html"><div class="ttname"><a href="structcrow_1_1detail_1_1routing__handler__call__helper_1_1_wrapped_1_1req__handler__wrapper.html">crow::detail::routing_handler_call_helper::Wrapped::req_handler_wrapper</a></div><div class="ttdef"><b>Definition:</b> routing.h:192</div></div>
-<div class="ttc" id="astructcrow_1_1response_html_abef42200eca49c70dc1f5140ee3603ab"><div class="ttname"><a href="structcrow_1_1response.html#abef42200eca49c70dc1f5140ee3603ab">crow::response::end</a></div><div class="ttdeci">void end()</div><div class="ttdoc">Set the response completion flag and call the handler (to send the response).</div><div class="ttdef"><b>Definition:</b> http_response.h:145</div></div>
+<div class="ttc" id="astructcrow_1_1response_html_abef42200eca49c70dc1f5140ee3603ab"><div class="ttname"><a href="structcrow_1_1response.html#abef42200eca49c70dc1f5140ee3603ab">crow::response::end</a></div><div class="ttdeci">void end()</div><div class="ttdoc">Set the response completion flag and call the handler (to send the response).</div><div class="ttdef"><b>Definition:</b> http_response.h:147</div></div>
 <div class="ttc" id="aclasscrow_1_1websocket_1_1_connection_html"><div class="ttname"><a href="classcrow_1_1websocket_1_1_connection.html">crow::websocket::Connection</a></div><div class="ttdoc">A websocket connection.</div><div class="ttdef"><b>Definition:</b> websocket.h:59</div></div>
 <div class="ttc" id="astructcrow_1_1routing__params_html"><div class="ttname"><a href="structcrow_1_1routing__params.html">crow::routing_params</a></div><div class="ttdef"><b>Definition:</b> common.h:83</div></div>
-<div class="ttc" id="aclasscrow_1_1_router_html"><div class="ttname"><a href="classcrow_1_1_router.html">crow::Router</a></div><div class="ttdoc">Handles matching requests to existing rules and upgrade requests.</div><div class="ttdef"><b>Definition:</b> routing.h:932</div></div>
+<div class="ttc" id="aclasscrow_1_1_router_html"><div class="ttname"><a href="classcrow_1_1_router.html">crow::Router</a></div><div class="ttdoc">Handles matching requests to existing rules and upgrade requests.</div><div class="ttdef"><b>Definition:</b> routing.h:938</div></div>
 <div class="ttc" id="astructcrow_1_1detail_1_1routing__handler__call__helper_1_1call_html"><div class="ttname"><a href="structcrow_1_1detail_1_1routing__handler__call__helper_1_1call.html">crow::detail::routing_handler_call_helper::call</a></div><div class="ttdef"><b>Definition:</b> routing.h:110</div></div>
+<div class="ttc" id="astructcrow_1_1response_html_ab2b9a9b9795fa6330bd47b66a716cb0b"><div class="ttname"><a href="structcrow_1_1response.html#ab2b9a9b9795fa6330bd47b66a716cb0b">crow::response::set_header</a></div><div class="ttdeci">void set_header(std::string key, std::string value)</div><div class="ttdoc">Set the value of an existing header in the response.</div><div class="ttdef"><b>Definition:</b> http_response.h:36</div></div>
+<div class="ttc" id="astructcrow_1_1response_html_a42e68ba33c040b10d3bc49392193f415"><div class="ttname"><a href="structcrow_1_1response.html#a42e68ba33c040b10d3bc49392193f415">crow::response::is_head_response</a></div><div class="ttdeci">bool is_head_response</div><div class="ttdoc">Whether this is a response to a HEAD request.</div><div class="ttdef"><b>Definition:</b> http_response.h:32</div></div>
 <!-- start footer part -->
 		<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
 			<ul>
 				<li class="navelem"><a class="el" href="dir_d44c64559bbebec7f509842c48db8b23.html">include</a></li><li class="navelem"><a class="el" href="dir_d22c1cb87b72f01e1a7f207eb3bfd1ca.html">crow</a></li><li class="navelem"><b>routing.h</b></li>
 				<li class="footer">
-					Generated on Fri Apr 2 2021 for Crow by <a href="http://www.doxygen.org/index.html">
+					Generated on Sat Apr 3 2021 for Crow by <a href="http://www.doxygen.org/index.html">
 					<img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.17.
 					Dark theme by <a href="http://majerle.eu" target="_new">Tilen Majerle</a>. Edited by <a href="https://github.com/The-EDev" target="_new">Farook Al-Sammarraie</a>. All rights reserved.
 				</li>

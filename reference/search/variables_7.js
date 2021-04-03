@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['url_374',['url',['../structcrow_1_1request.html#aa3df34c56847d6d42887e73655276167',1,'crow::request']]],
-  ['url_5fparams_375',['url_params',['../structcrow_1_1request.html#a745d5a94e9e9ae1fed64674aae0194b0',1,'crow::request::url_params()'],['../structcrow_1_1_h_t_t_p_parser.html#aa00ec7a2a2b475ec0b2cfe3d946c9b87',1,'crow::HTTPParser::url_params()']]]
+  ['raw_5furl_377',['raw_url',['../structcrow_1_1request.html#a72f5504a56f9ba70d7d33f86aaf9bc8a',1,'crow::request']]],
+  ['remoteipaddress_378',['remoteIpAddress',['../structcrow_1_1request.html#ac43969a0c47f6477f88f4b49bcab423b',1,'crow::request']]]
 ];

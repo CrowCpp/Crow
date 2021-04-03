@@ -573,7 +573,7 @@ $(document).ready(function(){initNavTree('http__connection_8h_source.html',''); 
 <div class="line"><a name="l00472"></a><span class="lineno">  472</span>&#160; </div>
 <div class="line"><a name="l00473"></a><span class="lineno">  473</span>&#160;            }</div>
 <div class="line"><a name="l00474"></a><span class="lineno">  474</span>&#160; </div>
-<div class="line"><a name="l00475"></a><span class="lineno">  475</span>&#160;            <span class="keywordflow">if</span> (!res.headers.count(<span class="stringliteral">&quot;content-length&quot;</span>))</div>
+<div class="line"><a name="l00475"></a><span class="lineno">  475</span>&#160;            <span class="keywordflow">if</span> (!res.manual_length_header &amp;&amp; !res.headers.count(<span class="stringliteral">&quot;content-length&quot;</span>))</div>
 <div class="line"><a name="l00476"></a><span class="lineno">  476</span>&#160;            {</div>
 <div class="line"><a name="l00477"></a><span class="lineno">  477</span>&#160;                content_length_ = std::to_string(res.body.size());</div>
 <div class="line"><a name="l00478"></a><span class="lineno">  478</span>&#160;                <span class="keyword">static</span> std::string content_length_tag = <span class="stringliteral">&quot;Content-Length: &quot;</span>;</div>
@@ -816,7 +816,7 @@ $(document).ready(function(){initNavTree('http__connection_8h_source.html',''); 
 			<ul>
 				<li class="navelem"><a class="el" href="dir_d44c64559bbebec7f509842c48db8b23.html">include</a></li><li class="navelem"><a class="el" href="dir_d22c1cb87b72f01e1a7f207eb3bfd1ca.html">crow</a></li><li class="navelem"><b>http_connection.h</b></li>
 				<li class="footer">
-					Generated on Fri Apr 2 2021 for Crow by <a href="http://www.doxygen.org/index.html">
+					Generated on Sat Apr 3 2021 for Crow by <a href="http://www.doxygen.org/index.html">
 					<img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.17.
 					Dark theme by <a href="http://majerle.eu" target="_new">Tilen Majerle</a>. Edited by <a href="https://github.com/The-EDev" target="_new">Farook Al-Sammarraie</a>. All rights reserved.
 				</li>

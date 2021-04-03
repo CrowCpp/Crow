@@ -5,5 +5,6 @@ var classcrow_1_1_trie =
     [ "add", "classcrow_1_1_trie.html#a2b69bfd87fe489c5169385ca48707971", null ],
     [ "debug_print", "classcrow_1_1_trie.html#a9ac17b6ae0f96dc94b595bb704a89101", null ],
     [ "find", "classcrow_1_1_trie.html#a82edfa525aa7aa6a2aee0aceb9b65606", null ],
+    [ "is_empty", "classcrow_1_1_trie.html#af2cada415bae6140779323f453a5a146", null ],
     [ "validate", "classcrow_1_1_trie.html#a77dcd4729633ce992fc210eeb327dfb5", null ]
 ];

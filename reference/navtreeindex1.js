@@ -1,5 +1,6 @@
 var NAVTREEINDEX1 =
 {
+"classcrow_1_1websocket_1_1_connection.html#aff28834d3434b6d24a01830667247111":[0,0,0,6,1,8],
 "common_8h_source.html":[1,0,0,0,3],
 "compression_8h_source.html":[1,0,0,0,4],
 "cookie__parser_8h_source.html":[1,0,0,0,0,0],
@@ -248,6 +249,5 @@ var NAVTREEINDEX1 =
 "structcrow_1_1request.html#a72f5504a56f9ba70d7d33f86aaf9bc8a":[0,0,0,19,11],
 "structcrow_1_1request.html#a745d5a94e9e9ae1fed64674aae0194b0":[0,0,0,19,14],
 "structcrow_1_1request.html#a79ac893dd6ad4ec5752dea0cec65ce71":[0,0,0,19,9],
-"structcrow_1_1request.html#a81e389dddb3f59bdb667097371573356":[0,0,0,19,4],
-"structcrow_1_1request.html#a838c9a8c9a5eb2283d57e66f3630b5a6":[0,0,0,19,0]
+"structcrow_1_1request.html#a81e389dddb3f59bdb667097371573356":[0,0,0,19,4]
 };
