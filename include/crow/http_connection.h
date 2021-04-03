@@ -472,7 +472,7 @@ namespace crow
 
             }
 
-            if (!res.no_body && !res.headers.count("content-length"))
+            if (!res.no_length && !res.headers.count("content-length"))
             {
                 content_length_ = std::to_string(res.body.size());
                 static std::string content_length_tag = "Content-Length: ";

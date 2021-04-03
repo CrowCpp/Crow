@@ -1088,7 +1088,7 @@ namespace crow
             else if (req.method == HTTPMethod::HEAD)
             {
                 method_actual = HTTPMethod::GET;
-                res.no_body = true;
+                res.head = true;
             }
             else if (req.method == HTTPMethod::OPTIONS)
             {
@@ -1106,7 +1106,7 @@ namespace crow
                         allow = allow.substr(0, allow.size()-2);
                         res = response(204);
                         res.set_header("Allow", allow);
-                        res.no_body = true;
+                        res.no_length = true;
                         res.end();
                         return;
                 }
@@ -1124,7 +1124,7 @@ namespace crow
                         allow = allow.substr(0, allow.size()-2);
                         res = response(204);
                         res.set_header("Allow", allow);
-                        res.no_body = true;
+                        res.no_length = true;
                         res.end();
                         return;
                     }
