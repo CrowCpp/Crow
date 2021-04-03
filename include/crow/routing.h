@@ -1138,7 +1138,7 @@ namespace crow
                 }
             }
 
-            auto& per_method = per_methods_[static_cast<int>(int)method_actual];
+            auto& per_method = per_methods_[static_cast<int>(method_actual)];
             auto& trie = per_method.trie;
             auto& rules = per_method.rules;
 
