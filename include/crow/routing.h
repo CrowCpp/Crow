@@ -1119,7 +1119,7 @@ namespace crow
                             allow += method_name((HTTPMethod)i) + ", ";
                         }
                     }
-                    if (allow.size() > 0)
+                    if (allow != "OPTIONS, HEAD, ")
                     {
                         allow = allow.substr(0, allow.size()-2);
                         res = response(204);

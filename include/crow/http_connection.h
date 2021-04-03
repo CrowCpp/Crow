@@ -357,11 +357,6 @@ namespace crow
                 (*middlewares_, ctx_, req_, res);
             }
 
-            if (res.no_body)
-            {
-                res.body = "";
-            }
-
             std::string accept_encoding = req_.get_header_value("Accept-Encoding");
             if (!accept_encoding.empty() && res.compressed)
             {

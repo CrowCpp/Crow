@@ -378,6 +378,54 @@ TEST_CASE("http_method")
 
     CHECK(405 == res.code);
   }
+
+  {
+    request req;
+    response res;
+
+    req.url = "/get_only";
+    req.method = "HEAD"_method;
+    app.handle(req, res);
+
+    CHECK(200 == res.code);
+    CHECK("" == res.body);
+  }
+
+  {
+    request req;
+    response res;
+
+    req.url = "/";
+    req.method = "OPTIONS"_method;
+    app.handle(req, res);
+
+    CHECK(204 == res.code);
+    CHECK("OPTIONS, HEAD, GET, POST" == res.get_header_value("Allow"));
+  }
+
+  {
+    request req;
+    response res;
+
+    req.url = "/does_not_exist";
+    req.method = "OPTIONS"_method;
+    app.handle(req, res);
+
+    CHECK(404 == res.code);
+  }
+
+  {
+    request req;
+    response res;
+
+    req.url = "/*";
+    req.method = "OPTIONS"_method;
+    app.handle(req, res);
+
+    CHECK(204 == res.code);
+    CHECK("OPTIONS, HEAD, GET, POST, PATCH, PURGE" == res.get_header_value("Allow"));
+
+  }
 }
 
 TEST_CASE("server_handling_error_request")

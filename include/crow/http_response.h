@@ -148,7 +148,10 @@ namespace crow
             if (!completed_)
             {
                 completed_ = true;
-
+                if (no_body)
+                {
+                    body = "";
+                }
                 if (complete_request_handler_)
                 {
                     complete_request_handler_();
