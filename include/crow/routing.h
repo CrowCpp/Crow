@@ -1155,14 +1155,16 @@ namespace crow
                         CROW_LOG_DEBUG << "Cannot match method " << req.url << " " << method_name(method_actual);
                         res = response(405);
                         res.end();
-                        return;
+                        return 0;
                     }
                 }
-
+#ifdef CROW_CATCHALL
+                return 1; // CROW_CATCHALL 1 = fallback to user function
+#endif
                 CROW_LOG_DEBUG << "Cannot match rules " << req.url;
                 res = response(404);
                 res.end();
-                return;
+                return -1;
             }
 
             if (rule_index >= rules.size())
@@ -1183,7 +1185,7 @@ namespace crow
                     res.add_header("Location", "http://" + req.get_header_value("Host") + req.url + "/");
                 }
                 res.end();
-                return;
+                return -2;
             }
 
             CROW_LOG_DEBUG << "Matched rule '" << rules[rule_index]->rule_ << "' " << static_cast<uint32_t>(req.method) << " / " << rules[rule_index]->get_methods();
@@ -1198,15 +1200,16 @@ namespace crow
                 CROW_LOG_ERROR << "An uncaught exception occurred: " << e.what();
                 res = response(500);
                 res.end();
-                return;
+                return -3;
             }
             catch(...)
             {
                 CROW_LOG_ERROR << "An uncaught exception occurred. The type was unknown so no information was available.";
                 res = response(500);
                 res.end();
-                return;
+                return -4;
             }
+            return 0;
         }
 
         void debug_print()

@@ -29,6 +29,9 @@
 
 namespace crow
 {
+#ifdef CROW_CATCHALL
+    using catch_all_func_t= std::function<void( const crow::request& , crow::response& )>;
+#endif
 #ifdef CROW_MAIN
     int detail::dumb_timer_queue::tick = 5;
 #endif
@@ -69,7 +72,16 @@ namespace crow
         ///Process the request and generate a response for it
         void handle(const request& req, response& res)
         {
-            router_.handle(req, res);
+            if (  router_.handle(req, res) == 1 )
+            {
+#ifdef CROW_CATCHALL
+                if ( m_catch_all_handler )
+                {
+                    m_catch_all_handler( req, res );
+                    res.end();
+                }
+#endif
+            }
         }
 
         ///Create a dynamic route using a rule (**Use CROW_ROUTE instead**)
@@ -347,7 +359,15 @@ namespace crow
                 return;
             cv_started_.wait(lock);
         }
-
+#ifdef CROW_CATCHALL
+    public:
+        void setCatchAllHandler( catch_all_func_t func)
+        {
+            m_catch_all_handler = func;
+        }
+    private:
+        catch_all_func_t m_catch_all_handler;
+#endif
     private:
         uint16_t port_ = 80;
         uint16_t concurrency_ = 1;
