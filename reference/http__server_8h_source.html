@@ -247,7 +247,7 @@ $(document).ready(function(){initNavTree('http__server_8h_source.html',''); init
 <div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;                        });</div>
 <div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;            }</div>
 <div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160; </div>
-<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;            CROW_LOG_INFO &lt;&lt; server_name_ &lt;&lt; <span class="stringliteral">&quot; server is running at &quot;</span> &lt;&lt; bindaddr_ &lt;&lt;<span class="stringliteral">&quot;:&quot;</span> &lt;&lt; port_</div>
+<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;            CROW_LOG_INFO &lt;&lt; server_name_ &lt;&lt; <span class="stringliteral">&quot; server is running at &quot;</span> &lt;&lt; bindaddr_ &lt;&lt;<span class="stringliteral">&quot;:&quot;</span> &lt;&lt; acceptor_.local_endpoint().port()</div>
 <div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;                          &lt;&lt; <span class="stringliteral">&quot; using &quot;</span> &lt;&lt; concurrency_ &lt;&lt; <span class="stringliteral">&quot; threads&quot;</span>;</div>
 <div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;            CROW_LOG_INFO &lt;&lt; <span class="stringliteral">&quot;Call `app.loglevel(crow::LogLevel::Warning)` to hide Info level logs.&quot;</span>;</div>
 <div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160; </div>
@@ -357,7 +357,7 @@ $(document).ready(function(){initNavTree('http__server_8h_source.html',''); init
 			<ul>
 				<li class="navelem"><a class="el" href="dir_d44c64559bbebec7f509842c48db8b23.html">include</a></li><li class="navelem"><a class="el" href="dir_d22c1cb87b72f01e1a7f207eb3bfd1ca.html">crow</a></li><li class="navelem"><b>http_server.h</b></li>
 				<li class="footer">
-					Generated on Sat Apr 3 2021 for Crow by <a href="http://www.doxygen.org/index.html">
+					Generated on Mon Apr 5 2021 for Crow by <a href="http://www.doxygen.org/index.html">
 					<img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.17.
 					Dark theme by <a href="http://majerle.eu" target="_new">Tilen Majerle</a>. Edited by <a href="https://github.com/The-EDev" target="_new">Farook Al-Sammarraie</a>. All rights reserved.
 				</li>
