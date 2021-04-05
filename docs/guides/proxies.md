@@ -37,7 +37,7 @@ If you want crow to run in a subdirectory (such as `domain.abc/crow`) you can us
 
 !!! note
 
-    If you're using an Arch Linux based OS. You will have to access `/etc/httpd/conf/httpd.conf` to enable modules and change configuration
+    If you're using an Arch Linux based OS. You will have to access `/etc/httpd/conf/httpd.conf` to enable modules and change configuration.
 
 ##Nginx
 
