@@ -934,6 +934,9 @@ namespace crow
         std::vector<Node> nodes_;
     };
 
+#ifdef CROW_CATCHALL
+    using catch_all_func_t= std::function<void( const crow::request& , crow::response& )>;
+#endif
     /// Handles matching requests to existing rules and upgrade requests.
     class Router
     {
@@ -1158,9 +1161,17 @@ namespace crow
                         return;
                     }
                 }
-
-                CROW_LOG_DEBUG << "Cannot match rules " << req.url;
-                res = response(404);
+#ifdef CROW_CATCHALL
+                if ( catch_all_handler_ )
+                {
+                    catch_all_handler_( req, res );
+                }
+                else
+#endif
+                {
+                    CROW_LOG_DEBUG << "Cannot match rules " << req.url;
+                    res = response(404);
+                }
                 res.end();
                 return;
             }
@@ -1218,6 +1229,15 @@ namespace crow
             }
         }
 
+#ifdef CROW_CATCHALL
+    public:
+        void set_catchall( catch_all_func_t func)
+        {
+            catch_all_handler_ = func;
+        }
+    private:
+        catch_all_func_t catch_all_handler_;
+#endif
     private:
         struct PerMethod
         {
@@ -1229,5 +1249,6 @@ namespace crow
         };
         std::array<PerMethod, static_cast<int>(HTTPMethod::InternalMethodCount)> per_methods_;
         std::vector<std::unique_ptr<BaseRule>> all_rules_;
+
     };
 }
