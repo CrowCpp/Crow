@@ -347,7 +347,13 @@ namespace crow
                 return;
             cv_started_.wait(lock);
         }
-
+#ifdef CROW_CATCHALL
+    public:
+        void catchall_handler( catch_all_func_t func )
+        {
+            router_.set_catchall( func );
+        }
+#endif
     private:
         uint16_t port_ = 80;
         uint16_t concurrency_ = 1;
