@@ -1167,12 +1167,12 @@ namespace crow
                     catch_all_handler_( req, res );
                 }
                 else
+#endif
                 {
                     CROW_LOG_DEBUG << "Cannot match rules " << req.url;
                     res = response(404);
                 }
                 res.end();
-#endif
                 return;
             }
 
