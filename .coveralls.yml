@@ -1,0 +1,4 @@
+service_name: drone-io
+gcov_options: \-lp
+include:
+  - include
