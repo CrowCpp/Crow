@@ -1057,7 +1057,7 @@ namespace crow
             return *ruleObject;
         }
 
-        CatchallRule* catchall_rule()
+        CatchallRule& catchall_rule()
         {
             return catchall_rule_;
         }
@@ -1260,10 +1260,10 @@ namespace crow
                     }
                 }
 
-                if (catchall_rule_->has_handler())
+                if (catchall_rule_.has_handler())
                 {
                     CROW_LOG_DEBUG << "Cannot match rules " << req.url << ". Redirecting to Catchall rule";
-                    catchall_rule_->handler_(req, res);
+                    catchall_rule_.handler_(req, res);
                 }
                 else
                 {
@@ -1328,7 +1328,7 @@ namespace crow
         }
 
     private:
-        CatchallRule* catchall_rule_ = new CatchallRule();
+        CatchallRule catchall_rule_;
 
         struct PerMethod
         {

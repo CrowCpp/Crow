@@ -26,7 +26,7 @@
 #else
 #define CROW_ROUTE(app, url) app.route<crow::black_magic::get_parameter_tag(url)>(url)
 #endif
-#define CROW_CATCHALL_ROUTE(app) (*(app.catchall_route()))
+#define CROW_CATCHALL_ROUTE(app) app.catchall_route()
 
 namespace crow
 {
@@ -88,7 +88,7 @@ namespace crow
         }
 
         ///Create a route for any requests without a proper route (**Use CROW_CATCHALL_ROUTE instead**)
-        CatchallRule* catchall_route()
+        CatchallRule& catchall_route()
         {
             return router_.catchall_rule();
         }
