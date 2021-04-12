@@ -26,6 +26,7 @@
 #else
 #define CROW_ROUTE(app, url) app.route<crow::black_magic::get_parameter_tag(url)>(url)
 #endif
+#define CROW_CATCHALL_ROUTE(app) (*(app.catchall_route()))
 
 namespace crow
 {
@@ -84,6 +85,12 @@ namespace crow
             -> typename std::result_of<decltype(&Router::new_rule_tagged<Tag>)(Router, std::string&&)>::type
         {
             return router_.new_rule_tagged<Tag>(std::move(rule));
+        }
+
+        ///Create a route for any requests without a proper route (**Use CROW_CATCHALL_ROUTE instead**)
+        CatchallRule* catchall_route()
+        {
+            return router_.catchall_rule();
         }
 
         self_t& signal_clear()
@@ -347,13 +354,7 @@ namespace crow
                 return;
             cv_started_.wait(lock);
         }
-#ifdef CROW_CATCHALL
-    public:
-        void catchall_handler( catch_all_func_t func )
-        {
-            router_.set_catchall( func );
-        }
-#endif
+
     private:
         uint16_t port_ = 80;
         uint16_t concurrency_ = 1;

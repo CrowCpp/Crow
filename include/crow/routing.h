@@ -271,6 +271,101 @@ namespace crow
         }
     }
 
+
+    class CatchallRule
+    {
+    public:
+        CatchallRule(){}
+
+        template <typename Func>
+        typename std::enable_if<black_magic::CallHelper<Func, black_magic::S<>>::value, void>::type
+        operator()(Func&& f)
+        {
+            static_assert(!std::is_same<void, decltype(f())>::value,
+                "Handler function cannot have void return type; valid return types: string, int, crow::resposne, crow::json::wvalue");
+
+            handler_ = (
+#ifdef CROW_CAN_USE_CPP14
+                [f = std::move(f)]
+#else
+                [f]
+#endif
+                (const request&, response& res){
+                    res = response(f());
+                    res.end();
+                });
+
+        }
+
+        template <typename Func>
+        typename std::enable_if<
+            !black_magic::CallHelper<Func, black_magic::S<>>::value &&
+            black_magic::CallHelper<Func, black_magic::S<crow::request>>::value,
+            void>::type
+        operator()(Func&& f)
+        {
+            static_assert(!std::is_same<void, decltype(f(std::declval<crow::request>()))>::value,
+                "Handler function cannot have void return type; valid return types: string, int, crow::resposne, crow::json::wvalue");
+
+            handler_ = (
+#ifdef CROW_CAN_USE_CPP14
+                [f = std::move(f)]
+#else
+                [f]
+#endif
+                (const crow::request& req, crow::response& res){
+                    res = response(f(req));
+                    res.end();
+                });
+        }
+
+        template <typename Func>
+        typename std::enable_if<
+            !black_magic::CallHelper<Func, black_magic::S<>>::value &&
+            !black_magic::CallHelper<Func, black_magic::S<crow::request>>::value &&
+            black_magic::CallHelper<Func, black_magic::S<crow::response&>>::value,
+        void>::type
+        operator()(Func&& f)
+        {
+          static_assert(std::is_same<void, decltype(f(std::declval<crow::response&>()))>::value,
+                        "Handler function with response argument should have void return type");
+          handler_ = (
+#ifdef CROW_CAN_USE_CPP14
+                [f = std::move(f)]
+#else
+                [f]
+#endif
+                (const crow::request&, crow::response& res){
+                  f(res);
+                });
+        }
+
+        template <typename Func>
+        typename std::enable_if<
+            !black_magic::CallHelper<Func, black_magic::S<>>::value &&
+            !black_magic::CallHelper<Func, black_magic::S<crow::request>>::value &&
+            !black_magic::CallHelper<Func, black_magic::S<crow::response&>>::value,
+            void>::type
+        operator()(Func&& f)
+        {
+            static_assert(std::is_same<void, decltype(f(std::declval<crow::request>(), std::declval<crow::response&>()))>::value,
+                "Handler function with response argument should have void return type");
+
+                handler_ = std::move(f);
+        }
+
+        bool has_handler()
+        {
+            return (handler_ != nullptr);
+        }
+
+    protected:
+        friend class Router;
+    private:
+        std::function<void(const crow::request&, crow::response&)> handler_;
+    };
+
+
     /// A rule dealing with websockets.
 
     /// Provides the interface for the user to put in the necessary handlers for a websocket to work.
@@ -934,9 +1029,7 @@ namespace crow
         std::vector<Node> nodes_;
     };
 
-#ifdef CROW_CATCHALL
-    using catch_all_func_t= std::function<void( const crow::request& , crow::response& )>;
-#endif
+
     /// Handles matching requests to existing rules and upgrade requests.
     class Router
     {
@@ -962,6 +1055,11 @@ namespace crow
             all_rules_.emplace_back(ruleObject);
 
             return *ruleObject;
+        }
+
+        CatchallRule* catchall_rule()
+        {
+            return catchall_rule_;
         }
 
         void internal_add_rule_object(const std::string& rule, BaseRule* ruleObject)
@@ -1161,13 +1259,13 @@ namespace crow
                         return;
                     }
                 }
-#ifdef CROW_CATCHALL
-                if ( catch_all_handler_ )
+
+                if (catchall_rule_->has_handler())
                 {
-                    catch_all_handler_( req, res );
+                    CROW_LOG_DEBUG << "Cannot match rules " << req.url << ". Redirecting to Catchall rule";
+                    catchall_rule_->handler_(req, res);
                 }
                 else
-#endif
                 {
                     CROW_LOG_DEBUG << "Cannot match rules " << req.url;
                     res = response(404);
@@ -1229,16 +1327,9 @@ namespace crow
             }
         }
 
-#ifdef CROW_CATCHALL
-    public:
-        void set_catchall( catch_all_func_t func)
-        {
-            catch_all_handler_ = func;
-        }
     private:
-        catch_all_func_t catch_all_handler_;
-#endif
-    private:
+        CatchallRule* catchall_rule_ = new CatchallRule();
+
         struct PerMethod
         {
             std::vector<BaseRule*> rules;
