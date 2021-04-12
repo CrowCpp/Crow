@@ -46,7 +46,7 @@ else ()
   target_link_libraries(basic_example PUBLIC ${REQUIRED_LIBRARIES})
 
   if (Tcmalloc_FOUND)
-    target_link_libraries(basic_example ${Tcmalloc_LIBRARIES})
+    target_link_libraries(basic_example PRIVATE ${Tcmalloc_LIBRARIES})
   endif(Tcmalloc_FOUND)
 
   add_executable(example_with_all example_with_all.cpp)

@@ -20,6 +20,8 @@ def main():
         "#include <string>",
         "",
         "namespace crow {",
+        "",
+        "#ifdef CROW_MAIN"
         tabspace + "std::unordered_map<std::string, std::string> mime_types {"])
 
     with open(file_path, "r") as mtfile:
@@ -40,7 +42,13 @@ def main():
                 outLines.extend(mime_line_to_cpp(splitLine))
 
     outLines[-1] = outLines[-1][:-1]
-    outLines.extend([tabspace + "};", "}"])
+    outLines.extend([
+		tabspace + "};",
+		"#else",
+		"extern std::unordered_map<std::string, std::string> mime_types;",
+		"#endif",
+		"}"
+		])
 
     with open(output_path, "w") as mtcppfile:
         mtcppfile.writelines(x + '\n' for x in outLines)

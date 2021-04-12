@@ -15,24 +15,26 @@ steps:
 
   commands:
   - export DEBIAN_FRONTEND=noninteractive
+  - export TRAVIS_BRANCH=$DRONE_SOURCE_BRANCH
   - apt-get -y update
   - apt-get -y install libboost-all-dev doxygen mkdocs graphviz zlib1g-dev gcc clang make cmake python3 python3-pip git
-  - pip3 install mkdocs-material cpp-coveralls
+  - pip3 install mkdocs-material cpp-coveralls pyyaml
   - export CC=/usr/bin/gcc
   - export CXX=/usr/bin/g++
   - mkdir build
   - cd build
   - cmake ..
-  - make -j4 && ctest -V -j4
+  - make -j4
+  - ctest -V -j4
   - cd ..
+  - coveralls --verbose --exclude-pattern .*/http_parser_merged.h --exclude-pattern .*/TinySHA1.hpp
   - export CC=/usr/bin/clang
   - export CXX=/usr/bin/clang++
   - mkdir build-clang
   - cd build-clang
   - cmake ..
-  - make -j4 && ctest -V -j4
-  - cd ..
-  - coveralls -i include --exclude-pattern .*/http_parser_merged.h --exclude-pattern .*/TinySHA1.hpp --gcov-options '\-lp'
+  - make -j4
+  - ctest -V -j4
 
 trigger:
   branch:
@@ -60,14 +62,16 @@ steps:
   - cd build
   - cmake --version
   - cmake ..
-  - make -j4 && ctest -V -j4
+  - make -j4
+  - ctest -V -j4
   - cd ..
   - export CC=/usr/bin/clang
   - export CXX=/usr/bin/clang++
   - mkdir build-clang
   - cd build-clang
   - cmake ..
-  - make -j4 && ctest -V -j4
+  - make -j4
+  - ctest -V -j4
 
 trigger:
   branch:
@@ -100,24 +104,27 @@ steps:
   - export DRONE_BUILD_DIR=$PWD
   - export DEBIAN_FRONTEND=noninteractive
   - export DOXYFILE=$DRONE_BUILD_DIR/Doxyfile
+  - export TRAVIS_BRANCH=$DRONE_REPO_BRANCH
   - apt-get -y update
   - apt-get -y install libboost-all-dev doxygen mkdocs graphviz zlib1g-dev gcc clang make cmake python3 python3-pip git
-  - pip3 install mkdocs-material cpp-coveralls
+  - pip3 install mkdocs-material cpp-coveralls pyyaml
   - export CC=/usr/bin/gcc
   - export CXX=/usr/bin/g++
   - mkdir build
   - cd build
   - cmake ..
-  - make -j4 && ctest -V -j4
+  - make -j4
+  - ctest -V -j4
   - cd ..
+  - coveralls --verbose --exclude-pattern .*/http_parser_merged.h --exclude-pattern .*/TinySHA1.hpp
   - export CC=/usr/bin/clang
   - export CXX=/usr/bin/clang++
   - mkdir build-clang
   - cd build-clang
   - cmake ..
-  - make -j4 && ctest -V -j4
+  - make -j4
+  - ctest -V -j4
   - cd ..
-  - coveralls -i include --exclude-pattern .*/http_parser_merged.h --exclude-pattern .*/TinySHA1.hpp --gcov-options '\-lp'
   - chmod +x scripts/generateDocumentationAndDeploy.sh
   - ./scripts/generateDocumentationAndDeploy.sh
 
@@ -147,14 +154,16 @@ steps:
   - cd build
   - cmake --version
   - cmake ..
-  - make -j4 && ctest -V -j4
+  - make -j4
+  - ctest -V -j4
   - cd ..
   - export CC=/usr/bin/clang
   - export CXX=/usr/bin/clang++
   - mkdir build-clang
   - cd build-clang
   - cmake ..
-  - make -j4 && ctest -V -j4
+  - make -j4
+  - ctest -V -j4
 
 trigger:
   branch:
