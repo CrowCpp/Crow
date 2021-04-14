@@ -282,7 +282,7 @@ namespace crow
         operator()(Func&& f)
         {
             static_assert(!std::is_same<void, decltype(f())>::value,
-                "Handler function cannot have void return type; valid return types: string, int, crow::resposne, crow::json::wvalue");
+                "Handler function cannot have void return type; valid return types: string, int, crow::response, crow::returnable");
 
             handler_ = (
 #ifdef CROW_CAN_USE_CPP14
@@ -305,7 +305,7 @@ namespace crow
         operator()(Func&& f)
         {
             static_assert(!std::is_same<void, decltype(f(std::declval<crow::request>()))>::value,
-                "Handler function cannot have void return type; valid return types: string, int, crow::resposne, crow::json::wvalue");
+                "Handler function cannot have void return type; valid return types: string, int, crow::response, crow::returnable");
 
             handler_ = (
 #ifdef CROW_CAN_USE_CPP14
@@ -582,7 +582,7 @@ namespace crow
                 black_magic::CallHelper<Func, black_magic::S<crow::request, Args...>>::value ,
                 "Handler type is mismatched with URL parameters");
             static_assert(!std::is_same<void, decltype(f(std::declval<Args>()...))>::value,
-                "Handler function cannot have void return type; valid return types: string, int, crow::resposne, crow::json::wvalue");
+                "Handler function cannot have void return type; valid return types: string, int, crow::response, crow::returnable");
 
             handler_ = (
 #ifdef CROW_CAN_USE_CPP14
@@ -607,7 +607,7 @@ namespace crow
                 black_magic::CallHelper<Func, black_magic::S<crow::request, Args...>>::value,
                 "Handler type is mismatched with URL parameters");
             static_assert(!std::is_same<void, decltype(f(std::declval<crow::request>(), std::declval<Args>()...))>::value,
-                "Handler function cannot have void return type; valid return types: string, int, crow::resposne, crow::json::wvalue");
+                "Handler function cannot have void return type; valid return types: string, int, crow::response, crow::returnable");
 
             handler_ = (
 #ifdef CROW_CAN_USE_CPP14
