@@ -95,6 +95,7 @@ var annotated_dup =
         [ "Connection", "classcrow_1_1websocket_1_1_connection.html", "classcrow_1_1websocket_1_1_connection" ]
       ] ],
       [ "BaseRule", "classcrow_1_1_base_rule.html", "classcrow_1_1_base_rule" ],
+      [ "CatchallRule", "classcrow_1_1_catchall_rule.html", "classcrow_1_1_catchall_rule" ],
       [ "CerrLogHandler", "classcrow_1_1_cerr_log_handler.html", "classcrow_1_1_cerr_log_handler" ],
       [ "ci_hash", "structcrow_1_1ci__hash.html", "structcrow_1_1ci__hash" ],
       [ "ci_key_eq", "structcrow_1_1ci__key__eq.html", "structcrow_1_1ci__key__eq" ],

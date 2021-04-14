@@ -479,7 +479,7 @@
         
           <li class="md-nav__item">
   <a href="#return-statement" class="md-nav__link">
-    return statement
+    Return statement
   </a>
   
 </li>
@@ -492,6 +492,13 @@
         <li class="md-nav__item">
   <a href="#returning-custom-classes" class="md-nav__link">
     Returning custom classes
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#catchall-routes" class="md-nav__link">
+    Catchall routes
   </a>
   
 </li>
@@ -791,7 +798,7 @@
         
           <li class="md-nav__item">
   <a href="#return-statement" class="md-nav__link">
-    return statement
+    Return statement
   </a>
   
 </li>
@@ -804,6 +811,13 @@
         <li class="md-nav__item">
   <a href="#returning-custom-classes" class="md-nav__link">
     Returning custom classes
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#catchall-routes" class="md-nav__link">
+    Catchall routes
   </a>
   
 </li>
@@ -859,7 +873,7 @@ you can see the first <code>&lt;int&gt;</code> is defined as <code>a</code> and 
 <p>Please note that in order to return a response defined as a parameter you'll need to use <code>res.end();</code>.<br><br></p>
 <p>Alternatively, you can define the response in the body and return it (<code class="highlight"><span class="p">([](){</span><span class="k">return</span> <span class="n">crow</span><span class="o">::</span><span class="n">response</span><span class="p">()})</span></code>).<br></p>
 <p>For more information on <code>crow::response</code> go <a href="../../reference/structcrow_1_1response.html">here</a>.<br><br></p>
-<h3 id="return-statement">return statement</h3>
+<h3 id="return-statement">Return statement</h3>
 <p>A <code>crow::response</code> is very strictly tied to a route. If you can have something in a response constructor, you can return it in a handler.<br><br>
 The main return type is <code>std::string</code>. although you could also return a <code>crow::json::wvalue</code> or <code>crow::multipart::message</code> directly.<br><br>
 For more information on the specific constructors for a <code>crow::response</code> go <a href="../../reference/structcrow_1_1response.html">here</a>.</p>
@@ -881,6 +895,8 @@ to use the returnable class, you only need your class to publicly extend <code>c
     <span class="p">}</span>
 <span class="p">}</span>
 </code></pre></div></p>
+<h2 id="catchall-routes">Catchall routes</h2>
+<p>By default, any request that Crow can't find a route for will return a simple 404 response. You can change that to return a default route using the <code>CROW_CATCHALL_ROUTE(app)</code> macro. Defining it is identical to a normal route, even when it comes to the <code>const crow::request&amp;</code> and <code>crow::response&amp;</code> parameters being optional.</p>
                 
               
               

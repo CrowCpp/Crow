@@ -18,6 +18,7 @@ var hierarchy =
     [ "crow::detail::routing_handler_call_helper::call_params< H1 >", "structcrow_1_1detail_1_1routing__handler__call__helper_1_1call__params.html", null ],
     [ "crow::black_magic::CallHelper< F, Set >", "structcrow_1_1black__magic_1_1_call_helper.html", null ],
     [ "crow::black_magic::CallHelper< F, S< Args... > >", "structcrow_1_1black__magic_1_1_call_helper_3_01_f_00_01_s_3_01_args_8_8_8_01_4_01_4.html", null ],
+    [ "crow::CatchallRule", "classcrow_1_1_catchall_rule.html", null ],
     [ "crow::detail::check_after_handle_arity_3< MW >", "structcrow_1_1detail_1_1check__after__handle__arity__3.html", null ],
     [ "crow::detail::check_after_handle_arity_3_const< MW >", "structcrow_1_1detail_1_1check__after__handle__arity__3__const.html", null ],
     [ "crow::detail::check_before_handle_arity_3< MW >", "structcrow_1_1detail_1_1check__before__handle__arity__3.html", null ],

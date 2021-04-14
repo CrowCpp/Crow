@@ -1,6 +1,7 @@
 var classcrow_1_1_router =
 [
     [ "Router", "classcrow_1_1_router.html#ae5c4c84e7b66b23c20a893bf320137de", null ],
+    [ "catchall_rule", "classcrow_1_1_router.html#ad757b52858f405c09e7757e1e1b1acb6", null ],
     [ "debug_print", "classcrow_1_1_router.html#a61157adad80f901413a4023d8fb0fd9d", null ],
     [ "handle", "classcrow_1_1_router.html#a6b7a5a19c6aa65f229eecaf47bda4dde", null ],
     [ "handle_upgrade", "classcrow_1_1_router.html#a2b37f05675d075c3de79f6a4de42320d", null ],
