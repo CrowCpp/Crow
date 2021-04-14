@@ -65,6 +65,10 @@ else ()
   target_compile_options(example_chat PRIVATE "${compiler_options}")
   target_link_libraries(example_chat PUBLIC ${REQUIRED_LIBRARIES})
 
+  add_executable(example_catchall example_catchall.cpp)
+  target_compile_options(example_catchall PRIVATE "${compiler_options}")
+  target_link_libraries(example_catchall PUBLIC ${REQUIRED_LIBRARIES})
+
   add_custom_command(OUTPUT example_chat.html
     COMMAND ${CMAKE_COMMAND} -E
     copy ${PROJECT_SOURCE_DIR}/example_chat.html ${CMAKE_CURRENT_BINARY_DIR}/example_chat.html

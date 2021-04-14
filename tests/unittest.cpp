@@ -1750,3 +1750,63 @@ TEST_CASE("zlib_compression")
     app_deflate.stop();
     app_gzip.stop();
 }
+
+TEST_CASE("catchall")
+{
+    SimpleApp app;
+    SimpleApp app2;
+
+    CROW_ROUTE(app, "/place")([](){return "place";});
+
+    CROW_CATCHALL_ROUTE(app)([](){return "!place";});
+
+    CROW_ROUTE(app2, "/place")([](){return "place";});
+
+    app.validate();
+    app2.validate();
+
+    {
+      request req;
+      response res;
+
+      req.url = "/place";
+
+      app.handle(req, res);
+
+      CHECK(200 == res.code);
+    }
+
+    {
+      request req;
+      response res;
+
+      req.url = "/another_place";
+
+      app.handle(req, res);
+
+      CHECK(200 == res.code);
+      CHECK("!place" == res.body);
+    }
+
+    {
+      request req;
+      response res;
+
+      req.url = "/place";
+
+      app2.handle(req, res);
+
+      CHECK(200 == res.code);
+    }
+
+    {
+      request req;
+      response res;
+
+      req.url = "/another_place";
+
+      app2.handle(req, res);
+
+      CHECK(404 == res.code);
+    }
+}

@@ -271,6 +271,101 @@ namespace crow
         }
     }
 
+
+    class CatchallRule
+    {
+    public:
+        CatchallRule(){}
+
+        template <typename Func>
+        typename std::enable_if<black_magic::CallHelper<Func, black_magic::S<>>::value, void>::type
+        operator()(Func&& f)
+        {
+            static_assert(!std::is_same<void, decltype(f())>::value,
+                "Handler function cannot have void return type; valid return types: string, int, crow::response, crow::returnable");
+
+            handler_ = (
+#ifdef CROW_CAN_USE_CPP14
+                [f = std::move(f)]
+#else
+                [f]
+#endif
+                (const request&, response& res){
+                    res = response(f());
+                    res.end();
+                });
+
+        }
+
+        template <typename Func>
+        typename std::enable_if<
+            !black_magic::CallHelper<Func, black_magic::S<>>::value &&
+            black_magic::CallHelper<Func, black_magic::S<crow::request>>::value,
+            void>::type
+        operator()(Func&& f)
+        {
+            static_assert(!std::is_same<void, decltype(f(std::declval<crow::request>()))>::value,
+                "Handler function cannot have void return type; valid return types: string, int, crow::response, crow::returnable");
+
+            handler_ = (
+#ifdef CROW_CAN_USE_CPP14
+                [f = std::move(f)]
+#else
+                [f]
+#endif
+                (const crow::request& req, crow::response& res){
+                    res = response(f(req));
+                    res.end();
+                });
+        }
+
+        template <typename Func>
+        typename std::enable_if<
+            !black_magic::CallHelper<Func, black_magic::S<>>::value &&
+            !black_magic::CallHelper<Func, black_magic::S<crow::request>>::value &&
+            black_magic::CallHelper<Func, black_magic::S<crow::response&>>::value,
+        void>::type
+        operator()(Func&& f)
+        {
+          static_assert(std::is_same<void, decltype(f(std::declval<crow::response&>()))>::value,
+                        "Handler function with response argument should have void return type");
+          handler_ = (
+#ifdef CROW_CAN_USE_CPP14
+                [f = std::move(f)]
+#else
+                [f]
+#endif
+                (const crow::request&, crow::response& res){
+                  f(res);
+                });
+        }
+
+        template <typename Func>
+        typename std::enable_if<
+            !black_magic::CallHelper<Func, black_magic::S<>>::value &&
+            !black_magic::CallHelper<Func, black_magic::S<crow::request>>::value &&
+            !black_magic::CallHelper<Func, black_magic::S<crow::response&>>::value,
+            void>::type
+        operator()(Func&& f)
+        {
+            static_assert(std::is_same<void, decltype(f(std::declval<crow::request>(), std::declval<crow::response&>()))>::value,
+                "Handler function with response argument should have void return type");
+
+                handler_ = std::move(f);
+        }
+
+        bool has_handler()
+        {
+            return (handler_ != nullptr);
+        }
+
+    protected:
+        friend class Router;
+    private:
+        std::function<void(const crow::request&, crow::response&)> handler_;
+    };
+
+
     /// A rule dealing with websockets.
 
     /// Provides the interface for the user to put in the necessary handlers for a websocket to work.
@@ -487,7 +582,7 @@ namespace crow
                 black_magic::CallHelper<Func, black_magic::S<crow::request, Args...>>::value ,
                 "Handler type is mismatched with URL parameters");
             static_assert(!std::is_same<void, decltype(f(std::declval<Args>()...))>::value,
-                "Handler function cannot have void return type; valid return types: string, int, crow::resposne, crow::json::wvalue");
+                "Handler function cannot have void return type; valid return types: string, int, crow::response, crow::returnable");
 
             handler_ = (
 #ifdef CROW_CAN_USE_CPP14
@@ -512,7 +607,7 @@ namespace crow
                 black_magic::CallHelper<Func, black_magic::S<crow::request, Args...>>::value,
                 "Handler type is mismatched with URL parameters");
             static_assert(!std::is_same<void, decltype(f(std::declval<crow::request>(), std::declval<Args>()...))>::value,
-                "Handler function cannot have void return type; valid return types: string, int, crow::resposne, crow::json::wvalue");
+                "Handler function cannot have void return type; valid return types: string, int, crow::response, crow::returnable");
 
             handler_ = (
 #ifdef CROW_CAN_USE_CPP14
@@ -934,6 +1029,7 @@ namespace crow
         std::vector<Node> nodes_;
     };
 
+
     /// Handles matching requests to existing rules and upgrade requests.
     class Router
     {
@@ -959,6 +1055,11 @@ namespace crow
             all_rules_.emplace_back(ruleObject);
 
             return *ruleObject;
+        }
+
+        CatchallRule& catchall_rule()
+        {
+            return catchall_rule_;
         }
 
         void internal_add_rule_object(const std::string& rule, BaseRule* ruleObject)
@@ -1159,8 +1260,16 @@ namespace crow
                     }
                 }
 
-                CROW_LOG_DEBUG << "Cannot match rules " << req.url;
-                res = response(404);
+                if (catchall_rule_.has_handler())
+                {
+                    CROW_LOG_DEBUG << "Cannot match rules " << req.url << ". Redirecting to Catchall rule";
+                    catchall_rule_.handler_(req, res);
+                }
+                else
+                {
+                    CROW_LOG_DEBUG << "Cannot match rules " << req.url;
+                    res = response(404);
+                }
                 res.end();
                 return;
             }
@@ -1219,6 +1328,8 @@ namespace crow
         }
 
     private:
+        CatchallRule catchall_rule_;
+
         struct PerMethod
         {
             std::vector<BaseRule*> rules;
@@ -1229,5 +1340,6 @@ namespace crow
         };
         std::array<PerMethod, static_cast<int>(HTTPMethod::InternalMethodCount)> per_methods_;
         std::vector<std::unique_ptr<BaseRule>> all_rules_;
+
     };
 }
