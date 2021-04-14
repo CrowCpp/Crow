@@ -11,6 +11,12 @@ set(TEST_SRCS
 
 add_executable(mustachetest ${TEST_SRCS})
 target_compile_options(mustachetest PRIVATE "${compiler_options}")
+
+if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+  set_target_properties(mustachetest PROPERTIES COMPILE_FLAGS "--coverage -fprofile-arcs -ftest-coverage")
+  target_link_libraries(mustachetest gcov)
+endif()
+
 file(COPY DIRECTORY . DESTINATION ${CMAKE_CURRENT_BINARY_DIR} FILES_MATCHING PATTERN "*.json")
 
 add_custom_command(OUTPUT test.py
