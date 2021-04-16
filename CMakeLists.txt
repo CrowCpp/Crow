@@ -68,6 +68,7 @@ if (NOT MSVC AND BUILD_TESTING)
 	add_subdirectory(tests)
 	enable_testing()
 	add_test(NAME crow_test COMMAND ${CMAKE_CURRENT_BINARY_DIR}/tests/unittest)
+	add_test(NAME ssl_test COMMAND ${CMAKE_CURRENT_BINARY_DIR}/tests/ssl/ssltest)
 	add_test(NAME template_test COMMAND ${CMAKE_CURRENT_BINARY_DIR}/tests/template/test.py WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/tests/template)
 endif()
 
