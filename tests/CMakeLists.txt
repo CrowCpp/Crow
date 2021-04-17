@@ -6,7 +6,7 @@ set(TEST_SRCS
 )
 
 add_executable(unittest ${TEST_SRCS})
-target_link_libraries(unittest ${Boost_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} ${OPENSSL_LIBRARIES} z)
+target_link_libraries(unittest ${Boost_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} z)
 # set target compile options as defined in the cmake/compiler_options.cmake Module
 target_compile_options(unittest PRIVATE ${compiler_options})
 
