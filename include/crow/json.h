@@ -1,7 +1,7 @@
 #pragma once
 
 //#define CROW_JSON_NO_ERROR_CHECK
-//#deine CROW_JSON_USE_MAP
+//#define CROW_JSON_USE_MAP
 
 #include <string>
 #ifdef CROW_JSON_USE_MAP

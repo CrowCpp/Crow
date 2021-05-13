@@ -364,7 +364,7 @@ namespace crow
 
         /// Get a value from a name, used for `?name=value`.
         ///
-        /// Note: this method returns the value of the first occurance of the key only, to return all occurances, see \ref get_list().
+        /// Note: this method returns the value of the first occurrence of the key only, to return all occurrences, see \ref get_list().
         char* get (const std::string& name) const
         {
             char* ret = qs_k2v(name.c_str(), key_value_pairs_.data(), key_value_pairs_.size());
