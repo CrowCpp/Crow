@@ -196,7 +196,7 @@ inline char * qs_k2v(const char * key, char * const * qs_kv, int qs_kv_size, int
     }
 #endif  // _qsSORTING
 
-    return NULL;
+    return nullptr;
 }
 
 inline boost::optional<std::pair<std::string, std::string>> qs_dict_name2kv(const char * dict_name, char * const * qs_kv, int qs_kv_size, int nth = 0)
@@ -362,16 +362,41 @@ namespace crow
 
         }
 
+        /// Get a value from a name, used for `?name=value`.
+        ///
+        /// Note: this method returns the value of the first occurrence of the key only, to return all occurrences, see \ref get_list().
         char* get (const std::string& name) const
         {
             char* ret = qs_k2v(name.c_str(), key_value_pairs_.data(), key_value_pairs_.size());
             return ret;
         }
 
-        std::vector<char*> get_list (const std::string& name) const
+        /// Works similar to \ref get() except it removes the item from the query string.
+        char* pop (const std::string& name)
+        {
+            char* ret = get(name);
+            if (ret != nullptr)
+            {
+                for (unsigned int i = 0; i<key_value_pairs_.size(); i++)
+                {
+                    std::string str_item(key_value_pairs_[i]);
+                    if (str_item.substr(0, name.size()+1) == name+'=')
+                    {
+                        key_value_pairs_.erase(key_value_pairs_.begin()+i);
+                        break;
+                    }
+                }
+            }
+            return ret;
+        }
+
+        /// Returns a list of values, passed as `?name[]=value1&name[]=value2&...name[]=valuen` with n being the size of the list.
+        ///
+        /// Note: Square brackets in the above example are controlled by `use_brackets` boolean (true by default). If set to false, the example becomes `?name=value1,name=value2...name=valuen`
+        std::vector<char*> get_list (const std::string& name, bool use_brackets = true) const
         {
             std::vector<char*> ret;
-            std::string plus = name + "[]";            
+            std::string plus = name + (use_brackets ? "[]" : "");
             char* element = nullptr;
 
             int count = 0;
@@ -385,6 +410,29 @@ namespace crow
             return ret;
         }
 
+        /// Similar to \ref get_list() but it removes the
+        std::vector<char*> pop_list (const std::string& name, bool use_brackets = true)
+        {
+            std::vector<char*> ret = get_list(name, use_brackets);
+            if (!ret.empty())
+            {
+                for (unsigned int i = 0; i<key_value_pairs_.size(); i++)
+                {
+                    std::string str_item(key_value_pairs_[i]);
+                    if ((use_brackets ? (str_item.substr(0, name.size()+3) == name+"[]=") : (str_item.substr(0, name.size()+1) == name+'=')))
+                    {
+                        key_value_pairs_.erase(key_value_pairs_.begin()+i--);
+                    }
+                }
+            }
+            return ret;
+        }
+
+        /// Works similar to \ref get_list() except the brackets are mandatory must not be empty.
+        ///
+        /// For example calling `get_dict(yourname)` on `?yourname[sub1]=42&yourname[sub2]=84` would give a map containing `{sub1 : 42, sub2 : 84}`.
+        ///
+        /// if your query string has both empty brackets and ones with a key inside, use pop_list() to get all the values without a key before running this method.
         std::unordered_map<std::string, std::string> get_dict (const std::string& name) const
         {
             std::unordered_map<std::string, std::string> ret;
@@ -396,6 +444,35 @@ namespace crow
                     ret.insert(*element);
                 else
                     break;
+            }
+            return ret;
+        }
+
+        /// Works the same as \ref get_dict() but removes the values from the query string.
+        std::unordered_map<std::string, std::string> pop_dict (const std::string& name)
+        {
+            std::unordered_map<std::string, std::string> ret = get_dict(name);
+            if (!ret.empty())
+            {
+                for (unsigned int i = 0; i<key_value_pairs_.size(); i++)
+                {
+                    std::string str_item(key_value_pairs_[i]);
+                    if (str_item.substr(0, name.size()+1) == name+'[')
+                    {
+                        key_value_pairs_.erase(key_value_pairs_.begin()+i--);
+                    }
+                }
+            }
+            return ret;
+        }
+
+        std::vector<std::string> keys() const
+        {
+            std::vector<std::string> ret;
+            for (auto element: key_value_pairs_)
+            {
+                std::string str_element(element);
+                ret.emplace_back(str_element.substr(0, str_element.find('=')));
             }
             return ret;
         }

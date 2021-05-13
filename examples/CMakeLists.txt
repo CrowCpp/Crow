@@ -68,6 +68,10 @@ else ()
   add_executable(example_catchall example_catchall.cpp)
   target_compile_options(example_catchall PRIVATE "${compiler_options}")
   target_link_libraries(example_catchall PUBLIC ${REQUIRED_LIBRARIES})
+  
+  add_executable(example_json_map example_json_map.cpp)
+  target_compile_options(example_json_map PRIVATE "${compiler_options}")
+  target_link_libraries(example_json_map PUBLIC ${REQUIRED_LIBRARIES})
 
   add_custom_command(OUTPUT example_chat.html
     COMMAND ${CMAKE_COMMAND} -E

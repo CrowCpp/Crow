@@ -37,6 +37,7 @@ nav:
             - JSON: guides/json.md
             - Templating (Mustache): guides/templating.md
             - Multipart: guides/multipart.md
+            - Query Strings: guides/query-string.md
             - Middleware: guides/middleware.md
             - SSL: guides/ssl.md
             - Static Files: guides/static.md
@@ -59,4 +60,4 @@ extra_css:
     - 'stylesheets/colors.css'
     - 'stylesheets/latofonts.css'
 
-copyright: 'Copyright &copy; 2020 Farook Al-Sammarraie'
+copyright: 'Copyright &copy; 2021 CrowCpp'
