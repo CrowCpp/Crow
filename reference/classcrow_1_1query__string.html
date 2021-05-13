@@ -127,15 +127,27 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a19138a2e29bba49996bf67e7403da405"><td class="memItemLeft" align="right" valign="top"><a id="a19138a2e29bba49996bf67e7403da405"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>clear</b> ()</td></tr>
 <tr class="separator:a19138a2e29bba49996bf67e7403da405"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7db05380bed403b88cb2fe6a5fdd8d75"><td class="memItemLeft" align="right" valign="top"><a id="a7db05380bed403b88cb2fe6a5fdd8d75"></a>
-char *&#160;</td><td class="memItemRight" valign="bottom"><b>get</b> (const std::string &amp;name) const</td></tr>
+<tr class="memitem:a7db05380bed403b88cb2fe6a5fdd8d75"><td class="memItemLeft" align="right" valign="top">char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcrow_1_1query__string.html#a7db05380bed403b88cb2fe6a5fdd8d75">get</a> (const std::string &amp;name) const</td></tr>
 <tr class="separator:a7db05380bed403b88cb2fe6a5fdd8d75"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aec547ea57a3570c566c1adb1b92ba76d"><td class="memItemLeft" align="right" valign="top"><a id="aec547ea57a3570c566c1adb1b92ba76d"></a>
-std::vector&lt; char * &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>get_list</b> (const std::string &amp;name) const</td></tr>
-<tr class="separator:aec547ea57a3570c566c1adb1b92ba76d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af56add12ca6a7f0222956e353d1d40bb"><td class="memItemLeft" align="right" valign="top"><a id="af56add12ca6a7f0222956e353d1d40bb"></a>
-std::unordered_map&lt; std::string, std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>get_dict</b> (const std::string &amp;name) const</td></tr>
+<tr class="memitem:ab0a81b08a5531b98c08b1a6a268ebea1"><td class="memItemLeft" align="right" valign="top"><a id="ab0a81b08a5531b98c08b1a6a268ebea1"></a>
+char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcrow_1_1query__string.html#ab0a81b08a5531b98c08b1a6a268ebea1">pop</a> (const std::string &amp;name)</td></tr>
+<tr class="memdesc:ab0a81b08a5531b98c08b1a6a268ebea1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Works similar to <a class="el" href="classcrow_1_1query__string.html#a7db05380bed403b88cb2fe6a5fdd8d75">get()</a> except it removes the item from the query string. <br /></td></tr>
+<tr class="separator:ab0a81b08a5531b98c08b1a6a268ebea1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a657e5fe435375cd31229944ed2ad5608"><td class="memItemLeft" align="right" valign="top">std::vector&lt; char * &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcrow_1_1query__string.html#a657e5fe435375cd31229944ed2ad5608">get_list</a> (const std::string &amp;name, bool use_brackets=true) const</td></tr>
+<tr class="separator:a657e5fe435375cd31229944ed2ad5608"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8ef1a91122dc53e1235919e107fd1a9c"><td class="memItemLeft" align="right" valign="top"><a id="a8ef1a91122dc53e1235919e107fd1a9c"></a>
+std::vector&lt; char * &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcrow_1_1query__string.html#a8ef1a91122dc53e1235919e107fd1a9c">pop_list</a> (const std::string &amp;name, bool use_brackets=true)</td></tr>
+<tr class="memdesc:a8ef1a91122dc53e1235919e107fd1a9c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Similar to <a class="el" href="classcrow_1_1query__string.html#a657e5fe435375cd31229944ed2ad5608">get_list()</a> but it removes the. <br /></td></tr>
+<tr class="separator:a8ef1a91122dc53e1235919e107fd1a9c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af56add12ca6a7f0222956e353d1d40bb"><td class="memItemLeft" align="right" valign="top">std::unordered_map&lt; std::string, std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcrow_1_1query__string.html#af56add12ca6a7f0222956e353d1d40bb">get_dict</a> (const std::string &amp;name) const</td></tr>
 <tr class="separator:af56add12ca6a7f0222956e353d1d40bb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0744b06ff0709ebbe7c2a1646564508b"><td class="memItemLeft" align="right" valign="top"><a id="a0744b06ff0709ebbe7c2a1646564508b"></a>
+std::unordered_map&lt; std::string, std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcrow_1_1query__string.html#a0744b06ff0709ebbe7c2a1646564508b">pop_dict</a> (const std::string &amp;name)</td></tr>
+<tr class="memdesc:a0744b06ff0709ebbe7c2a1646564508b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Works the same as <a class="el" href="classcrow_1_1query__string.html#af56add12ca6a7f0222956e353d1d40bb">get_dict()</a> but removes the values from the query string. <br /></td></tr>
+<tr class="separator:a0744b06ff0709ebbe7c2a1646564508b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad83b800ef5b122d361061d9d5f889dd9"><td class="memItemLeft" align="right" valign="top"><a id="ad83b800ef5b122d361061d9d5f889dd9"></a>
+std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>keys</b> () const</td></tr>
+<tr class="separator:ad83b800ef5b122d361061d9d5f889dd9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-attribs"></a>
 Static Public Attributes</h2></td></tr>
@@ -151,7 +163,103 @@ std::ostream &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operato
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>A class to represent any data coming after the <code>?</code> in the request URL into key-value pairs. </p>
-</div><hr/>The documentation for this class was generated from the following file:<ul>
+</div><h2 class="groupheader">Member Function Documentation</h2>
+<a id="a7db05380bed403b88cb2fe6a5fdd8d75"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7db05380bed403b88cb2fe6a5fdd8d75">&#9670;&nbsp;</a></span>get()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">char* crow::query_string::get </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>name</em></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Get a value from a name, used for <code>?name=value</code>.</p>
+<p>Note: this method returns the value of the first occurrence of the key only, to return all occurrences, see <a class="el" href="classcrow_1_1query__string.html#a657e5fe435375cd31229944ed2ad5608">get_list()</a>. </p>
+
+</div>
+</div>
+<a id="af56add12ca6a7f0222956e353d1d40bb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af56add12ca6a7f0222956e353d1d40bb">&#9670;&nbsp;</a></span>get_dict()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::unordered_map&lt;std::string, std::string&gt; crow::query_string::get_dict </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>name</em></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Works similar to <a class="el" href="classcrow_1_1query__string.html#a657e5fe435375cd31229944ed2ad5608">get_list()</a> except the brackets are mandatory must not be empty.</p>
+<p>For example calling <code>get_dict(yourname)</code> on <code>?yourname[sub1]=42&amp;yourname[sub2]=84</code> would give a map containing <code>{sub1 : 42, sub2 : 84}</code>.</p>
+<p>if your query string has both empty brackets and ones with a key inside, use <a class="el" href="classcrow_1_1query__string.html#a8ef1a91122dc53e1235919e107fd1a9c" title="Similar to get_list() but it removes the.">pop_list()</a> to get all the values without a key before running this method. </p>
+
+</div>
+</div>
+<a id="a657e5fe435375cd31229944ed2ad5608"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a657e5fe435375cd31229944ed2ad5608">&#9670;&nbsp;</a></span>get_list()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::vector&lt;char*&gt; crow::query_string::get_list </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>name</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>use_brackets</em> = <code>true</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Returns a list of values, passed as <code>?name[]=value1&amp;name[]=value2&amp;...name[]=valuen</code> with n being the size of the list.</p>
+<p>Note: Square brackets in the above example are controlled by <code>use_brackets</code> boolean (true by default). If set to false, the example becomes <code>?name=value1,name=value2...name=valuen</code> </p>
+
+</div>
+</div>
+<hr/>The documentation for this class was generated from the following file:<ul>
 <li>/drone/src/include/crow/<a class="el" href="query__string_8h_source.html">query_string.h</a></li>
 </ul>
 </div><!-- contents -->
@@ -161,7 +269,7 @@ std::ostream &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operato
 			<ul>
 				<li class="navelem"><b>crow</b></li><li class="navelem"><a class="el" href="classcrow_1_1query__string.html">query_string</a></li>
 				<li class="footer">
-					Generated on Wed Apr 14 2021 for Crow by <a href="http://www.doxygen.org/index.html">
+					Generated on Thu May 13 2021 for Crow by <a href="http://www.doxygen.org/index.html">
 					<img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.17.
 					Dark theme by <a href="http://majerle.eu" target="_new">Tilen Majerle</a>. Edited by <a href="https://github.com/The-EDev" target="_new">Farook Al-Sammarraie</a>. All rights reserved.
 				</li>

@@ -1,7 +1,9 @@
 var classcrow_1_1json_1_1wvalue =
 [
     [ "wvalue", "classcrow_1_1json_1_1wvalue.html#a3bd09f79662afa14d7da1016e0da672d", null ],
+    [ "wvalue", "classcrow_1_1json_1_1wvalue.html#a5c1b390b43cb94c8c8a0cb9369088119", null ],
     [ "wvalue", "classcrow_1_1json_1_1wvalue.html#a1813a29de56af96789cc76b8cdb0dbbe", null ],
+    [ "wvalue", "classcrow_1_1json_1_1wvalue.html#a9aa686c7631dd551f121bb91d5f07d2b", null ],
     [ "wvalue", "classcrow_1_1json_1_1wvalue.html#a780a992b87a23470b99ef4b594ffd1ba", null ],
     [ "clear", "classcrow_1_1json_1_1wvalue.html#af46596998d8e639a23b401e951297b63", null ],
     [ "count", "classcrow_1_1json_1_1wvalue.html#a1f2b15883743ea9c24709e966668da99", null ],
@@ -27,6 +29,7 @@ var classcrow_1_1json_1_1wvalue =
     [ "operator[]", "classcrow_1_1json_1_1wvalue.html#a75a106571d5ae1b9be6903f8e2435754", null ],
     [ "operator[]", "classcrow_1_1json_1_1wvalue.html#ae0d1876f5cd3f8ac5b61970d12b0ad74", null ],
     [ "reset", "classcrow_1_1json_1_1wvalue.html#ab13538ab6037cf427ed225b94d703ce9", null ],
+    [ "size", "classcrow_1_1json_1_1wvalue.html#a1ded929c63fcb6e3c53be38e9b54c672", null ],
     [ "t", "classcrow_1_1json_1_1wvalue.html#a2e8d3ed2849f16bb1894c4d48cb49921", null ],
     [ "crow::mustache::template_t", "classcrow_1_1json_1_1wvalue.html#aedfa8358796846a88c67b51d3b280461", null ],
     [ "d", "classcrow_1_1json_1_1wvalue.html#a935012c320a3a93e4dd04e0c8c65f293", null ],

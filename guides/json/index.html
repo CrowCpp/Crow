@@ -12,7 +12,7 @@
         <link rel="canonical" href="https://crowcpp.github.io/crow/guides/json/">
       
       <link rel="icon" href="../../assets/favicon.svg">
-      <meta name="generator" content="mkdocs-1.1.2, mkdocs-material-7.1.1">
+      <meta name="generator" content="mkdocs-1.1.2, mkdocs-material-7.1.4">
     
     
       
@@ -20,7 +20,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.9299cb39.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.bde7dde4.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.ef6f36e2.min.css">
@@ -60,7 +60,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#rvalue" class="md-skip">
+        <a href="#type" class="md-skip">
           Skip to content
         </a>
       
@@ -430,12 +430,53 @@
       
       <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
       
-        
       
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          JSON
+          <span class="md-nav__icon md-icon"></span>
+        </label>
       
       <a href="./" class="md-nav__link md-nav__link--active">
         JSON
       </a>
+      
+        
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#type" class="md-nav__link">
+    type
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#rvalue" class="md-nav__link">
+    rvalue
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#wvalue" class="md-nav__link">
+    wvalue
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
       
     </li>
   
@@ -460,6 +501,18 @@
     <li class="md-nav__item">
       <a href="../multipart/" class="md-nav__link">
         Multipart
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../query-string/" class="md-nav__link">
+        Query Strings
       </a>
     </li>
   
@@ -645,8 +698,36 @@
 <nav class="md-nav md-nav--secondary" aria-label="Table of contents">
   
   
-    
   
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#type" class="md-nav__link">
+    type
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#rvalue" class="md-nav__link">
+    rvalue
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#wvalue" class="md-nav__link">
+    wvalue
+  </a>
+  
+</li>
+      
+    </ul>
   
 </nav>
                   </div>
@@ -660,14 +741,8 @@
                 
                 
                 <p>Crow has built in support for JSON data.<br><br></p>
-<h2 id="rvalue">rvalue</h2>
-<p>JSON read value, used for taking a JSON string and parsing it into <code>crow::json</code>.<br><br></p>
-<p>You can read individual items of the rvalue, but you cannot add items to it.<br>
-To do that, you need to convert it to a <code>wvalue</code>, which can be done by simply writing <code class="highlight"><span class="n">crow</span><span class="o">::</span><span class="n">json</span><span class="o">::</span><span class="n">wvalue</span> <span class="n">wval</span> <span class="p">(</span><span class="n">rval</span><span class="p">);</span></code> (assuming <code>rval</code> is your <code>rvalue</code>).<br><br></p>
-<p>For more info on read values go <a href="/reference/classcrow_1_1json_1_1rvalue.html">here</a>.<br><br></p>
-<h1 id="wvalue">wvalue</h1>
-<p>JSON write value, used for creating, editing and converting JSON to a string.<br><br></p>
-<p>The types of values that <code>wvalue</code> can take are as follows:<br></p>
+<h2 id="type">type</h2>
+<p>The types of values that <code>rvalue and wvalue</code> can take are as follows:<br></p>
 <ul>
 <li><code>False</code>: from type <code>bool</code>.</li>
 <li><code>True</code>: from type <code>bool</code>.</li>
@@ -679,10 +754,23 @@ To do that, you need to convert it to a <code>wvalue</code>, which can be done b
 </li>
 <li><code>String</code>: from type <code>std::string</code>.</li>
 <li><code>List</code>: from type <code>std::vector</code>.</li>
-<li><code>Object</code>: from type <code>crow::json::wvalue</code>.<br>
-This last type means that <code>wvalue</code> can have keys, this is done by simply assigning a value to whatever string key you like, something like <code class="highlight"><span class="n">wval</span><span class="p">[</span><span class="s">&quot;key1&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">val1</span><span class="p">;</span></code>. Keep in mind that val1 can be any of the above types.<br><br></li>
+<li><code>Object</code>: from type <code>crow::json::wvalue or crow::json::rvalue</code>.<br>
+This last type means that <code>rvalue or wvalue</code> can have keys.</li>
 </ul>
-<p>A JSON wvalue can be returned directly inside a route handler, this will cause the <code>content-type</code> header to automatically be set to <code>Application/json</code> and the JSON value will be converted to string and placed in the response body. For more information go to <a href="../routes">Routes</a>.<br><br></p>
+<h2 id="rvalue">rvalue</h2>
+<p>JSON read value, used for taking a JSON string and parsing it into <code>crow::json</code>.<br><br></p>
+<p>You can read individual items of the rvalue, but you cannot add items to it.<br>
+To do that, you need to convert it to a <code>wvalue</code>, which can be done by simply writing <code class="highlight"><span class="n">crow</span><span class="o">::</span><span class="n">json</span><span class="o">::</span><span class="n">wvalue</span> <span class="nf">wval</span> <span class="p">(</span><span class="n">rval</span><span class="p">);</span></code> (assuming <code>rval</code> is your <code>rvalue</code>).<br><br></p>
+<p>For more info on read values go <a href="/reference/classcrow_1_1json_1_1rvalue.html">here</a>.<br><br></p>
+<h1 id="wvalue">wvalue</h1>
+<p>JSON write value, used for creating, editing and converting JSON to a string.<br><br></p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>setting a <code>wvalue</code> to object type can be done by simply assigning a value to whatever string key you like, something like <code class="highlight"><span class="n">wval</span><span class="p">[</span><span class="s">&quot;key1&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">val1</span><span class="p">;</span></code>. Keep in mind that val1 can be any of the above types.</p>
+</div>
+<p>A <code>wvalue</code> can be treated as an object or even a list (setting a value by using <code>json[3] = 32</code> for example). Please note that this will remove the data in the value if it isn't of List type.<br><br></p>
+<p>An object type <code>wvalue</code> uses <code>std::unordered_map</code> by default, if you want to have your returned <code>wvalue</code> key value pairs be sorted (using <code>std::map</code>) you can add <code class="highlight"><span class="cp">#define CROW_JSON_USE_MAP</span></code> to the top of your program.<br><br></p>
+<p>A JSON <code>wvalue</code> can be returned directly inside a route handler, this will cause the <code>content-type</code> header to automatically be set to <code>Application/json</code> and the JSON value will be converted to string and placed in the response body. For more information go to <a href="../routes">Routes</a>.<br><br></p>
 <p>For more info on write values go <a href="../../reference/classcrow_1_1json_1_1wvalue.html">here</a>.</p>
                 
               
@@ -738,7 +826,7 @@ This last type means that <code>wvalue</code> can have keys, this is done by sim
       <div class="md-footer-copyright">
         
           <div class="md-footer-copyright__highlight">
-            Copyright &copy; 2020 Farook Al-Sammarraie
+            Copyright &copy; 2021 CrowCpp
           </div>
         
         Made with
@@ -778,10 +866,10 @@ This last type means that <code>wvalue</code> can have keys, this is done by sim
     <div class="md-dialog" data-md-component="dialog">
       <div class="md-dialog__inner md-typeset"></div>
     </div>
-    <script id="__config" type="application/json">{"base": "../..", "features": "navigation.tabs", "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing"}, "search": "../../assets/javascripts/workers/search.fe42c31b.min.js", "version": null}</script>
+    <script id="__config" type="application/json">{"base": "../..", "features": "navigation.tabs", "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing"}, "search": "../../assets/javascripts/workers/search.4fa0e4ee.min.js", "version": null}</script>
     
     
-      <script src="../../assets/javascripts/bundle.7353b375.min.js"></script>
+      <script src="../../assets/javascripts/bundle.1d3bfcf1.min.js"></script>
       
     
   </body>

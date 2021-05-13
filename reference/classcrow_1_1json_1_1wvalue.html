@@ -123,10 +123,16 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a2e8d3ed2849f16bb1894c4d48cb49921"><td class="memItemLeft" align="right" valign="top"><a id="a2e8d3ed2849f16bb1894c4d48cb49921"></a>
 type&#160;</td><td class="memItemRight" valign="bottom"><b>t</b> () const</td></tr>
 <tr class="separator:a2e8d3ed2849f16bb1894c4d48cb49921"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5c1b390b43cb94c8c8a0cb9369088119"><td class="memItemLeft" align="right" valign="top"><a id="a5c1b390b43cb94c8c8a0cb9369088119"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>wvalue</b> (std::vector&lt; <a class="el" href="classcrow_1_1json_1_1wvalue.html">wvalue</a> &gt; &amp;r)</td></tr>
+<tr class="separator:a5c1b390b43cb94c8c8a0cb9369088119"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1813a29de56af96789cc76b8cdb0dbbe"><td class="memItemLeft" align="right" valign="top"><a id="a1813a29de56af96789cc76b8cdb0dbbe"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcrow_1_1json_1_1wvalue.html#a1813a29de56af96789cc76b8cdb0dbbe">wvalue</a> (const <a class="el" href="classcrow_1_1json_1_1rvalue.html">rvalue</a> &amp;r)</td></tr>
 <tr class="memdesc:a1813a29de56af96789cc76b8cdb0dbbe"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a write value from a read value (useful for editing JSON strings). <br /></td></tr>
 <tr class="separator:a1813a29de56af96789cc76b8cdb0dbbe"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9aa686c7631dd551f121bb91d5f07d2b"><td class="memItemLeft" align="right" valign="top"><a id="a9aa686c7631dd551f121bb91d5f07d2b"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>wvalue</b> (const <a class="el" href="classcrow_1_1json_1_1wvalue.html">wvalue</a> &amp;r)</td></tr>
+<tr class="separator:a9aa686c7631dd551f121bb91d5f07d2b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a780a992b87a23470b99ef4b594ffd1ba"><td class="memItemLeft" align="right" valign="top"><a id="a780a992b87a23470b99ef4b594ffd1ba"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><b>wvalue</b> (<a class="el" href="classcrow_1_1json_1_1wvalue.html">wvalue</a> &amp;&amp;r)</td></tr>
 <tr class="separator:a780a992b87a23470b99ef4b594ffd1ba"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -198,8 +204,13 @@ int&#160;</td><td class="memItemRight" valign="bottom"><b>count</b> (const std::
 <tr class="memitem:aa7519105cd7878322ecef8536fdead7e"><td class="memItemLeft" align="right" valign="top"><a id="aa7519105cd7878322ecef8536fdead7e"></a>
 std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>keys</b> () const</td></tr>
 <tr class="separator:aa7519105cd7878322ecef8536fdead7e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1ded929c63fcb6e3c53be38e9b54c672"><td class="memItemLeft" align="right" valign="top"><a id="a1ded929c63fcb6e3c53be38e9b54c672"></a>
+std::size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcrow_1_1json_1_1wvalue.html#a1ded929c63fcb6e3c53be38e9b54c672">size</a> () const</td></tr>
+<tr class="memdesc:a1ded929c63fcb6e3c53be38e9b54c672"><td class="mdescLeft">&#160;</td><td class="mdescRight">If the wvalue is a list, it returns the length of the list, otherwise it returns 1. <br /></td></tr>
+<tr class="separator:a1ded929c63fcb6e3c53be38e9b54c672"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5af23d208ed3d066a0fb5339350978c6"><td class="memItemLeft" align="right" valign="top"><a id="a5af23d208ed3d066a0fb5339350978c6"></a>
-size_t&#160;</td><td class="memItemRight" valign="bottom"><b>estimate_length</b> () const</td></tr>
+size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcrow_1_1json_1_1wvalue.html#a5af23d208ed3d066a0fb5339350978c6">estimate_length</a> () const</td></tr>
+<tr class="memdesc:a5af23d208ed3d066a0fb5339350978c6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns an estimated size of the value in bytes. <br /></td></tr>
 <tr class="separator:a5af23d208ed3d066a0fb5339350978c6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3c1d23310e96667629f0a74de09f46ba"><td class="memItemLeft" align="right" valign="top"><a id="a3c1d23310e96667629f0a74de09f46ba"></a>
 std::string&#160;</td><td class="memItemRight" valign="bottom"><b>dump</b> ()</td></tr>
@@ -235,7 +246,7 @@ std::string&#160;</td><td class="memItemRight" valign="bottom"><b>content_type</
 			<ul>
 				<li class="navelem"><b>crow</b></li><li class="navelem"><b>json</b></li><li class="navelem"><a class="el" href="classcrow_1_1json_1_1wvalue.html">wvalue</a></li>
 				<li class="footer">
-					Generated on Wed Apr 14 2021 for Crow by <a href="http://www.doxygen.org/index.html">
+					Generated on Thu May 13 2021 for Crow by <a href="http://www.doxygen.org/index.html">
 					<img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.17.
 					Dark theme by <a href="http://majerle.eu" target="_new">Tilen Majerle</a>. Edited by <a href="https://github.com/The-EDev" target="_new">Farook Al-Sammarraie</a>. All rights reserved.
 				</li>

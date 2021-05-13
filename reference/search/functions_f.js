@@ -1,7 +1,15 @@
 var searchData=
 [
-  ['t_361',['t',['../classcrow_1_1json_1_1rvalue.html#a9c9f7242e4164f4ed690e50e3cf5f4b1',1,'crow::json::rvalue']]],
-  ['tick_362',['tick',['../classcrow_1_1_crow.html#a068042431b0be5911ee1689a285f4693',1,'crow::Crow']]],
-  ['timeout_363',['timeout',['../classcrow_1_1_crow.html#a47ed9a118820f6e6ba0b2bc37f0997fb',1,'crow::Crow']]],
-  ['to_5frequest_364',['to_request',['../structcrow_1_1_h_t_t_p_parser.html#a4c1e61f6ed620123661ffb95070c9ca0',1,'crow::HTTPParser']]]
+  ['s_370',['s',['../classcrow_1_1json_1_1rvalue.html#ad94f27a14e60af841219279f70290858',1,'crow::json::rvalue']]],
+  ['send_5fbinary_371',['send_binary',['../classcrow_1_1websocket_1_1_connection.html#ae28e1265b68dfe0f4f99a68a52a57979',1,'crow::websocket::Connection']]],
+  ['send_5fping_372',['send_ping',['../classcrow_1_1websocket_1_1_connection.html#a6c5235850fd393aa6b5875fb4ea2ea4e',1,'crow::websocket::Connection']]],
+  ['send_5fpong_373',['send_pong',['../classcrow_1_1websocket_1_1_connection.html#ae8eaad22a072354c995bb9999efb683b',1,'crow::websocket::Connection']]],
+  ['send_5ftext_374',['send_text',['../classcrow_1_1websocket_1_1_connection.html#aa60e803417bb2d13cda3f0da7d68459f',1,'crow::websocket::Connection']]],
+  ['server_5fname_375',['server_name',['../classcrow_1_1_crow.html#ae0e400a1757bd68f716b82753a5a1a73',1,'crow::Crow']]],
+  ['set_5fheader_376',['set_header',['../structcrow_1_1response.html#ab2b9a9b9795fa6330bd47b66a716cb0b',1,'crow::response']]],
+  ['set_5fstatic_5ffile_5finfo_377',['set_static_file_info',['../structcrow_1_1response.html#a8f5e5caa08c3e658bccd03996e1a778a',1,'crow::response']]],
+  ['size_378',['size',['../classcrow_1_1json_1_1wvalue.html#a1ded929c63fcb6e3c53be38e9b54c672',1,'crow::json::wvalue']]],
+  ['socket_379',['socket',['../classcrow_1_1_connection.html#adb5878dd700c30dae10f3fa8d06ecbab',1,'crow::Connection::socket()'],['../structcrow_1_1_socket_adaptor.html#a70c413ce6d8f9e2fe1e4852fc07f0928',1,'crow::SocketAdaptor::socket()']]],
+  ['start_380',['start',['../classcrow_1_1websocket_1_1_connection.html#a24f90aa6961994abef482699e7ffe037',1,'crow::websocket::Connection']]],
+  ['stop_381',['stop',['../classcrow_1_1_crow.html#a0266672657128919ab9a067d93f3868f',1,'crow::Crow']]]
 ];

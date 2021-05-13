@@ -12,7 +12,7 @@
         <link rel="canonical" href="https://crowcpp.github.io/crow/guides/testing/">
       
       <link rel="icon" href="../../assets/favicon.svg">
-      <meta name="generator" content="mkdocs-1.1.2, mkdocs-material-7.1.1">
+      <meta name="generator" content="mkdocs-1.1.2, mkdocs-material-7.1.4">
     
     
       
@@ -20,7 +20,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.9299cb39.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.bde7dde4.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.ef6f36e2.min.css">
@@ -461,6 +461,18 @@
   
   
     <li class="md-nav__item">
+      <a href="../query-string/" class="md-nav__link">
+        Query Strings
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../middleware/" class="md-nav__link">
         Middleware
       </a>
@@ -515,6 +527,7 @@
       <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
       
       
+      
         <label class="md-nav__link md-nav__link--active" for="__toc">
           Writing Tests
           <span class="md-nav__icon md-icon"></span>
@@ -526,6 +539,7 @@
       
         
 <nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
   
   
   
@@ -678,6 +692,7 @@
   
   
   
+  
     <label class="md-nav__title" for="__toc">
       <span class="md-nav__icon md-icon"></span>
       Table of contents
@@ -783,7 +798,7 @@
   <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">sendmsg</span> <span class="o">=</span> <span class="s">&quot;GET /</span><span class="se">\r\n</span><span class="s">Content-Length:3</span><span class="se">\r\n</span><span class="s">X-HeaderTest: 123</span><span class="se">\r\n\r\n</span><span class="s">A=B</span><span class="se">\r\n</span><span class="s">&quot;</span><span class="p">;</span>
   <span class="n">asio</span><span class="o">::</span><span class="n">io_service</span> <span class="n">is</span><span class="p">;</span>
   <span class="p">{</span>
-    <span class="n">asio</span><span class="o">::</span><span class="n">ip</span><span class="o">::</span><span class="n">tcp</span><span class="o">::</span><span class="n">socket</span> <span class="n">c</span><span class="p">(</span><span class="n">is</span><span class="p">);</span>
+    <span class="n">asio</span><span class="o">::</span><span class="n">ip</span><span class="o">::</span><span class="n">tcp</span><span class="o">::</span><span class="n">socket</span> <span class="nf">c</span><span class="p">(</span><span class="n">is</span><span class="p">);</span>
     <span class="n">c</span><span class="p">.</span><span class="n">connect</span><span class="p">(</span><span class="n">asio</span><span class="o">::</span><span class="n">ip</span><span class="o">::</span><span class="n">tcp</span><span class="o">::</span><span class="n">endpoint</span><span class="p">(</span><span class="n">asio</span><span class="o">::</span><span class="n">ip</span><span class="o">::</span><span class="n">address</span><span class="o">::</span><span class="n">from_string</span><span class="p">(</span><span class="s">&quot;127.0.0.1&quot;</span><span class="p">),</span> <span class="mi">45451</span><span class="p">));</span>
 
     <span class="n">c</span><span class="p">.</span><span class="n">send</span><span class="p">(</span><span class="n">asio</span><span class="o">::</span><span class="n">buffer</span><span class="p">(</span><span class="n">sendmsg</span><span class="p">));</span>
@@ -867,7 +882,7 @@ Finally check the result against the expected one.</p>
       <div class="md-footer-copyright">
         
           <div class="md-footer-copyright__highlight">
-            Copyright &copy; 2020 Farook Al-Sammarraie
+            Copyright &copy; 2021 CrowCpp
           </div>
         
         Made with
@@ -907,10 +922,10 @@ Finally check the result against the expected one.</p>
     <div class="md-dialog" data-md-component="dialog">
       <div class="md-dialog__inner md-typeset"></div>
     </div>
-    <script id="__config" type="application/json">{"base": "../..", "features": "navigation.tabs", "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing"}, "search": "../../assets/javascripts/workers/search.fe42c31b.min.js", "version": null}</script>
+    <script id="__config" type="application/json">{"base": "../..", "features": "navigation.tabs", "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing"}, "search": "../../assets/javascripts/workers/search.4fa0e4ee.min.js", "version": null}</script>
     
     
-      <script src="../../assets/javascripts/bundle.7353b375.min.js"></script>
+      <script src="../../assets/javascripts/bundle.1d3bfcf1.min.js"></script>
       
     
   </body>
