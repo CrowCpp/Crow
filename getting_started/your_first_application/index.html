@@ -780,10 +780,10 @@
                 
                 <p>This page shows how you can get started with a simple hello world application.</p>
 <h2 id="1-include">1. Include</h2>
-<p>Starting with an empty <code>main.cpp</code> file, add <code class="highlight"><span class="cp">#CROW_MAIN</span></code> then <code class="highlight"><span class="cp">#include</span> <span class="cpf">&quot;crow.h&quot;</span><span class="cp"></span></code> or <code class="highlight"><span class="cp">#include</span> <span class="cpf">&quot;crow_all.h&quot;</span><span class="cp"></span></code> if you're using the single header file.</p>
+<p>Starting with an empty <code>main.cpp</code> file, add <code class="highlight"><span class="cp">#define CROW_MAIN</span></code> then <code class="highlight"><span class="cp">#include</span> <span class="cpf">&quot;crow.h&quot;</span><span class="cp"></span></code> or <code class="highlight"><span class="cp">#include</span> <span class="cpf">&quot;crow_all.h&quot;</span><span class="cp"></span></code> if you're using the single header file.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>If you're using multiple C++ source files make sure to have <code>#CROW_MAIN</code> defined only in your main source file.</p>
+<p>If you're using multiple C++ source files make sure to have <code>CROW_MAIN</code> defined only in your main source file.</p>
 </div>
 <h2 id="2-app-declaration">2. App declaration</h2>
 <p>Next Create a <code>main()</code> and declare a <code class="highlight"><span class="n">crow</span><span class="o">::</span><span class="n">SimpleApp</span></code> inside, your code should look like this
