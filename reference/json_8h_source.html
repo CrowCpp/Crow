@@ -1707,15 +1707,15 @@ $(document).ready(function(){initNavTree('json_8h_source.html',''); initResizabl
 <div class="line"><a name="l01606"></a><span class="lineno"> 1606</span>&#160; </div>
 <div class="line"><a name="l01607"></a><span class="lineno"> 1607</span>&#160;        <span class="keyword">private</span>:</div>
 <div class="line"><a name="l01608"></a><span class="lineno"> 1608</span>&#160; </div>
-<div class="line"><a name="l01609"></a><span class="lineno"> 1609</span>&#160;            <span class="keyword">inline</span> <span class="keywordtype">void</span> dump_string(<span class="keyword">const</span> std::string&amp; str, std::string&amp; out)</div>
-<div class="line"><a name="l01610"></a><span class="lineno"> 1610</span>&#160;            {</div>
+<div class="line"><a name="l01609"></a><span class="lineno"> 1609</span>&#160;            <span class="keyword">inline</span> <span class="keywordtype">void</span> dump_string(<span class="keyword">const</span> std::string&amp; str, std::string&amp; out)<span class="keyword"> const</span></div>
+<div class="line"><a name="l01610"></a><span class="lineno"> 1610</span>&#160;<span class="keyword">            </span>{</div>
 <div class="line"><a name="l01611"></a><span class="lineno"> 1611</span>&#160;                out.push_back(<span class="charliteral">&#39;&quot;&#39;</span>);</div>
 <div class="line"><a name="l01612"></a><span class="lineno"> 1612</span>&#160;                escape(str, out);</div>
 <div class="line"><a name="l01613"></a><span class="lineno"> 1613</span>&#160;                out.push_back(<span class="charliteral">&#39;&quot;&#39;</span>);</div>
 <div class="line"><a name="l01614"></a><span class="lineno"> 1614</span>&#160;            }</div>
 <div class="line"><a name="l01615"></a><span class="lineno"> 1615</span>&#160; </div>
-<div class="line"><a name="l01616"></a><span class="lineno"> 1616</span>&#160;            <span class="keyword">inline</span> <span class="keywordtype">void</span> dump_internal(<span class="keyword">const</span> wvalue&amp; v, std::string&amp; out)</div>
-<div class="line"><a name="l01617"></a><span class="lineno"> 1617</span>&#160;            {</div>
+<div class="line"><a name="l01616"></a><span class="lineno"> 1616</span>&#160;            <span class="keyword">inline</span> <span class="keywordtype">void</span> dump_internal(<span class="keyword">const</span> wvalue&amp; v, std::string&amp; out)<span class="keyword"> const</span></div>
+<div class="line"><a name="l01617"></a><span class="lineno"> 1617</span>&#160;<span class="keyword">            </span>{</div>
 <div class="line"><a name="l01618"></a><span class="lineno"> 1618</span>&#160;                <span class="keywordflow">switch</span>(v.t_)</div>
 <div class="line"><a name="l01619"></a><span class="lineno"> 1619</span>&#160;                {</div>
 <div class="line"><a name="l01620"></a><span class="lineno"> 1620</span>&#160;                    <span class="keywordflow">case</span> type::Null: out += <span class="stringliteral">&quot;null&quot;</span>; <span class="keywordflow">break</span>;</div>
@@ -1790,8 +1790,8 @@ $(document).ready(function(){initNavTree('json_8h_source.html',''); initResizabl
 <div class="line"><a name="l01689"></a><span class="lineno"> 1689</span>&#160;            }</div>
 <div class="line"><a name="l01690"></a><span class="lineno"> 1690</span>&#160; </div>
 <div class="line"><a name="l01691"></a><span class="lineno"> 1691</span>&#160;        <span class="keyword">public</span>:</div>
-<div class="line"><a name="l01692"></a><span class="lineno"> 1692</span>&#160;            std::string dump()</div>
-<div class="line"><a name="l01693"></a><span class="lineno"> 1693</span>&#160;            {</div>
+<div class="line"><a name="l01692"></a><span class="lineno"> 1692</span>&#160;            std::string dump()<span class="keyword"> const</span></div>
+<div class="line"><a name="l01693"></a><span class="lineno"> 1693</span>&#160;<span class="keyword">            </span>{</div>
 <div class="line"><a name="l01694"></a><span class="lineno"> 1694</span>&#160;                std::string ret;</div>
 <div class="line"><a name="l01695"></a><span class="lineno"> 1695</span>&#160;                ret.reserve(<a class="code" href="classcrow_1_1json_1_1wvalue.html#a5af23d208ed3d066a0fb5339350978c6">estimate_length</a>());</div>
 <div class="line"><a name="l01696"></a><span class="lineno"> 1696</span>&#160;                dump_internal(*<span class="keyword">this</span>, ret);</div>

@@ -109,7 +109,7 @@ $(document).ready(function(){initNavTree('returnable_8h_source.html',''); initRe
 <div class="line"><a name="l00008"></a><span class="lineno"><a class="line" href="structcrow_1_1returnable.html">    8</a></span>&#160;<span class="comment"></span><span class="keyword">struct </span><a class="code" href="structcrow_1_1returnable.html">returnable</a></div>
 <div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;{</div>
 <div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;    std::string content_type;</div>
-<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;    <span class="keyword">virtual</span> std::string dump() = 0;</div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;    <span class="keyword">virtual</span> std::string dump() <span class="keyword">const</span> = 0;</div>
 <div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160; </div>
 <div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;    <a class="code" href="structcrow_1_1returnable.html">returnable</a>(std::string ctype) : content_type {ctype}</div>
 <div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;    {}</div>

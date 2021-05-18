@@ -262,7 +262,7 @@ Sorting lists.../drone/src/include/crow/json.h:1351: warning: unable to resolve 
 /drone/src/include/crow/http_response.h:189: warning: Member path (variable) of class crow::response::static_file_info is not documented.
 /drone/src/include/crow/http_response.h:189: warning: Member statbuf (variable) of class crow::response::static_file_info is not documented.
 /drone/src/include/crow/http_response.h:191: warning: Member statResult (variable) of class crow::response::static_file_info is not documented.
-/drone/src/include/crow/returnable.h:11: warning: Member dump()=0 (function) of class crow::returnable is not documented.
+/drone/src/include/crow/returnable.h:11: warning: Member dump() const =0 (function) of class crow::returnable is not documented.
 /drone/src/include/crow/returnable.h:13: warning: Member returnable(std::string ctype) (function) of class crow::returnable is not documented.
 /drone/src/include/crow/returnable.h:10: warning: Member content_type (variable) of class crow::returnable is not documented.
 /drone/src/include/crow/routing.h:1041: warning: Member new_rule_dynamic(const std::string &rule) (function) of class crow::Router is not documented.
@@ -629,7 +629,7 @@ Generating docs for compound crow::detail::routing_handler_call_/drone/src/inclu
 /drone/src/include/crow/json.h:1523: warning: Member count(const std::string &str) (function) of class crow::json::wvalue is not documented.
 /drone/src/include/crow/json.h:1532: warning: Member operator[](const std::string &str) (function) of class crow::json::wvalue is not documented.
 /drone/src/include/crow/json.h:1546: warning: Member keys() const (function) of class crow::json::wvalue is not documented.
-/drone/src/include/crow/json.h:1692: warning: Member dump() (function) of class crow::json::wvalue is not documented.
+/drone/src/include/crow/json.h:1692: warning: Member dump() const (function) of class crow::json::wvalue is not documented.
 /drone/src/include/crow/returnable.h:13: warning: Member returnable(std::string ctype) (function) of class crow::returnable is not documented.
 /drone/src/include/crow/returnable.h:10: warning: Member content_type (variable) of class crow::returnable is not documented.
 /drone/src/include/crow/json.h:172: warning: Member iterator (typedef) of class crow::json::detail::r_string is not documented.
