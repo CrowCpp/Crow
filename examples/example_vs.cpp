@@ -130,8 +130,3 @@ int main()
         .multithreaded()
         .run();
 }
-
-Edit example_vs.cpp to use CROW_ROUTE instead of app.route_dynamic.
-
-    VS2019 error:
-    '<function-style-cast>': cannot convert from 'void' to 'crow::response'
