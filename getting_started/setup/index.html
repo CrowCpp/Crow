@@ -12,7 +12,7 @@
         <link rel="canonical" href="https://crowcpp.github.io/crow/getting_started/setup/">
       
       <link rel="icon" href="../../assets/favicon.svg">
-      <meta name="generator" content="mkdocs-1.1.2, mkdocs-material-7.1.4">
+      <meta name="generator" content="mkdocs-1.1.2, mkdocs-material-7.1.5">
     
     
       
@@ -425,8 +425,8 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#microsoft-visual-studio" class="md-nav__link">
-    Microsoft Visual Studio
+  <a href="#microsoft-visual-studio-2019-example_with_allcpp" class="md-nav__link">
+    Microsoft Visual Studio 2019 (example_with_all.cpp)
   </a>
   
 </li>
@@ -885,8 +885,8 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#microsoft-visual-studio" class="md-nav__link">
-    Microsoft Visual Studio
+  <a href="#microsoft-visual-studio-2019-example_with_allcpp" class="md-nav__link">
+    Microsoft Visual Studio 2019 (example_with_all.cpp)
   </a>
   
 </li>
@@ -986,8 +986,21 @@
 <li>Debug: <code>clang++ main.cpp -g -lpthread -lboost_system -lz -DCROW_ENABLE_DEBUG</code>.</li>
 <li>SSL: <code>clang++ main.cpp -lssl -lcrypto -lpthread -lboost_system -lz -DCROW_ENABLE_SSL</code>.</li>
 </ul>
-<h3 id="microsoft-visual-studio">Microsoft Visual Studio</h3>
-<p><strong><em>Help needed</em></strong></p>
+<h3 id="microsoft-visual-studio-2019-example_with_allcpp">Microsoft Visual Studio 2019 (<code>example_with_all.cpp</code>)</h3>
+<ol>
+<li>Generate <code>crow_all.h</code> following <a href="#single-header-file">Single header file</a>.</li>
+<li><code>git clone https://github.com/microsoft/vcpkg.git</code></li>
+<li><code>.\vcpkg\bootstrap-vcpkg.bat</code></li>
+<li><code>.\vcpkg\vcpkg integrate install</code></li>
+<li>Create empty Visual Studio project.</li>
+<li>In solution explorer, right click the name of your project then click <code>Open Folder in File Explorer</code>.</li>
+<li>Copy <code>crow_all.h</code>, <code>example_with_all.cpp</code>, <code>vcpkg.json</code> to opened folder.</li>
+<li>Add <code>crow_all.h</code> to <code>Header Files</code> and <code>example_with_all.cpp</code> to <code>Source Files</code>.</li>
+<li>In solution explorer, right click the name of your project then click <code>Properties</code>.</li>
+<li>Under <code>vcpkg</code>, set <code>Use Vcpkg Manifest</code> to <code>Yes</code> and <code>Additional Options</code> to <code>--feature-flags="versions"</code>.</li>
+<li>Set <code>Debug/Release</code> and <code>x64/x86</code>. </li>
+<li>Run.</li>
+</ol>
 <h2 id="building-via-cmake">building via CMake</h2>
 <p>Add the following to your <code>CMakeLists.txt</code>:
 <table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
@@ -1155,10 +1168,10 @@ make install
     <div class="md-dialog" data-md-component="dialog">
       <div class="md-dialog__inner md-typeset"></div>
     </div>
-    <script id="__config" type="application/json">{"base": "../..", "features": "navigation.tabs", "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing"}, "search": "../../assets/javascripts/workers/search.4fa0e4ee.min.js", "version": null}</script>
+    <script id="__config" type="application/json">{"base": "../..", "features": "navigation.tabs", "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing"}, "search": "../../assets/javascripts/workers/search.d351de03.min.js", "version": null}</script>
     
     
-      <script src="../../assets/javascripts/bundle.1d3bfcf1.min.js"></script>
+      <script src="../../assets/javascripts/bundle.a1609d9a.min.js"></script>
       
     
   </body>

@@ -1287,12 +1287,12 @@ $(document).ready(function(){initNavTree('routing_8h_source.html',''); initResiz
 <div class="line"><a name="l01186"></a><span class="lineno"> 1186</span>&#160;            HTTPMethod method_actual = req.method;</div>
 <div class="line"><a name="l01187"></a><span class="lineno"> 1187</span>&#160;            <span class="keywordflow">if</span> (req.method &gt;= HTTPMethod::InternalMethodCount)</div>
 <div class="line"><a name="l01188"></a><span class="lineno"> 1188</span>&#160;                <span class="keywordflow">return</span>;</div>
-<div class="line"><a name="l01189"></a><span class="lineno"> 1189</span>&#160;            <span class="keywordflow">else</span> <span class="keywordflow">if</span> (req.method == HTTPMethod::HEAD)</div>
+<div class="line"><a name="l01189"></a><span class="lineno"> 1189</span>&#160;            <span class="keywordflow">else</span> <span class="keywordflow">if</span> (req.method == HTTPMethod::Head)</div>
 <div class="line"><a name="l01190"></a><span class="lineno"> 1190</span>&#160;            {</div>
-<div class="line"><a name="l01191"></a><span class="lineno"> 1191</span>&#160;                method_actual = HTTPMethod::GET;</div>
+<div class="line"><a name="l01191"></a><span class="lineno"> 1191</span>&#160;                method_actual = HTTPMethod::Get;</div>
 <div class="line"><a name="l01192"></a><span class="lineno"> 1192</span>&#160;                res.<a class="code" href="structcrow_1_1response.html#a42e68ba33c040b10d3bc49392193f415">is_head_response</a> = <span class="keyword">true</span>;</div>
 <div class="line"><a name="l01193"></a><span class="lineno"> 1193</span>&#160;            }</div>
-<div class="line"><a name="l01194"></a><span class="lineno"> 1194</span>&#160;            <span class="keywordflow">else</span> <span class="keywordflow">if</span> (req.method == HTTPMethod::OPTIONS)</div>
+<div class="line"><a name="l01194"></a><span class="lineno"> 1194</span>&#160;            <span class="keywordflow">else</span> <span class="keywordflow">if</span> (req.method == HTTPMethod::Options)</div>
 <div class="line"><a name="l01195"></a><span class="lineno"> 1195</span>&#160;            {</div>
 <div class="line"><a name="l01196"></a><span class="lineno"> 1196</span>&#160;                std::string allow = <span class="stringliteral">&quot;OPTIONS, HEAD, &quot;</span>;</div>
 <div class="line"><a name="l01197"></a><span class="lineno"> 1197</span>&#160; </div>
@@ -1486,7 +1486,7 @@ $(document).ready(function(){initNavTree('routing_8h_source.html',''); initResiz
 			<ul>
 				<li class="navelem"><a class="el" href="dir_d44c64559bbebec7f509842c48db8b23.html">include</a></li><li class="navelem"><a class="el" href="dir_d22c1cb87b72f01e1a7f207eb3bfd1ca.html">crow</a></li><li class="navelem"><b>routing.h</b></li>
 				<li class="footer">
-					Generated on Tue May 18 2021 for Crow by <a href="http://www.doxygen.org/index.html">
+					Generated on Mon May 24 2021 for Crow by <a href="http://www.doxygen.org/index.html">
 					<img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.17.
 					Dark theme by <a href="http://majerle.eu" target="_new">Tilen Majerle</a>. Edited by <a href="https://github.com/The-EDev" target="_new">Farook Al-Sammarraie</a>. All rights reserved.
 				</li>
