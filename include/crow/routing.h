@@ -1186,12 +1186,12 @@ namespace crow
             HTTPMethod method_actual = req.method;
             if (req.method >= HTTPMethod::InternalMethodCount)
                 return;
-            else if (req.method == HTTPMethod::HEAD)
+            else if (req.method == HTTPMethod::Head)
             {
-                method_actual = HTTPMethod::GET;
+                method_actual = HTTPMethod::Get;
                 res.is_head_response = true;
             }
-            else if (req.method == HTTPMethod::OPTIONS)
+            else if (req.method == HTTPMethod::Options)
             {
                 std::string allow = "OPTIONS, HEAD, ";
 
