@@ -89,4 +89,7 @@ for header in order:
     build.append(re_depends.sub(lambda x: '\n', d))
     build.append('\n')
 
-open(output_path, 'w').write('\n'.join(build))
+ofile = open(output_path, 'w')
+ofile.write('#ifdef DEBUG\n#undef DEBUG\n#define XCODE_DEBUG\n#endif\n')
+ofile.write('\n'.join(build))
+ofile.write('\n#ifdef XCODE_DEBUG\n#undef XCODE_DEBUG\n#define DEBUG\n#endif\n')
