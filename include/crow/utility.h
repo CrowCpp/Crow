@@ -36,7 +36,8 @@ namespace crow
                     static_assert( N >= 1, "not a string literal");
                 }
             constexpr char operator[]( unsigned i ) const { 
-                return requires_in_range(i, size_), begin_[i]; 
+                requires_in_range(i, size_);
+                return begin_[i]; 
             }
 
             constexpr operator const char *() const { 
