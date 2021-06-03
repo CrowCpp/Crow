@@ -18,8 +18,9 @@
 #include "crow/http_request.h"
 #include "crow/http_server.h"
 #include "crow/dumb_timer_queue.h"
+#ifdef CROW_ENABLE_COMPRESSION
 #include "crow/compression.h"
-
+#endif
 
 #ifdef CROW_MSVC_WORKAROUND
 #define CROW_ROUTE(app, url) app.route_dynamic(url)
@@ -171,6 +172,7 @@ namespace crow
             return *this;
         }
 
+#ifdef CROW_ENABLE_COMPRESSION
         self_t& use_compression(compression::algorithm algorithm)
         {
             comp_algorithm_ = algorithm;
@@ -182,7 +184,7 @@ namespace crow
         {
             return comp_algorithm_;
         }
-
+#endif
         ///A wrapper for `validate()` in the router
 
         ///
@@ -361,7 +363,10 @@ namespace crow
         std::string server_name_ = "Crow/0.2";
         std::string bindaddr_ = "0.0.0.0";
         Router router_;
+
+#ifdef CROW_ENABLE_COMPRESSION
         compression::algorithm comp_algorithm_;
+#endif
 
         std::chrono::milliseconds tick_interval_;
         std::function<void()> tick_function_;
