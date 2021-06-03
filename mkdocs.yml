@@ -41,6 +41,7 @@ nav:
             - Middleware: guides/middleware.md
             - SSL: guides/ssl.md
             - Static Files: guides/static.md
+            - Compression: guides/compression.md
             - Websockets: guides/websockets.md
             - Writing Tests: guides/testing.md
         - Server setup:
