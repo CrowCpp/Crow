@@ -120,7 +120,7 @@ namespace crow
             return *this;
         }
 
-        ///Set the server name (default Crow/0.2)
+        ///Set the server name (default Crow/0.3)
         self_t& server_name(std::string server_name)
         {
             server_name_ = server_name;
@@ -360,7 +360,7 @@ namespace crow
     private:
         uint16_t port_ = 80;
         uint16_t concurrency_ = 1;
-        std::string server_name_ = "Crow/0.2";
+        std::string server_name_ = "Crow/0.3";
         std::string bindaddr_ = "0.0.0.0";
         Router router_;
 
