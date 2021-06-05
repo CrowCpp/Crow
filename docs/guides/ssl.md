@@ -7,4 +7,6 @@ To enable SSL, first your application needs to define either a `.crt` and `.key`
 
 You can also set your own SSL context (by using `boost::asio::ssl::context ctx`) and then applying it via the `#!cpp app.ssl(ctx)` method.<br><br>
 
-**IMPORTANT NOTICE**: If you plan on using a proxy like Nginx or Apache2, **DO NOT** use SSL in crow, instead define it in your proxy instead and keep the connection between the proxy and Crow non-SSL.
+!!! warning
+    
+    If you plan on using a proxy like Nginx or Apache2, **DO NOT** use SSL in crow, instead define it in your proxy and keep the connection between the proxy and Crow non-SSL.

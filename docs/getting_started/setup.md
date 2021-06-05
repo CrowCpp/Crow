@@ -3,21 +3,36 @@ This page explains how to set Crow up for use with your project.
 
 ##Requirements
  - C++ compiler with C++14 support.
-    - Continuous Testing on g++-9.3 and clang-7.0, AMD64 (x86_64) and Arm64 v8
+    - Crow's CI uses g++-9.3 and clang-7.0 running on AMD64 (x86_64) and ARM64v8
  - boost library (1.70 or later).
- - (optional) CMake and Python3 to build tests and/or examples.
- - (optional) Linking with jemalloc/tcmalloc is recommended for speed.
+ - **(optional)** ZLib for HTTP Compression.
+ - **(optional)** CMake and Python3 to build tests and/or examples.
+ - **(optional)** Linking with jemalloc/tcmalloc is recommended for speed.
+!!!note
+    
+    While using Boost 1.70 or later is recommended, it may be possible to compile a Crow application with version 1.64
+    
 <br><br>
 
 ##Installing Requirements
+!!! note
+
+    The Linux requirements are for developing and compiling a Crow application. Running a built application requires the actual libraries rather than just the development headers.
+
 ###Ubuntu
-`sudo apt-get install libboost-all-dev`
+`sudo apt-get install build-essential libboost-all-dev`
+
+###Non Debian based GNU/Linux
+Use your package manager to install the following:
+ - GCC and G++ (or Clang and Clang++)
+ - Boost Development headers (sometimes part of the Boost package itself)
+
 
 ###OSX
 `brew install boost`
 
 ###Windows
-Download boost from [here](https://www.boost.org/) and install it
+Microsoft Visual Studio 2019 (older versions not tested)
 
 ##Downloading
 Either run `git clone https://github.com/crowcpp/crow.git` or download `crow_all.h` from the releases section. You can also download a zip of the project on github.
@@ -29,7 +44,7 @@ Either run `git clone https://github.com/crowcpp/crow.git` or download `crow_all
 <br><br>
 
 ##Single header file
-If you've downloaded `crow_all.h`, you can skip to step 4.
+If you've downloaded `crow_all.h`, you can skip to step **4**.
 
 1. Make sure you have python 3 installed. 
 2. Open a terminal (or `cmd.exe`) instance in `/path/to/crow/scripts`.
@@ -44,16 +59,18 @@ If you've downloaded `crow_all.h`, you can skip to step 4.
 To build a crow Project, do the following:
 
 ###GCC (G++)
- - Release: `g++ main.cpp -lpthread -lboost_system -lz`.
- - Debug: `g++ main.cpp -ggdb -lpthread -lboost_system -lz -D CROW_ENABLE_DEBUG`.
- - SSL: `g++ main.cpp -lssl -lcrypto -lpthread -lboost_system -lz -D CROW_ENABLE_SSL`.
+ - Release: `g++ main.cpp -lpthread -lboost_system`.
+ - Debug: `g++ main.cpp -ggdb -lpthread -lboost_system -DCROW_ENABLE_DEBUG`.
+ - SSL: `g++ main.cpp -lssl -lcrypto -lpthread -lboost_system -DCROW_ENABLE_SSL`.
 
 ###Clang
- - Release: `clang++ main.cpp -lpthread -lboost_system -lz`.
- - Debug: `clang++ main.cpp -g -lpthread -lboost_system -lz -DCROW_ENABLE_DEBUG`.
- - SSL: `clang++ main.cpp -lssl -lcrypto -lpthread -lboost_system -lz -DCROW_ENABLE_SSL`.
+ - Release: `clang++ main.cpp -lpthread -lboost_system`.
+ - Debug: `clang++ main.cpp -g -lpthread -lboost_system -DCROW_ENABLE_DEBUG`.
+ - SSL: `clang++ main.cpp -lssl -lcrypto -lpthread -lboost_system -DCROW_ENABLE_SSL`.
 
-###Microsoft Visual Studio 2019 (`example_with_all.cpp`)
+###Microsoft Visual Studio 2019
+The following guide will use `example_with_all.cpp` as the Crow application for demonstration purposes.
+
 1. Generate `crow_all.h` following [Single header file](#single-header-file).
 2. `git clone https://github.com/microsoft/vcpkg.git`
 3. `.\vcpkg\bootstrap-vcpkg.bat`
@@ -97,7 +114,9 @@ set(PROJECT_INCLUDE_DIR ${PROJECT_SOURCE_DIR}/include)
 
 include_directories("${PROJECT_INCLUDE_DIR}")
 ```
-**Note**: The last 2 lines are unnecessary if you're using `crow_all.h`.
+!!!note
+
+    The last 2 lines are unnecessary if you're using `crow_all.h`.
 
 ##Building Crow tests and examples
 Out-of-source build with CMake is recommended.
