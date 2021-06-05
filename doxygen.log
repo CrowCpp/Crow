@@ -285,7 +285,7 @@ Sorting lists.../drone/src/include/crow/json.h:1351: warning: unable to resolve 
 /drone/src/include/crow/routing.h:460: warning: Member name(std::string name) noexcept (function) of class crow::RuleParameterTraits is not documented.
 /drone/src/include/crow/routing.h:466: warning: Member methods(HTTPMethod method) (function) of class crow::RuleParameterTraits is not documented.
 /drone/src/include/crow/routing.h:473: warning: Member methods(HTTPMethod method, MethodArgs ... args_method) (function) of class crow::RuleParameterTraits is not documented.
-/drone/src/include/crow/http_server.h:29: warning: Member Server(Handler *handler, std::string bindaddr, uint16_t port, std::string server_name="Crow/0.2", std::tuple< Middlewares... > *middlewares=nullptr, uint16_t concurrency=1, typename Adaptor::context *adaptor_ctx=nullptr) (function) of class crow::Server is not documented.
+/drone/src/include/crow/http_server.h:29: warning: Member Server(Handler *handler, std::string bindaddr, uint16_t port, std::string server_name="Crow/0.3", std::tuple< Middlewares... > *middlewares=nullptr, uint16_t concurrency=1, typename Adaptor::context *adaptor_ctx=nullptr) (function) of class crow::Server is not documented.
 /drone/src/include/crow/http_server.h:43: warning: Member set_tick_function(std::chrono::milliseconds d, std::function< void()> f) (function) of class crow::Server is not documented.
 /drone/src/include/crow/http_server.h:49: warning: Member on_tick() (function) of class crow::Server is not documented.
 /drone/src/include/crow/http_server.h:61: warning: Member run() (function) of class crow::Server is not documented.

@@ -34,7 +34,7 @@
 						<td id="projectlogo"><img alt="Logo" src="logo55.png"/></td>
 						<td id="projectalign" style="padding-left: 0.5em;">
 							<div id="projectname">Crow
-								&#160;<span id="projectnumber">0.2</span>
+								&#160;<span id="projectnumber">0.3</span>
 							</div>
 							<div id="projectbrief">A C++ microframework for the web</div>
 						</td>
@@ -127,7 +127,7 @@ $(document).ready(function(){initNavTree('http__server_8h_source.html',''); init
 <div class="line"><a name="l00026"></a><span class="lineno"><a class="line" href="classcrow_1_1_server.html">   26</a></span>&#160;    <span class="keyword">class </span><a class="code" href="classcrow_1_1_server.html">Server</a></div>
 <div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;    {</div>
 <div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;    <span class="keyword">public</span>:</div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;    <a class="code" href="classcrow_1_1_server.html">Server</a>(Handler* handler, std::string bindaddr, uint16_t port, std::string server_name = <span class="stringliteral">&quot;Crow/0.2&quot;</span>, std::tuple&lt;Middlewares...&gt;* middlewares = <span class="keyword">nullptr</span>, uint16_t concurrency = 1, <span class="keyword">typename</span> Adaptor::context* adaptor_ctx = <span class="keyword">nullptr</span>)</div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;    <a class="code" href="classcrow_1_1_server.html">Server</a>(Handler* handler, std::string bindaddr, uint16_t port, std::string server_name = <span class="stringliteral">&quot;Crow/0.3&quot;</span>, std::tuple&lt;Middlewares...&gt;* middlewares = <span class="keyword">nullptr</span>, uint16_t concurrency = 1, <span class="keyword">typename</span> Adaptor::context* adaptor_ctx = <span class="keyword">nullptr</span>)</div>
 <div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;            : acceptor_(io_service_, tcp::endpoint(boost::asio::ip::address::from_string(bindaddr), port)),</div>
 <div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;            signals_(io_service_, SIGINT, SIGTERM),</div>
 <div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;            tick_timer_(io_service_),</div>

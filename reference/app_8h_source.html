@@ -34,7 +34,7 @@
 						<td id="projectlogo"><img alt="Logo" src="logo55.png"/></td>
 						<td id="projectalign" style="padding-left: 0.5em;">
 							<div id="projectname">Crow
-								&#160;<span id="projectnumber">0.2</span>
+								&#160;<span id="projectnumber">0.3</span>
 							</div>
 							<div id="projectbrief">A C++ microframework for the web</div>
 						</td>
@@ -221,7 +221,7 @@ $(document).ready(function(){initNavTree('app_8h_source.html',''); initResizable
 <div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;            <span class="keywordflow">return</span> *<span class="keyword">this</span>;</div>
 <div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;        }</div>
 <div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;<span class="comment">        ///Set the server name (default Crow/0.2)</span></div>
+<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;<span class="comment">        ///Set the server name (default Crow/0.3)</span></div>
 <div class="line"><a name="l00124"></a><span class="lineno"><a class="line" href="classcrow_1_1_crow.html#ae0e400a1757bd68f716b82753a5a1a73">  124</a></span>&#160;<span class="comment"></span>        <a class="code" href="classcrow_1_1_crow.html">self_t</a>&amp; <a class="code" href="classcrow_1_1_crow.html#ae0e400a1757bd68f716b82753a5a1a73">server_name</a>(std::string <a class="code" href="classcrow_1_1_crow.html#ae0e400a1757bd68f716b82753a5a1a73">server_name</a>)</div>
 <div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;        {</div>
 <div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;            server_name_ = <a class="code" href="classcrow_1_1_crow.html#ae0e400a1757bd68f716b82753a5a1a73">server_name</a>;</div>
@@ -461,7 +461,7 @@ $(document).ready(function(){initNavTree('app_8h_source.html',''); initResizable
 <div class="line"><a name="l00360"></a><span class="lineno">  360</span>&#160;    <span class="keyword">private</span>:</div>
 <div class="line"><a name="l00361"></a><span class="lineno">  361</span>&#160;        uint16_t port_ = 80;</div>
 <div class="line"><a name="l00362"></a><span class="lineno">  362</span>&#160;        uint16_t concurrency_ = 1;</div>
-<div class="line"><a name="l00363"></a><span class="lineno">  363</span>&#160;        std::string server_name_ = <span class="stringliteral">&quot;Crow/0.2&quot;</span>;</div>
+<div class="line"><a name="l00363"></a><span class="lineno">  363</span>&#160;        std::string server_name_ = <span class="stringliteral">&quot;Crow/0.3&quot;</span>;</div>
 <div class="line"><a name="l00364"></a><span class="lineno">  364</span>&#160;        std::string bindaddr_ = <span class="stringliteral">&quot;0.0.0.0&quot;</span>;</div>
 <div class="line"><a name="l00365"></a><span class="lineno">  365</span>&#160;        <a class="code" href="classcrow_1_1_router.html">Router</a> router_;</div>
 <div class="line"><a name="l00366"></a><span class="lineno">  366</span>&#160; </div>
@@ -505,7 +505,7 @@ $(document).ready(function(){initNavTree('app_8h_source.html',''); initResizable
 <div class="ttc" id="aclasscrow_1_1_crow_html_a6e435bf5275735effd32647772bdbd04"><div class="ttname"><a href="classcrow_1_1_crow.html#a6e435bf5275735effd32647772bdbd04">crow::Crow::handle_upgrade</a></div><div class="ttdeci">void handle_upgrade(const request &amp;req, response &amp;res, Adaptor &amp;&amp;adaptor)</div><div class="ttdoc">Process an Upgrade request.</div><div class="ttdef"><b>Definition:</b> app.h:66</div></div>
 <div class="ttc" id="astructcrow_1_1response_html"><div class="ttname"><a href="structcrow_1_1response.html">crow::response</a></div><div class="ttdoc">HTTP response.</div><div class="ttdef"><b>Definition:</b> http_response.h:23</div></div>
 <div class="ttc" id="aclasscrow_1_1_crow_html_a068042431b0be5911ee1689a285f4693"><div class="ttname"><a href="classcrow_1_1_crow.html#a068042431b0be5911ee1689a285f4693">crow::Crow::tick</a></div><div class="ttdeci">self_t &amp; tick(Duration d, Func f)</div><div class="ttdoc">Set a custom duration and function to run on every tick.</div><div class="ttdef"><b>Definition:</b> app.h:169</div></div>
-<div class="ttc" id="aclasscrow_1_1_crow_html_ae0e400a1757bd68f716b82753a5a1a73"><div class="ttname"><a href="classcrow_1_1_crow.html#ae0e400a1757bd68f716b82753a5a1a73">crow::Crow::server_name</a></div><div class="ttdeci">self_t &amp; server_name(std::string server_name)</div><div class="ttdoc">Set the server name (default Crow/0.2)</div><div class="ttdef"><b>Definition:</b> app.h:124</div></div>
+<div class="ttc" id="aclasscrow_1_1_crow_html_ae0e400a1757bd68f716b82753a5a1a73"><div class="ttname"><a href="classcrow_1_1_crow.html#ae0e400a1757bd68f716b82753a5a1a73">crow::Crow::server_name</a></div><div class="ttdeci">self_t &amp; server_name(std::string server_name)</div><div class="ttdoc">Set the server name (default Crow/0.3)</div><div class="ttdef"><b>Definition:</b> app.h:124</div></div>
 <div class="ttc" id="aclasscrow_1_1_dynamic_rule_html"><div class="ttname"><a href="classcrow_1_1_dynamic_rule.html">crow::DynamicRule</a></div><div class="ttdoc">A rule that can change its parameters during runtime.</div><div class="ttdef"><b>Definition:</b> routing.h:483</div></div>
 <div class="ttc" id="aclasscrow_1_1_crow_html_a47ed9a118820f6e6ba0b2bc37f0997fb"><div class="ttname"><a href="classcrow_1_1_crow.html#a47ed9a118820f6e6ba0b2bc37f0997fb">crow::Crow::timeout</a></div><div class="ttdeci">self_t &amp; timeout(std::uint8_t timeout)</div><div class="ttdoc">Set the connection timeout in seconds (default is 5)</div><div class="ttdef"><b>Definition:</b> app.h:117</div></div>
 <div class="ttc" id="aclasscrow_1_1_crow_html_a5e39821ccc9cbf8c6400fd86fc406c21"><div class="ttname"><a href="classcrow_1_1_crow.html#a5e39821ccc9cbf8c6400fd86fc406c21">crow::Crow::wait_for_server_start</a></div><div class="ttdeci">void wait_for_server_start()</div><div class="ttdoc">Wait until the server has properly started.</div><div class="ttdef"><b>Definition:</b> app.h:352</div></div>
