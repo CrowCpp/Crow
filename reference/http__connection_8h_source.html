@@ -457,7 +457,7 @@ $(document).ready(function(){initNavTree('http__connection_8h_source.html',''); 
 <div class="line"><a name="l00356"></a><span class="lineno">  356</span>&#160;                    decltype(*middlewares_)&gt;</div>
 <div class="line"><a name="l00357"></a><span class="lineno">  357</span>&#160;                (*middlewares_, ctx_, req_, res);</div>
 <div class="line"><a name="l00358"></a><span class="lineno">  358</span>&#160;            }</div>
-<div class="line"><a name="l00359"></a><span class="lineno">  359</span>&#160; </div>
+<div class="line"><a name="l00359"></a><span class="lineno">  359</span>&#160;<span class="preprocessor">#ifdef CROW_ENABLE_COMPRESSION</span></div>
 <div class="line"><a name="l00360"></a><span class="lineno">  360</span>&#160;            std::string accept_encoding = req_.get_header_value(<span class="stringliteral">&quot;Accept-Encoding&quot;</span>);</div>
 <div class="line"><a name="l00361"></a><span class="lineno">  361</span>&#160;            <span class="keywordflow">if</span> (!accept_encoding.empty() &amp;&amp; res.compressed)</div>
 <div class="line"><a name="l00362"></a><span class="lineno">  362</span>&#160;            {</div>
@@ -481,7 +481,7 @@ $(document).ready(function(){initNavTree('http__connection_8h_source.html',''); 
 <div class="line"><a name="l00380"></a><span class="lineno">  380</span>&#160;                        <span class="keywordflow">break</span>;</div>
 <div class="line"><a name="l00381"></a><span class="lineno">  381</span>&#160;                }</div>
 <div class="line"><a name="l00382"></a><span class="lineno">  382</span>&#160;            }</div>
-<div class="line"><a name="l00383"></a><span class="lineno">  383</span>&#160; </div>
+<div class="line"><a name="l00383"></a><span class="lineno">  383</span>&#160;<span class="preprocessor">#endif</span></div>
 <div class="line"><a name="l00384"></a><span class="lineno">  384</span>&#160;            <span class="comment">//if there is a redirection with a partial URL, treat the URL as a route.</span></div>
 <div class="line"><a name="l00385"></a><span class="lineno">  385</span>&#160;            std::string location = res.get_header_value(<span class="stringliteral">&quot;Location&quot;</span>);</div>
 <div class="line"><a name="l00386"></a><span class="lineno">  386</span>&#160;            <span class="keywordflow">if</span> (!location.empty() &amp;&amp; location.find(<span class="stringliteral">&quot;://&quot;</span>, 0) == std::string::npos)</div>
@@ -816,7 +816,7 @@ $(document).ready(function(){initNavTree('http__connection_8h_source.html',''); 
 			<ul>
 				<li class="navelem"><a class="el" href="dir_d44c64559bbebec7f509842c48db8b23.html">include</a></li><li class="navelem"><a class="el" href="dir_d22c1cb87b72f01e1a7f207eb3bfd1ca.html">crow</a></li><li class="navelem"><b>http_connection.h</b></li>
 				<li class="footer">
-					Generated on Wed Jun 2 2021 for Crow by <a href="http://www.doxygen.org/index.html">
+					Generated on Sat Jun 5 2021 for Crow by <a href="http://www.doxygen.org/index.html">
 					<img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.17.
 					Dark theme by <a href="http://majerle.eu" target="_new">Tilen Majerle</a>. Edited by <a href="https://github.com/The-EDev" target="_new">Farook Al-Sammarraie</a>. All rights reserved.
 				</li>

@@ -9,14 +9,14 @@
       
       
       
-        <link rel="canonical" href="https://crowcpp.github.io/crow/guides/syste/">
+        <link rel="canonical" href="https://crowcpp.github.io/crow/guides/compression/">
       
       <link rel="icon" href="../../assets/favicon.svg">
       <meta name="generator" content="mkdocs-1.1.2, mkdocs-material-7.1.6">
     
     
       
-        <title>Systemd run on startup - Crow</title>
+        <title>Compression - Crow</title>
       
     
     
@@ -60,7 +60,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#writing-the-service-unit-file" class="md-skip">
+        <a href="#http-compression" class="md-skip">
           Skip to content
         </a>
       
@@ -89,7 +89,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Systemd run on startup
+              Compression
             
           </span>
         </div>
@@ -364,12 +364,14 @@
             
   
   
+    
+  
   
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_1" type="checkbox" id="__nav_3_1" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_1" type="checkbox" id="__nav_3_1" checked>
       
       <label class="md-nav__link" for="__nav_3_1">
         Different parts of Crow
@@ -505,11 +507,54 @@
             
   
   
+    
   
-    <li class="md-nav__item">
-      <a href="../compression/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Compression
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         Compression
       </a>
+      
+        
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#http-compression" class="md-nav__link">
+    HTTP Compression
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#websocket-compression" class="md-nav__link">
+    Websocket Compression
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -547,14 +592,12 @@
             
   
   
-    
-  
   
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_2" type="checkbox" id="__nav_3_2" checked>
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_2" type="checkbox" id="__nav_3_2" >
       
       <label class="md-nav__link" for="__nav_3_2">
         Server setup
@@ -582,47 +625,11 @@
             
   
   
-    
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
-      
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          Systemd run on startup
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../syste/" class="md-nav__link">
         Systemd run on startup
       </a>
-      
-        
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#writing-the-service-unit-file" class="md-nav__link">
-    Writing the Service Unit File
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -705,8 +712,15 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#writing-the-service-unit-file" class="md-nav__link">
-    Writing the Service Unit File
+  <a href="#http-compression" class="md-nav__link">
+    HTTP Compression
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#websocket-compression" class="md-nav__link">
+    Websocket Compression
   </a>
   
 </li>
@@ -724,34 +738,23 @@
               
                 
                 
-                  <h1>Systemd run on startup</h1>
+                  <h1>Compression</h1>
                 
-                <p>Using Systemd allows you to run any executable or script when the system starts. This can be useful when you don't want to re-run your Crow application every single time you restart your server.<br><br></p>
-<h2 id="writing-the-service-unit-file">Writing the Service Unit File</h2>
-<p>In order to have Systemd recognize your application, you need to create a <code>.service</code> file that explains how Systemd should handle your program.<br><br></p>
-<p>To create a service file, you need to go to <code>/etc/systemd/system</code> and create an empty text file with the extension <code>.service</code>, the file name can be anything.<br><br></p>
-<p>Once the file is created, open it using your favorite text editor and add the following:</p>
-<div class="highlight"><pre><span></span><code><span class="o">[</span>Unit<span class="o">]</span>
-<span class="nv">Description</span><span class="o">=</span>My revolutionary Crow application
-
-<span class="nv">Wants</span><span class="o">=</span>network.target
-<span class="nv">After</span><span class="o">=</span>syslog.target network-online.target
-
-<span class="o">[</span>Service<span class="o">]</span>
-<span class="nv">Type</span><span class="o">=</span>simple
-<span class="nv">ExecStart</span><span class="o">=</span>/absolute/path/to/your/executable
-<span class="nv">Restart</span><span class="o">=</span>on-failure
-<span class="nv">RestartSec</span><span class="o">=</span><span class="m">10</span>
-<span class="nv">KillMode</span><span class="o">=</span>process
-
-<span class="o">[</span>Install<span class="o">]</span>
-<span class="nv">WantedBy</span><span class="o">=</span>multi-user.target
-</code></pre></div>
-<p>You will then need to give the correct permission, this can be done by using the following command (a <code>sudo</code> maybe required):</p>
-<div class="highlight"><pre><span></span><code>chmod <span class="m">640</span> /etc/systemd/system/crowthing.service
-</code></pre></div>
-<p>And that's it! You can now use your <code>systemctl</code> controls to <code>enable</code>, <code>start</code>, <code>stop</code>, or <code>disable</code> your Crow application.<br><br></p>
-<p>If you're not familiar with Systemd, <code>systemctl enable crowthing.service</code> will allow your Crow application to run at startup, <code>start</code> will start it, and the rest is simple.</p>
+                <p>Crow supports Zlib compression using Gzip or Deflate algorithms.</p>
+<h2 id="http-compression">HTTP Compression</h2>
+<p>HTTP compression is by default disabled in crow. Do the following to enable it: <br>
+1. Add <code class="highlight"><span class="cp">#define CROW_ENABLE_COMPRESSION</span></code> to the top of your main source file.
+2. Call <code class="highlight"><span class="n">use_compression</span><span class="p">(</span><span class="n">crow</span><span class="o">::</span><span class="n">compression</span><span class="o">::</span><span class="n">algorithm</span><span class="p">)</span></code> on your crow app.
+3. When compiling your application, make sure that ZLIB is included as a dependency. Either through <code>-lz</code> argument or <code>find_package(ZLIB)</code> in CMake.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>step 3 is not needed for MSVC since <code>vcpckg.json</code> already includes zlib as a dependency by default</p>
+</div>
+<p>For the compression algorim you can use <code>crow::compression::algorithm::DEFLATE</code> or <code>crow::compression::algorithm::GZIP</code>.<br>
+And now your HTTP responses will be compressed.</p>
+<h2 id="websocket-compression">Websocket Compression</h2>
+<p>Crow currently does not support Websocket compression.<br>
+Feel free to discuss the subject with us on Github if you're feeling adventurous and want to try to implement it. We appreciate all the help.</p>
                 
               
               
@@ -770,7 +773,7 @@
   
     <nav class="md-footer__inner md-grid" aria-label="Footer">
       
-        <a href="../proxies/" class="md-footer__link md-footer__link--prev" rel="prev">
+        <a href="../static/" class="md-footer__link md-footer__link--prev" rel="prev">
           <div class="md-footer__button md-icon">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
           </div>
@@ -779,11 +782,25 @@
               <span class="md-footer__direction">
                 Previous
               </span>
-              Proxies
+              Static Files
             </div>
           </div>
         </a>
       
+      
+        <a href="../websockets/" class="md-footer__link md-footer__link--next" rel="next">
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              Websockets
+            </div>
+          </div>
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4z"/></svg>
+          </div>
+        </a>
       
     </nav>
   

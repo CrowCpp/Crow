@@ -1,7 +1,5 @@
 var NAVTREEINDEX1 =
 {
-"classcrow_1_1query__string.html#ab0a81b08a5531b98c08b1a6a268ebea1":[0,0,0,19,10],
-"classcrow_1_1query__string.html#ab1be7ad7a7d36dc348c2481f7d91d2ab":[0,0,0,19,9],
 "classcrow_1_1query__string.html#ad83b800ef5b122d361061d9d5f889dd9":[0,0,0,19,7],
 "classcrow_1_1query__string.html#af56add12ca6a7f0222956e353d1d40bb":[0,0,0,19,5],
 "classcrow_1_1websocket_1_1_connection.html":[0,0,0,6,1],
@@ -249,5 +247,7 @@ var NAVTREEINDEX1 =
 "structcrow_1_1multipart_1_1message.html#a0007fa0cadffae1a8d16fac169d1527b":[0,0,0,3,1,0],
 "structcrow_1_1multipart_1_1message.html#a05e9cf3feb60f4534af334b2dd5eadf2":[0,0,0,3,1,7],
 "structcrow_1_1multipart_1_1message.html#a32946a0f39a8d024aaf4643116a7561b":[0,0,0,3,1,1],
-"structcrow_1_1multipart_1_1message.html#a56eb4bbf64d4930663ac4d5dd7b77d34":[0,0,0,3,1,5]
+"structcrow_1_1multipart_1_1message.html#a56eb4bbf64d4930663ac4d5dd7b77d34":[0,0,0,3,1,5],
+"structcrow_1_1multipart_1_1message.html#a6096bf07a476710b1d4bd5855bf96be3":[0,0,0,3,1,4],
+"structcrow_1_1multipart_1_1message.html#abeeebf36687f9cbdf06a6521eac1ce33":[0,0,0,3,1,3]
 };
