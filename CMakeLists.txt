@@ -58,6 +58,12 @@ add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/crow_all.h
 # Amalgamation
 add_custom_target(amalgamation ALL DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/crow_all.h)
 
+add_library(crow INTERFACE)
+add_dependencies(crow amalgamation)
+target_include_directories(crow INTERFACE
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
+  $<INSTALL_INTERFACE:include>)
+
 # Examples
 if(BUILD_EXAMPLES)
 	add_subdirectory(examples)
@@ -74,4 +80,17 @@ endif()
 #####################################
 # Install Files
 #####################################
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/crow_all.h DESTINATION include)
+# Install the library (fake, it doesn't have any library files--just used to create the export)
+install(TARGETS crow EXPORT CrowConfigTargets)
+
+# Install the header file
+install(FILES "${CMAKE_CURRENT_BINARY_DIR}/crow_all.h" DESTINATION include)
+
+# Install the export file
+install(EXPORT CrowConfigTargets FILE CrowConfigTargets.cmake NAMESPACE Crow:: DESTINATION lib/cmake/Crow)
+
+# Write and install Config*.cmake files
+include(CMakePackageConfigHelpers)
+configure_package_config_file("${CMAKE_CURRENT_SOURCE_DIR}/cmake/CrowConfig.cmake.in" "${CMAKE_CURRENT_BINARY_DIR}/CrowConfig.cmake" INSTALL_DESTINATION lib/cmake/Crow)
+write_basic_package_version_file("${CMAKE_CURRENT_BINARY_DIR}/CrowConfigVersion.cmake" VERSION 0.2 COMPATIBILITY AnyNewerVersion)
+install(FILES "${CMAKE_CURRENT_BINARY_DIR}/CrowConfig.cmake" "${CMAKE_CURRENT_BINARY_DIR}/CrowConfigVersion.cmake" DESTINATION lib/cmake/Crow)
