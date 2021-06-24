@@ -12,7 +12,7 @@
         <link rel="canonical" href="https://crowcpp.github.io/crow/getting_started/your_first_application/">
       
       <link rel="icon" href="../../assets/favicon.svg">
-      <meta name="generator" content="mkdocs-1.1.2, mkdocs-material-7.1.6">
+      <meta name="generator" content="mkdocs-1.2.1, mkdocs-material-7.1.8">
     
     
       
@@ -20,7 +20,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.875de78c.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ca7ac06f.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.f1a3b89f.min.css">
@@ -39,6 +39,8 @@
     
     
       
+
+
     
     
   </head>
@@ -792,7 +794,7 @@
                 
                 <p>This page shows how you can get started with a simple hello world application.</p>
 <h2 id="1-include">1. Include</h2>
-<p>Starting with an empty <code>main.cpp</code> file, add <code class="highlight"><span class="cp">#define CROW_MAIN</span></code> then <code class="highlight"><span class="cp">#include</span> <span class="cpf">&quot;crow.h&quot;</span><span class="cp"></span></code> or <code class="highlight"><span class="cp">#include</span> <span class="cpf">&quot;crow_all.h&quot;</span><span class="cp"></span></code> if you're using the single header file.</p>
+<p>Starting with an empty <code>main.cpp</code> file, first add <code class="highlight"><span class="cp">#define CROW_MAIN</span></code> then <code class="highlight"><span class="cp">#include</span> <span class="cpf">&quot;crow.h&quot;</span><span class="cp"></span></code> or <code class="highlight"><span class="cp">#include</span> <span class="cpf">&quot;crow_all.h&quot;</span><span class="cp"></span></code> if you're using the single header file.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>If you're using multiple C++ source files make sure to have <code>CROW_MAIN</code> defined only in your main source file.</p>
@@ -834,7 +836,9 @@ Please note that the <code>port()</code> and <code>multithreaded()</code> method
 <span class="normal">12</span>
 <span class="normal">13</span>
 <span class="normal">14</span>
-<span class="normal">15</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="cp">#include</span> <span class="cpf">&quot;crow.h&quot;</span><span class="cp"></span>
+<span class="normal">15</span>
+<span class="normal">16</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="cp">#define CROW_MAIN </span><span class="c1">//let the compiler know this is your main cpp file</span>
+<span class="cp">#include</span> <span class="cpf">&quot;crow.h&quot;</span><span class="cp"></span>
 <span class="c1">//#include &quot;crow_all.h&quot;</span>
 
 <span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
@@ -870,7 +874,8 @@ After building and running your .cpp file, you should be able to access your end
   
     <nav class="md-footer__inner md-grid" aria-label="Footer">
       
-        <a href="../setup/" class="md-footer__link md-footer__link--prev" rel="prev">
+        
+        <a href="../setup/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Setup" rel="prev">
           <div class="md-footer__button md-icon">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
           </div>
@@ -885,7 +890,8 @@ After building and running your .cpp file, you should be able to access your end
         </a>
       
       
-        <a href="../../guides/app/" class="md-footer__link md-footer__link--next" rel="next">
+        
+        <a href="../../guides/app/" class="md-footer__link md-footer__link--next" aria-label="Next: App" rel="next">
           <div class="md-footer__title">
             <div class="md-ellipsis">
               <span class="md-footer__direction">
@@ -946,10 +952,10 @@ After building and running your .cpp file, you should be able to access your end
     <div class="md-dialog" data-md-component="dialog">
       <div class="md-dialog__inner md-typeset"></div>
     </div>
-    <script id="__config" type="application/json">{"base": "../..", "features": "navigation.tabs", "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing"}, "search": "../../assets/javascripts/workers/search.d351de03.min.js", "version": null}</script>
+    <script id="__config" type="application/json">{"base": "../..", "features": "navigation.tabs", "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../../assets/javascripts/workers/search.b0710199.min.js", "version": null}</script>
     
     
-      <script src="../../assets/javascripts/bundle.34eae1b6.min.js"></script>
+      <script src="../../assets/javascripts/bundle.76f349be.min.js"></script>
       
     
   </body>
