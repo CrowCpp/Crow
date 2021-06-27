@@ -300,6 +300,12 @@ namespace crow
                     else
                     {
                         close_connection_ = true;
+
+                        ctx_ = detail::context<Middlewares...>();
+                        req.middleware_context = (void*)&ctx_;
+                        req.io_service = &adaptor_.get_io_service();
+                        detail::middleware_call_helper<0, decltype(ctx_), decltype(*middlewares_), Middlewares...>(*middlewares_, req, res, ctx_);
+
                         handler_->handle_upgrade(req, res, std::move(adaptor_));
                         return;
                     }

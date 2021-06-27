@@ -69,7 +69,7 @@ namespace crow
 						std::function<void(crow::websocket::connection&, const std::string&, bool)> message_handler,
 						std::function<void(crow::websocket::connection&, const std::string&)> close_handler,
 						std::function<void(crow::websocket::connection&)> error_handler,
-						std::function<bool(const crow::request&)> accept_handler)
+						std::function<bool(const crow::request&, crow::websocket::connection&)> accept_handler)
 					: adaptor_(std::move(adaptor)), open_handler_(std::move(open_handler)), message_handler_(std::move(message_handler)), close_handler_(std::move(close_handler)), error_handler_(std::move(error_handler))
 					, accept_handler_(std::move(accept_handler))
 				{
@@ -613,7 +613,7 @@ namespace crow
 				std::function<void(crow::websocket::connection&, const std::string&, bool)> message_handler_;
 				std::function<void(crow::websocket::connection&, const std::string&)> close_handler_;
 				std::function<void(crow::websocket::connection&)> error_handler_;
-				std::function<bool(const crow::request&)> accept_handler_;
+				std::function<bool(const crow::request&, crow::websocket::connection&)> accept_handler_;
         };
     }
 }
