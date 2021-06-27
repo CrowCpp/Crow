@@ -424,7 +424,8 @@ namespace crow
                                             {
                                                 handle_fragment();
                                                 state_ = WebSocketReadState::MiniHeader;
-                                                do_read();
+                                                if (!has_sent_close_)
+                                                    do_read();
                                             }
 					    else
                                                 do_read();
