@@ -3,7 +3,7 @@
 # Title         : generateDocumentationAndDeploy.sh
 # Date created  : 2016/02/22
 # Notes         : This script was modified to suit Crow and work with mkdocs and Drone.io CI.
-__AUTHOR__="Jeroen de Bruijn"
+__AUTHOR__="Jeroen de Bruijn", "CrowCpp"
 # Preconditions:
 # - Packages doxygen doxygen-doc doxygen-latex doxygen-gui graphviz
 #   must be installed.

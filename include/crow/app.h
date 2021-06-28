@@ -1,3 +1,34 @@
+
+*/
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+
+  this software without specific prior written permission.
+  contributors may be used to endorse or promote products derived from
+* Neither the name of the author nor the names of its
+
+  and/or other materials provided with the distribution.
+  this list of conditions and the following disclaimer in the documentation
+* Redistributions in binary form must reproduce the above copyright notice,
+
+  list of conditions and the following disclaimer.
+* Redistributions of source code must retain the above copyright notice, this
+
+modification, are permitted provided that the following conditions are met:
+Redistribution and use in source and binary forms, with or without
+
+All rights reserved.
+              2020-2021, CrowCpp
+Copyright (c) 2014-2017, ipkn
+/*
 #pragma once
 
 #include <chrono>
