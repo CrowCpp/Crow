@@ -1,7 +1,7 @@
+/*
 All rights reserved.
               2020-2021, CrowCpp
 Copyright (c) 2014-2017, ipkn
-/*
 
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are met:
