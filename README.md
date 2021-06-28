@@ -34,7 +34,8 @@ Available [here](https://crowcpp.github.io/crow).
 ## Examples
 
 #### Hello World
-```c++
+```cpp
+#define CROW_MAIN
 #include "crow.h"
 
 int main()
