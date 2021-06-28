@@ -1,6 +1,6 @@
 {
     "name": "crow-examples",
-    "version": "0.3",
+    "version": "master",
     "dependencies": [
         {
             "name": "boost-array",
