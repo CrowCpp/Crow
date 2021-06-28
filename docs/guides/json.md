@@ -36,3 +36,7 @@ An object type `wvalue` uses `std::unordered_map` by default, if you want to hav
 A JSON `wvalue` can be returned directly inside a route handler, this will cause the `content-type` header to automatically be set to `Application/json` and the JSON value will be converted to string and placed in the response body. For more information go to [Routes](../routes).<br><br>
 
 For more info on write values go [here](../../reference/classcrow_1_1json_1_1wvalue.html).
+
+!!!note
+
+    Crow's json exceptions can be disabled by using the `#!cpp #define CROW_JSON_NO_ERROR_CHECK` macro. This should increase the program speed with the drawback of having unexpected behavious when used incorrectly (e.g. by attempting to parse an invalid json object).
