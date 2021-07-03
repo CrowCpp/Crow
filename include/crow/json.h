@@ -88,6 +88,7 @@ namespace crow
             String,
             List,
             Object,
+            Function
         };
 
         inline const char* get_type_str(type t) {
@@ -98,6 +99,7 @@ namespace crow
                 case type::List: return "List";
                 case type::String: return "String";
                 case type::Object: return "Object";
+                case type::Function: return "Function";
                 default: return "Unknown";
             }
         }
@@ -771,6 +773,7 @@ namespace crow
                         os << '}'; 
                     }
                     break;
+                case type::Function: os << "custom function"; break;
                 }
                 return os;
             }
@@ -1236,6 +1239,7 @@ namespace crow
             } num; ///< Value if type is a number.
             std::string s; ///< Value if type is a string.
             std::unique_ptr<std::vector<wvalue>> l; ///< Value if type is a list.
+            std::function<std::string(std::string&)> f; //Value if type is a function (C++ lambda)
 #ifdef CROW_JSON_USE_MAP
             std::unique_ptr<std::map<std::string, wvalue>> o;
 #else
@@ -1264,6 +1268,7 @@ namespace crow
                     case type::Null:
                     case type::False:
                     case type::True:
+                    case type::Function:
                         return;
                     case type::Number:
                         nt = r.nt();
@@ -1330,6 +1335,8 @@ namespace crow
 #endif
                         o->insert(r.o->begin(), r.o->end());
                         return;
+                    case type::Function:
+                        f = r.f;
                 }
             }
 
@@ -1457,7 +1464,7 @@ namespace crow
                 return *this;
             }
 
-            wvalue& operator=(const char* str)
+            wvalue& operator = (const char* str)
             {
                 reset();
                 t_ = type::String;
@@ -1465,7 +1472,7 @@ namespace crow
                 return *this;
             }
 
-            wvalue& operator=(const std::string& str)
+            wvalue& operator = (const std::string& str)
             {
                 reset();
                 t_ = type::String;
@@ -1473,7 +1480,7 @@ namespace crow
                 return *this;
             }
 
-            wvalue& operator=(std::vector<wvalue>&& v)
+            wvalue& operator = (std::vector<wvalue>&& v)
             {
                 if (t_ != type::List)
                     reset();
@@ -1491,7 +1498,7 @@ namespace crow
             }
 
             template <typename T>
-            wvalue& operator=(const std::vector<T>& v)
+            wvalue& operator = (const std::vector<T>& v)
             {
                 if (t_ != type::List)
                     reset();
@@ -1505,6 +1512,14 @@ namespace crow
                 {
                     (*l)[idx++] = x;
                 }
+                return *this;
+            }
+
+            wvalue& operator = (std::function<std::string(std::string&)>&& func)
+            {
+                reset();
+                t_ = type::Function;
+                f = std::move(func);
                 return *this;
             }
 
@@ -1555,6 +1570,13 @@ namespace crow
                 return result;
             }
 
+            std::string execute(std::string txt = "") const //Not using reference because it cannot be used with a default rvalue
+            {
+                if (t_ != type::Function)
+                    return "";
+                return f(txt);
+            }
+
             /// If the wvalue is a list, it returns the length of the list, otherwise it returns 1.
             std::size_t size() const
             {
@@ -1600,6 +1622,8 @@ namespace crow
                             }
                             return sum+2;
                         }
+                    case type::Function:
+                        return 0;
                 }
                 return 1;
             }
@@ -1685,6 +1709,8 @@ namespace crow
                              out.push_back('}');
                          }
                          break;
+                case type::Function:
+                    out += "custom function"; break;
                 }
             }
 

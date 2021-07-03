@@ -45,13 +45,13 @@ namespace crow
             int end;
             int pos;
             ActionType t;
-            Action(ActionType t, size_t start, size_t end, size_t pos = 0) 
+            Action(ActionType t, size_t start, size_t end, size_t pos = 0)
                 : start(static_cast<int>(start)), end(static_cast<int>(end)), pos(static_cast<int>(pos)), t(t)
             {}
         };
 
         /// A mustache template object.
-        class template_t 
+        class template_t
         {
         public:
             template_t(std::string body)
@@ -215,8 +215,14 @@ namespace crow
                                         else
                                             out += ctx.s;
                                         break;
+                                    case json::type::Function:
+                                        if (action.t == ActionType::Tag)
+                                            escape(ctx.execute(), out);
+                                        else
+                                            out += ctx.execute();
+                                        break;
                                     default:
-                                        throw std::runtime_error("not implemented tag type" + boost::lexical_cast<std::string>(static_cast<int>(ctx.t())));
+                                        throw std::runtime_error(std::string("not implemented tag type: ") + json::get_type_str(ctx.t()));
                                 }
                             }
                             break;
@@ -341,7 +347,7 @@ namespace crow
                 std::string tag_close = "}}";
 
                 std::vector<int> blockPositions;
-                
+
                 size_t current = 0;
                 while(1)
                 {
