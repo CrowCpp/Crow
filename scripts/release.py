@@ -16,6 +16,6 @@ if os.path.exists(releasePath):
 
 os.mkdir(releasePath)
 os.chdir(releasePath)
-os.system("cmake -DCPACK_PACKAGE_FILE_NAME=\"crow-{}\" .. && make -j5".format(version))
+os.system("cmake -DBUILD_EXAMPLES=OFF -DBUILD_TESTING=OFF -DCPACK_PACKAGE_FILE_NAME=\"crow-{}\" .. && make -j5".format(version))
 os.system("sed -i 's/constexpr char VERSION\\[\\] = \"master\";/constexpr char VERSION\\[\\] = \"{}\";/g' crow_all.h".format(version))
 os.system("cpack")
