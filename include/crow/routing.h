@@ -1029,6 +1029,94 @@ namespace crow
         std::vector<Node> nodes_;
     };
 
+    /// A blueprint can be considered a smaller section of a Crow app, specifically where the router is conecerned.
+    class Blueprint
+    {
+    public:
+        Blueprint()
+        {
+        }
+
+        Blueprint(const std::string& prefix):
+            prefix_(prefix){};
+
+        Blueprint(std::string&& prefix):
+            prefix_(prefix){};
+/*
+        Blueprint(Blueprint& other)
+        {
+            prefix_ = std::move(other.prefix_);
+            all_rules_ = std::move(other.all_rules_);
+        }
+
+        Blueprint(const Blueprint& other)
+        {
+            prefix_ = other.prefix_;
+            all_rules_ = other.all_rules_;
+        }
+*/
+        Blueprint(Blueprint&& value)
+        {
+            *this = std::move(value);
+        }
+
+        Blueprint& operator = (const Blueprint& value) = delete;
+
+        Blueprint& operator = (Blueprint&& value) noexcept
+        {
+            prefix_ = std::move(value.prefix_);
+            all_rules_ = std::move(value.all_rules_);
+            catchall_rule_ = std::move(value.catchall_rule_);
+            return *this;
+        }
+
+        bool operator == (const Blueprint& value)
+        {
+            return value.prefix() == prefix_;
+        }
+
+        bool operator != (const Blueprint& value)
+        {
+            return value.prefix() != prefix_;
+        }
+
+        std::string prefix() const
+        {
+            return prefix_;
+        }
+
+        DynamicRule& new_rule_dynamic(const std::string& rule)
+        {
+            std::string new_rule = '/' + prefix_ + rule;
+            auto ruleObject = new DynamicRule(new_rule);
+            all_rules_.emplace_back(ruleObject);
+
+            return *ruleObject;
+        }
+
+        template <uint64_t N>
+        typename black_magic::arguments<N>::type::template rebind<TaggedRule>& new_rule_tagged(const std::string& rule)
+        {
+            std::string new_rule = '/' + prefix_ + rule;
+            using RuleT = typename black_magic::arguments<N>::type::template rebind<TaggedRule>;
+
+            auto ruleObject = new RuleT(new_rule);
+            all_rules_.emplace_back(ruleObject);
+
+            return *ruleObject;
+        }
+
+        CatchallRule& catchall_rule()
+        {
+            return catchall_rule_;
+        }
+
+    private:
+            std::string prefix_;
+            std::vector<std::unique_ptr<BaseRule>> all_rules_;
+            CatchallRule catchall_rule_;
+            friend class Router;
+    };
 
     /// Handles matching requests to existing rules and upgrade requests.
     class Router
@@ -1088,8 +1176,20 @@ namespace crow
 
         }
 
-        void validate()
+        void validate(std::vector<Blueprint*>& bp_list)
         {
+            //Take all the routes from the registered blueprints and add them to `all_rules_` to be processed.
+           if (!(bp_list.empty()))
+            {
+                for (Blueprint* bp : bp_list)
+                {
+                    for (auto& rule: bp->all_rules_)
+                    {
+                        all_rules_.push_back(std::move(rule));
+                    }
+              }
+            }
+
             for(auto& rule:all_rules_)
             {
                 if (rule)

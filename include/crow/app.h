@@ -24,8 +24,10 @@
 
 #ifdef CROW_MSVC_WORKAROUND
 #define CROW_ROUTE(app, url) app.route_dynamic(url)
+#define CROW_BP_ROUTE(app, blueprint, url) app.route_dynamic(blueprint, url)
 #else
 #define CROW_ROUTE(app, url) app.route<crow::black_magic::get_parameter_tag(url)>(url)
+#define CROW_BP_ROUTE(app, blueprint, url) app.route<crow::black_magic::get_parameter_tag(url)>(blueprint, url)
 #endif
 #define CROW_CATCHALL_ROUTE(app) app.catchall_route()
 
@@ -80,12 +82,26 @@ namespace crow
             return router_.new_rule_dynamic(std::move(rule));
         }
 
+        ///Create a dynamic route for a blueprint using a rule (**Use CROW_ROUTE instead**)
+        DynamicRule& route_dynamic(Blueprint& blueprint, std::string&& rule)
+        {
+            return blueprint.new_rule_dynamic(std::move(rule));
+        }
+
         ///Create a route using a rule (**Use CROW_ROUTE instead**)
         template <uint64_t Tag>
         auto route(std::string&& rule)
             -> typename std::result_of<decltype(&Router::new_rule_tagged<Tag>)(Router, std::string&&)>::type
-        {
+        {//TODO process the blueprint
             return router_.new_rule_tagged<Tag>(std::move(rule));
+        }
+
+        ///Create a route for a blueprint using a rule (**Use CROW_ROUTE instead**)
+        template <uint64_t Tag>
+        auto route(Blueprint& blueprint, std::string&& rule)
+            -> typename std::result_of<decltype(&Router::new_rule_tagged<Tag>)(Router, std::string&&)>::type
+        {
+            return blueprint.new_rule_tagged<Tag>(std::move(rule));
         }
 
         ///Create a route for any requests without a proper route (**Use CROW_CATCHALL_ROUTE instead**)
@@ -158,9 +174,18 @@ namespace crow
         /// crow::LogLevel::Warning     (2)<br>
         /// crow::LogLevel::Error       (3)<br>
         /// crow::LogLevel::Critical    (4)<br>
-        self_t& loglevel(crow::LogLevel level)
+        self_t& loglevel(LogLevel level)
         {
             crow::logger::setLogLevel(level);
+            return *this;
+        }
+
+        self_t& register_blueprint(Blueprint& blueprint)
+        {
+            if (blueprints_.empty() || std::find(blueprints_.begin(), blueprints_.end(), &blueprint) == blueprints_.end())
+            {
+                blueprints_.emplace_back(&blueprint);
+            }//TODO error throwing
             return *this;
         }
 
@@ -191,7 +216,7 @@ namespace crow
         ///Go through the rules, upgrade them if possible, and add them to the list of rules
         void validate()
         {
-            router_.validate();
+            router_.validate(blueprints_);
         }
 
         ///Notify anything using `wait_for_server_start()` to proceed
@@ -379,6 +404,8 @@ namespace crow
         std::unique_ptr<server_t> server_;
 
         std::vector<int> signals_{SIGINT, SIGTERM};
+
+        std::vector<Blueprint*> blueprints_;
 
         bool server_started_{false};
         std::condition_variable cv_started_;
