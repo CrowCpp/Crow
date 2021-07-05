@@ -5,7 +5,7 @@ int main()
 {
     crow::SimpleApp app;
 
-    crow::Blueprint bp("bp_prefix");
+    crow::Blueprint bp("bp_prefix", "cstat");
 
     CROW_BP_ROUTE(app, bp, "/")
     ([]() {

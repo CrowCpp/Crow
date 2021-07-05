@@ -1033,15 +1033,13 @@ namespace crow
     class Blueprint
     {
     public:
-        Blueprint()
-        {
-        }
 
         Blueprint(const std::string& prefix):
             prefix_(prefix){};
 
-        Blueprint(std::string&& prefix):
-            prefix_(prefix){};
+        Blueprint(const std::string& prefix, const std::string& static_dir):
+            prefix_(prefix), static_dir_(static_dir){};
+
 /*
         Blueprint(Blueprint& other)
         {
@@ -1085,6 +1083,11 @@ namespace crow
             return prefix_;
         }
 
+        std::string static_dir() const
+        {
+            return static_dir_;
+        }
+
         DynamicRule& new_rule_dynamic(const std::string& rule)
         {
             std::string new_rule = '/' + prefix_ + rule;
@@ -1113,6 +1116,7 @@ namespace crow
 
     private:
             std::string prefix_;
+            std::string static_dir_;
             std::vector<std::unique_ptr<BaseRule>> all_rules_;
             CatchallRule catchall_rule_;
             friend class Router;

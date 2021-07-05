@@ -237,6 +237,19 @@ namespace crow
               res.set_static_file_info(CROW_STATIC_DIRECTORY + file_path_partial);
               res.end();
             });
+
+            for (auto& bp : blueprints_)
+            {
+                if (!bp->static_dir().empty())
+                {
+                    route<crow::black_magic::get_parameter_tag(CROW_STATIC_ENDPOINT)>(*bp, CROW_STATIC_ENDPOINT)
+                    ([bp](crow::response& res, std::string file_path_partial)
+                    {
+                      res.set_static_file_info(bp->static_dir() + '/' + file_path_partial);
+                      res.end();
+                    });
+                }
+            }
 #endif
             validate();
 
