@@ -212,8 +212,8 @@ namespace crow
               res.set_static_file_info(CROW_STATIC_DIRECTORY + file_path_partial);
               res.end();
             });
-            validate();
 #endif
+            validate();
 
 #ifdef CROW_ENABLE_SSL
             if (use_ssl_)
