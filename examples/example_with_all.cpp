@@ -42,7 +42,7 @@ int main()
         return crow::response(os.str());
     });
 
-    // example which uses only response as a paramter wihtout
+    // example which uses only response as a paramter without
     // request being a parameter.
     CROW_ROUTE(app,"/add/<int>/<int>")
     ([](crow::response& res, int a, int b){
