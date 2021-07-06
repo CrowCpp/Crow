@@ -103,5 +103,6 @@ var NAVTREEINDEX2 =
 "structcrow_1_1websocket_1_1connection.html#a70a89c27bd30213cab17bd34645535c1":[0,0,0,6,0,3],
 "structcrow_1_1websocket_1_1connection.html#a75b25cfa1f5f8fd3bbae01b5637097f6":[0,0,0,6,0,7],
 "utility_8h_source.html":[1,0,0,0,22],
-"websocket_8h_source.html":[1,0,0,0,23]
+"version_8h_source.html":[1,0,0,0,23],
+"websocket_8h_source.html":[1,0,0,0,24]
 };
