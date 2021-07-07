@@ -14,6 +14,7 @@
 #include "crow/utility.h"
 #include "crow/logging.h"
 #include "crow/websocket.h"
+#include "crow/mustache.h"
 
 namespace crow
 {
@@ -69,6 +70,9 @@ namespace crow
                     f(method);
             }
         }
+
+
+        std::string custom_templates_base;
 
         const std::string& rule() { return rule_; }
 
@@ -499,6 +503,10 @@ namespace crow
 
         void handle(const request& req, response& res, const routing_params& params) override
         {
+            if (!custom_templates_base.empty())
+                mustache::set_base(custom_templates_base);
+            else if (mustache::detail::get_template_base_directory_ref() != "templates")
+                mustache::set_base("templates");
             erased_handler_(req, res, params);
         }
 
@@ -674,6 +682,11 @@ namespace crow
 
         void handle(const request& req, response& res, const routing_params& params) override
         {
+            if (!custom_templates_base.empty())
+                mustache::set_base(custom_templates_base);
+            else if (mustache::detail::get_template_base_directory_ref() != "templates")
+                mustache::set_base("templates");
+
             detail::routing_handler_call_helper::call<
                 detail::routing_handler_call_helper::call_params<
                     decltype(handler_)>,
@@ -1040,6 +1053,9 @@ namespace crow
         Blueprint(const std::string& prefix, const std::string& static_dir):
             prefix_(prefix), static_dir_(static_dir){};
 
+        Blueprint(const std::string& prefix, const std::string& static_dir, const std::string& templates_dir):
+            prefix_(prefix), static_dir_(static_dir), templates_dir_(templates_dir){};
+
 /*
         Blueprint(Blueprint& other)
         {
@@ -1092,6 +1108,7 @@ namespace crow
         {
             std::string new_rule = '/' + prefix_ + rule;
             auto ruleObject = new DynamicRule(new_rule);
+            ruleObject->custom_templates_base = templates_dir_;
             all_rules_.emplace_back(ruleObject);
 
             return *ruleObject;
@@ -1104,6 +1121,7 @@ namespace crow
             using RuleT = typename black_magic::arguments<N>::type::template rebind<TaggedRule>;
 
             auto ruleObject = new RuleT(new_rule);
+            ruleObject->custom_templates_base = templates_dir_;
             all_rules_.emplace_back(ruleObject);
 
             return *ruleObject;
@@ -1117,6 +1135,7 @@ namespace crow
     private:
             std::string prefix_;
             std::string static_dir_;
+            std::string templates_dir_;
             std::vector<std::unique_ptr<BaseRule>> all_rules_;
             CatchallRule catchall_rule_;
             friend class Router;
