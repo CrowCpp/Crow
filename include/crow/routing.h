@@ -770,27 +770,27 @@ namespace crow
                 switch(node->param)
                 {
                     case ParamType::INT:
-                        std::cout << std::string(2*level, ' ') << "<int>" << std::endl;
+                        CROW_LOG_DEBUG << std::string(2*level, ' ') << "<int>";
                         break;
                     case ParamType::UINT:
-                        std::cout << std::string(2*level, ' ') << "<uint>" << std::endl;
+                        CROW_LOG_DEBUG << std::string(2*level, ' ') << "<uint>";
                         break;
                     case ParamType::DOUBLE:
-                        std::cout << std::string(2*level, ' ') << "<double>" << std::endl;
+                        CROW_LOG_DEBUG << std::string(2*level, ' ') << "<double>";
                         break;
                     case ParamType::STRING:
-                        std::cout << std::string(2*level, ' ') << "<string>" << std::endl;
+                        CROW_LOG_DEBUG << std::string(2*level, ' ') << "<string>";
                         break;
                     case ParamType::PATH:
-                        std::cout << std::string(2*level, ' ') << "<path>" << std::endl;
+                        CROW_LOG_DEBUG << std::string(2*level, ' ') << "<path>";
                         break;
                     default:
-                        std::cout << std::string(2*level, ' ') << "<ERROR>" << std::endl;
+                        CROW_LOG_DEBUG << std::string(2*level, ' ') << "<ERROR>";
                         break;
                 }
             }
             else
-                std::cout << std::string(2*level, ' ') << node->key << std::endl;
+                CROW_LOG_DEBUG << std::string(2*level, ' ') << node->key;
 
             for(auto& child : node->children)
             {
@@ -801,7 +801,7 @@ namespace crow
 
         void debug_print()
         {
-            std::cout << "HEAD" << std::endl;
+            CROW_LOG_DEBUG << "HEAD";
             for (auto& child : head_.children)
                 debug_node_print(child, 1);
         }
