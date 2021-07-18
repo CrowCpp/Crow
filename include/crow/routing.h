@@ -740,12 +740,7 @@ namespace crow
         {
             if (node->children.empty())
                 return;
-            bool mergeWithChild = true;
-                if (!node->IsSimpleNode() /*|| node->children[0]->param != ParamType::MAX*/)
-                {
-                    mergeWithChild = false;
-                }
-            if (mergeWithChild)
+            if (node->IsSimpleNode())
             {
                 Node* child_temp = node->children[0];
                 node->key = node->key + child_temp->key;
