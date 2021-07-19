@@ -701,100 +701,128 @@ namespace crow
         struct Node
         {
             unsigned rule_index{};
-            std::array<unsigned, static_cast<int>(ParamType::MAX)> param_childrens{};
-            std::unordered_map<std::string, unsigned> children;
+            std::string key;
+            ParamType param = ParamType::MAX; // MAX = No param.
+            std::vector<Node*> children;
 
             bool IsSimpleNode() const
             {
                 return
                     !rule_index &&
-                    std::all_of(
-                        std::begin(param_childrens),
-                        std::end(param_childrens),
-                        [](unsigned x){ return !x; });
+                    children.size() < 2 &&
+                    param == ParamType::MAX &&
+                    std::all_of(std::begin(children), std::end(children), [](Node* x){ return x->param == ParamType::MAX; });
             }
         };
 
-        Trie() : nodes_(1)
+
+        Trie()
         {
         }
 
         ///Check whether or not the trie is empty.
         bool is_empty()
         {
-            return nodes_.size() > 1;
+            return head_.children.empty();
         }
+
+        void optimize()
+        {
+            for (auto child: head_.children)
+            {
+                optimizeNode(child);
+            }
+        }
+
 
     private:
         void optimizeNode(Node* node)
         {
-            for(auto x : node->param_childrens)
-            {
-                if (!x)
-                    continue;
-                Node* child = &nodes_[x];
-                optimizeNode(child);
-            }
             if (node->children.empty())
                 return;
-            bool mergeWithChild = true;
-            for(auto& kv : node->children)
+            if (node->IsSimpleNode())
             {
-                Node* child = &nodes_[kv.second];
-                if (!child->IsSimpleNode())
-                {
-                    mergeWithChild = false;
-                    break;
-                }
-            }
-            if (mergeWithChild)
-            {
-                decltype(node->children) merged;
-                for(auto& kv : node->children)
-                {
-                    Node* child = &nodes_[kv.second];
-                    for(auto& child_kv : child->children)
-                    {
-                        merged[kv.first + child_kv.first] = child_kv.second;
-                    }
-                }
-                node->children = std::move(merged);
+                Node* child_temp = node->children[0];
+                node->key = node->key + child_temp->key;
+                node->rule_index = child_temp->rule_index;
+                node->children = std::move(child_temp->children);
+                delete(child_temp);
                 optimizeNode(node);
             }
             else
             {
-                for(auto& kv : node->children)
+                for(auto& child : node->children)
                 {
-                    Node* child = &nodes_[kv.second];
                     optimizeNode(child);
                 }
             }
         }
 
-        void optimize()
+        void debug_node_print(Node* node, int level)
         {
-            optimizeNode(head());
+            if (node->param != ParamType::MAX)
+            {
+                switch(node->param)
+                {
+                    case ParamType::INT:
+                        CROW_LOG_DEBUG << std::string(2*level, ' ') << "<int>";
+                        break;
+                    case ParamType::UINT:
+                        CROW_LOG_DEBUG << std::string(2*level, ' ') << "<uint>";
+                        break;
+                    case ParamType::DOUBLE:
+                        CROW_LOG_DEBUG << std::string(2*level, ' ') << "<double>";
+                        break;
+                    case ParamType::STRING:
+                        CROW_LOG_DEBUG << std::string(2*level, ' ') << "<string>";
+                        break;
+                    case ParamType::PATH:
+                        CROW_LOG_DEBUG << std::string(2*level, ' ') << "<path>";
+                        break;
+                    default:
+                        CROW_LOG_DEBUG << std::string(2*level, ' ') << "<ERROR>";
+                        break;
+                }
+            }
+            else
+                CROW_LOG_DEBUG << std::string(2*level, ' ') << node->key;
+
+            for(auto& child : node->children)
+            {
+                debug_node_print(child, level+1);
+            }
+        }
+    public:
+
+        void debug_print()
+        {
+            CROW_LOG_DEBUG << "HEAD";
+            for (auto& child : head_.children)
+                debug_node_print(child, 1);
         }
 
-    public:
         void validate()
         {
-            if (!head()->IsSimpleNode())
+            if (!head_.IsSimpleNode())
                 throw std::runtime_error("Internal error: Trie header should be simple!");
             optimize();
         }
 
         std::pair<unsigned, routing_params> find(const std::string& req_url, const Node* node = nullptr, unsigned pos = 0, routing_params* params = nullptr) const
         {
+            //start params as an empty struct
             routing_params empty;
             if (params == nullptr)
                 params = &empty;
 
-            unsigned found{};
-            routing_params match_params;
+            unsigned found{}; //The rule index to be found
+            routing_params match_params; //supposedly the final matched parameters
 
+            //start from the head node
             if (node == nullptr)
-                node = head();
+                node = &head_;
+
+            //if the function was called on a node at the end of the string (the last recursion), return the nodes rule index, and whatever params were passed to the function
             if (pos == req_url.size())
                 return {node->rule_index, *params};
 
@@ -807,109 +835,113 @@ namespace crow
                 }
             };
 
-            if (node->param_childrens[static_cast<int>(ParamType::INT)])
+
+            for(auto& child : node->children)
             {
-                char c = req_url[pos];
-                if ((c >= '0' && c <= '9') || c == '+' || c == '-')
+                if (child->param != ParamType::MAX)
                 {
-                    char* eptr;
-                    errno = 0;
-                    long long int value = strtoll(req_url.data()+pos, &eptr, 10);
-                    if (errno != ERANGE && eptr != req_url.data()+pos)
+                    if (child->param == ParamType::INT)
                     {
-                        params->int_params.push_back(value);
-                        auto ret = find(req_url, &nodes_[node->param_childrens[static_cast<int>(ParamType::INT)]], eptr - req_url.data(), params);
+                        char c = req_url[pos];
+                        if ((c >= '0' && c <= '9') || c == '+' || c == '-')
+                        {
+                            char* eptr;
+                            errno = 0;
+                            long long int value = strtoll(req_url.data()+pos, &eptr, 10);
+                            if (errno != ERANGE && eptr != req_url.data()+pos)
+                            {
+                                params->int_params.push_back(value);
+                                auto ret = find(req_url, child, eptr - req_url.data(), params);
+                                update_found(ret);
+                                params->int_params.pop_back();
+                            }
+                        }
+                    }
+
+                    else if (child->param == ParamType::UINT)
+                    {
+                        char c = req_url[pos];
+                        if ((c >= '0' && c <= '9') || c == '+')
+                        {
+                            char* eptr;
+                            errno = 0;
+                            unsigned long long int value = strtoull(req_url.data()+pos, &eptr, 10);
+                            if (errno != ERANGE && eptr != req_url.data()+pos)
+                            {
+                                params->uint_params.push_back(value);
+                                auto ret = find(req_url, child, eptr - req_url.data(), params);
+                                update_found(ret);
+                                params->uint_params.pop_back();
+                            }
+                        }
+                    }
+
+                    else if (child->param == ParamType::DOUBLE)
+                    {
+                        char c = req_url[pos];
+                        if ((c >= '0' && c <= '9') || c == '+' || c == '-' || c == '.')
+                        {
+                            char* eptr;
+                            errno = 0;
+                            double value = strtod(req_url.data()+pos, &eptr);
+                            if (errno != ERANGE && eptr != req_url.data()+pos)
+                            {
+                                params->double_params.push_back(value);
+                                auto ret = find(req_url, child, eptr - req_url.data(), params);
+                                update_found(ret);
+                                params->double_params.pop_back();
+                            }
+                        }
+                    }
+
+                    else if (child->param == ParamType::STRING)
+                    {
+                        size_t epos = pos;
+                        for(; epos < req_url.size(); epos ++)
+                        {
+                            if (req_url[epos] == '/')
+                                break;
+                        }
+
+                        if (epos != pos)
+                        {
+                            params->string_params.push_back(req_url.substr(pos, epos-pos));
+                            auto ret = find(req_url, child, epos, params);
+                            update_found(ret);
+                            params->string_params.pop_back();
+                        }
+                    }
+
+                    else if (child->param == ParamType::PATH)
+                    {
+                        size_t epos = req_url.size();
+
+                        if (epos != pos)
+                        {
+                            params->string_params.push_back(req_url.substr(pos, epos-pos));
+                            auto ret = find(req_url, child, epos, params);
+                            update_found(ret);
+                            params->string_params.pop_back();
+                        }
+                    }
+                }
+
+                else
+                {
+                    const std::string& fragment = child->key;
+                    if (req_url.compare(pos, fragment.size(), fragment) == 0)
+                    {
+                        auto ret = find(req_url, child, pos + fragment.size(), params);
                         update_found(ret);
-                        params->int_params.pop_back();
                     }
                 }
             }
-
-            if (node->param_childrens[static_cast<int>(ParamType::UINT)])
-            {
-                char c = req_url[pos];
-                if ((c >= '0' && c <= '9') || c == '+')
-                {
-                    char* eptr;
-                    errno = 0;
-                    unsigned long long int value = strtoull(req_url.data()+pos, &eptr, 10);
-                    if (errno != ERANGE && eptr != req_url.data()+pos)
-                    {
-                        params->uint_params.push_back(value);
-                        auto ret = find(req_url, &nodes_[node->param_childrens[static_cast<int>(ParamType::UINT)]], eptr - req_url.data(), params);
-                        update_found(ret);
-                        params->uint_params.pop_back();
-                    }
-                }
-            }
-
-            if (node->param_childrens[static_cast<int>(ParamType::DOUBLE)])
-            {
-                char c = req_url[pos];
-                if ((c >= '0' && c <= '9') || c == '+' || c == '-' || c == '.')
-                {
-                    char* eptr;
-                    errno = 0;
-                    double value = strtod(req_url.data()+pos, &eptr);
-                    if (errno != ERANGE && eptr != req_url.data()+pos)
-                    {
-                        params->double_params.push_back(value);
-                        auto ret = find(req_url, &nodes_[node->param_childrens[static_cast<int>(ParamType::DOUBLE)]], eptr - req_url.data(), params);
-                        update_found(ret);
-                        params->double_params.pop_back();
-                    }
-                }
-            }
-
-            if (node->param_childrens[static_cast<int>(ParamType::STRING)])
-            {
-                size_t epos = pos;
-                for(; epos < req_url.size(); epos ++)
-                {
-                    if (req_url[epos] == '/')
-                        break;
-                }
-
-                if (epos != pos)
-                {
-                    params->string_params.push_back(req_url.substr(pos, epos-pos));
-                    auto ret = find(req_url, &nodes_[node->param_childrens[static_cast<int>(ParamType::STRING)]], epos, params);
-                    update_found(ret);
-                    params->string_params.pop_back();
-                }
-            }
-
-            if (node->param_childrens[static_cast<int>(ParamType::PATH)])
-            {
-                size_t epos = req_url.size();
-
-                if (epos != pos)
-                {
-                    params->string_params.push_back(req_url.substr(pos, epos-pos));
-                    auto ret = find(req_url, &nodes_[node->param_childrens[static_cast<int>(ParamType::PATH)]], epos, params);
-                    update_found(ret);
-                    params->string_params.pop_back();
-                }
-            }
-
-            for(auto& kv : node->children)
-            {
-                const std::string& fragment = kv.first;
-                const Node* child = &nodes_[kv.second];
-
-                if (req_url.compare(pos, fragment.size(), fragment) == 0)
-                {
-                    auto ret = find(req_url, child, pos + fragment.size(), params);
-                    update_found(ret);
-                }
-            }
-
-            return {found, match_params};
+            return {found, match_params}; //Called after all the recursions have been done
         }
 
         void add(const std::string& url, unsigned rule_index)
         {
-            unsigned idx{0};
+            Node* idx = &head_;
 
             for(unsigned i = 0; i < url.size(); i ++)
             {
@@ -935,12 +967,23 @@ namespace crow
                     {
                         if (url.compare(i, x.name.size(), x.name) == 0)
                         {
-                            if (!nodes_[idx].param_childrens[static_cast<int>(x.type)])
+                            bool found = false;
+                            for (Node* child : idx->children)
                             {
-                                auto new_node_idx = new_node();
-                                nodes_[idx].param_childrens[static_cast<int>(x.type)] = new_node_idx;
+                                if (child->param == x.type)
+                                {
+                                    idx = child;
+                                    i += x.name.size();
+                                    found = true;
+                                    break;
+                                }
                             }
-                            idx = nodes_[idx].param_childrens[static_cast<int>(x.type)];
+                            if (found)
+                                break;
+
+                            auto new_node_idx = new_node(idx);
+                            new_node_idx->param = x.type;
+                            idx = new_node_idx;
                             i += x.name.size();
                             break;
                         }
@@ -950,83 +993,60 @@ namespace crow
                 }
                 else
                 {
-                    std::string piece(&c, 1);
-                    if (!nodes_[idx].children.count(piece))
+                    //This part assumes the tree is unoptimized (every node has a max 1 character key)
+                    bool piece_found = false;
+                    for (auto& child : idx->children)
                     {
-                        auto new_node_idx = new_node();
-                        nodes_[idx].children.emplace(piece, new_node_idx);
+                        if (child->key[0] == c)
+                        {
+                            idx = child;
+                            piece_found = true;
+                            break;
+                        }
                     }
-                    idx = nodes_[idx].children[piece];
+                    if (!piece_found)
+                    {
+                        auto new_node_idx = new_node(idx);
+                        new_node_idx->key = c;
+                        idx = new_node_idx;
+                    }
                 }
             }
-            if (nodes_[idx].rule_index)
+
+            //check if the last node already has a value (exact url already in Trie)
+            if (idx->rule_index)
                 throw std::runtime_error("handler already exists for " + url);
-            nodes_[idx].rule_index = rule_index;
-        }
-    private:
-        void debug_node_print(Node* n, int level)
-        {
-            for(int i = 0; i < static_cast<int>(ParamType::MAX); i ++)
-            {
-                if (n->param_childrens[i])
-                {
-                    CROW_LOG_DEBUG << std::string(2*level, ' ') /*<< "("<<n->param_childrens[i]<<") "*/;
-                    switch(static_cast<ParamType>(i))
-                    {
-                        case ParamType::INT:
-                            CROW_LOG_DEBUG << "<int>";
-                            break;
-                        case ParamType::UINT:
-                            CROW_LOG_DEBUG << "<uint>";
-                            break;
-                        case ParamType::DOUBLE:
-                            CROW_LOG_DEBUG << "<float>";
-                            break;
-                        case ParamType::STRING:
-                            CROW_LOG_DEBUG << "<str>";
-                            break;
-                        case ParamType::PATH:
-                            CROW_LOG_DEBUG << "<path>";
-                            break;
-                        default:
-                            CROW_LOG_DEBUG << "<ERROR>";
-                            break;
-                    }
-
-                    debug_node_print(&nodes_[n->param_childrens[i]], level+1);
-                }
-            }
-            for(auto& kv : n->children)
-            {
-                CROW_LOG_DEBUG << std::string(2*level, ' ') /*<< "(" << kv.second << ") "*/ << kv.first;
-                debug_node_print(&nodes_[kv.second], level+1);
-            }
+            idx->rule_index = rule_index;
         }
 
-    public:
-        void debug_print()
+        size_t get_size()
         {
-            debug_node_print(head(), 0);
+            return get_size(&head_);
         }
+
+        size_t get_size(Node* node)
+        {
+            unsigned size = 8; //rule_index and param
+            size += (node->key.size()); //each character in the key is 1 byte
+            for (auto child: node->children)
+            {
+                size += get_size(child);
+            }
+            return size;
+        }
+
 
     private:
-        const Node* head() const
+
+        Node* new_node(Node* parent)
         {
-            return &nodes_.front();
+            auto& children = parent->children;
+            children.resize(children.size()+1);
+            children[children.size()-1] = new Node();
+            return children[children.size()-1];
         }
 
-        Node* head()
-        {
-            return &nodes_.front();
-        }
-
-        unsigned new_node()
-        {
-            nodes_.resize(nodes_.size()+1);
-            return nodes_.size() - 1;
-        }
-
-        std::vector<Node> nodes_;
+        Node head_;
     };
 
 
@@ -1199,7 +1219,7 @@ namespace crow
                 {
                     for(int i = 0; i < static_cast<int>(HTTPMethod::InternalMethodCount); i ++)
                     {
-                        if (per_methods_[i].trie.is_empty())
+                        if (!per_methods_[i].trie.is_empty())
                         {
                             allow += method_name(static_cast<HTTPMethod>(i)) + ", ";
                         }
