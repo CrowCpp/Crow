@@ -1,5 +1,8 @@
 var NAVTREEINDEX1 =
 {
+"classcrow_1_1query__string.html#aa1d5497d54799e733c393d9e554aed93":[0,0,0,19,0],
+"classcrow_1_1query__string.html#ab0a81b08a5531b98c08b1a6a268ebea1":[0,0,0,19,10],
+"classcrow_1_1query__string.html#ab1be7ad7a7d36dc348c2481f7d91d2ab":[0,0,0,19,9],
 "classcrow_1_1query__string.html#ad83b800ef5b122d361061d9d5f889dd9":[0,0,0,19,7],
 "classcrow_1_1query__string.html#af56add12ca6a7f0222956e353d1d40bb":[0,0,0,19,5],
 "classcrow_1_1websocket_1_1_connection.html":[0,0,0,6,1],
@@ -100,9 +103,10 @@ var NAVTREEINDEX1 =
 "structcrow_1_1_socket_adaptor.html#ae86b04665391cb1fb36ec15e49787348":[0,0,0,27,1],
 "structcrow_1_1_socket_adaptor.html#af925b4f600663b2293741947297d730e":[0,0,0,27,2],
 "structcrow_1_1_trie_1_1_node.html":[0,0,0,29,0],
-"structcrow_1_1_trie_1_1_node.html#a3dbbcfa07c4165fa3c5d904230a60510":[0,0,0,29,0,2],
-"structcrow_1_1_trie_1_1_node.html#a5007a7463d5089c1ef20657aa4a5260c":[0,0,0,29,0,1],
-"structcrow_1_1_trie_1_1_node.html#ad573aa8aa9b57af5ecd5cd24aa7b0f99":[0,0,0,29,0,3],
+"structcrow_1_1_trie_1_1_node.html#a355b279db31bd1cead3f7de89a6f55f0":[0,0,0,29,0,2],
+"structcrow_1_1_trie_1_1_node.html#a74957f8801c13a123504c10a5fbb968c":[0,0,0,29,0,1],
+"structcrow_1_1_trie_1_1_node.html#a7aac45bf193240463b5e74945edb74b1":[0,0,0,29,0,3],
+"structcrow_1_1_trie_1_1_node.html#ad573aa8aa9b57af5ecd5cd24aa7b0f99":[0,0,0,29,0,4],
 "structcrow_1_1_trie_1_1_node.html#ae72aa7fc92fe39cd902dff0dcc9e69e8":[0,0,0,29,0,0],
 "structcrow_1_1black__magic_1_1_call_helper.html":[0,0,0,0,2],
 "structcrow_1_1black__magic_1_1_call_helper_3_01_f_00_01_s_3_01_args_8_8_8_01_4_01_4.html":[0,0,0,0,3],
@@ -245,9 +249,5 @@ var NAVTREEINDEX1 =
 "structcrow_1_1multipart_1_1header.html#ae6c16041bbae76caa020bd8261b8889d":[0,0,0,3,0,1],
 "structcrow_1_1multipart_1_1message.html":[0,0,0,3,1],
 "structcrow_1_1multipart_1_1message.html#a0007fa0cadffae1a8d16fac169d1527b":[0,0,0,3,1,0],
-"structcrow_1_1multipart_1_1message.html#a05e9cf3feb60f4534af334b2dd5eadf2":[0,0,0,3,1,7],
-"structcrow_1_1multipart_1_1message.html#a32946a0f39a8d024aaf4643116a7561b":[0,0,0,3,1,1],
-"structcrow_1_1multipart_1_1message.html#a56eb4bbf64d4930663ac4d5dd7b77d34":[0,0,0,3,1,5],
-"structcrow_1_1multipart_1_1message.html#a6096bf07a476710b1d4bd5855bf96be3":[0,0,0,3,1,4],
-"structcrow_1_1multipart_1_1message.html#abeeebf36687f9cbdf06a6521eac1ce33":[0,0,0,3,1,3]
+"structcrow_1_1multipart_1_1message.html#a05e9cf3feb60f4534af334b2dd5eadf2":[0,0,0,3,1,7]
 };

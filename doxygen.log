@@ -262,14 +262,14 @@ Se/drone/src/include/crow/json.h:1351: warning: unable to resolve reference to '
 /drone/src/include/crow/returnable.h:11: warning: Member dump() const =0 (function) of class crow::returnable is not documented.
 /drone/src/include/crow/returnable.h:13: warning: Member returnable(std::string ctype) (function) of class crow::returnable is not documented.
 /drone/src/include/crow/returnable.h:10: warning: Member content_type (variable) of class crow::returnable is not documented.
-/drone/src/include/crow/routing.h:1041: warning: Member new_rule_dynamic(const std::string &rule) (function) of class crow::Router is not documented.
-/drone/src/include/crow/routing.h:1050: warning: Member new_rule_tagged(const std::string &rule) (function) of class crow::Router is not documented.
-/drone/src/include/crow/routing.h:1060: warning: Member catchall_rule() (function) of class crow::Router is not documented.
-/drone/src/include/crow/routing.h:1065: warning: Member internal_add_rule_object(const std::string &rule, BaseRule *ruleObject) (function) of class crow::Router is not documented.
-/drone/src/include/crow/routing.h:1091: warning: Member validate() (function) of class crow::Router is not documented.
-/drone/src/include/crow/routing.h:1112: warning: Member handle_upgrade(const request &req, response &res, Adaptor &&adaptor) (function) of class crow::Router is not documented.
-/drone/src/include/crow/routing.h:1184: warning: Member handle(const request &req, response &res) (function) of class crow::Router is not documented.
-/drone/src/include/crow/routing.h:1321: warning: Member debug_print() (function) of class crow::Router is not documented.
+/drone/src/include/crow/routing.h:1061: warning: Member new_rule_dynamic(const std::string &rule) (function) of class crow::Router is not documented.
+/drone/src/include/crow/routing.h:1070: warning: Member new_rule_tagged(const std::string &rule) (function) of class crow::Router is not documented.
+/drone/src/include/crow/routing.h:1080: warning: Member catchall_rule() (function) of class crow::Router is not documented.
+/drone/src/include/crow/routing.h:1085: warning: Member internal_add_rule_object(const std::string &rule, BaseRule *ruleObject) (function) of class crow::Router is not documented.
+/drone/src/include/crow/routing.h:1111: warning: Member validate() (function) of class crow::Router is not documented.
+/drone/src/include/crow/routing.h:1132: warning: Member handle_upgrade(const request &req, response &res, Adaptor &&adaptor) (function) of class crow::Router is not documented.
+/drone/src/include/crow/routing.h:1204: warning: Member handle(const request &req, response &res) (function) of class crow::Router is not documented.
+/drone/src/include/crow/routing.h:1341: warning: Member debug_print() (function) of class crow::Router is not documented.
 /drone/src/include/crow/common.h:90: warning: Member debug_print() const (function) of class crow::routing_params is not documented.
 /drone/src/include/crow/common.h:108: warning: Member get(unsigned) const (function) of class crow::routing_params is not documented.
 /drone/src/include/crow/common.h:113: warning: Member get(unsigned index) const (function) of class crow::routing_params is not documented.
@@ -326,14 +326,18 @@ Se/drone/src/include/crow/json.h:1351: warning: unable to resolve reference to '
 /drone/src/include/crow/routing.h:78: warning: Member rule_ (variable) of class crow::BaseRule is not documented.
 /drone/src/include/crow/routing.h:79: warning: Member name_ (variable) of class crow::BaseRule is not documented.
 /drone/src/include/crow/routing.h:81: warning: Member rule_to_upgrade_ (variable) of class crow::BaseRule is not documented.
-/drone/src/include/crow/routing.h:780: warning: Member validate() (function) of class crow::Trie is not documented.
-/drone/src/include/crow/routing.h:787: warning: Member find(const std::string &req_url, const Node *node=nullptr, unsigned pos=0, routing_params *params=nullptr) const (function) of class crow::Trie is not documented.
-/drone/src/include/crow/routing.h:910: warning: Member add(const std::string &url, unsigned rule_index) (function) of class crow::Trie is not documented.
-/drone/src/include/crow/routing.h:1007: warning: Member debug_print() (function) of class crow::Trie is not documented.
-/drone/src/include/crow/routing.h:707: warning: Member IsSimpleNode() const (function) of class crow::Trie::Node is not documented.
+/drone/src/include/crow/routing.h:729: warning: Member optimize() (function) of class crow::Trie is not documented.
+/drone/src/include/crow/routing.h:797: warning: Member debug_print() (function) of class crow::Trie is not documented.
+/drone/src/include/crow/routing.h:804: warning: Member validate() (function) of class crow::Trie is not documented.
+/drone/src/include/crow/routing.h:811: warning: Member find(const std::string &req_url, const Node *node=nullptr, unsigned pos=0, routing_params *params=nullptr) const (function) of class crow::Trie is not documented.
+/drone/src/include/crow/routing.h:942: warning: Member add(const std::string &url, unsigned rule_index) (function) of class crow::Trie is not documented.
+/drone/src/include/crow/routing.h:1022: warning: Member get_size() (function) of class crow::Trie is not documented.
+/drone/src/include/crow/routing.h:1027: warning: Member get_size(Node *node) (function) of class crow::Trie is not documented.
+/drone/src/include/crow/routing.h:708: warning: Member IsSimpleNode() const (function) of class crow::Trie::Node is not documented.
 /drone/src/include/crow/routing.h:703: warning: Member rule_index (variable) of class crow::Trie::Node is not documented.
-/drone/src/include/crow/routing.h:704: warning: Member param_childrens (variable) of class crow::Trie::Node is not documented.
-/drone/src/include/crow/routing.h:705: warning: Member children (variable) of class crow::Trie::Node is not documented.
+/drone/src/include/crow/routing.h:704: warning: Member key (variable) of class crow::Trie::Node is not documented.
+/drone/src/include/crow/routing.h:705: warning: Member param (variable) of class crow::Trie::Node is not documented.
+/drone/src/include/crow/routing.h:706: warning: Member children (variable) of class crow::Trie::Node is not documented.
 arch for main page...
 Computing page relations...
 Determining the scope of groups...
@@ -727,5 +731,5 @@ Generating example index...
 finalizing index lists...
 writing tag file...
 Running plantuml with JAVA...
-lookup cache used 2443/65536 hits=20810 misses=2760
+lookup cache used 2441/65536 hits=20777 misses=2759
 finished...
