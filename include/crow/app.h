@@ -27,6 +27,7 @@
 #define CROW_ROUTE(app, url) app.route_dynamic(url)
 #else
 #define CROW_ROUTE(app, url) app.route<crow::black_magic::get_parameter_tag(url)>(url)
+#define CROW_ROUTE_M(app, url, method) app.route<crow::black_magic::get_parameter_tag(url)>(url).methods(method)
 #endif
 #define CROW_CATCHALL_ROUTE(app) app.catchall_route()
 
