@@ -408,10 +408,10 @@ namespace crow
                             break;
                         case WebSocketReadState::Payload:
                             {
-                                size_t to_read = buffer_.size();
+                                auto to_read = static_cast<std::uint64_t>(buffer_.size());
                                 if (remaining_length_ < to_read)
                                     to_read = remaining_length_;
-                                adaptor_.socket().async_read_some( boost::asio::buffer(buffer_, to_read), 
+                                adaptor_.socket().async_read_some(boost::asio::buffer(buffer_, static_cast<std::size_t>(to_read)), 
                                     [this](const boost::system::error_code& ec, std::size_t bytes_transferred)
                                     {
                                         is_reading = false;
