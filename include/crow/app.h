@@ -25,13 +25,13 @@
 
 #ifdef CROW_MSVC_WORKAROUND
 #define CROW_ROUTE(app, url) app.route_dynamic(url)
-#define CROW_BP_ROUTE(app, blueprint, url) app.route_dynamic(blueprint, url)
+//#define CROW_BP_ROUTE(app, blueprint, url) app.route_dynamic(blueprint, url)
 #else
 #define CROW_ROUTE(app, url) app.route<crow::black_magic::get_parameter_tag(url)>(url)
-#define CROW_BP_ROUTE(app, blueprint, url) app.route<crow::black_magic::get_parameter_tag(url)>(blueprint, url)
+//#define CROW_BP_ROUTE(app, blueprint, url) app.route<crow::black_magic::get_parameter_tag(url)>(blueprint, url)
 #endif
 #define CROW_CATCHALL_ROUTE(app) app.catchall_route()
-#define CROW_BP_CATCHALL_ROUTE(app, blueprint) app.catchall_route(blueprint)
+//#define CROW_BP_CATCHALL_ROUTE(app, blueprint) app.catchall_route(blueprint)
 
 namespace crow
 {
@@ -84,27 +84,27 @@ namespace crow
             return router_.new_rule_dynamic(std::move(rule));
         }
 
-        ///Create a dynamic route for a blueprint using a rule (**Use CROW_BP_ROUTE instead**)
-        DynamicRule& route_dynamic(Blueprint& blueprint, std::string&& rule)
-        {
-            return blueprint.new_rule_dynamic(std::move(rule));
-        }
+//        ///Create a dynamic route for a blueprint using a rule (**Use CROW_BP_ROUTE instead**)
+//        DynamicRule& route_dynamic(Blueprint& blueprint, std::string&& rule)
+//        {
+//            return blueprint.new_rule_dynamic(std::move(rule));
+//        }
 
         ///Create a route using a rule (**Use CROW_ROUTE instead**)
         template <uint64_t Tag>
         auto route(std::string&& rule)
             -> typename std::result_of<decltype(&Router::new_rule_tagged<Tag>)(Router, std::string&&)>::type
-        {//TODO process the blueprint
+        {
             return router_.new_rule_tagged<Tag>(std::move(rule));
         }
 
-        ///Create a route for a blueprint using a rule (**Use CROW_BP_ROUTE instead**)
-        template <uint64_t Tag>
-        auto route(Blueprint& blueprint, std::string&& rule)
-            -> typename std::result_of<decltype(&Router::new_rule_tagged<Tag>)(Router, std::string&&)>::type
-        {
-            return blueprint.new_rule_tagged<Tag>(std::move(rule));
-        }
+//        ///Create a route for a blueprint using a rule (**Use CROW_BP_ROUTE instead**)
+//        template <uint64_t Tag>
+//        auto route(Blueprint& blueprint, std::string&& rule)
+//            -> typename std::result_of<decltype(&Router::new_rule_tagged<Tag>)(Router, std::string&&)>::type
+//        {
+//            return blueprint.new_rule_tagged<Tag>(std::move(rule));
+//        }
 
         ///Create a route for any requests without a proper route (**Use CROW_CATCHALL_ROUTE instead**)
         CatchallRule& catchall_route()
@@ -112,11 +112,11 @@ namespace crow
             return router_.catchall_rule();
         }
 
-        ///Create a route for any requests without a proper route within the blueprint (**Use CROW_BP_CATCHALL_ROUTE instead**)
-        CatchallRule& catchall_route(Blueprint& blueprint)
-        {
-            return blueprint.catchall_rule();
-        }
+//        ///Create a route for any requests without a proper route within the blueprint (**Use CROW_BP_CATCHALL_ROUTE instead**)
+//        CatchallRule& catchall_route(Blueprint& blueprint)
+//        {
+//            return blueprint.catchall_rule();
+//        }
 
         self_t& signal_clear()
         {
@@ -190,10 +190,7 @@ namespace crow
 
         self_t& register_blueprint(Blueprint& blueprint)
         {
-            if (blueprints_.empty() || std::find(blueprints_.begin(), blueprints_.end(), &blueprint) == blueprints_.end())
-            {
-                blueprints_.emplace_back(&blueprint);
-            }//TODO error throwing
+            router_.register_blueprint(blueprint);
             return *this;
         }
 
@@ -224,7 +221,30 @@ namespace crow
         ///Go through the rules, upgrade them if possible, and add them to the list of rules
         void validate()
         {
-            router_.validate(blueprints_);
+
+#ifndef CROW_DISABLE_STATIC_DIR
+            route<crow::black_magic::get_parameter_tag(CROW_STATIC_ENDPOINT)>(CROW_STATIC_ENDPOINT)
+            ([](crow::response& res, std::string file_path_partial)
+            {
+              res.set_static_file_info(CROW_STATIC_DIRECTORY + file_path_partial);
+              res.end();
+            });
+
+            for (auto& bp : router_.blueprints())
+            {
+                if (!bp->static_dir().empty())
+                {
+                    bp->new_rule_tagged<crow::black_magic::get_parameter_tag(CROW_STATIC_ENDPOINT)>(CROW_STATIC_ENDPOINT)
+                    ([bp](crow::response& res, std::string file_path_partial)
+                    {
+                      res.set_static_file_info(bp->static_dir() + '/' + file_path_partial);
+                      res.end();
+                    });
+                }
+            }
+#endif
+
+            router_.validate();
         }
 
         ///Notify anything using `wait_for_server_start()` to proceed
@@ -238,27 +258,7 @@ namespace crow
         ///Run the server
         void run()
         {
-#ifndef CROW_DISABLE_STATIC_DIR
-            route<crow::black_magic::get_parameter_tag(CROW_STATIC_ENDPOINT)>(CROW_STATIC_ENDPOINT)
-            ([](crow::response& res, std::string file_path_partial)
-            {
-              res.set_static_file_info(CROW_STATIC_DIRECTORY + file_path_partial);
-              res.end();
-            });
 
-            for (auto& bp : blueprints_)
-            {
-                if (!bp->static_dir().empty())
-                {
-                    route<crow::black_magic::get_parameter_tag(CROW_STATIC_ENDPOINT)>(*bp, CROW_STATIC_ENDPOINT)
-                    ([bp](crow::response& res, std::string file_path_partial)
-                    {
-                      res.set_static_file_info(bp->static_dir() + '/' + file_path_partial);
-                      res.end();
-                    });
-                }
-            }
-#endif
             validate();
 
 #ifdef CROW_ENABLE_SSL
@@ -425,8 +425,6 @@ namespace crow
         std::unique_ptr<server_t> server_;
 
         std::vector<int> signals_{SIGINT, SIGTERM};
-
-        std::vector<Blueprint*> blueprints_;
 
         bool server_started_{false};
         std::condition_variable cv_started_;
