@@ -194,7 +194,7 @@ namespace crow
                     buf[0] += opcode;
                     if (size < 126)
                     {
-                        buf[1] += size;
+                        buf[1] += static_cast<char>(size);
                         return {buf, buf+2};
                     }
                     else if (size < 0x10000)
