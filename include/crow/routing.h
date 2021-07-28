@@ -1108,12 +1108,6 @@ namespace crow
         Node head_;
     };
 
-#ifdef CROW_MSVC_WORKAROUND
-#define CROW_BP_ROUTE(blueprint, url) blueprint.new_rule_dynamic(url)
-#else
-#define CROW_BP_ROUTE(blueprint, url) blueprint.new_rule_tagged<crow::black_magic::get_parameter_tag(url)>(url)
-#endif
-#define CROW_BP_CATCHALL_ROUTE(blueprint) blueprint.catchall_rule()
     /// A blueprint can be considered a smaller section of a Crow app, specifically where the router is conecerned.
     class Blueprint
     {
@@ -1176,9 +1170,10 @@ namespace crow
             return static_dir_;
         }
 
-        DynamicRule& new_rule_dynamic(const std::string&& rule)
-        {//TODO maybe try not copying the same data (reuse rule)
-            std::string new_rule = '/' + prefix_ + rule;
+        DynamicRule& new_rule_dynamic(std::string&& rule)
+        {
+            std::string new_rule = std::move(rule);
+            new_rule = '/' + prefix_ + new_rule;
             auto ruleObject = new DynamicRule(new_rule);
             ruleObject->custom_templates_base = templates_dir_;
             all_rules_.emplace_back(ruleObject);
@@ -1187,9 +1182,10 @@ namespace crow
         }
 
         template <uint64_t N>
-        typename black_magic::arguments<N>::type::template rebind<TaggedRule>& new_rule_tagged(const std::string&& rule)
+        typename black_magic::arguments<N>::type::template rebind<TaggedRule>& new_rule_tagged(std::string&& rule)
         {
-            std::string new_rule = '/' + prefix_ + rule;
+            std::string new_rule = std::move(rule);
+            new_rule = '/' + prefix_ + new_rule;
             using RuleT = typename black_magic::arguments<N>::type::template rebind<TaggedRule>;
 
             auto ruleObject = new RuleT(new_rule);
@@ -1203,16 +1199,29 @@ namespace crow
         {
             if (blueprints_.empty() || std::find(blueprints_.begin(), blueprints_.end(), &blueprint) == blueprints_.end())
             {
-                blueprint.prefix_ = prefix_ + '/' + blueprint.prefix_;
-                blueprint.static_dir_ = static_dir_ + '/' + blueprint.static_dir_;
-                blueprint.templates_dir_ = templates_dir_ + '/' + blueprint.templates_dir_;
-                for (auto& rule : blueprint.all_rules_)
-                {
-                    std::string new_rule = '/' + prefix_ + rule->rule_;
-                    rule->rule_ = new_rule;
-                }
+                apply_blueprint(blueprint);
                 blueprints_.emplace_back(&blueprint);
-            }//TODO error throwing
+            }
+            else
+                throw std::runtime_error("blueprint \"" + blueprint.prefix_ + "\" already exists in blueprint \"" + prefix_ + '\"');
+        }
+
+        void apply_blueprint(Blueprint& blueprint)
+        {
+
+            blueprint.prefix_ = prefix_ + '/' + blueprint.prefix_;
+            blueprint.static_dir_ = static_dir_ + '/' + blueprint.static_dir_;
+            blueprint.templates_dir_ = templates_dir_ + '/' + blueprint.templates_dir_;
+            for (auto& rule : blueprint.all_rules_)
+            {
+                std::string new_rule = '/' + prefix_ + rule->rule_;
+                rule->rule_ = new_rule;
+            }
+            for (Blueprint* bp_child : blueprint.blueprints_)
+            {
+                Blueprint& bp_ref = *bp_child;
+                apply_blueprint(bp_ref);
+            }
         }
 
         CatchallRule& catchall_rule()
@@ -1294,7 +1303,9 @@ namespace crow
             if (blueprints_.empty() || std::find(blueprints_.begin(), blueprints_.end(), &blueprint) == blueprints_.end())
             {
                 blueprints_.emplace_back(&blueprint);
-            }//TODO error throwing
+            }
+            else
+                throw std::runtime_error("blueprint \"" + blueprint.prefix_ + "\" already exists in router");
         }
 
         void get_recursive_child_methods(Blueprint* blueprint, std::vector<HTTPMethod>& methods)
@@ -1445,16 +1456,41 @@ namespace crow
             }
         }
 
-        Blueprint* get_found_bp(std::vector<uint16_t>& bp_i, std::vector<Blueprint*>& blueprints)
+        void get_found_bp(std::vector<uint16_t>& bp_i, std::vector<Blueprint*>& blueprints, std::vector<Blueprint*>& found_bps, uint16_t index = 0)
         {
-            if (bp_i.empty())
-                return nullptr;
-            else if (bp_i.size() == 1)
-                return blueprints[bp_i[0]];
+            if (index < bp_i.size())
+            {
+                // This statement makes 3 assertions:
+                // 1. The index is above 0.
+                // 2. The index does not lie outside the given blueprint list.
+                // 3. The next blueprint we're adding has a prefix that starts the same as the already added blueprint + a slash (the rest is irrelevant).
+                //
+                // This is done to prevent a blueprint that has a prefix of "bp_prefix2" to be assumed as a child of one that has "bp_prefix".
+                //
+                // If any of the assertions is untrue, we delete the last item added, and continue using the blueprint list of the blueprint found before, the topmost being the router's list
+                if (index > 0 && bp_i[index] < blueprints.size() && blueprints[bp_i[index]]->prefix().substr(0,found_bps[index-1]->prefix().length()+1).compare(std::string(found_bps[index-1]->prefix()+'/')) == 0)
+                {
+                    found_bps.push_back(blueprints[bp_i[index]]);
+                    get_found_bp(bp_i, found_bps.back()->blueprints_, found_bps, ++index);
+                }
+                else
+                {
+                    if (!found_bps.empty())
+                        found_bps.pop_back();
 
-            uint16_t index = bp_i[0];
-            bp_i.erase(bp_i.begin());
-            return get_found_bp(bp_i, blueprints[index]->blueprints_);
+                    if (found_bps.empty())
+                    {
+                        found_bps.push_back(blueprints_[bp_i[index]]);
+                        get_found_bp(bp_i, found_bps.back()->blueprints_, found_bps, ++index);
+                    }
+                    else
+                    {
+                        Blueprint* last_element  = found_bps.back();
+                        found_bps.push_back(last_element->blueprints_[bp_i[index]]);
+                        get_found_bp(bp_i, found_bps.back()->blueprints_, found_bps, ++index);
+                    }
+                }
+            }
         }
 
         void handle(const request& req, response& res)
@@ -1536,21 +1572,32 @@ namespace crow
                     }
                 }
 
-                Blueprint* bp_found = get_found_bp(std::get<1>(found), blueprints_);
-                if (bp_found != nullptr && bp_found->catchall_rule().has_handler())
+                std::vector<Blueprint*> bps_found;
+                get_found_bp(std::get<1>(found), blueprints_, bps_found);
+                bool no_bp_catchall = true;
+                for (int i = bps_found.size()-1; i > 0; i--)
                 {
-                    CROW_LOG_DEBUG << "Cannot match rules " << req.url << ". Redirecting to Blueprint \"" << bp_found->prefix() << "\" Catchall rule";
-                    bp_found->catchall_rule().handler_(req, res);
+                    std::vector<uint16_t> bpi = std::get<1>(found);
+                    if (bps_found[i]->catchall_rule().has_handler())
+                    {
+                        no_bp_catchall = false;
+                        CROW_LOG_DEBUG << "Cannot match rules " << req.url << ". Redirecting to Blueprint \"" << bps_found[i]->prefix() << "\" Catchall rule";
+                        bps_found[i]->catchall_rule().handler_(req, res);
+                        break;
+                    }
                 }
-                else if (catchall_rule_.has_handler())
+                if (no_bp_catchall)
                 {
-                    CROW_LOG_DEBUG << "Cannot match rules " << req.url << ". Redirecting to global Catchall rule";
-                    catchall_rule_.handler_(req, res);
-                }
-                else
-                {
-                    CROW_LOG_DEBUG << "Cannot match rules " << req.url;
-                    res = response(404);
+                    if (catchall_rule_.has_handler())
+                    {
+                        CROW_LOG_DEBUG << "Cannot match rules " << req.url << ". Redirecting to global Catchall rule";
+                        catchall_rule_.handler_(req, res);
+                    }
+                    else
+                    {
+                        CROW_LOG_DEBUG << "Cannot match rules " << req.url;
+                        res = response(404);
+                    }
                 }
                 res.end();
                 return;
