@@ -295,7 +295,7 @@ $(document).ready(function(){initNavTree('websocket_8h_source.html',''); initRes
 <div class="line"><a name="l00194"></a><span class="lineno">  194</span>&#160;                    buf[0] += <a class="code" href="classcrow_1_1websocket_1_1_connection.html#a47a804e0269c7e70f45434f7618c6e7b">opcode</a>;</div>
 <div class="line"><a name="l00195"></a><span class="lineno">  195</span>&#160;                    <span class="keywordflow">if</span> (size &lt; 126)</div>
 <div class="line"><a name="l00196"></a><span class="lineno">  196</span>&#160;                    {</div>
-<div class="line"><a name="l00197"></a><span class="lineno">  197</span>&#160;                        buf[1] += size;</div>
+<div class="line"><a name="l00197"></a><span class="lineno">  197</span>&#160;                        buf[1] += <span class="keyword">static_cast&lt;</span><span class="keywordtype">char</span><span class="keyword">&gt;</span>(size);</div>
 <div class="line"><a name="l00198"></a><span class="lineno">  198</span>&#160;                        <span class="keywordflow">return</span> {buf, buf+2};</div>
 <div class="line"><a name="l00199"></a><span class="lineno">  199</span>&#160;                    }</div>
 <div class="line"><a name="l00200"></a><span class="lineno">  200</span>&#160;                    <span class="keywordflow">else</span> <span class="keywordflow">if</span> (size &lt; 0x10000)</div>
@@ -509,10 +509,10 @@ $(document).ready(function(){initNavTree('websocket_8h_source.html',''); initRes
 <div class="line"><a name="l00408"></a><span class="lineno">  408</span>&#160;                            <span class="keywordflow">break</span>;</div>
 <div class="line"><a name="l00409"></a><span class="lineno">  409</span>&#160;                        <span class="keywordflow">case</span> WebSocketReadState::Payload:</div>
 <div class="line"><a name="l00410"></a><span class="lineno">  410</span>&#160;                            {</div>
-<div class="line"><a name="l00411"></a><span class="lineno">  411</span>&#160;                                <span class="keywordtype">size_t</span> to_read = buffer_.size();</div>
+<div class="line"><a name="l00411"></a><span class="lineno">  411</span>&#160;                                <span class="keyword">auto</span> to_read = <span class="keyword">static_cast&lt;</span>std::uint64_t<span class="keyword">&gt;</span>(buffer_.size());</div>
 <div class="line"><a name="l00412"></a><span class="lineno">  412</span>&#160;                                <span class="keywordflow">if</span> (remaining_length_ &lt; to_read)</div>
 <div class="line"><a name="l00413"></a><span class="lineno">  413</span>&#160;                                    to_read = remaining_length_;</div>
-<div class="line"><a name="l00414"></a><span class="lineno">  414</span>&#160;                                adaptor_.socket().async_read_some( boost::asio::buffer(buffer_, to_read), </div>
+<div class="line"><a name="l00414"></a><span class="lineno">  414</span>&#160;                                adaptor_.socket().async_read_some(boost::asio::buffer(buffer_, <span class="keyword">static_cast&lt;</span>std::size_t<span class="keyword">&gt;</span>(to_read)), </div>
 <div class="line"><a name="l00415"></a><span class="lineno">  415</span>&#160;                                    [<span class="keyword">this</span>](<span class="keyword">const</span> boost::system::error_code&amp; ec, std::size_t bytes_transferred)</div>
 <div class="line"><a name="l00416"></a><span class="lineno">  416</span>&#160;                                    {</div>
 <div class="line"><a name="l00417"></a><span class="lineno">  417</span>&#160;                                        is_reading = <span class="keyword">false</span>;</div>
@@ -521,7 +521,7 @@ $(document).ready(function(){initNavTree('websocket_8h_source.html',''); initRes
 <div class="line"><a name="l00420"></a><span class="lineno">  420</span>&#160;                                        {</div>
 <div class="line"><a name="l00421"></a><span class="lineno">  421</span>&#160;                                            fragment_.insert(fragment_.end(), buffer_.begin(), buffer_.begin() + bytes_transferred);</div>
 <div class="line"><a name="l00422"></a><span class="lineno">  422</span>&#160;                                            remaining_length_ -= bytes_transferred;</div>
-<div class="line"><a name="l00423"></a><span class="lineno">  423</span>&#160;                                            if (remaining_length_ == 0)</div>
+<div class="line"><a name="l00423"></a><span class="lineno">  423</span>&#160;                                            <span class="keywordflow">if</span> (remaining_length_ == 0)</div>
 <div class="line"><a name="l00424"></a><span class="lineno">  424</span>&#160;                                            {</div>
 <div class="line"><a name="l00425"></a><span class="lineno">  425</span>&#160;                                                handle_fragment();</div>
 <div class="line"><a name="l00426"></a><span class="lineno">  426</span>&#160;                                                state_ = WebSocketReadState::MiniHeader;</div>
@@ -744,7 +744,7 @@ $(document).ready(function(){initNavTree('websocket_8h_source.html',''); initRes
 			<ul>
 				<li class="navelem"><a class="el" href="dir_d44c64559bbebec7f509842c48db8b23.html">include</a></li><li class="navelem"><a class="el" href="dir_d22c1cb87b72f01e1a7f207eb3bfd1ca.html">crow</a></li><li class="navelem"><b>websocket.h</b></li>
 				<li class="footer">
-					Generated on Tue Jul 27 2021 for Crow by <a href="http://www.doxygen.org/index.html">
+					Generated on Wed Jul 28 2021 for Crow by <a href="http://www.doxygen.org/index.html">
 					<img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.17.
 					Dark theme by <a href="http://majerle.eu" target="_new">Tilen Majerle</a>. Edited by <a href="https://github.com/The-EDev" target="_new">Farook Al-Sammarraie</a>. All rights reserved.
 				</li>
