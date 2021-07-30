@@ -98,25 +98,11 @@ namespace crow
             return router_.new_rule_tagged<Tag>(std::move(rule));
         }
 
-//        ///Create a route for a blueprint using a rule (**Use CROW_BP_ROUTE instead**)
-//        template <uint64_t Tag>
-//        auto route(Blueprint& blueprint, std::string&& rule)
-//            -> typename std::result_of<decltype(&Router::new_rule_tagged<Tag>)(Router, std::string&&)>::type
-//        {
-//            return blueprint.new_rule_tagged<Tag>(std::move(rule));
-//        }
-
         ///Create a route for any requests without a proper route (**Use CROW_CATCHALL_ROUTE instead**)
         CatchallRule& catchall_route()
         {
             return router_.catchall_rule();
         }
-
-//        ///Create a route for any requests without a proper route within the blueprint (**Use CROW_BP_CATCHALL_ROUTE instead**)
-//        CatchallRule& catchall_route(Blueprint& blueprint)
-//        {
-//            return blueprint.catchall_rule();
-//        }
 
         self_t& signal_clear()
         {

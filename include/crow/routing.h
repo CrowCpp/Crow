@@ -1078,14 +1078,14 @@ namespace crow
             idx->rule_index = rule_index;
         }
 
-        size_t get_size(bool small_enum_flag = false)
+        size_t get_size()
         {
-            return get_size(&head_, small_enum_flag);
+            return get_size(&head_);
         }
 
-        size_t get_size(Node* node, bool small_enum_flag)
+        size_t get_size(Node* node)
         {
-            unsigned size = small_enum_flag ? 3 : 6; //rule_index and param
+            unsigned size =  5 ; //rule_index, blueprint_index, and param
             size += (node->key.size()); //each character in the key is 1 byte
             for (auto child: node->children)
             {
@@ -1109,6 +1109,9 @@ namespace crow
     };
 
     /// A blueprint can be considered a smaller section of a Crow app, specifically where the router is conecerned.
+    ///
+    /// You can use blueprints to assign a common prefix to rules' prefix, set custom static and template folders, and set a custom catchall route.
+    /// You can also assign nest blueprints for maximum Compartmentalization.
     class Blueprint
     {
     public:
@@ -1206,6 +1209,14 @@ namespace crow
                 throw std::runtime_error("blueprint \"" + blueprint.prefix_ + "\" already exists in blueprint \"" + prefix_ + '\"');
         }
 
+
+        CatchallRule& catchall_rule()
+        {
+            return catchall_rule_;
+        }
+
+    private:
+
         void apply_blueprint(Blueprint& blueprint)
         {
 
@@ -1224,20 +1235,14 @@ namespace crow
             }
         }
 
-        CatchallRule& catchall_rule()
-        {
-            return catchall_rule_;
-        }
+        std::string prefix_;
+        std::string static_dir_;
+        std::string templates_dir_;
+        std::vector<std::unique_ptr<BaseRule>> all_rules_;
+        CatchallRule catchall_rule_;
+        std::vector<Blueprint*> blueprints_;
 
-    private:
-            std::string prefix_;
-            std::string static_dir_;
-            std::string templates_dir_;
-            std::vector<std::unique_ptr<BaseRule>> all_rules_;
-            CatchallRule catchall_rule_;
-            std::vector<Blueprint*> blueprints_;
-
-            friend class Router;
+        friend class Router;
     };
 
     /// Handles matching requests to existing rules and upgrade requests.
