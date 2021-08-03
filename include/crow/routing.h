@@ -717,7 +717,7 @@ namespace crow
         {
             uint16_t rule_index{};
             // Assign the index to the maximum 32 unsigned integer value by default so that any other number (specifically 0) is a valid BP id.
-            uint16_t blueprint_index{0xFFFF};
+            uint16_t blueprint_index{INVALID_BP_ID};
             std::string key;
             ParamType param = ParamType::MAX; // MAX = No param.
             std::vector<Node*> children;
@@ -726,7 +726,7 @@ namespace crow
             {
                 return
                     !rule_index &&
-                    blueprint_index == 0xFFFF &&
+                    blueprint_index == INVALID_BP_ID &&
                     children.size() < 2 &&
                     param == ParamType::MAX &&
                     std::all_of(std::begin(children), std::end(children), [](Node* x){ return x->param == ParamType::MAX; });
@@ -754,6 +754,8 @@ namespace crow
 
 
     private:
+
+
         void optimizeNode(Node* node)
         {
             if (node->children.empty())
@@ -830,7 +832,6 @@ namespace crow
         //Rule_index, Blueprint_index, routing_params
         std::tuple<uint16_t, std::vector<uint16_t>, routing_params> find(const std::string& req_url, const Node* node = nullptr, unsigned pos = 0, routing_params* params = nullptr, std::vector<uint16_t>* blueprints = nullptr) const
         {
-            static const uint16_t idx_max{0xFFFF};
             //start params as an empty struct
             routing_params empty;
             if (params == nullptr)
@@ -883,7 +884,7 @@ namespace crow
                             {
                                 found_fragment = true;
                                 params->int_params.push_back(value);
-                                if (child->blueprint_index != idx_max) blueprints->push_back(child->blueprint_index);
+                                if (child->blueprint_index != INVALID_BP_ID) blueprints->push_back(child->blueprint_index);
                                 auto ret = find(req_url, child, eptr - req_url.data(), params, blueprints);
                                 update_found(ret);
                                 params->int_params.pop_back();
@@ -904,7 +905,7 @@ namespace crow
                             {
                                 found_fragment = true;
                                 params->uint_params.push_back(value);
-                                if (child->blueprint_index != idx_max) blueprints->push_back(child->blueprint_index);
+                                if (child->blueprint_index != INVALID_BP_ID) blueprints->push_back(child->blueprint_index);
                                 auto ret = find(req_url, child, eptr - req_url.data(), params, blueprints);
                                 update_found(ret);
                                 params->uint_params.pop_back();
@@ -925,7 +926,7 @@ namespace crow
                             {
                                 found_fragment = true;
                                 params->double_params.push_back(value);
-                                if (child->blueprint_index != idx_max) blueprints->push_back(child->blueprint_index);
+                                if (child->blueprint_index != INVALID_BP_ID) blueprints->push_back(child->blueprint_index);
                                 auto ret = find(req_url, child, eptr - req_url.data(), params, blueprints);
                                 update_found(ret);
                                 params->double_params.pop_back();
@@ -947,7 +948,7 @@ namespace crow
                         {
                             found_fragment = true;
                             params->string_params.push_back(req_url.substr(pos, epos-pos));
-                            if (child->blueprint_index != idx_max) blueprints->push_back(child->blueprint_index);
+                            if (child->blueprint_index != INVALID_BP_ID) blueprints->push_back(child->blueprint_index);
                             auto ret = find(req_url, child, epos, params, blueprints);
                             update_found(ret);
                             params->string_params.pop_back();
@@ -963,7 +964,7 @@ namespace crow
                         {
                             found_fragment = true;
                             params->string_params.push_back(req_url.substr(pos, epos-pos));
-                            if (child->blueprint_index != idx_max) blueprints->push_back(child->blueprint_index);
+                            if (child->blueprint_index != INVALID_BP_ID) blueprints->push_back(child->blueprint_index);
                             auto ret = find(req_url, child, epos, params, blueprints);
                             update_found(ret);
                             params->string_params.pop_back();
@@ -978,7 +979,7 @@ namespace crow
                     if (req_url.compare(pos, fragment.size(), fragment) == 0)
                     {
                         found_fragment = true;
-                        if (child->blueprint_index != idx_max) blueprints->push_back(child->blueprint_index);
+                        if (child->blueprint_index != INVALID_BP_ID) blueprints->push_back(child->blueprint_index);
                         auto ret = find(req_url, child, pos + fragment.size(), params, blueprints);
                         update_found(ret);
                         blueprints->pop_back();
@@ -1104,6 +1105,8 @@ namespace crow
             children[children.size()-1] = new Node();
             return children[children.size()-1];
         }
+
+        static constexpr uint16_t INVALID_BP_ID{0xFFFF};
 
         Node head_;
     };

@@ -84,12 +84,6 @@ namespace crow
             return router_.new_rule_dynamic(std::move(rule));
         }
 
-//        ///Create a dynamic route for a blueprint using a rule (**Use CROW_BP_ROUTE instead**)
-//        DynamicRule& route_dynamic(Blueprint& blueprint, std::string&& rule)
-//        {
-//            return blueprint.new_rule_dynamic(std::move(rule));
-//        }
-
         ///Create a route using a rule (**Use CROW_ROUTE instead**)
         template <uint64_t Tag>
         auto route(std::string&& rule)
