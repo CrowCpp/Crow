@@ -18,6 +18,12 @@
 
 namespace crow
 {
+
+#ifdef CROW_MAIN
+    constexpr uint16_t INVALID_BP_ID{0xFFFF};
+#else
+    extern constexpr uint16_t INVALID_BP_ID{0xFFFF};
+#endif
     /// A base class for all rules.
 
     /// Used to provide a common interface for code dealing with different types of rules.
@@ -994,11 +1000,11 @@ namespace crow
         }
 
         //This functions assumes any blueprint info passed is valid
-        void add(const std::string& url, uint16_t rule_index, unsigned bp_prefix_length = 0, uint16_t blueprint_index = 0xFFFF)
+        void add(const std::string& url, uint16_t rule_index, unsigned bp_prefix_length = 0, uint16_t blueprint_index = INVALID_BP_ID)
         {
             Node* idx = &head_;
 
-            bool has_blueprint = bp_prefix_length != 0 && blueprint_index != 0xFFFF;
+            bool has_blueprint = bp_prefix_length != 0 && blueprint_index != INVALID_BP_ID;
 
             for(unsigned i = 0; i < url.size(); i ++)
             {
@@ -1106,7 +1112,6 @@ namespace crow
             return children[children.size()-1];
         }
 
-        static constexpr uint16_t INVALID_BP_ID{0xFFFF};
 
         Node head_;
     };
@@ -1294,13 +1299,13 @@ namespace crow
             ruleObject->foreach_method([&](int method)
                     {
                         per_methods_[method].rules.emplace_back(ruleObject);
-                        per_methods_[method].trie.add(rule, per_methods_[method].rules.size() - 1, BP_index != 0xFFFF ? blueprints[BP_index]->prefix().length() : 0, BP_index);
+                        per_methods_[method].trie.add(rule, per_methods_[method].rules.size() - 1, BP_index != INVALID_BP_ID ? blueprints[BP_index]->prefix().length() : 0, BP_index);
 
                         // directory case:
                         //   request to '/about' url matches '/about/' rule
                         if (has_trailing_slash)
                         {
-                            per_methods_[method].trie.add(rule_without_trailing_slash, RULE_SPECIAL_REDIRECT_SLASH, BP_index != 0xFFFF ? blueprints_[BP_index]->prefix().length() : 0, BP_index);
+                            per_methods_[method].trie.add(rule_without_trailing_slash, RULE_SPECIAL_REDIRECT_SLASH, BP_index != INVALID_BP_ID ? blueprints_[BP_index]->prefix().length() : 0, BP_index);
                         }
                     });
 
@@ -1308,7 +1313,7 @@ namespace crow
 
         void register_blueprint(Blueprint& blueprint)
         {
-            if (blueprints_.empty() || std::find(blueprints_.begin(), blueprints_.end(), &blueprint) == blueprints_.end())
+            if (std::find(blueprints_.begin(), blueprints_.end(), &blueprint) == blueprints_.end())
             {
                 blueprints_.emplace_back(&blueprint);
             }
@@ -1319,14 +1324,14 @@ namespace crow
         void get_recursive_child_methods(Blueprint* blueprint, std::vector<HTTPMethod>& methods)
         {
             //we only need to deal with children if the blueprint has absolutely no methods (meaning its index won't be added to the trie)
-            if (blueprint->static_dir_ == "" && blueprint->all_rules_.empty())
+            if (blueprint->static_dir_.empty() && blueprint->all_rules_.empty())
             {
                 for(Blueprint* bp : blueprint->blueprints_)
                 {
                     get_recursive_child_methods(bp, methods);
                 }
             }
-            else if (blueprint->static_dir_ != "")
+            else if (!blueprint->static_dir_.empty())
                 methods.emplace_back(HTTPMethod::GET);
             for (auto& rule: blueprint->all_rules_)
             {
@@ -1381,7 +1386,7 @@ namespace crow
                     if (upgraded)
                         rule = std::move(upgraded);
                     rule->validate();
-                    internal_add_rule_object(rule->rule(), rule.get(), 0xFFFF, blueprints_);
+                    internal_add_rule_object(rule->rule(), rule.get(), INVALID_BP_ID, blueprints_);
                 }
             }
             for(auto& per_method:per_methods_)
@@ -1466,17 +1471,25 @@ namespace crow
 
         void get_found_bp(std::vector<uint16_t>& bp_i, std::vector<Blueprint*>& blueprints, std::vector<Blueprint*>& found_bps, uint16_t index = 0)
         {
+            // This statement makes 3 assertions:
+            // 1. The index is above 0.
+            // 2. The index does not lie outside the given blueprint list.
+            // 3. The next blueprint we're adding has a prefix that starts the same as the already added blueprint + a slash (the rest is irrelevant).
+            //
+            // This is done to prevent a blueprint that has a prefix of "bp_prefix2" to be assumed as a child of one that has "bp_prefix".
+            //
+            // If any of the assertions is untrue, we delete the last item added, and continue using the blueprint list of the blueprint found before, the topmost being the router's list
+            auto verify_prefix = [&bp_i, &index, &blueprints, &found_bps]()
+            {
+                return index > 0 &&
+                bp_i[index] < blueprints.size() &&
+                blueprints[bp_i[index]]->prefix().substr(0,found_bps[index-1]->prefix().length()+1)
+                .compare(std::string(found_bps[index-1]->prefix()+'/')) == 0;
+            };
             if (index < bp_i.size())
             {
-                // This statement makes 3 assertions:
-                // 1. The index is above 0.
-                // 2. The index does not lie outside the given blueprint list.
-                // 3. The next blueprint we're adding has a prefix that starts the same as the already added blueprint + a slash (the rest is irrelevant).
-                //
-                // This is done to prevent a blueprint that has a prefix of "bp_prefix2" to be assumed as a child of one that has "bp_prefix".
-                //
-                // If any of the assertions is untrue, we delete the last item added, and continue using the blueprint list of the blueprint found before, the topmost being the router's list
-                if (index > 0 && bp_i[index] < blueprints.size() && blueprints[bp_i[index]]->prefix().substr(0,found_bps[index-1]->prefix().length()+1).compare(std::string(found_bps[index-1]->prefix()+'/')) == 0)
+
+                if (verify_prefix())
                 {
                     found_bps.push_back(blueprints[bp_i[index]]);
                     get_found_bp(bp_i, found_bps.back()->blueprints_, found_bps, ++index);
