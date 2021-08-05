@@ -20,9 +20,9 @@ namespace crow
 {
 
 #ifdef CROW_MAIN
-    constexpr uint16_t INVALID_BP_ID{0xFFFF};
+    uint16_t INVALID_BP_ID{0xFFFF};
 #else
-    extern constexpr uint16_t INVALID_BP_ID{0xFFFF};
+    extern uint16_t INVALID_BP_ID{0xFFFF};
 #endif
     /// A base class for all rules.
 
