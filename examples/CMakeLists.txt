@@ -77,6 +77,10 @@ else ()
   target_compile_options(example_json_map PRIVATE "${compiler_options}")
   target_link_libraries(example_json_map PUBLIC ${REQUIRED_LIBRARIES})
 
+  add_executable(example_blueprint example_blueprint.cpp)
+  target_compile_options(example_blueprint PRIVATE "${compiler_options}")
+  target_link_libraries(example_blueprint PUBLIC ${REQUIRED_LIBRARIES})
+
   add_custom_command(OUTPUT example_chat.html
     COMMAND ${CMAKE_COMMAND} -E
     copy ${PROJECT_SOURCE_DIR}/example_chat.html ${CMAKE_CURRENT_BINARY_DIR}/example_chat.html

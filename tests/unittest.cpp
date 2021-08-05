@@ -1418,14 +1418,15 @@ TEST_CASE("stream_response")
 
     SimpleApp app;
 
-    CROW_ROUTE(app, "/test")
-    ([](const crow::request&, crow::response& res)
-    {
-      std::string keyword_ = "hello";
-      std::string key_response;
-      for (unsigned int i = 0; i<250000; i++)
-        key_response += keyword_;
 
+    std::string keyword_ = "hello";
+    std::string key_response;
+    for (unsigned int i = 0; i<250000; i++)
+      key_response += keyword_;
+
+    CROW_ROUTE(app, "/test")
+    ([&key_response](const crow::request&, crow::response& res)
+    {
       res.body = key_response;
       res.end();
     });
@@ -1433,7 +1434,7 @@ TEST_CASE("stream_response")
     app.validate();
 
     //running the test on a separate thread to allow the client to sleep
-    std::thread runTest([&app](){
+   std::thread runTest([&app, &key_response](){
 
     auto _ = async(launch::async,
                    [&] { app.bindaddr(LOCALHOST_ADDRESS).port(45451).run(); });
@@ -1447,9 +1448,6 @@ TEST_CASE("stream_response")
     {
       asio::streambuf b;
 
-      std::string keyword_ = "hello";
-      std::string key_response;
-
       asio::ip::tcp::socket c(is);
       c.connect(asio::ip::tcp::endpoint(
           asio::ip::address::from_string(LOCALHOST_ADDRESS), 45451));
@@ -1458,10 +1456,6 @@ TEST_CASE("stream_response")
       //consuming the headers, since we don't need those for the test
       static char buf[2048];
       c.receive(asio::buffer(buf, 2048));
-
-      //creating the string to compare against
-      for (unsigned int i = 0; i<250000; i++)
-        key_response += keyword_;
 
       //"hello" is 5 bytes, (5*250000)/16384 = 76.2939
       for (unsigned int i = 0; i<76; i++)
@@ -1885,5 +1879,117 @@ TEST_CASE("catchall")
       app2.handle(req, res);
 
       CHECK(404 == res.code);
+    }
+}
+
+TEST_CASE("blueprint")
+{
+    SimpleApp app;
+    crow::Blueprint bp("bp_prefix", "cstat", "ctemplate");
+    crow::Blueprint bp_not_sub("bp_prefix_second");
+    crow::Blueprint sub_bp("bp2", "csstat", "cstemplate");
+    crow::Blueprint sub_sub_bp("bp3");
+
+    CROW_BP_ROUTE(sub_bp, "/hello")
+    ([]() {
+        return "Hello world!";
+    });
+
+    CROW_BP_ROUTE(bp_not_sub, "/hello")
+    ([]() {
+        return "Hello world!";
+    });
+
+    CROW_BP_ROUTE(sub_sub_bp, "/hi")
+    ([]() {
+        return "Hi world!";
+    });
+
+    CROW_BP_CATCHALL_ROUTE(sub_bp)([](){return response(200, "WRONG!!");});
+
+    app.   register_blueprint(bp);
+    app.   register_blueprint(bp_not_sub);
+    bp.    register_blueprint(sub_bp);
+    sub_bp.register_blueprint(sub_sub_bp);
+
+    app.validate();
+
+    {
+      request req;
+      response res;
+
+      req.url = "/bp_prefix/bp2/hello";
+
+      app.handle(req, res);
+
+      CHECK("Hello world!" == res.body);
+    }
+
+    {
+      request req;
+      response res;
+
+      req.url = "/bp_prefix_second/hello";
+
+      app.handle(req, res);
+
+      CHECK("Hello world!" == res.body);
+    }
+
+    {
+      request req;
+      response res;
+
+      req.url = "/bp_prefix/bp2/bp3/hi";
+
+      app.handle(req, res);
+
+      CHECK("Hi world!" == res.body);
+    }
+
+    {
+      request req;
+      response res;
+
+      req.url = "/bp_prefix/nonexistent";
+
+      app.handle(req, res);
+
+      CHECK(404 == res.code);
+    }
+
+    {
+      request req;
+      response res;
+
+      req.url = "/bp_prefix_second/nonexistent";
+
+      app.handle(req, res);
+
+      CHECK(404 == res.code);
+    }
+
+    {
+      request req;
+      response res;
+
+      req.url = "/bp_prefix/bp2/nonexistent";
+
+      app.handle(req, res);
+
+      CHECK(200 == res.code);
+      CHECK("WRONG!!" == res.body);
+    }
+
+    {
+      request req;
+      response res;
+
+      req.url = "/bp_prefix/bp2/bp3/nonexistent";
+
+      app.handle(req, res);
+
+      CHECK(200 == res.code);
+      CHECK("WRONG!!" == res.body);
     }
 }

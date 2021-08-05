@@ -1,9 +1,9 @@
 site_name: Crow
 
 # Repository
-repo_name: crowcpp/crow
-repo_url: https://github.com/crowcpp/crow
-site_url: https://crowcpp.github.io/crow
+repo_name: CrowCpp/Crow
+repo_url: https://github.com/CrowCpp/Crow
+site_url: https://crowcpp.org
 edit_uri: ""
 
 theme: 
@@ -41,6 +41,7 @@ nav:
             - Middleware: guides/middleware.md
             - SSL: guides/ssl.md
             - Static Files: guides/static.md
+            - Blueprints: guides/blueprints.md
             - Compression: guides/compression.md
             - Websockets: guides/websockets.md
             - Writing Tests: guides/testing.md

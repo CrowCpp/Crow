@@ -25,10 +25,13 @@
 
 #ifdef CROW_MSVC_WORKAROUND
 #define CROW_ROUTE(app, url) app.route_dynamic(url)
+#define CROW_BP_ROUTE(blueprint, url) blueprint.new_rule_dynamic(url)
 #else
 #define CROW_ROUTE(app, url) app.route<crow::black_magic::get_parameter_tag(url)>(url)
+#define CROW_BP_ROUTE(blueprint, url) blueprint.new_rule_tagged<crow::black_magic::get_parameter_tag(url)>(url)
 #endif
 #define CROW_CATCHALL_ROUTE(app) app.catchall_route()
+#define CROW_BP_CATCHALL_ROUTE(blueprint) blueprint.catchall_rule()
 
 namespace crow
 {
@@ -159,9 +162,15 @@ namespace crow
         /// crow::LogLevel::Warning     (2)<br>
         /// crow::LogLevel::Error       (3)<br>
         /// crow::LogLevel::Critical    (4)<br>
-        self_t& loglevel(crow::LogLevel level)
+        self_t& loglevel(LogLevel level)
         {
             crow::logger::setLogLevel(level);
+            return *this;
+        }
+
+        self_t& register_blueprint(Blueprint& blueprint)
+        {
+            router_.register_blueprint(blueprint);
             return *this;
         }
 
@@ -192,7 +201,34 @@ namespace crow
         ///Go through the rules, upgrade them if possible, and add them to the list of rules
         void validate()
         {
-            router_.validate();
+            if (!validated_)
+            {
+
+#ifndef CROW_DISABLE_STATIC_DIR
+                route<crow::black_magic::get_parameter_tag(CROW_STATIC_ENDPOINT)>(CROW_STATIC_ENDPOINT)
+                ([](crow::response& res, std::string file_path_partial)
+                {
+                  res.set_static_file_info(CROW_STATIC_DIRECTORY + file_path_partial);
+                  res.end();
+                });
+
+                for (auto& bp : router_.blueprints())
+                {
+                    if (!bp->static_dir().empty())
+                    {
+                        bp->new_rule_tagged<crow::black_magic::get_parameter_tag(CROW_STATIC_ENDPOINT)>(CROW_STATIC_ENDPOINT)
+                        ([bp](crow::response& res, std::string file_path_partial)
+                        {
+                          res.set_static_file_info(bp->static_dir() + '/' + file_path_partial);
+                          res.end();
+                        });
+                    }
+                }
+#endif
+
+                router_.validate();
+                validated_ = true;
+            }
         }
 
         ///Notify anything using `wait_for_server_start()` to proceed
@@ -206,14 +242,7 @@ namespace crow
         ///Run the server
         void run()
         {
-#ifndef CROW_DISABLE_STATIC_DIR
-            route<crow::black_magic::get_parameter_tag(CROW_STATIC_ENDPOINT)>(CROW_STATIC_ENDPOINT)
-            ([](crow::response& res, std::string file_path_partial)
-            {
-              res.set_static_file_info(CROW_STATIC_DIRECTORY + file_path_partial);
-              res.end();
-            });
-#endif
+
             validate();
 
 #ifdef CROW_ENABLE_SSL
@@ -361,6 +390,7 @@ namespace crow
     private:
         uint16_t port_ = 80;
         uint16_t concurrency_ = 1;
+        bool validated_ = false;
         std::string server_name_ = std::string("Crow/") + VERSION;
         std::string bindaddr_ = "0.0.0.0";
         Router router_;
