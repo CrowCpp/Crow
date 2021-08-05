@@ -8,6 +8,7 @@ var hierarchy =
       [ "crow::TaggedRule< Args >", "classcrow_1_1_tagged_rule.html", null ],
       [ "crow::WebSocketRule", "classcrow_1_1_web_socket_rule.html", null ]
     ] ],
+    [ "crow::Blueprint", "classcrow_1_1_blueprint.html", null ],
     [ "crow::detail::routing_handler_call_helper::call< F, NInt, NUint, NDouble, NString, S1, S2 >", "structcrow_1_1detail_1_1routing__handler__call__helper_1_1call.html", null ],
     [ "crow::detail::routing_handler_call_helper::call< F, NInt, NUint, NDouble, NString, black_magic::S< double, Args1... >, black_magic::S< Args2... > >", "structcrow_1_1detail_1_1routing__handler__call__helper_1_1call_3_01_f_00_01_n_int_00_01_n_uint_0ac50968f63df9484eeaa96bf94c67fc5.html", null ],
     [ "crow::detail::routing_handler_call_helper::call< F, NInt, NUint, NDouble, NString, black_magic::S< int64_t, Args1... >, black_magic::S< Args2... > >", "structcrow_1_1detail_1_1routing__handler__call__helper_1_1call_3_01_f_00_01_n_int_00_01_n_uint_0b63d09427b176e92959de8d063124ae4.html", null ],

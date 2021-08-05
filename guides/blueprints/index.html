@@ -9,14 +9,14 @@
       
       
       
-        <link rel="canonical" href="https://crowcpp.org/guides/multipart/">
+        <link rel="canonical" href="https://crowcpp.org/guides/blueprints/">
       
       <link rel="icon" href="../../assets/favicon.svg">
       <meta name="generator" content="mkdocs-1.2.2, mkdocs-material-7.2.2">
     
     
       
-        <title>Multipart - Crow</title>
+        <title>Blueprints - Crow</title>
       
     
     
@@ -61,6 +61,11 @@
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
       
+        
+        <a href="#define-routes" class="md-skip">
+          Skip to content
+        </a>
+      
     </div>
     <div data-md-component="announce">
       
@@ -86,7 +91,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Multipart
+              Blueprints
             
           </span>
         </div>
@@ -448,19 +453,11 @@
             
   
   
-    
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
-      
-      
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../multipart/" class="md-nav__link">
         Multipart
       </a>
-      
     </li>
   
 
@@ -516,11 +513,82 @@
             
   
   
+    
   
-    <li class="md-nav__item">
-      <a href="../blueprints/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Blueprints
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         Blueprints
       </a>
+      
+        
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#define-routes" class="md-nav__link">
+    Define Routes
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#define-a-prefix" class="md-nav__link">
+    Define a Prefix
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#use-a-custom-static-directory" class="md-nav__link">
+    Use a custom Static directory
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#use-a-custom-templates-directory" class="md-nav__link">
+    Use a custom Templates directory
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#define-a-custom-catchall-route" class="md-nav__link">
+    Define a custom Catchall route
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#register-other-blueprints" class="md-nav__link">
+    Register other Blueprints
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -673,33 +741,112 @@
               </div>
             
             
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#define-routes" class="md-nav__link">
+    Define Routes
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#define-a-prefix" class="md-nav__link">
+    Define a Prefix
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#use-a-custom-static-directory" class="md-nav__link">
+    Use a custom Static directory
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#use-a-custom-templates-directory" class="md-nav__link">
+    Use a custom Templates directory
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#define-a-custom-catchall-route" class="md-nav__link">
+    Define a custom Catchall route
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#register-other-blueprints" class="md-nav__link">
+    Register other Blueprints
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
           
           <div class="md-content" data-md-component="content">
             <article class="md-content__inner md-typeset">
               
                 
                 
-                  <h1>Multipart</h1>
+                  <h1>Blueprints</h1>
                 
-                <p>Multipart is a way of forming HTTP requests or responses to contain multiple distinct parts.<br>
-Such an approach allows a request to contain multiple different pieces of data with potentially conflicting data types in a single response payload.<br>
-It is typically used either in html forms, or when uploading multiple files.<br><br></p>
-<p>The structure of a multipart request is typically consistent of:<br></p>
-<ul>
-<li>A Header: Typically <code>multipart/form-data;boundary=&lt;boundary&gt;</code>, This defines the HTTP message as being multipart, as well as defining the separator used to distinguish the different parts.<br></li>
-<li>1 or more parts:<ul>
-<li><code>--&lt;boundary&gt;</code></li>
-<li>Part header: typically <code>content-disposition: mime/type; name="&lt;fieldname&gt;"</code> (<code>mime/type</code> should be replaced with the actual mime-type), can also contain a <code>filename</code> property (separated from the rest by a <code>;</code> and structured similarly to the <code>name</code> property)</li>
-<li>Value</li>
-</ul>
-</li>
-<li><code>--&lt;boundary&gt;--</code><br><br></li>
-</ul>
-<p>Crow supports multipart requests and responses though <code>crow::multipart::message</code>.<br>
-A message can be created either by defining the headers, boundary, and individual parts and using them to create the message. or simply by reading a <code>crow::request</code>.<br><br></p>
-<p>Once a multipart message has been made, the individual parts can be accessed throught <code>mpmes.parts</code>, <code>parts</code> is an <code>std::vector</code>, so accessing the individual parts should be straightforward.<br>
-In order to access the individual part's name or filename, something like <code class="highlight"><span class="n">mpmes</span><span class="p">.</span><span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">headers</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">params</span><span class="p">[</span><span class="s">&quot;name&quot;</span><span class="p">]</span></code> sould do the trick.<br><br></p>
-<p>For more info on Multipart messages, go <a href="../../reference/namespacecrow_1_1multipart.html">here</a></p>
+                <div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This feature is currently only available on the "master" branch.</p>
+</div>
+<p>Crow supports flask style blueprints.<br>
+A blueprint is a limited app. It cannot handle networking. But it can handle routes.<br>
+Blueprints allow developers to compartmentalize their Crow applications, making them a lot more modular.<br><br></p>
+<p>In order for a blueprint to work, it has to be registered with a Crow app before the app is run. This can be done using <code class="highlight"><span class="n">app</span><span class="p">.</span><span class="n">register_blueprint</span><span class="p">(</span><span class="n">blueprint</span><span class="p">);</span></code>.<br><br></p>
+<p>Blueprints let you do the following:<br><br></p>
+<h3 id="define-routes">Define Routes</h3>
+<p>You can define routes in a blueprint, similarly to how <code class="highlight"><span class="n">CROW_ROUTE</span><span class="p">(</span><span class="n">app</span><span class="p">,</span> <span class="s">&quot;/xyz&quot;</span><span class="p">)</span></code> works, you can use <code class="highlight"><span class="n">CROW_BP_ROUTE</span><span class="p">(</span><span class="n">blueprint</span><span class="p">,</span> <span class="s">&quot;/xyz&quot;</span><span class="p">)</span></code> to define a blueprint route.</p>
+<h3 id="define-a-prefix">Define a Prefix</h3>
+<p>Blueprints can have a prefix assigned to them. This can be done when creating a new blueprint as in <code class="highlight"><span class="n">crow</span><span class="o">::</span><span class="n">blueprint</span> <span class="nf">bp</span><span class="p">(</span><span class="s">&quot;prefix&quot;</span><span class="p">);</span></code>. This prefix will be applied to all routes belonging to the blueprint. truning a route such as <code>/crow/rocks</code> into <code>/prefix/crow/rocks</code>.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Unlike routes, blueprint prefixes should contain no slashes.</p>
+</div>
+<h3 id="use-a-custom-static-directory">Use a custom Static directory</h3>
+<p>Blueprints let you define a custom static directory (relative to your working directory). This can be done by initializing a blueprint as <code class="highlight"><span class="n">crow</span><span class="o">::</span><span class="n">blueprint</span> <span class="nf">bp</span><span class="p">(</span><span class="s">&quot;prefix&quot;</span><span class="p">,</span> <span class="s">&quot;custom_static&quot;</span><span class="p">);</span></code>. This does not have an effect on <code class="highlight"><span class="n">set_static_file_info</span><span class="p">()</span></code>, it's only for when you want direct access to a file.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Currently changing which endpoint the blueprint uses isn't possible, so whatever you've set in <code>CROW_STATIC_ENDPOINT</code> (default is "static") will be used. Making your final route <code>/prefix/static/filename</code>.</p>
+</div>
+<h3 id="use-a-custom-templates-directory">Use a custom Templates directory</h3>
+<p>Similar to static directories, You can set a custom templates directory (relative to your working directory). To do this you initialize the blueprint as <code class="highlight"><span class="n">crow</span><span class="o">::</span><span class="n">blueprint</span> <span class="nf">bp</span><span class="p">(</span><span class="s">&quot;prefix&quot;</span><span class="p">,</span> <span class="s">&quot;custom_static&quot;</span><span class="p">,</span> <span class="s">&quot;custom_templates&quot;</span><span class="p">);</span></code>. Any routes defined for the blueprint will use that directory when calling <code class="highlight"><span class="n">crow</span><span class="o">::</span><span class="n">mustache</span><span class="o">::</span><span class="n">load</span><span class="p">(</span><span class="s">&quot;filename.html&quot;</span><span class="p">)</span></code>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If you want to define a custom templates directory without defining a custom static directory, you can pass the static directory as an empty string. Making your constructor <code class="highlight"><span class="n">crow</span><span class="o">::</span><span class="n">blueprint</span> <span class="nf">bp</span><span class="p">(</span><span class="s">&quot;prefix&quot;</span><span class="p">,</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="s">&quot;custom_templates&quot;</span><span class="p">);</span></code>.</p>
+</div>
+<h3 id="define-a-custom-catchall-route">Define a custom Catchall route</h3>
+<p>You can define a custom catchall route for a blueprint by calling <code class="highlight"><span class="n">CROW_BP_CATCHALL_ROUTE</span><span class="p">(</span><span class="n">blueprint</span><span class="p">)</span></code>. This causes any requests with a URL starting with <code>/prefix</code> and no route found to call the blueprint's catchall route. if no catchall route is defined, Crow will default to either the parent blueprint or the app's catchall route.</p>
+<h3 id="register-other-blueprints">Register other Blueprints</h3>
+<p>Blueprints can also register other blueprints. This is done through <code class="highlight"><span class="n">blueprint</span><span class="p">.</span><span class="n">register_blueprint</span><span class="p">(</span><span class="n">blueprint_2</span><span class="p">);</span></code>. The child blueprint's routes become <code>/prefix/prefix_2/abc/xyz</code>.</p>
                 
               
               
@@ -719,7 +866,7 @@ In order to access the individual part's name or filename, something like <code 
     <nav class="md-footer__inner md-grid" aria-label="Footer">
       
         
-        <a href="../templating/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Templating (Mustache)" rel="prev">
+        <a href="../static/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Static Files" rel="prev">
           <div class="md-footer__button md-icon">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
           </div>
@@ -728,20 +875,20 @@ In order to access the individual part's name or filename, something like <code 
               <span class="md-footer__direction">
                 Previous
               </span>
-              Templating (Mustache)
+              Static Files
             </div>
           </div>
         </a>
       
       
         
-        <a href="../query-string/" class="md-footer__link md-footer__link--next" aria-label="Next: Query Strings" rel="next">
+        <a href="../compression/" class="md-footer__link md-footer__link--next" aria-label="Next: Compression" rel="next">
           <div class="md-footer__title">
             <div class="md-ellipsis">
               <span class="md-footer__direction">
                 Next
               </span>
-              Query Strings
+              Compression
             </div>
           </div>
           <div class="md-footer__button md-icon">

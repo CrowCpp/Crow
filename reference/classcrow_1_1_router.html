@@ -121,9 +121,18 @@ template&lt;uint64_t N&gt; </td></tr>
 <tr class="memitem:ad757b52858f405c09e7757e1e1b1acb6"><td class="memItemLeft" align="right" valign="top"><a id="ad757b52858f405c09e7757e1e1b1acb6"></a>
 <a class="el" href="classcrow_1_1_catchall_rule.html">CatchallRule</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>catchall_rule</b> ()</td></tr>
 <tr class="separator:ad757b52858f405c09e7757e1e1b1acb6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a67549da074b6c19280db15a25747417d"><td class="memItemLeft" align="right" valign="top"><a id="a67549da074b6c19280db15a25747417d"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>internal_add_rule_object</b> (const std::string &amp;rule, <a class="el" href="classcrow_1_1_base_rule.html">BaseRule</a> *ruleObject)</td></tr>
-<tr class="separator:a67549da074b6c19280db15a25747417d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a20f16874473f813c92ee8b9df771a437"><td class="memItemLeft" align="right" valign="top"><a id="a20f16874473f813c92ee8b9df771a437"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>internal_add_rule_object</b> (const std::string &amp;rule, <a class="el" href="classcrow_1_1_base_rule.html">BaseRule</a> *ruleObject, const uint16_t &amp;BP_index, std::vector&lt; <a class="el" href="classcrow_1_1_blueprint.html">Blueprint</a> * &gt; &amp;blueprints)</td></tr>
+<tr class="separator:a20f16874473f813c92ee8b9df771a437"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a303e99f0109524b148d8d0a032367e8e"><td class="memItemLeft" align="right" valign="top"><a id="a303e99f0109524b148d8d0a032367e8e"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>register_blueprint</b> (<a class="el" href="classcrow_1_1_blueprint.html">Blueprint</a> &amp;blueprint)</td></tr>
+<tr class="separator:a303e99f0109524b148d8d0a032367e8e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6438f06d942775e79cc4c12cb954b658"><td class="memItemLeft" align="right" valign="top"><a id="a6438f06d942775e79cc4c12cb954b658"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>get_recursive_child_methods</b> (<a class="el" href="classcrow_1_1_blueprint.html">Blueprint</a> *blueprint, std::vector&lt; HTTPMethod &gt; &amp;methods)</td></tr>
+<tr class="separator:a6438f06d942775e79cc4c12cb954b658"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5047652f0713d9853ef81b670c8c0012"><td class="memItemLeft" align="right" valign="top"><a id="a5047652f0713d9853ef81b670c8c0012"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>validate_bp</b> (std::vector&lt; <a class="el" href="classcrow_1_1_blueprint.html">Blueprint</a> * &gt; blueprints)</td></tr>
+<tr class="separator:a5047652f0713d9853ef81b670c8c0012"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7916aa9620d6c6af2389af0d877ea9d9"><td class="memItemLeft" align="right" valign="top"><a id="a7916aa9620d6c6af2389af0d877ea9d9"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>validate</b> ()</td></tr>
 <tr class="separator:a7916aa9620d6c6af2389af0d877ea9d9"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -131,12 +140,18 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>validate</b> ()</td><
 template&lt;typename Adaptor &gt; </td></tr>
 <tr class="memitem:a2b37f05675d075c3de79f6a4de42320d"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><b>handle_upgrade</b> (const <a class="el" href="structcrow_1_1request.html">request</a> &amp;req, <a class="el" href="structcrow_1_1response.html">response</a> &amp;res, Adaptor &amp;&amp;adaptor)</td></tr>
 <tr class="separator:a2b37f05675d075c3de79f6a4de42320d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4d65ef343dc5bfbc6c80cb0987a19151"><td class="memItemLeft" align="right" valign="top"><a id="a4d65ef343dc5bfbc6c80cb0987a19151"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>get_found_bp</b> (std::vector&lt; uint16_t &gt; &amp;bp_i, std::vector&lt; <a class="el" href="classcrow_1_1_blueprint.html">Blueprint</a> * &gt; &amp;blueprints, std::vector&lt; <a class="el" href="classcrow_1_1_blueprint.html">Blueprint</a> * &gt; &amp;found_bps, uint16_t index=0)</td></tr>
+<tr class="separator:a4d65ef343dc5bfbc6c80cb0987a19151"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6b7a5a19c6aa65f229eecaf47bda4dde"><td class="memItemLeft" align="right" valign="top"><a id="a6b7a5a19c6aa65f229eecaf47bda4dde"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>handle</b> (const <a class="el" href="structcrow_1_1request.html">request</a> &amp;req, <a class="el" href="structcrow_1_1response.html">response</a> &amp;res)</td></tr>
 <tr class="separator:a6b7a5a19c6aa65f229eecaf47bda4dde"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a61157adad80f901413a4023d8fb0fd9d"><td class="memItemLeft" align="right" valign="top"><a id="a61157adad80f901413a4023d8fb0fd9d"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>debug_print</b> ()</td></tr>
 <tr class="separator:a61157adad80f901413a4023d8fb0fd9d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afe22b2cfd1ada8c06d9e181d155cda61"><td class="memItemLeft" align="right" valign="top"><a id="afe22b2cfd1ada8c06d9e181d155cda61"></a>
+std::vector&lt; <a class="el" href="classcrow_1_1_blueprint.html">Blueprint</a> * &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>blueprints</b> ()</td></tr>
+<tr class="separator:afe22b2cfd1ada8c06d9e181d155cda61"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Handles matching requests to existing rules and upgrade requests. </p>

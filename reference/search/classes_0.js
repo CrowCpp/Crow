@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['action_201',['Action',['../structcrow_1_1mustache_1_1_action.html',1,'crow::mustache']]],
-  ['arguments_202',['arguments',['../structcrow_1_1black__magic_1_1arguments.html',1,'crow::black_magic']]],
-  ['arguments_3c_200_20_3e_203',['arguments&lt; 0 &gt;',['../structcrow_1_1black__magic_1_1arguments_3_010_01_4.html',1,'crow::black_magic']]]
+  ['action_202',['Action',['../structcrow_1_1mustache_1_1_action.html',1,'crow::mustache']]],
+  ['arguments_203',['arguments',['../structcrow_1_1black__magic_1_1arguments.html',1,'crow::black_magic']]],
+  ['arguments_3c_200_20_3e_204',['arguments&lt; 0 &gt;',['../structcrow_1_1black__magic_1_1arguments_3_010_01_4.html',1,'crow::black_magic']]]
 ];

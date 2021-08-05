@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['self_5ft_406',['self_t',['../classcrow_1_1_crow.html#a5b0a203a6f9070ea8010227dcdbcec60',1,'crow::Crow']]],
-  ['server_5ft_407',['server_t',['../classcrow_1_1_crow.html#a5df810d2619e31c2f024cc4e45898997',1,'crow::Crow']]]
+  ['self_5ft_408',['self_t',['../classcrow_1_1_crow.html#a5b0a203a6f9070ea8010227dcdbcec60',1,'crow::Crow']]],
+  ['server_5ft_409',['server_t',['../classcrow_1_1_crow.html#a5df810d2619e31c2f024cc4e45898997',1,'crow::Crow']]]
 ];

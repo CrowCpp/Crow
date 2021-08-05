@@ -129,12 +129,12 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>debug_print</b> ()</t
 <tr class="memitem:a77dcd4729633ce992fc210eeb327dfb5"><td class="memItemLeft" align="right" valign="top"><a id="a77dcd4729633ce992fc210eeb327dfb5"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>validate</b> ()</td></tr>
 <tr class="separator:a77dcd4729633ce992fc210eeb327dfb5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a82edfa525aa7aa6a2aee0aceb9b65606"><td class="memItemLeft" align="right" valign="top"><a id="a82edfa525aa7aa6a2aee0aceb9b65606"></a>
-std::pair&lt; unsigned, <a class="el" href="structcrow_1_1routing__params.html">routing_params</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>find</b> (const std::string &amp;req_url, const <a class="el" href="structcrow_1_1_trie_1_1_node.html">Node</a> *node=nullptr, unsigned pos=0, <a class="el" href="structcrow_1_1routing__params.html">routing_params</a> *params=nullptr) const</td></tr>
-<tr class="separator:a82edfa525aa7aa6a2aee0aceb9b65606"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2b69bfd87fe489c5169385ca48707971"><td class="memItemLeft" align="right" valign="top"><a id="a2b69bfd87fe489c5169385ca48707971"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>add</b> (const std::string &amp;url, unsigned rule_index)</td></tr>
-<tr class="separator:a2b69bfd87fe489c5169385ca48707971"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5abc884875975bed2134e25ce1820280"><td class="memItemLeft" align="right" valign="top"><a id="a5abc884875975bed2134e25ce1820280"></a>
+std::tuple&lt; uint16_t, std::vector&lt; uint16_t &gt;, <a class="el" href="structcrow_1_1routing__params.html">routing_params</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>find</b> (const std::string &amp;req_url, const <a class="el" href="structcrow_1_1_trie_1_1_node.html">Node</a> *node=nullptr, unsigned pos=0, <a class="el" href="structcrow_1_1routing__params.html">routing_params</a> *params=nullptr, std::vector&lt; uint16_t &gt; *blueprints=nullptr) const</td></tr>
+<tr class="separator:a5abc884875975bed2134e25ce1820280"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3a71f4488027eace41a219f79d862620"><td class="memItemLeft" align="right" valign="top"><a id="a3a71f4488027eace41a219f79d862620"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>add</b> (const std::string &amp;url, uint16_t rule_index, unsigned bp_prefix_length=0, uint16_t blueprint_index=INVALID_BP_ID)</td></tr>
+<tr class="separator:a3a71f4488027eace41a219f79d862620"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a52993a04988b6adcbae88d8582ca3ed4"><td class="memItemLeft" align="right" valign="top"><a id="a52993a04988b6adcbae88d8582ca3ed4"></a>
 size_t&#160;</td><td class="memItemRight" valign="bottom"><b>get_size</b> ()</td></tr>
 <tr class="separator:a52993a04988b6adcbae88d8582ca3ed4"><td class="memSeparator" colspan="2">&#160;</td></tr>
