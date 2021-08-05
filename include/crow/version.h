@@ -3,8 +3,8 @@
 namespace crow {
 
 #ifdef CROW_MAIN
-  constexpr char VERSION[] = "master";
+  char VERSION[] = "master";
 #else
-  extern constexpr char VERSION[];
+  extern char VERSION[];
 #endif
 }
