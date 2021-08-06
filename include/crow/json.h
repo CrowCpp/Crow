@@ -1224,6 +1224,15 @@ namespace crow
         class wvalue : public returnable
         {
             friend class crow::mustache::template_t;
+
+        public:
+            using object_type =
+#ifdef CROW_JSON_USE_MAP
+            std::map<std::string, wvalue>;
+#else
+            std::unordered_map<std::string, wvalue>;
+#endif
+
         public:
             type t() const { return t_; }
         private:
@@ -1245,6 +1254,12 @@ namespace crow
         public:
 
             wvalue() : returnable("application/json") {}
+
+            wvalue(std::initializer_list<std::pair<std::string const, wvalue>> initializer_list) : returnable("application/json"), t_(type::Object), o(new object_type(initializer_list)) {}
+
+            wvalue(object_type const& value) : returnable("application/json"), t_(type::Object), o(new object_type(value)) {}
+
+            wvalue(object_type&& value) : returnable("application/json"), t_(type::Object), o(new object_type(std::move(value))) {}
 
             wvalue(std::vector<wvalue>& r) : returnable("application/json")
             {
@@ -1505,6 +1520,39 @@ namespace crow
                 {
                     (*l)[idx++] = x;
                 }
+                return *this;
+            }
+
+            wvalue& operator=(std::initializer_list<std::pair<std::string const, wvalue>> initializer_list)
+            {
+                if (t_ != type::Object) {
+                    reset();
+                    t_ = type::Object;
+                    o = std::unique_ptr<object_type>(new object_type(initializer_list));
+                } else
+                    (*o) = initializer_list;
+                return *this;
+            }
+
+            wvalue& operator=(object_type const& value)
+            {
+                if (t_ != type::Object) {
+                    reset();
+                    t_ = type::Object;
+                    o = std::unique_ptr<object_type>(new object_type(value));
+                } else
+                    (*o) = value;
+                return *this;
+            }
+
+            wvalue& operator=(object_type&& value)
+            {
+                if (t_ != type::Object) {
+                    reset();
+                    t_ = type::Object;
+                    o = std::unique_ptr<object_type>(new object_type(std::move(value)));
+                  } else
+                    (*o) = value;
                 return *this;
             }
 
