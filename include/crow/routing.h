@@ -1332,7 +1332,7 @@ namespace crow
                 }
             }
             else if (!blueprint->static_dir_.empty())
-                methods.emplace_back(HTTPMethod::GET);
+                methods.emplace_back(HTTPMethod::Get);
             for (auto& rule: blueprint->all_rules_)
             {
                 rule->foreach_method([&methods](unsigned method){
