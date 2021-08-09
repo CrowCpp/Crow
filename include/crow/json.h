@@ -1238,10 +1238,26 @@ namespace crow
         private:
             type t_{type::Null}; ///< The type of the value.
             num_type nt{num_type::Null}; ///< The specific type of the number if \ref t_ is a number.
-            union {
+            union number {
               double d;
               int64_t si;
-              uint64_t ui {};
+              uint64_t ui;
+
+            public:
+              constexpr number() noexcept : ui() {} /* default constructor initializes unsigned integer. */
+
+              constexpr number(std::uint8_t value) noexcept : ui(static_cast<std::uint64_t>(value)) {}
+              constexpr number(std::uint16_t value) noexcept : ui(static_cast<std::uint64_t>(value)) {}
+              constexpr number(std::uint32_t value) noexcept : ui(static_cast<std::uint64_t>(value)) {}
+              constexpr number(std::uint64_t value) noexcept : ui(value) {}
+
+              constexpr number(std::int8_t value) noexcept : si(static_cast<std::int64_t>(value)) {}
+              constexpr number(std::int16_t value) noexcept : si(static_cast<std::int64_t>(value)) {}
+              constexpr number(std::int32_t value) noexcept : si(static_cast<std::int64_t>(value)) {}
+              constexpr number(std::int64_t value) noexcept : si(value) {}
+
+              constexpr number(float value) noexcept : d(static_cast<double>(value)) {}
+              constexpr number(double value) noexcept : d(value) {}
             } num; ///< Value if type is a number.
             std::string s; ///< Value if type is a string.
             std::unique_ptr<std::vector<wvalue>> l; ///< Value if type is a list.
@@ -1252,13 +1268,33 @@ namespace crow
 #endif
 
         public:
-
             wvalue() : returnable("application/json") {}
+
+            wvalue(std::nullptr_t) : returnable("application/json"), t_(type::Null) {}
+
+            wvalue(bool value) : returnable("application/json"), t_(value ? type::True : type::False) {}
+
+            wvalue(std::uint8_t value) : returnable("application/json"), t_(type::Number), nt(num_type::Unsigned_integer), num(value) {}
+            wvalue(std::uint16_t value) : returnable("application/json"), t_(type::Number), nt(num_type::Unsigned_integer), num(value) {}
+            wvalue(std::uint32_t value) : returnable("application/json"), t_(type::Number), nt(num_type::Unsigned_integer), num(value) {}
+            wvalue(std::uint64_t value) : returnable("application/json"), t_(type::Number), nt(num_type::Unsigned_integer), num(value) {}
+
+            wvalue(std::int8_t value) : returnable("application/json"), t_(type::Number), nt(num_type::Signed_integer), num(value) {}
+            wvalue(std::int16_t value) : returnable("application/json"), t_(type::Number), nt(num_type::Signed_integer), num(value) {}
+            wvalue(std::int32_t value) : returnable("application/json"), t_(type::Number), nt(num_type::Signed_integer), num(value) {}
+            wvalue(std::int64_t value) : returnable("application/json"), t_(type::Number), nt(num_type::Signed_integer), num(value) {}
+
+            wvalue(float value) : returnable("application/json"), t_(type::Number), nt(num_type::Floating_point), num(value) {}
+            wvalue(double value) : returnable("application/json"), t_(type::Number), nt(num_type::Floating_point), num(value) {}
+
+            wvalue(char const* value) : returnable("application/json"), t_(type::String), s(value) {}
+
+            wvalue(std::string const& value) : returnable("application/json"), t_(type::String), s(value) {}
+            wvalue(std::string&& value) : returnable("application/json"), t_(type::String), s(std::move(value)) {}
 
             wvalue(std::initializer_list<std::pair<std::string const, wvalue>> initializer_list) : returnable("application/json"), t_(type::Object), o(new object_type(initializer_list)) {}
 
             wvalue(object_type const& value) : returnable("application/json"), t_(type::Object), o(new object_type(value)) {}
-
             wvalue(object_type&& value) : returnable("application/json"), t_(type::Object), o(new object_type(std::move(value))) {}
 
             wvalue(std::vector<wvalue>& r) : returnable("application/json")
