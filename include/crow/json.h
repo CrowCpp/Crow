@@ -41,7 +41,7 @@ namespace crow
         inline void escape(const std::string& str, std::string& ret)
         {
             ret.reserve(ret.size() + str.size()+str.size()/4);
-            for(unsigned char c:str)
+            for(auto c:str)
             {
                 switch(c)
                 {
