@@ -1245,18 +1245,8 @@ namespace crow
 
             public:
               constexpr number() noexcept : ui() {} /* default constructor initializes unsigned integer. */
-
-              constexpr number(std::uint8_t value) noexcept : ui(static_cast<std::uint64_t>(value)) {}
-              constexpr number(std::uint16_t value) noexcept : ui(static_cast<std::uint64_t>(value)) {}
-              constexpr number(std::uint32_t value) noexcept : ui(static_cast<std::uint64_t>(value)) {}
               constexpr number(std::uint64_t value) noexcept : ui(value) {}
-
-              constexpr number(std::int8_t value) noexcept : si(static_cast<std::int64_t>(value)) {}
-              constexpr number(std::int16_t value) noexcept : si(static_cast<std::int64_t>(value)) {}
-              constexpr number(std::int32_t value) noexcept : si(static_cast<std::int64_t>(value)) {}
               constexpr number(std::int64_t value) noexcept : si(value) {}
-
-              constexpr number(float value) noexcept : d(static_cast<double>(value)) {}
               constexpr number(double value) noexcept : d(value) {}
             } num; ///< Value if type is a number.
             std::string s; ///< Value if type is a string.
@@ -1274,18 +1264,18 @@ namespace crow
 
             wvalue(bool value) : returnable("application/json"), t_(value ? type::True : type::False) {}
 
-            wvalue(std::uint8_t value) : returnable("application/json"), t_(type::Number), nt(num_type::Unsigned_integer), num(value) {}
-            wvalue(std::uint16_t value) : returnable("application/json"), t_(type::Number), nt(num_type::Unsigned_integer), num(value) {}
-            wvalue(std::uint32_t value) : returnable("application/json"), t_(type::Number), nt(num_type::Unsigned_integer), num(value) {}
-            wvalue(std::uint64_t value) : returnable("application/json"), t_(type::Number), nt(num_type::Unsigned_integer), num(value) {}
+            wvalue(std::uint8_t value) : returnable("application/json"), t_(type::Number), nt(num_type::Unsigned_integer), num(static_cast<std::uint64_t>(value)) {}
+            wvalue(std::uint16_t value) : returnable("application/json"), t_(type::Number), nt(num_type::Unsigned_integer), num(static_cast<std::uint64_t>(value)) {}
+            wvalue(std::uint32_t value) : returnable("application/json"), t_(type::Number), nt(num_type::Unsigned_integer), num(static_cast<std::uint64_t>(value)) {}
+            wvalue(std::uint64_t value) : returnable("application/json"), t_(type::Number), nt(num_type::Unsigned_integer), num(static_cast<std::uint64_t>(value)) {}
 
-            wvalue(std::int8_t value) : returnable("application/json"), t_(type::Number), nt(num_type::Signed_integer), num(value) {}
-            wvalue(std::int16_t value) : returnable("application/json"), t_(type::Number), nt(num_type::Signed_integer), num(value) {}
-            wvalue(std::int32_t value) : returnable("application/json"), t_(type::Number), nt(num_type::Signed_integer), num(value) {}
-            wvalue(std::int64_t value) : returnable("application/json"), t_(type::Number), nt(num_type::Signed_integer), num(value) {}
+            wvalue(std::int8_t value) : returnable("application/json"), t_(type::Number), nt(num_type::Signed_integer), num(static_cast<std::int64_t>(value)) {}
+            wvalue(std::int16_t value) : returnable("application/json"), t_(type::Number), nt(num_type::Signed_integer), num(static_cast<std::int64_t>(value)) {}
+            wvalue(std::int32_t value) : returnable("application/json"), t_(type::Number), nt(num_type::Signed_integer), num(static_cast<std::int64_t>(value)) {}
+            wvalue(std::int64_t value) : returnable("application/json"), t_(type::Number), nt(num_type::Signed_integer), num(static_cast<std::int64_t>(value)) {}
 
-            wvalue(float value) : returnable("application/json"), t_(type::Number), nt(num_type::Floating_point), num(value) {}
-            wvalue(double value) : returnable("application/json"), t_(type::Number), nt(num_type::Floating_point), num(value) {}
+            wvalue(float value) : returnable("application/json"), t_(type::Number), nt(num_type::Floating_point), num(static_cast<double>(value)) {}
+            wvalue(double value) : returnable("application/json"), t_(type::Number), nt(num_type::Floating_point), num(static_cast<double>(value)) {}
 
             wvalue(char const* value) : returnable("application/json"), t_(type::String), s(value) {}
 
@@ -1565,8 +1555,9 @@ namespace crow
                     reset();
                     t_ = type::Object;
                     o = std::unique_ptr<object_type>(new object_type(initializer_list));
-                } else
+                } else {
                     (*o) = initializer_list;
+                }
                 return *this;
             }
 
@@ -1576,8 +1567,9 @@ namespace crow
                     reset();
                     t_ = type::Object;
                     o = std::unique_ptr<object_type>(new object_type(value));
-                } else
+                } else {
                     (*o) = value;
+                }
                 return *this;
             }
 
@@ -1587,8 +1579,9 @@ namespace crow
                     reset();
                     t_ = type::Object;
                     o = std::unique_ptr<object_type>(new object_type(std::move(value)));
-                  } else
-                    (*o) = value;
+                } else {
+                    (*o) = std::move(value);
+                }
                 return *this;
             }
 
