@@ -870,14 +870,6 @@ TEST_CASE("json::wvalue::wvalue(std::initializer_list<std::pair<std::string cons
     {"lie", lie},
     {"null", null}
   });
-  /* initializer-list constructor. *//*
-  json::wvalue value = {{
-    {"integer", integer},
-    {"number", number},
-    {"truth", truth},
-    {"lie", lie},
-    {"null", null}
-  }}; */
 
   CHECK(value["integer"].dump() == integer.dump());
   CHECK(value["number"].dump() == number.dump());
@@ -902,7 +894,6 @@ TEST_CASE("json::wvalue::wvalue(std::[unordered_]map<std::string, json::wvalue> 
   });
 
   json::wvalue value(map); /* copy-constructor. */
-  //json::wvalue value = map; /* copy-constructor. */
 
   CHECK(value["integer"].dump() == integer.dump());
   CHECK(value["number"].dump() == number.dump());
