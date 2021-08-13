@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="130mm"
+   height="130mm"
+   viewBox="0 0 130 130"
+   version="1.1"
+   id="svg5"
+   inkscape:version="1.1 (c4e8f9ed74, 2021-05-24)"
+   sodipodi:docname="header_icon.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview7"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:document-units="mm"
+     showgrid="false"
+     inkscape:zoom="0.73673541"
+     inkscape:cx="-10.180046"
+     inkscape:cy="249.75045"
+     inkscape:window-width="1920"
+     inkscape:window-height="1007"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1"
+     height="130mm" />
+  <defs
+     id="defs2">
+    <rect
+       x="286.39862"
+       y="431.63394"
+       width="213.10229"
+       height="276.89725"
+       id="rect12469" />
+    <rect
+       x="308.11603"
+       y="465.56741"
+       width="176.45412"
+       height="267.39587"
+       id="rect3773" />
+  </defs>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-55.42222,-82.637121)">
+    <path
+       style="fill:#122027;stroke-width:2.24211;fill-opacity:1"
+       d="M 71.826397,147.44239 V 82.637121 H 106.193 140.55963 l 15.1244,15.140066 15.1244,15.140063 v 49.66521 49.6652 H 121.31746 71.826397 Z"
+       id="path1009" />
+    <text
+       xml:space="preserve"
+       transform="scale(0.26458333)"
+       id="text3771"
+       style="font-style:normal;font-weight:normal;font-size:200px;line-height:1.25;font-family:sans-serif;white-space:pre;shape-inside:url(#rect3773);fill:#ffffff;fill-opacity:1;stroke:none" />
+    <text
+       xml:space="preserve"
+       transform="matrix(0.26458333,0,0,0.26458333,18.558949,21.906892)"
+       id="text12467"
+       style="font-style:normal;font-weight:normal;font-size:200px;line-height:1.25;font-family:sans-serif;white-space:pre;shape-inside:url(#rect12469);fill:#ffffff;fill-opacity:1;stroke:none"><tspan
+         x="286.39844"
+         y="608.58789"
+         id="tspan1098">.h</tspan></text>
+  </g>
+</svg>

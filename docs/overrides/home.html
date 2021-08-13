@@ -1,0 +1,300 @@
+{% extends "main.html" %}
+
+<!-- Render hero under tabs -->
+
+<!-- Content -->
+{% block content %}
+<style>
+.clogo{
+    margin-left: 15rem;
+    margin-right: 15rem;
+    width: 30rem;
+}
+
+.ccard{
+    outline-style: solid;
+    outline-width: .1rem;
+    outline-color: #00000080;
+    border-radius: 0.5rem;
+    width: 10rem;
+    height: 12rem;
+    box-shadow: 2px 5px 5px #00000040;
+    margin-inline: 2rem;
+    transition: transform 0.3s;
+}
+
+.ccard:hover{
+    transform: scale(1.1);
+}
+
+.ccard__image{
+    max-width: 7.5rem;
+    max-height: 7.5rem;
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+    margin-top: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: solid;    
+    border-width: 0.1rem;
+    border-image-slice: 1;
+    border-image-source: linear-gradient(90deg, rgba(0,0,0,0) 0%, rgb(0, 0, 0) 50%, rgba(0,0,0,0) 100%);
+}
+
+.ccard__text{
+    text-align: center;
+}
+
+.csection{
+    display: flex;
+    justify-content: center;
+}
+
+.ssection{
+    display:flex;
+    justify-content: center;
+}
+
+.sdescription{
+    display:flex;
+    align-items: center;
+    justify-content: center;
+    width: 50%;
+    height: 14rem;
+}
+
+.scontent{
+    display:flex;
+    align-items: center;
+    justify-content: center;
+    width: 50%;
+    height: 14rem;
+}
+.highlight{
+    width: 100%
+}
+
+.sbuttons{
+    display: flex;
+    justify-content: center;
+}
+
+.crow-button{
+    margin: 0rem 1rem;
+}
+
+code{
+    border-radius: 0.3rem !important;
+}
+
+.dcard{
+    width: 10rem;
+    height: 15rem;
+    margin-inline: 2rem;
+    transition: transform 0.3s;
+}
+
+.dcard:hover{
+    transform: scale(1.1);
+}
+
+.dcard__image{
+    max-width: 7.5rem;
+    max-height: 7.5rem;
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+    margin-top: 1rem;
+}
+
+.dcard__title{
+    font-size: 1.25rem;
+    margin: 0px 0px;
+    text-align: center;
+}
+
+.dcard__description{
+    font-size: 0.75rem;
+    margin: 0.1rem 0px;
+    text-align: center;
+}
+
+</style>
+<img class="clogo" style="width:30rem" alt="logo" src="/assets/crowlogo_main_color.svg">
+
+<h1 style="text-align:center;">A Fast and Easy to use microframework for the web.</h1>
+
+<hr>
+
+<section class="csection">
+<div class="ccard">
+    <img class="ccard__image" src= /assets/fast_icon.svg>
+    <p class="ccard__text">Blazingly Fast</p>
+</div>
+<div class="ccard">
+    <img class="ccard__image" src= /assets/header_icon.svg>
+    <p class="ccard__text">Header Only</p>
+</div>
+<div class="ccard">
+    <img class="ccard__image" src= /assets/typesafe_icon.svg>
+    <p class="ccard__text">Typesafe handlers</p>
+</div>
+<div class="ccard">
+    <img class="ccard__image" src= /assets/websocket_icon.svg>
+    <p class="ccard__text">Websocket Support</p>
+</div>
+</section>
+
+
+<hr>
+
+<section class="ssection">
+    <div class="sdescription">
+        <h2 style="text-align: center;">Easy to get started</h3>
+    </div>
+    <div class="scontent">
+        <div class="highlight"><pre id="__code_0"><span></span><button class="md-clipboard md-icon" title="Copy to clipboard" data-clipboard-target="#__code_0 > code"></button><code><span class="cp">#define CROW_MAIN</span>
+<span class="cp">#include</span> <span class="cpf">"crow.h"</span><span class="cp"></span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">crow</span><span class="o">::</span><span class="n">SimpleApp</span> <span class="n">app</span><span class="p">;</span>
+
+    <span class="cp">CROW_ROUTE</span><span class="p">(</span><span class="n">app</span><span class="p">,</span> <span class="s">"/"</span><span class="p">)([](){</span>
+        <span class="k">return</span> <span class="s">"Hello world"</span><span class="p">;</span>
+    <span class="p">});</span>
+
+    <span class="n">app</span><span class="p">.</span><span class="n">port</span><span class="p">(</span><span class="mi">18080</span><span class="p">).</span><span class="n">run</span><span class="p">();</span>
+<span class="p">}</span>
+</code></pre></div>
+    </div>
+</section>
+
+<section class="ssection">    
+    <div class="scontent">
+       <div class="highlight"><pre id="__code_1"><span></span><button class="md-clipboard md-icon" title="Copy to clipboard" data-clipboard-target="#__code_1 > code"></button><code><span class="cp">CROW_ROUTE</span><span class="p">(</span><span class="n">app</span><span class="p">,</span> <span class="s">"/json"</span><span class="p">)</span>
+<span class="p">([]{</span>
+    <span class="n">crow</span><span class="o">::</span><span class="n">json</span><span class="o">::</span><span class="n">wvalue</span> <span class="n">x</span><span class="p">;</span>
+    <span class="n">x</span><span class="p">[</span><span class="s">"message"</span><span class="p">]</span> <span class="o">=</span> <span class="s">"Hello, World!"</span><span class="p">;</span>
+    <span class="k">return</span> <span class="n">x</span><span class="p">;</span>
+<span class="p">});</span>
+</code></pre></div>
+    </div>
+    <div class="sdescription">
+        <h2 style="text-align: center;">JSON Support Built-in</h3>
+    </div>
+
+</section>
+
+<section class="ssection">
+    <div class="sdescription">
+        <h2 style="text-align: center;">URL parameter support as well!</h3>
+    </div>
+    <div class="scontent">
+        <div class="highlight"><pre id="__code_2"><span></span><button class="md-clipboard md-icon" title="Copy to clipboard" data-clipboard-target="#__code_2 > code"></button><code><span class="cp">CROW_ROUTE</span><span class="p">(</span><span class="n">app</span><span class="p">,</span><span class="s">"/hello/&lt;int&gt;"</span><span class="p">)</span>
+<span class="p">([](</span><span class="kt">int</span> <span class="n">count</span><span class="p">){</span>
+    <span class="k">return</span> <span class="n">crow</span><span class="o">::</span><span class="n">response</span><span class="p">(std::to_string(count));</span></span>
+<span class="p">});</span>
+</code></pre></div>
+    </div>
+</section>
+
+<hr>
+
+<h1 style="text-align:center;">Support Crow</h1>
+<h3 style="text-align:center;">Crow is provided free of charge courtesy of everyone who is donating their money, time, and expertise to keep it going.<h3>
+<h3 style="text-align:center;">Help us make something great!<h3>
+
+<dev class="sbuttons">
+    <a href="https://opencollective.com/crow" title="Crow - OpenCollective" class="md-button crow-button">Fund Crow</a>
+    <a href="https://github.com/CrowCpp/Crow" title="Crow - OpenCollective" class="md-button crow-button">Develop Crow</a>
+    <a href="https://gitter.im/crowfork/community" title="Crow - OpenCollective" class="md-button crow-button">Chat with us</a>
+</dev>
+
+<hr>
+<h1 style="text-align:center;">Get Crow</h1>
+<h3 style="text-align:center;">Crow is everywhere, you just need to grab it!<h3>
+
+<section class="csection">
+
+<div class="dcard">
+<a href="https://github.com/CrowCpp/Crow/releases/latest">
+    <img class="dcard__image" src="/assets/pkg_logos/ubuntu.png">
+    <p class="dcard__title">.deb file</p>
+    <p class="dcard__description">for Ubuntu/Debian based systems</p>
+</a>
+</div>
+
+<div class="dcard">
+<a href="https://aur.archlinux.org/packages/crow">
+    <img class="dcard__image" src="/assets/pkg_logos/arch.png">
+    <p class="dcard__title">AUR</p>
+    <p class="dcard__description">for Arch based systems</p>
+</a>
+</div>
+
+<div class="dcard">
+<a href="https://vcpkg.io">
+    <img class="dcard__image" src="/assets/pkg_logos/vcpkg.png">
+    <p class="dcard__title">VCPKG</p>
+    <p class="dcard__description">for Windows systems</p>
+</a>
+</div>
+
+<div class="dcard">
+<a href="https://conan.io/center/crowcpp-crow">
+    <img class="dcard__image" src="/assets/pkg_logos/conan.png">
+    <p class="dcard__title">Conan Center</p>
+    <p class="dcard__description">for developers using the conan package manager</p>
+</a>
+</div>
+
+<div class="dcard">
+<a href="https://github.com/CrowCpp/Crow/releases/latest">
+    <img class="dcard__image" src="/assets/pkg_logos/github.png">
+    <p class="dcard__title">Header File</p>
+    <p class="dcard__description">Download Crow directly from github</p>
+</a>
+</div>
+
+</section>
+
+<hr>
+<h1 style="text-align:center;">Learn Crow</h1>
+<h3 style="text-align:center;">The 1000 mile journey begins with a single step. Get started by installing Crow and building you first application. Or go through the guides if you're stuck somewhere.<h3>
+
+<dev class="sbuttons">
+    <a href="/getting_started/setup/" title="Get Started" class="md-button crow-button">Get Started</a>
+    <a href="/guides/app/" title="Guides" class="md-button crow-button">Guides</a>
+    <a href="/reference/index.html" title="API Reference" class="md-button crow-button">API Reference</a>
+</dev>
+
+
+
+
+{% endblock %}
+
+{% block site_nav %}{% endblock %}
+{% block footer %}
+
+<footer class="md-footer">
+  <!-- Further information -->
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+
+      <!-- Copyright and theme information -->
+      <div class="md-footer-copyright">
+        {% if config.copyright %}
+          <div class="md-footer-copyright__highlight">
+            {{ config.copyright }}
+          </div>
+        {% endif %}
+        {{ extracopyright }}
+      </div>
+
+      <!-- Social links -->
+      {% include "partials/social.html" %}
+    </div>
+  </div>
+</footer>
+{% endblock %}
