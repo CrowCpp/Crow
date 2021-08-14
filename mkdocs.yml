@@ -16,6 +16,7 @@ theme:
     logo: 'assets/favicon.svg'
     icon:
         repo: fontawesome/brands/github-square
+    custom_dir: docs/overrides
 
 markdown_extensions:
     - admonition
@@ -61,5 +62,6 @@ extra:
 extra_css:
     - 'stylesheets/colors.css'
     - 'stylesheets/latofonts.css'
+    - 'stylesheets/extra.css'
 
-copyright: 'Copyright &copy; 2021 CrowCpp'
+copyright: 'Copyright &copy; 2020-2021 CrowCpp'
