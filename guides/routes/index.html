@@ -37,12 +37,20 @@
     
       <link rel="stylesheet" href="../../stylesheets/latofonts.css">
     
+      <link rel="stylesheet" href="../../stylesheets/extra.css">
+    
     
       
 
 
     
     
+<meta property="og:title" content="CrowCpp"/>
+<meta property="og:type" content="website" />
+<meta property="og:description" content="A Fast and Easy to use microframework for the web."/>
+<meta property="og:image" content="/assets/og_img.png" />
+<meta property="og:url" content="https://crowcpp.org">
+
   </head>
   
   
@@ -71,16 +79,51 @@
       
     </div>
     
-      <header class="md-header" data-md-component="header">
-  <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../.." title="Crow" class="md-header__button md-logo" aria-label="Crow" data-md-component="logo">
+      <!--
+  Copyright (c) 2016-2021 Martin Donath <martin.donath@squidfunk.com>
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- Header -->
+<header class="md-header" data-md-component="header">
+  <nav
+    class="md-header__inner md-grid"
+    aria-label="Header"
+  >
+
+    <!-- Link to home -->
+    <a
+      href="../.."
+      title="Crow"
+      class="md-header__button md-logo"
+      aria-label="Crow"
+      data-md-component="logo"
+    >
       
   <img src="../../assets/favicon.svg" alt="logo">
 
     </a>
+
+    <!-- Button to open drawer -->
     <label class="md-header__button md-icon" for="__drawer">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z"/></svg>
     </label>
+
+    <!-- Header title -->
     <div class="md-header__title" data-md-component="header-title">
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
@@ -97,12 +140,20 @@
         </div>
       </div>
     </div>
+
+    <!-- Color palette -->
     
+
+    <!-- Site language selector -->
     
+
+    <!-- Button to open search modal -->
     
       <label class="md-header__button md-icon" for="__search">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
       </label>
+
+      <!-- Search interface -->
       
 <div class="md-search" data-md-component="search" role="dialog">
   <label class="md-search__overlay" for="__search"></label>
@@ -135,6 +186,12 @@
 </div>
     
     
+    <div class="md-header__source">
+	<a class="md-source" href="https://opencollective.com/crow" style="padding-left:2.4rem;"><img style="border-radius: 5px" alt="Open Collective" src="https://img.shields.io/opencollective/all/crow?label=Support%20Crow&color=important&labelColor=122027&logo=opencollective&style=for-the-badge"></a>
+	</div>
+	
+    <!-- Repository information -->
+    
       <div class="md-header__source">
         
 <a href="https://github.com/CrowCpp/Crow" title="Go to repository" class="md-source" data-md-component="source">
@@ -148,6 +205,7 @@
 </a>
       </div>
     
+
   </nav>
 </header>
     
@@ -923,7 +981,8 @@ you can see the first <code>&lt;int&gt;</code> is defined as <code>a</code> and 
 The main return type is <code>std::string</code>. although you could also return a <code>crow::json::wvalue</code> or <code>crow::multipart::message</code> directly.<br><br>
 For more information on the specific constructors for a <code>crow::response</code> go <a href="../../reference/structcrow_1_1response.html">here</a>.</p>
 <h2 id="returning-custom-classes">Returning custom classes</h2>
-<p>If you have your own class you want to return (without converting it to string and returning that), you can use the <code>crow::returnable</code> class.<br>
+<p><strong>Introduced in: <code>v0.3</code></strong><br><br>
+If you have your own class you want to return (without converting it to string and returning that), you can use the <code>crow::returnable</code> class.<br>
 to use the returnable class, you only need your class to publicly extend <code>crow::returnable</code>, add a <code>dump()</code> method that returns your class as an <code>std::string</code>, and add a constructor that has a <code>Content-Type</code> header as a string argument.<br><br></p>
 <p>your class should look like the following:
 <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">a</span> <span class="o">:</span> <span class="k">public</span> <span class="n">crow</span><span class="o">::</span><span class="n">returnable</span> 
@@ -941,7 +1000,8 @@ to use the returnable class, you only need your class to publicly extend <code>c
 <span class="p">}</span>
 </code></pre></div></p>
 <h2 id="catchall-routes">Catchall routes</h2>
-<p>By default, any request that Crow can't find a route for will return a simple 404 response. You can change that to return a default route using the <code>CROW_CATCHALL_ROUTE(app)</code> macro. Defining it is identical to a normal route, even when it comes to the <code>const crow::request&amp;</code> and <code>crow::response&amp;</code> parameters being optional.</p>
+<p><strong>Introduced in: <code>v0.3</code></strong><br><br>
+By default, any request that Crow can't find a route for will return a simple 404 response. You can change that to return a default route using the <code>CROW_CATCHALL_ROUTE(app)</code> macro. Defining it is identical to a normal route, even when it comes to the <code>const crow::request&amp;</code> and <code>crow::response&amp;</code> parameters being optional.</p>
                 
               
               
@@ -998,7 +1058,7 @@ to use the returnable class, you only need your class to publicly extend <code>c
       <div class="md-footer-copyright">
         
           <div class="md-footer-copyright__highlight">
-            Copyright &copy; 2021 CrowCpp
+            Copyright &copy; 2020-2021 CrowCpp
           </div>
         
         Made with

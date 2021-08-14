@@ -37,12 +37,20 @@
     
       <link rel="stylesheet" href="stylesheets/latofonts.css">
     
+      <link rel="stylesheet" href="stylesheets/extra.css">
+    
     
       
 
 
     
     
+<meta property="og:title" content="CrowCpp"/>
+<meta property="og:type" content="website" />
+<meta property="og:description" content="A Fast and Easy to use microframework for the web."/>
+<meta property="og:image" content="/assets/og_img.png" />
+<meta property="og:url" content="https://crowcpp.org">
+
   </head>
   
   
@@ -61,26 +69,56 @@
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
       
-        
-        <a href="#_1" class="md-skip">
-          Skip to content
-        </a>
-      
     </div>
     <div data-md-component="announce">
       
     </div>
     
-      <header class="md-header" data-md-component="header">
-  <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="." title="Crow" class="md-header__button md-logo" aria-label="Crow" data-md-component="logo">
+      <!--
+  Copyright (c) 2016-2021 Martin Donath <martin.donath@squidfunk.com>
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- Header -->
+<header class="md-header" data-md-component="header">
+  <nav
+    class="md-header__inner md-grid"
+    aria-label="Header"
+  >
+
+    <!-- Link to home -->
+    <a
+      href="."
+      title="Crow"
+      class="md-header__button md-logo"
+      aria-label="Crow"
+      data-md-component="logo"
+    >
       
   <img src="assets/favicon.svg" alt="logo">
 
     </a>
+
+    <!-- Button to open drawer -->
     <label class="md-header__button md-icon" for="__drawer">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z"/></svg>
     </label>
+
+    <!-- Header title -->
     <div class="md-header__title" data-md-component="header-title">
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
@@ -97,12 +135,20 @@
         </div>
       </div>
     </div>
+
+    <!-- Color palette -->
     
+
+    <!-- Site language selector -->
     
+
+    <!-- Button to open search modal -->
     
       <label class="md-header__button md-icon" for="__search">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
       </label>
+
+      <!-- Search interface -->
       
 <div class="md-search" data-md-component="search" role="dialog">
   <label class="md-search__overlay" for="__search"></label>
@@ -135,6 +181,12 @@
 </div>
     
     
+    <div class="md-header__source">
+	<a class="md-source" href="https://opencollective.com/crow" style="padding-left:2.4rem;"><img style="border-radius: 5px" alt="Open Collective" src="https://img.shields.io/opencollective/all/crow?label=Support%20Crow&color=important&labelColor=122027&logo=opencollective&style=for-the-badge"></a>
+	</div>
+	
+    <!-- Repository information -->
+    
       <div class="md-header__source">
         
 <a href="https://github.com/CrowCpp/Crow" title="Go to repository" class="md-source" data-md-component="source">
@@ -148,6 +200,7 @@
 </a>
       </div>
     
+
   </nav>
 </header>
     
@@ -237,770 +290,278 @@
       <main class="md-main" data-md-component="main">
         <div class="md-main__inner md-grid">
           
-            
-              
-              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
-                <div class="md-sidebar__scrollwrap">
-                  <div class="md-sidebar__inner">
-                    
-
-  
-
-
-<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
-  <label class="md-nav__title" for="__drawer">
-    <a href="." title="Crow" class="md-nav__button md-logo" aria-label="Crow" data-md-component="logo">
-      
-  <img src="assets/favicon.svg" alt="logo">
-
-    </a>
-    Crow
-  </label>
-  
-    <div class="md-nav__source">
-      
-<a href="https://github.com/CrowCpp/Crow" title="Go to repository" class="md-source" data-md-component="source">
-  <div class="md-source__icon md-icon">
-    
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M400 32H48C21.5 32 0 53.5 0 80v352c0 26.5 21.5 48 48 48h352c26.5 0 48-21.5 48-48V80c0-26.5-21.5-48-48-48zM277.3 415.7c-8.4 1.5-11.5-3.7-11.5-8 0-5.4.2-33 .2-55.3 0-15.6-5.2-25.5-11.3-30.7 37-4.1 76-9.2 76-73.1 0-18.2-6.5-27.3-17.1-39 1.7-4.3 7.4-22-1.7-45-13.9-4.3-45.7 17.9-45.7 17.9-13.2-3.7-27.5-5.6-41.6-5.6-14.1 0-28.4 1.9-41.6 5.6 0 0-31.8-22.2-45.7-17.9-9.1 22.9-3.5 40.6-1.7 45-10.6 11.7-15.6 20.8-15.6 39 0 63.6 37.3 69 74.3 73.1-4.8 4.3-9.1 11.7-10.6 22.3-9.5 4.3-33.8 11.7-48.3-13.9-9.1-15.8-25.5-17.1-25.5-17.1-16.2-.2-1.1 10.2-1.1 10.2 10.8 5 18.4 24.2 18.4 24.2 9.7 29.7 56.1 19.7 56.1 19.7 0 13.9.2 36.5.2 40.6 0 4.3-3 9.5-11.5 8-66-22.1-112.2-84.9-112.2-158.3 0-91.8 70.2-161.5 162-161.5S388 165.6 388 257.4c.1 73.4-44.7 136.3-110.7 158.3zm-98.1-61.1c-1.9.4-3.7-.4-3.9-1.7-.2-1.5 1.1-2.8 3-3.2 1.9-.2 3.7.6 3.9 1.9.3 1.3-1 2.6-3 3zm-9.5-.9c0 1.3-1.5 2.4-3.5 2.4-2.2.2-3.7-.9-3.7-2.4 0-1.3 1.5-2.4 3.5-2.4 1.9-.2 3.7.9 3.7 2.4zm-13.7-1.1c-.4 1.3-2.4 1.9-4.1 1.3-1.9-.4-3.2-1.9-2.8-3.2.4-1.3 2.4-1.9 4.1-1.5 2 .6 3.3 2.1 2.8 3.4zm-12.3-5.4c-.9 1.1-2.8.9-4.3-.6-1.5-1.3-1.9-3.2-.9-4.1.9-1.1 2.8-.9 4.3.6 1.3 1.3 1.8 3.3.9 4.1zm-9.1-9.1c-.9.6-2.6 0-3.7-1.5s-1.1-3.2 0-3.9c1.1-.9 2.8-.2 3.7 1.3 1.1 1.5 1.1 3.3 0 4.1zm-6.5-9.7c-.9.9-2.4.4-3.5-.6-1.1-1.3-1.3-2.8-.4-3.5.9-.9 2.4-.4 3.5.6 1.1 1.3 1.3 2.8.4 3.5zm-6.7-7.4c-.4.9-1.7 1.1-2.8.4-1.3-.6-1.9-1.7-1.5-2.6.4-.6 1.5-.9 2.8-.4 1.3.7 1.9 1.8 1.5 2.6z"/></svg>
-  </div>
-  <div class="md-source__repository">
-    CrowCpp/Crow
-  </div>
-</a>
-    </div>
-  
-  <ul class="md-nav__list" data-md-scrollfix>
-    
-      
-      
-      
-
-  
-  
-    
-  
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          Home
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="." class="md-nav__link md-nav__link--active">
-        Home
-      </a>
-      
-        
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#description" class="md-nav__link">
-    Description
-  </a>
-  
-    <nav class="md-nav" aria-label="Description">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#features" class="md-nav__link">
-    Features
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#still-in-development" class="md-nav__link">
-    Still in development
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#documentation" class="md-nav__link">
-    Documentation
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#examples" class="md-nav__link">
-    Examples
-  </a>
-  
-    <nav class="md-nav" aria-label="Examples">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#hello-world" class="md-nav__link">
-    Hello World
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#json-response" class="md-nav__link">
-    JSON Response
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#arguments" class="md-nav__link">
-    Arguments
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#handling-json-requests" class="md-nav__link">
-    Handling JSON Requests
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#setting-up-building" class="md-nav__link">
-    Setting Up / Building
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#disclaimer" class="md-nav__link">
-    Disclaimer
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
-    </li>
-  
-
-    
-      
-      
-      
-
-  
-  
-  
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-      
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2" type="checkbox" id="__nav_2" >
-      
-      <label class="md-nav__link" for="__nav_2">
-        Getting Started
-        <span class="md-nav__icon md-icon"></span>
-      </label>
-      <nav class="md-nav" aria-label="Getting Started" data-md-level="1">
-        <label class="md-nav__title" for="__nav_2">
-          <span class="md-nav__icon md-icon"></span>
-          Getting Started
-        </label>
-        <ul class="md-nav__list" data-md-scrollfix>
-          
-            
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="getting_started/setup/" class="md-nav__link">
-        Setup
-      </a>
-    </li>
-  
-
-          
-            
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="getting_started/your_first_application/" class="md-nav__link">
-        Your First Application
-      </a>
-    </li>
-  
-
-          
-        </ul>
-      </nav>
-    </li>
-  
-
-    
-      
-      
-      
-
-  
-  
-  
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-      
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3" type="checkbox" id="__nav_3" >
-      
-      <label class="md-nav__link" for="__nav_3">
-        Guides
-        <span class="md-nav__icon md-icon"></span>
-      </label>
-      <nav class="md-nav" aria-label="Guides" data-md-level="1">
-        <label class="md-nav__title" for="__nav_3">
-          <span class="md-nav__icon md-icon"></span>
-          Guides
-        </label>
-        <ul class="md-nav__list" data-md-scrollfix>
-          
-            
-  
-  
-  
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-      
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_1" type="checkbox" id="__nav_3_1" >
-      
-      <label class="md-nav__link" for="__nav_3_1">
-        Different parts of Crow
-        <span class="md-nav__icon md-icon"></span>
-      </label>
-      <nav class="md-nav" aria-label="Different parts of Crow" data-md-level="2">
-        <label class="md-nav__title" for="__nav_3_1">
-          <span class="md-nav__icon md-icon"></span>
-          Different parts of Crow
-        </label>
-        <ul class="md-nav__list" data-md-scrollfix>
-          
-            
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="guides/app/" class="md-nav__link">
-        App
-      </a>
-    </li>
-  
-
-          
-            
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="guides/routes/" class="md-nav__link">
-        Routes
-      </a>
-    </li>
-  
-
-          
-            
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="guides/logging/" class="md-nav__link">
-        Logging
-      </a>
-    </li>
-  
-
-          
-            
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="guides/json/" class="md-nav__link">
-        JSON
-      </a>
-    </li>
-  
-
-          
-            
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="guides/templating/" class="md-nav__link">
-        Templating (Mustache)
-      </a>
-    </li>
-  
-
-          
-            
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="guides/multipart/" class="md-nav__link">
-        Multipart
-      </a>
-    </li>
-  
-
-          
-            
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="guides/query-string/" class="md-nav__link">
-        Query Strings
-      </a>
-    </li>
-  
-
-          
-            
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="guides/middleware/" class="md-nav__link">
-        Middleware
-      </a>
-    </li>
-  
-
-          
-            
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="guides/ssl/" class="md-nav__link">
-        SSL
-      </a>
-    </li>
-  
-
-          
-            
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="guides/static/" class="md-nav__link">
-        Static Files
-      </a>
-    </li>
-  
-
-          
-            
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="guides/blueprints/" class="md-nav__link">
-        Blueprints
-      </a>
-    </li>
-  
-
-          
-            
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="guides/compression/" class="md-nav__link">
-        Compression
-      </a>
-    </li>
-  
-
-          
-            
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="guides/websockets/" class="md-nav__link">
-        Websockets
-      </a>
-    </li>
-  
-
-          
-            
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="guides/testing/" class="md-nav__link">
-        Writing Tests
-      </a>
-    </li>
-  
-
-          
-        </ul>
-      </nav>
-    </li>
-  
-
-          
-            
-  
-  
-  
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-      
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_2" type="checkbox" id="__nav_3_2" >
-      
-      <label class="md-nav__link" for="__nav_3_2">
-        Server setup
-        <span class="md-nav__icon md-icon"></span>
-      </label>
-      <nav class="md-nav" aria-label="Server setup" data-md-level="2">
-        <label class="md-nav__title" for="__nav_3_2">
-          <span class="md-nav__icon md-icon"></span>
-          Server setup
-        </label>
-        <ul class="md-nav__list" data-md-scrollfix>
-          
-            
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="guides/proxies/" class="md-nav__link">
-        Proxies
-      </a>
-    </li>
-  
-
-          
-            
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="guides/syste/" class="md-nav__link">
-        Systemd run on startup
-      </a>
-    </li>
-  
-
-          
-        </ul>
-      </nav>
-    </li>
-  
-
-          
-        </ul>
-      </nav>
-    </li>
-  
-
-    
-      
-      
-      
-
-  
-  
-  
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-      
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4" type="checkbox" id="__nav_4" >
-      
-      <label class="md-nav__link" for="__nav_4">
-        API Reference
-        <span class="md-nav__icon md-icon"></span>
-      </label>
-      <nav class="md-nav" aria-label="API Reference" data-md-level="1">
-        <label class="md-nav__title" for="__nav_4">
-          <span class="md-nav__icon md-icon"></span>
-          API Reference
-        </label>
-        <ul class="md-nav__list" data-md-scrollfix>
-          
-            
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="reference/index.html" class="md-nav__link">
-        API Reference
-      </a>
-    </li>
-  
-
-          
-        </ul>
-      </nav>
-    </li>
-  
-
-    
-  </ul>
-</nav>
-                  </div>
-                </div>
-              </div>
-            
-            
-              
-              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
-                <div class="md-sidebar__scrollwrap">
-                  <div class="md-sidebar__inner">
-                    
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#description" class="md-nav__link">
-    Description
-  </a>
-  
-    <nav class="md-nav" aria-label="Description">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#features" class="md-nav__link">
-    Features
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#still-in-development" class="md-nav__link">
-    Still in development
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#documentation" class="md-nav__link">
-    Documentation
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#examples" class="md-nav__link">
-    Examples
-  </a>
-  
-    <nav class="md-nav" aria-label="Examples">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#hello-world" class="md-nav__link">
-    Hello World
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#json-response" class="md-nav__link">
-    JSON Response
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#arguments" class="md-nav__link">
-    Arguments
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#handling-json-requests" class="md-nav__link">
-    Handling JSON Requests
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#setting-up-building" class="md-nav__link">
-    Setting Up / Building
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#disclaimer" class="md-nav__link">
-    Disclaimer
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-                  </div>
-                </div>
-              </div>
-            
-          
           <div class="md-content" data-md-component="content">
             <article class="md-content__inner md-typeset">
               
-                
-                
-                <h1 id="_1"></h1>
-<p align="center"><img src="assets/crowlogo.svg" width=600></p>
+<style>
+.clogo{
+    margin-left: 15rem;
+    margin-right: 15rem;
+    width: 30rem;
+}
 
-<h4 align="center">A Fast and Easy to use microframework for the web.</h4>
-<p align="center">
-<a href="https://cloud.drone.io/CrowCpp/Crow"><img src="https://cloud.drone.io/api/badges/CrowCpp/Crow/status.svg" alt="Build Status"></a>
-<a href="https://coveralls.io/github/CrowCpp/Crow?branch=master"><img src="https://coveralls.io/repos/github/CrowCpp/Crow/badge.svg?branch=master" alt="Coverage Status"></a>
-<a href="https://crowcpp.org"><img src="https://img.shields.io/badge/-Documentation-informational" alt="Documentation"></a>
-<a href="https://gitter.im/crowfork/community?utm_source=badge&amp;utm_medium=badge&amp;utm_campaign=pr-badge"><img src="https://badges.gitter.im/crowfork/community.svg" alt="Gitter"></a>
-</p>
+.ccard{
+    outline-style: solid;
+    outline-width: .1rem;
+    outline-color: #00000080;
+    border-radius: 0.5rem;
+    width: 10rem;
+    height: 12rem;
+    box-shadow: 2px 5px 5px #00000040;
+    margin-inline: 2rem;
+    transition: transform 0.3s;
+}
 
-<h2 id="description">Description</h2>
-<p>Crow is a C++ microframework for running web services. It uses routing similar to Python's Flask which makes it easy to use. It is also extremely fast, beating multiple existing C++ frameworks as well as non C++ frameworks.</p>
-<h3 id="features">Features</h3>
-<ul>
-<li>Easy Routing (similar to flask).</li>
-<li>Type-safe Handlers.</li>
-<li>Blazingly fast (see <a href="https://github.com/ipkn/crow-benchmark">this benchmark</a> and <a href="https://github.com/guteksan/REST-CPP-benchmark">this benchmark</a>).</li>
-<li>Built in JSON support.</li>
-<li><a href="http://mustache.github.io/">Mustache</a> based templating library (<code>crow::mustache</code>).</li>
-<li>Header only library (single header file available).</li>
-<li>Middleware support for extensions.</li>
-<li>HTTP/1.1 and Websocket support.</li>
-<li>Multi-part request and response support.</li>
-<li>Uses modern C++ (11/14)</li>
-</ul>
-<h3 id="still-in-development">Still in development</h3>
-<ul>
-<li><a href="https://github.com/crowcpp/crow/issues/8">HTTP/2 support</a></li>
-</ul>
-<h2 id="documentation">Documentation</h2>
-<p>Available <a href="https://crowcpp.org">here</a>.</p>
-<h2 id="examples">Examples</h2>
-<h4 id="hello-world">Hello World</h4>
-<div class="highlight"><pre><span></span><code><span class="cp">#define CROW_MAIN</span>
-<span class="cp">#include</span> <span class="cpf">&quot;crow.h&quot;</span><span class="cp"></span>
+.ccard:hover{
+    transform: scale(1.1);
+}
+
+.ccard__image{
+    max-width: 7.5rem;
+    max-height: 7.5rem;
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+    margin-top: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: solid;    
+    border-width: 0.1rem;
+    border-image-slice: 1;
+    border-image-source: linear-gradient(90deg, rgba(0,0,0,0) 0%, rgb(0, 0, 0) 50%, rgba(0,0,0,0) 100%);
+}
+
+.ccard__text{
+    text-align: center;
+}
+
+.csection{
+    display: flex;
+    justify-content: center;
+}
+
+.ssection{
+    display:flex;
+    justify-content: center;
+}
+
+.sdescription{
+    display:flex;
+    align-items: center;
+    justify-content: center;
+    width: 50%;
+    height: 14rem;
+}
+
+.scontent{
+    display:flex;
+    align-items: center;
+    justify-content: center;
+    width: 50%;
+    height: 14rem;
+}
+.highlight{
+    width: 100%
+}
+
+.sbuttons{
+    display: flex;
+    justify-content: center;
+}
+
+.crow-button{
+    margin: 0rem 1rem;
+}
+
+code{
+    border-radius: 0.3rem !important;
+}
+
+.dcard{
+    width: 10rem;
+    height: 15rem;
+    margin-inline: 2rem;
+    transition: transform 0.3s;
+}
+
+.dcard:hover{
+    transform: scale(1.1);
+}
+
+.dcard__image{
+    max-width: 7.5rem;
+    max-height: 7.5rem;
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+    margin-top: 1rem;
+}
+
+.dcard__title{
+    font-size: 1.25rem;
+    margin: 0px 0px;
+    text-align: center;
+}
+
+.dcard__description{
+    font-size: 0.75rem;
+    margin: 0.1rem 0px;
+    text-align: center;
+}
+
+</style>
+<img class="clogo" style="width:30rem" alt="logo" src="/assets/crowlogo_main_color.svg">
+
+<h1 style="text-align:center;">A Fast and Easy to use microframework for the web.</h1>
+
+<hr>
+
+<section class="csection">
+<div class="ccard">
+    <img class="ccard__image" src= /assets/fast_icon.svg>
+    <p class="ccard__text">Blazingly Fast</p>
+</div>
+<div class="ccard">
+    <img class="ccard__image" src= /assets/header_icon.svg>
+    <p class="ccard__text">Header Only</p>
+</div>
+<div class="ccard">
+    <img class="ccard__image" src= /assets/typesafe_icon.svg>
+    <p class="ccard__text">Typesafe handlers</p>
+</div>
+<div class="ccard">
+    <img class="ccard__image" src= /assets/websocket_icon.svg>
+    <p class="ccard__text">Websocket Support</p>
+</div>
+</section>
+
+
+<hr>
+
+<section class="ssection">
+    <div class="sdescription">
+        <h2 style="text-align: center;">Easy to get started</h3>
+    </div>
+    <div class="scontent">
+        <div class="highlight"><pre id="__code_0"><span></span><button class="md-clipboard md-icon" title="Copy to clipboard" data-clipboard-target="#__code_0 > code"></button><code><span class="cp">#define CROW_MAIN</span>
+<span class="cp">#include</span> <span class="cpf">"crow.h"</span><span class="cp"></span>
 
 <span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
 <span class="p">{</span>
     <span class="n">crow</span><span class="o">::</span><span class="n">SimpleApp</span> <span class="n">app</span><span class="p">;</span>
 
-    <span class="n">CROW_ROUTE</span><span class="p">(</span><span class="n">app</span><span class="p">,</span> <span class="s">&quot;/&quot;</span><span class="p">)([](){</span>
-        <span class="k">return</span> <span class="s">&quot;Hello world&quot;</span><span class="p">;</span>
+    <span class="cp">CROW_ROUTE</span><span class="p">(</span><span class="n">app</span><span class="p">,</span> <span class="s">"/"</span><span class="p">)([](){</span>
+        <span class="k">return</span> <span class="s">"Hello world"</span><span class="p">;</span>
     <span class="p">});</span>
 
-    <span class="n">app</span><span class="p">.</span><span class="n">port</span><span class="p">(</span><span class="mi">18080</span><span class="p">).</span><span class="n">multithreaded</span><span class="p">().</span><span class="n">run</span><span class="p">();</span>
+    <span class="n">app</span><span class="p">.</span><span class="n">port</span><span class="p">(</span><span class="mi">18080</span><span class="p">).</span><span class="n">run</span><span class="p">();</span>
 <span class="p">}</span>
 </code></pre></div>
-<h4 id="json-response">JSON Response</h4>
-<div class="highlight"><pre><span></span><code><span class="n">CROW_ROUTE</span><span class="p">(</span><span class="n">app</span><span class="p">,</span> <span class="s">&quot;/json&quot;</span><span class="p">)</span>
+    </div>
+</section>
+
+<section class="ssection">    
+    <div class="scontent">
+       <div class="highlight"><pre id="__code_1"><span></span><button class="md-clipboard md-icon" title="Copy to clipboard" data-clipboard-target="#__code_1 > code"></button><code><span class="cp">CROW_ROUTE</span><span class="p">(</span><span class="n">app</span><span class="p">,</span> <span class="s">"/json"</span><span class="p">)</span>
 <span class="p">([]{</span>
     <span class="n">crow</span><span class="o">::</span><span class="n">json</span><span class="o">::</span><span class="n">wvalue</span> <span class="n">x</span><span class="p">;</span>
-    <span class="n">x</span><span class="p">[</span><span class="s">&quot;message&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&quot;Hello, World!&quot;</span><span class="p">;</span>
+    <span class="n">x</span><span class="p">[</span><span class="s">"message"</span><span class="p">]</span> <span class="o">=</span> <span class="s">"Hello, World!"</span><span class="p">;</span>
     <span class="k">return</span> <span class="n">x</span><span class="p">;</span>
 <span class="p">});</span>
 </code></pre></div>
-<h4 id="arguments">Arguments</h4>
-<p><div class="highlight"><pre><span></span><code><span class="n">CROW_ROUTE</span><span class="p">(</span><span class="n">app</span><span class="p">,</span><span class="s">&quot;/hello/&lt;int&gt;&quot;</span><span class="p">)</span>
+    </div>
+    <div class="sdescription">
+        <h2 style="text-align: center;">JSON Support Built-in</h3>
+    </div>
+
+</section>
+
+<section class="ssection">
+    <div class="sdescription">
+        <h2 style="text-align: center;">URL parameter support as well!</h3>
+    </div>
+    <div class="scontent">
+        <div class="highlight"><pre id="__code_2"><span></span><button class="md-clipboard md-icon" title="Copy to clipboard" data-clipboard-target="#__code_2 > code"></button><code><span class="cp">CROW_ROUTE</span><span class="p">(</span><span class="n">app</span><span class="p">,</span><span class="s">"/hello/&lt;int&gt;"</span><span class="p">)</span>
 <span class="p">([](</span><span class="kt">int</span> <span class="n">count</span><span class="p">){</span>
-    <span class="k">if</span> <span class="p">(</span><span class="n">count</span> <span class="o">&gt;</span> <span class="mi">100</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">crow</span><span class="o">::</span><span class="n">response</span><span class="p">(</span><span class="mi">400</span><span class="p">);</span>
-    <span class="n">std</span><span class="o">::</span><span class="n">ostringstream</span> <span class="n">os</span><span class="p">;</span>
-    <span class="n">os</span> <span class="o">&lt;&lt;</span> <span class="n">count</span> <span class="o">&lt;&lt;</span> <span class="s">&quot; bottles of beer!&quot;</span><span class="p">;</span>
-    <span class="k">return</span> <span class="n">crow</span><span class="o">::</span><span class="n">response</span><span class="p">(</span><span class="n">os</span><span class="p">.</span><span class="n">str</span><span class="p">());</span>
+    <span class="k">return</span> <span class="n">crow</span><span class="o">::</span><span class="n">response</span><span class="p">(std::to_string(count));</span></span>
 <span class="p">});</span>
 </code></pre></div>
-Handler arguments type check at compile time
-<div class="highlight"><pre><span></span><code><span class="c1">// Compile error with message &quot;Handler type is mismatched with URL paramters&quot;</span>
-<span class="n">CROW_ROUTE</span><span class="p">(</span><span class="n">app</span><span class="p">,</span><span class="s">&quot;/another/&lt;int&gt;&quot;</span><span class="p">)</span>
-<span class="p">([](</span><span class="kt">int</span> <span class="n">a</span><span class="p">,</span> <span class="kt">int</span> <span class="n">b</span><span class="p">){</span>
-    <span class="k">return</span> <span class="n">crow</span><span class="o">::</span><span class="n">response</span><span class="p">(</span><span class="mi">500</span><span class="p">);</span>
-<span class="p">});</span>
-</code></pre></div></p>
-<h4 id="handling-json-requests">Handling JSON Requests</h4>
-<div class="highlight"><pre><span></span><code><span class="n">CROW_ROUTE</span><span class="p">(</span><span class="n">app</span><span class="p">,</span> <span class="s">&quot;/add_json&quot;</span><span class="p">)</span>
-<span class="p">.</span><span class="n">methods</span><span class="p">(</span><span class="s">&quot;POST&quot;</span><span class="n">_method</span><span class="p">)</span>
-<span class="p">([](</span><span class="k">const</span> <span class="n">crow</span><span class="o">::</span><span class="n">request</span><span class="o">&amp;</span> <span class="n">req</span><span class="p">){</span>
-    <span class="k">auto</span> <span class="n">x</span> <span class="o">=</span> <span class="n">crow</span><span class="o">::</span><span class="n">json</span><span class="o">::</span><span class="n">load</span><span class="p">(</span><span class="n">req</span><span class="p">.</span><span class="n">body</span><span class="p">);</span>
-    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">x</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">crow</span><span class="o">::</span><span class="n">response</span><span class="p">(</span><span class="mi">400</span><span class="p">);</span>
-    <span class="kt">int</span> <span class="n">sum</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="s">&quot;a&quot;</span><span class="p">].</span><span class="n">i</span><span class="p">()</span><span class="o">+</span><span class="n">x</span><span class="p">[</span><span class="s">&quot;b&quot;</span><span class="p">].</span><span class="n">i</span><span class="p">();</span>
-    <span class="n">std</span><span class="o">::</span><span class="n">ostringstream</span> <span class="n">os</span><span class="p">;</span>
-    <span class="n">os</span> <span class="o">&lt;&lt;</span> <span class="n">sum</span><span class="p">;</span>
-    <span class="k">return</span> <span class="n">crow</span><span class="o">::</span><span class="n">response</span><span class="p">{</span><span class="n">os</span><span class="p">.</span><span class="n">str</span><span class="p">()};</span>
-<span class="p">});</span>
-</code></pre></div>
-<p>More examples can be found <a href="https://github.com/crowcpp/crow/tree/master/examples">here</a>.</p>
-<h2 id="setting-up-building">Setting Up / Building</h2>
-<p>Available <a href="https://crowcpp.org/getting_started/setup">here</a>.</p>
-<h2 id="disclaimer">Disclaimer</h2>
-<p>CrowCpp/Crow is a project based on ipkn/crow. Neither CrowCpp, it's members, or this project have been associated with, or endorsed or supported by ipkn (Jaeseung Ha) in any way. We do use ipkn/crow's source code under the BSD-3 clause license and sometimes refer to the public comments available on the github repository. But we do not in any way claim to be associated with or in contact with ipkn (Jaeseung Ha) regarding CrowCpp or CrowCpp/Crow</p>
-                
-              
+    </div>
+</section>
+
+<hr>
+
+<h1 style="text-align:center;">Support Crow</h1>
+<h3 style="text-align:center;">Crow is provided free of charge courtesy of everyone who is donating their money, time, and expertise to keep it going.<h3>
+<h3 style="text-align:center;">Help us make something great!<h3>
+
+<dev class="sbuttons">
+    <a href="https://opencollective.com/crow" title="Crow - OpenCollective" class="md-button crow-button">Fund Crow</a>
+    <a href="https://github.com/CrowCpp/Crow" title="Crow - OpenCollective" class="md-button crow-button">Develop Crow</a>
+    <a href="https://gitter.im/crowfork/community" title="Crow - OpenCollective" class="md-button crow-button">Chat with us</a>
+</dev>
+
+<hr>
+<h1 style="text-align:center;">Get Crow</h1>
+<h3 style="text-align:center;">Crow is everywhere, you just need to grab it!<h3>
+
+<section class="csection">
+
+<div class="dcard">
+<a href="https://github.com/CrowCpp/Crow/releases/latest">
+    <img class="dcard__image" src="/assets/pkg_logos/ubuntu.png">
+    <p class="dcard__title">.deb file</p>
+    <p class="dcard__description">for Ubuntu/Debian based systems</p>
+</a>
+</div>
+
+<div class="dcard">
+<a href="https://aur.archlinux.org/packages/crow">
+    <img class="dcard__image" src="/assets/pkg_logos/arch.png">
+    <p class="dcard__title">AUR</p>
+    <p class="dcard__description">for Arch based systems</p>
+</a>
+</div>
+
+<div class="dcard">
+<a href="https://vcpkg.io">
+    <img class="dcard__image" src="/assets/pkg_logos/vcpkg.png">
+    <p class="dcard__title">VCPKG</p>
+    <p class="dcard__description">for Windows systems</p>
+</a>
+</div>
+
+<div class="dcard">
+<a href="https://conan.io/center/crowcpp-crow">
+    <img class="dcard__image" src="/assets/pkg_logos/conan.png">
+    <p class="dcard__title">Conan Center</p>
+    <p class="dcard__description">for developers using the conan package manager</p>
+</a>
+</div>
+
+<div class="dcard">
+<a href="https://github.com/CrowCpp/Crow/releases/latest">
+    <img class="dcard__image" src="/assets/pkg_logos/github.png">
+    <p class="dcard__title">Header File</p>
+    <p class="dcard__description">Download Crow directly from github</p>
+</a>
+</div>
+
+</section>
+
+<hr>
+<h1 style="text-align:center;">Learn Crow</h1>
+<h3 style="text-align:center;">The 1000 mile journey begins with a single step. Get started by installing Crow and building you first application. Or go through the guides if you're stuck somewhere.<h3>
+
+<dev class="sbuttons">
+    <a href="/getting_started/setup/" title="Get Started" class="md-button crow-button">Get Started</a>
+    <a href="/guides/app/" title="Guides" class="md-button crow-button">Guides</a>
+    <a href="/reference/index.html" title="API Reference" class="md-button crow-button">API Reference</a>
+</dev>
+
+
+
+
+
               
                 
 
@@ -1012,43 +573,23 @@ Handler arguments type check at compile time
         
       </main>
       
-        
+
 <footer class="md-footer">
-  
-    <nav class="md-footer__inner md-grid" aria-label="Footer">
-      
-      
-        
-        <a href="getting_started/setup/" class="md-footer__link md-footer__link--next" aria-label="Next: Setup" rel="next">
-          <div class="md-footer__title">
-            <div class="md-ellipsis">
-              <span class="md-footer__direction">
-                Next
-              </span>
-              Setup
-            </div>
-          </div>
-          <div class="md-footer__button md-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4z"/></svg>
-          </div>
-        </a>
-      
-    </nav>
-  
+  <!-- Further information -->
   <div class="md-footer-meta md-typeset">
     <div class="md-footer-meta__inner md-grid">
+
+      <!-- Copyright and theme information -->
       <div class="md-footer-copyright">
         
           <div class="md-footer-copyright__highlight">
-            Copyright &copy; 2021 CrowCpp
+            Copyright &copy; 2020-2021 CrowCpp
           </div>
         
-        Made with
-        <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
-          Material for MkDocs
-        </a>
         
       </div>
+
+      <!-- Social links -->
       
   <div class="md-footer-social">
     
@@ -1075,7 +616,7 @@ Handler arguments type check at compile time
     </div>
   </div>
 </footer>
-      
+
     </div>
     <div class="md-dialog" data-md-component="dialog">
       <div class="md-dialog__inner md-typeset"></div>

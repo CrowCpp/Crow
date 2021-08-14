@@ -1,6 +1,31 @@
  
 :root {
-    --md-primary-fg-color: #161616;
-	--md-accent-fg-color:  #396A97;
-	--md-typeset-a-color: var(--md-accent-fg-color);
+    --md-primary-fg-color: #24404f;
+	--md-accent-fg-color:  #122027;
+	--md-typeset-a-color: var(--md-accent-fg-color) !important;
+    --md-default-bg-color: #e5f2f8;
+    --md-code-bg-color: #2e3639 !important;
+    --md-code-hl-punctuation-color: #fff !important;
+}
+
+.md-typeset code {
+    background-color: #2e3639;
+    color: #afafaf;
+}
+
+.linenos {
+    background-color: #2e3639 !important;
+    color: #afafaf !important;
+}
+
+.highlight .p {
+    color: #bbb;
+}
+
+.highlight .o {
+    color: #afafaf;
+}
+
+.highlight .n {
+    color: #afafaf;
 }
