@@ -1,3 +1,4 @@
+**Introduced in: `v0.3`**<br><br>
 Crow supports Zlib compression using Gzip or Deflate algorithms.
 
 ## HTTP Compression

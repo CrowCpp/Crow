@@ -1,3 +1,4 @@
+**Introduced in: `v0.2`**<br><br>
 A static file is any file that resides in the server's storage.
 
 Crow supports returning Static files as responses in 2 ways.

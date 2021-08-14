@@ -6,6 +6,7 @@
 <a href="https://coveralls.io/github/CrowCpp/Crow?branch=master"><img src="https://coveralls.io/repos/github/CrowCpp/Crow/badge.svg?branch=master" alt="Coverage Status"></a>
 <a href="https://crowcpp.org"><img src="https://img.shields.io/badge/-Documentation-informational" alt="Documentation"></a>
 <a href="https://gitter.im/crowfork/community?utm_source=badge&amp;utm_medium=badge&amp;utm_campaign=pr-badge"><img src="https://badges.gitter.im/crowfork/community.svg" alt="Gitter"></a>
+<a href="https://opencollective.com/crow"><img alt="Open Collective" src="https://img.shields.io/opencollective/all/crow?label=Support%20Crow&logo=opencollective"></a>
 </p>
 
 
