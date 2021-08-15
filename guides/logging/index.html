@@ -828,10 +828,10 @@
 <li>Critical
 <br><br></li>
 </ul>
-<p>To set a logLevel, just use <code class="highlight"><span class="n">app</span><span class="p">.</span><span class="n">loglevel</span><span class="p">(</span><span class="n">crow</span><span class="o">::</span><span class="n">LogLevel</span><span class="o">::</span><span class="n">Warning</span><span class="p">)</span></code>, This will not show any debug or info logs. It will however still show error and critical logs.<br><br></p>
+<p>To set a logLevel, just use <code class="highlight"><span class="n">app</span><span class="p">.</span><span class="n">loglevel</span><span class="p">(</span><span class="n">crow</span><span class="o">::</span><span class="n">LogLevel</span><span class="o">::</span><span class="n">Warning</span><span class="p">)</span><span class="w"></span></code>, This will not show any debug or info logs. It will however still show error and critical logs.<br><br></p>
 <p>Please note that setting the Macro <code>CROW_ENABLE_DEBUG</code> during compilation will also set the log level to <code>Debug</code>.</p>
 <h2 id="writing-a-log">Writing a log</h2>
-<p>Writing a log is as simple as <code class="highlight"><span class="n">CROW_LOG_</span><span class="o">&lt;</span><span class="n">LOG</span> <span class="n">LEVEL</span><span class="o">&gt;</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;Hello&quot;</span><span class="p">;</span></code> (replace&lt;LOG LEVEL&gt; with the actual level in all caps, so you have <code>CROW_LOG_WARNING</code>).</p>
+<p>Writing a log is as simple as <code class="highlight"><span class="n">CROW_LOG_</span><span class="o">&lt;</span><span class="n">LOG</span><span class="w"> </span><span class="n">LEVEL</span><span class="o">&gt;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;Hello&quot;</span><span class="p">;</span><span class="w"></span></code> (replace&lt;LOG LEVEL&gt; with the actual level in all caps, so you have <code>CROW_LOG_WARNING</code>).</p>
                 
               
               

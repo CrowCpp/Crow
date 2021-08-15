@@ -1071,8 +1071,8 @@
 <h2 id="includes-folder">Includes folder</h2>
 <ol>
 <li>Copy the <code>/includes</code> folder to your project's root folder.</li>
-<li>Add <code class="highlight"><span class="cp">#include</span> <span class="cpf">&quot;path/to/includes/crow.h&quot;</span><span class="cp"></span></code> to your <code>.cpp</code> file.</li>
-<li>For any middlewares, add <code class="highlight"><span class="cp">#include</span> <span class="cpf">&quot;path/to/includes/middlewares/some_middleware.h&quot;</span><span class="cp"></span></code>.
+<li>Add <code class="highlight"><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;path/to/includes/crow.h&quot;</span><span class="cp"></span></code> to your <code>.cpp</code> file.</li>
+<li>For any middlewares, add <code class="highlight"><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;path/to/includes/middlewares/some_middleware.h&quot;</span><span class="cp"></span></code>.
 <br><br></li>
 </ol>
 <h2 id="single-header-file">Single header file</h2>
@@ -1082,7 +1082,7 @@
 <li>Open a terminal (or <code>cmd.exe</code>) instance in <code>/path/to/crow/scripts</code>.</li>
 <li>Run <code>python merge_all.py ../include crow_all.h</code> (replace <code>/</code> with <code>\</code> if you're on Windows).</li>
 <li>Copy the <code>crow_all.h</code> file to where you put your libraries (if you don't know where this is, you can put it anywhere).</li>
-<li>Add <code class="highlight"><span class="cp">#include</span> <span class="cpf">&quot;path/to/crow_all.h&quot;</span><span class="cp"></span></code> to your <code>.cpp</code> file.
+<li>Add <code class="highlight"><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;path/to/crow_all.h&quot;</span><span class="cp"></span></code> to your <code>.cpp</code> file.
 <br><br>
 <strong>Note</strong>: All middlewares are included with the merged header file, if you would like to include or exclude middlewares use the <code>-e</code> or <code>-i</code> arguments.
 <br><br></li>

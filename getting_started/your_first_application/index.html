@@ -868,30 +868,30 @@
                 
                 <p>This page shows how you can get started with a simple hello world application.</p>
 <h2 id="1-include">1. Include</h2>
-<p>Starting with an empty <code>main.cpp</code> file, first add <code class="highlight"><span class="cp">#define CROW_MAIN</span></code> then <code class="highlight"><span class="cp">#include</span> <span class="cpf">&quot;crow.h&quot;</span><span class="cp"></span></code> or <code class="highlight"><span class="cp">#include</span> <span class="cpf">&quot;crow_all.h&quot;</span><span class="cp"></span></code> if you're using the single header file.</p>
+<p>Starting with an empty <code>main.cpp</code> file, first add <code class="highlight"><span class="cp">#define CROW_MAIN</span></code> then <code class="highlight"><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;crow.h&quot;</span><span class="cp"></span></code> or <code class="highlight"><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;crow_all.h&quot;</span><span class="cp"></span></code> if you're using the single header file.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>If you're using multiple C++ source files make sure to have <code>CROW_MAIN</code> defined only in your main source file.</p>
 </div>
 <h2 id="2-app-declaration">2. App declaration</h2>
-<p>Next Create a <code>main()</code> and declare a <code class="highlight"><span class="n">crow</span><span class="o">::</span><span class="n">SimpleApp</span></code> inside, your code should look like this
-<div class="highlight"><pre><span></span><code><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
-<span class="p">{</span>
-    <span class="n">crow</span><span class="o">::</span><span class="n">SimpleApp</span> <span class="n">app</span><span class="p">;</span>
-<span class="p">}</span>
+<p>Next Create a <code>main()</code> and declare a <code class="highlight"><span class="n">crow</span><span class="o">::</span><span class="n">SimpleApp</span><span class="w"></span></code> inside, your code should look like this
+<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">crow</span><span class="o">::</span><span class="n">SimpleApp</span><span class="w"> </span><span class="n">app</span><span class="p">;</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
 </code></pre></div>
 The App (or SimpleApp) class organizes all the different parts of Crow and provides the developer (you) a simple interface to interact with these parts.
 For more information, please go <a href="../../guides/app">here</a>.</p>
 <h2 id="3-adding-routes">3. Adding routes</h2>
 <p>Once you have your app, the next step is to add routes (or endpoints). You can do so with the <code>CROW_ROUTE</code> macro.
-<div class="highlight"><pre><span></span><code><span class="n">CROW_ROUTE</span><span class="p">(</span><span class="n">app</span><span class="p">,</span> <span class="s">&quot;/&quot;</span><span class="p">)([](){</span>
-    <span class="k">return</span> <span class="s">&quot;Hello world&quot;</span><span class="p">;</span>
-<span class="p">});</span>
+<div class="highlight"><pre><span></span><code><span class="n">CROW_ROUTE</span><span class="p">(</span><span class="n">app</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;/&quot;</span><span class="p">)([](){</span><span class="w"></span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="s">&quot;Hello world&quot;</span><span class="p">;</span><span class="w"></span>
+<span class="p">});</span><span class="w"></span>
 </code></pre></div>
 For more details on routes, please go <a href="../../guides/routes">here</a>.</p>
 <h1 id="4-running-the-app">4. Running the app</h1>
 <p>Once you're happy with how you defined all your routes, you're going to want to instruct Crow to run your app. This is done using the <code>run()</code> method.
-<div class="highlight"><pre><span></span><code><span class="n">app</span><span class="p">.</span><span class="n">port</span><span class="p">(</span><span class="mi">18080</span><span class="p">).</span><span class="n">multithreaded</span><span class="p">().</span><span class="n">run</span><span class="p">();</span>
+<div class="highlight"><pre><span></span><code><span class="n">app</span><span class="p">.</span><span class="n">port</span><span class="p">(</span><span class="mi">18080</span><span class="p">).</span><span class="n">multithreaded</span><span class="p">().</span><span class="n">run</span><span class="p">();</span><span class="w"></span>
 </code></pre></div>
 Please note that the <code>port()</code> and <code>multithreaded()</code> methods aren't needed, Though not using <code>port()</code> will cause the default port (<code>80</code>) to be used.<br></p>
 <h2 id="putting-it-all-together">Putting it all together</h2>
@@ -912,21 +912,21 @@ Please note that the <code>port()</code> and <code>multithreaded()</code> method
 <span class="normal">14</span>
 <span class="normal">15</span>
 <span class="normal">16</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="cp">#define CROW_MAIN </span><span class="c1">//let the compiler know this is your main cpp file</span>
-<span class="cp">#include</span> <span class="cpf">&quot;crow.h&quot;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;crow.h&quot;</span><span class="cp"></span>
 <span class="c1">//#include &quot;crow_all.h&quot;</span>
 
-<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
-<span class="p">{</span>
-    <span class="n">crow</span><span class="o">::</span><span class="n">SimpleApp</span> <span class="n">app</span><span class="p">;</span> <span class="c1">//define your crow application</span>
+<span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">crow</span><span class="o">::</span><span class="n">SimpleApp</span><span class="w"> </span><span class="n">app</span><span class="p">;</span><span class="w"> </span><span class="c1">//define your crow application</span>
 
-    <span class="c1">//define your endpoint at the root directory</span>
-    <span class="n">CROW_ROUTE</span><span class="p">(</span><span class="n">app</span><span class="p">,</span> <span class="s">&quot;/&quot;</span><span class="p">)([](){</span>
-        <span class="k">return</span> <span class="s">&quot;Hello world&quot;</span><span class="p">;</span>
-    <span class="p">});</span>
+<span class="w">    </span><span class="c1">//define your endpoint at the root directory</span>
+<span class="w">    </span><span class="n">CROW_ROUTE</span><span class="p">(</span><span class="n">app</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;/&quot;</span><span class="p">)([](){</span><span class="w"></span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="s">&quot;Hello world&quot;</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="p">});</span><span class="w"></span>
 
-    <span class="c1">//set the port, set the app to run on multiple threads, and run the app</span>
-    <span class="n">app</span><span class="p">.</span><span class="n">port</span><span class="p">(</span><span class="mi">18080</span><span class="p">).</span><span class="n">multithreaded</span><span class="p">().</span><span class="n">run</span><span class="p">();</span>
-<span class="p">}</span>
+<span class="w">    </span><span class="c1">//set the port, set the app to run on multiple threads, and run the app</span>
+<span class="w">    </span><span class="n">app</span><span class="p">.</span><span class="n">port</span><span class="p">(</span><span class="mi">18080</span><span class="p">).</span><span class="n">multithreaded</span><span class="p">().</span><span class="n">run</span><span class="p">();</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
 </code></pre></div>
 </td></tr></table>
 After building and running your .cpp file, you should be able to access your endpoint at <a href="http://localhost:18080">http://localhost:18080</a>. Opening this URL in your browser will show a white screen with "Hello world" typed on it.</p>

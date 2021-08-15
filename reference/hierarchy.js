@@ -43,6 +43,7 @@ var hierarchy =
       ] ]
     ] ],
     [ "crow::CookieParser::context", "structcrow_1_1_cookie_parser_1_1context.html", null ],
+    [ "crow::UTF8::context", "structcrow_1_1_u_t_f8_1_1context.html", null ],
     [ "crow::CookieParser", "structcrow_1_1_cookie_parser.html", null ],
     [ "crow::Crow< Middlewares >", "classcrow_1_1_crow.html", null ],
     [ "crow::detail::dumb_timer_queue", "classcrow_1_1detail_1_1dumb__timer__queue.html", null ],
@@ -150,5 +151,6 @@ var hierarchy =
     [ "type", null, [
       [ "crow::black_magic::contains< Tp, Head, Rest... >", "structcrow_1_1black__magic_1_1contains_3_01_tp_00_01_head_00_01_rest_8_8_8_01_4.html", null ]
     ] ],
+    [ "crow::UTF8", "structcrow_1_1_u_t_f8.html", null ],
     [ "crow::detail::routing_handler_call_helper::Wrapped< Func, ArgsWrapped >", "structcrow_1_1detail_1_1routing__handler__call__helper_1_1_wrapped.html", null ]
 ];

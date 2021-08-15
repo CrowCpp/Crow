@@ -886,7 +886,7 @@ Works the same as <code>get</code>, but removes the returned value.</p>
 </div>
 <h2 id="get_listname">get_list(name)</h2>
 <p>A url can be <code>http://example.com?key[]=value1&amp;key[]=value2&amp;key[]=value3</code>. Using <code>get_list("key")</code> on such a url returns an <code>std::vector&lt;std::string&gt;</code> containing <code>[value1, value2, value3]</code>.<br><br></p>
-<p><code class="highlight"><span class="n">get_list</span><span class="p">(</span><span class="s">&quot;key&quot;</span><span class="p">,</span> <span class="nb">false</span><span class="p">)</span></code> can be used to parse <code>http://example.com?key=value1&amp;key=value2&amp;key=value3</code></p>
+<p><code class="highlight"><span class="n">get_list</span><span class="p">(</span><span class="s">&quot;key&quot;</span><span class="p">,</span><span class="w"> </span><span class="nb">false</span><span class="p">)</span><span class="w"></span></code> can be used to parse <code>http://example.com?key=value1&amp;key=value2&amp;key=value3</code></p>
 <h2 id="pop_listname">pop_list(name)</h2>
 <p><strong>Introduced in: <code>v0.3</code></strong><br><br>
 Works the same as <code>get_list</code> but removes all instances of values having the given key (<code>use_brackets</code> is also available here).</p>

@@ -821,7 +821,7 @@ Crow supports Zlib compression using Gzip or Deflate algorithms.</p>
 <h2 id="http-compression">HTTP Compression</h2>
 <p>HTTP compression is by default disabled in crow. Do the following to enable it: <br>
 1. Add <code class="highlight"><span class="cp">#define CROW_ENABLE_COMPRESSION</span></code> to the top of your main source file.
-2. Call <code class="highlight"><span class="n">use_compression</span><span class="p">(</span><span class="n">crow</span><span class="o">::</span><span class="n">compression</span><span class="o">::</span><span class="n">algorithm</span><span class="p">)</span></code> on your crow app.
+2. Call <code class="highlight"><span class="n">use_compression</span><span class="p">(</span><span class="n">crow</span><span class="o">::</span><span class="n">compression</span><span class="o">::</span><span class="n">algorithm</span><span class="p">)</span><span class="w"></span></code> on your crow app.
 3. When compiling your application, make sure that ZLIB is included as a dependency. Either through <code>-lz</code> argument or <code>find_package(ZLIB)</code> in CMake.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>

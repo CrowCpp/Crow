@@ -943,7 +943,7 @@
                 <p>Routes define what happens when your client connects to a certain URL.<br></p>
 <h2 id="macro">Macro</h2>
 <p><code>CROW_ROUTE(app, url)</code><br>
-Can be replaced with <code class="highlight"><span class="n">app</span><span class="p">.</span><span class="n">route</span><span class="o">&lt;</span><span class="n">crow</span><span class="o">::</span><span class="n">black_magick</span><span class="o">::</span><span class="n">get_parameter_tag</span><span class="p">(</span><span class="n">url</span><span class="p">)</span><span class="o">&gt;</span><span class="p">(</span><span class="n">url</span><span class="p">)</span></code> or <code class="highlight"><span class="n">app</span><span class="p">.</span><span class="n">route_dynamic</span><span class="p">(</span><span class="n">url</span><span class="p">)</span></code> if you're using VS2013 or want runtime url evaluation. Although this usage is <strong>NOT</strong> recommended.</p>
+Can be replaced with <code class="highlight"><span class="n">app</span><span class="p">.</span><span class="n">route</span><span class="o">&lt;</span><span class="n">crow</span><span class="o">::</span><span class="n">black_magick</span><span class="o">::</span><span class="n">get_parameter_tag</span><span class="p">(</span><span class="n">url</span><span class="p">)</span><span class="o">&gt;</span><span class="p">(</span><span class="n">url</span><span class="p">)</span><span class="w"></span></code> or <code class="highlight"><span class="n">app</span><span class="p">.</span><span class="n">route_dynamic</span><span class="p">(</span><span class="n">url</span><span class="p">)</span><span class="w"></span></code> if you're using VS2013 or want runtime url evaluation. Although this usage is <strong>NOT</strong> recommended.</p>
 <h2 id="app">App</h2>
 <p>Which app class to assign the route to.</p>
 <h2 id="path-url">Path (URL)</h2>
@@ -952,11 +952,11 @@ Using <code>/hello</code> means the client will need to access <code>http://exam
 A path can have parameters, for example <code>/hello/&lt;int&gt;</code> will allow a client to input an int into the url which will be in the handler (something like <code>http://example.com/hello/42</code>).<br>
 Parameters can be <code>&lt;int&gt;</code>, <code>&lt;uint&gt;</code>, <code>&lt;double&gt;</code>, <code>&lt;string&gt;</code>, or <code>&lt;path&gt;</code>.<br>
 It's worth nothing that the parameters also need to be defined in the handler, an example of using parameters would be to add 2 numbers based on input:
-<div class="highlight"><pre><span></span><code><span class="n">CROW_ROUTE</span><span class="p">(</span><span class="n">app</span><span class="p">,</span> <span class="s">&quot;/add/&lt;int&gt;/&lt;int&gt;&quot;</span><span class="p">)</span>
-<span class="p">([](</span><span class="kt">int</span> <span class="n">a</span><span class="p">,</span> <span class="kt">int</span> <span class="n">b</span><span class="p">)</span>
-<span class="p">{</span>
-    <span class="k">return</span> <span class="n">std</span><span class="o">::</span><span class="n">to_string</span><span class="p">(</span><span class="n">a</span><span class="o">+</span><span class="n">b</span><span class="p">);</span>
-<span class="p">});</span>
+<div class="highlight"><pre><span></span><code><span class="n">CROW_ROUTE</span><span class="p">(</span><span class="n">app</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;/add/&lt;int&gt;/&lt;int&gt;&quot;</span><span class="p">)</span><span class="w"></span>
+<span class="p">([](</span><span class="kt">int</span><span class="w"> </span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">b</span><span class="p">)</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">to_string</span><span class="p">(</span><span class="n">a</span><span class="o">+</span><span class="n">b</span><span class="p">);</span><span class="w"></span>
+<span class="p">});</span><span class="w"></span>
 </code></pre></div>
 you can see the first <code>&lt;int&gt;</code> is defined as <code>a</code> and the second as <code>b</code>. If you were to run this and call <code>http://example.com/add/1/2</code>, the result would be a page with <code>3</code>. Exciting!</p>
 <h2 id="methods">Methods</h2>
@@ -966,15 +966,15 @@ you can see the first <code>&lt;int&gt;</code> is defined as <code>a</code> and 
 <p>Crow handles <code>HEAD</code> and <code>OPTIONS</code> methods automatically. So adding those to your handler has no effect.</p>
 </div>
 <h2 id="handler">Handler</h2>
-<p>Basically a piece of code that gets executed whenever the client calls the associated route, usually in the form of a <a href="https://en.cppreference.com/w/cpp/language/lambda">lambda expression</a>. It can be as simple as <code class="highlight"><span class="p">([](){</span><span class="k">return</span> <span class="s">&quot;Hello World&quot;</span><span class="p">})</span></code>.<br><br></p>
+<p>Basically a piece of code that gets executed whenever the client calls the associated route, usually in the form of a <a href="https://en.cppreference.com/w/cpp/language/lambda">lambda expression</a>. It can be as simple as <code class="highlight"><span class="p">([](){</span><span class="k">return</span><span class="w"> </span><span class="s">&quot;Hello World&quot;</span><span class="p">})</span><span class="w"></span></code>.<br><br></p>
 <h3 id="request">Request</h3>
-<p>Handlers can also use information from the request by adding it as a parameter <code class="highlight"><span class="p">([](</span><span class="k">const</span> <span class="n">crow</span><span class="o">::</span><span class="n">request</span><span class="o">&amp;</span> <span class="n">req</span><span class="p">){...})</span></code>.<br><br></p>
-<p>You can also access the url parameters in the handler using <code class="highlight"><span class="n">req</span><span class="p">.</span><span class="n">url_params</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;param_name&quot;</span><span class="p">);</span></code>. If the parameter doesn't exist, <code>nullptr</code> is returned.<br><br></p>
+<p>Handlers can also use information from the request by adding it as a parameter <code class="highlight"><span class="p">([](</span><span class="k">const</span><span class="w"> </span><span class="n">crow</span><span class="o">::</span><span class="n">request</span><span class="o">&amp;</span><span class="w"> </span><span class="n">req</span><span class="p">){...})</span><span class="w"></span></code>.<br><br></p>
+<p>You can also access the url parameters in the handler using <code class="highlight"><span class="n">req</span><span class="p">.</span><span class="n">url_params</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;param_name&quot;</span><span class="p">);</span><span class="w"></span></code>. If the parameter doesn't exist, <code>nullptr</code> is returned.<br><br></p>
 <p>For more information on <code>crow::request</code> go <a href="../../reference/structcrow_1_1request.html">here</a>.<br><br></p>
 <h3 id="response">Response</h3>
-<p>Crow also provides the ability to define a response in the parameters by using <code class="highlight"><span class="p">([](</span><span class="n">crow</span><span class="o">::</span><span class="n">response</span><span class="o">&amp;</span> <span class="n">res</span><span class="p">){...})</span></code>.<br><br></p>
+<p>Crow also provides the ability to define a response in the parameters by using <code class="highlight"><span class="p">([](</span><span class="n">crow</span><span class="o">::</span><span class="n">response</span><span class="o">&amp;</span><span class="w"> </span><span class="n">res</span><span class="p">){...})</span><span class="w"></span></code>.<br><br></p>
 <p>Please note that in order to return a response defined as a parameter you'll need to use <code>res.end();</code>.<br><br></p>
-<p>Alternatively, you can define the response in the body and return it (<code class="highlight"><span class="p">([](){</span><span class="k">return</span> <span class="n">crow</span><span class="o">::</span><span class="n">response</span><span class="p">()})</span></code>).<br></p>
+<p>Alternatively, you can define the response in the body and return it (<code class="highlight"><span class="p">([](){</span><span class="k">return</span><span class="w"> </span><span class="n">crow</span><span class="o">::</span><span class="n">response</span><span class="p">()})</span><span class="w"></span></code>).<br></p>
 <p>For more information on <code>crow::response</code> go <a href="../../reference/structcrow_1_1response.html">here</a>.<br><br></p>
 <h3 id="return-statement">Return statement</h3>
 <p>A <code>crow::response</code> is very strictly tied to a route. If you can have something in a response constructor, you can return it in a handler.<br><br>
@@ -985,19 +985,19 @@ For more information on the specific constructors for a <code>crow::response</co
 If you have your own class you want to return (without converting it to string and returning that), you can use the <code>crow::returnable</code> class.<br>
 to use the returnable class, you only need your class to publicly extend <code>crow::returnable</code>, add a <code>dump()</code> method that returns your class as an <code>std::string</code>, and add a constructor that has a <code>Content-Type</code> header as a string argument.<br><br></p>
 <p>your class should look like the following:
-<div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">a</span> <span class="o">:</span> <span class="k">public</span> <span class="n">crow</span><span class="o">::</span><span class="n">returnable</span> 
-<span class="p">{</span>
-    <span class="n">a</span><span class="p">()</span> <span class="o">:</span> <span class="n">returnable</span><span class="p">(</span><span class="s">&quot;text/plain&quot;</span><span class="p">){};</span>
+<div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">a</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">crow</span><span class="o">::</span><span class="n">returnable</span><span class="w"> </span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">a</span><span class="p">()</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">returnable</span><span class="p">(</span><span class="s">&quot;text/plain&quot;</span><span class="p">){};</span><span class="w"></span>
 
-    <span class="p">...</span>
-    <span class="p">...</span>
-    <span class="p">...</span>
+<span class="w">    </span><span class="p">...</span><span class="w"></span>
+<span class="w">    </span><span class="p">...</span><span class="w"></span>
+<span class="w">    </span><span class="p">...</span><span class="w"></span>
 
-    <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">dump</span><span class="p">()</span> <span class="k">override</span>
-    <span class="p">{</span>
-        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="n">as_string</span><span class="p">();</span>
-    <span class="p">}</span>
-<span class="p">}</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">dump</span><span class="p">()</span><span class="w"> </span><span class="k">override</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="n">as_string</span><span class="p">();</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
 </code></pre></div></p>
 <h2 id="catchall-routes">Catchall routes</h2>
 <p><strong>Introduced in: <code>v0.3</code></strong><br><br>

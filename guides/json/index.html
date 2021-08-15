@@ -848,13 +848,13 @@ This last type means that <code>rvalue or wvalue</code> can have keys.</li>
 <h2 id="rvalue">rvalue</h2>
 <p>JSON read value, used for taking a JSON string and parsing it into <code>crow::json</code>.<br><br></p>
 <p>You can read individual items of the rvalue, but you cannot add items to it.<br>
-To do that, you need to convert it to a <code>wvalue</code>, which can be done by simply writing <code class="highlight"><span class="n">crow</span><span class="o">::</span><span class="n">json</span><span class="o">::</span><span class="n">wvalue</span> <span class="nf">wval</span> <span class="p">(</span><span class="n">rval</span><span class="p">);</span></code> (assuming <code>rval</code> is your <code>rvalue</code>).<br><br></p>
+To do that, you need to convert it to a <code>wvalue</code>, which can be done by simply writing <code class="highlight"><span class="n">crow</span><span class="o">::</span><span class="n">json</span><span class="o">::</span><span class="n">wvalue</span><span class="w"> </span><span class="nf">wval</span><span class="w"> </span><span class="p">(</span><span class="n">rval</span><span class="p">);</span><span class="w"></span></code> (assuming <code>rval</code> is your <code>rvalue</code>).<br><br></p>
 <p>For more info on read values go <a href="/reference/classcrow_1_1json_1_1rvalue.html">here</a>.<br><br></p>
 <h1 id="wvalue">wvalue</h1>
 <p>JSON write value, used for creating, editing and converting JSON to a string.<br><br></p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>setting a <code>wvalue</code> to object type can be done by simply assigning a value to whatever string key you like, something like <code class="highlight"><span class="n">wval</span><span class="p">[</span><span class="s">&quot;key1&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">val1</span><span class="p">;</span></code>. Keep in mind that val1 can be any of the above types.</p>
+<p>setting a <code>wvalue</code> to object type can be done by simply assigning a value to whatever string key you like, something like <code class="highlight"><span class="n">wval</span><span class="p">[</span><span class="s">&quot;key1&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">val1</span><span class="p">;</span><span class="w"></span></code>. Keep in mind that val1 can be any of the above types.</p>
 </div>
 <p>A <code>wvalue</code> can be treated as an object or even a list (setting a value by using <code>json[3] = 32</code> for example). Please note that this will remove the data in the value if it isn't of List type.<br><br></p>
 <p>An object type <code>wvalue</code> uses <code>std::unordered_map</code> by default, if you want to have your returned <code>wvalue</code> key value pairs be sorted (using <code>std::map</code>) you can add <code class="highlight"><span class="cp">#define CROW_JSON_USE_MAP</span></code> to the top of your program.<br><br></p>

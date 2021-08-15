@@ -831,19 +831,19 @@
 <span class="normal">10</span>
 <span class="normal">11</span>
 <span class="normal">12</span>
-<span class="normal">13</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>  <span class="n">CROW_ROUTE</span><span class="p">(</span><span class="n">app</span><span class="p">,</span> <span class="s">&quot;/place&quot;</span><span class="p">)</span>
-  <span class="p">([]</span> <span class="p">{</span> <span class="k">return</span> <span class="s">&quot;hi&quot;</span><span class="p">;</span> <span class="p">});</span>
+<span class="normal">13</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="w">  </span><span class="n">CROW_ROUTE</span><span class="p">(</span><span class="n">app</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;/place&quot;</span><span class="p">)</span><span class="w"></span>
+<span class="w">  </span><span class="p">([]</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="s">&quot;hi&quot;</span><span class="p">;</span><span class="w"> </span><span class="p">});</span><span class="w"></span>
 
-  <span class="n">app</span><span class="p">.</span><span class="n">validate</span><span class="p">();</span>  <span class="c1">//Used to make sure all the route handlers are in order.</span>
+<span class="w">  </span><span class="n">app</span><span class="p">.</span><span class="n">validate</span><span class="p">();</span><span class="w">  </span><span class="c1">//Used to make sure all the route handlers are in order.</span>
 
-  <span class="p">{</span>
-    <span class="n">request</span> <span class="n">req</span><span class="p">;</span>
-    <span class="n">response</span> <span class="n">res</span><span class="p">;</span>
+<span class="w">  </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">request</span><span class="w"> </span><span class="n">req</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="n">response</span><span class="w"> </span><span class="n">res</span><span class="p">;</span><span class="w"></span>
 
-    <span class="n">req</span><span class="p">.</span><span class="n">url</span> <span class="o">=</span> <span class="s">&quot;/place&quot;</span><span class="p">;</span>
+<span class="w">    </span><span class="n">req</span><span class="p">.</span><span class="n">url</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;/place&quot;</span><span class="p">;</span><span class="w"></span>
 
-    <span class="n">app</span><span class="p">.</span><span class="n">handle</span><span class="p">(</span><span class="n">req</span><span class="p">,</span> <span class="n">res</span><span class="p">);</span> <span class="c1">//res will contain a code of 200, and a response body of &quot;hi&quot;</span>
-  <span class="p">}</span>
+<span class="w">    </span><span class="n">app</span><span class="p">.</span><span class="n">handle</span><span class="p">(</span><span class="n">req</span><span class="p">,</span><span class="w"> </span><span class="n">res</span><span class="p">);</span><span class="w"> </span><span class="c1">//res will contain a code of 200, and a response body of &quot;hi&quot;</span>
+<span class="w">  </span><span class="p">}</span><span class="w"></span>
 </code></pre></div>
 </td></tr></table>
 <div class="admonition note">
@@ -876,27 +876,27 @@
 <span class="normal">18</span>
 <span class="normal">19</span>
 <span class="normal">20</span>
-<span class="normal">21</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>  <span class="k">static</span> <span class="kt">char</span> <span class="n">buf</span><span class="p">[</span><span class="mi">2048</span><span class="p">];</span>
-  <span class="n">SimpleApp</span> <span class="n">app</span><span class="p">;</span>
-  <span class="n">CROW_ROUTE</span><span class="p">(</span><span class="n">app</span><span class="p">,</span> <span class="s">&quot;/&quot;</span><span class="p">)([]</span> <span class="p">{</span> <span class="k">return</span> <span class="s">&quot;A&quot;</span><span class="p">;</span> <span class="p">});</span>
+<span class="normal">21</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="n">buf</span><span class="p">[</span><span class="mi">2048</span><span class="p">];</span><span class="w"></span>
+<span class="w">  </span><span class="n">SimpleApp</span><span class="w"> </span><span class="n">app</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="n">CROW_ROUTE</span><span class="p">(</span><span class="n">app</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;/&quot;</span><span class="p">)([]</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="s">&quot;A&quot;</span><span class="p">;</span><span class="w"> </span><span class="p">});</span><span class="w"></span>
 
-  <span class="k">auto</span> <span class="n">_</span> <span class="o">=</span> <span class="n">async</span><span class="p">(</span><span class="n">launch</span><span class="o">::</span><span class="n">async</span><span class="p">,[</span><span class="o">&amp;</span><span class="p">]</span> <span class="p">{</span> <span class="n">app1</span><span class="p">.</span><span class="n">bindaddr</span><span class="p">(</span><span class="s">&quot;127.0.0.1&quot;</span><span class="p">).</span><span class="n">port</span><span class="p">(</span><span class="mi">45451</span><span class="p">).</span><span class="n">run</span><span class="p">();</span> <span class="p">});</span>
-  <span class="n">app</span><span class="p">.</span><span class="n">wait_for_server_start</span><span class="p">();</span>
+<span class="w">  </span><span class="k">auto</span><span class="w"> </span><span class="n">_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">async</span><span class="p">(</span><span class="n">launch</span><span class="o">::</span><span class="n">async</span><span class="p">,[</span><span class="o">&amp;</span><span class="p">]</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">app1</span><span class="p">.</span><span class="n">bindaddr</span><span class="p">(</span><span class="s">&quot;127.0.0.1&quot;</span><span class="p">).</span><span class="n">port</span><span class="p">(</span><span class="mi">45451</span><span class="p">).</span><span class="n">run</span><span class="p">();</span><span class="w"> </span><span class="p">});</span><span class="w"></span>
+<span class="w">  </span><span class="n">app</span><span class="p">.</span><span class="n">wait_for_server_start</span><span class="p">();</span><span class="w"></span>
 
-  <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">sendmsg</span> <span class="o">=</span> <span class="s">&quot;GET /</span><span class="se">\r\n</span><span class="s">Content-Length:3</span><span class="se">\r\n</span><span class="s">X-HeaderTest: 123</span><span class="se">\r\n\r\n</span><span class="s">A=B</span><span class="se">\r\n</span><span class="s">&quot;</span><span class="p">;</span>
-  <span class="n">asio</span><span class="o">::</span><span class="n">io_service</span> <span class="n">is</span><span class="p">;</span>
-  <span class="p">{</span>
-    <span class="n">asio</span><span class="o">::</span><span class="n">ip</span><span class="o">::</span><span class="n">tcp</span><span class="o">::</span><span class="n">socket</span> <span class="nf">c</span><span class="p">(</span><span class="n">is</span><span class="p">);</span>
-    <span class="n">c</span><span class="p">.</span><span class="n">connect</span><span class="p">(</span><span class="n">asio</span><span class="o">::</span><span class="n">ip</span><span class="o">::</span><span class="n">tcp</span><span class="o">::</span><span class="n">endpoint</span><span class="p">(</span><span class="n">asio</span><span class="o">::</span><span class="n">ip</span><span class="o">::</span><span class="n">address</span><span class="o">::</span><span class="n">from_string</span><span class="p">(</span><span class="s">&quot;127.0.0.1&quot;</span><span class="p">),</span> <span class="mi">45451</span><span class="p">));</span>
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">sendmsg</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;GET /</span><span class="se">\r\n</span><span class="s">Content-Length:3</span><span class="se">\r\n</span><span class="s">X-HeaderTest: 123</span><span class="se">\r\n\r\n</span><span class="s">A=B</span><span class="se">\r\n</span><span class="s">&quot;</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="n">asio</span><span class="o">::</span><span class="n">io_service</span><span class="w"> </span><span class="n">is</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">asio</span><span class="o">::</span><span class="n">ip</span><span class="o">::</span><span class="n">tcp</span><span class="o">::</span><span class="n">socket</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="n">is</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="n">c</span><span class="p">.</span><span class="n">connect</span><span class="p">(</span><span class="n">asio</span><span class="o">::</span><span class="n">ip</span><span class="o">::</span><span class="n">tcp</span><span class="o">::</span><span class="n">endpoint</span><span class="p">(</span><span class="n">asio</span><span class="o">::</span><span class="n">ip</span><span class="o">::</span><span class="n">address</span><span class="o">::</span><span class="n">from_string</span><span class="p">(</span><span class="s">&quot;127.0.0.1&quot;</span><span class="p">),</span><span class="w"> </span><span class="mi">45451</span><span class="p">));</span><span class="w"></span>
 
-    <span class="n">c</span><span class="p">.</span><span class="n">send</span><span class="p">(</span><span class="n">asio</span><span class="o">::</span><span class="n">buffer</span><span class="p">(</span><span class="n">sendmsg</span><span class="p">));</span>
+<span class="w">    </span><span class="n">c</span><span class="p">.</span><span class="n">send</span><span class="p">(</span><span class="n">asio</span><span class="o">::</span><span class="n">buffer</span><span class="p">(</span><span class="n">sendmsg</span><span class="p">));</span><span class="w"></span>
 
-    <span class="kt">size_t</span> <span class="n">recved</span> <span class="o">=</span> <span class="n">c</span><span class="p">.</span><span class="n">receive</span><span class="p">(</span><span class="n">asio</span><span class="o">::</span><span class="n">buffer</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="mi">2048</span><span class="p">));</span>
-    <span class="n">CHECK</span><span class="p">(</span><span class="sc">&#39;A&#39;</span> <span class="o">==</span> <span class="n">buf</span><span class="p">[</span><span class="n">recved</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]);</span> <span class="c1">//This is specific to catch2 testing library, but it should give a general idea of how to read the response.</span>
-  <span class="p">}</span>
+<span class="w">    </span><span class="kt">size_t</span><span class="w"> </span><span class="n">recved</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">c</span><span class="p">.</span><span class="n">receive</span><span class="p">(</span><span class="n">asio</span><span class="o">::</span><span class="n">buffer</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span><span class="w"> </span><span class="mi">2048</span><span class="p">));</span><span class="w"></span>
+<span class="w">    </span><span class="n">CHECK</span><span class="p">(</span><span class="sc">&#39;A&#39;</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">buf</span><span class="p">[</span><span class="n">recved</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">]);</span><span class="w"> </span><span class="c1">//This is specific to catch2 testing library, but it should give a general idea of how to read the response.</span>
+<span class="w">  </span><span class="p">}</span><span class="w"></span>
 
-  <span class="n">app</span><span class="p">.</span><span class="n">stop</span><span class="p">();</span> <span class="c1">//THIS MUST RUN</span>
-<span class="p">}</span>
+<span class="w">  </span><span class="n">app</span><span class="p">.</span><span class="n">stop</span><span class="p">();</span><span class="w"> </span><span class="c1">//THIS MUST RUN</span>
+<span class="p">}</span><span class="w"></span>
 </code></pre></div>
 </td></tr></table>
 The first part is straightforward, create an app and add a route.<br>

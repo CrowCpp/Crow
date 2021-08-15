@@ -838,16 +838,16 @@ An app allows access to the http server (for handling connections), router (for 
 <h2 id="appm1-m2">App&lt;m1, m2, ...&gt;</h2>
 <p>Has middlewares.</p>
 <h2 id="using-the-app">Using the app</h2>
-<p>To use a Crow app, simply define <code class="highlight"><span class="n">crow</span><span class="o">::</span><span class="n">SimpleApp</span></code> or <code class="highlight"><span class="n">crow</span><span class="o">::</span><span class="n">App</span><span class="o">&lt;</span><span class="n">m1</span><span class="p">,</span> <span class="n">m2</span> <span class="p">...</span><span class="o">&gt;</span></code> if you're using middlewares.<br>
+<p>To use a Crow app, simply define <code class="highlight"><span class="n">crow</span><span class="o">::</span><span class="n">SimpleApp</span><span class="w"></span></code> or <code class="highlight"><span class="n">crow</span><span class="o">::</span><span class="n">App</span><span class="o">&lt;</span><span class="n">m1</span><span class="p">,</span><span class="w"> </span><span class="n">m2</span><span class="w"> </span><span class="p">...</span><span class="o">&gt;</span><span class="w"></span></code> if you're using middlewares.<br>
 The methods of an app can be chained. That means that you can configure and run your app in the same code line.
-<div class="highlight"><pre><span></span><code><span class="n">app</span><span class="p">.</span><span class="n">bindaddr</span><span class="p">(</span><span class="mf">192.168.1.2</span><span class="p">).</span><span class="n">port</span><span class="p">(</span><span class="mi">443</span><span class="p">).</span><span class="n">ssl_file</span><span class="p">(</span><span class="s">&quot;certfile.crt&quot;</span><span class="p">,</span><span class="s">&quot;keyfile.key&quot;</span><span class="p">).</span><span class="n">multithreaded</span><span class="p">().</span><span class="n">run</span><span class="p">();</span>
+<div class="highlight"><pre><span></span><code><span class="n">app</span><span class="p">.</span><span class="n">bindaddr</span><span class="p">(</span><span class="mf">192.168.1.2</span><span class="p">).</span><span class="n">port</span><span class="p">(</span><span class="mi">443</span><span class="p">).</span><span class="n">ssl_file</span><span class="p">(</span><span class="s">&quot;certfile.crt&quot;</span><span class="p">,</span><span class="s">&quot;keyfile.key&quot;</span><span class="p">).</span><span class="n">multithreaded</span><span class="p">().</span><span class="n">run</span><span class="p">();</span><span class="w"></span>
 </code></pre></div>
 Or if you like your code neat
-<div class="highlight"><pre><span></span><code><span class="n">app</span><span class="p">.</span><span class="n">bindaddr</span><span class="p">(</span><span class="mf">192.168.1.2</span><span class="p">)</span>
-<span class="p">.</span><span class="n">port</span><span class="p">(</span><span class="mi">443</span><span class="p">)</span>
-<span class="p">.</span><span class="n">ssl_file</span><span class="p">(</span><span class="s">&quot;certfile.crt&quot;</span><span class="p">,</span><span class="s">&quot;keyfile.key&quot;</span><span class="p">)</span>
-<span class="p">.</span><span class="n">multithreaded</span><span class="p">()</span>
-<span class="p">.</span><span class="n">run</span><span class="p">();</span>
+<div class="highlight"><pre><span></span><code><span class="n">app</span><span class="p">.</span><span class="n">bindaddr</span><span class="p">(</span><span class="mf">192.168.1.2</span><span class="p">)</span><span class="w"></span>
+<span class="p">.</span><span class="n">port</span><span class="p">(</span><span class="mi">443</span><span class="p">)</span><span class="w"></span>
+<span class="p">.</span><span class="n">ssl_file</span><span class="p">(</span><span class="s">&quot;certfile.crt&quot;</span><span class="p">,</span><span class="s">&quot;keyfile.key&quot;</span><span class="p">)</span><span class="w"></span>
+<span class="p">.</span><span class="n">multithreaded</span><span class="p">()</span><span class="w"></span>
+<span class="p">.</span><span class="n">run</span><span class="p">();</span><span class="w"></span>
 </code></pre></div>
 <br><br></p>
 <p>For more info on middlewares, check out <a href="../middleware">this page</a>.<br><br>
