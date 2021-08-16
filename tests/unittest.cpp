@@ -746,6 +746,261 @@ TEST_CASE("json_copy_r_to_w_to_w_to_r")
   CHECK("other" == x["obj"]["other"].key());
 }
 
+TEST_CASE("json::wvalue::wvalue(bool)") {
+  CHECK(json::wvalue(true).t() == json::type::True);
+  CHECK(json::wvalue(false).t() == json::type::False);
+}
+
+TEST_CASE("json::wvalue::wvalue(std::uint8_t)") {
+  std::uint8_t i = 42;
+  json::wvalue value = i;
+
+  CHECK(value.t() == json::type::Number);
+  CHECK(value.dump() == "42");
+}
+
+TEST_CASE("json::wvalue::wvalue(std::uint16_t)") {
+  std::uint16_t i = 42;
+  json::wvalue value = i;
+
+  CHECK(value.t() == json::type::Number);
+  CHECK(value.dump() == "42");
+}
+
+TEST_CASE("json::wvalue::wvalue(std::uint32_t)") {
+  std::uint32_t i = 42;
+  json::wvalue value = i;
+
+  CHECK(value.t() == json::type::Number);
+  CHECK(value.dump() == "42");
+}
+
+TEST_CASE("json::wvalue::wvalue(std::uint64_t)") {
+  std::uint64_t i = 42;
+  json::wvalue value = i;
+
+  CHECK(value.t() == json::type::Number);
+  CHECK(value.dump() == "42");
+}
+
+TEST_CASE("json::wvalue::wvalue(std::int8_t)") {
+  std::int8_t i = -42;
+  json::wvalue value = i;
+
+  CHECK(value.t() == json::type::Number);
+  CHECK(value.dump() == "-42");
+}
+
+TEST_CASE("json::wvalue::wvalue(std::int16_t)") {
+  std::int16_t i = -42;
+  json::wvalue value = i;
+
+  CHECK(value.t() == json::type::Number);
+  CHECK(value.dump() == "-42");
+}
+
+TEST_CASE("json::wvalue::wvalue(std::int32_t)") {
+  std::int32_t i = -42;
+  json::wvalue value = i;
+
+  CHECK(value.t() == json::type::Number);
+  CHECK(value.dump() == "-42");
+}
+
+TEST_CASE("json::wvalue::wvalue(std::int64_t)") {
+  std::int64_t i = -42;
+  json::wvalue value = i;
+
+  CHECK(value.t() == json::type::Number);
+  CHECK(value.dump() == "-42");
+}
+
+TEST_CASE("json::wvalue::wvalue(float)") {
+  float f = 4.2;
+  json::wvalue value = f;
+
+  CHECK(value.t() == json::type::Number);
+  CHECK(value.dump() == "4.2");
+}
+
+TEST_CASE("json::wvalue::wvalue(double)") {
+  double d = 4.2;
+  json::wvalue value = d;
+
+  CHECK(value.t() == json::type::Number);
+  CHECK(value.dump() == "4.2");
+}
+
+TEST_CASE("json::wvalue::wvalue(char const*)") {
+  char const* str = "Hello world!";
+  json::wvalue value = str;
+
+  CHECK(value.t() == json::type::String);
+  CHECK(value.dump() == "\"Hello world!\"");
+}
+
+TEST_CASE("json::wvalue::wvalue(std::string const&)") {
+  std::string str = "Hello world!";
+  json::wvalue value = str;
+
+  CHECK(value.t() == json::type::String);
+  CHECK(value.dump() == "\"Hello world!\"");
+}
+
+TEST_CASE("json::wvalue::wvalue(std::string&&)") {
+  std::string str = "Hello world!";
+  json::wvalue value = std::move(str);
+
+  CHECK(value.t() == json::type::String);
+  CHECK(value.dump() == "\"Hello world!\"");
+}
+
+TEST_CASE("json::wvalue::wvalue(std::initializer_list<std::pair<std::string const, json::wvalue>>)") {
+  json::wvalue integer, number, truth, lie, null;
+  integer = 2147483647;
+  number = 23.43;
+  truth = true;
+  lie = false;
+
+  /* initializer-list constructor. */
+  json::wvalue value({
+    {"integer", integer},
+    {"number", number},
+    {"truth", truth},
+    {"lie", lie},
+    {"null", null}
+  });
+
+  CHECK(value["integer"].dump() == integer.dump());
+  CHECK(value["number"].dump() == number.dump());
+  CHECK(value["truth"].dump() == truth.dump());
+  CHECK(value["lie"].dump() == lie.dump());
+  CHECK(value["null"].dump() == null.dump());
+}
+
+TEST_CASE("json::wvalue::wvalue(std::[unordered_]map<std::string, json::wvalue> const&)") {
+  json::wvalue integer, number, truth, lie, null;
+  integer = 2147483647;
+  number = 23.43;
+  truth = true;
+  lie = false;
+
+  json::wvalue::object_type map({
+    {"integer", integer},
+    {"number", number},
+    {"truth", truth},
+    {"lie", lie},
+    {"null", null}
+  });
+
+  json::wvalue value(map); /* copy-constructor. */
+
+  CHECK(value["integer"].dump() == integer.dump());
+  CHECK(value["number"].dump() == number.dump());
+  CHECK(value["truth"].dump() == truth.dump());
+  CHECK(value["lie"].dump() == lie.dump());
+  CHECK(value["null"].dump() == null.dump());
+}
+
+TEST_CASE("json::wvalue::wvalue(std::[unordered_]map<std::string, json::wvalue>&&)") {
+  json::wvalue integer, number, truth, lie, null;
+  integer = 2147483647;
+  number = 23.43;
+  truth = true;
+  lie = false;
+
+  json::wvalue::object_type map = {{
+    {"integer", integer},
+    {"number", number},
+    {"truth", truth},
+    {"lie", lie},
+    {"null", null}
+  }};
+
+  json::wvalue value(std::move(map)); /* move constructor. */
+  // json::wvalue value = std::move(map); /* move constructor. */
+
+  CHECK(value["integer"].dump() == integer.dump());
+  CHECK(value["number"].dump() == number.dump());
+  CHECK(value["truth"].dump() == truth.dump());
+  CHECK(value["lie"].dump() == lie.dump());
+  CHECK(value["null"].dump() == null.dump());
+}
+
+TEST_CASE("json::wvalue::operator=(std::initializer_list<std::pair<std::string const, json::wvalue>>)") {
+  json::wvalue integer, number, truth, lie, null;
+  integer = 2147483647;
+  number = 23.43;
+  truth = true;
+  lie = false;
+
+  json::wvalue value;
+  /* initializer-list assignment. */
+  value = {
+    {"integer", integer},
+    {"number", number},
+    {"truth", truth},
+    {"lie", lie},
+    {"null", null}
+  };
+
+  CHECK(value["integer"].dump() == integer.dump());
+  CHECK(value["number"].dump() == number.dump());
+  CHECK(value["truth"].dump() == truth.dump());
+  CHECK(value["lie"].dump() == lie.dump());
+  CHECK(value["null"].dump() == null.dump());
+}
+
+TEST_CASE("json::wvalue::operator=(std::[unordered_]map<std::string, json::wvalue> const&)") {
+  json::wvalue integer, number, truth, lie, null;
+  integer = 2147483647;
+  number = 23.43;
+  truth = true;
+  lie = false;
+
+  json::wvalue::object_type map({
+    {"integer", integer},
+    {"number", number},
+    {"truth", truth},
+    {"lie", lie},
+    {"null", null}
+  });
+
+  json::wvalue value;
+  value = map; /* copy assignment. */
+
+  CHECK(value["integer"].dump() == integer.dump());
+  CHECK(value["number"].dump() == number.dump());
+  CHECK(value["truth"].dump() == truth.dump());
+  CHECK(value["lie"].dump() == lie.dump());
+  CHECK(value["null"].dump() == null.dump());
+}
+
+TEST_CASE("json::wvalue::operator=(std::[unordered_]map<std::string, json::wvalue>&&)") {
+  json::wvalue integer, number, truth, lie, null;
+  integer = 2147483647;
+  number = 23.43;
+  truth = true;
+  lie = false;
+
+  json::wvalue::object_type map({
+    {"integer", integer},
+    {"number", number},
+    {"truth", truth},
+    {"lie", lie},
+    {"null", null}
+  });
+
+  json::wvalue value;
+  value = std::move(map); /* move assignment. */
+
+  CHECK(value["integer"].dump() == integer.dump());
+  CHECK(value["number"].dump() == number.dump());
+  CHECK(value["truth"].dump() == truth.dump());
+  CHECK(value["lie"].dump() == lie.dump());
+  CHECK(value["null"].dump() == null.dump());
+}
+
 TEST_CASE("json_vector")
 {//TODO probably make constructors for the same values as = operator
     json::wvalue a;
