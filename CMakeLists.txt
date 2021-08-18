@@ -76,3 +76,9 @@ endif()
 # Install Files
 #####################################
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/crow_all.h DESTINATION include)
+
+set(CPACK_GENERATOR "DEB")
+set(CPACK_DEBIAN_PACKAGE_MAINTAINER "CrowCpp")
+set(CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON)
+
+include(CPack)

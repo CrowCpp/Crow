@@ -263,7 +263,7 @@ namespace crow
             req_ = std::move(parser_.to_request());
             request& req = req_;
 
-            req.remoteIpAddress = adaptor_.remote_endpoint().address().to_string();
+            req.remote_ip_address = adaptor_.remote_endpoint().address().to_string();
 
             if (parser_.check_version(1, 0))
             {
@@ -357,7 +357,7 @@ namespace crow
                     decltype(*middlewares_)>
                 (*middlewares_, ctx_, req_, res);
             }
-
+#ifdef CROW_ENABLE_COMPRESSION
             std::string accept_encoding = req_.get_header_value("Accept-Encoding");
             if (!accept_encoding.empty() && res.compressed)
             {
@@ -381,7 +381,7 @@ namespace crow
                         break;
                 }
             }
-
+#endif
             //if there is a redirection with a partial URL, treat the URL as a route.
             std::string location = res.get_header_value("Location");
             if (!location.empty() && location.find("://", 0) == std::string::npos)

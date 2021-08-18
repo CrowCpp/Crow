@@ -45,7 +45,7 @@ namespace crow
             }
 
             ///Represent all parts as a string (**does not include message headers**)
-            std::string dump() override
+            std::string dump() const override
             {
                 std::stringstream str;
                 std::string delimiter = dd + boundary;
@@ -60,7 +60,7 @@ namespace crow
             }
 
             ///Represent an individual part as a string
-            std::string dump(int part_)
+            std::string dump(int part_) const
             {
                 std::stringstream str;
                 part item = parts[part_];
@@ -92,7 +92,7 @@ namespace crow
 
           private:
 
-            std::string get_boundary(const std::string& header)
+            std::string get_boundary(const std::string& header) const
             {
                 size_t found = header.find("boundary=");
                 if (found)
@@ -181,14 +181,14 @@ namespace crow
                 }
             }
 
-            inline std::string trim (std::string& string, const char& excess = '"')
+            inline std::string trim (std::string& string, const char& excess = '"') const
             {
                 if (string.length() > 1 && string[0] == excess && string[string.length()-1] == excess)
                     return string.substr(1, string.length()-2);
                 return string;
             }
 
-            inline std::string pad (std::string& string, const char& padding = '"')
+            inline std::string pad (std::string& string, const char& padding = '"') const
             {
                     return (padding + string + padding);
             }

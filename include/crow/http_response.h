@@ -28,7 +28,10 @@ namespace crow
         int code{200}; ///< The Status code for the response.
         std::string body; ///< The actual payload containing the response data.
         ci_map headers; ///< HTTP headers.
+
+#ifdef CROW_ENABLE_COMPRESSION
         bool compressed = true; ///< If compression is enabled and this is false, the individual response will not be compressed.
+#endif
         bool is_head_response = false; ///< Whether this is a response to a HEAD request.
         bool manual_length_header = false; ///< Whether Crow should automatically add a "Content-Length" header.
 
@@ -84,6 +87,7 @@ namespace crow
             code = r.code;
             headers = std::move(r.headers);
             completed_ = r.completed_;
+            file_info = std::move(r.file_info);
             return *this;
         }
 
@@ -195,7 +199,9 @@ namespace crow
         void set_static_file_info(std::string path){
             file_info.path = path;
             file_info.statResult = stat(file_info.path.c_str(), &file_info.statbuf);
+#ifdef CROW_ENABLE_COMPRESSION
             compressed = false;
+#endif
             if (file_info.statResult == 0)
             {
                 std::size_t last_dot = path.find_last_of(".");

@@ -1,0 +1,71 @@
+{
+    "name": "crow-examples",
+    "version": "master",
+    "dependencies": [
+        {
+            "name": "boost-array",
+            "version>=": "1.70.0"
+        },
+        {
+            "name": "boost-algorithm",
+            "version>=": "1.70.0"
+        },
+        {
+            "name": "boost-asio",
+            "version>=": "1.70.0"
+        },
+        {
+            "name": "boost-date-time",
+            "version>=": "1.70.0"
+        },
+        {
+            "name": "boost-functional",
+            "version>=": "1.70.0"
+        },
+        {
+            "name": "boost-lexical-cast",
+            "version>=": "1.70.0"
+        },
+        {
+            "name": "boost-optional",
+            "version>=": "1.70.0"
+        },
+        {
+            "name": "openssl-windows"
+        },
+        {
+            "name": "zlib"
+        }
+    ],
+    "overrides": [
+        {
+            "name": "boost-array",
+            "version": "1.70.0"
+        },
+        {
+            "name": "boost-algorithm",
+            "version": "1.70.0"
+        },
+        {
+            "name": "boost-asio",
+            "version-semver": "1.70.0-2"
+        },
+        {
+            "name": "boost-date-time",
+            "version": "1.70.0"
+        },
+        {
+            "name": "boost-functional",
+            "version": "1.70.0"
+        },
+        {
+            "name": "boost-lexical-cast",
+            "version": "1.70.0"
+        },
+        {
+            "name": "boost-optional",
+            "version": "1.70.0"
+        }
+    ],
+    "builtin-baseline": "44d94c2edbd44f0c01d66c2ad95eb6982a9a61bc"
+}

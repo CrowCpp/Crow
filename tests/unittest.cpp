@@ -1,4 +1,5 @@
 #define CATCH_CONFIG_MAIN
+#define CROW_ENABLE_COMPRESSION
 #define CROW_LOG_LEVEL 0
 #define CROW_MAIN
 #include <sys/stat.h>
@@ -665,6 +666,24 @@ TEST_CASE("json_read_unescaping")
   }
 }
 
+TEST_CASE("json_read_string")
+{
+    auto x = json::load(R"({"message": 53})");
+    int y (x["message"]);
+    std::string z(x["message"]);
+    CHECK(53 == y);
+    CHECK("53" == z);
+}
+
+TEST_CASE("json_read_container")
+{
+    auto x = json::load(R"({"first": 53, "second": "55", "third": [5,6,7,8,3,2,1,4]})");
+    CHECK(std::vector<std::string>({"first", "second", "third"}) == x.keys());
+    CHECK(53 == int(x.lo()[0]));
+    CHECK("55" == std::string(x.lo()[1]));
+    CHECK (8 == int(x.lo()[2].lo()[3]));
+}
+
 TEST_CASE("json_write")
 {
   json::wvalue x;
@@ -700,11 +719,12 @@ TEST_CASE("json_write")
   CHECK(R"({"scores":[1,2,3]})" == y.dump());
 }
 
-TEST_CASE("json_copy_r_to_w_to_r")
+TEST_CASE("json_copy_r_to_w_to_w_to_r")
 {
   json::rvalue r = json::load(
       R"({"smallint":2,"bigint":2147483647,"fp":23.43,"fpsc":2.343e1,"str":"a string","trueval":true,"falseval":false,"nullval":null,"listval":[1,2,"foo","bar"],"obj":{"member":23,"other":"baz"}})");
-  json::wvalue w{r};
+  json::wvalue v{r};
+  json::wvalue w(v);
   json::rvalue x =
       json::load(w.dump());  // why no copy-ctor wvalue -> rvalue?
   CHECK(2 == x["smallint"]);
@@ -724,6 +744,294 @@ TEST_CASE("json_copy_r_to_w_to_r")
   CHECK("member" == x["obj"]["member"].key());
   CHECK("baz" == x["obj"]["other"]);
   CHECK("other" == x["obj"]["other"].key());
+}
+
+TEST_CASE("json::wvalue::wvalue(bool)") {
+  CHECK(json::wvalue(true).t() == json::type::True);
+  CHECK(json::wvalue(false).t() == json::type::False);
+}
+
+TEST_CASE("json::wvalue::wvalue(std::uint8_t)") {
+  std::uint8_t i = 42;
+  json::wvalue value = i;
+
+  CHECK(value.t() == json::type::Number);
+  CHECK(value.dump() == "42");
+}
+
+TEST_CASE("json::wvalue::wvalue(std::uint16_t)") {
+  std::uint16_t i = 42;
+  json::wvalue value = i;
+
+  CHECK(value.t() == json::type::Number);
+  CHECK(value.dump() == "42");
+}
+
+TEST_CASE("json::wvalue::wvalue(std::uint32_t)") {
+  std::uint32_t i = 42;
+  json::wvalue value = i;
+
+  CHECK(value.t() == json::type::Number);
+  CHECK(value.dump() == "42");
+}
+
+TEST_CASE("json::wvalue::wvalue(std::uint64_t)") {
+  std::uint64_t i = 42;
+  json::wvalue value = i;
+
+  CHECK(value.t() == json::type::Number);
+  CHECK(value.dump() == "42");
+}
+
+TEST_CASE("json::wvalue::wvalue(std::int8_t)") {
+  std::int8_t i = -42;
+  json::wvalue value = i;
+
+  CHECK(value.t() == json::type::Number);
+  CHECK(value.dump() == "-42");
+}
+
+TEST_CASE("json::wvalue::wvalue(std::int16_t)") {
+  std::int16_t i = -42;
+  json::wvalue value = i;
+
+  CHECK(value.t() == json::type::Number);
+  CHECK(value.dump() == "-42");
+}
+
+TEST_CASE("json::wvalue::wvalue(std::int32_t)") {
+  std::int32_t i = -42;
+  json::wvalue value = i;
+
+  CHECK(value.t() == json::type::Number);
+  CHECK(value.dump() == "-42");
+}
+
+TEST_CASE("json::wvalue::wvalue(std::int64_t)") {
+  std::int64_t i = -42;
+  json::wvalue value = i;
+
+  CHECK(value.t() == json::type::Number);
+  CHECK(value.dump() == "-42");
+}
+
+TEST_CASE("json::wvalue::wvalue(float)") {
+  float f = 4.2;
+  json::wvalue value = f;
+
+  CHECK(value.t() == json::type::Number);
+  CHECK(value.dump() == "4.2");
+}
+
+TEST_CASE("json::wvalue::wvalue(double)") {
+  double d = 4.2;
+  json::wvalue value = d;
+
+  CHECK(value.t() == json::type::Number);
+  CHECK(value.dump() == "4.2");
+}
+
+TEST_CASE("json::wvalue::wvalue(char const*)") {
+  char const* str = "Hello world!";
+  json::wvalue value = str;
+
+  CHECK(value.t() == json::type::String);
+  CHECK(value.dump() == "\"Hello world!\"");
+}
+
+TEST_CASE("json::wvalue::wvalue(std::string const&)") {
+  std::string str = "Hello world!";
+  json::wvalue value = str;
+
+  CHECK(value.t() == json::type::String);
+  CHECK(value.dump() == "\"Hello world!\"");
+}
+
+TEST_CASE("json::wvalue::wvalue(std::string&&)") {
+  std::string str = "Hello world!";
+  json::wvalue value = std::move(str);
+
+  CHECK(value.t() == json::type::String);
+  CHECK(value.dump() == "\"Hello world!\"");
+}
+
+TEST_CASE("json::wvalue::wvalue(std::initializer_list<std::pair<std::string const, json::wvalue>>)") {
+  json::wvalue integer, number, truth, lie, null;
+  integer = 2147483647;
+  number = 23.43;
+  truth = true;
+  lie = false;
+
+  /* initializer-list constructor. */
+  json::wvalue value({
+    {"integer", integer},
+    {"number", number},
+    {"truth", truth},
+    {"lie", lie},
+    {"null", null}
+  });
+
+  CHECK(value["integer"].dump() == integer.dump());
+  CHECK(value["number"].dump() == number.dump());
+  CHECK(value["truth"].dump() == truth.dump());
+  CHECK(value["lie"].dump() == lie.dump());
+  CHECK(value["null"].dump() == null.dump());
+}
+
+TEST_CASE("json::wvalue::wvalue(std::[unordered_]map<std::string, json::wvalue> const&)") {
+  json::wvalue integer, number, truth, lie, null;
+  integer = 2147483647;
+  number = 23.43;
+  truth = true;
+  lie = false;
+
+  json::wvalue::object_type map({
+    {"integer", integer},
+    {"number", number},
+    {"truth", truth},
+    {"lie", lie},
+    {"null", null}
+  });
+
+  json::wvalue value(map); /* copy-constructor. */
+
+  CHECK(value["integer"].dump() == integer.dump());
+  CHECK(value["number"].dump() == number.dump());
+  CHECK(value["truth"].dump() == truth.dump());
+  CHECK(value["lie"].dump() == lie.dump());
+  CHECK(value["null"].dump() == null.dump());
+}
+
+TEST_CASE("json::wvalue::wvalue(std::[unordered_]map<std::string, json::wvalue>&&)") {
+  json::wvalue integer, number, truth, lie, null;
+  integer = 2147483647;
+  number = 23.43;
+  truth = true;
+  lie = false;
+
+  json::wvalue::object_type map = {{
+    {"integer", integer},
+    {"number", number},
+    {"truth", truth},
+    {"lie", lie},
+    {"null", null}
+  }};
+
+  json::wvalue value(std::move(map)); /* move constructor. */
+  // json::wvalue value = std::move(map); /* move constructor. */
+
+  CHECK(value["integer"].dump() == integer.dump());
+  CHECK(value["number"].dump() == number.dump());
+  CHECK(value["truth"].dump() == truth.dump());
+  CHECK(value["lie"].dump() == lie.dump());
+  CHECK(value["null"].dump() == null.dump());
+}
+
+TEST_CASE("json::wvalue::operator=(std::initializer_list<std::pair<std::string const, json::wvalue>>)") {
+  json::wvalue integer, number, truth, lie, null;
+  integer = 2147483647;
+  number = 23.43;
+  truth = true;
+  lie = false;
+
+  json::wvalue value;
+  /* initializer-list assignment. */
+  value = {
+    {"integer", integer},
+    {"number", number},
+    {"truth", truth},
+    {"lie", lie},
+    {"null", null}
+  };
+
+  CHECK(value["integer"].dump() == integer.dump());
+  CHECK(value["number"].dump() == number.dump());
+  CHECK(value["truth"].dump() == truth.dump());
+  CHECK(value["lie"].dump() == lie.dump());
+  CHECK(value["null"].dump() == null.dump());
+}
+
+TEST_CASE("json::wvalue::operator=(std::[unordered_]map<std::string, json::wvalue> const&)") {
+  json::wvalue integer, number, truth, lie, null;
+  integer = 2147483647;
+  number = 23.43;
+  truth = true;
+  lie = false;
+
+  json::wvalue::object_type map({
+    {"integer", integer},
+    {"number", number},
+    {"truth", truth},
+    {"lie", lie},
+    {"null", null}
+  });
+
+  json::wvalue value;
+  value = map; /* copy assignment. */
+
+  CHECK(value["integer"].dump() == integer.dump());
+  CHECK(value["number"].dump() == number.dump());
+  CHECK(value["truth"].dump() == truth.dump());
+  CHECK(value["lie"].dump() == lie.dump());
+  CHECK(value["null"].dump() == null.dump());
+}
+
+TEST_CASE("json::wvalue::operator=(std::[unordered_]map<std::string, json::wvalue>&&)") {
+  json::wvalue integer, number, truth, lie, null;
+  integer = 2147483647;
+  number = 23.43;
+  truth = true;
+  lie = false;
+
+  json::wvalue::object_type map({
+    {"integer", integer},
+    {"number", number},
+    {"truth", truth},
+    {"lie", lie},
+    {"null", null}
+  });
+
+  json::wvalue value;
+  value = std::move(map); /* move assignment. */
+
+  CHECK(value["integer"].dump() == integer.dump());
+  CHECK(value["number"].dump() == number.dump());
+  CHECK(value["truth"].dump() == truth.dump());
+  CHECK(value["lie"].dump() == lie.dump());
+  CHECK(value["null"].dump() == null.dump());
+}
+
+TEST_CASE("json_vector")
+{//TODO probably make constructors for the same values as = operator
+    json::wvalue a;
+    json::wvalue b;
+    json::wvalue c;
+    json::wvalue d;
+    json::wvalue e;
+    json::wvalue f;
+    json::wvalue g;
+    json::wvalue h;
+    a = 5;
+    b = 6;
+    c = 7;
+    d = 8;
+    e = 4;
+    f = 3;
+    g = 2;
+    h = 1;
+    std::vector<json::wvalue> nums;
+    nums.emplace_back(a);
+    nums.emplace_back(b);
+    nums.emplace_back(c);
+    nums.emplace_back(d);
+    nums.emplace_back(e);
+    nums.emplace_back(f);
+    nums.emplace_back(g);
+    nums.emplace_back(h);
+    json::wvalue x(nums);
+
+    CHECK(8 == x.size());
+    CHECK("[5,6,7,8,4,3,2,1]" == x.dump());
 }
 
 TEST_CASE("template_basic")
@@ -1130,9 +1438,15 @@ TEST_CASE("simple_url_params")
     c.receive(asio::buffer(buf, 2048));
     c.close();
 
-    CHECK(string(last_url_params.get("hello")) == "world");
-    CHECK(string(last_url_params.get("left")) == "right");
-    CHECK(string(last_url_params.get("up")) == "down");
+    query_string mutable_params(last_url_params);
+
+    CHECK(string(mutable_params.get("hello")) == "world");
+    CHECK(string(mutable_params.get("left")) == "right");
+    CHECK(string(mutable_params.get("up")) == "down");
+
+    std::string z = mutable_params.pop("left");
+    CHECK(z == "right");
+    CHECK(mutable_params.get("left") == nullptr);
   }
   // check multiple value, multiple types
   sendmsg = "GET /params?int=100&double=123.45&boolean=1\r\n\r\n";
@@ -1165,8 +1479,7 @@ TEST_CASE("simple_url_params")
     CHECK(string(last_url_params.get_list("tmnt")[0]) == "leonardo");
   }
   // check multiple array value
-  sendmsg =
-      "GET /params?tmnt[]=leonardo&tmnt[]=donatello&tmnt[]=raphael\r\n\r\n";
+  sendmsg = "GET /params?tmnt[]=leonardo&tmnt[]=donatello&tmnt[]=raphael\r\n\r\n";
   {
     asio::ip::tcp::socket c(is);
 
@@ -1180,6 +1493,25 @@ TEST_CASE("simple_url_params")
     CHECK(string(last_url_params.get_list("tmnt")[0]) == "leonardo");
     CHECK(string(last_url_params.get_list("tmnt")[1]) == "donatello");
     CHECK(string(last_url_params.get_list("tmnt")[2]) == "raphael");
+    CHECK(last_url_params.pop_list("tmnt").size() == 3);
+    CHECK(last_url_params.get_list("tmnt").size() == 0);
+  }
+  // check dictionary value
+  sendmsg = "GET /params?kees[one]=vee1&kees[two]=vee2&kees[three]=vee3\r\n\r\n";
+  {
+    asio::ip::tcp::socket c(is);
+
+    c.connect(asio::ip::tcp::endpoint(asio::ip::address::from_string(LOCALHOST_ADDRESS), 45451));
+    c.send(asio::buffer(sendmsg));
+    c.receive(asio::buffer(buf, 2048));
+    c.close();
+
+    CHECK(last_url_params.get_dict("kees").size() == 3);
+    CHECK(string(last_url_params.get_dict("kees")["one"]) == "vee1");
+    CHECK(string(last_url_params.get_dict("kees")["two"]) == "vee2");
+    CHECK(string(last_url_params.get_dict("kees")["three"]) == "vee3");
+    CHECK(last_url_params.pop_dict("kees").size() == 3);
+    CHECK(last_url_params.get_dict("kees").size() == 0);
   }
   app.stop();
 }
@@ -1341,14 +1673,15 @@ TEST_CASE("stream_response")
 
     SimpleApp app;
 
-    CROW_ROUTE(app, "/test")
-    ([](const crow::request&, crow::response& res)
-    {
-      std::string keyword_ = "hello";
-      std::string key_response;
-      for (unsigned int i = 0; i<250000; i++)
-        key_response += keyword_;
 
+    std::string keyword_ = "hello";
+    std::string key_response;
+    for (unsigned int i = 0; i<250000; i++)
+      key_response += keyword_;
+
+    CROW_ROUTE(app, "/test")
+    ([&key_response](const crow::request&, crow::response& res)
+    {
       res.body = key_response;
       res.end();
     });
@@ -1356,7 +1689,7 @@ TEST_CASE("stream_response")
     app.validate();
 
     //running the test on a separate thread to allow the client to sleep
-    std::thread runTest([&app](){
+   std::thread runTest([&app, &key_response](){
 
     auto _ = async(launch::async,
                    [&] { app.bindaddr(LOCALHOST_ADDRESS).port(45451).run(); });
@@ -1370,9 +1703,6 @@ TEST_CASE("stream_response")
     {
       asio::streambuf b;
 
-      std::string keyword_ = "hello";
-      std::string key_response;
-
       asio::ip::tcp::socket c(is);
       c.connect(asio::ip::tcp::endpoint(
           asio::ip::address::from_string(LOCALHOST_ADDRESS), 45451));
@@ -1381,10 +1711,6 @@ TEST_CASE("stream_response")
       //consuming the headers, since we don't need those for the test
       static char buf[2048];
       c.receive(asio::buffer(buf, 2048));
-
-      //creating the string to compare against
-      for (unsigned int i = 0; i<250000; i++)
-        key_response += keyword_;
 
       //"hello" is 5 bytes, (5*250000)/16384 = 76.2939
       for (unsigned int i = 0; i<76; i++)
@@ -1808,5 +2134,117 @@ TEST_CASE("catchall")
       app2.handle(req, res);
 
       CHECK(404 == res.code);
+    }
+}
+
+TEST_CASE("blueprint")
+{
+    SimpleApp app;
+    crow::Blueprint bp("bp_prefix", "cstat", "ctemplate");
+    crow::Blueprint bp_not_sub("bp_prefix_second");
+    crow::Blueprint sub_bp("bp2", "csstat", "cstemplate");
+    crow::Blueprint sub_sub_bp("bp3");
+
+    CROW_BP_ROUTE(sub_bp, "/hello")
+    ([]() {
+        return "Hello world!";
+    });
+
+    CROW_BP_ROUTE(bp_not_sub, "/hello")
+    ([]() {
+        return "Hello world!";
+    });
+
+    CROW_BP_ROUTE(sub_sub_bp, "/hi")
+    ([]() {
+        return "Hi world!";
+    });
+
+    CROW_BP_CATCHALL_ROUTE(sub_bp)([](){return response(200, "WRONG!!");});
+
+    app.   register_blueprint(bp);
+    app.   register_blueprint(bp_not_sub);
+    bp.    register_blueprint(sub_bp);
+    sub_bp.register_blueprint(sub_sub_bp);
+
+    app.validate();
+
+    {
+      request req;
+      response res;
+
+      req.url = "/bp_prefix/bp2/hello";
+
+      app.handle(req, res);
+
+      CHECK("Hello world!" == res.body);
+    }
+
+    {
+      request req;
+      response res;
+
+      req.url = "/bp_prefix_second/hello";
+
+      app.handle(req, res);
+
+      CHECK("Hello world!" == res.body);
+    }
+
+    {
+      request req;
+      response res;
+
+      req.url = "/bp_prefix/bp2/bp3/hi";
+
+      app.handle(req, res);
+
+      CHECK("Hi world!" == res.body);
+    }
+
+    {
+      request req;
+      response res;
+
+      req.url = "/bp_prefix/nonexistent";
+
+      app.handle(req, res);
+
+      CHECK(404 == res.code);
+    }
+
+    {
+      request req;
+      response res;
+
+      req.url = "/bp_prefix_second/nonexistent";
+
+      app.handle(req, res);
+
+      CHECK(404 == res.code);
+    }
+
+    {
+      request req;
+      response res;
+
+      req.url = "/bp_prefix/bp2/nonexistent";
+
+      app.handle(req, res);
+
+      CHECK(200 == res.code);
+      CHECK("WRONG!!" == res.body);
+    }
+
+    {
+      request req;
+      response res;
+
+      req.url = "/bp_prefix/bp2/bp3/nonexistent";
+
+      app.handle(req, res);
+
+      CHECK(200 == res.code);
+      CHECK("WRONG!!" == res.body);
     }
 }

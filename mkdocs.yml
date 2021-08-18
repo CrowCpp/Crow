@@ -1,9 +1,9 @@
 site_name: Crow
 
 # Repository
-repo_name: crowcpp/crow
-repo_url: https://github.com/crowcpp/crow
-site_url: https://crowcpp.github.io/crow
+repo_name: CrowCpp/Crow
+repo_url: https://github.com/CrowCpp/Crow
+site_url: https://crowcpp.org
 edit_uri: ""
 
 theme: 
@@ -16,6 +16,7 @@ theme:
     logo: 'assets/favicon.svg'
     icon:
         repo: fontawesome/brands/github-square
+    custom_dir: docs/overrides
 
 markdown_extensions:
     - admonition
@@ -37,9 +38,12 @@ nav:
             - JSON: guides/json.md
             - Templating (Mustache): guides/templating.md
             - Multipart: guides/multipart.md
+            - Query Strings: guides/query-string.md
             - Middleware: guides/middleware.md
             - SSL: guides/ssl.md
             - Static Files: guides/static.md
+            - Blueprints: guides/blueprints.md
+            - Compression: guides/compression.md
             - Websockets: guides/websockets.md
             - Writing Tests: guides/testing.md
         - Server setup:
@@ -58,5 +62,6 @@ extra:
 extra_css:
     - 'stylesheets/colors.css'
     - 'stylesheets/latofonts.css'
+    - 'stylesheets/extra.css'
 
-copyright: 'Copyright &copy; 2020 Farook Al-Sammarraie'
+copyright: 'Copyright &copy; 2020-2021 CrowCpp'
