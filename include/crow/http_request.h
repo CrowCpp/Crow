@@ -31,7 +31,7 @@ namespace crow
         query_string url_params; ///< The parameters associated with the request. (everything after the `?`)
         ci_map headers;
         std::string body;
-        std::string remoteIpAddress; ///< The IP address from which the request was sent.
+        std::string remote_ip_address; ///< The IP address from which the request was sent.
 
         void* middleware_context{};
         boost::asio::io_service* io_service{};

@@ -8,7 +8,7 @@
 
 namespace crow
 {
-    enum class HTTPMethod
+    enum class HTTPMethod : char
     {
 #ifndef DELETE
         DELETE = 0,
@@ -69,7 +69,7 @@ namespace crow
         return "invalid";
     }
 
-    enum class ParamType
+    enum class ParamType : char
     {
         INT,
         UINT,

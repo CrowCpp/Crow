@@ -14,9 +14,16 @@
 #include "crow/utility.h"
 #include "crow/logging.h"
 #include "crow/websocket.h"
+#include "crow/mustache.h"
 
 namespace crow
 {
+
+#ifdef CROW_MAIN
+    uint16_t INVALID_BP_ID{0xFFFF};
+#else
+    extern uint16_t INVALID_BP_ID;
+#endif
     /// A base class for all rules.
 
     /// Used to provide a common interface for code dealing with different types of rules.
@@ -70,6 +77,9 @@ namespace crow
             }
         }
 
+
+        std::string custom_templates_base;
+
         const std::string& rule() { return rule_; }
 
     protected:
@@ -81,6 +91,7 @@ namespace crow
         std::unique_ptr<BaseRule> rule_to_upgrade_;
 
         friend class Router;
+        friend class Blueprint;
         template <typename T>
         friend struct RuleParameterTraits;
     };
@@ -499,6 +510,10 @@ namespace crow
 
         void handle(const request& req, response& res, const routing_params& params) override
         {
+            if (!custom_templates_base.empty())
+                mustache::set_base(custom_templates_base);
+            else if (mustache::detail::get_template_base_directory_ref() != "templates")
+                mustache::set_base("templates");
             erased_handler_(req, res, params);
         }
 
@@ -674,6 +689,11 @@ namespace crow
 
         void handle(const request& req, response& res, const routing_params& params) override
         {
+            if (!custom_templates_base.empty())
+                mustache::set_base(custom_templates_base);
+            else if (mustache::detail::get_template_base_directory_ref() != "templates")
+                mustache::set_base("templates");
+
             detail::routing_handler_call_helper::call<
                 detail::routing_handler_call_helper::call_params<
                     decltype(handler_)>,
@@ -694,222 +714,297 @@ namespace crow
 
     const int RULE_SPECIAL_REDIRECT_SLASH = 1;
 
+
     /// A search tree.
     class Trie
     {
     public:
         struct Node
         {
-            unsigned rule_index{};
-            std::array<unsigned, static_cast<int>(ParamType::MAX)> param_childrens{};
-            std::unordered_map<std::string, unsigned> children;
+            uint16_t rule_index{};
+            // Assign the index to the maximum 32 unsigned integer value by default so that any other number (specifically 0) is a valid BP id.
+            uint16_t blueprint_index{INVALID_BP_ID};
+            std::string key;
+            ParamType param = ParamType::MAX; // MAX = No param.
+            std::vector<Node*> children;
 
             bool IsSimpleNode() const
             {
                 return
                     !rule_index &&
-                    std::all_of(
-                        std::begin(param_childrens),
-                        std::end(param_childrens),
-                        [](unsigned x){ return !x; });
+                    blueprint_index == INVALID_BP_ID &&
+                    children.size() < 2 &&
+                    param == ParamType::MAX &&
+                    std::all_of(std::begin(children), std::end(children), [](Node* x){ return x->param == ParamType::MAX; });
             }
         };
 
-        Trie() : nodes_(1)
+
+        Trie()
         {
         }
 
         ///Check whether or not the trie is empty.
         bool is_empty()
         {
-            return nodes_.size() > 1;
+            return head_.children.empty();
         }
 
-    private:
-        void optimizeNode(Node* node)
+        void optimize()
         {
-            for(auto x : node->param_childrens)
+            for (auto child: head_.children)
             {
-                if (!x)
-                    continue;
-                Node* child = &nodes_[x];
                 optimizeNode(child);
             }
+        }
+
+
+    private:
+
+
+        void optimizeNode(Node* node)
+        {
             if (node->children.empty())
                 return;
-            bool mergeWithChild = true;
-            for(auto& kv : node->children)
+            if (node->IsSimpleNode())
             {
-                Node* child = &nodes_[kv.second];
-                if (!child->IsSimpleNode())
-                {
-                    mergeWithChild = false;
-                    break;
-                }
-            }
-            if (mergeWithChild)
-            {
-                decltype(node->children) merged;
-                for(auto& kv : node->children)
-                {
-                    Node* child = &nodes_[kv.second];
-                    for(auto& child_kv : child->children)
-                    {
-                        merged[kv.first + child_kv.first] = child_kv.second;
-                    }
-                }
-                node->children = std::move(merged);
+                Node* child_temp = node->children[0];
+                node->key = node->key + child_temp->key;
+                node->rule_index = child_temp->rule_index;
+                node->blueprint_index = child_temp->blueprint_index;
+                node->children = std::move(child_temp->children);
+                delete(child_temp);
                 optimizeNode(node);
             }
             else
             {
-                for(auto& kv : node->children)
+                for(auto& child : node->children)
                 {
-                    Node* child = &nodes_[kv.second];
                     optimizeNode(child);
                 }
             }
         }
 
-        void optimize()
+        void debug_node_print(Node* node, int level)
         {
-            optimizeNode(head());
+            if (node->param != ParamType::MAX)
+            {
+                switch(node->param)
+                {
+                    case ParamType::INT:
+                        CROW_LOG_DEBUG << std::string(2*level, ' ') << "<int>";
+                        break;
+                    case ParamType::UINT:
+                        CROW_LOG_DEBUG << std::string(2*level, ' ') << "<uint>";
+                        break;
+                    case ParamType::DOUBLE:
+                        CROW_LOG_DEBUG << std::string(2*level, ' ') << "<double>";
+                        break;
+                    case ParamType::STRING:
+                        CROW_LOG_DEBUG << std::string(2*level, ' ') << "<string>";
+                        break;
+                    case ParamType::PATH:
+                        CROW_LOG_DEBUG << std::string(2*level, ' ') << "<path>";
+                        break;
+                    default:
+                        CROW_LOG_DEBUG << std::string(2*level, ' ') << "<ERROR>";
+                        break;
+                }
+            }
+            else
+                CROW_LOG_DEBUG << std::string(2*level, ' ') << node->key;
+
+            for(auto& child : node->children)
+            {
+                debug_node_print(child, level+1);
+            }
+        }
+    public:
+
+        void debug_print()
+        {
+            CROW_LOG_DEBUG << "HEAD";
+            for (auto& child : head_.children)
+                debug_node_print(child, 1);
         }
 
-    public:
         void validate()
         {
-            if (!head()->IsSimpleNode())
+            if (!head_.IsSimpleNode())
                 throw std::runtime_error("Internal error: Trie header should be simple!");
             optimize();
         }
 
-        std::pair<unsigned, routing_params> find(const std::string& req_url, const Node* node = nullptr, unsigned pos = 0, routing_params* params = nullptr) const
+        //Rule_index, Blueprint_index, routing_params
+        std::tuple<uint16_t, std::vector<uint16_t>, routing_params> find(const std::string& req_url, const Node* node = nullptr, unsigned pos = 0, routing_params* params = nullptr, std::vector<uint16_t>* blueprints = nullptr) const
         {
+            //start params as an empty struct
             routing_params empty;
             if (params == nullptr)
                 params = &empty;
+            //same for blueprint vector
+            std::vector<uint16_t> MT;
+            if (blueprints == nullptr)
+                blueprints = &MT;
 
-            unsigned found{};
-            routing_params match_params;
+            uint16_t found{}; //The rule index to be found
+            std::vector<uint16_t> found_BP; //The Blueprint indices to be found
+            routing_params match_params; //supposedly the final matched parameters
 
+            //start from the head node
             if (node == nullptr)
-                node = head();
-            if (pos == req_url.size())
-                return {node->rule_index, *params};
+                node = &head_;
 
-            auto update_found = [&found, &match_params](std::pair<unsigned, routing_params>& ret)
+            auto update_found = [&found, &found_BP, &match_params](std::tuple<uint16_t, std::vector<uint16_t>, routing_params>& ret)
             {
-                if (ret.first && (!found || found > ret.first))
+                found_BP = std::move(std::get<1>(ret));
+                if (std::get<0>(ret) && (!found || found > std::get<0>(ret)))
                 {
-                    found = ret.first;
-                    match_params = std::move(ret.second);
+                    found = std::get<0>(ret);
+                    match_params = std::move(std::get<2>(ret));
                 }
             };
 
-            if (node->param_childrens[static_cast<int>(ParamType::INT)])
+            //if the function was called on a node at the end of the string (the last recursion), return the nodes rule index, and whatever params were passed to the function
+            if (pos == req_url.size())
             {
-                char c = req_url[pos];
-                if ((c >= '0' && c <= '9') || c == '+' || c == '-')
+                found_BP = std::move(*blueprints);
+                return {node->rule_index, *blueprints, *params};
+            }
+
+            bool found_fragment = false;
+
+            for(auto& child : node->children)
+            {
+                if (child->param != ParamType::MAX)
                 {
-                    char* eptr;
-                    errno = 0;
-                    long long int value = strtoll(req_url.data()+pos, &eptr, 10);
-                    if (errno != ERANGE && eptr != req_url.data()+pos)
+                    if (child->param == ParamType::INT)
                     {
-                        params->int_params.push_back(value);
-                        auto ret = find(req_url, &nodes_[node->param_childrens[static_cast<int>(ParamType::INT)]], eptr - req_url.data(), params);
+                        char c = req_url[pos];
+                        if ((c >= '0' && c <= '9') || c == '+' || c == '-')
+                        {
+                            char* eptr;
+                            errno = 0;
+                            long long int value = strtoll(req_url.data()+pos, &eptr, 10);
+                            if (errno != ERANGE && eptr != req_url.data()+pos)
+                            {
+                                found_fragment = true;
+                                params->int_params.push_back(value);
+                                if (child->blueprint_index != INVALID_BP_ID) blueprints->push_back(child->blueprint_index);
+                                auto ret = find(req_url, child, eptr - req_url.data(), params, blueprints);
+                                update_found(ret);
+                                params->int_params.pop_back();
+                                blueprints->pop_back();
+                            }
+                        }
+                    }
+
+                    else if (child->param == ParamType::UINT)
+                    {
+                        char c = req_url[pos];
+                        if ((c >= '0' && c <= '9') || c == '+')
+                        {
+                            char* eptr;
+                            errno = 0;
+                            unsigned long long int value = strtoull(req_url.data()+pos, &eptr, 10);
+                            if (errno != ERANGE && eptr != req_url.data()+pos)
+                            {
+                                found_fragment = true;
+                                params->uint_params.push_back(value);
+                                if (child->blueprint_index != INVALID_BP_ID) blueprints->push_back(child->blueprint_index);
+                                auto ret = find(req_url, child, eptr - req_url.data(), params, blueprints);
+                                update_found(ret);
+                                params->uint_params.pop_back();
+                                blueprints->pop_back();
+                            }
+                        }
+                    }
+
+                    else if (child->param == ParamType::DOUBLE)
+                    {
+                        char c = req_url[pos];
+                        if ((c >= '0' && c <= '9') || c == '+' || c == '-' || c == '.')
+                        {
+                            char* eptr;
+                            errno = 0;
+                            double value = strtod(req_url.data()+pos, &eptr);
+                            if (errno != ERANGE && eptr != req_url.data()+pos)
+                            {
+                                found_fragment = true;
+                                params->double_params.push_back(value);
+                                if (child->blueprint_index != INVALID_BP_ID) blueprints->push_back(child->blueprint_index);
+                                auto ret = find(req_url, child, eptr - req_url.data(), params, blueprints);
+                                update_found(ret);
+                                params->double_params.pop_back();
+                                blueprints->pop_back();
+                            }
+                        }
+                    }
+
+                    else if (child->param == ParamType::STRING)
+                    {
+                        size_t epos = pos;
+                        for(; epos < req_url.size(); epos ++)
+                        {
+                            if (req_url[epos] == '/')
+                                break;
+                        }
+
+                        if (epos != pos)
+                        {
+                            found_fragment = true;
+                            params->string_params.push_back(req_url.substr(pos, epos-pos));
+                            if (child->blueprint_index != INVALID_BP_ID) blueprints->push_back(child->blueprint_index);
+                            auto ret = find(req_url, child, epos, params, blueprints);
+                            update_found(ret);
+                            params->string_params.pop_back();
+                            blueprints->pop_back();
+                        }
+                    }
+
+                    else if (child->param == ParamType::PATH)
+                    {
+                        size_t epos = req_url.size();
+
+                        if (epos != pos)
+                        {
+                            found_fragment = true;
+                            params->string_params.push_back(req_url.substr(pos, epos-pos));
+                            if (child->blueprint_index != INVALID_BP_ID) blueprints->push_back(child->blueprint_index);
+                            auto ret = find(req_url, child, epos, params, blueprints);
+                            update_found(ret);
+                            params->string_params.pop_back();
+                            blueprints->pop_back();
+                        }
+                    }
+                }
+
+                else
+                {
+                    const std::string& fragment = child->key;
+                    if (req_url.compare(pos, fragment.size(), fragment) == 0)
+                    {
+                        found_fragment = true;
+                        if (child->blueprint_index != INVALID_BP_ID) blueprints->push_back(child->blueprint_index);
+                        auto ret = find(req_url, child, pos + fragment.size(), params, blueprints);
                         update_found(ret);
-                        params->int_params.pop_back();
+                        blueprints->pop_back();
                     }
                 }
             }
 
-            if (node->param_childrens[static_cast<int>(ParamType::UINT)])
-            {
-                char c = req_url[pos];
-                if ((c >= '0' && c <= '9') || c == '+')
-                {
-                    char* eptr;
-                    errno = 0;
-                    unsigned long long int value = strtoull(req_url.data()+pos, &eptr, 10);
-                    if (errno != ERANGE && eptr != req_url.data()+pos)
-                    {
-                        params->uint_params.push_back(value);
-                        auto ret = find(req_url, &nodes_[node->param_childrens[static_cast<int>(ParamType::UINT)]], eptr - req_url.data(), params);
-                        update_found(ret);
-                        params->uint_params.pop_back();
-                    }
-                }
-            }
+            if (!found_fragment)
+                found_BP = std::move(*blueprints);
 
-            if (node->param_childrens[static_cast<int>(ParamType::DOUBLE)])
-            {
-                char c = req_url[pos];
-                if ((c >= '0' && c <= '9') || c == '+' || c == '-' || c == '.')
-                {
-                    char* eptr;
-                    errno = 0;
-                    double value = strtod(req_url.data()+pos, &eptr);
-                    if (errno != ERANGE && eptr != req_url.data()+pos)
-                    {
-                        params->double_params.push_back(value);
-                        auto ret = find(req_url, &nodes_[node->param_childrens[static_cast<int>(ParamType::DOUBLE)]], eptr - req_url.data(), params);
-                        update_found(ret);
-                        params->double_params.pop_back();
-                    }
-                }
-            }
-
-            if (node->param_childrens[static_cast<int>(ParamType::STRING)])
-            {
-                size_t epos = pos;
-                for(; epos < req_url.size(); epos ++)
-                {
-                    if (req_url[epos] == '/')
-                        break;
-                }
-
-                if (epos != pos)
-                {
-                    params->string_params.push_back(req_url.substr(pos, epos-pos));
-                    auto ret = find(req_url, &nodes_[node->param_childrens[static_cast<int>(ParamType::STRING)]], epos, params);
-                    update_found(ret);
-                    params->string_params.pop_back();
-                }
-            }
-
-            if (node->param_childrens[static_cast<int>(ParamType::PATH)])
-            {
-                size_t epos = req_url.size();
-
-                if (epos != pos)
-                {
-                    params->string_params.push_back(req_url.substr(pos, epos-pos));
-                    auto ret = find(req_url, &nodes_[node->param_childrens[static_cast<int>(ParamType::PATH)]], epos, params);
-                    update_found(ret);
-                    params->string_params.pop_back();
-                }
-            }
-
-            for(auto& kv : node->children)
-            {
-                const std::string& fragment = kv.first;
-                const Node* child = &nodes_[kv.second];
-
-                if (req_url.compare(pos, fragment.size(), fragment) == 0)
-                {
-                    auto ret = find(req_url, child, pos + fragment.size(), params);
-                    update_found(ret);
-                }
-            }
-
-            return {found, match_params};
+            return {found, found_BP, match_params}; //Called after all the recursions have been done
         }
 
-        void add(const std::string& url, unsigned rule_index)
+        //This functions assumes any blueprint info passed is valid
+        void add(const std::string& url, uint16_t rule_index, unsigned bp_prefix_length = 0, uint16_t blueprint_index = INVALID_BP_ID)
         {
-            unsigned idx{0};
+            Node* idx = &head_;
+
+            bool has_blueprint = bp_prefix_length != 0 && blueprint_index != INVALID_BP_ID;
 
             for(unsigned i = 0; i < url.size(); i ++)
             {
@@ -935,12 +1030,23 @@ namespace crow
                     {
                         if (url.compare(i, x.name.size(), x.name) == 0)
                         {
-                            if (!nodes_[idx].param_childrens[static_cast<int>(x.type)])
+                            bool found = false;
+                            for (Node* child : idx->children)
                             {
-                                auto new_node_idx = new_node();
-                                nodes_[idx].param_childrens[static_cast<int>(x.type)] = new_node_idx;
+                                if (child->param == x.type)
+                                {
+                                    idx = child;
+                                    i += x.name.size();
+                                    found = true;
+                                    break;
+                                }
                             }
-                            idx = nodes_[idx].param_childrens[static_cast<int>(x.type)];
+                            if (found)
+                                break;
+
+                            auto new_node_idx = new_node(idx);
+                            new_node_idx->param = x.type;
+                            idx = new_node_idx;
                             i += x.name.size();
                             break;
                         }
@@ -950,85 +1056,202 @@ namespace crow
                 }
                 else
                 {
-                    std::string piece(&c, 1);
-                    if (!nodes_[idx].children.count(piece))
+                    //This part assumes the tree is unoptimized (every node has a max 1 character key)
+                    bool piece_found = false;
+                    for (auto& child : idx->children)
                     {
-                        auto new_node_idx = new_node();
-                        nodes_[idx].children.emplace(piece, new_node_idx);
+                        if (child->key[0] == c)
+                        {
+                            idx = child;
+                            piece_found = true;
+                            break;
+                        }
                     }
-                    idx = nodes_[idx].children[piece];
+                    if (!piece_found)
+                    {
+                        auto new_node_idx = new_node(idx);
+                        new_node_idx->key = c;
+                        //The assumption here is that you'd only need to add a blueprint index if the tree didn't have the BP prefix.
+                        if (has_blueprint && i == bp_prefix_length)
+                            new_node_idx->blueprint_index = blueprint_index;
+                        idx = new_node_idx;
+                    }
                 }
             }
-            if (nodes_[idx].rule_index)
+
+            //check if the last node already has a value (exact url already in Trie)
+            if (idx->rule_index)
                 throw std::runtime_error("handler already exists for " + url);
-            nodes_[idx].rule_index = rule_index;
-        }
-    private:
-        void debug_node_print(Node* n, int level)
-        {
-            for(int i = 0; i < static_cast<int>(ParamType::MAX); i ++)
-            {
-                if (n->param_childrens[i])
-                {
-                    CROW_LOG_DEBUG << std::string(2*level, ' ') /*<< "("<<n->param_childrens[i]<<") "*/;
-                    switch(static_cast<ParamType>(i))
-                    {
-                        case ParamType::INT:
-                            CROW_LOG_DEBUG << "<int>";
-                            break;
-                        case ParamType::UINT:
-                            CROW_LOG_DEBUG << "<uint>";
-                            break;
-                        case ParamType::DOUBLE:
-                            CROW_LOG_DEBUG << "<float>";
-                            break;
-                        case ParamType::STRING:
-                            CROW_LOG_DEBUG << "<str>";
-                            break;
-                        case ParamType::PATH:
-                            CROW_LOG_DEBUG << "<path>";
-                            break;
-                        default:
-                            CROW_LOG_DEBUG << "<ERROR>";
-                            break;
-                    }
-
-                    debug_node_print(&nodes_[n->param_childrens[i]], level+1);
-                }
-            }
-            for(auto& kv : n->children)
-            {
-                CROW_LOG_DEBUG << std::string(2*level, ' ') /*<< "(" << kv.second << ") "*/ << kv.first;
-                debug_node_print(&nodes_[kv.second], level+1);
-            }
+            idx->rule_index = rule_index;
         }
 
-    public:
-        void debug_print()
+        size_t get_size()
         {
-            debug_node_print(head(), 0);
+            return get_size(&head_);
         }
+
+        size_t get_size(Node* node)
+        {
+            unsigned size =  5 ; //rule_index, blueprint_index, and param
+            size += (node->key.size()); //each character in the key is 1 byte
+            for (auto child: node->children)
+            {
+                size += get_size(child);
+            }
+            return size;
+        }
+
 
     private:
-        const Node* head() const
+
+        Node* new_node(Node* parent)
         {
-            return &nodes_.front();
+            auto& children = parent->children;
+            children.resize(children.size()+1);
+            children[children.size()-1] = new Node();
+            return children[children.size()-1];
         }
 
-        Node* head()
-        {
-            return &nodes_.front();
-        }
 
-        unsigned new_node()
-        {
-            nodes_.resize(nodes_.size()+1);
-            return nodes_.size() - 1;
-        }
-
-        std::vector<Node> nodes_;
+        Node head_;
     };
 
+    /// A blueprint can be considered a smaller section of a Crow app, specifically where the router is conecerned.
+    ///
+    /// You can use blueprints to assign a common prefix to rules' prefix, set custom static and template folders, and set a custom catchall route.
+    /// You can also assign nest blueprints for maximum Compartmentalization.
+    class Blueprint
+    {
+    public:
+
+        Blueprint(const std::string& prefix):
+            prefix_(prefix){};
+
+        Blueprint(const std::string& prefix, const std::string& static_dir):
+            prefix_(prefix), static_dir_(static_dir){};
+
+        Blueprint(const std::string& prefix, const std::string& static_dir, const std::string& templates_dir):
+            prefix_(prefix), static_dir_(static_dir), templates_dir_(templates_dir){};
+
+/*
+        Blueprint(Blueprint& other)
+        {
+            prefix_ = std::move(other.prefix_);
+            all_rules_ = std::move(other.all_rules_);
+        }
+
+        Blueprint(const Blueprint& other)
+        {
+            prefix_ = other.prefix_;
+            all_rules_ = other.all_rules_;
+        }
+*/
+        Blueprint(Blueprint&& value)
+        {
+            *this = std::move(value);
+        }
+
+        Blueprint& operator = (const Blueprint& value) = delete;
+
+        Blueprint& operator = (Blueprint&& value) noexcept
+        {
+            prefix_ = std::move(value.prefix_);
+            all_rules_ = std::move(value.all_rules_);
+            catchall_rule_ = std::move(value.catchall_rule_);
+            return *this;
+        }
+
+        bool operator == (const Blueprint& value)
+        {
+            return value.prefix() == prefix_;
+        }
+
+        bool operator != (const Blueprint& value)
+        {
+            return value.prefix() != prefix_;
+        }
+
+        std::string prefix() const
+        {
+            return prefix_;
+        }
+
+        std::string static_dir() const
+        {
+            return static_dir_;
+        }
+
+        DynamicRule& new_rule_dynamic(std::string&& rule)
+        {
+            std::string new_rule = std::move(rule);
+            new_rule = '/' + prefix_ + new_rule;
+            auto ruleObject = new DynamicRule(new_rule);
+            ruleObject->custom_templates_base = templates_dir_;
+            all_rules_.emplace_back(ruleObject);
+
+            return *ruleObject;
+        }
+
+        template <uint64_t N>
+        typename black_magic::arguments<N>::type::template rebind<TaggedRule>& new_rule_tagged(std::string&& rule)
+        {
+            std::string new_rule = std::move(rule);
+            new_rule = '/' + prefix_ + new_rule;
+            using RuleT = typename black_magic::arguments<N>::type::template rebind<TaggedRule>;
+
+            auto ruleObject = new RuleT(new_rule);
+            ruleObject->custom_templates_base = templates_dir_;
+            all_rules_.emplace_back(ruleObject);
+
+            return *ruleObject;
+        }
+
+        void register_blueprint(Blueprint& blueprint)
+        {
+            if (blueprints_.empty() || std::find(blueprints_.begin(), blueprints_.end(), &blueprint) == blueprints_.end())
+            {
+                apply_blueprint(blueprint);
+                blueprints_.emplace_back(&blueprint);
+            }
+            else
+                throw std::runtime_error("blueprint \"" + blueprint.prefix_ + "\" already exists in blueprint \"" + prefix_ + '\"');
+        }
+
+
+        CatchallRule& catchall_rule()
+        {
+            return catchall_rule_;
+        }
+
+    private:
+
+        void apply_blueprint(Blueprint& blueprint)
+        {
+
+            blueprint.prefix_ = prefix_ + '/' + blueprint.prefix_;
+            blueprint.static_dir_ = static_dir_ + '/' + blueprint.static_dir_;
+            blueprint.templates_dir_ = templates_dir_ + '/' + blueprint.templates_dir_;
+            for (auto& rule : blueprint.all_rules_)
+            {
+                std::string new_rule = '/' + prefix_ + rule->rule_;
+                rule->rule_ = new_rule;
+            }
+            for (Blueprint* bp_child : blueprint.blueprints_)
+            {
+                Blueprint& bp_ref = *bp_child;
+                apply_blueprint(bp_ref);
+            }
+        }
+
+        std::string prefix_;
+        std::string static_dir_;
+        std::string templates_dir_;
+        std::vector<std::unique_ptr<BaseRule>> all_rules_;
+        CatchallRule catchall_rule_;
+        std::vector<Blueprint*> blueprints_;
+
+        friend class Router;
+    };
 
     /// Handles matching requests to existing rules and upgrade requests.
     class Router
@@ -1062,7 +1285,7 @@ namespace crow
             return catchall_rule_;
         }
 
-        void internal_add_rule_object(const std::string& rule, BaseRule* ruleObject)
+        void internal_add_rule_object(const std::string& rule, BaseRule* ruleObject, const uint16_t& BP_index, std::vector<Blueprint*>& blueprints)
         {
             bool has_trailing_slash = false;
             std::string rule_without_trailing_slash;
@@ -1076,20 +1299,85 @@ namespace crow
             ruleObject->foreach_method([&](int method)
                     {
                         per_methods_[method].rules.emplace_back(ruleObject);
-                        per_methods_[method].trie.add(rule, per_methods_[method].rules.size() - 1);
+                        per_methods_[method].trie.add(rule, per_methods_[method].rules.size() - 1, BP_index != INVALID_BP_ID ? blueprints[BP_index]->prefix().length() : 0, BP_index);
 
                         // directory case:
                         //   request to '/about' url matches '/about/' rule
                         if (has_trailing_slash)
                         {
-                            per_methods_[method].trie.add(rule_without_trailing_slash, RULE_SPECIAL_REDIRECT_SLASH);
+                            per_methods_[method].trie.add(rule_without_trailing_slash, RULE_SPECIAL_REDIRECT_SLASH, BP_index != INVALID_BP_ID ? blueprints_[BP_index]->prefix().length() : 0, BP_index);
                         }
                     });
 
         }
 
+        void register_blueprint(Blueprint& blueprint)
+        {
+            if (std::find(blueprints_.begin(), blueprints_.end(), &blueprint) == blueprints_.end())
+            {
+                blueprints_.emplace_back(&blueprint);
+            }
+            else
+                throw std::runtime_error("blueprint \"" + blueprint.prefix_ + "\" already exists in router");
+        }
+
+        void get_recursive_child_methods(Blueprint* blueprint, std::vector<HTTPMethod>& methods)
+        {
+            //we only need to deal with children if the blueprint has absolutely no methods (meaning its index won't be added to the trie)
+            if (blueprint->static_dir_.empty() && blueprint->all_rules_.empty())
+            {
+                for(Blueprint* bp : blueprint->blueprints_)
+                {
+                    get_recursive_child_methods(bp, methods);
+                }
+            }
+            else if (!blueprint->static_dir_.empty())
+                methods.emplace_back(HTTPMethod::Get);
+            for (auto& rule: blueprint->all_rules_)
+            {
+                rule->foreach_method([&methods](unsigned method){
+                    HTTPMethod method_final = static_cast<HTTPMethod>(method);
+                    if (std::find(methods.begin(), methods.end(), method_final) == methods.end())
+                        methods.emplace_back(method_final);
+                });
+            }
+        }
+
+        void validate_bp(std::vector<Blueprint*> blueprints)
+        {
+            for (unsigned i = 0; i < blueprints.size(); i++)
+            {
+                Blueprint* blueprint = blueprints[i];
+                if (blueprint->static_dir_ == "" && blueprint->all_rules_.empty())
+                {
+                    std::vector<HTTPMethod> methods;
+                    get_recursive_child_methods(blueprint, methods);
+                    for (HTTPMethod x : methods)
+                    {
+                        int i = static_cast<int>(x);
+                        per_methods_[i].trie.add(blueprint->prefix(), 0, blueprint->prefix().length(), i);
+                    }
+                }
+                for (auto& rule: blueprint->all_rules_)
+                {
+                    if (rule)
+                    {
+                        auto upgraded = rule->upgrade();
+                        if (upgraded)
+                            rule = std::move(upgraded);
+                        rule->validate();
+                        internal_add_rule_object(rule->rule(), rule.get(), i, blueprints);
+                    }
+                }
+                validate_bp(blueprint->blueprints_);
+            }
+        }
+
         void validate()
         {
+            //Take all the routes from the registered blueprints and add them to `all_rules_` to be processed.
+            validate_bp(blueprints_);
+
             for(auto& rule:all_rules_)
             {
                 if (rule)
@@ -1098,7 +1386,7 @@ namespace crow
                     if (upgraded)
                         rule = std::move(upgraded);
                     rule->validate();
-                    internal_add_rule_object(rule->rule(), rule.get());
+                    internal_add_rule_object(rule->rule(), rule.get(), INVALID_BP_ID, blueprints_);
                 }
             }
             for(auto& per_method:per_methods_)
@@ -1116,13 +1404,13 @@ namespace crow
 
             auto& per_method = per_methods_[static_cast<int>(req.method)];
             auto& rules = per_method.rules;
-            unsigned rule_index = per_method.trie.find(req.url).first;
+            unsigned rule_index = std::get<0>(per_method.trie.find(req.url));
 
             if (!rule_index)
             {
                 for (auto& per_method: per_methods_)
                 {
-                    if (per_method.trie.find(req.url).first)
+                    if (std::get<0>(per_method.trie.find(req.url)))
                     {
                         CROW_LOG_DEBUG << "Cannot match method " << req.url << " " << method_name(req.method);
                         res = response(405);
@@ -1181,6 +1469,51 @@ namespace crow
             }
         }
 
+        void get_found_bp(std::vector<uint16_t>& bp_i, std::vector<Blueprint*>& blueprints, std::vector<Blueprint*>& found_bps, uint16_t index = 0)
+        {
+            // This statement makes 3 assertions:
+            // 1. The index is above 0.
+            // 2. The index does not lie outside the given blueprint list.
+            // 3. The next blueprint we're adding has a prefix that starts the same as the already added blueprint + a slash (the rest is irrelevant).
+            //
+            // This is done to prevent a blueprint that has a prefix of "bp_prefix2" to be assumed as a child of one that has "bp_prefix".
+            //
+            // If any of the assertions is untrue, we delete the last item added, and continue using the blueprint list of the blueprint found before, the topmost being the router's list
+            auto verify_prefix = [&bp_i, &index, &blueprints, &found_bps]()
+            {
+                return index > 0 &&
+                bp_i[index] < blueprints.size() &&
+                blueprints[bp_i[index]]->prefix().substr(0,found_bps[index-1]->prefix().length()+1)
+                .compare(std::string(found_bps[index-1]->prefix()+'/')) == 0;
+            };
+            if (index < bp_i.size())
+            {
+
+                if (verify_prefix())
+                {
+                    found_bps.push_back(blueprints[bp_i[index]]);
+                    get_found_bp(bp_i, found_bps.back()->blueprints_, found_bps, ++index);
+                }
+                else
+                {
+                    if (!found_bps.empty())
+                        found_bps.pop_back();
+
+                    if (found_bps.empty())
+                    {
+                        found_bps.push_back(blueprints_[bp_i[index]]);
+                        get_found_bp(bp_i, found_bps.back()->blueprints_, found_bps, ++index);
+                    }
+                    else
+                    {
+                        Blueprint* last_element  = found_bps.back();
+                        found_bps.push_back(last_element->blueprints_[bp_i[index]]);
+                        get_found_bp(bp_i, found_bps.back()->blueprints_, found_bps, ++index);
+                    }
+                }
+            }
+        }
+
         void handle(const request& req, response& res)
         {
             HTTPMethod method_actual = req.method;
@@ -1199,7 +1532,7 @@ namespace crow
                 {
                     for(int i = 0; i < static_cast<int>(HTTPMethod::InternalMethodCount); i ++)
                     {
-                        if (per_methods_[i].trie.is_empty())
+                        if (!per_methods_[i].trie.is_empty())
                         {
                             allow += method_name(static_cast<HTTPMethod>(i)) + ", ";
                         }
@@ -1215,7 +1548,7 @@ namespace crow
                 {
                     for(int i = 0; i < static_cast<int>(HTTPMethod::InternalMethodCount); i ++)
                     {
-                        if (per_methods_[i].trie.find(req.url).first)
+                        if (std::get<0>(per_methods_[i].trie.find(req.url)))
                         {
                             allow += method_name(static_cast<HTTPMethod>(i)) + ", ";
                         }
@@ -1245,13 +1578,13 @@ namespace crow
 
             auto found = trie.find(req.url);
 
-            unsigned rule_index = found.first;
+            unsigned rule_index = std::get<0>(found);
 
             if (!rule_index)
             {
                 for (auto& per_method: per_methods_)
                 {
-                    if (per_method.trie.find(req.url).first)
+                    if (std::get<0>(per_method.trie.find(req.url)))
                     {
                         CROW_LOG_DEBUG << "Cannot match method " << req.url << " " << method_name(method_actual);
                         res = response(405);
@@ -1260,15 +1593,32 @@ namespace crow
                     }
                 }
 
-                if (catchall_rule_.has_handler())
+                std::vector<Blueprint*> bps_found;
+                get_found_bp(std::get<1>(found), blueprints_, bps_found);
+                bool no_bp_catchall = true;
+                for (int i = bps_found.size()-1; i > 0; i--)
                 {
-                    CROW_LOG_DEBUG << "Cannot match rules " << req.url << ". Redirecting to Catchall rule";
-                    catchall_rule_.handler_(req, res);
+                    std::vector<uint16_t> bpi = std::get<1>(found);
+                    if (bps_found[i]->catchall_rule().has_handler())
+                    {
+                        no_bp_catchall = false;
+                        CROW_LOG_DEBUG << "Cannot match rules " << req.url << ". Redirecting to Blueprint \"" << bps_found[i]->prefix() << "\" Catchall rule";
+                        bps_found[i]->catchall_rule().handler_(req, res);
+                        break;
+                    }
                 }
-                else
+                if (no_bp_catchall)
                 {
-                    CROW_LOG_DEBUG << "Cannot match rules " << req.url;
-                    res = response(404);
+                    if (catchall_rule_.has_handler())
+                    {
+                        CROW_LOG_DEBUG << "Cannot match rules " << req.url << ". Redirecting to global Catchall rule";
+                        catchall_rule_.handler_(req, res);
+                    }
+                    else
+                    {
+                        CROW_LOG_DEBUG << "Cannot match rules " << req.url;
+                        res = response(404);
+                    }
                 }
                 res.end();
                 return;
@@ -1300,7 +1650,7 @@ namespace crow
             // any uncaught exceptions become 500s
             try
             {
-                rules[rule_index]->handle(req, res, found.second);
+                rules[rule_index]->handle(req, res, std::get<2>(found));
             }
             catch(std::exception& e)
             {
@@ -1327,6 +1677,11 @@ namespace crow
             }
         }
 
+        std::vector<Blueprint*>& blueprints()
+        {
+            return blueprints_;
+        }
+
     private:
         CatchallRule catchall_rule_;
 
@@ -1340,6 +1695,7 @@ namespace crow
         };
         std::array<PerMethod, static_cast<int>(HTTPMethod::InternalMethodCount)> per_methods_;
         std::vector<std::unique_ptr<BaseRule>> all_rules_;
+        std::vector<Blueprint*> blueprints_;
 
     };
 }

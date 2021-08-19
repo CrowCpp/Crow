@@ -94,3 +94,9 @@ include(CMakePackageConfigHelpers)
 configure_package_config_file("${CMAKE_CURRENT_SOURCE_DIR}/cmake/CrowConfig.cmake.in" "${CMAKE_CURRENT_BINARY_DIR}/CrowConfig.cmake" INSTALL_DESTINATION lib/cmake/Crow)
 write_basic_package_version_file("${CMAKE_CURRENT_BINARY_DIR}/CrowConfigVersion.cmake" VERSION 0.2 COMPATIBILITY AnyNewerVersion)
 install(FILES "${CMAKE_CURRENT_BINARY_DIR}/CrowConfig.cmake" "${CMAKE_CURRENT_BINARY_DIR}/CrowConfigVersion.cmake" DESTINATION lib/cmake/Crow)
+
+set(CPACK_GENERATOR "DEB")
+set(CPACK_DEBIAN_PACKAGE_MAINTAINER "CrowCpp")
+set(CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON)
+
+include(CPack)
