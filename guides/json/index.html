@@ -50,6 +50,8 @@
 <meta property="og:description" content="A Fast and Easy to use microframework for the web."/>
 <meta property="og:image" content="/assets/og_img.png" />
 <meta property="og:url" content="https://crowcpp.org">
+<meta property="twitter:card" content="summary_large_image">
+<meta property="twitter:image" content="/assets/og_img.png">
 
   </head>
   
@@ -857,6 +859,7 @@ To do that, you need to convert it to a <code>wvalue</code>, which can be done b
 <p>setting a <code>wvalue</code> to object type can be done by simply assigning a value to whatever string key you like, something like <code class="highlight"><span class="n">wval</span><span class="p">[</span><span class="s">&quot;key1&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">val1</span><span class="p">;</span><span class="w"></span></code>. Keep in mind that val1 can be any of the above types.</p>
 </div>
 <p>A <code>wvalue</code> can be treated as an object or even a list (setting a value by using <code>json[3] = 32</code> for example). Please note that this will remove the data in the value if it isn't of List type.<br><br></p>
+<p>Additionally, a <code>wvalue</code> can be initialized as an object using an initializer list, an example object would be <code>wvalue x = {{"a", 1}, {"b", 2}}</code>. Or as a list using <code>wvalue x = json::wvalue::list({1, 2, 3})</code>, lists can include any type that <code>wvalue</code> supports.</p>
 <p>An object type <code>wvalue</code> uses <code>std::unordered_map</code> by default, if you want to have your returned <code>wvalue</code> key value pairs be sorted (using <code>std::map</code>) you can add <code class="highlight"><span class="cp">#define CROW_JSON_USE_MAP</span></code> to the top of your program.<br><br></p>
 <p>A JSON <code>wvalue</code> can be returned directly inside a route handler, this will cause the <code>content-type</code> header to automatically be set to <code>Application/json</code> and the JSON value will be converted to string and placed in the response body. For more information go to <a href="../routes">Routes</a>.<br><br></p>
 <p>For more info on write values go <a href="../../reference/classcrow_1_1json_1_1wvalue.html">here</a>.</p>

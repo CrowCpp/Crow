@@ -122,9 +122,12 @@ Inheritance diagram for crow::json::wvalue:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
 Public Types</h2></td></tr>
-<tr class="memitem:a2e8a1339fb9ebde6ed26ec49e059ee6a"><td class="memItemLeft" align="right" valign="top"><a id="a2e8a1339fb9ebde6ed26ec49e059ee6a"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>object_type</b> = std::unordered_map&lt; std::string, <a class="el" href="classcrow_1_1json_1_1wvalue.html">wvalue</a> &gt;</td></tr>
-<tr class="separator:a2e8a1339fb9ebde6ed26ec49e059ee6a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aaa67583404db6c3f8f0d28783996887a"><td class="memItemLeft" align="right" valign="top"><a id="aaa67583404db6c3f8f0d28783996887a"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>object</b> = std::unordered_map&lt; std::string, <a class="el" href="classcrow_1_1json_1_1wvalue.html">wvalue</a> &gt;</td></tr>
+<tr class="separator:aaa67583404db6c3f8f0d28783996887a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4a885b86093c6fc423747a46865996b3"><td class="memItemLeft" align="right" valign="top"><a id="a4a885b86093c6fc423747a46865996b3"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>list</b> = std::vector&lt; <a class="el" href="classcrow_1_1json_1_1wvalue.html">wvalue</a> &gt;</td></tr>
+<tr class="separator:a4a885b86093c6fc423747a46865996b3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
@@ -179,15 +182,18 @@ type&#160;</td><td class="memItemRight" valign="bottom"><b>t</b> () const</td></
 <tr class="memitem:a7b27cf8c76058972391014f0f9fa3c4b"><td class="memItemLeft" align="right" valign="top"><a id="a7b27cf8c76058972391014f0f9fa3c4b"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><b>wvalue</b> (std::initializer_list&lt; std::pair&lt; std::string const, <a class="el" href="classcrow_1_1json_1_1wvalue.html">wvalue</a> &gt;&gt; initializer_list)</td></tr>
 <tr class="separator:a7b27cf8c76058972391014f0f9fa3c4b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa5f18ddc5961e0ae6cf94a5dc91d7333"><td class="memItemLeft" align="right" valign="top"><a id="aa5f18ddc5961e0ae6cf94a5dc91d7333"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>wvalue</b> (object_type const &amp;value)</td></tr>
-<tr class="separator:aa5f18ddc5961e0ae6cf94a5dc91d7333"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5ece003955fd5d52e2edadd38cc6fd6b"><td class="memItemLeft" align="right" valign="top"><a id="a5ece003955fd5d52e2edadd38cc6fd6b"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>wvalue</b> (object_type &amp;&amp;value)</td></tr>
-<tr class="separator:a5ece003955fd5d52e2edadd38cc6fd6b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5c1b390b43cb94c8c8a0cb9369088119"><td class="memItemLeft" align="right" valign="top"><a id="a5c1b390b43cb94c8c8a0cb9369088119"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>wvalue</b> (std::vector&lt; <a class="el" href="classcrow_1_1json_1_1wvalue.html">wvalue</a> &gt; &amp;r)</td></tr>
-<tr class="separator:a5c1b390b43cb94c8c8a0cb9369088119"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af2b309cba1e3af1ad1c288de94cdeb55"><td class="memItemLeft" align="right" valign="top"><a id="af2b309cba1e3af1ad1c288de94cdeb55"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>wvalue</b> (object const &amp;value)</td></tr>
+<tr class="separator:af2b309cba1e3af1ad1c288de94cdeb55"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a10971407ce42243530c4cec2869788e0"><td class="memItemLeft" align="right" valign="top"><a id="a10971407ce42243530c4cec2869788e0"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>wvalue</b> (object &amp;&amp;value)</td></tr>
+<tr class="separator:a10971407ce42243530c4cec2869788e0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac2cff8bc7cf17dff6ecb87100f938e5a"><td class="memItemLeft" align="right" valign="top"><a id="ac2cff8bc7cf17dff6ecb87100f938e5a"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>wvalue</b> (const list &amp;r)</td></tr>
+<tr class="separator:ac2cff8bc7cf17dff6ecb87100f938e5a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ade7cb4f77f8226d0956a0668f459b7e3"><td class="memItemLeft" align="right" valign="top"><a id="ade7cb4f77f8226d0956a0668f459b7e3"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>wvalue</b> (list &amp;r)</td></tr>
+<tr class="separator:ade7cb4f77f8226d0956a0668f459b7e3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1813a29de56af96789cc76b8cdb0dbbe"><td class="memItemLeft" align="right" valign="top"><a id="a1813a29de56af96789cc76b8cdb0dbbe"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcrow_1_1json_1_1wvalue.html#a1813a29de56af96789cc76b8cdb0dbbe">wvalue</a> (const <a class="el" href="classcrow_1_1json_1_1rvalue.html">rvalue</a> &amp;r)</td></tr>
 <tr class="memdesc:a1813a29de56af96789cc76b8cdb0dbbe"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a write value from a read value (useful for editing JSON strings). <br /></td></tr>
@@ -247,9 +253,9 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>reset</b> ()</td></tr
 <tr class="memitem:aee7c185b7984ce7cd39567580d44dc3e"><td class="memItemLeft" align="right" valign="top"><a id="aee7c185b7984ce7cd39567580d44dc3e"></a>
 <a class="el" href="classcrow_1_1json_1_1wvalue.html">wvalue</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operator=</b> (const std::string &amp;str)</td></tr>
 <tr class="separator:aee7c185b7984ce7cd39567580d44dc3e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab25c85074086f11aaf4155c248dc74f9"><td class="memItemLeft" align="right" valign="top"><a id="ab25c85074086f11aaf4155c248dc74f9"></a>
-<a class="el" href="classcrow_1_1json_1_1wvalue.html">wvalue</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operator=</b> (std::vector&lt; <a class="el" href="classcrow_1_1json_1_1wvalue.html">wvalue</a> &gt; &amp;&amp;v)</td></tr>
-<tr class="separator:ab25c85074086f11aaf4155c248dc74f9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2d9cf8c7ef5676469cd98f7af50a600d"><td class="memItemLeft" align="right" valign="top"><a id="a2d9cf8c7ef5676469cd98f7af50a600d"></a>
+<a class="el" href="classcrow_1_1json_1_1wvalue.html">wvalue</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operator=</b> (list &amp;&amp;v)</td></tr>
+<tr class="separator:a2d9cf8c7ef5676469cd98f7af50a600d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a59bab9796cae55bab5350ee8ee47676a"><td class="memTemplParams" colspan="2"><a id="a59bab9796cae55bab5350ee8ee47676a"></a>
 template&lt;typename T &gt; </td></tr>
 <tr class="memitem:a59bab9796cae55bab5350ee8ee47676a"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classcrow_1_1json_1_1wvalue.html">wvalue</a> &amp;&#160;</td><td class="memTemplItemRight" valign="bottom"><b>operator=</b> (const std::vector&lt; T &gt; &amp;v)</td></tr>
@@ -257,12 +263,12 @@ template&lt;typename T &gt; </td></tr>
 <tr class="memitem:a83d2b3dfd8f9349e902e02faf15fd0c2"><td class="memItemLeft" align="right" valign="top"><a id="a83d2b3dfd8f9349e902e02faf15fd0c2"></a>
 <a class="el" href="classcrow_1_1json_1_1wvalue.html">wvalue</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operator=</b> (std::initializer_list&lt; std::pair&lt; std::string const, <a class="el" href="classcrow_1_1json_1_1wvalue.html">wvalue</a> &gt;&gt; initializer_list)</td></tr>
 <tr class="separator:a83d2b3dfd8f9349e902e02faf15fd0c2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acec791c1ec484e2d7003ddfddc0de910"><td class="memItemLeft" align="right" valign="top"><a id="acec791c1ec484e2d7003ddfddc0de910"></a>
-<a class="el" href="classcrow_1_1json_1_1wvalue.html">wvalue</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operator=</b> (object_type const &amp;value)</td></tr>
-<tr class="separator:acec791c1ec484e2d7003ddfddc0de910"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aad438e85180a7b2901aa6cc2491d59b0"><td class="memItemLeft" align="right" valign="top"><a id="aad438e85180a7b2901aa6cc2491d59b0"></a>
-<a class="el" href="classcrow_1_1json_1_1wvalue.html">wvalue</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operator=</b> (object_type &amp;&amp;value)</td></tr>
-<tr class="separator:aad438e85180a7b2901aa6cc2491d59b0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a60871591b1b0d88555c0d8d7a720dd7b"><td class="memItemLeft" align="right" valign="top"><a id="a60871591b1b0d88555c0d8d7a720dd7b"></a>
+<a class="el" href="classcrow_1_1json_1_1wvalue.html">wvalue</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operator=</b> (object const &amp;value)</td></tr>
+<tr class="separator:a60871591b1b0d88555c0d8d7a720dd7b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a928740e05daf3017fea95e2db70ec04e"><td class="memItemLeft" align="right" valign="top"><a id="a928740e05daf3017fea95e2db70ec04e"></a>
+<a class="el" href="classcrow_1_1json_1_1wvalue.html">wvalue</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operator=</b> (object &amp;&amp;value)</td></tr>
+<tr class="separator:a928740e05daf3017fea95e2db70ec04e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae0d1876f5cd3f8ac5b61970d12b0ad74"><td class="memItemLeft" align="right" valign="top"><a id="ae0d1876f5cd3f8ac5b61970d12b0ad74"></a>
 <a class="el" href="classcrow_1_1json_1_1wvalue.html">wvalue</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operator[]</b> (unsigned index)</td></tr>
 <tr class="separator:ae0d1876f5cd3f8ac5b61970d12b0ad74"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -317,7 +323,7 @@ std::string&#160;</td><td class="memItemRight" valign="bottom"><b>content_type</
 			<ul>
 				<li class="navelem"><b>crow</b></li><li class="navelem"><b>json</b></li><li class="navelem"><a class="el" href="classcrow_1_1json_1_1wvalue.html">wvalue</a></li>
 				<li class="footer">
-					Generated on Mon Aug 16 2021 for Crow by <a href="http://www.doxygen.org/index.html">
+					Generated on Fri Aug 20 2021 for Crow by <a href="http://www.doxygen.org/index.html">
 					<img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.17.
 					Dark theme by <a href="http://majerle.eu" target="_new">Tilen Majerle</a>. Edited by <a href="https://github.com/The-EDev" target="_new">Farook Al-Sammarraie</a>. All rights reserved.
 				</li>
