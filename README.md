@@ -55,8 +55,8 @@ int main()
 ```cpp
 CROW_ROUTE(app, "/json")
 ([]{
-    crow::json::wvalue x;
-    x["message"] = "Hello, World!";
+    crow::json::wvalue x({{"message", "Hello, World!"}});
+    x["message2"] = "Hello, World.. Again!";
     return x;
 });
 ```

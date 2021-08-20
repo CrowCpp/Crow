@@ -174,8 +174,8 @@ code{
     <div class="scontent">
        <div class="highlight"><pre id="__code_1"><span></span><button class="md-clipboard md-icon" title="Copy to clipboard" data-clipboard-target="#__code_1 > code"></button><code><span class="cp">CROW_ROUTE</span><span class="p">(</span><span class="n">app</span><span class="p">,</span> <span class="s">"/json"</span><span class="p">)</span>
 <span class="p">([]{</span>
-    <span class="n">crow</span><span class="o">::</span><span class="n">json</span><span class="o">::</span><span class="n">wvalue</span> <span class="n">x</span><span class="p">;</span>
-    <span class="n">x</span><span class="p">[</span><span class="s">"message"</span><span class="p">]</span> <span class="o">=</span> <span class="s">"Hello, World!"</span><span class="p">;</span>
+    <span class="n">crow</span><span class="o">::</span><span class="n">json</span><span class="o">::</span><span class="n">wvalue</span> <span class="n">x</span><span class="p">{{"({{"}}</span><span class="s">"message"</span><span class="p">,</span> <span class="s">"Hello, World!"</span><span class="p">{{"}});"}}</span>
+    <span class="n">x</span><span class="p">[</span><span class="s">"message2"</span><span class="p">]</span> <span class="o">=</span> <span class="s">"Hello, World.. Again!"</span><span class="p">;</span>
     <span class="k">return</span> <span class="n">x</span><span class="p">;</span>
 <span class="p">});</span>
 </code></pre></div>

@@ -1216,6 +1216,7 @@ namespace crow
             return load(str.data(), str.size());
         }
 
+
         /// JSON write value.
 
         ///
@@ -1226,14 +1227,16 @@ namespace crow
             friend class crow::mustache::template_t;
 
         public:
-            using object_type =
+
+            using object =
 #ifdef CROW_JSON_USE_MAP
             std::map<std::string, wvalue>;
 #else
             std::unordered_map<std::string, wvalue>;
 #endif
 
-        public:
+            using list = std::vector<wvalue>;
+
             type t() const { return t_; }
         private:
             type t_{type::Null}; ///< The type of the value.
@@ -1250,12 +1253,8 @@ namespace crow
               constexpr number(double value) noexcept : d(value) {}
             } num; ///< Value if type is a number.
             std::string s; ///< Value if type is a string.
-            std::unique_ptr<std::vector<wvalue>> l; ///< Value if type is a list.
-#ifdef CROW_JSON_USE_MAP
-            std::unique_ptr<std::map<std::string, wvalue>> o;
-#else
-            std::unique_ptr<std::unordered_map<std::string, wvalue>> o; ///< Value if type is a JSON object.
-#endif
+            std::unique_ptr<list> l; ///< Value if type is a list.
+            std::unique_ptr<object> o; ///< Value if type is a JSON object.
 
         public:
             wvalue() : returnable("application/json") {}
@@ -1282,15 +1281,23 @@ namespace crow
             wvalue(std::string const& value) : returnable("application/json"), t_(type::String), s(value) {}
             wvalue(std::string&& value) : returnable("application/json"), t_(type::String), s(std::move(value)) {}
 
-            wvalue(std::initializer_list<std::pair<std::string const, wvalue>> initializer_list) : returnable("application/json"), t_(type::Object), o(new object_type(initializer_list)) {}
+            wvalue(std::initializer_list<std::pair<std::string const, wvalue>> initializer_list) : returnable("application/json"), t_(type::Object), o(new object(initializer_list)) {}
 
-            wvalue(object_type const& value) : returnable("application/json"), t_(type::Object), o(new object_type(value)) {}
-            wvalue(object_type&& value) : returnable("application/json"), t_(type::Object), o(new object_type(std::move(value))) {}
+            wvalue(object const& value) : returnable("application/json"), t_(type::Object), o(new object(value)) {}
+            wvalue(object&& value) : returnable("application/json"), t_(type::Object), o(new object(std::move(value))) {}
 
-            wvalue(std::vector<wvalue>& r) : returnable("application/json")
+            wvalue(const list& r) : returnable("application/json")
             {
                 t_ = type::List;
-                l = std::unique_ptr<std::vector<wvalue>>(new std::vector<wvalue>{});
+                l = std::unique_ptr<list>(new list{});
+                l->reserve(r.size());
+                for(auto it = r.begin(); it != r.end(); ++it)
+                    l->emplace_back(*it);
+            }
+            wvalue(list& r) : returnable("application/json")
+            {
+                t_ = type::List;
+                l = std::unique_ptr<list>(new list{});
                 l->reserve(r.size());
                 for(auto it = r.begin(); it != r.end(); ++it)
                     l->emplace_back(*it);
@@ -1319,17 +1326,13 @@ namespace crow
                         s = r.s();
                         return;
                     case type::List:
-                        l = std::unique_ptr<std::vector<wvalue>>(new std::vector<wvalue>{});
+                        l = std::unique_ptr<list>(new list{});
                         l->reserve(r.size());
                         for(auto it = r.begin(); it != r.end(); ++it)
                             l->emplace_back(*it);
                         return;
                     case type::Object:
-#ifdef CROW_JSON_USE_MAP
-                        o = std::unique_ptr<std::map<std::string, wvalue>>(new std::map<std::string, wvalue>{});
-#else
-                        o = std::unique_ptr<std::unordered_map<std::string, wvalue>>(new std::unordered_map<std::string, wvalue>{});
-#endif
+                        o = std::unique_ptr<object>(new object{});
                         for(auto it = r.begin(); it != r.end(); ++it)
                             o->emplace(it->key(), *it);
                         return;
@@ -1358,17 +1361,13 @@ namespace crow
                         s = r.s;
                         return;
                     case type::List:
-                        l = std::unique_ptr<std::vector<wvalue>>(new std::vector<wvalue>{});
+                        l = std::unique_ptr<list>(new list{});
                         l->reserve(r.size());
                         for(auto it = r.l->begin(); it != r.l->end(); ++it)
                             l->emplace_back(*it);
                         return;
                     case type::Object:
-#ifdef CROW_JSON_USE_MAP
-                        o = std::unique_ptr<std::map<std::string, wvalue>>(new std::map<std::string, wvalue>{});
-#else
-                        o = std::unique_ptr<std::unordered_map<std::string, wvalue>>(new std::unordered_map<std::string, wvalue>{});
-#endif
+                        o = std::unique_ptr<object>(new object{});
                         o->insert(r.o->begin(), r.o->end());
                         return;
                 }
@@ -1514,13 +1513,13 @@ namespace crow
                 return *this;
             }
 
-            wvalue& operator=(std::vector<wvalue>&& v)
+            wvalue& operator=(list&& v)
             {
                 if (t_ != type::List)
                     reset();
                 t_ = type::List;
                 if (!l)
-                    l = std::unique_ptr<std::vector<wvalue>>(new std::vector<wvalue>{});
+                    l = std::unique_ptr<list>(new list{});
                 l->clear();
                 l->resize(v.size());
                 size_t idx = 0;
@@ -1538,7 +1537,7 @@ namespace crow
                     reset();
                 t_ = type::List;
                 if (!l)
-                    l = std::unique_ptr<std::vector<wvalue>>(new std::vector<wvalue>{});
+                    l = std::unique_ptr<list>(new list{});
                 l->clear();
                 l->resize(v.size());
                 size_t idx = 0;
@@ -1554,31 +1553,31 @@ namespace crow
                 if (t_ != type::Object) {
                     reset();
                     t_ = type::Object;
-                    o = std::unique_ptr<object_type>(new object_type(initializer_list));
+                    o = std::unique_ptr<object>(new object(initializer_list));
                 } else {
                     (*o) = initializer_list;
                 }
                 return *this;
             }
 
-            wvalue& operator=(object_type const& value)
+            wvalue& operator=(object const& value)
             {
                 if (t_ != type::Object) {
                     reset();
                     t_ = type::Object;
-                    o = std::unique_ptr<object_type>(new object_type(value));
+                    o = std::unique_ptr<object>(new object(value));
                 } else {
                     (*o) = value;
                 }
                 return *this;
             }
 
-            wvalue& operator=(object_type&& value)
+            wvalue& operator=(object&& value)
             {
                 if (t_ != type::Object) {
                     reset();
                     t_ = type::Object;
-                    o = std::unique_ptr<object_type>(new object_type(std::move(value)));
+                    o = std::unique_ptr<object>(new object(std::move(value)));
                 } else {
                     (*o) = std::move(value);
                 }
@@ -1591,7 +1590,7 @@ namespace crow
                     reset();
                 t_ = type::List;
                 if (!l)
-                    l = std::unique_ptr<std::vector<wvalue>>(new std::vector<wvalue>{});
+                    l = std::unique_ptr<list>(new list{});
                 if (l->size() < index+1)
                     l->resize(index+1);
                 return (*l)[index];
@@ -1612,11 +1611,7 @@ namespace crow
                     reset();
                 t_ = type::Object;
                 if (!o)
-#ifdef CROW_JSON_USE_MAP
-                        o = std::unique_ptr<std::map<std::string, wvalue>>(new std::map<std::string, wvalue>{});
-#else
-                        o = std::unique_ptr<std::unordered_map<std::string, wvalue>>(new std::unordered_map<std::string, wvalue>{});
-#endif
+                        o = std::unique_ptr<object>(new object{});
                 return (*o)[str];
             }
 
@@ -1706,8 +1701,48 @@ namespace crow
     #else
     #define MSC_COMPATIBLE_SPRINTF(BUFFER_PTR, FORMAT_PTR, VALUE) sprintf((BUFFER_PTR), (FORMAT_PTR), (VALUE))
     #endif
+                                enum {
+                                    start,
+                                    decp,
+                                    zero
+                                } f_state;
                                 char outbuf[128];
-                                MSC_COMPATIBLE_SPRINTF(outbuf, "%g", v.num.d);
+                                MSC_COMPATIBLE_SPRINTF(outbuf, "%f", v.num.d);
+                                char *p = &outbuf[0], *o = nullptr;
+                                f_state = start;
+                                while (*p != '\0')
+                                {
+                                    //std::cout << *p << std::endl;
+                                    char ch = *p;
+                                    switch (f_state){
+                                    case start:
+                                        if (ch == '.')
+                                        {
+                                            if (p+1 && *(p+1) == '0') p++;
+                                            f_state = decp;
+                                        }
+                                        p++;
+                                        break;
+                                    case decp:
+                                        if (ch == '0')
+                                        {
+                                            f_state = zero;
+                                            o = p;
+                                        }
+                                        p++;
+                                        break;
+                                    case zero:
+                                        if (ch != '0')
+                                        {
+                                            o = nullptr;
+                                            f_state = decp;
+                                        }
+                                        p++;
+                                        break;
+                                    }
+                                }
+                                if (o != nullptr)
+                                    *o = '\0';
                                 out += outbuf;
     #undef MSC_COMPATIBLE_SPRINTF
                             }
