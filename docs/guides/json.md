@@ -31,6 +31,8 @@ JSON write value, used for creating, editing and converting JSON to a string.<br
 
 A `wvalue` can be treated as an object or even a list (setting a value by using `json[3] = 32` for example). Please note that this will remove the data in the value if it isn't of List type.<br><br>
 
+Additionally, a `wvalue` can be initialized as an object using an initializer list, an example object would be `wvalue x = {{"a", 1}, {"b", 2}}`. Or as a list using `wvalue x = json::wvalue::list({1, 2, 3})`, lists can include any type that `wvalue` supports.
+
 An object type `wvalue` uses `std::unordered_map` by default, if you want to have your returned `wvalue` key value pairs be sorted (using `std::map`) you can add `#!cpp #define CROW_JSON_USE_MAP` to the top of your program.<br><br>
     
 A JSON `wvalue` can be returned directly inside a route handler, this will cause the `content-type` header to automatically be set to `Application/json` and the JSON value will be converted to string and placed in the response body. For more information go to [Routes](../routes).<br><br>
