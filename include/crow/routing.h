@@ -1500,15 +1500,14 @@ namespace crow
                     {
                         found_bps.clear();
                         found_bps.push_back(blueprints_[bp_i[index]]);
-                        get_found_bp(bp_i, found_bps.back()->blueprints_, found_bps, ++index);
                     }
                     else
                     {
                         found_bps.pop_back();
                         Blueprint* last_element  = found_bps.back();
                         found_bps.push_back(last_element->blueprints_[bp_i[index]]);
-                        get_found_bp(bp_i, found_bps.back()->blueprints_, found_bps, ++index);
                     }
+                    get_found_bp(bp_i, found_bps.back()->blueprints_, found_bps, ++index);
                 }
             }
         }
@@ -1616,7 +1615,7 @@ namespace crow
                 {
                     if (std::get<0>(per_method.trie.find(req.url))) //Route found, but in another method
                     {
-                        std::string error_message(get_error(405, found, req, res));
+                        const std::string error_message(get_error(405, found, req, res));
                         CROW_LOG_DEBUG << "Cannot match method " << req.url << " " << method_name(method_actual) << ". " << error_message;
                         res.end();
                         return;
@@ -1624,7 +1623,7 @@ namespace crow
                 }
                 //Route does not exist anywhere
 
-                std::string error_message(get_error(404, found, req, res));
+                const std::string error_message(get_error(404, found, req, res));
                 CROW_LOG_DEBUG << "Cannot match rules " << req.url << ". " << error_message;
                 res.end();
                 return;
