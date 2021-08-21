@@ -1,5 +1,6 @@
 #define CATCH_CONFIG_MAIN
 #define CROW_ENABLE_COMPRESSION
+#define CROW_ENABLE_DEBUG
 #define CROW_LOG_LEVEL 0
 #define CROW_MAIN
 #include <sys/stat.h>
@@ -2094,7 +2095,7 @@ TEST_CASE("catchall")
 
     CROW_ROUTE(app, "/place")([](){return "place";});
 
-    CROW_CATCHALL_ROUTE(app)([](){return "!place";});
+    CROW_CATCHALL_ROUTE(app)([](response& res){res.body = "!place";});
 
     CROW_ROUTE(app2, "/place")([](){return "place";});
 
@@ -2120,7 +2121,7 @@ TEST_CASE("catchall")
 
       app.handle(req, res);
 
-      CHECK(200 == res.code);
+      CHECK(404 == res.code);
       CHECK("!place" == res.body);
     }
 

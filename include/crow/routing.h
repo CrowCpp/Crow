@@ -1496,22 +1496,52 @@ namespace crow
                 }
                 else
                 {
-                    if (!found_bps.empty())
-                        found_bps.pop_back();
-
-                    if (found_bps.empty())
+                    if (found_bps.size() < 2)
                     {
+                        found_bps.clear();
                         found_bps.push_back(blueprints_[bp_i[index]]);
                         get_found_bp(bp_i, found_bps.back()->blueprints_, found_bps, ++index);
                     }
                     else
                     {
+                        found_bps.pop_back();
                         Blueprint* last_element  = found_bps.back();
                         found_bps.push_back(last_element->blueprints_[bp_i[index]]);
                         get_found_bp(bp_i, found_bps.back()->blueprints_, found_bps, ++index);
                     }
                 }
             }
+        }
+
+        /// Is used to handle errors, you insert the error code, found route, request, and response. and it'll either call the appropriate catchall route (considering the blueprint system) and send you a status string (which is mainly used for debug messages), or just set the response code to the proper error code.
+        std::string get_error(unsigned short code, std::tuple<uint16_t, std::vector<uint16_t>, routing_params>& found, const request& req, response& res)
+        {
+            res.code = code;
+            std::vector<Blueprint*> bps_found;
+            get_found_bp(std::get<1>(found), blueprints_, bps_found);
+            for (int i = bps_found.size()-1; i > 0; i--)
+            {
+                std::vector<uint16_t> bpi = std::get<1>(found);
+                if (bps_found[i]->catchall_rule().has_handler())
+                {
+                    bps_found[i]->catchall_rule().handler_(req, res);
+#ifdef CROW_ENABLE_DEBUG
+                    return std::string("Redirected to Blueprint \"" + bps_found[i]->prefix() + "\" Catchall rule");
+#else
+                    return std::string();
+#endif
+                }
+            }
+            if (catchall_rule_.has_handler())
+            {
+                catchall_rule_.handler_(req, res);
+#ifdef CROW_ENABLE_DEBUG
+                return std::string("Redirected to global Catchall rule");
+#else
+                return std::string();
+#endif
+            }
+            return std::string();
         }
 
         void handle(const request& req, response& res)
@@ -1584,42 +1614,18 @@ namespace crow
             {
                 for (auto& per_method: per_methods_)
                 {
-                    if (std::get<0>(per_method.trie.find(req.url)))
+                    if (std::get<0>(per_method.trie.find(req.url))) //Route found, but in another method
                     {
-                        CROW_LOG_DEBUG << "Cannot match method " << req.url << " " << method_name(method_actual);
-                        res = response(405);
+                        std::string error_message(get_error(405, found, req, res));
+                        CROW_LOG_DEBUG << "Cannot match method " << req.url << " " << method_name(method_actual) << ". " << error_message;
                         res.end();
                         return;
                     }
                 }
+                //Route does not exist anywhere
 
-                std::vector<Blueprint*> bps_found;
-                get_found_bp(std::get<1>(found), blueprints_, bps_found);
-                bool no_bp_catchall = true;
-                for (int i = bps_found.size()-1; i > 0; i--)
-                {
-                    std::vector<uint16_t> bpi = std::get<1>(found);
-                    if (bps_found[i]->catchall_rule().has_handler())
-                    {
-                        no_bp_catchall = false;
-                        CROW_LOG_DEBUG << "Cannot match rules " << req.url << ". Redirecting to Blueprint \"" << bps_found[i]->prefix() << "\" Catchall rule";
-                        bps_found[i]->catchall_rule().handler_(req, res);
-                        break;
-                    }
-                }
-                if (no_bp_catchall)
-                {
-                    if (catchall_rule_.has_handler())
-                    {
-                        CROW_LOG_DEBUG << "Cannot match rules " << req.url << ". Redirecting to global Catchall rule";
-                        catchall_rule_.handler_(req, res);
-                    }
-                    else
-                    {
-                        CROW_LOG_DEBUG << "Cannot match rules " << req.url;
-                        res = response(404);
-                    }
-                }
+                std::string error_message(get_error(404, found, req, res));
+                CROW_LOG_DEBUG << "Cannot match rules " << req.url << ". " << error_message;
                 res.end();
                 return;
             }
