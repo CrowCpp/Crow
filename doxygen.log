@@ -287,9 +287,9 @@ Add enum values to en/drone/src/include/crow/json.h:1391: warning: unable to res
 /drone/src/include/crow/routing.h:1377: warning: Member validate() (function) of class crow::Router is not documented.
 /drone/src/include/crow/routing.h:1401: warning: Member handle_upgrade(const request &req, response &res, Adaptor &&adaptor) (function) of class crow::Router is not documented.
 /drone/src/include/crow/routing.h:1473: warning: Member get_found_bp(std::vector< uint16_t > &bp_i, std::vector< Blueprint * > &blueprints, std::vector< Blueprint * > &found_bps, uint16_t index=0) (function) of class crow::Router is not documented.
-/drone/src/include/crow/routing.h:1518: warning: Member handle(const request &req, response &res) (function) of class crow::Router is not documented.
-/drone/src/include/crow/routing.h:1672: warning: Member debug_print() (function) of class crow::Router is not documented.
-/drone/src/include/crow/routing.h:1681: warning: Member blueprints() (function) of class crow::Router is not documented.
+/drone/src/include/crow/routing.h:1547: warning: Member handle(const request &req, response &res) (function) of class crow::Router is not documented.
+/drone/src/include/crow/routing.h:1677: warning: Member debug_print() (function) of class crow::Router is not documented.
+/drone/src/include/crow/routing.h:1686: warning: Member blueprints() (function) of class crow::Router is not documented.
 /drone/src/include/crow/common.h:90: warning: Member debug_print() const (function) of class crow::routing_params is not documented.
 /drone/src/include/crow/common.h:108: warning: Member get(unsigned) const (function) of class crow::routing_params is not documented.
 /drone/src/include/crow/common.h:113: warning: Member get(unsigned index) const (function) of class crow::routing_params is not documented.
@@ -788,5 +788,5 @@ Generating example index...
 finalizing index lists...
 writing tag file...
 Running plantuml with JAVA...
-lookup cache used 2550/65536 hits=22653 misses=2874
+lookup cache used 2567/65536 hits=22711 misses=2891
 finished...

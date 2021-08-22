@@ -1,5 +1,6 @@
 var NAVTREEINDEX2 =
 {
+"structcrow_1_1detail_1_1routing__handler__call__helper_1_1_wrapped_1_1handler__type__helper_3_012f01fc0d25e96ed100e3017a66fd4b36.html#a9d7e8d0b0ee47af5b45064956e3d695d":[0,0,0,1,0,8,1,0],
 "structcrow_1_1detail_1_1routing__handler__call__helper_1_1_wrapped_1_1handler__type__helper_3_01e78e01f0ab35f7c7c9ae99998f83560a.html":[0,0,0,1,0,8,2],
 "structcrow_1_1detail_1_1routing__handler__call__helper_1_1_wrapped_1_1handler__type__helper_3_01e78e01f0ab35f7c7c9ae99998f83560a.html#a1ed6dda811a1c1a53a38502aa816f342":[0,0,0,1,0,8,2,0],
 "structcrow_1_1detail_1_1routing__handler__call__helper_1_1_wrapped_1_1handler__type__helper_3_01e78e01f0ab35f7c7c9ae99998f83560a.html#aa9221a71167d40ff603f92ea8232fecd":[0,0,0,1,0,8,2,1],
