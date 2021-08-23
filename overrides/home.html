@@ -6,9 +6,9 @@
 {% block content %}
 <style>
 .clogo{
-    margin-left: 15rem;
-    margin-right: 15rem;
-    width: 30rem;
+    width: 50%;
+    margin-inline: auto;
+    display: block;
 }
 
 .ccard{
@@ -19,7 +19,9 @@
     width: 10rem;
     height: 12rem;
     box-shadow: 2px 5px 5px #00000040;
-    margin-inline: 2rem;
+    margin-inline: 1.5rem;
+    margin-bottom: 1rem;
+    display: inline-block;
     transition: transform 0.3s;
 }
 
@@ -46,8 +48,7 @@
 }
 
 .csection{
-    display: flex;
-    justify-content: center;
+    text-align: center;
 }
 
 .ssection{
@@ -75,12 +76,12 @@
 }
 
 .sbuttons{
-    display: flex;
-    justify-content: center;
+    display: block;
+    text-align: center;
 }
 
 .crow-button{
-    margin: 0rem 1rem;
+    margin: 1rem 1rem;
 }
 
 code{
@@ -90,7 +91,8 @@ code{
 .dcard{
     width: 10rem;
     height: 15rem;
-    margin-inline: 2rem;
+    margin-inline: 0.5rem;
+    display: inline-block;
     transition: transform 0.3s;
 }
 
@@ -120,7 +122,7 @@ code{
 }
 
 </style>
-<img class="clogo" style="width:30rem" alt="logo" src="/assets/crowlogo_main_color.svg">
+<img class="clogo" alt="logo" src="/assets/crowlogo_main_color.svg">
 
 <h1 style="text-align:center;">A Fast and Easy to use microframework for the web.</h1>
 
@@ -203,7 +205,7 @@ code{
 
 <h1 style="text-align:center;">Support Crow</h1>
 <h3 style="text-align:center;">Crow is provided free of charge courtesy of everyone who is donating their money, time, and expertise to keep it going.<h3>
-<h3 style="text-align:center;">Help us make something great!<h3>
+<h3 style="text-align:center;">Help us make something great!</h3>
 
 <dev class="sbuttons">
     <a href="https://opencollective.com/crow" title="Crow - OpenCollective" class="md-button crow-button">Fund Crow</a>
