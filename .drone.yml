@@ -18,13 +18,13 @@ steps:
   - export TRAVIS_BRANCH=$DRONE_BRANCH
   - export TRAVIS_JOB_ID=$DRONE_BUILD_NUMBER
   - apt-get -y update
-  - apt-get -y install libboost-all-dev doxygen mkdocs graphviz zlib1g-dev gcc clang make cmake python3 python3-pip git
+  - apt-get -y install libboost-all-dev doxygen mkdocs graphviz zlib1g-dev libssl-dev gcc clang make cmake python3 python3-pip git
   - pip3 install mkdocs-material cpp-coveralls pyyaml
   - export CC=/usr/bin/gcc
   - export CXX=/usr/bin/g++
   - mkdir build
   - cd build
-  - cmake ..
+  - cmake .. -DCROW_ENABLE_COMPRESSION=ON -DCROW_ENABLE_SSL=ON
   - make -j4
   - ctest -V -j4
   - cd ..
@@ -33,7 +33,7 @@ steps:
   - export CXX=/usr/bin/clang++
   - mkdir build-clang
   - cd build-clang
-  - cmake ..
+  - cmake .. -DCROW_ENABLE_COMPRESSION=ON -DCROW_ENABLE_SSL=ON
   - make -j4
   - ctest -V -j4
 
@@ -58,11 +58,11 @@ steps:
   commands:
   - export DEBIAN_FRONTEND=noninteractive
   - apt-get -y update
-  - apt-get -y install libboost-all-dev zlib1g-dev gcc clang make cmake python3
+  - apt-get -y install libboost-all-dev zlib1g-dev libssl-dev gcc clang make cmake python3
   - mkdir build
   - cd build
   - cmake --version
-  - cmake ..
+  - cmake .. -DCROW_ENABLE_COMPRESSION=ON -DCROW_ENABLE_SSL=ON
   - make -j4
   - ctest -V -j4
   - cd ..
@@ -70,7 +70,7 @@ steps:
   - export CXX=/usr/bin/clang++
   - mkdir build-clang
   - cd build-clang
-  - cmake ..
+  - cmake .. -DCROW_ENABLE_COMPRESSION=ON -DCROW_ENABLE_SSL=ON
   - make -j4
   - ctest -V -j4
 
@@ -108,13 +108,13 @@ steps:
   - export TRAVIS_BRANCH=$DRONE_REPO_BRANCH
   - export TRAVIS_JOB_ID=$DRONE_BUILD_NUMBER
   - apt-get -y update
-  - apt-get -y install libboost-all-dev doxygen mkdocs graphviz zlib1g-dev gcc clang make cmake python3 python3-pip git
+  - apt-get -y install libboost-all-dev doxygen mkdocs graphviz zlib1g-dev libssl-dev gcc clang make cmake python3 python3-pip git
   - pip3 install mkdocs-material cpp-coveralls pyyaml
   - export CC=/usr/bin/gcc
   - export CXX=/usr/bin/g++
   - mkdir build
   - cd build
-  - cmake ..
+  - cmake .. -DCROW_ENABLE_COMPRESSION=ON -DCROW_ENABLE_SSL=ON
   - make -j4
   - ctest -V -j4
   - cd ..
@@ -123,7 +123,7 @@ steps:
   - export CXX=/usr/bin/clang++
   - mkdir build-clang
   - cd build-clang
-  - cmake ..
+  - cmake .. -DCROW_ENABLE_COMPRESSION=ON -DCROW_ENABLE_SSL=ON
   - make -j4
   - ctest -V -j4
   - cd ..
@@ -151,11 +151,11 @@ steps:
   commands:
   - export DEBIAN_FRONTEND=noninteractive
   - apt-get -y update
-  - apt-get -y install libboost-all-dev zlib1g-dev gcc clang make cmake python3
+  - apt-get -y install libboost-all-dev zlib1g-dev libssl-dev gcc clang make cmake python3
   - mkdir build
   - cd build
   - cmake --version
-  - cmake ..
+  - cmake .. -DCROW_ENABLE_COMPRESSION=ON -DCROW_ENABLE_SSL=ON
   - make -j4
   - ctest -V -j4
   - cd ..
@@ -163,7 +163,7 @@ steps:
   - export CXX=/usr/bin/clang++
   - mkdir build-clang
   - cd build-clang
-  - cmake ..
+  - cmake .. -DCROW_ENABLE_COMPRESSION=ON -DCROW_ENABLE_SSL=ON
   - make -j4
   - ctest -V -j4
 
