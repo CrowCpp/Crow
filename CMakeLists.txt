@@ -3,17 +3,17 @@
 #####################################
 cmake_minimum_required(VERSION 3.15.0 FATAL_ERROR)
 
-# Define the Project Name and Description
-project (crow_all LANGUAGES CXX)
+# Define the project name and language
+project(Crow
+	LANGUAGES CXX
+)
 
-# Define the module path
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake/")
-
-# Set required C++ Standard
+# Set required C++ standard
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
 
-if (NOT CMAKE_BUILD_TYPE)
+# Default to build type "Release"
+if(NOT CMAKE_BUILD_TYPE)
 	message(STATUS "No build type selected, default to Release")
 	set(CMAKE_BUILD_TYPE "Release")
 endif()
@@ -21,50 +21,61 @@ endif()
 #####################################
 # Define Options
 #####################################
-option(BUILD_EXAMPLES "Builds the examples in the project" ON)
-option(BUILD_TESTING  "Builds the tests in the project"    ON)
+option(CROW_BUILD_EXAMPLES     "Build the examples in the project"      ON )
+option(CROW_BUILD_TESTS        "Build the tests in the project"         ON )
+option(CROW_AMALGAMATE         "Combine all headers into one"           OFF)
+option(CROW_INSTALL            "Add install step for Crow"              ON )
 
-#####################################
-# Define CMake Module Imports
-#####################################
-include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/dependencies.cmake)
-include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/compiler_options.cmake)
-
-#####################################
-# Define project-wide imports
-#####################################
-# this can be alternatively (and as recommended way) done with target_include_directories()
-if(BUILD_EXAMPLES OR BUILD_TESTING)
-	set(PROJECT_INCLUDE_DIR
-		${CMAKE_CURRENT_SOURCE_DIR}/include
-	)
-
-	include_directories("${PROJECT_INCLUDE_DIR}")
-	include_directories("${CMAKE_CURRENT_SOURCE_DIR}")
-	include_directories("${CMAKE_CURRENT_BINARY_DIR}")  # To include crow_all.h
-endif()
+option(CROW_ENABLE_SSL         "Enable SSL capabilities (OpenSSL)"      OFF)
+option(CROW_ENABLE_COMPRESSION "Enable compression capabilities (ZLIB)" OFF)
 
 #####################################
 # Define Targets
 #####################################
-add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/crow_all.h
-	COMMAND python3 ${CMAKE_CURRENT_SOURCE_DIR}/scripts/merge_all.py
-	${CMAKE_CURRENT_SOURCE_DIR}/include
-	${CMAKE_CURRENT_BINARY_DIR}/crow_all.h
-	WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-	DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/include/*.h ${CMAKE_CURRENT_SOURCE_DIR}/include/crow/*.h ${CMAKE_CURRENT_SOURCE_DIR}/include/crow/middlewares/*.h
+add_library(Crow INTERFACE)
+add_library(Crow::Crow ALIAS Crow)
+target_include_directories(Crow INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/include)
+
+find_package(Boost 1.64 COMPONENTS system date_time REQUIRED)
+find_package(Threads REQUIRED)
+
+target_link_libraries(Crow
+	INTERFACE
+		Boost::boost Boost::system Boost::date_time
+		Threads::Threads
 )
 
-# Amalgamation
-add_custom_target(amalgamation ALL DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/crow_all.h)
+if(CROW_ENABLE_COMPRESSION)
+	find_package(ZLIB REQUIRED)
+	target_link_libraries(Crow INTERFACE ZLIB::ZLIB)
+	target_compile_definitions(Crow INTERFACE CROW_ENABLE_COMPRESSION)
+endif()
+
+if(CROW_ENABLE_SSL)
+	find_package(OpenSSL REQUIRED)
+	target_link_libraries(Crow INTERFACE OpenSSL::SSL)
+	target_compile_definitions(Crow INTERFACE CROW_ENABLE_SSL)
+endif()
+
+if(CROW_AMALGAMATE)
+	add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/crow_all.h
+		COMMAND python3 ${CMAKE_CURRENT_SOURCE_DIR}/scripts/merge_all.py
+		${CMAKE_CURRENT_SOURCE_DIR}/include
+		${CMAKE_CURRENT_BINARY_DIR}/crow_all.h
+		WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+		DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/include/*.h ${CMAKE_CURRENT_SOURCE_DIR}/include/crow/*.h ${CMAKE_CURRENT_SOURCE_DIR}/include/crow/middlewares/*.h
+	)
+
+	add_custom_target(crow_amalgamated ALL DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/crow_all.h)
+endif()
 
 # Examples
-if(BUILD_EXAMPLES)
+if(CROW_BUILD_EXAMPLES)
 	add_subdirectory(examples)
 endif()
 
 # Tests
-if (NOT MSVC AND BUILD_TESTING)
+if(NOT MSVC AND CROW_BUILD_TESTS)
 	add_subdirectory(tests)
 	enable_testing()
 	add_test(NAME crow_test COMMAND ${CMAKE_CURRENT_BINARY_DIR}/tests/unittest)
@@ -75,7 +86,9 @@ endif()
 #####################################
 # Install Files
 #####################################
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/crow_all.h DESTINATION include)
+if(CROW_INSTALL)
+	install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/ DESTINATION include)
+endif()
 
 set(CPACK_GENERATOR "DEB")
 set(CPACK_DEBIAN_PACKAGE_MAINTAINER "CrowCpp")

@@ -33,6 +33,7 @@ addons:
       - mkdocs
       - graphviz
       - zlib1g-dev
+      - libssl-dev
 
 before_install:
   - if [ "$TRAVIS_COMPILER" == "gcc" -a "$TRAVIS_CPU_ARCH" == "amd64" ]; then export PUSH_COVERAGE=ON; fi
@@ -45,7 +46,7 @@ before_script:
   - mkdir build
   - cd build
   - cmake --version
-  - cmake ..
+  - cmake .. -DCROW_ENABLE_COMPRESSION=ON -DCROW_ENABLE_SSL=ON
 
 script: make -j4 && ctest -V -j4
 
