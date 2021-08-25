@@ -895,7 +895,7 @@ namespace crow
                                 auto ret = find(req_url, child, eptr - req_url.data(), params, blueprints);
                                 update_found(ret);
                                 params->int_params.pop_back();
-                                blueprints->pop_back();
+                                if (!blueprints->empty()) blueprints->pop_back();
                             }
                         }
                     }
@@ -916,7 +916,7 @@ namespace crow
                                 auto ret = find(req_url, child, eptr - req_url.data(), params, blueprints);
                                 update_found(ret);
                                 params->uint_params.pop_back();
-                                blueprints->pop_back();
+                                if (!blueprints->empty()) blueprints->pop_back();
                             }
                         }
                     }
@@ -937,7 +937,7 @@ namespace crow
                                 auto ret = find(req_url, child, eptr - req_url.data(), params, blueprints);
                                 update_found(ret);
                                 params->double_params.pop_back();
-                                blueprints->pop_back();
+                                if (!blueprints->empty()) blueprints->pop_back();
                             }
                         }
                     }
@@ -959,7 +959,7 @@ namespace crow
                             auto ret = find(req_url, child, epos, params, blueprints);
                             update_found(ret);
                             params->string_params.pop_back();
-                            blueprints->pop_back();
+                            if (!blueprints->empty()) blueprints->pop_back();
                         }
                     }
 
@@ -975,7 +975,7 @@ namespace crow
                             auto ret = find(req_url, child, epos, params, blueprints);
                             update_found(ret);
                             params->string_params.pop_back();
-                            blueprints->pop_back();
+                            if (!blueprints->empty()) blueprints->pop_back();
                         }
                     }
                 }
@@ -989,7 +989,7 @@ namespace crow
                         if (child->blueprint_index != INVALID_BP_ID) blueprints->push_back(child->blueprint_index);
                         auto ret = find(req_url, child, pos + fragment.size(), params, blueprints);
                         update_found(ret);
-                        blueprints->pop_back();
+                        if (!blueprints->empty()) blueprints->pop_back();
                     }
                 }
             }
