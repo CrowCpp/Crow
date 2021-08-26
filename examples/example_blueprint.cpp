@@ -31,5 +31,5 @@ int main()
     bp.register_blueprint(sub_bp);
     app.register_blueprint(bp);
 
-    app.loglevel(crow::LogLevel::DEBUG).port(18080).run();
+    app.loglevel(crow::LogLevel::Debug).port(18080).run();
 }

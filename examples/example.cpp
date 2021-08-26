@@ -10,7 +10,7 @@ class ExampleLogHandler : public crow::ILogHandler {
         }
 };
 
-struct ExampleMiddleware 
+struct ExampleMiddleware
 {
     std::string message;
 
@@ -75,10 +75,10 @@ int main()
       return crow::json::wvalue({
         {"first", "Hello world!"},                     /* stores a char const* hence a json::type::String */
         {"second", std::string("How are you today?")}, /* stores a std::string hence a json::type::String. */
-        {"third", 54},      /* stores an int (as 54 is an int literal) hence a std::int64_t. */
-        {"fourth", 54l},    /* stores a long (as 54l is a long literal) hence a std::int64_t. */
-        {"fifth", 54u},     /* stores an unsigned int (as 54u is a unsigned int literal) hence a std::uint64_t. */
-        {"sixth", 54ul},    /* stores an unsigned long (as 54ul is an unsigned long literal) hence a std::uint64_t. */
+        {"third", std::int64_t(54)},                   /* stores a 64-bit int hence a std::int64_t. */
+        {"fourth", std::uint64_t(54)},                 /* stores a 64-bit unsigned int hence a std::uint64_t. */
+        {"fifth", 54},      /* stores an int (as 54 is an int literal) hence a std::int64_t. */
+        {"sixth", 54u},     /* stores an unsigned int (as 54u is a unsigned int literal) hence a std::uint64_t. */
         {"seventh", 2.f},   /* stores a float (as 2.f is a float literal) hence a double. */
         {"eighth", 2.},     /* stores a double (as 2. is a double literal) hence a double. */
         {"ninth", nullptr}, /* stores a std::nullptr hence json::type::Null . */
@@ -151,7 +151,7 @@ int main()
 
         // To get a simple string from the url params
         // To see it in action /params?foo='blabla'
-        os << "Params: " << req.url_params << "\n\n"; 
+        os << "Params: " << req.url_params << "\n\n";
         os << "The key 'foo' was " << (req.url_params.get("foo") == nullptr ? "not " : "") << "found.\n";
 
         // To get a double from the request
@@ -178,7 +178,7 @@ int main()
         }
 
         return crow::response{os.str()};
-    });    
+    });
 
     CROW_ROUTE(app, "/large")
     ([]{
