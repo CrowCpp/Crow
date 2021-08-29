@@ -49,13 +49,12 @@ namespace crow
         }
 
         virtual void handle(const request&, response&, const routing_params&) = 0;
-#ifndef CROW_ENABLE_SSL
         virtual void handle_upgrade(const request&, response& res, SocketAdaptor&&)
         {
             res = response(404);
             res.end();
         }
-#else
+#ifdef CROW_ENABLE_SSL
         virtual void handle_upgrade(const request&, response& res, SSLAdaptor&&)
         {
             res = response(404);
@@ -400,12 +399,12 @@ namespace crow
             res = response(404);
             res.end();
         }
-#ifndef CROW_ENABLE_SSL
+
         void handle_upgrade(const request& req, response&, SocketAdaptor&& adaptor) override
         {
             new crow::websocket::Connection<SocketAdaptor>(req, std::move(adaptor), open_handler_, message_handler_, close_handler_, error_handler_, accept_handler_);
         }
-#else
+#ifdef CROW_ENABLE_SSL
         void handle_upgrade(const request& req, response&, SSLAdaptor&& adaptor) override
         {
             new crow::websocket::Connection<SSLAdaptor>(req, std::move(adaptor), open_handler_, message_handler_, close_handler_, error_handler_, accept_handler_);
