@@ -34,7 +34,12 @@ option(CROW_ENABLE_COMPRESSION "Enable compression capabilities (ZLIB)" OFF)
 #####################################
 add_library(Crow INTERFACE)
 add_library(Crow::Crow ALIAS Crow)
-target_include_directories(Crow INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/include)
+
+target_include_directories(Crow
+	INTERFACE
+		$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+		$<INSTALL_INTERFACE:include>
+)
 
 find_package(Boost 1.64 COMPONENTS system date_time REQUIRED)
 find_package(Threads REQUIRED)
@@ -87,7 +92,25 @@ endif()
 # Install Files
 #####################################
 if(CROW_INSTALL)
+	install(TARGETS Crow EXPORT CrowTargets)
 	install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/ DESTINATION include)
+
+	install(EXPORT CrowTargets
+		FILE CrowTargets.cmake
+		NAMESPACE Crow::
+		DESTINATION lib/cmake/Crow
+	)
+
+	include(CMakePackageConfigHelpers)
+	configure_package_config_file(
+		"${CMAKE_CURRENT_SOURCE_DIR}/cmake/CrowConfig.cmake.in"
+		"${CMAKE_CURRENT_BINARY_DIR}/CrowConfig.cmake"
+		INSTALL_DESTINATION lib/cmake/Crow
+	)
+	install(FILES
+    "${CMAKE_CURRENT_BINARY_DIR}/CrowConfig.cmake"
+    DESTINATION lib/cmake/Crow
+  )
 endif()
 
 set(CPACK_GENERATOR "DEB")
