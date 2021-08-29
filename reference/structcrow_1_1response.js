@@ -9,6 +9,8 @@ var structcrow_1_1response =
     [ "response", "structcrow_1_1response.html#a70c56fc6910c94f42accb77a45d5686e", null ],
     [ "response", "structcrow_1_1response.html#a37aaf5b69473066fe8bcf302e9ba4580", null ],
     [ "response", "structcrow_1_1response.html#abd924a9b90dfb505804fe4cf791768a3", null ],
+    [ "response", "structcrow_1_1response.html#ac7f3e75d48f2082a93e366d31298eb72", null ],
+    [ "response", "structcrow_1_1response.html#a58dd09e8a9b3f1d86fe9d676757c8a2c", null ],
     [ "add_header", "structcrow_1_1response.html#a16d1a8bcec6460ba97f90b80881693b8", null ],
     [ "clear", "structcrow_1_1response.html#a068269fc8b7f1df3d5421ccd384fe1f3", null ],
     [ "do_stream_body", "structcrow_1_1response.html#a35a2324a75247f1ea1305b4b2ad0083e", null ],
