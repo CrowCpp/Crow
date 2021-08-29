@@ -79,12 +79,15 @@ namespace crow
             *this = std::move(r);
         }
         
-        response(std::string contentType, std::string body)
+        response(std::string contentType, std::string body) : body(std::move(body))
         {
             set_header("Content-Type",mime_types[contentType]);
-            this->body = body;
         }
 
+        response(int code, std::string contentType, std::string body): code(code),body(std::move(body))
+        {
+            set_header("Content-Type",mime_types[contentType]);
+        }
 
         response& operator = (const response& r) = delete;
 
