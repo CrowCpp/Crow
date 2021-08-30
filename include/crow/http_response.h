@@ -48,6 +48,11 @@ namespace crow
             headers.emplace(std::move(key), std::move(value));
         }
 
+        std::string get_header(std::string key)
+        {
+            return headers.find(key)->second;
+        }
+
         const std::string& get_header_value(const std::string& key)
         {
             return crow::get_header_value(headers, key);
