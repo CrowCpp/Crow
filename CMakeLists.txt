@@ -81,6 +81,13 @@ endif()
 
 # Tests
 if(NOT MSVC AND CROW_BUILD_TESTS)
+	if(NOT CROW_ENABLE_COMPRESSION)
+		message(STATUS "Compression tests are omitted. (Configure with CROW_ENABLE_COMPRESSION=ON to enable them)")
+	endif()
+	if(NOT CROW_ENABLE_SSL)
+		message(STATUS "SSL tests are omitted. (Configure with CROW_ENABLE_SSL=ON to enable them)")
+	endif()
+
 	add_subdirectory(tests)
 	enable_testing()
 	add_test(NAME crow_test COMMAND ${CMAKE_CURRENT_BINARY_DIR}/tests/unittest)
