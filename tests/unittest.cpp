@@ -260,6 +260,10 @@ TEST_CASE("simple_response_routing_params")
   CHECK(200 == response("Hello there").code);
   CHECK(500 == response(500, "Internal Error?").code);
 
+  CHECK(100 == response(100, "xml", "").code);
+  CHECK(200 == response(200, "html", "").code);
+  CHECK(500 == response(500, "html", "Internal Error?").code);
+
   routing_params rp;
   rp.int_params.push_back(1);
   rp.int_params.push_back(5);
