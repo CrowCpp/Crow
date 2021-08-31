@@ -260,6 +260,13 @@ TEST_CASE("simple_response_routing_params")
   CHECK(200 == response("Hello there").code);
   CHECK(500 == response(500, "Internal Error?").code);
 
+  CHECK(100 == response(100, "xml", "").code);
+  CHECK("text/xml" == response(100, "xml", "").get_header_value("Content-Type"));
+  CHECK(200 == response(200, "html", "").code);
+  CHECK("text/html" == response(200, "html", "").get_header_value("Content-Type"));
+  CHECK(500 == response(500, "html", "Internal Error?").code);
+  CHECK("text/css" == response(500, "css", "Internal Error?").get_header_value("Content-Type"));
+
   routing_params rp;
   rp.int_params.push_back(1);
   rp.int_params.push_back(5);
