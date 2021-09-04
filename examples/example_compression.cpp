@@ -1,5 +1,4 @@
 #define CROW_MAIN
-#define CROW_ENABLE_COMPRESSION
 #include "crow.h"
 #include "crow/compression.h"
 

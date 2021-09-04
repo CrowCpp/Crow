@@ -52,10 +52,9 @@ namespace crow
     public:
         ///This crow application
         using self_t = Crow;
-#ifndef CROW_ENABLE_SSL
         ///The HTTP server
         using server_t = Server<Crow, SocketAdaptor, Middlewares...>;
-#else
+#ifdef CROW_ENABLE_SSL
         ///An HTTP server that runs on SSL with an SSLAdaptor
         using ssl_server_t = Server<Crow, SSLAdaptor, Middlewares...>;
 #endif
@@ -187,13 +186,18 @@ namespace crow
         self_t& use_compression(compression::algorithm algorithm)
         {
             comp_algorithm_ = algorithm;
+            compression_used_ = true;
             return *this;
         }
-
 
         compression::algorithm compression_algorithm()
         {
             return comp_algorithm_;
+        }
+
+        bool compression_used() const
+        {
+            return compression_used_;
         }
 #endif
         ///A wrapper for `validate()` in the router
@@ -255,22 +259,18 @@ namespace crow
                 ssl_server_->run();
             }
             else
-            {
-                CROW_LOG_CRITICAL << "SSL context not defined, please define a certificate or SSL context.";
-            }
-#else
-
-            server_ = std::move(std::unique_ptr<server_t>(new server_t(this, bindaddr_, port_, server_name_, &middlewares_, concurrency_, nullptr)));
-            server_->set_tick_function(tick_interval_, tick_function_);
-            server_->signal_clear();
-            for (auto snum : signals_)
-            {
-                server_->signal_add(snum);
-            }
-            notify_server_start();
-            server_->run();
-
 #endif
+            {
+                server_ = std::move(std::unique_ptr<server_t>(new server_t(this, bindaddr_, port_, server_name_, &middlewares_, concurrency_, nullptr)));
+                server_->set_tick_function(tick_interval_, tick_function_);
+                server_->signal_clear();
+                for (auto snum : signals_)
+                {
+                    server_->signal_add(snum);
+                }
+                notify_server_start();
+                server_->run();
+            }
         }
 
         ///Stop the server
@@ -284,16 +284,14 @@ namespace crow
 		}
             }
             else
+#endif
             {
-                CROW_LOG_CRITICAL << "SSL context not defined, please define a certificate or SSL context.";
-            }
-#else
-
 		if (server_) {
                     server_->stop();
+		}
+            }
         }
-#endif
-        }
+
         void debug_print()
         {
             CROW_LOG_DEBUG << "Routing:";
@@ -404,6 +402,7 @@ namespace crow
 
 #ifdef CROW_ENABLE_COMPRESSION
         compression::algorithm comp_algorithm_;
+        bool compression_used_{false};
 #endif
 
         std::chrono::milliseconds tick_interval_;
@@ -413,9 +412,9 @@ namespace crow
 
 #ifdef CROW_ENABLE_SSL
         std::unique_ptr<ssl_server_t> ssl_server_;
-#else
-        std::unique_ptr<server_t> server_;
 #endif
+        std::unique_ptr<server_t> server_;
+
         std::vector<int> signals_{SIGINT, SIGTERM};
 
         bool server_started_{false};

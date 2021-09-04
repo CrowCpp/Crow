@@ -357,27 +357,29 @@ namespace crow
                 (*middlewares_, ctx_, req_, res);
             }
 #ifdef CROW_ENABLE_COMPRESSION
-            std::string accept_encoding = req_.get_header_value("Accept-Encoding");
-            if (!accept_encoding.empty() && res.compressed)
-            {
-                switch (handler_->compression_algorithm())
+            if (handler_->compression_used()) {
+                std::string accept_encoding = req_.get_header_value("Accept-Encoding");
+                if (!accept_encoding.empty() && res.compressed)
                 {
-                    case compression::DEFLATE:
-                        if (accept_encoding.find("deflate") != std::string::npos)
-                        {
-                            res.body = compression::compress_string(res.body, compression::algorithm::DEFLATE);
-                            res.set_header("Content-Encoding", "deflate");
-                        }
-                        break;
-                    case compression::GZIP:
-                        if (accept_encoding.find("gzip") != std::string::npos)
-                        {
-                            res.body = compression::compress_string(res.body, compression::algorithm::GZIP);
-                            res.set_header("Content-Encoding", "gzip");
-                        }
-                        break;
-                    default:
-                        break;
+                    switch (handler_->compression_algorithm())
+                    {
+                        case compression::DEFLATE:
+                            if (accept_encoding.find("deflate") != std::string::npos)
+                            {
+                                res.body = compression::compress_string(res.body, compression::algorithm::DEFLATE);
+                                res.set_header("Content-Encoding", "deflate");
+                            }
+                            break;
+                        case compression::GZIP:
+                            if (accept_encoding.find("gzip") != std::string::npos)
+                            {
+                                res.body = compression::compress_string(res.body, compression::algorithm::GZIP);
+                                res.set_header("Content-Encoding", "gzip");
+                            }
+                            break;
+                        default:
+                            break;
+                    }
                 }
             }
 #endif
