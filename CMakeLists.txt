@@ -8,6 +8,12 @@ project(Crow
 	LANGUAGES CXX
 )
 
+# Check if Crow is the main project
+set(CROW_IS_MAIN_PROJECT OFF)
+if (CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
+  set(CROW_IS_MAIN_PROJECT ON)
+endif()
+
 # Set required C++ standard
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
@@ -21,8 +27,8 @@ endif()
 #####################################
 # Define Options
 #####################################
-option(CROW_BUILD_EXAMPLES     "Build the examples in the project"      ON )
-option(CROW_BUILD_TESTS        "Build the tests in the project"         ON )
+option(CROW_BUILD_EXAMPLES     "Build the examples in the project"      ${CROW_IS_MAIN_PROJECT})
+option(CROW_BUILD_TESTS        "Build the tests in the project"         ${CROW_IS_MAIN_PROJECT})
 option(CROW_AMALGAMATE         "Combine all headers into one"           OFF)
 option(CROW_INSTALL            "Add install step for Crow"              ON )
 
