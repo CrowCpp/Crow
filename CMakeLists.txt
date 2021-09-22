@@ -127,7 +127,12 @@ if(CROW_INSTALL)
 endif()
 
 set(CPACK_GENERATOR "DEB")
+set(CPACK_PACKAGE_NAME "Crow")
 set(CPACK_DEBIAN_PACKAGE_MAINTAINER "CrowCpp")
+set(CPACK_PACKAGE_VENDOR "CrowCpp")
+set(CPACK_PACKAGE_DESCRIPTION "A Fast and Easy to use C++ microframework for the web.")
+set(CPACK_PACKAGE_HOMEPAGE_URL "https://crowcpp.org")
+set(CPACK_DEBIAN_PACKAGE_DEBUG OFF)
 set(CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON)
 
 include(CPack)
