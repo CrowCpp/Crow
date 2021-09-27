@@ -18,10 +18,15 @@ endif()
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
 
-# Default to build type "Release"
+# Default to build type "Release" unless tests are being built
 if(NOT CMAKE_BUILD_TYPE)
-	message(STATUS "No build type selected, default to Release")
-	set(CMAKE_BUILD_TYPE "Release")
+	if (NOT CROW_BUILD_TESTS)
+		message(STATUS "No build type selected, default to Release")
+		set(CMAKE_BUILD_TYPE "Release")
+	else()
+		message(STATUS "No build type selected but tests are being built, default to Debug")
+		set(CMAKE_BUILD_TYPE "Debug")
+	endif()
 endif()
 
 #####################################
