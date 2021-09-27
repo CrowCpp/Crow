@@ -1,4 +1,3 @@
-#define CROW_ENABLE_SSL
 #define CATCH_CONFIG_MAIN
 #define CROW_LOG_LEVEL 0
 #define CROW_MAIN
