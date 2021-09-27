@@ -186,13 +186,18 @@ namespace crow
         self_t& use_compression(compression::algorithm algorithm)
         {
             comp_algorithm_ = algorithm;
+            compression_used_ = true;
             return *this;
         }
-
 
         compression::algorithm compression_algorithm()
         {
             return comp_algorithm_;
+        }
+
+        bool compression_used() const
+        {
+            return compression_used_;
         }
 #endif
         ///A wrapper for `validate()` in the router
@@ -397,6 +402,7 @@ namespace crow
 
 #ifdef CROW_ENABLE_COMPRESSION
         compression::algorithm comp_algorithm_;
+        bool compression_used_{false};
 #endif
 
         std::chrono::milliseconds tick_interval_;

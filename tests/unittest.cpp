@@ -1,5 +1,5 @@
 #define CATCH_CONFIG_MAIN
-#define CROW_ENABLE_COMPRESSION
+#define CROW_ENABLE_DEBUG
 #define CROW_LOG_LEVEL 0
 #define CROW_MAIN
 #include <sys/stat.h>
@@ -258,6 +258,13 @@ TEST_CASE("simple_response_routing_params")
   CHECK(100 == response(100).code);
   CHECK(200 == response("Hello there").code);
   CHECK(500 == response(500, "Internal Error?").code);
+
+  CHECK(100 == response(100, "xml", "").code);
+  CHECK("text/xml" == response(100, "xml", "").get_header_value("Content-Type"));
+  CHECK(200 == response(200, "html", "").code);
+  CHECK("text/html" == response(200, "html", "").get_header_value("Content-Type"));
+  CHECK(500 == response(500, "html", "Internal Error?").code);
+  CHECK("text/css" == response(500, "css", "Internal Error?").get_header_value("Content-Type"));
 
   routing_params rp;
   rp.int_params.push_back(1);
@@ -746,6 +753,8 @@ TEST_CASE("json_copy_r_to_w_to_w_to_r")
   CHECK("other" == x["obj"]["other"].key());
 }
 
+//TODO maybe combine these
+
 TEST_CASE("json::wvalue::wvalue(bool)") {
   CHECK(json::wvalue(true).t() == json::type::True);
   CHECK(json::wvalue(false).t() == json::type::False);
@@ -885,7 +894,7 @@ TEST_CASE("json::wvalue::wvalue(std::[unordered_]map<std::string, json::wvalue> 
   truth = true;
   lie = false;
 
-  json::wvalue::object_type map({
+  json::wvalue::object map({
     {"integer", integer},
     {"number", number},
     {"truth", truth},
@@ -909,7 +918,7 @@ TEST_CASE("json::wvalue::wvalue(std::[unordered_]map<std::string, json::wvalue>&
   truth = true;
   lie = false;
 
-  json::wvalue::object_type map = {{
+  json::wvalue::object map = {{
     {"integer", integer},
     {"number", number},
     {"truth", truth},
@@ -958,7 +967,7 @@ TEST_CASE("json::wvalue::operator=(std::[unordered_]map<std::string, json::wvalu
   truth = true;
   lie = false;
 
-  json::wvalue::object_type map({
+  json::wvalue::object map({
     {"integer", integer},
     {"number", number},
     {"truth", truth},
@@ -983,7 +992,7 @@ TEST_CASE("json::wvalue::operator=(std::[unordered_]map<std::string, json::wvalu
   truth = true;
   lie = false;
 
-  json::wvalue::object_type map({
+  json::wvalue::object map({
     {"integer", integer},
     {"number", number},
     {"truth", truth},
@@ -1002,7 +1011,7 @@ TEST_CASE("json::wvalue::operator=(std::[unordered_]map<std::string, json::wvalu
 }
 
 TEST_CASE("json_vector")
-{//TODO probably make constructors for the same values as = operator
+{
     json::wvalue a;
     json::wvalue b;
     json::wvalue c;
@@ -1029,6 +1038,14 @@ TEST_CASE("json_vector")
     nums.emplace_back(g);
     nums.emplace_back(h);
     json::wvalue x(nums);
+
+    CHECK(8 == x.size());
+    CHECK("[5,6,7,8,4,3,2,1]" == x.dump());
+}
+
+TEST_CASE("json_list")
+{
+    json::wvalue x(json::wvalue::list({5,6,7,8,4,3,2,1}));
 
     CHECK(8 == x.size());
     CHECK("[5,6,7,8,4,3,2,1]" == x.dump());
@@ -1882,6 +1899,7 @@ TEST_CASE("websocket")
   app.stop();
 }
 
+#ifdef CROW_ENABLE_COMPRESSION
 TEST_CASE("zlib_compression")
 {
     static char buf_deflate[2048];
@@ -2076,6 +2094,7 @@ TEST_CASE("zlib_compression")
     app_deflate.stop();
     app_gzip.stop();
 }
+#endif
 
 TEST_CASE("catchall")
 {
@@ -2084,7 +2103,7 @@ TEST_CASE("catchall")
 
     CROW_ROUTE(app, "/place")([](){return "place";});
 
-    CROW_CATCHALL_ROUTE(app)([](){return "!place";});
+    CROW_CATCHALL_ROUTE(app)([](response& res){res.body = "!place";});
 
     CROW_ROUTE(app2, "/place")([](){return "place";});
 
@@ -2110,7 +2129,7 @@ TEST_CASE("catchall")
 
       app.handle(req, res);
 
-      CHECK(200 == res.code);
+      CHECK(404 == res.code);
       CHECK("!place" == res.body);
     }
 

@@ -15,7 +15,7 @@ namespace crow
         {
         }
 
-        void after_handle(request& /*req*/, response& res, context& ctx)
+        void after_handle(request& /*req*/, response& res, context& /*ctx*/)
         {
             if (get_header_value(res.headers, "Content-Type").empty())
             {
