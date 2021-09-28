@@ -97,6 +97,8 @@ if(NOT MSVC AND CROW_BUILD_TESTS)
 	endif()
 	if(NOT CROW_ENABLE_SSL)
 		message(STATUS "SSL tests are omitted. (Configure with CROW_ENABLE_SSL=ON to enable them)")
+	else()
+		add_test(NAME ssl_test COMMAND ${CMAKE_CURRENT_BINARY_DIR}/tests/ssl/ssltest)
 	endif()
 
 	add_subdirectory(tests)

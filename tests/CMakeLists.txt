@@ -17,4 +17,7 @@ if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
 endif()
 
 add_subdirectory(template)
+if (CROW_ENABLE_SSL)
+	add_subdirectory(ssl)
+endif()
 add_subdirectory(img)
