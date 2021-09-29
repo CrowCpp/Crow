@@ -28,7 +28,11 @@ markdown_extensions:
 nav:
     - Home: index.md
     - Getting Started:
-        - Setup: getting_started/setup.md
+        - Setup:
+            - Linux: getting_started/setup/linux.md
+            - MacOS: getting_started/setup/macos.md
+            - Windows: getting_started/setup/windows.md
+            - Legacy: getting_started/setup/legacy.md
         - Your First Application: getting_started/your_first_application.md
     - Guides:
         - Different parts of Crow:

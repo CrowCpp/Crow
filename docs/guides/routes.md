@@ -76,3 +76,7 @@ class a : public crow::returnable
 ##Catchall routes
 **Introduced in: `v0.3`**<br><br>
 By default, any request that Crow can't find a route for will return a simple 404 response. You can change that to return a default route using the `CROW_CATCHALL_ROUTE(app)` macro. Defining it is identical to a normal route, even when it comes to the `const crow::request&` and `crow::response&` parameters being optional.
+!!!note
+
+    For versions higher than 0.3 (excluding patches), Catchall routes handle 404 and 405 responses. The default response will contain the code 404 or 405.
+
