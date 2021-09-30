@@ -418,6 +418,7 @@ namespace crow
                 return;
             }
 
+            // Keep in sync with common.h/status
             static std::unordered_map<int, std::string> statusCodes = {
                 {100, "HTTP/1.1 100 Continue\r\n"},
                 {101, "HTTP/1.1 101 Switching Protocols\r\n"},
