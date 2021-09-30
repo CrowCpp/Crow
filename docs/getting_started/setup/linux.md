@@ -22,7 +22,7 @@ You can install Crow on GNU/Linux as a pre-made package
 
 === "Arch"
 
-    Crow is available for pacman through AUR, you only need to run `pacman -S crow`
+    Crow is available for Arch based distros through the AUR package `crow`.
 
 
 <br><br>
