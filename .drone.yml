@@ -32,7 +32,7 @@ steps:
   - make -j4
   - ctest -V -j4
   - cd ..
-  - coveralls --verbose --exclude-pattern .*/http_parser_merged.h --exclude-pattern .*/TinySHA1.hpp
+  - coveralls --verbose --exclude-pattern .*/http_parser_merged.h --exclude-pattern .*/TinySHA1.hpp --exclude-pattern .*/query_string.h
   - export CC=/usr/bin/clang
   - export CXX=/usr/bin/clang++
   - mkdir build-clang
@@ -126,7 +126,7 @@ steps:
   - make -j4
   - ctest -V -j4
   - cd ..
-  - coveralls --verbose --exclude-pattern .*/http_parser_merged.h --exclude-pattern .*/TinySHA1.hpp
+  - coveralls --verbose --exclude-pattern .*/http_parser_merged.h --exclude-pattern .*/TinySHA1.hpp --exclude-pattern .*/query_string.h
   - export CC=/usr/bin/clang
   - export CXX=/usr/bin/clang++
   - mkdir build-clang
