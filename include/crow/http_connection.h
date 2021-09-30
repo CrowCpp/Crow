@@ -419,10 +419,16 @@ namespace crow
             }
 
             static std::unordered_map<int, std::string> statusCodes = {
+                {100, "HTTP/1.1 100 Continue\r\n"},
+                {101, "HTTP/1.1 101 Switching Protocols\r\n"},
+
                 {200, "HTTP/1.1 200 OK\r\n"},
                 {201, "HTTP/1.1 201 Created\r\n"},
                 {202, "HTTP/1.1 202 Accepted\r\n"},
+                {203, "HTTP/1.1 203 Non-Authoritative Information\r\n"},
                 {204, "HTTP/1.1 204 No Content\r\n"},
+                {205, "HTTP/1.1 205 Reset Content\r\n"},
+                {206, "HTTP/1.1 206 Partial Content\r\n"},
 
                 {300, "HTTP/1.1 300 Multiple Choices\r\n"},
                 {301, "HTTP/1.1 301 Moved Permanently\r\n"},
@@ -437,14 +443,22 @@ namespace crow
                 {403, "HTTP/1.1 403 Forbidden\r\n"},
                 {404, "HTTP/1.1 404 Not Found\r\n"},
                 {405, "HTTP/1.1 405 Method Not Allowed\r\n"},
+                {407, "HTTP/1.1 407 Proxy Authentication Required\r\n"},
+                {409, "HTTP/1.1 409 Conflict\r\n"},
+                {410, "HTTP/1.1 410 Gone\r\n"},
                 {413, "HTTP/1.1 413 Payload Too Large\r\n"},
-                {422, "HTTP/1.1 422 Unprocessable Entity\r\n"},
+                {415, "HTTP/1.1 415 Unsupported Media Type\r\n"},
+                {416, "HTTP/1.1 416 Range Not Satisfiable\r\n"},
+                {417, "HTTP/1.1 417 Expectation Failed\r\n"},
+                {428, "HTTP/1.1 428 Precondition Required\r\n"},
                 {429, "HTTP/1.1 429 Too Many Requests\r\n"},
+                {451, "HTTP/1.1 451 Unavailable For Legal Reasons\r\n"},
 
                 {500, "HTTP/1.1 500 Internal Server Error\r\n"},
                 {501, "HTTP/1.1 501 Not Implemented\r\n"},
                 {502, "HTTP/1.1 502 Bad Gateway\r\n"},
                 {503, "HTTP/1.1 503 Service Unavailable\r\n"},
+                {506, "HTTP/1.1 506 Variant Also Negotiates\r\n"},
             };
 
             static std::string seperator = ": ";
