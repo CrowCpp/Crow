@@ -104,6 +104,16 @@ int main()
         return crow::response(os.str());
     });
 
+    // Same as above, but using crow::status
+    CROW_ROUTE(app,"/hello/<int>")
+    ([](int count){
+        if (count > 100)
+            return crow::response(crow::status::BAD_REQUEST);
+        std::ostringstream os;
+        os << count << " bottles of beer!";
+        return crow::response(os.str());
+    });
+
     // To see it in action submit {ip}:18080/add/1/2 and you should receive 3 (exciting, isn't it)
     CROW_ROUTE(app,"/add/<int>/<int>")
     ([](crow::response& res, int a, int b){

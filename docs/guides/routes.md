@@ -72,6 +72,12 @@ class a : public crow::returnable
     }
 }
 ```
+<br><br>
+
+## Response codes
+**Introduced in: `master`**<br><br>
+
+instead of assigning a response code, you can use the `crow::status` enum, for example you can replace `crow::response(200)` with `crow::response(crow::status::OK)`
 
 ##Catchall routes
 **Introduced in: `v0.3`**<br><br>
