@@ -44,9 +44,9 @@ warning: source ./doc is not a readable file or directory... skipping.
 /drone/src/include/crow/routing.h:150: warning: Compound crow::detail::routing_handler_call_helper::call< F, NInt, NUint, NDouble, NString, black_magic::S< double, Args1... >, black_magic::S< Args2... > > is not documented.
 /drone/src/include/crow/utility.h:497: warning: Compound crow::utility::function_traits< std::function< R(Args...)> > is not documented.
 /drone/src/include/crow/routing.h:172: warning: Compound crow::detail::routing_handler_call_helper::call< F, NInt, NUint, NDouble, NString, black_magic::S<>, black_magic::S< Args1... > > is not documented.
-/drone/src/include/crow/http_connection.h:86: warning: Compound crow::detail::is_after_handle_arity_3_impl is not documented.
-/drone/src/include/crow/common.h:84: warning: Compound crow::routing_params is not documented.
-/drone/src/include/crow/http_connection.h:70: warning: Compound crow::detail::is_before_handle_arity_3_impl is not documented.
+/drone/src/include/crow/http_connection.h:87: warning: Compound crow::detail::is_after_handle_arity_3_impl is not documented.
+/drone/src/include/crow/common.h:128: warning: Compound crow::routing_params is not documented.
+/drone/src/include/crow/http_connection.h:71: warning: Compound crow::detail::is_before_handle_arity_3_impl is not documented.
 /drone/src/include/crow/logging.h:33: warning: Compound crow::ILogHandler is not documented.
 /drone/src/include/crow/middlewares/cookie_parser.h:34: warning: Compound crow::CookieParser::context is not documented.
 /drone/src/include/crow/logging.h:38: warning: Compound crow::CerrLogHandler is not documented.
@@ -177,10 +177,10 @@ Add enum values to en/drone/src/include/crow/json.h:1391: warning: unable to res
 /drone/src/include/crow/logging.h:40: warning: Member log(std::string message, LogLevel) override (function) of class crow::CerrLogHandler is not documented.
 /drone/src/include/crow/ci_map.h:12: warning: Member operator()(const std::string &key) const (function) of class crow::ci_hash is not documented.
 /drone/src/include/crow/ci_map.h:29: warning: Member operator()(const std::string &l, const std::string &r) const (function) of class crow::ci_key_eq is not documented.
-/drone/src/include/crow/http_connection.h:189: warning: Member Connection(boost::asio::io_service &io_service, Handler *handler, const std::string &server_name, std::tuple< Middlewares... > *middlewares, std::function< std::string()> &get_cached_date_str_f, detail::dumb_timer_queue &timer_queue, typename Adaptor::context *adaptor_ctx_) (function) of class crow::Connection is not documented.
-/drone/src/include/crow/http_connection.h:228: warning: Member start() (function) of class crow::Connection is not documented.
-/drone/src/include/crow/http_connection.h:244: warning: Member handle_header() (function) of class crow::Connection is not documented.
-/drone/src/include/crow/http_connection.h:256: warning: Member handle() (function) of class crow::Connection is not documented.
+/drone/src/include/crow/http_connection.h:190: warning: Member Connection(boost::asio::io_service &io_service, Handler *handler, const std::string &server_name, std::tuple< Middlewares... > *middlewares, std::function< std::string()> &get_cached_date_str_f, detail::dumb_timer_queue &timer_queue, typename Adaptor::context *adaptor_ctx_) (function) of class crow::Connection is not documented.
+/drone/src/include/crow/http_connection.h:229: warning: Member start() (function) of class crow::Connection is not documented.
+/drone/src/include/crow/http_connection.h:245: warning: Member handle_header() (function) of class crow::Connection is not documented.
+/drone/src/include/crow/http_connection.h:257: warning: Member handle() (function) of class crow::Connection is not documented.
 /drone/src/include/crow/middlewares/cookie_parser.h:52: warning: Member before_handle(request &req, response &res, context &ctx) (function) of class crow::CookieParser is not documented.
 /drone/src/include/crow/middlewares/cookie_parser.h:96: warning: Member after_handle(request &, response &res, context &ctx) (function) of class crow::CookieParser is not documented.
 /drone/src/include/crow/middlewares/cookie_parser.h:38: warning: Member get_cookie(const std::string &key) const (function) of class crow::CookieParser::context is not documented.
@@ -292,15 +292,15 @@ Add enum values to en/drone/src/include/crow/json.h:1391: warning: unable to res
 /drone/src/include/crow/routing.h:1547: warning: Member handle(const request &req, response &res) (function) of class crow::Router is not documented.
 /drone/src/include/crow/routing.h:1677: warning: Member debug_print() (function) of class crow::Router is not documented.
 /drone/src/include/crow/routing.h:1686: warning: Member blueprints() (function) of class crow::Router is not documented.
-/drone/src/include/crow/common.h:90: warning: Member debug_print() const (function) of class crow::routing_params is not documented.
-/drone/src/include/crow/common.h:108: warning: Member get(unsigned) const (function) of class crow::routing_params is not documented.
-/drone/src/include/crow/common.h:113: warning: Member get(unsigned index) const (function) of class crow::routing_params is not documented.
-/drone/src/include/crow/common.h:119: warning: Member get(unsigned index) const (function) of class crow::routing_params is not documented.
-/drone/src/include/crow/common.h:125: warning: Member get(unsigned index) const (function) of class crow::routing_params is not documented.
-/drone/src/include/crow/common.h:85: warning: Member int_params (variable) of class crow::routing_params is not documented.
-/drone/src/include/crow/common.h:86: warning: Member uint_params (variable) of class crow::routing_params is not documented.
-/drone/src/include/crow/common.h:87: warning: Member double_params (variable) of class crow::routing_params is not documented.
-/drone/src/include/crow/common.h:88: warning: Member string_params (variable) of class crow::routing_params is not documented.
+/drone/src/include/crow/common.h:134: warning: Member debug_print() const (function) of class crow::routing_params is not documented.
+/drone/src/include/crow/common.h:152: warning: Member get(unsigned) const (function) of class crow::routing_params is not documented.
+/drone/src/include/crow/common.h:157: warning: Member get(unsigned index) const (function) of class crow::routing_params is not documented.
+/drone/src/include/crow/common.h:163: warning: Member get(unsigned index) const (function) of class crow::routing_params is not documented.
+/drone/src/include/crow/common.h:169: warning: Member get(unsigned index) const (function) of class crow::routing_params is not documented.
+/drone/src/include/crow/common.h:129: warning: Member int_params (variable) of class crow::routing_params is not documented.
+/drone/src/include/crow/common.h:130: warning: Member uint_params (variable) of class crow::routing_params is not documented.
+/drone/src/include/crow/common.h:131: warning: Member double_params (variable) of class crow::routing_params is not documented.
+/drone/src/include/crow/common.h:132: warning: Member string_params (variable) of class crow::routing_params is not documented.
 /drone/src/include/crow/routing.h:464: warning: Member self_t (typedef) of class crow::RuleParameterTraits is not documented.
 /drone/src/include/crow/routing.h:465: warning: Member websocket() (function) of class crow::RuleParameterTraits is not documented.
 /drone/src/include/crow/routing.h:472: warning: Member name(std::string name) noexcept (function) of class crow::RuleParameterTraits is not documented.
@@ -521,14 +521,14 @@ Generating docs for compound crow::Server.../drone/src/include/crow/http_server.
 /drone/src/include/crow/utility.h:432: warning: Member value (variable) of class crow::detail::get_index_of_element_from_tuple_by_type_impl is not documented.
 /drone/src/include/crow/utility.h:438: warning: Member value (variable) of class crow::detail::get_index_of_element_from_tuple_by_type_impl< T, N, T, Args... > is not documented.
 /drone/src/include/crow/utility.h:444: warning: Member value (variable) of class crow::detail::get_index_of_element_from_tuple_by_type_impl< T, N, U, Args... > is not documented.
-/drone/src/include/crow/http_connection.h:88: warning: Member f(typename check_after_handle_arity_3_const< T >::template get< C > *) (function) of class crow::detail::is_after_handle_arity_3_impl is not documented.
-/drone/src/include/crow/http_connection.h:91: warning: Member f(typename check_after_handle_arity_3< T >::template get< C > *) (function) of class crow::detail::is_after_handle_arity_3_impl is not documented.
-/drone/src/include/crow/http_connection.h:94: warning: Member f(...) (function) of class crow::detail::is_after_handle_arity_3_impl is not documented.
-/drone/src/include/crow/http_connection.h:97: warning: Member value (variable) of class crow::detail::is_after_handle_arity_3_impl is not documented.
-/drone/src/include/crow/http_connection.h:72: warning: Member f(typename check_before_handle_arity_3_const< T >::template get< C > *) (function) of class crow::detail::is_before_handle_arity_3_impl is not documented.
-/drone/src/include/crow/http_connection.h:75: warning: Member f(typename check_before_handle_arity_3< T >::template get< C > *) (function) of class crow::detail::is_before_handle_arity_3_impl is not documented.
-/drone/src/include/crow/http_connection.h:78: warning: Member f(...) (function) of class crow::detail::is_before_handle_arity_3_impl is not documented.
-/drone/src/include/crow/http_connection.h:81: warning: Member value (variable) of class crow::detail::is_before_handle_arity_3_impl is not documented.
+/drone/src/include/crow/http_connection.h:89: warning: Member f(typename check_after_handle_arity_3_const< T >::template get< C > *) (function) of class crow::detail::is_after_handle_arity_3_impl is not documented.
+/drone/src/include/crow/http_connection.h:92: warning: Member f(typename check_after_handle_arity_3< T >::template get< C > *) (function) of class crow::detail::is_after_handle_arity_3_impl is not documented.
+/drone/src/include/crow/http_connection.h:95: warning: Member f(...) (function) of class crow::detail::is_after_handle_arity_3_impl is not documented.
+/drone/src/include/crow/http_connection.h:98: warning: Member value (variable) of class crow::detail::is_after_handle_arity_3_impl is not documented.
+/drone/src/include/crow/http_connection.h:73: warning: Member f(typename check_before_handle_arity_3_const< T >::template get< C > *) (function) of class crow::detail::is_before_handle_arity_3_impl is not documented.
+/drone/src/include/crow/http_connection.h:76: warning: Member f(typename check_before_handle_arity_3< T >::template get< C > *) (function) of class crow::detail::is_before_handle_arity_3_impl is not documented.
+/drone/src/include/crow/http_connection.h:79: warning: Member f(...) (function) of class crow::detail::is_before_handle_arity_3_impl is not documented.
+/drone/src/include/crow/http_connection.h:82: warning: Member value (variable) of class crow::detail::is_before_handle_arity_3_impl is not documented.
 /drone/src/include/crow/middleware_context.h:18: warning: Member parent_context (typedef) of class crow::detail::partial_context is not documented.
 /drone/src/include/crow/middleware_context.h:20: warning: Member partial (typedef) of class crow::detail::partial_context is not documented.
 /drone/src/include/crow/middleware_context.h:23: warning: Member get() (function) of class crow::detail::partial_context is not documented.
@@ -790,5 +790,5 @@ Generating example index...
 finalizing index lists...
 writing tag file...
 Running plantuml with JAVA...
-lookup cache used 2567/65536 hits=22807 misses=2891
+lookup cache used 2641/65536 hits=22883 misses=2965
 finished...
