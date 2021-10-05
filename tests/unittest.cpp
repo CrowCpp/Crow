@@ -1727,37 +1727,30 @@ TEST_CASE("stream_response")
 
       //consuming the headers, since we don't need those for the test
       static char buf[2048];
-      c.receive(asio::buffer(buf, 2048));
+      size_t headers_received = 0;
+      // magic number is 102 (it's the size of the headers, which is how much this line below needs to read)
+      while (headers_received < 102)
+        headers_received += c.receive(asio::buffer(buf, 2048));
+      received += headers_received - 102; //add any extra that might have been received to the proper received count
 
-      //"hello" is 5 bytes, (5*250000)/16384 = 76.2939
-      for (unsigned int i = 0; i<76; i++)
+
+      //"hello" is 5 bytes, 5*250000 = 1250000
+      while (received < 1250000)
       {
         asio::streambuf::mutable_buffers_type bufs = b.prepare(16384);
+
         size_t n = c.receive(bufs);
         b.commit(n);
         received += n;
+
         std::istream is(&b);
         std::string s;
         is >> s;
+
         CHECK(key_response.substr(received-n, n) == s);
+
         std::this_thread::sleep_for(std::chrono::milliseconds(20));
-
       }
-
-      //handle the 0.2 and any errors in the earlier loop
-      while (c.available() > 0)
-      {
-          asio::streambuf::mutable_buffers_type bufs = b.prepare(16384);
-          size_t n = c.receive(bufs);
-          b.commit(n);
-          received += n;
-          std::istream is(&b);
-          std::string s;
-          is >> s;
-          CHECK(key_response.substr(received-n, n) == s);
-          std::this_thread::sleep_for(std::chrono::milliseconds(20));
-      }
-
 
     }
     app.stop();
