@@ -114,7 +114,7 @@ $(document).ready(function(){initNavTree('socket__adaptors_8h_source.html',''); 
 <div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;{</div>
 <div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;    <span class="keyword">using namespace </span>boost;</div>
 <div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;    <span class="keyword">using</span> tcp = asio::ip::tcp;</div>
-<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="preprocessor">#ifndef CROW_ENABLE_SSL</span></div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="comment"></span> </div>
 <div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="comment">    ///A wrapper for the asio::ip::tcp::socket and asio::ssl::stream</span></div>
 <div class="line"><a name="l00018"></a><span class="lineno"><a class="line" href="structcrow_1_1_socket_adaptor.html">   18</a></span>&#160;<span class="comment"></span>    <span class="keyword">struct </span><a class="code" href="structcrow_1_1_socket_adaptor.html">SocketAdaptor</a></div>
 <div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;    {</div>
@@ -184,7 +184,7 @@ $(document).ready(function(){initNavTree('socket__adaptors_8h_source.html',''); 
 <div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;        tcp::socket socket_;</div>
 <div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;    };</div>
 <div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160; </div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;<span class="preprocessor">#else</span></div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;<span class="preprocessor">#ifdef CROW_ENABLE_SSL</span></div>
 <div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;    <span class="keyword">struct </span>SSLAdaptor</div>
 <div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;    {</div>
 <div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;        <span class="keyword">using</span> context = boost::asio::ssl::context;</div>
@@ -279,7 +279,7 @@ $(document).ready(function(){initNavTree('socket__adaptors_8h_source.html',''); 
 			<ul>
 				<li class="navelem"><a class="el" href="dir_d44c64559bbebec7f509842c48db8b23.html">include</a></li><li class="navelem"><a class="el" href="dir_d22c1cb87b72f01e1a7f207eb3bfd1ca.html">crow</a></li><li class="navelem"><b>socket_adaptors.h</b></li>
 				<li class="footer">
-					Generated on Sat Oct 2 2021 for Crow by <a href="http://www.doxygen.org/index.html">
+					Generated on Tue Oct 5 2021 for Crow by <a href="http://www.doxygen.org/index.html">
 					<img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.17.
 					Dark theme by <a href="http://majerle.eu" target="_new">Tilen Majerle</a>. Edited by <a href="https://github.com/The-EDev" target="_new">Farook Al-Sammarraie</a>. All rights reserved.
 				</li>
