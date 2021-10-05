@@ -1,16 +1,12 @@
-This page explains how to set Crow up for use with your project.
+This page explains how to set Crow up for use with your project (***For versions 0.3+2 and lower***).
 
 
 ##Requirements
- - C++ compiler with C++14 support.
+ - C++ compiler with C++11 support.
     - Crow's CI uses g++-9.3 and clang-7.0 running on AMD64 (x86_64) and ARM64v8
- - boost library (1.70 or later).
+ - boost library (1.64 or later).
  - **(optional)** ZLib for HTTP Compression.
  - **(optional)** CMake and Python3 to build tests and/or examples.
- - **(optional)** Linking with jemalloc/tcmalloc is recommended for speed.
-!!!note
-    
-    While using Boost 1.70 or later is recommended, it may be possible to compile a Crow application with version 1.64
     
 <br><br>
 
@@ -21,6 +17,9 @@ This page explains how to set Crow up for use with your project.
 
 ###Ubuntu
 `sudo apt-get install build-essential libboost-all-dev`
+
+###Arch
+`sudo pacman -S python boost boost-libs`
 
 ###Non Debian based GNU/Linux
 Use your package manager to install the following:

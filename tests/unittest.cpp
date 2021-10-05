@@ -1,5 +1,4 @@
 #define CATCH_CONFIG_MAIN
-#define CROW_ENABLE_COMPRESSION
 #define CROW_ENABLE_DEBUG
 #define CROW_LOG_LEVEL 0
 #define CROW_MAIN
@@ -1900,6 +1899,7 @@ TEST_CASE("websocket")
   app.stop();
 }
 
+#ifdef CROW_ENABLE_COMPRESSION
 TEST_CASE("zlib_compression")
 {
     static char buf_deflate[2048];
@@ -2094,6 +2094,7 @@ TEST_CASE("zlib_compression")
     app_deflate.stop();
     app_gzip.stop();
 }
+#endif
 
 TEST_CASE("catchall")
 {

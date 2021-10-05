@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.15)
-project (template_test)
+project(template_test)
 
-set(PROJECT_INCLUDE_DIR 
+set(PROJECT_INCLUDE_DIR
   ${PROJECT_SOURCE_DIR}/include
 )
 
@@ -10,9 +10,10 @@ set(TEST_SRCS
 )
 
 add_executable(mustachetest ${TEST_SRCS})
-target_compile_options(mustachetest PRIVATE "${compiler_options}")
+target_link_libraries(mustachetest Crow::Crow)
+add_warnings_optimizations(mustachetest)
 
-if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
   set_target_properties(mustachetest PROPERTIES COMPILE_FLAGS "--coverage -fprofile-arcs -ftest-coverage")
   target_link_libraries(mustachetest gcov)
 endif()

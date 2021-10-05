@@ -23,7 +23,7 @@ namespace crow
     using namespace boost;
     using tcp = asio::ip::tcp;
 
-    template <typename Handler, typename Adaptor, typename ... Middlewares>
+    template <typename Handler, typename Adaptor = SocketAdaptor, typename ... Middlewares>
     class Server
     {
     public:
