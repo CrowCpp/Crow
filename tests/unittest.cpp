@@ -1690,12 +1690,13 @@ TEST_CASE("stream_response")
     SimpleApp app;
 
 
-    std::string keyword_ = "hello";
-    std::string key_response;
-    const unsigned repetitions = 250000;
-    unsigned key_response_size = keyword_.length()*repetitions;
+    const std::string keyword_ = "hello";
+    const size_t repetitions = 250000;
+    const size_t key_response_size = keyword_.length()*repetitions;
 
-    for (unsigned int i = 0; i<key_response_size; i++)
+    std::string key_response;
+
+    for (size_t i = 0; i<repetitions; i++)
       key_response += keyword_;
 
     CROW_ROUTE(app, "/test")
