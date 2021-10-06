@@ -1687,13 +1687,16 @@ TEST_CASE("send_file")
 
 TEST_CASE("stream_response")
 {
-
     SimpleApp app;
 
 
-    std::string keyword_ = "hello";
+    const std::string keyword_ = "hello";
+    const size_t repetitions = 250000;
+    const size_t key_response_size = keyword_.length()*repetitions;
+
     std::string key_response;
-    for (unsigned int i = 0; i<250000; i++)
+
+    for (size_t i = 0; i<repetitions; i++)
       key_response += keyword_;
 
     CROW_ROUTE(app, "/test")
@@ -1706,7 +1709,7 @@ TEST_CASE("stream_response")
     app.validate();
 
     //running the test on a separate thread to allow the client to sleep
-   std::thread runTest([&app, &key_response](){
+   std::thread runTest([&app, &key_response, key_response_size](){
 
     auto _ = async(launch::async,
                    [&] { app.bindaddr(LOCALHOST_ADDRESS).port(45451).run(); });
@@ -1727,37 +1730,31 @@ TEST_CASE("stream_response")
 
       //consuming the headers, since we don't need those for the test
       static char buf[2048];
-      c.receive(asio::buffer(buf, 2048));
+      size_t received_headers_bytes = 0;
 
-      //"hello" is 5 bytes, (5*250000)/16384 = 76.2939
-      for (unsigned int i = 0; i<76; i++)
+      // magic number is 102 (it's the size of the headers, which is how much this line below needs to read)
+      const size_t headers_bytes = 102;
+      while (received_headers_bytes < headers_bytes)
+        received_headers_bytes += c.receive(asio::buffer(buf, 2048));
+      received += received_headers_bytes - headers_bytes; //add any extra that might have been received to the proper received count
+
+
+      while (received < key_response_size)
       {
         asio::streambuf::mutable_buffers_type bufs = b.prepare(16384);
+
         size_t n = c.receive(bufs);
         b.commit(n);
         received += n;
+
         std::istream is(&b);
         std::string s;
         is >> s;
+
         CHECK(key_response.substr(received-n, n) == s);
+
         std::this_thread::sleep_for(std::chrono::milliseconds(20));
-
       }
-
-      //handle the 0.2 and any errors in the earlier loop
-      while (c.available() > 0)
-      {
-          asio::streambuf::mutable_buffers_type bufs = b.prepare(16384);
-          size_t n = c.receive(bufs);
-          b.commit(n);
-          received += n;
-          std::istream is(&b);
-          std::string s;
-          is >> s;
-          CHECK(key_response.substr(received-n, n) == s);
-          std::this_thread::sleep_for(std::chrono::milliseconds(20));
-      }
-
 
     }
     app.stop();
