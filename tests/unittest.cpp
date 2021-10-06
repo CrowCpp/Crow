@@ -1687,13 +1687,15 @@ TEST_CASE("send_file")
 
 TEST_CASE("stream_response")
 {
-
     SimpleApp app;
 
 
     std::string keyword_ = "hello";
     std::string key_response;
-    for (unsigned int i = 0; i<250000; i++)
+    const unsigned repetitions = 250000;
+    unsigned key_response_size = keyword_.length()*repetitions;
+
+    for (unsigned int i = 0; i<key_response_size; i++)
       key_response += keyword_;
 
     CROW_ROUTE(app, "/test")
@@ -1706,7 +1708,7 @@ TEST_CASE("stream_response")
     app.validate();
 
     //running the test on a separate thread to allow the client to sleep
-   std::thread runTest([&app, &key_response](){
+   std::thread runTest([&app, &key_response, key_response_size](){
 
     auto _ = async(launch::async,
                    [&] { app.bindaddr(LOCALHOST_ADDRESS).port(45451).run(); });
@@ -1727,15 +1729,16 @@ TEST_CASE("stream_response")
 
       //consuming the headers, since we don't need those for the test
       static char buf[2048];
-      size_t headers_received = 0;
+      size_t received_headers_bytes = 0;
+
       // magic number is 102 (it's the size of the headers, which is how much this line below needs to read)
-      while (headers_received < 102)
-        headers_received += c.receive(asio::buffer(buf, 2048));
-      received += headers_received - 102; //add any extra that might have been received to the proper received count
+      const size_t headers_bytes = 102;
+      while (received_headers_bytes < headers_bytes)
+        received_headers_bytes += c.receive(asio::buffer(buf, 2048));
+      received += received_headers_bytes - headers_bytes; //add any extra that might have been received to the proper received count
 
 
-      //"hello" is 5 bytes, 5*250000 = 1250000
-      while (received < 1250000)
+      while (received < key_response_size)
       {
         asio::streambuf::mutable_buffers_type bufs = b.prepare(16384);
 
