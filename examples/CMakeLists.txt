@@ -58,7 +58,7 @@ add_warnings_optimizations(example_chat)
 target_link_libraries(example_chat PUBLIC Crow::Crow)
 add_custom_command(OUTPUT example_chat.html
   COMMAND ${CMAKE_COMMAND} -E
-  copy ${PROJECT_SOURCE_DIR}/example_chat.html ${CMAKE_CURRENT_BINARY_DIR}/example_chat.html
+  copy ${PROJECT_SOURCE_DIR}/example_chat.html ${CMAKE_CURRENT_BINARY_DIR}/templates/example_chat.html
   DEPENDS ${PROJECT_SOURCE_DIR}/example_chat.html
 )
 add_custom_target(example_chat_copy ALL DEPENDS example_chat.html)
