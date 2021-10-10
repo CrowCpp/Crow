@@ -1555,7 +1555,7 @@ namespace crow
                     t_ = type::Object;
                     o = std::unique_ptr<object>(new object(initializer_list));
                 } else {
-                    (*o) = initializer_list;
+                    o = std::unique_ptr<object>(new object(initializer_list));
                 }
                 return *this;
             }
@@ -1567,7 +1567,7 @@ namespace crow
                     t_ = type::Object;
                     o = std::unique_ptr<object>(new object(value));
                 } else {
-                    (*o) = value;
+                    o = std::unique_ptr<object>(new object(value));
                 }
                 return *this;
             }

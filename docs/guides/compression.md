@@ -3,13 +3,13 @@ Crow supports Zlib compression using Gzip or Deflate algorithms.
 
 ## HTTP Compression
 HTTP compression is by default disabled in crow. Do the following to enable it: <br>
-1. Add `#!cpp #define CROW_ENABLE_COMPRESSION` to the top of your main source file.
-2. Call `#!cpp use_compression(crow::compression::algorithm)` on your crow app.
-3. When compiling your application, make sure that ZLIB is included as a dependency. Either through `-lz` argument or `find_package(ZLIB)` in CMake.
+- Define `CROW_ENABLE_COMPRESSION` in your compiler definitions (`g++ main.cpp -DCROW_ENABLE_COMPRESSION` for example) or `CMakeLists.txt`.
+- Call `#!cpp use_compression(crow::compression::algorithm)` on your Crow app.
+- When compiling your application, make sure that ZLIB is included as a dependency. Either through `-lz` compiler argument or `find_package(ZLIB)` in CMake.
 
 !!! note
 
-    step 3 is not needed for MSVC since `vcpckg.json` already includes zlib as a dependency by default
+    3<sup>rd</sup> point is not needed for MSVC or CMake projects using `Crow::Crow` since `vcpckg.json` and Crow's target already include zlib as a dependency.
 
 For the compression algorim you can use `crow::compression::algorithm::DEFLATE` or `crow::compression::algorithm::GZIP`.<br>
 And now your HTTP responses will be compressed.
