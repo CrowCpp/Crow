@@ -27,5 +27,6 @@ var searchData=
   ['socketadaptor_182',['SocketAdaptor',['../structcrow_1_1_socket_adaptor.html',1,'crow']]],
   ['start_183',['start',['../classcrow_1_1websocket_1_1_connection.html#a24f90aa6961994abef482699e7ffe037',1,'crow::websocket::Connection']]],
   ['static_5ffile_5finfo_184',['static_file_info',['../structcrow_1_1response_1_1static__file__info.html',1,'crow::response']]],
-  ['stop_185',['stop',['../classcrow_1_1_crow.html#a0266672657128919ab9a067d93f3868f',1,'crow::Crow']]]
+  ['stop_185',['stop',['../classcrow_1_1_crow.html#a0266672657128919ab9a067d93f3868f',1,'crow::Crow']]],
+  ['stream_5fthreshold_186',['stream_threshold',['../classcrow_1_1_crow.html#ae92390d22f6fc99987c41a617be71d64',1,'crow::Crow']]]
 ];

@@ -26,6 +26,8 @@ var classcrow_1_1_crow =
     [ "ssl", "classcrow_1_1_crow.html#a9052f48a13c6a73b1ff516f0fc0bf2e8", null ],
     [ "ssl_file", "classcrow_1_1_crow.html#af9ba728b92666e91d1852b125cf12803", null ],
     [ "stop", "classcrow_1_1_crow.html#a0266672657128919ab9a067d93f3868f", null ],
+    [ "stream_threshold", "classcrow_1_1_crow.html#a0a7b45c935e58d199eb1bcba86003232", null ],
+    [ "stream_threshold", "classcrow_1_1_crow.html#ae92390d22f6fc99987c41a617be71d64", null ],
     [ "tick", "classcrow_1_1_crow.html#a068042431b0be5911ee1689a285f4693", null ],
     [ "timeout", "classcrow_1_1_crow.html#a47ed9a118820f6e6ba0b2bc37f0997fb", null ],
     [ "validate", "classcrow_1_1_crow.html#ab9a22c981e0afec0d55ee234683a6d38", null ],

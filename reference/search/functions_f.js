@@ -1,15 +1,16 @@
 var searchData=
 [
-  ['s_375',['s',['../classcrow_1_1json_1_1rvalue.html#ad94f27a14e60af841219279f70290858',1,'crow::json::rvalue']]],
-  ['send_5fbinary_376',['send_binary',['../classcrow_1_1websocket_1_1_connection.html#ae28e1265b68dfe0f4f99a68a52a57979',1,'crow::websocket::Connection']]],
-  ['send_5fping_377',['send_ping',['../classcrow_1_1websocket_1_1_connection.html#a6c5235850fd393aa6b5875fb4ea2ea4e',1,'crow::websocket::Connection']]],
-  ['send_5fpong_378',['send_pong',['../classcrow_1_1websocket_1_1_connection.html#ae8eaad22a072354c995bb9999efb683b',1,'crow::websocket::Connection']]],
-  ['send_5ftext_379',['send_text',['../classcrow_1_1websocket_1_1_connection.html#aa60e803417bb2d13cda3f0da7d68459f',1,'crow::websocket::Connection']]],
-  ['server_5fname_380',['server_name',['../classcrow_1_1_crow.html#ae0e400a1757bd68f716b82753a5a1a73',1,'crow::Crow']]],
-  ['set_5fheader_381',['set_header',['../structcrow_1_1response.html#ab2b9a9b9795fa6330bd47b66a716cb0b',1,'crow::response']]],
-  ['set_5fstatic_5ffile_5finfo_382',['set_static_file_info',['../structcrow_1_1response.html#a8f5e5caa08c3e658bccd03996e1a778a',1,'crow::response']]],
-  ['size_383',['size',['../classcrow_1_1json_1_1wvalue.html#a1ded929c63fcb6e3c53be38e9b54c672',1,'crow::json::wvalue']]],
-  ['socket_384',['socket',['../classcrow_1_1_connection.html#adb5878dd700c30dae10f3fa8d06ecbab',1,'crow::Connection::socket()'],['../structcrow_1_1_socket_adaptor.html#a70c413ce6d8f9e2fe1e4852fc07f0928',1,'crow::SocketAdaptor::socket()']]],
-  ['start_385',['start',['../classcrow_1_1websocket_1_1_connection.html#a24f90aa6961994abef482699e7ffe037',1,'crow::websocket::Connection']]],
-  ['stop_386',['stop',['../classcrow_1_1_crow.html#a0266672657128919ab9a067d93f3868f',1,'crow::Crow']]]
+  ['s_376',['s',['../classcrow_1_1json_1_1rvalue.html#ad94f27a14e60af841219279f70290858',1,'crow::json::rvalue']]],
+  ['send_5fbinary_377',['send_binary',['../classcrow_1_1websocket_1_1_connection.html#ae28e1265b68dfe0f4f99a68a52a57979',1,'crow::websocket::Connection']]],
+  ['send_5fping_378',['send_ping',['../classcrow_1_1websocket_1_1_connection.html#a6c5235850fd393aa6b5875fb4ea2ea4e',1,'crow::websocket::Connection']]],
+  ['send_5fpong_379',['send_pong',['../classcrow_1_1websocket_1_1_connection.html#ae8eaad22a072354c995bb9999efb683b',1,'crow::websocket::Connection']]],
+  ['send_5ftext_380',['send_text',['../classcrow_1_1websocket_1_1_connection.html#aa60e803417bb2d13cda3f0da7d68459f',1,'crow::websocket::Connection']]],
+  ['server_5fname_381',['server_name',['../classcrow_1_1_crow.html#ae0e400a1757bd68f716b82753a5a1a73',1,'crow::Crow']]],
+  ['set_5fheader_382',['set_header',['../structcrow_1_1response.html#ab2b9a9b9795fa6330bd47b66a716cb0b',1,'crow::response']]],
+  ['set_5fstatic_5ffile_5finfo_383',['set_static_file_info',['../structcrow_1_1response.html#a8f5e5caa08c3e658bccd03996e1a778a',1,'crow::response']]],
+  ['size_384',['size',['../classcrow_1_1json_1_1wvalue.html#a1ded929c63fcb6e3c53be38e9b54c672',1,'crow::json::wvalue']]],
+  ['socket_385',['socket',['../classcrow_1_1_connection.html#adb5878dd700c30dae10f3fa8d06ecbab',1,'crow::Connection::socket()'],['../structcrow_1_1_socket_adaptor.html#a70c413ce6d8f9e2fe1e4852fc07f0928',1,'crow::SocketAdaptor::socket()']]],
+  ['start_386',['start',['../classcrow_1_1websocket_1_1_connection.html#a24f90aa6961994abef482699e7ffe037',1,'crow::websocket::Connection']]],
+  ['stop_387',['stop',['../classcrow_1_1_crow.html#a0266672657128919ab9a067d93f3868f',1,'crow::Crow']]],
+  ['stream_5fthreshold_388',['stream_threshold',['../classcrow_1_1_crow.html#ae92390d22f6fc99987c41a617be71d64',1,'crow::Crow']]]
 ];
