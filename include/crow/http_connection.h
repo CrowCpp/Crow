@@ -202,7 +202,8 @@ namespace crow
             server_name_(server_name),
             middlewares_(middlewares),
             get_cached_date_str(get_cached_date_str_f),
-            timer_queue(timer_queue)
+            timer_queue(timer_queue),
+            res_stream_threshold_(handler->stream_threshold())
         {
 #ifdef CROW_ENABLE_DEBUG
             connectionCount ++;
@@ -678,8 +679,6 @@ namespace crow
 
         boost::array<char, 4096> buffer_;
 
-        const unsigned res_stream_threshold_ = 1048576;
-
         HTTPParser<Connection> parser_;
         request req_;
         response res;
@@ -707,6 +706,8 @@ namespace crow
 
         std::function<std::string()>& get_cached_date_str;
         detail::dumb_timer_queue& timer_queue;
+
+        size_t res_stream_threshold_;
     };
 
 }
