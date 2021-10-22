@@ -232,7 +232,10 @@ namespace crow
                   res.end();
                 });
 
-                if (!router_.blueprints().empty()){
+#if defined(__APPLE__) || defined(__MACH__)
+                if (!router_.blueprints().empty())
+#endif
+                {
                     for (Blueprint* bp : router_.blueprints())
                     {
                         if (!bp->static_dir().empty())
