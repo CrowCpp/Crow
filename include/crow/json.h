@@ -1555,7 +1555,11 @@ namespace crow
                     t_ = type::Object;
                     o = std::unique_ptr<object>(new object(initializer_list));
                 } else {
+#if defined(__APPLE__) || defined(__MACH__)
+                    o = std::unique_ptr<object>(new object(initializer_list));
+#else
                     (*o) = initializer_list;
+#endif
                 }
                 return *this;
             }
@@ -1567,7 +1571,11 @@ namespace crow
                     t_ = type::Object;
                     o = std::unique_ptr<object>(new object(value));
                 } else {
+#if defined(__APPLE__) || defined(__MACH__)
+                    o = std::unique_ptr<object>(new object(value));
+#else
                     (*o) = value;
+#endif
                 }
                 return *this;
             }

@@ -232,16 +232,21 @@ namespace crow
                   res.end();
                 });
 
-                for (auto& bp : router_.blueprints())
+#if defined(__APPLE__) || defined(__MACH__)
+                if (!router_.blueprints().empty())
+#endif
                 {
-                    if (!bp->static_dir().empty())
+                    for (Blueprint* bp : router_.blueprints())
                     {
-                        bp->new_rule_tagged<crow::black_magic::get_parameter_tag(CROW_STATIC_ENDPOINT)>(CROW_STATIC_ENDPOINT)
-                        ([bp](crow::response& res, std::string file_path_partial)
+                        if (!bp->static_dir().empty())
                         {
-                          res.set_static_file_info(bp->static_dir() + '/' + file_path_partial);
-                          res.end();
-                        });
+                            bp->new_rule_tagged<crow::black_magic::get_parameter_tag(CROW_STATIC_ENDPOINT)>(CROW_STATIC_ENDPOINT)
+                            ([bp](crow::response& res, std::string file_path_partial)
+                            {
+                              res.set_static_file_info(bp->static_dir() + '/' + file_path_partial);
+                              res.end();
+                            });
+                        }
                     }
                 }
 #endif
