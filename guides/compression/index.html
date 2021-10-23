@@ -12,7 +12,7 @@
         <link rel="canonical" href="https://crowcpp.org/guides/compression/">
       
       <link rel="icon" href="../../assets/favicon.svg">
-      <meta name="generator" content="mkdocs-1.2.3, mkdocs-material-7.3.3">
+      <meta name="generator" content="mkdocs-1.2.3, mkdocs-material-7.3.4">
     
     
       
@@ -20,7 +20,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.5143246d.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.db9e7362.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.3f5d1f46.min.css">
@@ -954,12 +954,12 @@
 Crow supports Zlib compression using Gzip or Deflate algorithms.</p>
 <h2 id="http-compression">HTTP Compression</h2>
 <p>HTTP compression is by default disabled in crow. Do the following to enable it: <br>
-1. Add <code class="highlight"><span class="cp">#define CROW_ENABLE_COMPRESSION</span></code> to the top of your main source file.
-2. Call <code class="highlight"><span class="n">use_compression</span><span class="p">(</span><span class="n">crow</span><span class="o">::</span><span class="n">compression</span><span class="o">::</span><span class="n">algorithm</span><span class="p">)</span><span class="w"></span></code> on your crow app.
-3. When compiling your application, make sure that ZLIB is included as a dependency. Either through <code>-lz</code> argument or <code>find_package(ZLIB)</code> in CMake.</p>
+- Define <code>CROW_ENABLE_COMPRESSION</code> in your compiler definitions (<code>g++ main.cpp -DCROW_ENABLE_COMPRESSION</code> for example) or <code>CMakeLists.txt</code>.
+- Call <code class="highlight"><span class="n">use_compression</span><span class="p">(</span><span class="n">crow</span><span class="o">::</span><span class="n">compression</span><span class="o">::</span><span class="n">algorithm</span><span class="p">)</span><span class="w"></span></code> on your Crow app.
+- When compiling your application, make sure that ZLIB is included as a dependency. Either through <code>-lz</code> compiler argument or <code>find_package(ZLIB)</code> in CMake.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>step 3 is not needed for MSVC since <code>vcpckg.json</code> already includes zlib as a dependency by default</p>
+<p>3<sup>rd</sup> point is not needed for MSVC or CMake projects using <code>Crow::Crow</code> since <code>vcpckg.json</code> and Crow's target already include zlib as a dependency.</p>
 </div>
 <p>For the compression algorim you can use <code>crow::compression::algorithm::DEFLATE</code> or <code>crow::compression::algorithm::GZIP</code>.<br>
 And now your HTTP responses will be compressed.</p>
@@ -1112,7 +1112,7 @@ Feel free to discuss the subject with us on Github if you're feeling adventurous
     <script id="__config" type="application/json">{"base": "../..", "features": "navigation.tabs", "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../../assets/javascripts/workers/search.8397ff9e.min.js", "version": null}</script>
     
     
-      <script src="../../assets/javascripts/bundle.f89c2efe.min.js"></script>
+      <script src="../../assets/javascripts/bundle.1e84347e.min.js"></script>
       
     
   </body>
