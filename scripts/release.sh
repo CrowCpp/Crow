@@ -48,8 +48,8 @@ sed -i "s/char VERSION\\[\\] = \".*\";/char VERSION\\[\\] = \"$VERSION_NO_PATCH\
 prGreen "Applying new version to vcpkg..."
 sed -i "s/\"version-string\": \".*\",/\"version\": \"$VERSION_VCPKG\",/g" ../../vcpkg.json
 prGreen "Applying new version to PKGBUILD..."
-sed -i "s/^pkgver=.*/pkgver=$VERSION/" ../../scripts/PKGBUILD
-sed -i "s/^pkgrel=.*/pkgrel=1/" ../../scripts/PKGBUILD
+sed -i "s/^pkgver=.*/pkgver=$VERSION/" $SCRIPT_PATH/PKGBUILD
+sed -i "s/^pkgrel=.*/pkgrel=1/" $SCRIPT_PATH/PKGBUILD
 
 ##### Running CMake to compile crow_all and the deb package #####
 cd $RELEASE_PATH
@@ -71,7 +71,7 @@ git clone ssh://aur@aur.archlinux.org/crow.git AUR
 ##### Updating the PKGBUILD in build dir, and adding the tarball for checksum calculations #####
 prGreen "Updating AUR package..."
 cp crow-v$VERSION.tar.gz AUR/crow-v$VERSION.tar.gz
-cp ../../../scripts/PKGBUILD AUR/PKGBUILD
+cp $SCRIPT_PATH/PKGBUILD AUR/PKGBUILD
 
 ##### Updating Checksums #####
 cd $RELEASE_AUR_PATH
