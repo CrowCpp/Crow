@@ -98,6 +98,6 @@ prYellow "Release for Crow-$VERSION was made successfully. To publish the releas
 3. Upload the \"crow-$VERSION.deb\", \"crow-v$VERSION.tar.gz\" and \"crow_all.h\" files to the release.
 4. Update the changelog in \"$RELEASE_AUR_PATH\".
 5. push the changes to AUR (using git and only if AUR update ran without errors).
-6. Open issues to update the pakcages in VCPKG and ConanCenter."
+6. Open issues to update the packages in VCPKG and ConanCenter."
 
 exit 0
