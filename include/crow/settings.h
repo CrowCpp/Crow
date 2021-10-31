@@ -39,6 +39,10 @@
 #if __cplusplus >= 201402L
 #define CROW_CAN_USE_CPP14
 #endif
+
+#if defined(_MSVC_LANG) && _MSVC_LANG >= 201703L
+#define CROW_CAN_USE_CPP17
+#endif
 #if __cplusplus >= 201703L
 #define CROW_CAN_USE_CPP17
 #endif
