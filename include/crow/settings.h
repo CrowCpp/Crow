@@ -39,6 +39,9 @@
 #if __cplusplus >= 201402L
 #define CROW_CAN_USE_CPP14
 #endif
+#if __cplusplus >= 201703L
+#define CROW_CAN_USE_CPP17
+#endif
 
 #if defined(_MSC_VER)
 #if _MSC_VER < 1900
