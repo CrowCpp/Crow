@@ -510,7 +510,7 @@ TEST_CASE("multi_server")
   app2.wait_for_server_start();
 
   std::string sendmsg =
-      "POST HTTP/1.1 /\r\nContent-Length:3\r\nX-HeaderTest: 123\r\n\r\nA=B\r\n";
+      "POST / HTTP/1.0\r\nContent-Length:3\r\nX-HeaderTest: 123\r\n\r\nA=B\r\n";
   {
     asio::io_service is;
     asio::ip::tcp::socket c(is);
