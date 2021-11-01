@@ -1,48 +1,48 @@
 warning: source ./doc is not a readable file or directory... skipping.
-/drone/src/include/crow/utility.h:486: warning: Compound crow::utility::function_traits< R(ClassType::*)(Args...)> is not documented.
-/drone/src/include/crow/utility.h:475: warning: Compound crow::utility::function_traits< R(ClassType::*)(Args...) const > is not documented.
-/drone/src/include/crow/utility.h:458: warning: Compound crow::utility::function_traits is not documented.
-/drone/src/include/crow/utility.h:443: warning: Compound crow::detail::get_index_of_element_from_tuple_by_type_impl< T, N, U, Args... > is not documented.
-/drone/src/include/crow/utility.h:431: warning: Compound crow::detail::get_index_of_element_from_tuple_by_type_impl is not documented.
-/drone/src/include/crow/utility.h:371: warning: Compound crow::black_magic::pop_back<> is not documented.
-/drone/src/include/crow/utility.h:397: warning: Compound crow::black_magic::promote is not documented.
-/drone/src/include/crow/utility.h:364: warning: Compound crow::black_magic::pop_back is not documented.
-/drone/src/include/crow/utility.h:332: warning: Compound crow::black_magic::seq is not documented.
-/drone/src/include/crow/utility.h:318: warning: Compound crow::black_magic::last_element_type is not documented.
-/drone/src/include/crow/utility.h:312: warning: Compound crow::black_magic::arguments< 0 > is not documented.
-/drone/src/include/crow/utility.h:297: warning: Compound crow::black_magic::single_tag_to_type< 5 > is not documented.
-/drone/src/include/crow/utility.h:291: warning: Compound crow::black_magic::single_tag_to_type< 4 > is not documented.
-/drone/src/include/crow/utility.h:285: warning: Compound crow::black_magic::single_tag_to_type< 3 > is not documented.
-/drone/src/include/crow/utility.h:279: warning: Compound crow::black_magic::single_tag_to_type< 2 > is not documented.
-/drone/src/include/crow/utility.h:273: warning: Compound crow::black_magic::single_tag_to_type< 1 > is not documented.
-/drone/src/include/crow/utility.h:253: warning: Compound crow::black_magic::CallHelper< F, S< Args... > > is not documented.
-/drone/src/include/crow/utility.h:241: warning: Compound crow::black_magic::S is not documented.
-/drone/src/include/crow/utility.h:128: warning: Compound crow::black_magic::parameter_tag is not documented.
-/drone/src/include/crow/utility.h:19: warning: Compound crow::black_magic::OutOfRange is not documented.
+/drone/src/include/crow/utility.h:487: warning: Compound crow::utility::function_traits< R(ClassType::*)(Args...)> is not documented.
+/drone/src/include/crow/utility.h:476: warning: Compound crow::utility::function_traits< R(ClassType::*)(Args...) const > is not documented.
+/drone/src/include/crow/utility.h:459: warning: Compound crow::utility::function_traits is not documented.
+/drone/src/include/crow/utility.h:444: warning: Compound crow::detail::get_index_of_element_from_tuple_by_type_impl< T, N, U, Args... > is not documented.
+/drone/src/include/crow/utility.h:432: warning: Compound crow::detail::get_index_of_element_from_tuple_by_type_impl is not documented.
+/drone/src/include/crow/utility.h:372: warning: Compound crow::black_magic::pop_back<> is not documented.
+/drone/src/include/crow/utility.h:398: warning: Compound crow::black_magic::promote is not documented.
+/drone/src/include/crow/utility.h:365: warning: Compound crow::black_magic::pop_back is not documented.
+/drone/src/include/crow/utility.h:333: warning: Compound crow::black_magic::seq is not documented.
+/drone/src/include/crow/utility.h:319: warning: Compound crow::black_magic::last_element_type is not documented.
+/drone/src/include/crow/utility.h:313: warning: Compound crow::black_magic::arguments< 0 > is not documented.
+/drone/src/include/crow/utility.h:298: warning: Compound crow::black_magic::single_tag_to_type< 5 > is not documented.
+/drone/src/include/crow/utility.h:292: warning: Compound crow::black_magic::single_tag_to_type< 4 > is not documented.
+/drone/src/include/crow/utility.h:286: warning: Compound crow::black_magic::single_tag_to_type< 3 > is not documented.
+/drone/src/include/crow/utility.h:280: warning: Compound crow::black_magic::single_tag_to_type< 2 > is not documented.
+/drone/src/include/crow/utility.h:274: warning: Compound crow::black_magic::single_tag_to_type< 1 > is not documented.
+/drone/src/include/crow/utility.h:254: warning: Compound crow::black_magic::CallHelper< F, S< Args... > > is not documented.
+/drone/src/include/crow/utility.h:242: warning: Compound crow::black_magic::S is not documented.
+/drone/src/include/crow/utility.h:129: warning: Compound crow::black_magic::parameter_tag is not documented.
+/drone/src/include/crow/utility.h:20: warning: Compound crow::black_magic::OutOfRange is not documented.
 /drone/src/include/crow/routing.h:723: warning: Compound crow::Trie::Node is not documented.
 /drone/src/include/crow/routing.h:259: warning: Compound crow::detail::routing_handler_call_helper::Wrapped::handler_type_helper< const request &, response &, Args... > is not documented.
 /drone/src/include/crow/routing.h:252: warning: Compound crow::detail::routing_handler_call_helper::Wrapped::handler_type_helper< const request &, Args... > is not documented.
 /drone/src/include/crow/routing.h:245: warning: Compound crow::detail::routing_handler_call_helper::Wrapped::handler_type_helper is not documented.
 /drone/src/include/crow/routing.h:287: warning: Compound crow::CatchallRule is not documented.
-/drone/src/include/crow/utility.h:161: warning: Compound crow::black_magic::compute_parameter_tag_from_args_list< Arg, Args... > is not documented.
+/drone/src/include/crow/utility.h:162: warning: Compound crow::black_magic::compute_parameter_tag_from_args_list< Arg, Args... > is not documented.
 /drone/src/include/crow/mustache.h:43: warning: Compound crow::mustache::Action is not documented.
 /drone/src/include/crow/middlewares/utf-8.h:9: warning: Compound crow::UTF8 is not documented.
 /drone/src/include/crow/middleware_context.h:33: warning: Compound crow::detail::partial_context<> is not documented.
-/drone/src/include/crow/utility.h:437: warning: Compound crow::detail::get_index_of_element_from_tuple_by_type_impl< T, N, T, Args... > is not documented.
+/drone/src/include/crow/utility.h:438: warning: Compound crow::detail::get_index_of_element_from_tuple_by_type_impl< T, N, T, Args... > is not documented.
 /drone/src/include/crow/http_server.h:28: warning: Compound crow::Server is not documented.
-/drone/src/include/crow/utility.h:304: warning: Compound crow::black_magic::arguments is not documented.
+/drone/src/include/crow/utility.h:305: warning: Compound crow::black_magic::arguments is not documented.
 /drone/src/include/crow/middleware_context.h:17: warning: Compound crow::detail::partial_context is not documented.
 /drone/src/include/crow/routing.h:184: warning: Compound crow::detail::routing_handler_call_helper::Wrapped is not documented.
 /drone/src/include/crow/mustache.h:18: warning: Compound crow::mustache::invalid_template_exception is not documented.
 /drone/src/include/crow/logging.h:45: warning: Compound crow::logger is not documented.
 /drone/src/include/crow/routing.h:160: warning: Compound crow::detail::routing_handler_call_helper::call< F, NInt, NUint, NDouble, NString, black_magic::S< std::string, Args1... >, black_magic::S< Args2... > > is not documented.
-/drone/src/include/crow/utility.h:155: warning: Compound crow::black_magic::compute_parameter_tag_from_args_list<> is not documented.
-/drone/src/include/crow/utility.h:357: warning: Compound crow::black_magic::pop_back_helper< seq< N... >, Tuple > is not documented.
+/drone/src/include/crow/utility.h:156: warning: Compound crow::black_magic::compute_parameter_tag_from_args_list<> is not documented.
+/drone/src/include/crow/utility.h:358: warning: Compound crow::black_magic::pop_back_helper< seq< N... >, Tuple > is not documented.
 /drone/src/include/crow/routing.h:113: warning: Compound crow::detail::routing_handler_call_helper::call_params is not documented.
 /drone/src/include/crow/middleware_context.h:48: warning: Compound crow::detail::context is not documented.
 /drone/src/include/crow/routing.h:127: warning: Compound crow::detail::routing_handler_call_helper::call< F, NInt, NUint, NDouble, NString, black_magic::S< int64_t, Args1... >, black_magic::S< Args2... > > is not documented.
 /drone/src/include/crow/routing.h:149: warning: Compound crow::detail::routing_handler_call_helper::call< F, NInt, NUint, NDouble, NString, black_magic::S< double, Args1... >, black_magic::S< Args2... > > is not documented.
-/drone/src/include/crow/utility.h:497: warning: Compound crow::utility::function_traits< std::function< R(Args...)> > is not documented.
+/drone/src/include/crow/utility.h:498: warning: Compound crow::utility::function_traits< std::function< R(Args...)> > is not documented.
 /drone/src/include/crow/routing.h:171: warning: Compound crow::detail::routing_handler_call_helper::call< F, NInt, NUint, NDouble, NString, black_magic::S<>, black_magic::S< Args1... > > is not documented.
 /drone/src/include/crow/http_connection.h:87: warning: Compound crow::detail::is_after_handle_arity_3_impl is not documented.
 /drone/src/include/crow/common.h:128: warning: Compound crow::routing_params is not documented.
@@ -476,40 +476,40 @@ Generating docs for compound crow::Server.../drone/src/include/crow/http_server.
 /drone/src/include/crow/routing.h:89: warning: Member name_ (variable) of class crow::BaseRule is not documented.
 /drone/src/include/crow/routing.h:91: warning: Member rule_to_upgrade_ (variable) of class crow::BaseRule is not documented.
 /drone/src/include/crow/routing.h:81: warning: Member custom_templates_base (variable) of class crow::BaseRule is not documented.
-/drone/src/include/crow/utility.h:305: warning: Member subarguments (typedef) of class crow::black_magic::arguments is not documented.
-/drone/src/include/crow/utility.h:306: warning: Member type (typedef) of class crow::black_magic::arguments is not documented.
-/drone/src/include/crow/utility.h:313: warning: Member type (typedef) of class crow::black_magic::arguments< 0 > is not documented.
-/drone/src/include/crow/utility.h:257: warning: Member __test(int) (function) of class crow::black_magic::CallHelper< F, S< Args... > > is not documented.
-/drone/src/include/crow/utility.h:260: warning: Member __test(...) (function) of class crow::black_magic::CallHelper< F, S< Args... > > is not documented.
-/drone/src/include/crow/utility.h:262: warning: Member value (variable) of class crow::black_magic::CallHelper< F, S< Args... > > is not documented.
-/drone/src/include/crow/utility.h:162: warning: Member sub_value (variable) of class crow::black_magic::compute_parameter_tag_from_args_list< Arg, Args... > is not documented.
-/drone/src/include/crow/utility.h:164: warning: Member value (variable) of class crow::black_magic::compute_parameter_tag_from_args_list< Arg, Args... > is not documented.
-/drone/src/include/crow/utility.h:156: warning: Member value (variable) of class crow::black_magic::compute_parameter_tag_from_args_list<> is not documented.
-/drone/src/include/crow/utility.h:332: warning: Member type (typedef) of class seq< I1...,(sizeof...(I1)+I2)... > is not documented.
-/drone/src/include/crow/utility.h:35: warning: Member const_str(const char(&arr)[N]) (function) of class crow::black_magic::const_str is not documented.
-/drone/src/include/crow/utility.h:38: warning: Member operator[](unsigned i) const (function) of class crow::black_magic::const_str is not documented.
-/drone/src/include/crow/utility.h:42: warning: Member operator const char *() const (function) of class crow::black_magic::const_str is not documented.
-/drone/src/include/crow/utility.h:46: warning: Member begin() const (function) of class crow::black_magic::const_str is not documented.
-/drone/src/include/crow/utility.h:47: warning: Member end() const (function) of class crow::black_magic::const_str is not documented.
-/drone/src/include/crow/utility.h:49: warning: Member size() const (function) of class crow::black_magic::const_str is not documented.
-/drone/src/include/crow/utility.h:332: warning: Member type (typedef) of class seq<> is not documented.
-/drone/src/include/crow/utility.h:332: warning: Member type (typedef) of class seq< 0 > is not documented.
-/drone/src/include/crow/utility.h:319: warning: Member type (typedef) of class crow::black_magic::last_element_type is not documented.
-/drone/src/include/crow/utility.h:20: warning: Member OutOfRange(unsigned, unsigned) (function) of class crow::black_magic::OutOfRange is not documented.
-/drone/src/include/crow/utility.h:129: warning: Member value (variable) of class crow::black_magic::parameter_tag is not documented.
-/drone/src/include/crow/utility.h:366: warning: Member rebind (typedef) of class crow::black_magic::pop_back is not documented.
-/drone/src/include/crow/utility.h:373: warning: Member rebind (typedef) of class crow::black_magic::pop_back<> is not documented.
-/drone/src/include/crow/utility.h:359: warning: Member rebind (typedef) of class crow::black_magic::pop_back_helper< seq< N... >, Tuple > is not documented.
-/drone/src/include/crow/utility.h:398: warning: Member type (typedef) of class crow::black_magic::promote is not documented.
-/drone/src/include/crow/utility.h:243: warning: Member push (typedef) of class crow::black_magic::S is not documented.
-/drone/src/include/crow/utility.h:245: warning: Member push_back (typedef) of class crow::black_magic::S is not documented.
-/drone/src/include/crow/utility.h:247: warning: Member rebind (typedef) of class crow::black_magic::S is not documented.
-/drone/src/include/crow/utility.h:332: warning: Member type (typedef) of class crow::black_magic::seq is not documented.
-/drone/src/include/crow/utility.h:274: warning: Member type (typedef) of class crow::black_magic::single_tag_to_type< 1 > is not documented.
-/drone/src/include/crow/utility.h:280: warning: Member type (typedef) of class crow::black_magic::single_tag_to_type< 2 > is not documented.
-/drone/src/include/crow/utility.h:286: warning: Member type (typedef) of class crow::black_magic::single_tag_to_type< 3 > is not documented.
-/drone/src/include/crow/utility.h:292: warning: Member type (typedef) of class crow::black_magic::single_tag_to_type< 4 > is not documented.
-/drone/src/include/crow/utility.h:298: warning: Member type (typedef) of class crow::black_magic::single_tag_to_type< 5 > is not documented.
+/drone/src/include/crow/utility.h:306: warning: Member subarguments (typedef) of class crow::black_magic::arguments is not documented.
+/drone/src/include/crow/utility.h:307: warning: Member type (typedef) of class crow::black_magic::arguments is not documented.
+/drone/src/include/crow/utility.h:314: warning: Member type (typedef) of class crow::black_magic::arguments< 0 > is not documented.
+/drone/src/include/crow/utility.h:258: warning: Member __test(int) (function) of class crow::black_magic::CallHelper< F, S< Args... > > is not documented.
+/drone/src/include/crow/utility.h:261: warning: Member __test(...) (function) of class crow::black_magic::CallHelper< F, S< Args... > > is not documented.
+/drone/src/include/crow/utility.h:263: warning: Member value (variable) of class crow::black_magic::CallHelper< F, S< Args... > > is not documented.
+/drone/src/include/crow/utility.h:163: warning: Member sub_value (variable) of class crow::black_magic::compute_parameter_tag_from_args_list< Arg, Args... > is not documented.
+/drone/src/include/crow/utility.h:165: warning: Member value (variable) of class crow::black_magic::compute_parameter_tag_from_args_list< Arg, Args... > is not documented.
+/drone/src/include/crow/utility.h:157: warning: Member value (variable) of class crow::black_magic::compute_parameter_tag_from_args_list<> is not documented.
+/drone/src/include/crow/utility.h:333: warning: Member type (typedef) of class seq< I1...,(sizeof...(I1)+I2)... > is not documented.
+/drone/src/include/crow/utility.h:36: warning: Member const_str(const char(&arr)[N]) (function) of class crow::black_magic::const_str is not documented.
+/drone/src/include/crow/utility.h:39: warning: Member operator[](unsigned i) const (function) of class crow::black_magic::const_str is not documented.
+/drone/src/include/crow/utility.h:43: warning: Member operator const char *() const (function) of class crow::black_magic::const_str is not documented.
+/drone/src/include/crow/utility.h:47: warning: Member begin() const (function) of class crow::black_magic::const_str is not documented.
+/drone/src/include/crow/utility.h:48: warning: Member end() const (function) of class crow::black_magic::const_str is not documented.
+/drone/src/include/crow/utility.h:50: warning: Member size() const (function) of class crow::black_magic::const_str is not documented.
+/drone/src/include/crow/utility.h:333: warning: Member type (typedef) of class seq<> is not documented.
+/drone/src/include/crow/utility.h:333: warning: Member type (typedef) of class seq< 0 > is not documented.
+/drone/src/include/crow/utility.h:320: warning: Member type (typedef) of class crow::black_magic::last_element_type is not documented.
+/drone/src/include/crow/utility.h:21: warning: Member OutOfRange(unsigned, unsigned) (function) of class crow::black_magic::OutOfRange is not documented.
+/drone/src/include/crow/utility.h:130: warning: Member value (variable) of class crow::black_magic::parameter_tag is not documented.
+/drone/src/include/crow/utility.h:367: warning: Member rebind (typedef) of class crow::black_magic::pop_back is not documented.
+/drone/src/include/crow/utility.h:374: warning: Member rebind (typedef) of class crow::black_magic::pop_back<> is not documented.
+/drone/src/include/crow/utility.h:360: warning: Member rebind (typedef) of class crow::black_magic::pop_back_helper< seq< N... >, Tuple > is not documented.
+/drone/src/include/crow/utility.h:399: warning: Member type (typedef) of class crow::black_magic::promote is not documented.
+/drone/src/include/crow/utility.h:244: warning: Member push (typedef) of class crow::black_magic::S is not documented.
+/drone/src/include/crow/utility.h:246: warning: Member push_back (typedef) of class crow::black_magic::S is not documented.
+/drone/src/include/crow/utility.h:248: warning: Member rebind (typedef) of class crow::black_magic::S is not documented.
+/drone/src/include/crow/utility.h:333: warning: Member type (typedef) of class crow::black_magic::seq is not documented.
+/drone/src/include/crow/utility.h:275: warning: Member type (typedef) of class crow::black_magic::single_tag_to_type< 1 > is not documented.
+/drone/src/include/crow/utility.h:281: warning: Member type (typedef) of class crow::black_magic::single_tag_to_type< 2 > is not documented.
+/drone/src/include/crow/utility.h:287: warning: Member type (typedef) of class crow::black_magic::single_tag_to_type< 3 > is not documented.
+/drone/src/include/crow/utility.h:293: warning: Member type (typedef) of class crow::black_magic::single_tag_to_type< 4 > is not documented.
+/drone/src/include/crow/utility.h:299: warning: Member type (typedef) of class crow::black_magic::single_tag_to_type< 5 > is not documented.
 /drone/src/include/crow/middleware_context.h:64: warning: Member partial (typedef) of class crow::detail::context is not documented.
 /drone/src/include/crow/middleware_context.h:58: warning: Member get() (function) of class crow::detail::context is not documented.
 /drone/src/include/crow/middleware_context.h:50: warning: Member after_handlers_call_helper(Container &middlewares, Context &ctx, request &req, response &res) (friend) of class crow::detail::context is not documented.
@@ -519,9 +519,9 @@ Generating docs for compound crow::Server.../drone/src/include/crow/http_server.
 /drone/src/include/crow/dumb_timer_queue.h:23: warning: Member cancel(key &k) (function) of class crow::detail::dumb_timer_queue is not documented.
 /drone/src/include/crow/dumb_timer_queue.h:68: warning: Member set_io_service(boost::asio::io_service &io_service) (function) of class crow::detail::dumb_timer_queue is not documented.
 /drone/src/include/crow/dumb_timer_queue.h:20: warning: Member tick (variable) of class crow::detail::dumb_timer_queue is not documented.
-/drone/src/include/crow/utility.h:432: warning: Member value (variable) of class crow::detail::get_index_of_element_from_tuple_by_type_impl is not documented.
-/drone/src/include/crow/utility.h:438: warning: Member value (variable) of class crow::detail::get_index_of_element_from_tuple_by_type_impl< T, N, T, Args... > is not documented.
-/drone/src/include/crow/utility.h:444: warning: Member value (variable) of class crow::detail::get_index_of_element_from_tuple_by_type_impl< T, N, U, Args... > is not documented.
+/drone/src/include/crow/utility.h:433: warning: Member value (variable) of class crow::detail::get_index_of_element_from_tuple_by_type_impl is not documented.
+/drone/src/include/crow/utility.h:439: warning: Member value (variable) of class crow::detail::get_index_of_element_from_tuple_by_type_impl< T, N, T, Args... > is not documented.
+/drone/src/include/crow/utility.h:445: warning: Member value (variable) of class crow::detail::get_index_of_element_from_tuple_by_type_impl< T, N, U, Args... > is not documented.
 /drone/src/include/crow/http_connection.h:89: warning: Member f(typename check_after_handle_arity_3_const< T >::template get< C > *) (function) of class crow::detail::is_after_handle_arity_3_impl is not documented.
 /drone/src/include/crow/http_connection.h:92: warning: Member f(typename check_after_handle_arity_3< T >::template get< C > *) (function) of class crow::detail::is_after_handle_arity_3_impl is not documented.
 /drone/src/include/crow/http_connection.h:95: warning: Member f(...) (function) of class crow::detail::is_after_handle_arity_3_impl is not documented.
@@ -723,19 +723,19 @@ Generating docs for compound crow::detail::partial_context<>.../drone/src/includ
 /drone/src/include/crow/mustache.h:57: warning: Member template_t(std::string body) (function) of class crow::mustache::template_t is not documented.
 /drone/src/include/crow/mustache.h:316: warning: Member render() (function) of class crow::mustache::template_t is not documented.
 /drone/src/include/crow/mustache.h:326: warning: Member render(context &ctx) (function) of class crow::mustache::template_t is not documented.
-/drone/src/include/crow/utility.h:464: warning: Member parent_t (typedef) of class crow::utility::function_traits is not documented.
-/drone/src/include/crow/utility.h:466: warning: Member result_type (typedef) of class crow::utility::function_traits is not documented.
-/drone/src/include/crow/utility.h:468: warning: Member arg (typedef) of class crow::utility::function_traits is not documented.
-/drone/src/include/crow/utility.h:465: warning: Member arity (variable) of class crow::utility::function_traits is not documented.
-/drone/src/include/crow/utility.h:478: warning: Member result_type (typedef) of class crow::utility::function_traits< R(ClassType::*)(Args...) const > is not documented.
-/drone/src/include/crow/utility.h:481: warning: Member arg (typedef) of class crow::utility::function_traits< R(ClassType::*)(Args...) const > is not documented.
-/drone/src/include/crow/utility.h:476: warning: Member arity (variable) of class crow::utility::function_traits< R(ClassType::*)(Args...) const > is not documented.
-/drone/src/include/crow/utility.h:489: warning: Member result_type (typedef) of class crow::utility::function_traits< R(ClassType::*)(Args...)> is not documented.
-/drone/src/include/crow/utility.h:492: warning: Member arg (typedef) of class crow::utility::function_traits< R(ClassType::*)(Args...)> is not documented.
-/drone/src/include/crow/utility.h:487: warning: Member arity (variable) of class crow::utility::function_traits< R(ClassType::*)(Args...)> is not documented.
-/drone/src/include/crow/utility.h:500: warning: Member result_type (typedef) of class crow::utility::function_traits< std::function< R(Args...)> > is not documented.
-/drone/src/include/crow/utility.h:503: warning: Member arg (typedef) of class crow::utility::function_traits< std::function< R(Args...)> > is not documented.
-/drone/src/include/crow/utility.h:498: warning: Member arity (variable) of class crow::utility::function_traits< std::function< R(Args...)> > is not documented.
+/drone/src/include/crow/utility.h:465: warning: Member parent_t (typedef) of class crow::utility::function_traits is not documented.
+/drone/src/include/crow/utility.h:467: warning: Member result_type (typedef) of class crow::utility::function_traits is not documented.
+/drone/src/include/crow/utility.h:469: warning: Member arg (typedef) of class crow::utility::function_traits is not documented.
+/drone/src/include/crow/utility.h:466: warning: Member arity (variable) of class crow::utility::function_traits is not documented.
+/drone/src/include/crow/utility.h:479: warning: Member result_type (typedef) of class crow::utility::function_traits< R(ClassType::*)(Args...) const > is not documented.
+/drone/src/include/crow/utility.h:482: warning: Member arg (typedef) of class crow::utility::function_traits< R(ClassType::*)(Args...) const > is not documented.
+/drone/src/include/crow/utility.h:477: warning: Member arity (variable) of class crow::utility::function_traits< R(ClassType::*)(Args...) const > is not documented.
+/drone/src/include/crow/utility.h:490: warning: Member result_type (typedef) of class crow::utility::function_traits< R(ClassType::*)(Args...)> is not documented.
+/drone/src/include/crow/utility.h:493: warning: Member arg (typedef) of class crow::utility::function_traits< R(ClassType::*)(Args...)> is not documented.
+/drone/src/include/crow/utility.h:488: warning: Member arity (variable) of class crow::utility::function_traits< R(ClassType::*)(Args...)> is not documented.
+/drone/src/include/crow/utility.h:501: warning: Member result_type (typedef) of class crow::utility::function_traits< std::function< R(Args...)> > is not documented.
+/drone/src/include/crow/utility.h:504: warning: Member arg (typedef) of class crow::utility::function_traits< std::function< R(Args...)> > is not documented.
+/drone/src/include/crow/utility.h:499: warning: Member arity (variable) of class crow::utility::function_traits< std::function< R(Args...)> > is not documented.
 /drone/src/include/crow/websocket.h:24: warning: Member send_binary(const std::string &msg)=0 (function) of class crow::websocket::connection is not documented.
 /drone/src/include/crow/websocket.h:25: warning: Member send_text(const std::string &msg)=0 (function) of class crow::websocket::connection is not documented.
 /drone/src/include/crow/websocket.h:26: warning: Member send_ping(const std::string &msg)=0 (function) of class crow::websocket::connection is not documented.
@@ -791,5 +791,5 @@ Generating example index...
 finalizing index lists...
 writing tag file...
 Running plantuml with JAVA...
-lookup cache used 2646/65536 hits=22962 misses=2971
+lookup cache used 2647/65536 hits=23115 misses=2972
 finished...

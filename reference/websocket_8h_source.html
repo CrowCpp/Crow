@@ -198,7 +198,7 @@ $(document).ready(function(){initNavTree('websocket_8h_source.html',''); initRes
 <div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;                    s.processBytes(magic.data(), magic.size());</div>
 <div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;                    uint8_t digest[20];</div>
 <div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;                    s.getDigestBytes(digest);   </div>
-<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;                    <a class="code" href="classcrow_1_1websocket_1_1_connection.html#a24f90aa6961994abef482699e7ffe037">start</a>(crow::utility::base64encode((<span class="keywordtype">char</span>*)digest, 20));</div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;                    <a class="code" href="classcrow_1_1websocket_1_1_connection.html#a24f90aa6961994abef482699e7ffe037">start</a>(crow::utility::base64encode((<span class="keywordtype">unsigned</span> <span class="keywordtype">char</span>*)digest, 20));</div>
 <div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;        }</div>
 <div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;<span class="comment"></span> </div>
 <div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;<span class="comment">                /// Send data through the socket.</span></div>
@@ -744,7 +744,7 @@ $(document).ready(function(){initNavTree('websocket_8h_source.html',''); initRes
 			<ul>
 				<li class="navelem"><a class="el" href="dir_d44c64559bbebec7f509842c48db8b23.html">include</a></li><li class="navelem"><a class="el" href="dir_d22c1cb87b72f01e1a7f207eb3bfd1ca.html">crow</a></li><li class="navelem"><b>websocket.h</b></li>
 				<li class="footer">
-					Generated on Wed Oct 27 2021 for Crow by <a href="http://www.doxygen.org/index.html">
+					Generated on Mon Nov 1 2021 for Crow by <a href="http://www.doxygen.org/index.html">
 					<img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.17.
 					Dark theme by <a href="http://majerle.eu" target="_new">Tilen Majerle</a>. Edited by <a href="https://github.com/The-EDev" target="_new">Farook Al-Sammarraie</a>. All rights reserved.
 				</li>
