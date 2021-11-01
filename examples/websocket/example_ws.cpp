@@ -14,7 +14,7 @@ int main()
     CROW_ROUTE(app, "/ws")
         .websocket()
         .onopen([&](crow::websocket::connection& conn){
-                CROW_LOG_INFO << "new websocket connection";
+                CROW_LOG_INFO << "new websocket connection from " << conn.get_remote_ip();
                 std::lock_guard<std::mutex> _(mtx);
                 users.insert(&conn);
                 })
