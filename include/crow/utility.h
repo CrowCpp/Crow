@@ -7,6 +7,7 @@
 #include <cstring>
 #include <functional>
 #include <string>
+#include <unordered_map>
 
 #include "crow/settings.h"
 
@@ -503,7 +504,7 @@ template <typename F, typename Set>
             using arg = typename std::tuple_element<i, std::tuple<Args...>>::type;
         };
 
-        inline static std::string base64encode(const char* data, size_t size, const char* key = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/")
+        inline static std::string base64encode(const unsigned char* data, size_t size, const char* key = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/")
         {
             std::string ret;
             ret.resize((size+2) / 3 * 4);
@@ -539,11 +540,96 @@ template <typename F, typename Set>
             return ret;
         }
 
-        inline static std::string base64encode_urlsafe(const char* data, size_t size)
+        inline static std::string base64encode(std::string data, size_t size, const char* key = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/")
+        {
+            return base64encode((const unsigned char*)data.c_str(), size, key);
+        }
+
+        inline static std::string base64encode_urlsafe(const unsigned char* data, size_t size)
         {
             return base64encode(data, size, "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_");
         }
 
+        inline static std::string base64encode_urlsafe(std::string data, size_t size)
+        {
+            return base64encode((const unsigned char*)data.c_str(), size, "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_");
+        }
+
+        inline static std::string base64decode(const char* data, size_t size, bool urlsafe = false)
+        {
+            std::unordered_map<char, unsigned char> key ({
+            {'A',  0},{'B',  1},{'C',  2},{'D',  3},{'E',  4},{'F',  5},{'G',  6},{'H',  7},{'I',  8},{'J',  9},
+            {'K', 10},{'L', 11},{'M', 12},{'N', 13},{'O', 14},{'P', 15},{'Q', 16},{'R', 17},{'S', 18},{'T', 19},
+            {'U', 20},{'V', 21},{'W', 22},{'X', 23},{'Y', 24},{'Z', 25},{'a', 26},{'b', 27},{'c', 28},{'d', 29},
+            {'e', 30},{'f', 31},{'g', 32},{'h', 33},{'i', 34},{'j', 35},{'k', 36},{'l', 37},{'m', 38},{'n', 39},
+            {'o', 40},{'p', 41},{'q', 42},{'r', 43},{'s', 44},{'t', 45},{'u', 46},{'v', 47},{'w', 48},{'x', 49},
+            {'y', 50},{'z', 51},{'0', 52},{'1', 53},{'2', 54},{'3', 55},{'4', 56},{'5', 57},{'6', 58},{'7', 59},
+            {'8', 60},{'9', 61},{urlsafe ? '-' : '+', 62},{urlsafe ? '_' : '/', 63}});
+
+            // Not padded
+            if (size % 4 == 2) // missing last 2 characters
+                size = (size / 4 * 3) + 1; // Not subtracting extra characters because they're truncated in int division
+            else if (size % 4 == 3) // missing last character
+                size = (size / 4 * 3) + 2; // Not subtracting extra characters because they're truncated in int division
+
+            // Padded
+            else if (data[size-2] == '=') // padded with '=='
+                size = (size / 4 * 3) - 2; // == padding means the last block only has 1 character instead of 3, hence the '-2'
+            else if (data[size-1] == '=') // padded with '='
+                size = (size / 4 * 3) - 1; // = padding means the last block only has 2 character instead of 3, hence the '-1'
+
+            // Padding not needed
+            else
+                size = size / 4 * 3;
+
+            std::string ret;
+            ret.resize(size);
+            auto it = ret.begin();
+
+            // These will be used to decode 1 character at a time
+            unsigned char odd;  // char1 and char3
+            unsigned char even; // char2 and char4
+
+            // Take 4 character blocks to turn into 3
+            while (size >= 3)
+            {
+            // dec_char1 = (char1 shifted 2 bits to the left) OR ((char2 AND 00110000) shifted 4 bits to the right))
+                odd = key[*data++];
+                even = key[*data++];
+                *it++ = (odd << 2) | ((even & 0x30) >> 4);
+            // dec_char2 = ((char2 AND 00001111) shifted 4 bits left) OR ((char3 AND 00111100) shifted 2 bits right))
+                odd = key[*data++];
+                *it++ = ((even & 0x0F) << 4) | ((odd & 0x3C) >> 2);
+            // dec_char3 = ((char3 AND 00000011) shifted 6 bits left) OR (char4)
+                even = key[*data++];
+                *it++ = ((odd & 0x03) << 6) | (even);
+
+                size -= 3;
+            }
+            if (size == 2)
+            {
+                // d_char1 = (char1 shifted 2 bits to the left) OR ((char2 AND 00110000) shifted 4 bits to the right))
+                    odd = key[*data++];
+                    even = key[*data++];
+                    *it++ = (odd << 2) | ((even & 0x30) >> 4);
+                // d_char2 = ((char2 AND 00001111) shifted 4 bits left) OR ((char3 AND 00111100) shifted 2 bits right))
+                    odd = key[*data++];
+                    *it++ = ((even & 0x0F) << 4) | ((odd & 0x3C) >> 2);
+            }
+            else if (size == 1)
+            {
+                // d_char1 = (char1 shifted 2 bits to the left) OR ((char2 AND 00110000) shifted 4 bits to the right))
+                    odd = key[*data++];
+                    even = key[*data++];
+                    *it++ = (odd << 2) | ((even & 0x30) >> 4);
+            }
+            return ret;
+        }
+
+        inline static std::string base64decode(std::string data, size_t size, bool urlsafe = false)
+        {
+            return base64decode(data.c_str(), size, urlsafe);
+        }
 
     } // namespace utility
 }
