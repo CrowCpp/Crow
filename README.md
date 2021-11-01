@@ -88,7 +88,7 @@ CROW_ROUTE(app, "/add_json")
 ([](const crow::request& req){
     auto x = crow::json::load(req.body);
     if (!x)
-        return crow::response(400);
+        return crow::response(crow::status::BAD_REQUEST); // same as crow::response(400)
     int sum = x["a"].i()+x["b"].i();
     std::ostringstream os;
     os << sum;

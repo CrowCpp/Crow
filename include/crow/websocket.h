@@ -97,7 +97,7 @@ namespace crow
                     s.processBytes(magic.data(), magic.size());
                     uint8_t digest[20];
                     s.getDigestBytes(digest);   
-                    start(crow::utility::base64encode((char*)digest, 20));
+                    start(crow::utility::base64encode((unsigned char*)digest, 20));
 				}
 
                 /// Send data through the socket.
