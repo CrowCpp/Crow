@@ -2,6 +2,7 @@ var structcrow_1_1websocket_1_1connection =
 [
     [ "~connection", "structcrow_1_1websocket_1_1connection.html#a138eb577cfd1405f91d710dae9309e8c", null ],
     [ "close", "structcrow_1_1websocket_1_1connection.html#a0166bd544dfe0e24343328838a556e07", null ],
+    [ "get_remote_ip", "structcrow_1_1websocket_1_1connection.html#a3980e17a609909a5e2140dd897fa704e", null ],
     [ "send_binary", "structcrow_1_1websocket_1_1connection.html#a508f3f8dcb0ce467c82d383317c35dae", null ],
     [ "send_ping", "structcrow_1_1websocket_1_1connection.html#a70a89c27bd30213cab17bd34645535c1", null ],
     [ "send_pong", "structcrow_1_1websocket_1_1connection.html#a50cfb3c58d98dd7fd218a18f3f1a2c26", null ],

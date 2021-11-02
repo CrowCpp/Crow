@@ -7,6 +7,7 @@ var classcrow_1_1websocket_1_1_connection =
     [ "dispatch", "classcrow_1_1websocket_1_1_connection.html#a7a11996bd55dcc65c1c376cea1dd7b00", null ],
     [ "do_read", "classcrow_1_1websocket_1_1_connection.html#addd1692463d34ff141c02c48f0b46431", null ],
     [ "do_write", "classcrow_1_1websocket_1_1_connection.html#a7089a3814af7e3c6e6a82c22865ee852", null ],
+    [ "get_remote_ip", "classcrow_1_1websocket_1_1_connection.html#a92a7932bd7a942c106580c1bfeda4e6f", null ],
     [ "handle_fragment", "classcrow_1_1websocket_1_1_connection.html#a41c1d8a6f57071a43edcb532d528780c", null ],
     [ "is_FIN", "classcrow_1_1websocket_1_1_connection.html#aff28834d3434b6d24a01830667247111", null ],
     [ "opcode", "classcrow_1_1websocket_1_1_connection.html#a47a804e0269c7e70f45434f7618c6e7b", null ],
