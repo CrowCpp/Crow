@@ -460,7 +460,34 @@ TEST_CASE("server_handling_error_request")
       c.receive(asio::buffer(buf, 2048));
       FAIL_CHECK();
     } catch (std::exception& e) {
-      // std::cerr << e.what() << std::endl;
+      CROW_LOG_DEBUG << e.what();
+    }
+  }
+  app.stop();
+}
+
+TEST_CASE("server_handling_error_request_http_version")
+{
+  static char buf[2048];
+  SimpleApp app;
+  CROW_ROUTE(app, "/")([] { return "A"; });
+  auto _ = async(launch::async,
+                 [&] { app.bindaddr(LOCALHOST_ADDRESS).port(45451).run(); });
+  app.wait_for_server_start();
+  std::string sendmsg = "POST /\r\nContent-Length:3\r\nX-HeaderTest: 123\r\n\r\nA=B\r\n";
+  asio::io_service is;
+  {
+    asio::ip::tcp::socket c(is);
+    c.connect(asio::ip::tcp::endpoint(
+        asio::ip::address::from_string(LOCALHOST_ADDRESS), 45451));
+
+    c.send(asio::buffer(sendmsg));
+
+    try {
+      c.receive(asio::buffer(buf, 2048));
+      FAIL_CHECK();
+    } catch (std::exception& e) {
+        CROW_LOG_DEBUG << e.what();
     }
   }
   app.stop();
@@ -483,9 +510,9 @@ TEST_CASE("multi_server")
   app2.wait_for_server_start();
 
   std::string sendmsg =
-      "POST /\r\nContent-Length:3\r\nX-HeaderTest: 123\r\n\r\nA=B\r\n";
-  asio::io_service is;
+      "POST / HTTP/1.0\r\nContent-Length:3\r\nX-HeaderTest: 123\r\n\r\nA=B\r\n";
   {
+    asio::io_service is;
     asio::ip::tcp::socket c(is);
     c.connect(asio::ip::tcp::endpoint(
         asio::ip::address::from_string(LOCALHOST_ADDRESS), 45451));
@@ -497,6 +524,7 @@ TEST_CASE("multi_server")
   }
 
   {
+    asio::io_service is;
     asio::ip::tcp::socket c(is);
     c.connect(asio::ip::tcp::endpoint(
         asio::ip::address::from_string(LOCALHOST_ADDRESS), 45452));
