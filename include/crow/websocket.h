@@ -26,6 +26,7 @@ namespace crow
             virtual void send_ping(const std::string& msg) = 0;
             virtual void send_pong(const std::string& msg) = 0;
             virtual void close(const std::string& msg = "quit") = 0;
+            virtual std::string get_remote_ip() = 0;
             virtual ~connection(){}
 
             void userdata(void* u) { userdata_ = u; }
@@ -97,7 +98,7 @@ namespace crow
                     s.processBytes(magic.data(), magic.size());
                     uint8_t digest[20];
                     s.getDigestBytes(digest);   
-                    start(crow::utility::base64encode((char*)digest, 20));
+                    start(crow::utility::base64encode((unsigned char*)digest, 20));
 				}
 
                 /// Send data through the socket.
@@ -183,6 +184,11 @@ namespace crow
                         write_buffers_.emplace_back(msg);
                         do_write();
                     });
+                }
+
+                std::string get_remote_ip() override
+                {
+                    return adaptor_.remote_endpoint().address().to_string();
                 }
 
             protected:

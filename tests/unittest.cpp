@@ -460,7 +460,34 @@ TEST_CASE("server_handling_error_request")
       c.receive(asio::buffer(buf, 2048));
       FAIL_CHECK();
     } catch (std::exception& e) {
-      // std::cerr << e.what() << std::endl;
+      CROW_LOG_DEBUG << e.what();
+    }
+  }
+  app.stop();
+}
+
+TEST_CASE("server_handling_error_request_http_version")
+{
+  static char buf[2048];
+  SimpleApp app;
+  CROW_ROUTE(app, "/")([] { return "A"; });
+  auto _ = async(launch::async,
+                 [&] { app.bindaddr(LOCALHOST_ADDRESS).port(45451).run(); });
+  app.wait_for_server_start();
+  std::string sendmsg = "POST /\r\nContent-Length:3\r\nX-HeaderTest: 123\r\n\r\nA=B\r\n";
+  asio::io_service is;
+  {
+    asio::ip::tcp::socket c(is);
+    c.connect(asio::ip::tcp::endpoint(
+        asio::ip::address::from_string(LOCALHOST_ADDRESS), 45451));
+
+    c.send(asio::buffer(sendmsg));
+
+    try {
+      c.receive(asio::buffer(buf, 2048));
+      FAIL_CHECK();
+    } catch (std::exception& e) {
+        CROW_LOG_DEBUG << e.what();
     }
   }
   app.stop();
@@ -483,9 +510,9 @@ TEST_CASE("multi_server")
   app2.wait_for_server_start();
 
   std::string sendmsg =
-      "POST /\r\nContent-Length:3\r\nX-HeaderTest: 123\r\n\r\nA=B\r\n";
-  asio::io_service is;
+      "POST / HTTP/1.0\r\nContent-Length:3\r\nX-HeaderTest: 123\r\n\r\nA=B\r\n";
   {
+    asio::io_service is;
     asio::ip::tcp::socket c(is);
     c.connect(asio::ip::tcp::endpoint(
         asio::ip::address::from_string(LOCALHOST_ADDRESS), 45451));
@@ -497,6 +524,7 @@ TEST_CASE("multi_server")
   }
 
   {
+    asio::io_service is;
     asio::ip::tcp::socket c(is);
     c.connect(asio::ip::tcp::endpoint(
         asio::ip::address::from_string(LOCALHOST_ADDRESS), 45452));
@@ -2263,4 +2291,35 @@ TEST_CASE("blueprint")
       CHECK(200 == res.code);
       CHECK("WRONG!!" == res.body);
     }
+}
+
+TEST_CASE("base64")
+{
+    unsigned char sample_bin[]      = {0x14, 0xfb, 0x9c, 0x03, 0xd9, 0x7e};
+    std::string  sample_bin_enc     = "FPucA9l+";
+    std::string  sample_bin_enc_url = "FPucA9l-";
+    unsigned char sample_bin1[]     = {0x14, 0xfb, 0x9c, 0x03, 0xd9};
+    std::string  sample_bin1_enc    = "FPucA9k=";
+    std::string  sample_bin1_enc_np = "FPucA9k";
+    unsigned char sample_bin2[]     = {0x14, 0xfb, 0x9c, 0x03};
+    std::string  sample_bin2_enc    = "FPucAw==";
+    std::string  sample_bin2_enc_np = "FPucAw";
+    std::string  sample_text        = "Crow Allows users to handle requests that may not come from the network. This is done by calling the handle(req, res) method and providing a request and response objects. Which causes crow to identify and run the appropriate handler, returning the resulting response.";
+    std::string  sample_base64      = "Q3JvdyBBbGxvd3MgdXNlcnMgdG8gaGFuZGxlIHJlcXVlc3RzIHRoYXQgbWF5IG5vdCBjb21lIGZyb20gdGhlIG5ldHdvcmsuIFRoaXMgaXMgZG9uZSBieSBjYWxsaW5nIHRoZSBoYW5kbGUocmVxLCByZXMpIG1ldGhvZCBhbmQgcHJvdmlkaW5nIGEgcmVxdWVzdCBhbmQgcmVzcG9uc2Ugb2JqZWN0cy4gV2hpY2ggY2F1c2VzIGNyb3cgdG8gaWRlbnRpZnkgYW5kIHJ1biB0aGUgYXBwcm9wcmlhdGUgaGFuZGxlciwgcmV0dXJuaW5nIHRoZSByZXN1bHRpbmcgcmVzcG9uc2Uu";
+
+
+    CHECK(crow::utility::base64encode(sample_text, sample_text.length())     == sample_base64);
+    CHECK(crow::utility::base64encode((unsigned char*)sample_bin, 6)         == sample_bin_enc);
+    CHECK(crow::utility::base64encode_urlsafe((unsigned char*)sample_bin, 6) == sample_bin_enc_url);
+    CHECK(crow::utility::base64encode((unsigned char*)sample_bin1, 5)        == sample_bin1_enc);
+    CHECK(crow::utility::base64encode((unsigned char*)sample_bin2, 4)        == sample_bin2_enc);
+
+
+    CHECK(crow::utility::base64decode(sample_base64, sample_base64.length()) == sample_text);
+    CHECK(crow::utility::base64decode(sample_bin_enc, 8) == std::string(reinterpret_cast<char const*>(sample_bin)));
+    CHECK(crow::utility::base64decode(sample_bin_enc_url, 8, true) == std::string(reinterpret_cast<char const*>(sample_bin)));
+    CHECK(crow::utility::base64decode(sample_bin1_enc, 8) == std::string(reinterpret_cast<char const*>(sample_bin1)).substr(0,5));
+    CHECK(crow::utility::base64decode(sample_bin1_enc_np, 7) == std::string(reinterpret_cast<char const*>(sample_bin1)).substr(0,5));
+    CHECK(crow::utility::base64decode(sample_bin2_enc,8) == std::string(reinterpret_cast<char const*>(sample_bin2)).substr(0,4));
+    CHECK(crow::utility::base64decode(sample_bin2_enc_np, 6) == std::string(reinterpret_cast<char const*>(sample_bin2)).substr(0,4));
 }
