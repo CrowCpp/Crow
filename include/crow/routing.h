@@ -49,7 +49,7 @@ namespace crow
         }
 
         virtual void handle(const request&, response&, const routing_params&) = 0;
-        virtual void handle_upgrade(const request&, response& res, SocketAdaptor&&)
+        virtual void handle_upgrade(const request&, response& res, SocketAdaptor&&, std::atomic<int>&)
         {
             res = response(404);
             res.end();
@@ -400,9 +400,9 @@ namespace crow
             res.end();
         }
 
-        void handle_upgrade(const request& req, response&, SocketAdaptor&& adaptor) override
+        void handle_upgrade(const request& req, response&, SocketAdaptor&& adaptor, std::atomic<int>& websocket_count) override
         {
-            new crow::websocket::Connection<SocketAdaptor>(req, std::move(adaptor), open_handler_, message_handler_, close_handler_, error_handler_, accept_handler_);
+            new crow::websocket::Connection<SocketAdaptor>(req, std::move(adaptor), websocket_count, open_handler_, message_handler_, close_handler_, error_handler_, accept_handler_);
         }
 #ifdef CROW_ENABLE_SSL
         void handle_upgrade(const request& req, response&, SSLAdaptor&& adaptor) override
@@ -1397,7 +1397,7 @@ namespace crow
 
         //TODO maybe add actual_method
         template <typename Adaptor>
-        void handle_upgrade(const request& req, response& res, Adaptor&& adaptor)
+        void handle_upgrade(const request& req, response& res, Adaptor&& adaptor, std::atomic<int>& websocket_count)
         {
             if (req.method >= HTTPMethod::InternalMethodCount)
                 return;
@@ -1451,7 +1451,7 @@ namespace crow
             // any uncaught exceptions become 500s
             try
             {
-                rules[rule_index]->handle_upgrade(req, res, std::move(adaptor));
+                rules[rule_index]->handle_upgrade(req, res, std::move(adaptor), websocket_count);
             }
             catch(std::exception& e)
             {

@@ -29,7 +29,7 @@ namespace crow
     public:
     Server(Handler* handler, std::string bindaddr, uint16_t port, std::string server_name = std::string("Crow/") + VERSION, std::tuple<Middlewares...>* middlewares = nullptr, uint16_t concurrency = 1, typename Adaptor::context* adaptor_ctx = nullptr)
             : acceptor_(io_service_, tcp::endpoint(boost::asio::ip::address::from_string(bindaddr), port)),
-            signals_(io_service_, SIGINT, SIGTERM),
+            signals_(io_service_),
             tick_timer_(io_service_),
             handler_(handler),
             concurrency_(concurrency == 0 ? 1 : concurrency),
@@ -169,9 +169,21 @@ namespace crow
 
         void stop()
         {
-            io_service_.stop();
+            should_close_ = false; //Prevent the acceptor from taking new connections
+            while (handler_->websocket_count.load(std::memory_order_release) != 0) //Wait for the websockets to close properly
+            {
+            }
             for(auto& io_service:io_service_pool_)
-                io_service->stop();
+            {
+                if (io_service != nullptr)
+                {
+                CROW_LOG_INFO << "Closing IO service " << &io_service;
+                io_service->stop(); //Close all io_services (and HTTP connections)
+                }
+            }
+
+            CROW_LOG_INFO << "Closing main IO service (" << &io_service_ << ')';
+            io_service_.stop(); //Close main io_service
         }
 
         void signal_clear()
@@ -201,22 +213,25 @@ namespace crow
                 is, handler_, server_name_, middlewares_,
                 get_cached_date_str_pool_[roundrobin_index_], *timer_queue_pool_[roundrobin_index_],
                 adaptor_ctx_);
-            acceptor_.async_accept(p->socket(),
-                [this, p, &is](boost::system::error_code ec)
-                {
-                    if (!ec)
+            if (!should_close_)
+            {
+                acceptor_.async_accept(p->socket(),
+                    [this, p, &is](boost::system::error_code ec)
                     {
-                        is.post([p]
+                        if (!ec)
                         {
-                            p->start();
-                        });
-                    }
-                    else
-                    {
-                        delete p;
-                    }
-                    do_accept();
-                });
+                            is.post([p]
+                            {
+                                p->start();
+                            });
+                        }
+                        else
+                        {
+                            delete p;
+                        }
+                        do_accept();
+                    });
+            }
         }
 
     private:
@@ -225,6 +240,7 @@ namespace crow
         std::vector<detail::dumb_timer_queue*> timer_queue_pool_;
         std::vector<std::function<std::string()>> get_cached_date_str_pool_;
         tcp::acceptor acceptor_;
+        bool should_close_ = false;
         boost::asio::signal_set signals_;
         boost::asio::deadline_timer tick_timer_;
 

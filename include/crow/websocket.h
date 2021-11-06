@@ -1,6 +1,7 @@
 #pragma once
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/array.hpp>
+#include "crow/logging.h"
 #include "crow/socket_adaptors.h"
 #include "crow/http_request.h"
 #include "crow/TinySHA1.hpp"
@@ -56,7 +57,7 @@ namespace crow
         // +---------------------------------------------------------------+
 
         /// A websocket connection.
-		template <typename Adaptor>
+        template <typename Adaptor>
         class Connection : public connection
         {
 			public:
@@ -65,19 +66,20 @@ namespace crow
                 ///
                 /// Requires a request with an "Upgrade: websocket" header.<br>
                 /// Automatically handles the handshake.
-				Connection(const crow::request& req, Adaptor&& adaptor, 
+                                Connection(const crow::request& req, Adaptor&& adaptor, std::atomic<int>& websocket_count,
 						std::function<void(crow::websocket::connection&)> open_handler,
 						std::function<void(crow::websocket::connection&, const std::string&, bool)> message_handler,
 						std::function<void(crow::websocket::connection&, const std::string&)> close_handler,
 						std::function<void(crow::websocket::connection&)> error_handler,
 						std::function<bool(const crow::request&)> accept_handler)
-					: adaptor_(std::move(adaptor)), open_handler_(std::move(open_handler)), message_handler_(std::move(message_handler)), close_handler_(std::move(close_handler)), error_handler_(std::move(error_handler))
-					, accept_handler_(std::move(accept_handler))
+                    : adaptor_(std::move(adaptor)), websocket_count_(websocket_count), open_handler_(std::move(open_handler)), message_handler_(std::move(message_handler)), close_handler_(std::move(close_handler)), error_handler_(std::move(error_handler))
+                    , accept_handler_(std::move(accept_handler)), signals_(adaptor_.get_io_service(), SIGINT, SIGTERM)
 				{
+
 					if (!boost::iequals(req.get_header_value("upgrade"), "websocket"))
 					{
-						adaptor.close();
-						delete this;
+                        adaptor.close();
+                        delete this;
 						return;
 					}
 
@@ -85,19 +87,28 @@ namespace crow
 					{
 						if (!accept_handler_(req))
 						{
-							adaptor.close();
-							delete this;
+                            adaptor.close();
+                            delete this;
 							return;
 						}
 					}
+                    websocket_count_++;
 
 					// Sec-WebSocket-Key: dGhlIHNhbXBsZSBub25jZQ==
 					// Sec-WebSocket-Version: 13
-                    std::string magic = req.get_header_value("Sec-WebSocket-Key") +  "258EAFA5-E914-47DA-95CA-C5AB0DC85B11";
+                    std::string magic = req.get_header_value("Sec-WebSocket-Key") + "258EAFA5-E914-47DA-95CA-C5AB0DC85B11";
                     sha1::SHA1 s;
                     s.processBytes(magic.data(), magic.size());
                     uint8_t digest[20];
-                    s.getDigestBytes(digest);   
+                    s.getDigestBytes(digest);
+                    signals_.async_wait(
+                        [&](const boost::system::error_code& e, int /*signal_number*/){
+                            if (!e){
+                            CROW_LOG_INFO << "quitting " << this;
+                            do_not_destroy_ = true;
+                            close("Quitter");
+                            }
+                        });
                     start(crow::utility::base64encode((unsigned char*)digest, 20));
 				}
 
@@ -307,7 +318,7 @@ namespace crow
                             {
                                 remaining_length_ = 0;
                                 remaining_length16_ = 0;
-                                boost::asio::async_read(adaptor_.socket(), boost::asio::buffer(&remaining_length16_, 2), 
+                                boost::asio::async_read(adaptor_.socket(), boost::asio::buffer(&remaining_length16_, 2),
                                     [this](const boost::system::error_code& ec, std::size_t 
 #ifdef CROW_ENABLE_DEBUG
                                         bytes_transferred
@@ -342,7 +353,7 @@ namespace crow
                             break;
                         case WebSocketReadState::Len64:
                             {
-                                boost::asio::async_read(adaptor_.socket(), boost::asio::buffer(&remaining_length_, 8), 
+                                boost::asio::async_read(adaptor_.socket(), boost::asio::buffer(&remaining_length_, 8),
                                     [this](const boost::system::error_code& ec, std::size_t 
 #ifdef CROW_ENABLE_DEBUG
                                         bytes_transferred
@@ -417,7 +428,7 @@ namespace crow
                                 auto to_read = static_cast<std::uint64_t>(buffer_.size());
                                 if (remaining_length_ < to_read)
                                     to_read = remaining_length_;
-                                adaptor_.socket().async_read_some(boost::asio::buffer(buffer_, static_cast<std::size_t>(to_read)), 
+                                adaptor_.socket().async_read_some(boost::asio::buffer(buffer_, static_cast<std::size_t>(to_read)),
                                     [this](const boost::system::error_code& ec, std::size_t bytes_transferred)
                                     {
                                         is_reading = false;
@@ -561,7 +572,7 @@ namespace crow
                         {
                             buffers.emplace_back(boost::asio::buffer(s));
                         }
-                        boost::asio::async_write(adaptor_.socket(), buffers, 
+                        boost::asio::async_write(adaptor_.socket(), buffers,
                             [&](const boost::system::error_code& ec, std::size_t /*bytes_transferred*/)
                             {
                                 sending_buffers_.clear();
@@ -588,11 +599,12 @@ namespace crow
                     if (!is_close_handler_called_)
                         if (close_handler_)
                             close_handler_(*this, "uncleanly");
-                    if (sending_buffers_.empty() && !is_reading)
+                    websocket_count_--;
+                    if (sending_buffers_.empty() && !is_reading && !do_not_destroy_)
                         delete this;
                 }
-			private:
-				Adaptor adaptor_;
+            private:
+                Adaptor adaptor_;
 
                 std::vector<std::string> sending_buffers_;
                 std::vector<std::string> write_buffers_;
@@ -615,11 +627,21 @@ namespace crow
                 bool pong_received_{false};
                 bool is_close_handler_called_{false};
 
+                //**WARNING**
+                //SETTING THIS PREVENTS THE OBJECT FROM BEING DELETED,
+                //AND WILL ABSOLUTELY CAUSE A MEMORY LEAK!!
+                //ONLY USE IF THE APPLICATION IS BEING TERMINATED!!
+                bool do_not_destroy_{false};
+                //**WARNING**
+
+                std::atomic<int>& websocket_count_;
+
 				std::function<void(crow::websocket::connection&)> open_handler_;
 				std::function<void(crow::websocket::connection&, const std::string&, bool)> message_handler_;
 				std::function<void(crow::websocket::connection&, const std::string&)> close_handler_;
 				std::function<void(crow::websocket::connection&)> error_handler_;
 				std::function<bool(const crow::request&)> accept_handler_;
+                boost::asio::signal_set signals_;
         };
     }
 }

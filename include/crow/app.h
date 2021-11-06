@@ -62,6 +62,9 @@ namespace crow
         {
         }
 
+
+        std::atomic<int> websocket_count{0};
+
         ///Process an Upgrade request
 
         ///
@@ -69,7 +72,7 @@ namespace crow
         template <typename Adaptor>
         void handle_upgrade(const request& req, response& res, Adaptor&& adaptor)
         {
-            router_.handle_upgrade(req, res, adaptor);
+            router_.handle_upgrade(req, res, adaptor, websocket_count);
         }
 
         ///Process the request and generate a response for it
@@ -289,7 +292,6 @@ namespace crow
             {
                 server_ = std::move(std::unique_ptr<server_t>(new server_t(this, bindaddr_, port_, server_name_, &middlewares_, concurrency_, nullptr)));
                 server_->set_tick_function(tick_interval_, tick_function_);
-                server_->signal_clear();
                 for (auto snum : signals_)
                 {
                     server_->signal_add(snum);
