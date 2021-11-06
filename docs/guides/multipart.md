@@ -1,5 +1,6 @@
 **Introduced in: `v0.2`**<br><br>
 Multipart is a way of forming HTTP requests or responses to contain multiple distinct parts.<br>
+
 Such an approach allows a request to contain multiple different pieces of data with potentially conflicting data types in a single response payload.<br>
 It is typically used either in html forms, or when uploading multiple files.<br><br>
 
