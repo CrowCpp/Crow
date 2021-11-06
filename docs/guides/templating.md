@@ -2,22 +2,22 @@ Templating is when you return an html page with custom data. You can probably te
 
 Crow supports [mustache](http://mustache.github.io) for templates through its own implementation `crow::mustache`.<br><br>
 
-##Components of mustache
+## Components of mustache
 
 There are 2 components of a mustache template implementation:
 
 - Page
 - Context
 
-###Page
+### Page
 The HTML page (including the mustache tags). It is usually loaded into `crow::mustache::template_t`. It needs to be placed in the *templates directory* which should be directly inside the current working directory of the crow executable.<br><br>
 
 For more information on how to formulate a template, see [this mustache manual](http://mustache.github.io/mustache.5.html).
 
-###Context
+### Context
 A JSON object containing the tags as keys and their values. `crow::mustache::context` is actually a [crow::json::wvalue](../json#wvalue).
 
-##Returning a template
+## Returning a template
 To return a mustache template, you need to load a page using `#!cpp auto page = crow::mustache::load("path/to/template.html");`, keep in mind that the path is relative to the templates directory.<br>
 You also need to set up the context by using `#!cpp crow::mustache::context ctx;`. Then you need to assign the keys and values, this can be done the same way you assign values to a json write value (`ctx["key"] = value;`).<br>
 With your context and page ready, just `#!cpp return page.render(ctx);`. This will use the context data to return a filled template.<br>
