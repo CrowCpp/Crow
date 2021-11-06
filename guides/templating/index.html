@@ -6,6 +6,8 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
+        <meta name="description" content="Templating is when you return an html page with custom data. You can probably tell why that&#x27;s useful.">
+      
       
       
       
@@ -1012,6 +1014,8 @@
 You also need to set up the context by using <code class="highlight"><span class="n">crow</span><span class="o">::</span><span class="n">mustache</span><span class="o">::</span><span class="n">context</span><span class="w"> </span><span class="n">ctx</span><span class="p">;</span><span class="w"></span></code>. Then you need to assign the keys and values, this can be done the same way you assign values to a json write value (<code>ctx["key"] = value;</code>).<br>
 With your context and page ready, just <code class="highlight"><span class="k">return</span><span class="w"> </span><span class="n">page</span><span class="p">.</span><span class="n">render</span><span class="p">(</span><span class="n">ctx</span><span class="p">);</span><span class="w"></span></code>. This will use the context data to return a filled template.<br>
 Alternatively you could just render the page without a context using <code class="highlight"><span class="k">return</span><span class="w"> </span><span class="n">page</span><span class="p">.</span><span class="n">render</span><span class="p">();</span><span class="w"></span></code>.</p>
+                
+                  
                 
               
               

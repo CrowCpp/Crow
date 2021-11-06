@@ -6,6 +6,9 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
+        <meta name="description" content="Introduced in: v0.2
+A static file is any file that resides in the server&#x27;s storage.">
+      
       
       
       
@@ -965,6 +968,8 @@ static directory changes the directory in the server's filesystem, while the end
 <p>You can directly return a static file by using the <code>crow::response</code> method <code class="highlight"><span class="n">response</span><span class="p">.</span><span class="n">set_static_file_info</span><span class="p">(</span><span class="s">&quot;path/to/file&quot;</span><span class="p">);</span><span class="w"></span></code>. The path is relative to the executable unless preceded by <code>/</code>, then it is an absolute path.<br>
 Please keep in mind that using the <code>set_static_file_info</code> method does invalidate any data already in your response body.<br><br></p>
 <p><strong>Note</strong>: Crow sets the <code>content-type</code> header automatically based on the file's extension, if an extension is unavailable or undefined,  Crow uses <code>text/plain</code>, if you'd like to explicitly set a <code>content-type</code>, use <code class="highlight"><span class="n">response</span><span class="p">.</span><span class="n">set_header</span><span class="p">(</span><span class="s">&quot;content-type&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;mime/type&quot;</span><span class="p">);</span><span class="w"></span></code> <strong>AFTER</strong> calling <code>set_static_file_info</code>.</p>
+                
+                  
                 
               
               

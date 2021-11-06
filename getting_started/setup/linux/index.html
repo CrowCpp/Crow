@@ -6,6 +6,8 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
+        <meta name="description" content="Here&#x27;s how you can install Crow on your favorite GNU/Linux distro.">
+      
       
       
       
@@ -412,8 +414,6 @@
       <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
       
       
-        
-      
       
         <label class="md-nav__link md-nav__link--active" for="__toc">
           Linux
@@ -431,8 +431,6 @@
   
   
   
-    
-  
   
     <label class="md-nav__title" for="__toc">
       <span class="md-nav__icon md-icon"></span>
@@ -441,27 +439,35 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#getting-crow" class="md-nav__link">
+    Getting Crow
+  </a>
+  
+    <nav class="md-nav" aria-label="Getting Crow">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
   <a href="#requirements" class="md-nav__link">
     Requirements
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
+        
+          <li class="md-nav__item">
   <a href="#using-a-package-manager" class="md-nav__link">
     Using a package Manager
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
+        
+          <li class="md-nav__item">
   <a href="#release-package" class="md-nav__link">
     Release package
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
+        
+          <li class="md-nav__item">
   <a href="#installing-from-source" class="md-nav__link">
     Installing from source
   </a>
@@ -500,6 +506,38 @@
         
       </ul>
     </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#compiling-your-project" class="md-nav__link">
+    Compiling your project
+  </a>
+  
+    <nav class="md-nav" aria-label="Compiling your project">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#using-cmake_1" class="md-nav__link">
+    Using CMake
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#directly-using-a-compiler" class="md-nav__link">
+    Directly using a compiler
+  </a>
   
 </li>
         
@@ -976,8 +1014,6 @@
   
   
   
-    
-  
   
     <label class="md-nav__title" for="__toc">
       <span class="md-nav__icon md-icon"></span>
@@ -986,27 +1022,35 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#getting-crow" class="md-nav__link">
+    Getting Crow
+  </a>
+  
+    <nav class="md-nav" aria-label="Getting Crow">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
   <a href="#requirements" class="md-nav__link">
     Requirements
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
+        
+          <li class="md-nav__item">
   <a href="#using-a-package-manager" class="md-nav__link">
     Using a package Manager
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
+        
+          <li class="md-nav__item">
   <a href="#release-package" class="md-nav__link">
     Release package
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
+        
+          <li class="md-nav__item">
   <a href="#installing-from-source" class="md-nav__link">
     Installing from source
   </a>
@@ -1052,6 +1096,38 @@
     </nav>
   
 </li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#compiling-your-project" class="md-nav__link">
+    Compiling your project
+  </a>
+  
+    <nav class="md-nav" aria-label="Compiling your project">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#using-cmake_1" class="md-nav__link">
+    Using CMake
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#directly-using-a-compiler" class="md-nav__link">
+    Directly using a compiler
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
       
     </ul>
   
@@ -1066,9 +1142,11 @@
               
                 
                 
+                  <h1>Linux</h1>
+                
                 <p>Here's how you can install Crow on your favorite GNU/Linux distro.</p>
-<h1 id="getting-crow">Getting Crow</h1>
-<h2 id="requirements">Requirements</h2>
+<h2 id="getting-crow">Getting Crow</h2>
+<h3 id="requirements">Requirements</h3>
 <ul>
 <li>C++ compiler with at least C++11 support.</li>
 <li>boost library &amp; development headers (1.64 or later).</li>
@@ -1081,7 +1159,7 @@
 <p>Crow's CI uses <code>g++-9.3</code> and <code>clang-7.0</code> running on AMD64 (x86_64) and ARM64v8 architectures.</p>
 </div>
 <p><br><br></p>
-<h2 id="using-a-package-manager">Using a package Manager</h2>
+<h3 id="using-a-package-manager">Using a package Manager</h3>
 <p>You can install Crow on GNU/Linux as a pre-made package</p>
 <div class="tabbed-set" data-tabs="1:2"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><label for="__tabbed_1_1">Debian/Ubuntu</label><div class="tabbed-content">
 <p>Simply download Crow's <code>.deb</code> file from the <a href="https://github.com/CrowCpp/Crow/releases/latest">release section</a> and Install it.</p>
@@ -1091,12 +1169,12 @@
 </div>
 </div>
 <p><br><br></p>
-<h2 id="release-package">Release package</h2>
+<h3 id="release-package">Release package</h3>
 <p>Crow provides an archive containing the framework and CMake files, just copy the <code>include</code> folder to <code>/usr/local/include</code> and <code>lib</code> folder to <code>/usr/local/lib</code>.<br><br>
 You can also download the <code>crow_all.h</code> file and simply include that into your project.
 <br><br></p>
-<h2 id="installing-from-source">Installing from source</h2>
-<h3 id="using-cmake">Using CMake</h3>
+<h3 id="installing-from-source">Installing from source</h3>
+<h4 id="using-cmake">Using CMake</h4>
 <ol>
 <li>Download Crow's source code (Either through github's UI or by using<br> <code>git clone https://github.com/CrowCpp/Crow.git</code>).</li>
 <li>Run <code>mkdir build</code> inside of crow's source directory.</li>
@@ -1109,9 +1187,9 @@ You can also download the <code>crow_all.h</code> file and simply include that i
 <p>You can ignore <code>-DCROW_BUILD_EXAMPLES=OFF -DCROW_BUILD_TESTS=OFF</code> if you want to build the Examples and Unit Tests.</p>
 </div>
 <p><br></p>
-<h3 id="manually">Manually</h3>
+<h4 id="manually">Manually</h4>
 <p>Crow can be installed manually on your Linux computer.</p>
-<h4 id="multiple-header-files">Multiple header files</h4>
+<h5 id="multiple-header-files">Multiple header files</h5>
 <div class="tabbed-set" data-tabs="2:2"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><label for="__tabbed_2_1">Project Only</label><div class="tabbed-content">
 <p>Copy Crow's <code>include</code> directory to your project's <code>include</code> directory.</p>
 </div>
@@ -1119,7 +1197,7 @@ You can also download the <code>crow_all.h</code> file and simply include that i
 <p>Copy Crow's <code>include</code> directory to the <code>/usr/local/include</code> directory.</p>
 </div>
 </div>
-<h4 id="single-header-crow_allh">Single header (crow_all.h)</h4>
+<h5 id="single-header-crow_allh">Single header (crow_all.h)</h5>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
 <p><code>crow_all.h</code> is recommended only for small, possibly single source file projects, and ideally should not be installed on your system.</p>
@@ -1129,14 +1207,14 @@ You can also download the <code>crow_all.h</code> file and simply include that i
 <p class="admonition-title">Note</p>
 <p>You can also include or exclude middlewares from your <code>crow_all.h</code> by using <code>-i</code> or <code>-e</code> followed by the middleware header file names separated by a comma (e.g. <code>merge_all.py ../include crow_all.h -e cookie_parser</code> to exclude the cookie parser middleware).</p>
 </div>
-<h1 id="compiling-your-project">Compiling your project</h1>
-<h2 id="using-cmake_1">Using CMake</h2>
+<h2 id="compiling-your-project">Compiling your project</h2>
+<h3 id="using-cmake_1">Using CMake</h3>
 <p>In order to get your CMake project to work with Crow, all you need are the following lines in your CMakeLists.txt:
 <div class="highlight"><pre><span></span><code>find_package(Crow)
 target_link_libraries(your_project PUBLIC Crow::Crow)
 </code></pre></div>
 From there CMake should handle compiling and linking your project.</p>
-<h2 id="directly-using-a-compiler">Directly using a compiler</h2>
+<h3 id="directly-using-a-compiler">Directly using a compiler</h3>
 <p>All you need to do is run the following command:
 <div class="highlight"><pre><span></span><code>g++ main.cpp -lpthread
 </code></pre></div>
@@ -1145,6 +1223,8 @@ You can use arguments like <code>-DCROW_ENABLE_DEBUG</code>, <code>-DCROW_ENABLE
 <p class="admonition-title">Warning</p>
 <p>If you're using a version of boost prior to 1.69, you'll need to add the argument <code>-lboost_system</code> in order for you Crow application to compile correctly.</p>
 </div>
+                
+                  
                 
               
               

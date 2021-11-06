@@ -6,6 +6,8 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
+        <meta name="description" content="Here&#x27;s how you can install Crow on your Mac.">
+      
       
       
       
@@ -426,8 +428,6 @@
       <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
       
       
-        
-      
       
         <label class="md-nav__link md-nav__link--active" for="__toc">
           MacOS
@@ -445,8 +445,6 @@
   
   
   
-    
-  
   
     <label class="md-nav__title" for="__toc">
       <span class="md-nav__icon md-icon"></span>
@@ -455,6 +453,14 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#getting-crow" class="md-nav__link">
+    Getting Crow
+  </a>
+  
+    <nav class="md-nav" aria-label="Getting Crow">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
   <a href="#from-a-release" class="md-nav__link">
     From a release
   </a>
@@ -480,8 +486,8 @@
     </nav>
   
 </li>
-      
-        <li class="md-nav__item">
+        
+          <li class="md-nav__item">
   <a href="#from-source" class="md-nav__link">
     From Source
   </a>
@@ -505,6 +511,38 @@
         
       </ul>
     </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#setting-up-your-crow-project" class="md-nav__link">
+    Setting up your Crow project
+  </a>
+  
+    <nav class="md-nav" aria-label="Setting up your Crow project">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#using-xcode" class="md-nav__link">
+    Using XCode
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#building-crows-testsexamples" class="md-nav__link">
+    Building Crow's tests/examples
+  </a>
   
 </li>
       
@@ -962,8 +1000,6 @@
   
   
   
-    
-  
   
     <label class="md-nav__title" for="__toc">
       <span class="md-nav__icon md-icon"></span>
@@ -972,6 +1008,14 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#getting-crow" class="md-nav__link">
+    Getting Crow
+  </a>
+  
+    <nav class="md-nav" aria-label="Getting Crow">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
   <a href="#from-a-release" class="md-nav__link">
     From a release
   </a>
@@ -997,8 +1041,8 @@
     </nav>
   
 </li>
-      
-        <li class="md-nav__item">
+        
+          <li class="md-nav__item">
   <a href="#from-source" class="md-nav__link">
     From Source
   </a>
@@ -1024,6 +1068,38 @@
     </nav>
   
 </li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#setting-up-your-crow-project" class="md-nav__link">
+    Setting up your Crow project
+  </a>
+  
+    <nav class="md-nav" aria-label="Setting up your Crow project">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#using-xcode" class="md-nav__link">
+    Using XCode
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#building-crows-testsexamples" class="md-nav__link">
+    Building Crow's tests/examples
+  </a>
+  
+</li>
       
     </ul>
   
@@ -1038,19 +1114,21 @@
               
                 
                 
+                  <h1>MacOS</h1>
+                
                 <p>Here's how you can install Crow on your Mac.</p>
-<h1 id="getting-crow">Getting Crow</h1>
-<h2 id="from-a-release">From a <a href="https://github.com/CrowCpp/Crow/releases">release</a></h2>
-<h3 id="archive">Archive</h3>
+<h2 id="getting-crow">Getting Crow</h2>
+<h3 id="from-a-release">From a <a href="https://github.com/CrowCpp/Crow/releases">release</a></h3>
+<h4 id="archive">Archive</h4>
 <p>Crow provides an archive containing the framework and CMake files, You will only need the <code>include</code> folder inside that archive.</p>
-<h3 id="single-header-file">Single header file</h3>
+<h4 id="single-header-file">Single header file</h4>
 <p>You can also download the <code>crow_all.h</code> file which replaces the <code>include</code> folder.</p>
-<h2 id="from-source">From Source</h2>
+<h3 id="from-source">From Source</h3>
 <p>To get Crow from source, you only need to download the repository (as a <code>.zip</code> or through <code>git clone https://github.com/CrowCpp/Crow.git</code>).</p>
-<h3 id="include-folder">include folder</h3>
+<h4 id="include-folder">include folder</h4>
 <p>Once you've downloaded Crow's source code, you only need to take the <code>include</code> folder.</p>
-<h3 id="single-header-file_1">Single header file</h3>
-<p>You can generate your own single header file by using navigating to the <code>scripts</code> folder with your terminal and running the following command:
+<h4 id="single-header-file_1">Single header file</h4>
+<p>You can generate your own single header file by navigating to the <code>scripts</code> folder with your terminal and running the following command:
 <div class="highlight"><pre><span></span><code>python3 merge_all.py ../include crow_all.h
 </code></pre></div>
 This will generate a <code>crow_all.h</code> file which you can use in the following steps</p>
@@ -1058,8 +1136,8 @@ This will generate a <code>crow_all.h</code> file which you can use in the follo
 <p class="admonition-title">Warning</p>
 <p><code>crow_all.h</code> is recommended only for small, possibly single source file projects. For larger projects, it is advised to use the multi-header version.</p>
 </div>
-<h1 id="setting-up-your-crow-project">Setting up your Crow project</h1>
-<h2 id="using-xcode">Using XCode</h2>
+<h2 id="setting-up-your-crow-project">Setting up your Crow project</h2>
+<h3 id="using-xcode">Using XCode</h3>
 <ol>
 <li>Download and install <a href="https://brew.sh">Homebrew</a>.</li>
 <li>Run <code>brew install boost</code> in your terminal.</li>
@@ -1074,7 +1152,7 @@ This will generate a <code>crow_all.h</code> file which you can use in the follo
 </div>
 <input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><label for="__tabbed_1_2">Single Header</label><div class="tabbed-content">
 <ol>
-<li>Place <code>crow_all.h</code> inside your project folder and add it to the project in XCode (you need to use the File -&gt; )</li>
+<li>Place <code>crow_all.h</code> inside your project folder and add it to the project in XCode (you need to use File -&gt; Add files to "project_name")</li>
 <li>Add header search paths for boost's folder (<code>/usr/local/include</code>, and <code>/usr/local/Cellar/boost/include</code>)</li>
 <li>Add linker flags (<code>-lpthread</code> and <code>-lboost_system</code> if you're running an old version of boost)</li>
 </ol>
@@ -1086,7 +1164,7 @@ This will generate a <code>crow_all.h</code> file which you can use in the follo
 </li>
 <li>Press <code>▶</code> to compile and run your Crow application.</li>
 </ol>
-<h1 id="building-crows-testsexamples">Building Crow's tests/examples</h1>
+<h2 id="building-crows-testsexamples">Building Crow's tests/examples</h2>
 <ol>
 <li>Download and install <a href="https://brew.sh">Homebrew</a>.</li>
 <li>Run <code>brew install cmake boost</code> in your terminal.</li>
@@ -1103,6 +1181,8 @@ This will generate a <code>crow_all.h</code> file which you can use in the follo
 <p class="admonition-title">Note<p>You can add options like <code>-DCROW_ENABLE_SSL</code>, <code>-DCROW_ENABLE_COMPRESSION</code>, or <code>-DCROW_AMALGAMATE</code> to <code>3.c</code> to build their tests/examples.</p>
 </p>
 </div>
+                
+                  
                 
               
               

@@ -6,6 +6,8 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
+        <meta name="description" content="Here&#x27;s how you can install Crow on your Windows machine.">
+      
       
       
       
@@ -440,8 +442,6 @@
       <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
       
       
-        
-      
       
         <label class="md-nav__link md-nav__link--active" for="__toc">
           Windows
@@ -459,8 +459,6 @@
   
   
   
-    
-  
   
     <label class="md-nav__title" for="__toc">
       <span class="md-nav__icon md-icon"></span>
@@ -469,6 +467,14 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#getting-and-compiling-crow" class="md-nav__link">
+    Getting and Compiling Crow
+  </a>
+  
+    <nav class="md-nav" aria-label="Getting and Compiling Crow">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
   <a href="#using-a-package-manager" class="md-nav__link">
     Using A package manager
   </a>
@@ -487,8 +493,8 @@
     </nav>
   
 </li>
-      
-        <li class="md-nav__item">
+        
+          <li class="md-nav__item">
   <a href="#manually-source-or-release" class="md-nav__link">
     Manually (source or release)
   </a>
@@ -500,6 +506,11 @@
   <a href="#microsoft-visual-studio-2019-and-vcpkg" class="md-nav__link">
     Microsoft Visual Studio 2019 and VCPKG
   </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
         
@@ -948,8 +959,6 @@
   
   
   
-    
-  
   
     <label class="md-nav__title" for="__toc">
       <span class="md-nav__icon md-icon"></span>
@@ -958,6 +967,14 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#getting-and-compiling-crow" class="md-nav__link">
+    Getting and Compiling Crow
+  </a>
+  
+    <nav class="md-nav" aria-label="Getting and Compiling Crow">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
   <a href="#using-a-package-manager" class="md-nav__link">
     Using A package manager
   </a>
@@ -976,8 +993,8 @@
     </nav>
   
 </li>
-      
-        <li class="md-nav__item">
+        
+          <li class="md-nav__item">
   <a href="#manually-source-or-release" class="md-nav__link">
     Manually (source or release)
   </a>
@@ -989,6 +1006,11 @@
   <a href="#microsoft-visual-studio-2019-and-vcpkg" class="md-nav__link">
     Microsoft Visual Studio 2019 and VCPKG
   </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
         
@@ -1010,13 +1032,15 @@
               
                 
                 
+                  <h1>Windows</h1>
+                
                 <p>Here's how you can install Crow on your Windows machine.</p>
-<h1 id="getting-and-compiling-crow">Getting and Compiling Crow</h1>
-<h2 id="using-a-package-manager">Using A package manager</h2>
-<h3 id="vcpkg">VCPKG</h3>
+<h2 id="getting-and-compiling-crow">Getting and Compiling Crow</h2>
+<h3 id="using-a-package-manager">Using A package manager</h3>
+<h4 id="vcpkg">VCPKG</h4>
 <p>Crow can be simply installed through VCPKG using the command <code>vcpkg install crow</code></p>
-<h2 id="manually-source-or-release">Manually (source or release)</h2>
-<h3 id="microsoft-visual-studio-2019-and-vcpkg">Microsoft Visual Studio 2019 and VCPKG</h3>
+<h3 id="manually-source-or-release">Manually (source or release)</h3>
+<h4 id="microsoft-visual-studio-2019-and-vcpkg">Microsoft Visual Studio 2019 and VCPKG</h4>
 <p>The following guide will use <code>example_with_all.cpp</code> as the Crow application for demonstration purposes. VCPKG will be used only to install Crow's dependencies.</p>
 <ol>
 <li>Generate <code>crow_all.h</code> by navigating to the <code>scripts</code> folder and running <code>python3 merge_all.py ..\include crow_all.h</code>.</li>
@@ -1032,6 +1056,8 @@
 <li>Set <code>Debug/Release</code> and <code>x64/x86</code>. </li>
 <li>Run.</li>
 </ol>
+                
+                  
                 
               
               

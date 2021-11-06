@@ -6,6 +6,8 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
+        <meta name="description" content="Crow has built in support for JSON data.">
+      
       
       
       
@@ -966,6 +968,8 @@
               
                 
                 
+                  <h1>JSON</h1>
+                
                 <p>Crow has built in support for JSON data.<br><br></p>
 <h2 id="type">type</h2>
 <p>The types of values that <code>rvalue and wvalue</code> can take are as follows:<br></p>
@@ -988,7 +992,7 @@ This last type means that <code>rvalue or wvalue</code> can have keys.</li>
 <p>You can read individual items of the rvalue, but you cannot add items to it.<br>
 To do that, you need to convert it to a <code>wvalue</code>, which can be done by simply writing <code class="highlight"><span class="n">crow</span><span class="o">::</span><span class="n">json</span><span class="o">::</span><span class="n">wvalue</span><span class="w"> </span><span class="nf">wval</span><span class="w"> </span><span class="p">(</span><span class="n">rval</span><span class="p">);</span><span class="w"></span></code> (assuming <code>rval</code> is your <code>rvalue</code>).<br><br></p>
 <p>For more info on read values go <a href="/reference/classcrow_1_1json_1_1rvalue.html">here</a>.<br><br></p>
-<h1 id="wvalue">wvalue</h1>
+<h2 id="wvalue">wvalue</h2>
 <p>JSON write value, used for creating, editing and converting JSON to a string.<br><br></p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -1003,6 +1007,8 @@ To do that, you need to convert it to a <code>wvalue</code>, which can be done b
 <p class="admonition-title">Note</p>
 <p>Crow's json exceptions can be disabled by using the <code class="highlight"><span class="cp">#define CROW_JSON_NO_ERROR_CHECK</span></code> macro. This should increase the program speed with the drawback of having unexpected behavious when used incorrectly (e.g. by attempting to parse an invalid json object).</p>
 </div>
+                
+                  
                 
               
               

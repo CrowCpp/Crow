@@ -6,6 +6,9 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
+        <meta name="description" content="Introduced in: v0.2
+Multipart is a way of forming HTTP requests or responses to contain multiple distinct parts.">
+      
       
       
       
@@ -874,8 +877,8 @@
                   <h1>Multipart</h1>
                 
                 <p><strong>Introduced in: <code>v0.2</code></strong><br><br>
-Multipart is a way of forming HTTP requests or responses to contain multiple distinct parts.<br>
-Such an approach allows a request to contain multiple different pieces of data with potentially conflicting data types in a single response payload.<br>
+Multipart is a way of forming HTTP requests or responses to contain multiple distinct parts.<br></p>
+<p>Such an approach allows a request to contain multiple different pieces of data with potentially conflicting data types in a single response payload.<br>
 It is typically used either in html forms, or when uploading multiple files.<br><br></p>
 <p>The structure of a multipart request is typically consistent of:<br></p>
 <ul>
@@ -893,6 +896,8 @@ A message can be created either by defining the headers, boundary, and individua
 <p>Once a multipart message has been made, the individual parts can be accessed throught <code>mpmes.parts</code>, <code>parts</code> is an <code>std::vector</code>, so accessing the individual parts should be straightforward.<br>
 In order to access the individual part's name or filename, something like <code class="highlight"><span class="n">mpmes</span><span class="p">.</span><span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">headers</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">params</span><span class="p">[</span><span class="s">&quot;name&quot;</span><span class="p">]</span><span class="w"></span></code> sould do the trick.<br><br></p>
 <p>For more info on Multipart messages, go <a href="../../reference/namespacecrow_1_1multipart.html">here</a></p>
+                
+                  
                 
               
               

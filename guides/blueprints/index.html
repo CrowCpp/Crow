@@ -6,6 +6,10 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
+        <meta name="description" content="Crow supports flask style blueprints.
+A blueprint is a limited app. It cannot handle networking. But it can handle routes.
+Blueprints allow developers to compartmentalize their Crow applications, making them a lot more modular.">
+      
       
       
       
@@ -1043,6 +1047,8 @@ Blueprints allow developers to compartmentalize their Crow applications, making 
 <p>You can define a custom catchall route for a blueprint by calling <code class="highlight"><span class="n">CROW_BP_CATCHALL_ROUTE</span><span class="p">(</span><span class="n">blueprint</span><span class="p">)</span><span class="w"></span></code>. This causes any requests with a URL starting with <code>/prefix</code> and no route found to call the blueprint's catchall route. if no catchall route is defined, Crow will default to either the parent blueprint or the app's catchall route.</p>
 <h3 id="register-other-blueprints">Register other Blueprints</h3>
 <p>Blueprints can also register other blueprints. This is done through <code class="highlight"><span class="n">blueprint</span><span class="p">.</span><span class="n">register_blueprint</span><span class="p">(</span><span class="n">blueprint_2</span><span class="p">);</span><span class="w"></span></code>. The child blueprint's routes become <code>/prefix/prefix_2/abc/xyz</code>.</p>
+                
+                  
                 
               
               
