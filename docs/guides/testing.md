@@ -1,6 +1,6 @@
 Unit tests can be written in 2 ways for a Crow application.<br><br>
 
-##The handler method
+## The handler method
 Crow Allows users to handle requests that may not come from the network. This is done by calling the `handle(req, res)` method and providing a request and response objects. Which causes crow to identify and run the appropriate handler, returning the resulting response.
 
 ```cpp linenums="1"
@@ -29,7 +29,7 @@ Crow Allows users to handle requests that may not come from the network. This is
     This method does not send any data, nor does it run any post handle code, so things like static file serving (as far as sending the actual data) or compression cannot be tested using this method.
 
 
-##The client method
+## The client method
 This method involves creating a simple [ASIO](https://think-async.com/Asio/) client that sends the request and receives the response. It is considerably more complex than the earlier method, but it is both more realistic and includes post handle operations.
 
 ```cpp linenums="1"
