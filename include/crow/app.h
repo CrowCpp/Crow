@@ -123,6 +123,11 @@ namespace crow
             return *this;
         }
 
+        std::uint16_t port()
+        {
+            return port_;
+        }
+
         ///Set the connection timeout in seconds (default is 5)
         self_t& timeout(std::uint8_t timeout)
         {
