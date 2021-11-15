@@ -187,16 +187,17 @@ Add enum values to en/drone/src/include/crow/json.h:1391: warning: unable to res
 /drone/src/include/crow/middlewares/cookie_parser.h:46: warning: Member set_cookie(const std::string &key, const std::string &value) (function) of class crow::CookieParser::context is not documented.
 /drone/src/include/crow/middlewares/cookie_parser.h:35: warning: Member jar (variable) of class crow::CookieParser::context is not documented.
 /drone/src/include/crow/middlewares/cookie_parser.h:36: warning: Member cookies_to_add (variable) of class crow::CookieParser::context is not documented.
-/drone/src/include/crow/app.h:397: warning: Member context_t (typedef) of class crow::Crow is not documented.
+/drone/src/include/crow/app.h:402: warning: Member context_t (typedef) of class crow::Crow is not documented.
 /drone/src/include/crow/app.h:107: warning: Member signal_clear() (function) of class crow::Crow is not documented.
 /drone/src/include/crow/app.h:113: warning: Member signal_add(int signal_number) (function) of class crow::Crow is not documented.
-/drone/src/include/crow/app.h:187: warning: Member stream_threshold() (function) of class crow::Crow is not documented.
-/drone/src/include/crow/app.h:192: warning: Member register_blueprint(Blueprint &blueprint) (function) of class crow::Crow is not documented.
-/drone/src/include/crow/app.h:321: warning: Member debug_print() (function) of class crow::Crow is not documented.
-/drone/src/include/crow/app.h:374: warning: Member ssl_file(T &&, Remain &&...) (function) of class crow::Crow is not documented.
-/drone/src/include/crow/app.h:385: warning: Member ssl(T &&) (function) of class crow::Crow is not documented.
-/drone/src/include/crow/app.h:399: warning: Member get_context(const request &req) (function) of class crow::Crow is not documented.
-/drone/src/include/crow/app.h:407: warning: Member get_middleware() (function) of class crow::Crow is not documented.
+/drone/src/include/crow/app.h:126: warning: Member port() (function) of class crow::Crow is not documented.
+/drone/src/include/crow/app.h:192: warning: Member stream_threshold() (function) of class crow::Crow is not documented.
+/drone/src/include/crow/app.h:197: warning: Member register_blueprint(Blueprint &blueprint) (function) of class crow::Crow is not documented.
+/drone/src/include/crow/app.h:326: warning: Member debug_print() (function) of class crow::Crow is not documented.
+/drone/src/include/crow/app.h:379: warning: Member ssl_file(T &&, Remain &&...) (function) of class crow::Crow is not documented.
+/drone/src/include/crow/app.h:390: warning: Member ssl(T &&) (function) of class crow::Crow is not documented.
+/drone/src/include/crow/app.h:404: warning: Member get_context(const request &req) (function) of class crow::Crow is not documented.
+/drone/src/include/crow/app.h:412: warning: Member get_middleware() (function) of class crow::Crow is not documented.
 /drone/src/include/crow/routing.h:498: warning: Member DynamicRule(std::string rule) (function) of class crow::DynamicRule is not documented.
 /drone/src/include/crow/routing.h:503: warning: Member validate() override (function) of class crow::DynamicRule is not documented.
 /drone/src/include/crow/routing.h:511: warning: Member handle(const request &req, response &res, const routing_params &params) override (function) of class crow::DynamicRule is not documented.
@@ -398,9 +399,9 @@ Generating docs for compound crow::Server.../drone/src/include/crow/http_server.
 /drone/src/include/crow/http_server.h:44: warning: Member set_tick_function(std::chrono::milliseconds d, std::function< void()> f) (function) of class crow::Server is not documented.
 /drone/src/include/crow/http_server.h:50: warning: Member on_tick() (function) of class crow::Server is not documented.
 /drone/src/include/crow/http_server.h:62: warning: Member run() (function) of class crow::Server is not documented.
-/drone/src/include/crow/http_server.h:170: warning: Member stop() (function) of class crow::Server is not documented.
-/drone/src/include/crow/http_server.h:177: warning: Member signal_clear() (function) of class crow::Server is not documented.
-/drone/src/include/crow/http_server.h:182: warning: Member signal_add(int signal_number) (function) of class crow::Server is not documented.
+/drone/src/include/crow/http_server.h:173: warning: Member stop() (function) of class crow::Server is not documented.
+/drone/src/include/crow/http_server.h:180: warning: Member signal_clear() (function) of class crow::Server is not documented.
+/drone/src/include/crow/http_server.h:185: warning: Member signal_add(int signal_number) (function) of class crow::Server is not documented.
 /drone/src/include/crow/socket_adaptors.h:20: warning: Member context (typedef) of class crow::SocketAdaptor is not documented.
 /drone/src/include/crow/socket_adaptors.h:21: warning: Member SocketAdaptor(boost::asio::io_service &io_service, context *) (function) of class crow::SocketAdaptor is not documented.
 /drone/src/include/crow/socket_adaptors.h:26: warning: Member get_io_service() (function) of class crow::SocketAdaptor is not documented.
@@ -793,5 +794,5 @@ Generating example index...
 finalizing index lists...
 writing tag file...
 Running plantuml with JAVA...
-lookup cache used 2649/65536 hits=23135 misses=2974
+lookup cache used 2650/65536 hits=23157 misses=2975
 finished...

@@ -1,5 +1,6 @@
 var NAVTREEINDEX1 =
 {
+"classcrow_1_1json_1_1wvalue.html#a831735838c1dd18fbcb208d8e31841f3":[0,0,0,2,2,5],
 "classcrow_1_1json_1_1wvalue.html#a83d2b3dfd8f9349e902e02faf15fd0c2":[0,0,0,2,2,43],
 "classcrow_1_1json_1_1wvalue.html#a85cbaee18c9781f1beb08e8c8891f42d":[0,0,0,2,2,10],
 "classcrow_1_1json_1_1wvalue.html#a8b3669a45284129d59d9cbb8b808675a":[0,0,0,2,2,7],
@@ -248,6 +249,5 @@ var NAVTREEINDEX1 =
 "structcrow_1_1detail_1_1routing__handler__call__helper_1_1_wrapped.html#ac0b5953ef5f2de56e33b46c0b2d53d11":[0,0,0,1,0,8,6],
 "structcrow_1_1detail_1_1routing__handler__call__helper_1_1_wrapped.html#adb1db474bf72cfc2e4b2f8572dd83286":[0,0,0,1,0,8,7],
 "structcrow_1_1detail_1_1routing__handler__call__helper_1_1_wrapped.html#ae037f7cd31dcec958eaf9918dfdaf55d":[0,0,0,1,0,8,4],
-"structcrow_1_1detail_1_1routing__handler__call__helper_1_1_wrapped_1_1handler__type__helper.html":[0,0,0,1,0,8,0],
-"structcrow_1_1detail_1_1routing__handler__call__helper_1_1_wrapped_1_1handler__type__helper.html#a4c2a9a1065506309bd9b8a37d6518e3e":[0,0,0,1,0,8,0,1]
+"structcrow_1_1detail_1_1routing__handler__call__helper_1_1_wrapped_1_1handler__type__helper.html":[0,0,0,1,0,8,0]
 };
