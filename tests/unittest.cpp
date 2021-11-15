@@ -2323,3 +2323,21 @@ TEST_CASE("base64")
     CHECK(crow::utility::base64decode(sample_bin2_enc,8) == std::string(reinterpret_cast<char const*>(sample_bin2)).substr(0,4));
     CHECK(crow::utility::base64decode(sample_bin2_enc_np, 6) == std::string(reinterpret_cast<char const*>(sample_bin2)).substr(0,4));
 }
+
+
+TEST_CASE("get_port")
+{
+    SimpleApp app;
+
+    const std::uint16_t port = 12345;
+
+    std::thread runTest([&]() {
+        app.port(port).run();
+    });
+
+    app.wait_for_server_start();
+    CHECK(app.port() == port);
+    app.stop();
+
+    runTest.join();
+}
