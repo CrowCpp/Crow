@@ -2341,3 +2341,71 @@ TEST_CASE("get_port")
 
     runTest.join();
 }
+
+TEST_CASE("timeout")
+{
+  auto test_timeout = [](const std::uint8_t timeout) {
+    static char buf[2048];
+
+    SimpleApp app;
+
+    CROW_ROUTE(app, "/")
+    ([]() { return "hello"; });
+
+    auto _ = async(launch::async, [&] {
+      app.bindaddr(LOCALHOST_ADDRESS).timeout(timeout).port(45451).run();
+    });
+    app.wait_for_server_start();
+    asio::io_service is;
+    std::string sendmsg = "GET /\r\n\r\n";
+    future_status status;
+
+    {
+      asio::ip::tcp::socket c(is);
+      c.connect(asio::ip::tcp::endpoint(
+          asio::ip::address::from_string(LOCALHOST_ADDRESS), 45451));
+
+      auto receive_future = async(launch::async, [&]() {
+        boost::system::error_code ec;
+        c.receive(asio::buffer(buf, 2048), 0, ec);
+        return ec;
+      });
+      status = receive_future.wait_for(std::chrono::seconds(timeout - 1));
+      CHECK(status == future_status::timeout);
+
+      status = receive_future.wait_for(chrono::seconds(3));
+      CHECK(status == future_status::ready);
+      CHECK(receive_future.get() == asio::error::eof);
+
+      c.close();
+    }
+    {
+      asio::ip::tcp::socket c(is);
+      c.connect(asio::ip::tcp::endpoint(
+          asio::ip::address::from_string(LOCALHOST_ADDRESS), 45451));
+
+      size_t received;
+      auto receive_future = async(launch::async, [&]() {
+        boost::system::error_code ec;
+        received = c.receive(asio::buffer(buf, 2048), 0, ec);
+        return ec;
+      });
+      status = receive_future.wait_for(std::chrono::seconds(timeout - 1));
+      CHECK(status == future_status::timeout);
+
+      c.send(asio::buffer(sendmsg));
+
+      status = receive_future.wait_for(chrono::seconds(3));
+      CHECK(status == future_status::ready);
+      CHECK(!receive_future.get());
+      CHECK("hello" == std::string(buf + received - 5, buf + received));
+
+      c.close();
+    }
+
+    app.stop();
+  };
+
+  test_timeout(3);
+  test_timeout(5);
+}
