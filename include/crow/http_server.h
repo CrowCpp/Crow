@@ -16,7 +16,7 @@
 #include "crow/version.h"
 #include "crow/http_connection.h"
 #include "crow/logging.h"
-#include "crow/dumb_timer_queue.h"
+#include "crow/task_timer.h"
 
 namespace crow
 {
@@ -27,7 +27,7 @@ namespace crow
     class Server
     {
     public:
-    Server(Handler* handler, std::string bindaddr, uint16_t port, std::string server_name = std::string("Crow/") + VERSION, std::tuple<Middlewares...>* middlewares = nullptr, uint16_t concurrency = 1, typename Adaptor::context* adaptor_ctx = nullptr)
+    Server(Handler* handler, std::string bindaddr, uint16_t port, std::string server_name = std::string("Crow/") + VERSION, std::tuple<Middlewares...>* middlewares = nullptr, uint16_t concurrency = 1, uint8_t timeout = 5, typename Adaptor::context* adaptor_ctx = nullptr)
             : acceptor_(io_service_, tcp::endpoint(boost::asio::ip::address::from_string(bindaddr), port)),
             signals_(io_service_, SIGINT, SIGTERM),
             tick_timer_(io_service_),
@@ -37,7 +37,8 @@ namespace crow
             port_(port),
             bindaddr_(bindaddr),
             middlewares_(middlewares),
-            adaptor_ctx_(adaptor_ctx)
+            adaptor_ctx_(adaptor_ctx),
+            timeout_(timeout)
         {
         }
 
@@ -64,7 +65,7 @@ namespace crow
             for(int i = 0; i < concurrency_;  i++)
                 io_service_pool_.emplace_back(new boost::asio::io_service());
             get_cached_date_str_pool_.resize(concurrency_);
-            timer_queue_pool_.resize(concurrency_);
+            task_timer_pool_.resize(concurrency_);
 
             std::vector<std::future<void>> v;
             std::atomic<int> init_count(0);
@@ -101,23 +102,10 @@ namespace crow
                                 return date_str;
                             };
 
-                            // initializing timer queue
-                            detail::dumb_timer_queue timer_queue;
-                            timer_queue_pool_[i] = &timer_queue;
-
-                            timer_queue.set_io_service(*io_service_pool_[i]);
-                            boost::asio::deadline_timer timer(*io_service_pool_[i]);
-                            timer.expires_from_now(boost::posix_time::seconds(1));
-
-                            std::function<void(const boost::system::error_code& ec)> handler;
-                            handler = [&](const boost::system::error_code& ec){
-                                if (ec)
-                                    return;
-                                timer_queue.process();
-                                timer.expires_from_now(boost::posix_time::seconds(1));
-                                timer.async_wait(handler);
-                            };
-                            timer.async_wait(handler);
+                            // initializing task timers
+                            detail::task_timer task_timer(*io_service_pool_[i]);
+                            task_timer.set_default_timeout(timeout_);
+                            task_timer_pool_[i] = &task_timer;
 
                             init_count ++;
                             while(1)
@@ -202,8 +190,7 @@ namespace crow
             asio::io_service& is = pick_io_service();
             auto p = new Connection<Adaptor, Handler, Middlewares...>(
                 is, handler_, server_name_, middlewares_,
-                get_cached_date_str_pool_[roundrobin_index_], *timer_queue_pool_[roundrobin_index_],
-                adaptor_ctx_);
+                get_cached_date_str_pool_[roundrobin_index_], *task_timer_pool_[roundrobin_index_], adaptor_ctx_);
             acceptor_.async_accept(p->socket(),
                 [this, p, &is](boost::system::error_code ec)
                 {
@@ -225,7 +212,7 @@ namespace crow
     private:
         asio::io_service io_service_;
         std::vector<std::unique_ptr<asio::io_service>> io_service_pool_;
-        std::vector<detail::dumb_timer_queue*> timer_queue_pool_;
+        std::vector<detail::task_timer*> task_timer_pool_;
         std::vector<std::function<std::string()>> get_cached_date_str_pool_;
         tcp::acceptor acceptor_;
         boost::asio::signal_set signals_;
@@ -233,6 +220,7 @@ namespace crow
 
         Handler* handler_;
         uint16_t concurrency_{1};
+        std::uint8_t timeout_;
         std::string server_name_;
         uint16_t port_;
         std::string bindaddr_;

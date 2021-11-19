@@ -14,7 +14,7 @@
 #include "crow/http_response.h"
 #include "crow/logging.h"
 #include "crow/settings.h"
-#include "crow/dumb_timer_queue.h"
+#include "crow/task_timer.h"
 #include "crow/middleware_context.h"
 #include "crow/socket_adaptors.h"
 #include "crow/compression.h"
@@ -193,7 +193,7 @@ namespace crow
             const std::string& server_name,
             std::tuple<Middlewares...>* middlewares,
             std::function<std::string()>& get_cached_date_str_f,
-            detail::dumb_timer_queue& timer_queue,
+            detail::task_timer& task_timer,
             typename Adaptor::context* adaptor_ctx_
             ) 
             : adaptor_(io_service, adaptor_ctx_), 
@@ -202,7 +202,7 @@ namespace crow
             server_name_(server_name),
             middlewares_(middlewares),
             get_cached_date_str(get_cached_date_str_f),
-            timer_queue(timer_queue),
+            task_timer_(task_timer),
             res_stream_threshold_(handler->stream_threshold())
         {
 #ifdef CROW_ENABLE_DEBUG
@@ -653,15 +653,15 @@ namespace crow
 
         void cancel_deadline_timer()
         {
-            CROW_LOG_DEBUG << this << " timer cancelled: " << timer_cancel_key_.first << ' ' << timer_cancel_key_.second;
-            timer_queue.cancel(timer_cancel_key_);
+            CROW_LOG_DEBUG << this << " timer cancelled: " << &task_timer_ << ' ' << task_id_;
+            task_timer_.cancel(task_id_);
         }
 
         void start_deadline(/*int timeout = 5*/)
         {
             cancel_deadline_timer();
-            
-            timer_cancel_key_ = timer_queue.add([this]
+
+            task_id_ = task_timer_.set_timeout([this]
             {
                 if (!adaptor_.is_open())
                 {
@@ -670,7 +670,7 @@ namespace crow
                 adaptor_.shutdown_readwrite();
                 adaptor_.close();
             });
-            CROW_LOG_DEBUG << this << " timer added: " << timer_cancel_key_.first << ' ' << timer_cancel_key_.second;
+            CROW_LOG_DEBUG << this << " timer added: " << &task_timer_ << ' ' << task_id_;
         }
 
     private:
@@ -692,8 +692,7 @@ namespace crow
         std::string date_str_;
         std::string res_body_copy_;
 
-        //boost::asio::deadline_timer deadline_;
-        detail::dumb_timer_queue::key timer_cancel_key_;
+        detail::task_timer::identifier_type task_id_;
 
         bool is_reading{};
         bool is_writing{};
@@ -705,7 +704,7 @@ namespace crow
         detail::context<Middlewares...> ctx_;
 
         std::function<std::string()>& get_cached_date_str;
-        detail::dumb_timer_queue& timer_queue;
+        detail::task_timer& task_timer_;
 
         size_t res_stream_threshold_;
     };
