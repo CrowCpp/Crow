@@ -2428,10 +2428,10 @@ TEST_CASE("task_timer")
   timer.set_default_timeout(7);
   CHECK(timer.get_default_timeout() == 7);
 
-  timer.set_timeout([&a]() {
+  timer.schedule([&a]() {
     a = true;
   }, 5);
-  timer.set_timeout([&b]() {
+  timer.schedule([&b]() {
     b = true;
   });
 

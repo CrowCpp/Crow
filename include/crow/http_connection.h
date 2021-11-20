@@ -661,7 +661,7 @@ namespace crow
         {
             cancel_deadline_timer();
 
-            task_id_ = task_timer_.set_timeout([this]
+            task_id_ = task_timer_.schedule([this]
             {
                 if (!adaptor_.is_open())
                 {

@@ -39,7 +39,7 @@ class task_timer
   void cancel(identifier_type id)
   {
     tasks_.erase(id);
-    CROW_LOG_DEBUG << "timer cancelled: " << this << ' ' << id;
+    CROW_LOG_DEBUG << "task_timer cancelled: " << this << ' ' << id;
   }
 
   /**
@@ -51,13 +51,13 @@ class task_timer
    * undefined behavior if used with other task_timer objects or after the task
    * has been successfully executed.
    */
-  identifier_type set_timeout(const task_type& task)
+  identifier_type schedule(const task_type& task)
   {
     tasks_.insert(
         {++highest_id_,
          {clock_type::now() + std::chrono::seconds(get_default_timeout()),
           task}});
-    CROW_LOG_DEBUG << "timer add inside: " << this << ' ' << highest_id_;
+    CROW_LOG_DEBUG << "task_timer scheduled: " << this << ' ' << highest_id_;
     return highest_id_;
   }
 
@@ -71,11 +71,11 @@ class task_timer
    * undefined behavior if used with other task_timer objects or after the task
    * has been successfully executed.
    */
-  identifier_type set_timeout(const task_type& task, std::uint8_t timeout)
+  identifier_type schedule(const task_type& task, std::uint8_t timeout)
   {
     tasks_.insert({++highest_id_,
                    {clock_type::now() + std::chrono::seconds(timeout), task}});
-    CROW_LOG_DEBUG << "timer add inside: " << this << ' ' << highest_id_;
+    CROW_LOG_DEBUG << "task_timer scheduled: " << this << ' ' << highest_id_;
     return highest_id_;
   }
 
@@ -103,7 +103,7 @@ class task_timer
       if (task.second.first < current_time) {
         (task.second.second)();
         finished_tasks.push_back(task.first);
-        CROW_LOG_DEBUG << "timer call: " << this << ' ' << task.first;
+        CROW_LOG_DEBUG << "task_timer called: " << this << ' ' << task.first;
       }
     }
 
