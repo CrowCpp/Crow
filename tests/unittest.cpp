@@ -2409,3 +2409,42 @@ TEST_CASE("timeout")
   test_timeout(3);
   test_timeout(5);
 }
+
+TEST_CASE("task_timer")
+{
+  using work_guard_type = boost::asio::executor_work_guard<boost::asio::io_service::executor_type>;
+
+  boost::asio::io_service io_service;
+  work_guard_type work_guard(io_service.get_executor());
+  thread io_thread([&io_service]() {
+    io_service.run();
+  });
+
+  bool a = false;
+  bool b = false;
+
+  crow::detail::task_timer timer(io_service);
+  CHECK(timer.get_default_timeout() == 5);
+  timer.set_default_timeout(7);
+  CHECK(timer.get_default_timeout() == 7);
+
+  timer.set_timeout([&a]() {
+    a = true;
+  }, 5);
+  timer.set_timeout([&b]() {
+    b = true;
+  });
+
+  this_thread::sleep_for(chrono::seconds(4));
+  CHECK(a == false);
+  CHECK(b == false);
+  this_thread::sleep_for(chrono::seconds(2));
+  CHECK(a == true);
+  CHECK(b == false);
+  this_thread::sleep_for(chrono::seconds(2));
+  CHECK(a == true);
+  CHECK(b == true);
+
+  io_service.stop();
+  io_thread.join();
+}
