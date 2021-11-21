@@ -278,7 +278,7 @@ namespace crow
             validate();
 
 #ifdef CROW_ENABLE_SSL
-            if (use_ssl_)
+            if (ssl_used_)
             {
                 ssl_server_ = std::move(std::unique_ptr<ssl_server_t>(new ssl_server_t(this, bindaddr_, port_, server_name_, &middlewares_, concurrency_, timeout_, &ssl_context_)));
                 ssl_server_->set_tick_function(tick_interval_, tick_function_);
@@ -304,7 +304,7 @@ namespace crow
         void stop()
         {
 #ifdef CROW_ENABLE_SSL
-            if (use_ssl_)
+            if (ssl_used_)
             {
 		if (ssl_server_) {
                     ssl_server_->stop();
@@ -331,7 +331,7 @@ namespace crow
         ///use certificate and key files for SSL
         self_t& ssl_file(const std::string& crt_filename, const std::string& key_filename)
         {
-            use_ssl_ = true;
+            ssl_used_ = true;
             ssl_context_.set_verify_mode(boost::asio::ssl::verify_peer);
             ssl_context_.set_verify_mode(boost::asio::ssl::verify_client_once);
             ssl_context_.use_certificate_file(crt_filename, ssl_context_t::pem);
@@ -347,7 +347,7 @@ namespace crow
         ///use .pem file for SSL
         self_t& ssl_file(const std::string& pem_filename)
         {
-            use_ssl_ = true;
+            ssl_used_ = true;
             ssl_context_.set_verify_mode(boost::asio::ssl::verify_peer);
             ssl_context_.set_verify_mode(boost::asio::ssl::verify_client_once);
             ssl_context_.load_verify_file(pem_filename);
@@ -361,15 +361,15 @@ namespace crow
 
         self_t& ssl(boost::asio::ssl::context&& ctx)
         {
-            use_ssl_ = true;
+            ssl_used_ = true;
             ssl_context_ = std::move(ctx);
             return *this;
         }
 
-
-        bool use_ssl_{false};
-        ssl_context_t ssl_context_{boost::asio::ssl::context::sslv23};
-
+        bool ssl_used() const
+        {
+            return ssl_used_;
+        }
 #else
         template <typename T, typename ... Remain>
         self_t& ssl_file(T&&, Remain&&...)
@@ -391,6 +391,11 @@ namespace crow
                     std::is_base_of<T, void>::value,
                     "Define CROW_ENABLE_SSL to enable ssl support.");
             return *this;
+        }
+
+        bool ssl_used() const
+        {
+            return false;
         }
 #endif
 
@@ -441,7 +446,10 @@ namespace crow
 
 #ifdef CROW_ENABLE_SSL
         std::unique_ptr<ssl_server_t> ssl_server_;
+        bool ssl_used_{false};
+        ssl_context_t ssl_context_{boost::asio::ssl::context::sslv23};
 #endif
+
         std::unique_ptr<server_t> server_;
 
         std::vector<int> signals_{SIGINT, SIGTERM};
