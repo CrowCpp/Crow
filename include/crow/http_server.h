@@ -231,10 +231,6 @@ namespace crow
 
         std::tuple<Middlewares...>* middlewares_;
 
-#ifdef CROW_ENABLE_SSL
-        bool use_ssl_{false};
-        boost::asio::ssl::context ssl_context_{boost::asio::ssl::context::sslv23};
-#endif
         typename Adaptor::context* adaptor_ctx_;
     };
 }
