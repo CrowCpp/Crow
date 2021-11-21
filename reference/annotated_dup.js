@@ -62,14 +62,14 @@ var annotated_dup =
           [ "get", "structcrow_1_1detail_1_1check__before__handle__arity__3__const_1_1get.html", null ]
         ] ],
         [ "context", "structcrow_1_1detail_1_1context.html", "structcrow_1_1detail_1_1context" ],
-        [ "dumb_timer_queue", "classcrow_1_1detail_1_1dumb__timer__queue.html", "classcrow_1_1detail_1_1dumb__timer__queue" ],
         [ "get_index_of_element_from_tuple_by_type_impl", "structcrow_1_1detail_1_1get__index__of__element__from__tuple__by__type__impl.html", null ],
         [ "get_index_of_element_from_tuple_by_type_impl< T, N, T, Args... >", "structcrow_1_1detail_1_1get__index__of__element__from__tuple__by__type__impl_3_01_t_00_01_n_00_01_t_00_01_args_8_8_8_01_4.html", null ],
         [ "get_index_of_element_from_tuple_by_type_impl< T, N, U, Args... >", "structcrow_1_1detail_1_1get__index__of__element__from__tuple__by__type__impl_3_01_t_00_01_n_00_01_u_00_01_args_8_8_8_01_4.html", null ],
         [ "is_after_handle_arity_3_impl", "structcrow_1_1detail_1_1is__after__handle__arity__3__impl.html", null ],
         [ "is_before_handle_arity_3_impl", "structcrow_1_1detail_1_1is__before__handle__arity__3__impl.html", null ],
         [ "partial_context", "structcrow_1_1detail_1_1partial__context.html", "structcrow_1_1detail_1_1partial__context" ],
-        [ "partial_context<>", "structcrow_1_1detail_1_1partial__context_3_4.html", "structcrow_1_1detail_1_1partial__context_3_4" ]
+        [ "partial_context<>", "structcrow_1_1detail_1_1partial__context_3_4.html", "structcrow_1_1detail_1_1partial__context_3_4" ],
+        [ "task_timer", "classcrow_1_1detail_1_1task__timer.html", "classcrow_1_1detail_1_1task__timer" ]
       ] ],
       [ "json", null, [
         [ "detail", null, [

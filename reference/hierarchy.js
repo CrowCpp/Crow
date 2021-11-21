@@ -46,7 +46,6 @@ var hierarchy =
     [ "crow::UTF8::context", "structcrow_1_1_u_t_f8_1_1context.html", null ],
     [ "crow::CookieParser", "structcrow_1_1_cookie_parser.html", null ],
     [ "crow::Crow< Middlewares >", "classcrow_1_1_crow.html", null ],
-    [ "crow::detail::dumb_timer_queue", "classcrow_1_1detail_1_1dumb__timer__queue.html", null ],
     [ "crow::black_magic::empty_context< T >", "structcrow_1_1black__magic_1_1empty__context.html", null ],
     [ "equality_comparable", null, [
       [ "crow::json::detail::r_string", "structcrow_1_1json_1_1detail_1_1r__string.html", null ],
@@ -139,6 +138,7 @@ var hierarchy =
     [ "crow::black_magic::single_tag_to_type< 5 >", "structcrow_1_1black__magic_1_1single__tag__to__type_3_015_01_4.html", null ],
     [ "crow::SocketAdaptor", "structcrow_1_1_socket_adaptor.html", null ],
     [ "crow::response::static_file_info", "structcrow_1_1response_1_1static__file__info.html", null ],
+    [ "crow::detail::task_timer", "classcrow_1_1detail_1_1task__timer.html", null ],
     [ "template rebind< partial_context >", null, [
       [ "crow::detail::partial_context< Middlewares >", "structcrow_1_1detail_1_1partial__context.html", null ],
       [ "crow::detail::partial_context< Middlewares... >", "structcrow_1_1detail_1_1partial__context.html", null ]

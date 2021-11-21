@@ -1,5 +1,7 @@
 var NAVTREEINDEX2 =
 {
+"structcrow_1_1detail_1_1routing__handler__call__helper_1_1_wrapped.html#ae037f7cd31dcec958eaf9918dfdaf55d":[0,0,0,1,0,8,4],
+"structcrow_1_1detail_1_1routing__handler__call__helper_1_1_wrapped_1_1handler__type__helper.html":[0,0,0,1,0,8,0],
 "structcrow_1_1detail_1_1routing__handler__call__helper_1_1_wrapped_1_1handler__type__helper.html#a4c2a9a1065506309bd9b8a37d6518e3e":[0,0,0,1,0,8,0,1],
 "structcrow_1_1detail_1_1routing__handler__call__helper_1_1_wrapped_1_1handler__type__helper.html#a9914a4b757ed58f4a938a45b26774055":[0,0,0,1,0,8,0,0],
 "structcrow_1_1detail_1_1routing__handler__call__helper_1_1_wrapped_1_1handler__type__helper_3_012f01fc0d25e96ed100e3017a66fd4b36.html":[0,0,0,1,0,8,1],
@@ -164,6 +166,7 @@ var NAVTREEINDEX2 =
 "structcrow_1_1websocket_1_1connection.html#a6328a5e17af38a367e4f1c9e904900bc":[0,0,0,6,0,6],
 "structcrow_1_1websocket_1_1connection.html#a70a89c27bd30213cab17bd34645535c1":[0,0,0,6,0,4],
 "structcrow_1_1websocket_1_1connection.html#a75b25cfa1f5f8fd3bbae01b5637097f6":[0,0,0,6,0,8],
+"task__timer_8h_source.html":[1,0,0,0,21],
 "utf-8_8h_source.html":[1,0,0,0,0,1],
 "utility_8h_source.html":[1,0,0,0,22],
 "version_8h_source.html":[1,0,0,0,23],
