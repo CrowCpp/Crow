@@ -998,10 +998,10 @@
                 
                 <p>This page shows how you can get started with a simple hello world application.</p>
 <h2 id="1-include">1. Include</h2>
-<p>Starting with an empty <code>main.cpp</code> file, first add <code class="highlight"><span class="cp">#define CROW_MAIN</span></code> then <code class="highlight"><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;crow.h&quot;</span><span class="cp"></span></code> or <code class="highlight"><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;crow_all.h&quot;</span><span class="cp"></span></code> if you're using the single header file.</p>
+<p>Starting with an empty <code>main.cpp</code> file, first add <code class="highlight"><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;crow.h&quot;</span><span class="cp"></span></code> or <code class="highlight"><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;crow_all.h&quot;</span><span class="cp"></span></code> if you're using the single header file.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>If you're using multiple C++ source files make sure to have <code>CROW_MAIN</code> defined only in your main source file.</p>
+<p>If you are using version v0.3, then you have to put <code class="highlight"><span class="cp">#define CROW_MAIN</span></code> at the top of one and only one source file.</p>
 </div>
 <h2 id="2-app-declaration">2. App declaration</h2>
 <p>Next Create a <code>main()</code> and declare a <code class="highlight"><span class="n">crow</span><span class="o">::</span><span class="n">SimpleApp</span><span class="w"></span></code> inside, your code should look like this
@@ -1040,9 +1040,7 @@ Please note that the <code>port()</code> and <code>multithreaded()</code> method
 <span class="normal">12</span>
 <span class="normal">13</span>
 <span class="normal">14</span>
-<span class="normal">15</span>
-<span class="normal">16</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="cp">#define CROW_MAIN </span><span class="c1">//let the compiler know this is your main cpp file</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;crow.h&quot;</span><span class="cp"></span>
+<span class="normal">15</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;crow.h&quot;</span><span class="cp"></span>
 <span class="c1">//#include &quot;crow_all.h&quot;</span>
 
 <span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span><span class="w"></span>
