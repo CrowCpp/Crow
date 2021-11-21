@@ -18,7 +18,7 @@
 #include "crow/middleware_context.h"
 #include "crow/http_request.h"
 #include "crow/http_server.h"
-#include "crow/dumb_timer_queue.h"
+#include "crow/task_timer.h"
 #ifdef CROW_ENABLE_COMPRESSION
 #include "crow/compression.h"
 #endif
@@ -35,10 +35,6 @@
 
 namespace crow
 {
-#ifdef CROW_MAIN
-    int detail::dumb_timer_queue::tick = 5;
-#endif
-
 #ifdef CROW_ENABLE_SSL
     using ssl_context_t = boost::asio::ssl::context;
 #endif
@@ -131,7 +127,7 @@ namespace crow
         ///Set the connection timeout in seconds (default is 5)
         self_t& timeout(std::uint8_t timeout)
         {
-            detail::dumb_timer_queue::tick = timeout;
+            timeout_ = timeout;
             return *this;
         }
 
@@ -284,7 +280,7 @@ namespace crow
 #ifdef CROW_ENABLE_SSL
             if (use_ssl_)
             {
-                ssl_server_ = std::move(std::unique_ptr<ssl_server_t>(new ssl_server_t(this, bindaddr_, port_, server_name_, &middlewares_, concurrency_, &ssl_context_)));
+                ssl_server_ = std::move(std::unique_ptr<ssl_server_t>(new ssl_server_t(this, bindaddr_, port_, server_name_, &middlewares_, concurrency_, timeout_, &ssl_context_)));
                 ssl_server_->set_tick_function(tick_interval_, tick_function_);
                 notify_server_start();
                 ssl_server_->run();
@@ -292,7 +288,7 @@ namespace crow
             else
 #endif
             {
-                server_ = std::move(std::unique_ptr<server_t>(new server_t(this, bindaddr_, port_, server_name_, &middlewares_, concurrency_, nullptr)));
+                server_ = std::move(std::unique_ptr<server_t>(new server_t(this, bindaddr_, port_, server_name_, &middlewares_, concurrency_, timeout_, nullptr)));
                 server_->set_tick_function(tick_interval_, tick_function_);
                 server_->signal_clear();
                 for (auto snum : signals_)
@@ -424,6 +420,7 @@ namespace crow
         }
 
     private:
+        std::uint8_t timeout_{5};
         uint16_t port_ = 80;
         uint16_t concurrency_ = 1;
         bool validated_ = false;
