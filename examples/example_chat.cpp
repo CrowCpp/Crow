@@ -1,4 +1,3 @@
-#define CROW_MAIN
 #include "crow.h"
 #include <string>
 #include <vector>

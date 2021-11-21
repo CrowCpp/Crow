@@ -78,15 +78,15 @@ namespace crow
         {
             *this = std::move(r);
         }
-        
+
         response(std::string contentType, std::string body) : body(std::move(body))
         {
-            set_header("Content-Type",mime_types[contentType]);
+            set_header("Content-Type", mime_types.at(contentType));
         }
 
         response(int code, std::string contentType, std::string body): code(code),body(std::move(body))
         {
-            set_header("Content-Type",mime_types[contentType]);
+            set_header("Content-Type", mime_types.at(contentType));
         }
 
         response& operator = (const response& r) = delete;
@@ -221,7 +221,7 @@ namespace crow
                 this->add_header("Content-length", std::to_string(file_info.statbuf.st_size));
 
                 if (extension != ""){
-                    mimeType = mime_types[extension];
+                    mimeType = mime_types.at(extension);
                     if (mimeType != "")
                         this-> add_header("Content-Type", mimeType);
                     else

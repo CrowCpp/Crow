@@ -1,4 +1,3 @@
-#define CROW_MAIN
 #include "crow.h"
 
 int main()
@@ -14,7 +13,7 @@ int main()
 
     // Use .pem file
     //app.port(18080).ssl_file("test.pem").run();
-    
+
     // Use custom context; see boost::asio::ssl::context
     /*
      * crow::ssl_context_t ctx;
