@@ -20,9 +20,7 @@ def main():
         "#include <string>",
         "",
         "namespace crow {",
-        "",
-        "#ifdef CROW_MAIN"
-        tabspace + "std::unordered_map<std::string, std::string> mime_types {"])
+        tabspace + "const std::unordered_map<std::string, std::string> mime_types {"])
 
     with open(file_path, "r") as mtfile:
         incomplete = ""
@@ -44,9 +42,6 @@ def main():
     outLines[-1] = outLines[-1][:-1]
     outLines.extend([
 		tabspace + "};",
-		"#else",
-		"extern std::unordered_map<std::string, std::string> mime_types;",
-		"#endif",
 		"}"
 		])
 

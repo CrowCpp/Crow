@@ -19,11 +19,8 @@
 namespace crow
 {
 
-#ifdef CROW_MAIN
-    uint16_t INVALID_BP_ID{0xFFFF};
-#else
-    extern uint16_t INVALID_BP_ID;
-#endif
+    constexpr const uint16_t INVALID_BP_ID{0xFFFF};
+
     /// A base class for all rules.
 
     /// Used to provide a common interface for code dealing with different types of rules.
