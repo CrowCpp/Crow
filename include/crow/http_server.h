@@ -33,12 +33,12 @@ namespace crow
             tick_timer_(io_service_),
             handler_(handler),
             concurrency_(concurrency == 0 ? 1 : concurrency),
+            timeout_(timeout),
             server_name_(server_name),
             port_(port),
             bindaddr_(bindaddr),
             middlewares_(middlewares),
-            adaptor_ctx_(adaptor_ctx),
-            timeout_(timeout)
+            adaptor_ctx_(adaptor_ctx)
         {
         }
 
