@@ -78,7 +78,7 @@ namespace crow
         {
             *this = std::move(r);
         }
-        
+
         response(std::string contentType, std::string body) : body(std::move(body))
         {
             set_header("Content-Type", mime_types.at(contentType));

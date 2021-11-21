@@ -36,7 +36,6 @@ Available [here](https://crowcpp.org).
 
 #### Hello World
 ```cpp
-#define CROW_MAIN
 #include "crow.h"
 
 int main()

@@ -1,4 +1,3 @@
-#define CROW_MAIN
 #define CROW_JSON_USE_MAP
 #include "crow.h"
 

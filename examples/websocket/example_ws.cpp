@@ -1,4 +1,3 @@
-#define CROW_MAIN
 #include "crow.h"
 #include <unordered_set>
 #include <mutex>
@@ -38,7 +37,7 @@ int main()
         gethostname(name, 256);
         crow::mustache::context x;
         x["servername"] = name;
-	
+
         auto page = crow::mustache::load("ws.html");
         return page.render(x);
      });
