@@ -10,11 +10,10 @@
 
 namespace crow {
 namespace detail {
-/**
- * @brief A class for scheduling functions to be called after a specific amount
- * of ticks. A tick is equal to 1 second.
- *
- */
+///
+/// A class for scheduling functions to be called after a specific amount
+/// of ticks. A tick is equal to 1 second.
+///
 class task_timer
 {
  public:
@@ -42,15 +41,15 @@ class task_timer
     CROW_LOG_DEBUG << "task_timer cancelled: " << this << ' ' << id;
   }
 
-  /**
-   * @brief Schedule the given task to be executed after the default amount of
-   * ticks.
-   *
-   * @return identifier_type Used to cancel the thread.
-   * It is not bound to this task_timer instance and in some cases could lead to
-   * undefined behavior if used with other task_timer objects or after the task
-   * has been successfully executed.
-   */
+  ///
+  /// Schedule the given task to be executed after the default amount of
+  /// ticks.
+  ///
+  /// \return identifier_type Used to cancel the thread.
+  /// It is not bound to this task_timer instance and in some cases could lead to
+  /// undefined behavior if used with other task_timer objects or after the task
+  /// has been successfully executed.
+  ///
   identifier_type schedule(const task_type& task)
   {
     tasks_.insert(
@@ -61,16 +60,16 @@ class task_timer
     return highest_id_;
   }
 
-  /**
-   * @brief Schedule the given task to be executed after the given time.
-   *
-   * @param timeout The amount of ticks (seconds) to wait before execution.
-   *
-   * @return identifier_type Used to cancel the thread.
-   * It is not bound to this task_timer instance and in some cases could lead to
-   * undefined behavior if used with other task_timer objects or after the task
-   * has been successfully executed.
-   */
+  ///
+  /// Schedule the given task to be executed after the given time.
+  ///
+  /// \param timeout The amount of ticks (seconds) to wait before execution.
+  ///
+  /// \return identifier_type Used to cancel the thread.
+  /// It is not bound to this task_timer instance and in some cases could lead to
+  /// undefined behavior if used with other task_timer objects or after the task
+  /// has been successfully executed.
+  ///
   identifier_type schedule(const task_type& task, std::uint8_t timeout)
   {
     tasks_.insert({++highest_id_,
@@ -79,18 +78,16 @@ class task_timer
     return highest_id_;
   }
 
-  /**
-   * @brief Set the default timeout for this task_timer instance. (Default: 5)
-   *
-   * @param timeout The amount of ticks (seconds) to wait before execution.
-   */
+  ///
+  /// Set the default timeout for this task_timer instance. (Default: 5)
+  ///
+  /// \param timeout The amount of ticks (seconds) to wait before execution.
+  ///
   void set_default_timeout(std::uint8_t timeout) { default_timeout_ = timeout; }
 
-  /**
-   * @brief Get the default timeout. (Default: 5)
-   *
-   * @return std::uint8_t
-   */
+  ///
+  /// Get the default timeout. (Default: 5)
+  ///
   std::uint8_t get_default_timeout() const { return default_timeout_; }
 
  private:
