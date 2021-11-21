@@ -34,6 +34,10 @@ Available [here](https://crowcpp.org).
 
 ## Examples
 
+#### Disclaimer
+
+> If you are using version v0.3, then you have to put `#!cpp #define CROW_MAIN` at the top of one and only one source file.
+
 #### Hello World
 ```cpp
 #include "crow.h"

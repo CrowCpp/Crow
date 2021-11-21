@@ -3,6 +3,10 @@ This page shows how you can get started with a simple hello world application.
 ## 1. Include
 Starting with an empty `main.cpp` file, first add `#!cpp #include "crow.h"` or `#!cpp #include "crow_all.h"` if you're using the single header file.
 
+!!! note
+
+    If you are using version v0.3, then you have to put `#!cpp #define CROW_MAIN` at the top of one and only one source file.
+
 ## 2. App declaration
 Next Create a `main()` and declare a `#!cpp crow::SimpleApp` inside, your code should look like this
 ``` cpp
