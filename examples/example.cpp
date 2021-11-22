@@ -104,7 +104,7 @@ int main()
     });
 
     // Same as above, but using crow::status
-    CROW_ROUTE(app,"/hello/<int>")
+    CROW_ROUTE(app,"/hello_status/<int>")
     ([](int count){
         if (count > 100)
             return crow::response(crow::status::BAD_REQUEST);

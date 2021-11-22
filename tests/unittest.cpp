@@ -1909,6 +1909,32 @@ TEST_CASE("websocket")
     std::string checkstring4(std::string(buf).substr(0, 16));
     CHECK(checkstring4 == "\x82\x0EHello back bin");
   }
+  //----------16bit Length Text----------
+  {
+    std::fill_n (buf, 2048, 0);
+    char b16_text_message[2+2+5+1]("\x81\x7E"
+        "\x00\x05"
+        "Hello");
+
+    c.send(asio::buffer(b16_text_message, 9));
+    c.receive(asio::buffer(buf, 2048));
+    std::this_thread::sleep_for(std::chrono::milliseconds(5));
+    std::string checkstring(std::string(buf).substr(0, 12));
+    CHECK(checkstring == "\x81\x0AHello back");
+  }
+  //----------64bit Length Text----------
+  {
+    std::fill_n (buf, 2048, 0);
+    char b64text_message[2+8+5+1]("\x81\x7F"
+        "\x00\x00\x00\x00\x00\x00\x00\x05"
+        "Hello");
+
+    c.send(asio::buffer(b64text_message, 15));
+    c.receive(asio::buffer(buf, 2048));
+    std::this_thread::sleep_for(std::chrono::milliseconds(5));
+    std::string checkstring(std::string(buf).substr(0, 12));
+    CHECK(checkstring == "\x81\x0AHello back");
+  }
   //----------Close----------
   {
     std::fill_n (buf, 2048, 0);
