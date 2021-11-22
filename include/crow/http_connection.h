@@ -391,10 +391,11 @@ namespace crow
             if (!location.empty() && location.find("://", 0) == std::string::npos)
             {
                 #ifdef CROW_ENABLE_SSL
-                location.insert(0, "https://" + req_.get_header_value("Host"));
-                #else
-                location.insert(0, "http://" + req_.get_header_value("Host"));
+                if (handler_->ssl_used())
+                    location.insert(0, "https://" + req_.get_header_value("Host"));
+                else
                 #endif
+                location.insert(0, "http://" + req_.get_header_value("Host"));
                 res.set_header("location", location);
             }
 

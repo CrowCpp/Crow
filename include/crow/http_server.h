@@ -138,7 +138,8 @@ namespace crow
             port_ = acceptor_.local_endpoint().port();
             handler_->port(port_);
 
-            CROW_LOG_INFO << server_name_ << " server is running at " << bindaddr_ <<":" << acceptor_.local_endpoint().port()
+
+            CROW_LOG_INFO << server_name_ << " server is running at " << (handler_->ssl_used() ? "https://" : "http://") << bindaddr_ <<":" << acceptor_.local_endpoint().port()
                           << " using " << concurrency_ << " threads";
             CROW_LOG_INFO << "Call `app.loglevel(crow::LogLevel::Warning)` to hide Info level logs.";
 
@@ -231,10 +232,6 @@ namespace crow
 
         std::tuple<Middlewares...>* middlewares_;
 
-#ifdef CROW_ENABLE_SSL
-        bool use_ssl_{false};
-        boost::asio::ssl::context ssl_context_{boost::asio::ssl::context::sslv23};
-#endif
         typename Adaptor::context* adaptor_ctx_;
     };
 }
