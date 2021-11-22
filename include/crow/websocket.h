@@ -21,12 +21,12 @@ namespace crow
         ///A base class for websocket connection.
 		struct connection
 		{
-            virtual void send_binary(const std::string& msg) = 0;
-            virtual void send_text(const std::string& msg) = 0;
-            virtual void send_ping(const std::string& msg) = 0;
-            virtual void send_pong(const std::string& msg) = 0;
+            virtual void send_binary(const std::string& msg)    = 0;
+            virtual void send_text(const std::string& msg)      = 0;
+            virtual void send_ping(const std::string& msg)      = 0;
+            virtual void send_pong(const std::string& msg)      = 0;
             virtual void close(const std::string& msg = "quit") = 0;
-            virtual std::string get_remote_ip() = 0;
+            virtual std::string get_remote_ip()                 = 0;
             virtual ~connection(){}
 
             void userdata(void* u) { userdata_ = u; }
@@ -36,6 +36,9 @@ namespace crow
             void* userdata_;
 		};
 
+        // Modified version of the illustration in RFC6455 Section-5.2
+        //
+        //
         //  0               1               2               3               -byte
         //  0 1 2 3 4 5 6 7 0 1 2 3 4 5 6 7 0 1 2 3 4 5 6 7 0 1 2 3 4 5 6 7 -bit
         // +-+-+-+-+-------+-+-------------+-------------------------------+
@@ -54,6 +57,7 @@ namespace crow
         // + - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - +
         // |                     Payload Data continued ...                |
         // +---------------------------------------------------------------+
+        //
 
         /// A websocket connection.
 		template <typename Adaptor>
@@ -61,7 +65,6 @@ namespace crow
         {
 			public:
                 /// Constructor for a connection.
-
                 ///
                 /// Requires a request with an "Upgrade: websocket" header.<br>
                 /// Automatically handles the handshake.
@@ -116,7 +119,6 @@ namespace crow
                 }
 
                 /// Send a "Ping" message.
-
                 ///
                 /// Usually invoked to check if the other point is still online.
                 void send_ping(const std::string& msg) override
@@ -130,7 +132,6 @@ namespace crow
                 }
 
                 /// Send a "Pong" message.
-
                 ///
                 /// Usually automatically invoked as a response to a "Ping" message.
                 void send_pong(const std::string& msg) override
@@ -166,7 +167,6 @@ namespace crow
                 }
 
                 /// Send a close signal.
-
                 ///
                 /// Sets a flag to destroy the object once the message is sent.
                 void close(const std::string& msg) override
@@ -218,7 +218,6 @@ namespace crow
                 }
 
                 /// Send the HTTP upgrade response.
-
                 ///
                 /// Finishes the handshake process, then starts reading messages from the socket.
                 void start(std::string&& hello)
@@ -239,7 +238,6 @@ namespace crow
                 }
 
                 /// Read a websocket message.
-
                 ///
                 /// Involves:<br>
                 /// Handling headers (opcodes, size).<br>
@@ -276,6 +274,18 @@ namespace crow
                                         {
                                             if ((mini_header_ & 0x80) == 0x80)
                                                 has_mask_ = true;
+                                            else //if the websocket specification is enforced and the message isn't masked, terminate the connection
+                                            {
+#ifndef CROW_ENFORCE_WS_SPEC
+                                                has_mask_ = false;
+#else
+                                                close_connection_ = true;
+                                                adaptor_.close();
+                                                if (error_handler_)
+                                                    error_handler_(*this);
+                                                check_destroy();
+#endif
+                                            }
 
                                             if ((mini_header_ & 0x7f) == 127)
                                             {
@@ -461,7 +471,6 @@ namespace crow
                 }
 
                 /// Process the payload fragment.
-
                 ///
                 /// Unmasks the fragment, checks the opcode, merges fragments into 1 message body, and calls the appropriate handler.
                 void handle_fragment()
@@ -547,7 +556,6 @@ namespace crow
                 }
 
                 /// Send the buffers' data through the socket.
-
                 ///
                 /// Also destroyes the object if the Close flag is set.
                 void do_write()
