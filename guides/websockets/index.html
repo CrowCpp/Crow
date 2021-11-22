@@ -879,6 +879,10 @@
 <p>To create a websocket in Crow, you need a websocket route.<br>
 A websocket route differs from a normal route quite a bit. While it uses the same <code>CROW_ROUTE(app, "/url")</code> macro, that's about where the similarities end.<br>
 A websocket route follows the macro with <code>.websocket()</code> which is then followed by a series of methods (with handlers inside) for each event. These are (sorted by order of execution):</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>By default, Crow allows Clients to send unmasked websocket messages, which is useful for debugging but goes against the protocol specification. Production Crow applications should enforce the protocol by adding <code class="highlight"><span class="cp">#define CROW_ENFORCE_WS_SPEC</span></code> to their source code.</p>
+</div>
 <ul>
 <li><code class="highlight"><span class="n">onaccept</span><span class="p">([</span><span class="o">&amp;</span><span class="p">](</span><span class="k">const</span><span class="w"> </span><span class="n">crow</span><span class="o">::</span><span class="n">request</span><span class="o">&amp;</span><span class="p">){</span><span class="n">handler</span><span class="w"> </span><span class="n">code</span><span class="w"> </span><span class="n">goes</span><span class="w"> </span><span class="n">here</span><span class="p">})</span><span class="w"></span></code> (This handler has to return bool)</li>
 <li><code class="highlight"><span class="n">onopen</span><span class="p">([</span><span class="o">&amp;</span><span class="p">](</span><span class="n">crow</span><span class="o">::</span><span class="n">websocket</span><span class="o">::</span><span class="n">connection</span><span class="o">&amp;</span><span class="w"> </span><span class="n">conn</span><span class="p">){</span><span class="n">handler</span><span class="w"> </span><span class="n">code</span><span class="w"> </span><span class="n">goes</span><span class="w"> </span><span class="n">here</span><span class="p">})</span><span class="w"></span></code></li>
