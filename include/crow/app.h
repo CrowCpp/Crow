@@ -82,6 +82,9 @@ namespace crow
 
         ///Create a route using a rule (**Use CROW_ROUTE instead**)
         template <uint64_t Tag>
+#ifdef CROW_GCC8_WORKAROUND
+        auto& route(std::string&& rule)
+#else
         auto route(std::string&& rule)
 #ifdef CROW_CAN_USE_CPP17
             -> typename std::invoke_result<decltype(&Router::new_rule_tagged<Tag>),
@@ -89,6 +92,7 @@ namespace crow
 #else
             -> typename std::result_of<decltype (&Router::new_rule_tagged<Tag>)(
                 Router, std::string&&)>::type
+#endif
 #endif
         {
             return router_.new_rule_tagged<Tag>(std::move(rule));

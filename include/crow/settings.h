@@ -57,3 +57,7 @@
 #define noexcept throw()
 #endif
 #endif
+
+#if __GNUC__ == 8 && __cplusplus > 201103L
+#define CROW_GCC8_WORKAROUND
+#endif
