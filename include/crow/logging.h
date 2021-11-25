@@ -72,7 +72,7 @@ namespace crow
                     stringstream_ << "[" << prefix << "] ";
     #elif !defined(CROW_DISABLE_LOG_TIMESTAMP) && defined(CROW_DISABLE_LOG_PREFIX)
                     stringstream_ << "(" << timestamp() << ") ";
-    #else
+    #elif !defined(CROW_DISABLE_LOG_TIMESTAMP) && !defined(CROW_DISABLE_LOG_PREFIX)
                     stringstream_ << "(" << timestamp() << ") [" << prefix << "] ";
     #endif
     #endif
