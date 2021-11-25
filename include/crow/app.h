@@ -82,7 +82,7 @@ namespace crow
 
         ///Create a route using a rule (**Use CROW_ROUTE instead**)
         template <uint64_t Tag>
-#ifdef CROW_GCC8_WORKAROUND
+#ifdef CROW_GCC83_WORKAROUND
         auto& route(std::string&& rule)
 #else
         auto route(std::string&& rule)
