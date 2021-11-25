@@ -4,7 +4,7 @@ AccessModifierOffset: '-4'
 AlignAfterOpenBracket: Align
 AlignConsecutiveMacros: 'false'
 AlignEscapedNewlines: Left
-AlignOperands: AlignAfterOperator
+AlignOperands: 'true' #AlignAfterOperator
 AlignTrailingComments: 'true'
 AllowShortBlocksOnASingleLine: 'true'
 AllowShortCaseLabelsOnASingleLine: 'true'
@@ -20,6 +20,7 @@ BinPackArguments: 'true'
 BinPackParameters: 'true'
 BreakBeforeBraces: Allman
 BreakBeforeTernaryOperators: 'false'
+BreakBeforeBinaryOperators: 'false'
 BreakConstructorInitializers: AfterColon
 BreakInheritanceList: AfterColon
 ColumnLimit: '0'
