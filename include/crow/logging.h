@@ -68,7 +68,13 @@ namespace crow
 
             logger(std::string prefix, LogLevel level) : level_(level) {
     #ifdef CROW_ENABLE_LOGGING
+    #if defined(CROW_DISABLE_LOG_TIMESTAMP) && !defined(CROW_DISABLE_LOG_PREFIX)
+                    stringstream_ << "[" << prefix << "] ";
+    #elif !defined(CROW_DISABLE_LOG_TIMESTAMP) && defined(CROW_DISABLE_LOG_PREFIX)
+                    stringstream_ << "(" << timestamp() << ") ";
+    #else
                     stringstream_ << "(" << timestamp() << ") [" << prefix << "] ";
+    #endif
     #endif
 
             }
