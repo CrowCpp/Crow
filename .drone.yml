@@ -39,7 +39,7 @@ steps:
   - ctest -V -j4
   - cd ..
   - coveralls --verbose --exclude-pattern .*/http_parser_merged.h --exclude-pattern .*/TinySHA1.hpp
-  - clone https://github.com/CrowCpp/crow-clang-format.git
+  - git clone https://github.com/CrowCpp/crow-clang-format.git
   - cd crow-clang-format
   - chmod +x crow-clang-format.sh get-access-token.sh make-jwt.sh
   - ./crow-clang-format.sh
