@@ -62,6 +62,6 @@
 #if __cplusplus > 201103L
 #define CROW_GCC83_WORKAROUND
 #else
-#warning "GCC 8.1 - 8.3 have a bug that prevents crow from compiling with C++11. Please update GCC to > 8.3 or use C++ > 11."
+#warning "GCC 8.1 - 8.3 has a bug that prevents crow from compiling with C++11. Please update GCC to > 8.3 or use C++ > 11."
 #endif
 #endif
