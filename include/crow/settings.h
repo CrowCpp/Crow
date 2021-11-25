@@ -5,6 +5,12 @@
 /* #ifdef - enables debug mode */
 //#define CROW_ENABLE_DEBUG
 
+/* #ifdef - disable timestamp in logs */
+//#define CROW_DISABLE_LOG_TIMESTAMP
+
+/* #ifdef - disable prefix in logs */
+//#define CROW_DISABLE_LOG_PREFIX
+
 /* #ifdef - enables logging */
 #define CROW_ENABLE_LOGGING
 
