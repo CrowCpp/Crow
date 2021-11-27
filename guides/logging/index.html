@@ -617,6 +617,13 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#creating-a-custom-logger" class="md-nav__link">
+    Creating A custom logger
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -941,6 +948,13 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#creating-a-custom-logger" class="md-nav__link">
+    Creating A custom logger
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -969,9 +983,35 @@
 <br><br></li>
 </ul>
 <p>To set a logLevel, just use <code class="highlight"><span class="n">app</span><span class="p">.</span><span class="n">loglevel</span><span class="p">(</span><span class="n">crow</span><span class="o">::</span><span class="n">LogLevel</span><span class="o">::</span><span class="n">Warning</span><span class="p">)</span><span class="w"></span></code>, This will not show any debug or info logs. It will however still show error and critical logs.<br><br></p>
-<p>Please note that setting the Macro <code>CROW_ENABLE_DEBUG</code> during compilation will also set the log level to <code>Debug</code>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Setting the Macro <code>CROW_ENABLE_DEBUG</code> during compilation will also set the log level to <code>Debug</code> (unless otherwise set using <code>loglevel()</code>).</p>
+</div>
 <h2 id="writing-a-log">Writing a log</h2>
 <p>Writing a log is as simple as <code class="highlight"><span class="n">CROW_LOG_</span><span class="o">&lt;</span><span class="n">LOG</span><span class="w"> </span><span class="n">LEVEL</span><span class="o">&gt;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;Hello&quot;</span><span class="p">;</span><span class="w"></span></code> (replace&lt;LOG LEVEL&gt; with the actual level in all caps, so you have <code>CROW_LOG_WARNING</code>).</p>
+<h2 id="creating-a-custom-logger">Creating A custom logger</h2>
+<p>Assuming you have an existing logger or Crow's default format just doesn't work for you. Crow allows you to use a custom logger for any log made using the <code>CROW_LOG_&lt;LOG LEVEL&gt;</code> macro.<br>
+All you need is a class extending <code class="highlight"><span class="n">crow</span><span class="o">::</span><span class="n">ILogHandler</span><span class="w"></span></code> containing the method <code class="highlight"><span class="kt">void</span><span class="w"> </span><span class="n">log</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">,</span><span class="w"> </span><span class="n">crow</span><span class="o">::</span><span class="n">LogLevel</span><span class="p">)</span><span class="w"></span></code>.<br>
+Once you have your custom logger, you need to set it via <code class="highlight"><span class="n">crow</span><span class="o">::</span><span class="n">logger</span><span class="o">::</span><span class="n">setHandler</span><span class="p">(</span><span class="o">&amp;</span><span class="n">MyLogger</span><span class="p">);</span><span class="w"></span></code>. Here's a full example:<br>
+<div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">CustomLogger</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">crow</span><span class="o">::</span><span class="n">ILogHandler</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w"> </span><span class="k">public</span><span class="o">:</span><span class="w"></span>
+<span class="w">  </span><span class="n">CustomLogger</span><span class="p">()</span><span class="w"> </span><span class="p">{}</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">log</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">message</span><span class="p">,</span><span class="w"> </span><span class="n">crow</span><span class="o">::</span><span class="n">LogLevel</span><span class="w"> </span><span class="cm">/*level*/</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="c1">// &quot;message&quot; doesn&#39;t contain the timestamp and loglevel prefix the default</span>
+<span class="w">    </span><span class="c1">// logger does and it ends with a std::endl.</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">cerr</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">message</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="p">}</span><span class="w"></span>
+<span class="p">};</span><span class="w"></span>
+
+<span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">argc</span><span class="p">,</span><span class="w"> </span><span class="kt">char</span><span class="o">**</span><span class="w"> </span><span class="n">argv</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">  </span><span class="n">CustomLogger</span><span class="w"> </span><span class="n">logger</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="n">crow</span><span class="o">::</span><span class="n">logger</span><span class="o">::</span><span class="n">setHandler</span><span class="p">(</span><span class="o">&amp;</span><span class="n">logger</span><span class="p">);</span><span class="w"></span>
+
+<span class="w">  </span><span class="n">crow</span><span class="o">::</span><span class="n">SimpleApp</span><span class="w"> </span><span class="n">app</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="n">CROW_ROUTE</span><span class="p">(</span><span class="n">app</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;/&quot;</span><span class="p">)([]()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="s">&quot;Hello&quot;</span><span class="p">;</span><span class="w"> </span><span class="p">});</span><span class="w"></span>
+<span class="w">  </span><span class="n">app</span><span class="p">.</span><span class="n">run</span><span class="p">();</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</code></pre></div></p>
                 
                   
                 

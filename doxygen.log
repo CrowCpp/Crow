@@ -34,7 +34,7 @@ warning: source ./doc is not a readable file or directory... skipping.
 /drone/src/include/crow/middleware_context.h:17: warning: Compound crow::detail::partial_context is not documented.
 /drone/src/include/crow/routing.h:181: warning: Compound crow::detail::routing_handler_call_helper::Wrapped is not documented.
 /drone/src/include/crow/mustache.h:18: warning: Compound crow::mustache::invalid_template_exception is not documented.
-/drone/src/include/crow/logging.h:45: warning: Compound crow::logger is not documented.
+/drone/src/include/crow/logging.h:86: warning: Compound crow::logger is not documented.
 /drone/src/include/crow/routing.h:157: warning: Compound crow::detail::routing_handler_call_helper::call< F, NInt, NUint, NDouble, NString, black_magic::S< std::string, Args1... >, black_magic::S< Args2... > > is not documented.
 /drone/src/include/crow/utility.h:358: warning: Compound crow::black_magic::pop_back_helper< seq< N... >, Tuple > is not documented.
 /drone/src/include/crow/routing.h:110: warning: Compound crow::detail::routing_handler_call_helper::call_params is not documented.
@@ -47,9 +47,9 @@ warning: source ./doc is not a readable file or directory... skipping.
 /drone/src/include/crow/http_connection.h:87: warning: Compound crow::detail::is_after_handle_arity_3_impl is not documented.
 /drone/src/include/crow/common.h:128: warning: Compound crow::routing_params is not documented.
 /drone/src/include/crow/http_connection.h:71: warning: Compound crow::detail::is_before_handle_arity_3_impl is not documented.
-/drone/src/include/crow/logging.h:33: warning: Compound crow::ILogHandler is not documented.
+/drone/src/include/crow/logging.h:34: warning: Compound crow::ILogHandler is not documented.
 /drone/src/include/crow/middlewares/cookie_parser.h:34: warning: Compound crow::CookieParser::context is not documented.
-/drone/src/include/crow/logging.h:38: warning: Compound crow::CerrLogHandler is not documented.
+/drone/src/include/crow/logging.h:40: warning: Compound crow::CerrLogHandler is not documented.
 /drone/src/include/crow/middlewares/cookie_parser.h:32: warning: Compound crow::CookieParser is not documented.
 /drone/src/include/crow/routing.h:103: warning: Compound crow::detail::routing_handler_call_helper::call_pair is not documented.
 /drone/src/include/crow/routing.h:135: warning: Compound crow::detail::routing_handler_call_helper::call< F, NInt, NUint, NDouble, NString, black_magic::S< uint64_t, Args1... >, black_magic::S< Args2... > > is not documented.
@@ -175,7 +175,7 @@ Searc/drone/src/include/crow/json.h:1391: warning: unable to resolve reference t
 /drone/src/include/crow/routing.h:336: warning: Member operator()(Func &&f) (function) of class crow::CatchallRule is not documented.
 /drone/src/include/crow/routing.h:357: warning: Member operator()(Func &&f) (function) of class crow::CatchallRule is not documented.
 /drone/src/include/crow/routing.h:365: warning: Member has_handler() (function) of class crow::CatchallRule is not documented.
-/drone/src/include/crow/logging.h:40: warning: Member log(std::string message, LogLevel) override (function) of class crow::CerrLogHandler is not documented.
+/drone/src/include/crow/logging.h:42: warning: Member log(std::string message, LogLevel level) override (function) of class crow::CerrLogHandler is not documented.
 /drone/src/include/crow/ci_map.h:12: warning: Member operator()(const std::string &key) const (function) of class crow::ci_hash is not documented.
 /drone/src/include/crow/ci_map.h:29: warning: Member operator()(const std::string &l, const std::string &r) const (function) of class crow::ci_key_eq is not documented.
 /drone/src/include/crow/http_connection.h:190: warning: Member Connection(boost::asio::io_service &io_service, Handler *handler, const std::string &server_name, std::tuple< Middlewares... > *middlewares, std::function< std::string()> &get_cached_date_str_f, detail::task_timer &task_timer, typename Adaptor::context *adaptor_ctx_) (function) of class crow::Connection is not documented.
@@ -243,12 +243,12 @@ Searc/drone/src/include/crow/json.h:1391: warning: unable to resolve reference t
 /drone/src/include/crow/parser.h:170: warning: Member header_value (variable) of class crow::HTTPParser is not documented.
 /drone/src/include/crow/parser.h:171: warning: Member headers (variable) of class crow::HTTPParser is not documented.
 /drone/src/include/crow/parser.h:173: warning: Member body (variable) of class crow::HTTPParser is not documented.
-/drone/src/include/crow/logging.h:35: warning: Member log(std::string message, LogLevel level)=0 (function) of class crow::ILogHandler is not documented.
-/drone/src/include/crow/logging.h:69: warning: Member logger(std::string prefix, LogLevel level) (function) of class crow::logger is not documented.
-/drone/src/include/crow/logging.h:86: warning: Member operator<<(T const &value) (function) of class crow::logger is not documented.
-/drone/src/include/crow/logging.h:97: warning: Member setLogLevel(LogLevel level) (function) of class crow::logger is not documented.
-/drone/src/include/crow/logging.h:101: warning: Member setHandler(ILogHandler *handler) (function) of class crow::logger is not documented.
-/drone/src/include/crow/logging.h:105: warning: Member get_current_log_level() (function) of class crow::logger is not documented.
+/drone/src/include/crow/logging.h:36: warning: Member log(std::string message, LogLevel level)=0 (function) of class crow::ILogHandler is not documented.
+/drone/src/include/crow/logging.h:88: warning: Member logger(LogLevel level) (function) of class crow::logger is not documented.
+/drone/src/include/crow/logging.h:105: warning: Member operator<<(T const &value) (function) of class crow::logger is not documented.
+/drone/src/include/crow/logging.h:117: warning: Member setLogLevel(LogLevel level) (function) of class crow::logger is not documented.
+/drone/src/include/crow/logging.h:119: warning: Member setHandler(ILogHandler *handler) (function) of class crow::logger is not documented.
+/drone/src/include/crow/logging.h:121: warning: Member get_current_log_level() (function) of class crow::logger is not documented.
 /drone/src/include/crow/query_string.h:301: warning: Member query_string(const query_string &qs) (function) of class crow::query_string is not documented.
 /drone/src/include/crow/query_string.h:310: warning: Member operator=(const query_string &qs) (function) of class crow::query_string is not documented.
 /drone/src/include/crow/query_string.h:321: warning: Member operator=(query_string &&qs) (function) of class crow::query_string is not documented.
@@ -797,5 +797,5 @@ Generating example index...
 finalizing index lists...
 writing tag file...
 Running plantuml with JAVA...
-lookup cache used 2666/65536 hits=23299 misses=2995
+lookup cache used 2670/65536 hits=23312 misses=2999
 finished...
