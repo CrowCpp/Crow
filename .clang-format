@@ -33,7 +33,7 @@ BraceWrapping:
   BeforeCatch: 'true'
   BeforeElse: 'true'
 #  BeforeLambdaBody: 'false'
-  BeforeWhile: 'false'
+#  BeforeWhile: 'false'
   IndentBraces: 'false'
   SplitEmptyFunction: 'false'
   SplitEmptyRecord: 'false'
