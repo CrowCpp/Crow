@@ -39,6 +39,8 @@ namespace crow
         // should not add an item below this line: used for array count
     };
 
+    // clang-format off
+
     enum status
     {
         CONTINUE                      = 100,
@@ -87,31 +89,22 @@ namespace crow
     {
         switch(method)
         {
-            case HTTPMethod::Delete:
-                return "DELETE";
-            case HTTPMethod::Get:
-                return "GET";
-            case HTTPMethod::Head:
-                return "HEAD";
-            case HTTPMethod::Post:
-                return "POST";
-            case HTTPMethod::Put:
-                return "PUT";
-            case HTTPMethod::Connect:
-                return "CONNECT";
-            case HTTPMethod::Options:
-                return "OPTIONS";
-            case HTTPMethod::Trace:
-                return "TRACE";
-            case HTTPMethod::Patch:
-                return "PATCH";
-            case HTTPMethod::Purge:
-                return "PURGE";
-            default:
-                return "invalid";
+            case HTTPMethod::Delete: return "DELETE";
+            case HTTPMethod::Get: return "GET";
+            case HTTPMethod::Head: return "HEAD";
+            case HTTPMethod::Post: return "POST";
+            case HTTPMethod::Put: return "PUT";
+            case HTTPMethod::Connect: return "CONNECT";
+            case HTTPMethod::Options: return "OPTIONS";
+            case HTTPMethod::Trace: return "TRACE";
+            case HTTPMethod::Patch: return "PATCH";
+            case HTTPMethod::Purge: return "PURGE";
+            default: return "invalid";
         }
         return "invalid";
     }
+
+    // clang-format on
 
     enum class ParamType : char
     {
@@ -134,23 +127,22 @@ namespace crow
         void debug_print() const
         {
             std::cerr << "routing_params" << std::endl;
-            for(auto i:int_params)
-                std::cerr<<i <<", " ;
-            std::cerr<<std::endl;
-            for(auto i:uint_params)
-                std::cerr<<i <<", " ;
-            std::cerr<<std::endl;
-            for(auto i:double_params)
-                std::cerr<<i <<", " ;
-            std::cerr<<std::endl;
-            for(auto& i:string_params)
-                std::cerr<<i <<", " ;
-            std::cerr<<std::endl;
+            for (auto i : int_params)
+                std::cerr << i << ", ";
+            std::cerr << std::endl;
+            for (auto i : uint_params)
+                std::cerr << i << ", ";
+            std::cerr << std::endl;
+            for (auto i : double_params)
+                std::cerr << i << ", ";
+            std::cerr << std::endl;
+            for (auto& i : string_params)
+                std::cerr << i << ", ";
+            std::cerr << std::endl;
         }
 
-        template <typename T>
+        template<typename T>
         T get(unsigned) const;
-
     };
 
     template<>
@@ -176,22 +168,21 @@ namespace crow
     {
         return string_params[index];
     }
-}
+} // namespace crow
 
 #ifndef CROW_MSVC_WORKAROUND
-constexpr crow::HTTPMethod operator "" _method(const char* str, size_t /*len*/)
+constexpr crow::HTTPMethod operator"" _method(const char* str, size_t /*len*/)
 {
-    return
-        crow::black_magic::is_equ_p(str, "GET", 3) ? crow::HTTPMethod::Get :
-        crow::black_magic::is_equ_p(str, "DELETE", 6) ? crow::HTTPMethod::Delete :
-        crow::black_magic::is_equ_p(str, "HEAD", 4) ? crow::HTTPMethod::Head :
-        crow::black_magic::is_equ_p(str, "POST", 4) ? crow::HTTPMethod::Post :
-        crow::black_magic::is_equ_p(str, "PUT", 3) ? crow::HTTPMethod::Put :
-        crow::black_magic::is_equ_p(str, "OPTIONS", 7) ? crow::HTTPMethod::Options :
-        crow::black_magic::is_equ_p(str, "CONNECT", 7) ? crow::HTTPMethod::Connect :
-        crow::black_magic::is_equ_p(str, "TRACE", 5) ? crow::HTTPMethod::Trace :
-        crow::black_magic::is_equ_p(str, "PATCH", 5) ? crow::HTTPMethod::Patch :
-        crow::black_magic::is_equ_p(str, "PURGE", 5) ? crow::HTTPMethod::Purge :
-        throw std::runtime_error("invalid http method");
+    return crow::black_magic::is_equ_p(str, "GET", 3)     ? crow::HTTPMethod::Get :
+           crow::black_magic::is_equ_p(str, "DELETE", 6)  ? crow::HTTPMethod::Delete :
+           crow::black_magic::is_equ_p(str, "HEAD", 4)    ? crow::HTTPMethod::Head :
+           crow::black_magic::is_equ_p(str, "POST", 4)    ? crow::HTTPMethod::Post :
+           crow::black_magic::is_equ_p(str, "PUT", 3)     ? crow::HTTPMethod::Put :
+           crow::black_magic::is_equ_p(str, "OPTIONS", 7) ? crow::HTTPMethod::Options :
+           crow::black_magic::is_equ_p(str, "CONNECT", 7) ? crow::HTTPMethod::Connect :
+           crow::black_magic::is_equ_p(str, "TRACE", 5)   ? crow::HTTPMethod::Trace :
+           crow::black_magic::is_equ_p(str, "PATCH", 5)   ? crow::HTTPMethod::Patch :
+           crow::black_magic::is_equ_p(str, "PURGE", 5)   ? crow::HTTPMethod::Purge :
+                                                            throw std::runtime_error("invalid http method");
 }
 #endif

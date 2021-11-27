@@ -12,7 +12,7 @@ namespace crow
 
     // before_handle
     //      called before handling the request.
-    //      if res.end() is called, the operation is halted. 
+    //      if res.end() is called, the operation is halted.
     //      (still call after_handle of this middleware)
     //      2 signatures:
     //      void before_handle(request& req, response& res, context& ctx)
@@ -62,25 +62,26 @@ namespace crow
             }
             std::string cookies = req.get_header_value("Cookie");
             size_t pos = 0;
-            while(pos < cookies.size())
+            while (pos < cookies.size())
             {
                 size_t pos_equal = cookies.find('=', pos);
                 if (pos_equal == cookies.npos)
                     break;
-                std::string name = cookies.substr(pos, pos_equal-pos);
+                std::string name = cookies.substr(pos, pos_equal - pos);
                 boost::trim(name);
-                pos = pos_equal+1;
-                while(pos < cookies.size() && cookies[pos] == ' ') pos++;
+                pos = pos_equal + 1;
+                while (pos < cookies.size() && cookies[pos] == ' ')
+                    pos++;
                 if (pos == cookies.size())
                     break;
 
                 size_t pos_semicolon = cookies.find(';', pos);
-                std::string value = cookies.substr(pos, pos_semicolon-pos);
+                std::string value = cookies.substr(pos, pos_semicolon - pos);
 
                 boost::trim(value);
-                if (value[0] == '"' && value[value.size()-1] == '"')
+                if (value[0] == '"' && value[value.size() - 1] == '"')
                 {
-                    value = value.substr(1, value.size()-2);
+                    value = value.substr(1, value.size() - 2);
                 }
 
                 ctx.jar.emplace(std::move(name), std::move(value));
@@ -89,13 +90,14 @@ namespace crow
                 if (pos == cookies.npos)
                     break;
                 pos++;
-                while(pos < cookies.size() && cookies[pos] == ' ') pos++;
+                while (pos < cookies.size() && cookies[pos] == ' ')
+                    pos++;
             }
         }
 
         void after_handle(request& /*req*/, response& res, context& ctx)
         {
-            for(auto& cookie:ctx.cookies_to_add)
+            for (auto& cookie : ctx.cookies_to_add)
             {
                 if (cookie.second.empty())
                     res.add_header("Set-Cookie", cookie.first + "=\"\"");
@@ -128,4 +130,4 @@ namespace crow
 
     SimpleApp
     */
-}
+} // namespace crow
