@@ -117,7 +117,7 @@ Static Public Attributes</h2></td></tr>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename Arg , typename ... Args&gt; </div>
+template&lt;typename Arg , typename... Args&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -132,8 +132,8 @@ template&lt;typename Arg , typename ... Args&gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<b>Initial value:</b><div class="fragment"><div class="line">= </div>
-<div class="line">                compute_parameter_tag_from_args_list&lt;Args...&gt;::value</div>
+<b>Initial value:</b><div class="fragment"><div class="line">=</div>
+<div class="line">              compute_parameter_tag_from_args_list&lt;Args...&gt;::value</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -143,7 +143,7 @@ template&lt;typename Arg , typename ... Args&gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename Arg , typename ... Args&gt; </div>
+template&lt;typename Arg , typename... Args&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -158,10 +158,8 @@ template&lt;typename Arg , typename ... Args&gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<b>Initial value:</b><div class="fragment"><div class="line">= </div>
-<div class="line">                parameter_tag&lt;typename std::decay&lt;Arg&gt;::type&gt;::value</div>
-<div class="line">                ? sub_value* 6 + parameter_tag&lt;typename std::decay&lt;Arg&gt;::type&gt;::value</div>
-<div class="line">                : sub_value</div>
+<b>Initial value:</b><div class="fragment"><div class="line">=</div>
+<div class="line">              parameter_tag&lt;typename std::decay&lt;Arg&gt;::type&gt;::value ? sub_value * 6 + parameter_tag&lt;typename std::decay&lt;Arg&gt;::type&gt;::value : sub_value</div>
 </div><!-- fragment -->
 </div>
 </div>

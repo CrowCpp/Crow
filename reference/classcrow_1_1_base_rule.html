@@ -106,9 +106,6 @@ $(document).ready(function(){initNavTree('classcrow_1_1_base_rule.html',''); ini
 </div><!--header-->
 <div class="contents">
 
-<p>A base class for all rules.  
- <a href="classcrow_1_1_base_rule.html#details">More...</a></p>
-
 <p><code>#include &lt;<a class="el" href="routing_8h_source.html">routing.h</a>&gt;</code></p>
 <div class="dynheader">
 Inheritance diagram for crow::BaseRule:</div>
@@ -118,7 +115,7 @@ Inheritance diagram for crow::BaseRule:</div>
   <map id="crow::BaseRule_map" name="crow::BaseRule_map">
 <area href="classcrow_1_1_dynamic_rule.html" title="A rule that can change its parameters during runtime." alt="crow::DynamicRule" shape="rect" coords="0,56,164,80"/>
 <area href="classcrow_1_1_tagged_rule.html" title="Default rule created when CROW_ROUTE is called." alt="crow::TaggedRule&lt; Args &gt;" shape="rect" coords="174,56,338,80"/>
-<area href="classcrow_1_1_web_socket_rule.html" title="A rule dealing with websockets." alt="crow::WebSocketRule" shape="rect" coords="348,56,512,80"/>
+<area href="classcrow_1_1_web_socket_rule.html" alt="crow::WebSocketRule" shape="rect" coords="348,56,512,80"/>
   </map>
 </div></div>
 <table class="memberdecls">
@@ -159,7 +156,7 @@ std::string&#160;</td><td class="memItemRight" valign="bottom"><b>custom_templat
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-attribs"></a>
 Protected Attributes</h2></td></tr>
 <tr class="memitem:a997e9942d597fe133df84c94558c1e13"><td class="memItemLeft" align="right" valign="top"><a id="a997e9942d597fe133df84c94558c1e13"></a>
-uint32_t&#160;</td><td class="memItemRight" valign="bottom"><b>methods_</b> {1&lt;&lt;static_cast&lt;int&gt;(HTTPMethod::Get)}</td></tr>
+uint32_t&#160;</td><td class="memItemRight" valign="bottom"><b>methods_</b> {1 &lt;&lt; static_cast&lt;int&gt;(HTTPMethod::Get)}</td></tr>
 <tr class="separator:a997e9942d597fe133df84c94558c1e13"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a39f73fef34a8ff67907d96ef9c92b35a"><td class="memItemLeft" align="right" valign="top"><a id="a39f73fef34a8ff67907d96ef9c92b35a"></a>
 std::string&#160;</td><td class="memItemRight" valign="bottom"><b>rule_</b></td></tr>
@@ -185,8 +182,9 @@ template&lt;typename T &gt; </td></tr>
 <tr class="separator:ae4e239e90000a93c0a1e16dc4cbf8b41"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>A base class for all rules. </p>
-<p>Used to provide a common interface for code dealing with different types of rules. A Rule provides a URL, allowed HTTP methods, and handlers. </p>
+<div class="textblock"><p>A base class for all rules.</p>
+<p>Used to provide a common interface for code dealing with different types of rules.<br  />
+ A Rule provides a URL, allowed HTTP methods, and handlers. </p>
 </div><hr/>The documentation for this class was generated from the following file:<ul>
 <li>/drone/src/include/crow/<a class="el" href="routing_8h_source.html">routing.h</a></li>
 </ul>

@@ -109,23 +109,21 @@ $(document).ready(function(){initNavTree('utf-8_8h_source.html',''); initResizab
 <div class="line"><a name="l00008"></a><span class="lineno"><a class="line" href="structcrow_1_1_u_t_f8.html">    8</a></span>&#160;    <span class="keyword">struct </span><a class="code" href="structcrow_1_1_u_t_f8.html">UTF8</a></div>
 <div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;    {</div>
 <div class="line"><a name="l00010"></a><span class="lineno"><a class="line" href="structcrow_1_1_u_t_f8_1_1context.html">   10</a></span>&#160;        <span class="keyword">struct </span><a class="code" href="structcrow_1_1_u_t_f8_1_1context.html">context</a></div>
-<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;        {</div>
-<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;        };</div>
-<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160; </div>
-<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;        <span class="keywordtype">void</span> before_handle(<a class="code" href="structcrow_1_1request.html">request</a>&amp; <span class="comment">/*req*/</span>, <a class="code" href="structcrow_1_1response.html">response</a>&amp; <span class="comment">/*res*/</span>, <a class="code" href="structcrow_1_1_u_t_f8_1_1context.html">context</a>&amp; <span class="comment">/*ctx*/</span>)</div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;        {</div>
-<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;        }</div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160; </div>
-<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;        <span class="keywordtype">void</span> after_handle(<a class="code" href="structcrow_1_1request.html">request</a>&amp; <span class="comment">/*req*/</span>, <a class="code" href="structcrow_1_1response.html">response</a>&amp; res, context&amp; <span class="comment">/*ctx*/</span>)</div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;        {</div>
-<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;            <span class="keywordflow">if</span> (get_header_value(res.<a class="code" href="structcrow_1_1response.html#ae56cfc39f24a56748c11016842427fb3">headers</a>, <span class="stringliteral">&quot;Content-Type&quot;</span>).empty())</div>
-<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;            {</div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;                res.<a class="code" href="structcrow_1_1response.html#ab2b9a9b9795fa6330bd47b66a716cb0b">set_header</a>(<span class="stringliteral">&quot;Content-Type&quot;</span>, <span class="stringliteral">&quot;text/plain; charset=utf-8&quot;</span>);</div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;            }</div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;        }</div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;    };</div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160; </div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;}</div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;        {};</div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160; </div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;        <span class="keywordtype">void</span> before_handle(<a class="code" href="structcrow_1_1request.html">request</a>&amp; <span class="comment">/*req*/</span>, <a class="code" href="structcrow_1_1response.html">response</a>&amp; <span class="comment">/*res*/</span>, <a class="code" href="structcrow_1_1_u_t_f8_1_1context.html">context</a>&amp; <span class="comment">/*ctx*/</span>)</div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;        {}</div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160; </div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;        <span class="keywordtype">void</span> after_handle(<a class="code" href="structcrow_1_1request.html">request</a>&amp; <span class="comment">/*req*/</span>, <a class="code" href="structcrow_1_1response.html">response</a>&amp; res, context&amp; <span class="comment">/*ctx*/</span>)</div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;        {</div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;            <span class="keywordflow">if</span> (get_header_value(res.<a class="code" href="structcrow_1_1response.html#ae56cfc39f24a56748c11016842427fb3">headers</a>, <span class="stringliteral">&quot;Content-Type&quot;</span>).empty())</div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;            {</div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;                res.<a class="code" href="structcrow_1_1response.html#ab2b9a9b9795fa6330bd47b66a716cb0b">set_header</a>(<span class="stringliteral">&quot;Content-Type&quot;</span>, <span class="stringliteral">&quot;text/plain; charset=utf-8&quot;</span>);</div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;            }</div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;        }</div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;    };</div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160; </div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;} <span class="comment">// namespace crow</span></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <div class="ttc" id="astructcrow_1_1response_html_ae56cfc39f24a56748c11016842427fb3"><div class="ttname"><a href="structcrow_1_1response.html#ae56cfc39f24a56748c11016842427fb3">crow::response::headers</a></div><div class="ttdeci">ci_map headers</div><div class="ttdoc">HTTP headers.</div><div class="ttdef"><b>Definition:</b> http_response.h:30</div></div>

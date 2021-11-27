@@ -110,7 +110,7 @@ $(document).ready(function(){initNavTree('http__request_8h_source.html',''); ini
 <div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="keyword">namespace </span>crow</div>
 <div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;{<span class="comment"></span></div>
 <div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="comment">    /// Find and return the value associated with the key. (returns an empty string if nothing is found)</span></div>
-<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="comment"></span>    <span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="comment"></span>    <span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</div>
 <div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;    <span class="keyword">inline</span> <span class="keyword">const</span> std::string&amp; get_header_value(<span class="keyword">const</span> T&amp; headers, <span class="keyword">const</span> std::string&amp; key)</div>
 <div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;    {</div>
 <div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;        <span class="keywordflow">if</span> (headers.count(key))</div>
@@ -121,14 +121,14 @@ $(document).ready(function(){initNavTree('http__request_8h_source.html',''); ini
 <div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;        <span class="keywordflow">return</span> empty;</div>
 <div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;    }</div>
 <div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160; </div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;  <span class="keyword">struct </span>DetachHelper;</div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;    <span class="keyword">struct </span>DetachHelper;</div>
 <div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;<span class="comment"></span> </div>
 <div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;<span class="comment">    /// An HTTP request.</span></div>
 <div class="line"><a name="l00026"></a><span class="lineno"><a class="line" href="structcrow_1_1request.html">   26</a></span>&#160;<span class="comment"></span>    <span class="keyword">struct </span><a class="code" href="structcrow_1_1request.html">request</a></div>
 <div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;    {</div>
 <div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;        HTTPMethod method;</div>
-<div class="line"><a name="l00029"></a><span class="lineno"><a class="line" href="structcrow_1_1request.html#a72f5504a56f9ba70d7d33f86aaf9bc8a">   29</a></span>&#160;        std::string <a class="code" href="structcrow_1_1request.html#a72f5504a56f9ba70d7d33f86aaf9bc8a">raw_url</a>; <span class="comment">///&lt; The full URL containing the `?` and URL parameters.</span></div>
-<div class="line"><a name="l00030"></a><span class="lineno"><a class="line" href="structcrow_1_1request.html#aa3df34c56847d6d42887e73655276167">   30</a></span>&#160;<span class="comment"></span>        std::string <a class="code" href="structcrow_1_1request.html#aa3df34c56847d6d42887e73655276167">url</a>; <span class="comment">///&lt; The endpoint without any parameters.</span></div>
+<div class="line"><a name="l00029"></a><span class="lineno"><a class="line" href="structcrow_1_1request.html#a72f5504a56f9ba70d7d33f86aaf9bc8a">   29</a></span>&#160;        std::string <a class="code" href="structcrow_1_1request.html#a72f5504a56f9ba70d7d33f86aaf9bc8a">raw_url</a>;     <span class="comment">///&lt; The full URL containing the `?` and URL parameters.</span></div>
+<div class="line"><a name="l00030"></a><span class="lineno"><a class="line" href="structcrow_1_1request.html#aa3df34c56847d6d42887e73655276167">   30</a></span>&#160;<span class="comment"></span>        std::string <a class="code" href="structcrow_1_1request.html#aa3df34c56847d6d42887e73655276167">url</a>;         <span class="comment">///&lt; The endpoint without any parameters.</span></div>
 <div class="line"><a name="l00031"></a><span class="lineno"><a class="line" href="structcrow_1_1request.html#a745d5a94e9e9ae1fed64674aae0194b0">   31</a></span>&#160;<span class="comment"></span>        <a class="code" href="classcrow_1_1query__string.html">query_string</a> <a class="code" href="structcrow_1_1request.html#a745d5a94e9e9ae1fed64674aae0194b0">url_params</a>; <span class="comment">///&lt; The parameters associated with the request. (everything after the `?`)</span></div>
 <div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;<span class="comment"></span>        ci_map headers;</div>
 <div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;        std::string body;</div>
@@ -138,43 +138,40 @@ $(document).ready(function(){initNavTree('http__request_8h_source.html',''); ini
 <div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;        boost::asio::io_service* io_service{};</div>
 <div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;<span class="comment"></span> </div>
 <div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;<span class="comment">        /// Construct an empty request. (sets the method to `GET`)</span></div>
-<div class="line"><a name="l00040"></a><span class="lineno"><a class="line" href="structcrow_1_1request.html#a838c9a8c9a5eb2283d57e66f3630b5a6">   40</a></span>&#160;<span class="comment"></span>        <a class="code" href="structcrow_1_1request.html#a838c9a8c9a5eb2283d57e66f3630b5a6">request</a>()</div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;            : method(HTTPMethod::Get)</div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;        {</div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;        }</div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;<span class="comment">        /// Construct a request with all values assigned.</span></div>
-<div class="line"><a name="l00046"></a><span class="lineno"><a class="line" href="structcrow_1_1request.html#a59648d32ef18fa5ef59509a6def80ddc">   46</a></span>&#160;<span class="comment"></span>        <a class="code" href="structcrow_1_1request.html#a59648d32ef18fa5ef59509a6def80ddc">request</a>(HTTPMethod method, std::string <a class="code" href="structcrow_1_1request.html#a72f5504a56f9ba70d7d33f86aaf9bc8a">raw_url</a>, std::string <a class="code" href="structcrow_1_1request.html#aa3df34c56847d6d42887e73655276167">url</a>, <a class="code" href="classcrow_1_1query__string.html">query_string</a> <a class="code" href="structcrow_1_1request.html#a745d5a94e9e9ae1fed64674aae0194b0">url_params</a>, ci_map headers, std::string body)</div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;            : method(method), <a class="code" href="structcrow_1_1request.html#a72f5504a56f9ba70d7d33f86aaf9bc8a">raw_url</a>(std::move(<a class="code" href="structcrow_1_1request.html#a72f5504a56f9ba70d7d33f86aaf9bc8a">raw_url</a>)), <a class="code" href="structcrow_1_1request.html#aa3df34c56847d6d42887e73655276167">url</a>(std::move(<a class="code" href="structcrow_1_1request.html#aa3df34c56847d6d42887e73655276167">url</a>)), <a class="code" href="structcrow_1_1request.html#a745d5a94e9e9ae1fed64674aae0194b0">url_params</a>(std::move(<a class="code" href="structcrow_1_1request.html#a745d5a94e9e9ae1fed64674aae0194b0">url_params</a>)), headers(std::move(headers)), body(std::move(body))</div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;        {</div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;        }</div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160; </div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;        <span class="keywordtype">void</span> add_header(std::string key, std::string value)</div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;        {</div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;            headers.emplace(std::move(key), std::move(value));</div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;        }</div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160; </div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;        <span class="keyword">const</span> std::string&amp; get_header_value(<span class="keyword">const</span> std::string&amp; key)<span class="keyword"> const</span></div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;<span class="keyword">        </span>{</div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;            <span class="keywordflow">return</span> crow::get_header_value(headers, key);</div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;        }</div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;<span class="comment">        /// Send the request with a completion handler and return immediately.</span></div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;<span class="comment"></span>        <span class="keyword">template</span>&lt;<span class="keyword">typename</span> CompletionHandler&gt;</div>
-<div class="line"><a name="l00063"></a><span class="lineno"><a class="line" href="structcrow_1_1request.html#a33aa146a3914864ce82ef22136451601">   63</a></span>&#160;        <span class="keywordtype">void</span> <a class="code" href="structcrow_1_1request.html#a33aa146a3914864ce82ef22136451601">post</a>(CompletionHandler handler)</div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;        {</div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;            io_service-&gt;post(handler);</div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;        }</div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;<span class="comment">        /// Send the request with a completion handler.</span></div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;<span class="comment"></span>        <span class="keyword">template</span>&lt;<span class="keyword">typename</span> CompletionHandler&gt;</div>
-<div class="line"><a name="l00070"></a><span class="lineno"><a class="line" href="structcrow_1_1request.html#ac3e72e3fe415c68618dee999e3984160">   70</a></span>&#160;        <span class="keywordtype">void</span> <a class="code" href="structcrow_1_1request.html#ac3e72e3fe415c68618dee999e3984160">dispatch</a>(CompletionHandler handler)</div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;        {</div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;            io_service-&gt;dispatch(handler);</div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;        }</div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160; </div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;    };</div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;}</div>
+<div class="line"><a name="l00040"></a><span class="lineno"><a class="line" href="structcrow_1_1request.html#a838c9a8c9a5eb2283d57e66f3630b5a6">   40</a></span>&#160;<span class="comment"></span>        <a class="code" href="structcrow_1_1request.html#a838c9a8c9a5eb2283d57e66f3630b5a6">request</a>():</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;          method(HTTPMethod::Get)</div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;        {}</div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;<span class="comment">        /// Construct a request with all values assigned.</span></div>
+<div class="line"><a name="l00045"></a><span class="lineno"><a class="line" href="structcrow_1_1request.html#a59648d32ef18fa5ef59509a6def80ddc">   45</a></span>&#160;<span class="comment"></span>        <a class="code" href="structcrow_1_1request.html#a59648d32ef18fa5ef59509a6def80ddc">request</a>(HTTPMethod method, std::string <a class="code" href="structcrow_1_1request.html#a72f5504a56f9ba70d7d33f86aaf9bc8a">raw_url</a>, std::string <a class="code" href="structcrow_1_1request.html#aa3df34c56847d6d42887e73655276167">url</a>, <a class="code" href="classcrow_1_1query__string.html">query_string</a> <a class="code" href="structcrow_1_1request.html#a745d5a94e9e9ae1fed64674aae0194b0">url_params</a>, ci_map headers, std::string body):</div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;          method(method), <a class="code" href="structcrow_1_1request.html#a72f5504a56f9ba70d7d33f86aaf9bc8a">raw_url</a>(std::move(<a class="code" href="structcrow_1_1request.html#a72f5504a56f9ba70d7d33f86aaf9bc8a">raw_url</a>)), <a class="code" href="structcrow_1_1request.html#aa3df34c56847d6d42887e73655276167">url</a>(std::move(<a class="code" href="structcrow_1_1request.html#aa3df34c56847d6d42887e73655276167">url</a>)), <a class="code" href="structcrow_1_1request.html#a745d5a94e9e9ae1fed64674aae0194b0">url_params</a>(std::move(<a class="code" href="structcrow_1_1request.html#a745d5a94e9e9ae1fed64674aae0194b0">url_params</a>)), headers(std::move(headers)), body(std::move(body))</div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;        {}</div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160; </div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;        <span class="keywordtype">void</span> add_header(std::string key, std::string value)</div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;        {</div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;            headers.emplace(std::move(key), std::move(value));</div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;        }</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160; </div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;        <span class="keyword">const</span> std::string&amp; get_header_value(<span class="keyword">const</span> std::string&amp; key)<span class="keyword"> const</span></div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;<span class="keyword">        </span>{</div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;            <span class="keywordflow">return</span> crow::get_header_value(headers, key);</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;        }</div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;<span class="comment">        /// Send the request with a completion handler and return immediately.</span></div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;<span class="comment"></span>        <span class="keyword">template</span>&lt;<span class="keyword">typename</span> CompletionHandler&gt;</div>
+<div class="line"><a name="l00061"></a><span class="lineno"><a class="line" href="structcrow_1_1request.html#a33aa146a3914864ce82ef22136451601">   61</a></span>&#160;        <span class="keywordtype">void</span> <a class="code" href="structcrow_1_1request.html#a33aa146a3914864ce82ef22136451601">post</a>(CompletionHandler handler)</div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;        {</div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;            io_service-&gt;post(handler);</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;        }</div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;<span class="comment">        /// Send the request with a completion handler.</span></div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;<span class="comment"></span>        <span class="keyword">template</span>&lt;<span class="keyword">typename</span> CompletionHandler&gt;</div>
+<div class="line"><a name="l00068"></a><span class="lineno"><a class="line" href="structcrow_1_1request.html#ac3e72e3fe415c68618dee999e3984160">   68</a></span>&#160;        <span class="keywordtype">void</span> <a class="code" href="structcrow_1_1request.html#ac3e72e3fe415c68618dee999e3984160">dispatch</a>(CompletionHandler handler)</div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;        {</div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;            io_service-&gt;dispatch(handler);</div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;        }</div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;    };</div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;} <span class="comment">// namespace crow</span></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <div class="ttc" id="astructcrow_1_1request_html_a745d5a94e9e9ae1fed64674aae0194b0"><div class="ttname"><a href="structcrow_1_1request.html#a745d5a94e9e9ae1fed64674aae0194b0">crow::request::url_params</a></div><div class="ttdeci">query_string url_params</div><div class="ttdoc">The parameters associated with the request. (everything after the ?)</div><div class="ttdef"><b>Definition:</b> http_request.h:31</div></div>
@@ -184,9 +181,9 @@ $(document).ready(function(){initNavTree('http__request_8h_source.html',''); ini
 <div class="ttc" id="astructcrow_1_1request_html_aa8a04e30e2249f04614f233d25ffaad7"><div class="ttname"><a href="structcrow_1_1request.html#aa8a04e30e2249f04614f233d25ffaad7">crow::request::remote_ip_address</a></div><div class="ttdeci">std::string remote_ip_address</div><div class="ttdoc">The IP address from which the request was sent.</div><div class="ttdef"><b>Definition:</b> http_request.h:34</div></div>
 <div class="ttc" id="astructcrow_1_1request_html"><div class="ttname"><a href="structcrow_1_1request.html">crow::request</a></div><div class="ttdoc">An HTTP request.</div><div class="ttdef"><b>Definition:</b> http_request.h:26</div></div>
 <div class="ttc" id="astructcrow_1_1request_html_a72f5504a56f9ba70d7d33f86aaf9bc8a"><div class="ttname"><a href="structcrow_1_1request.html#a72f5504a56f9ba70d7d33f86aaf9bc8a">crow::request::raw_url</a></div><div class="ttdeci">std::string raw_url</div><div class="ttdoc">The full URL containing the ? and URL parameters.</div><div class="ttdef"><b>Definition:</b> http_request.h:29</div></div>
-<div class="ttc" id="astructcrow_1_1request_html_ac3e72e3fe415c68618dee999e3984160"><div class="ttname"><a href="structcrow_1_1request.html#ac3e72e3fe415c68618dee999e3984160">crow::request::dispatch</a></div><div class="ttdeci">void dispatch(CompletionHandler handler)</div><div class="ttdoc">Send the request with a completion handler.</div><div class="ttdef"><b>Definition:</b> http_request.h:70</div></div>
-<div class="ttc" id="astructcrow_1_1request_html_a33aa146a3914864ce82ef22136451601"><div class="ttname"><a href="structcrow_1_1request.html#a33aa146a3914864ce82ef22136451601">crow::request::post</a></div><div class="ttdeci">void post(CompletionHandler handler)</div><div class="ttdoc">Send the request with a completion handler and return immediately.</div><div class="ttdef"><b>Definition:</b> http_request.h:63</div></div>
-<div class="ttc" id="astructcrow_1_1request_html_a59648d32ef18fa5ef59509a6def80ddc"><div class="ttname"><a href="structcrow_1_1request.html#a59648d32ef18fa5ef59509a6def80ddc">crow::request::request</a></div><div class="ttdeci">request(HTTPMethod method, std::string raw_url, std::string url, query_string url_params, ci_map headers, std::string body)</div><div class="ttdoc">Construct a request with all values assigned.</div><div class="ttdef"><b>Definition:</b> http_request.h:46</div></div>
+<div class="ttc" id="astructcrow_1_1request_html_ac3e72e3fe415c68618dee999e3984160"><div class="ttname"><a href="structcrow_1_1request.html#ac3e72e3fe415c68618dee999e3984160">crow::request::dispatch</a></div><div class="ttdeci">void dispatch(CompletionHandler handler)</div><div class="ttdoc">Send the request with a completion handler.</div><div class="ttdef"><b>Definition:</b> http_request.h:68</div></div>
+<div class="ttc" id="astructcrow_1_1request_html_a33aa146a3914864ce82ef22136451601"><div class="ttname"><a href="structcrow_1_1request.html#a33aa146a3914864ce82ef22136451601">crow::request::post</a></div><div class="ttdeci">void post(CompletionHandler handler)</div><div class="ttdoc">Send the request with a completion handler and return immediately.</div><div class="ttdef"><b>Definition:</b> http_request.h:61</div></div>
+<div class="ttc" id="astructcrow_1_1request_html_a59648d32ef18fa5ef59509a6def80ddc"><div class="ttname"><a href="structcrow_1_1request.html#a59648d32ef18fa5ef59509a6def80ddc">crow::request::request</a></div><div class="ttdeci">request(HTTPMethod method, std::string raw_url, std::string url, query_string url_params, ci_map headers, std::string body)</div><div class="ttdoc">Construct a request with all values assigned.</div><div class="ttdef"><b>Definition:</b> http_request.h:45</div></div>
 <!-- start footer part -->
 		<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
 			<ul>

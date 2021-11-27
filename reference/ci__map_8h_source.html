@@ -115,7 +115,7 @@ $(document).ready(function(){initNavTree('ci__map_8h_source.html',''); initResiz
 <div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;            std::size_t seed = 0;</div>
 <div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;            std::locale locale;</div>
 <div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160; </div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;            <span class="keywordflow">for</span>(<span class="keyword">auto</span> c : key)</div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;            <span class="keywordflow">for</span> (<span class="keyword">auto</span> c : key)</div>
 <div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;            {</div>
 <div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;                boost::hash_combine(seed, std::toupper(c, locale));</div>
 <div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;            }</div>
@@ -134,7 +134,7 @@ $(document).ready(function(){initNavTree('ci__map_8h_source.html',''); initResiz
 <div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;    };</div>
 <div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160; </div>
 <div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;    <span class="keyword">using</span> ci_map = std::unordered_multimap&lt;std::string, std::string, ci_hash, ci_key_eq&gt;;</div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;}</div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;} <span class="comment">// namespace crow</span></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <div class="ttc" id="astructcrow_1_1ci__key__eq_html"><div class="ttname"><a href="structcrow_1_1ci__key__eq.html">crow::ci_key_eq</a></div><div class="ttdoc">Equals function for ci_map (unordered_multimap).</div><div class="ttdef"><b>Definition:</b> ci_map.h:27</div></div>
