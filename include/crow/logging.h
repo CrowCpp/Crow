@@ -1,13 +1,13 @@
 #pragma once
 
-#include <string>
+#include "crow/settings.h"
+
 #include <cstdio>
 #include <cstdlib>
 #include <ctime>
 #include <iostream>
 #include <sstream>
-
-#include "crow/settings.h"
+#include <string>
 
 namespace crow
 {
@@ -39,17 +39,31 @@ namespace crow
     class CerrLogHandler : public ILogHandler
     {
     public:
-        void log(std::string message, LogLevel /*level*/) override
+        void log(std::string message, LogLevel level) override
         {
-            std::cerr << message;
+            std::string prefix;
+            switch (level)
+            {
+                case LogLevel::Debug:
+                    prefix = "DEBUG   ";
+                    break;
+                case LogLevel::Info:
+                    prefix = "INFO    ";
+                    break;
+                case LogLevel::Warning:
+                    prefix = "WARNING ";
+                    break;
+                case LogLevel::Error:
+                    prefix = "ERROR   ";
+                    break;
+                case LogLevel::Critical:
+                    prefix = "CRITICAL";
+                    break;
+            }
+            std::cerr << "(" << timestamp() << ") [" << prefix << "] " << message;
         }
-    };
-
-    class logger
-    {
 
     private:
-        //
         static std::string timestamp()
         {
             char date[32];
@@ -66,15 +80,14 @@ namespace crow
             size_t sz = strftime(date, sizeof(date), "%Y-%m-%d %H:%M:%S", &my_tm);
             return std::string(date, date + sz);
         }
+    };
 
+    class logger
+    {
     public:
-        logger(std::string prefix, LogLevel level):
+        logger(LogLevel level):
           level_(level)
-        {
-#ifdef CROW_ENABLE_LOGGING
-            stringstream_ << "(" << timestamp() << ") [" << prefix << "] ";
-#endif
-        }
+          {}
         ~logger()
         {
 #ifdef CROW_ENABLE_LOGGING
@@ -90,7 +103,6 @@ namespace crow
         template<typename T>
         logger& operator<<(T const& value)
         {
-
 #ifdef CROW_ENABLE_LOGGING
             if (level_ >= get_current_log_level())
             {
@@ -101,20 +113,11 @@ namespace crow
         }
 
         //
-        static void setLogLevel(LogLevel level)
-        {
-            get_log_level_ref() = level;
-        }
+        static void setLogLevel(LogLevel level) { get_log_level_ref() = level; }
 
-        static void setHandler(ILogHandler* handler)
-        {
-            get_handler_ref() = handler;
-        }
+        static void setHandler(ILogHandler* handler) { get_handler_ref() = handler; }
 
-        static LogLevel get_current_log_level()
-        {
-            return get_log_level_ref();
-        }
+        static LogLevel get_current_log_level() { return get_log_level_ref(); }
 
     private:
         //
@@ -138,16 +141,16 @@ namespace crow
 
 #define CROW_LOG_CRITICAL                                                  \
     if (crow::logger::get_current_log_level() <= crow::LogLevel::Critical) \
-    crow::logger("CRITICAL", crow::LogLevel::Critical)
+    crow::logger(crow::LogLevel::Critical)
 #define CROW_LOG_ERROR                                                  \
     if (crow::logger::get_current_log_level() <= crow::LogLevel::Error) \
-    crow::logger("ERROR   ", crow::LogLevel::Error)
+    crow::logger(crow::LogLevel::Error)
 #define CROW_LOG_WARNING                                                  \
     if (crow::logger::get_current_log_level() <= crow::LogLevel::Warning) \
-    crow::logger("WARNING ", crow::LogLevel::Warning)
+    crow::logger(crow::LogLevel::Warning)
 #define CROW_LOG_INFO                                                  \
     if (crow::logger::get_current_log_level() <= crow::LogLevel::Info) \
-    crow::logger("INFO    ", crow::LogLevel::Info)
+    crow::logger(crow::LogLevel::Info)
 #define CROW_LOG_DEBUG                                                  \
     if (crow::logger::get_current_log_level() <= crow::LogLevel::Debug) \
-    crow::logger("DEBUG   ", crow::LogLevel::Debug)
+    crow::logger(crow::LogLevel::Debug)
