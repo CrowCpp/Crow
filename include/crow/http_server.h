@@ -38,8 +38,7 @@ namespace crow
           bindaddr_(bindaddr),
           middlewares_(middlewares),
           adaptor_ctx_(adaptor_ctx)
-        {
-        }
+        {}
 
         void set_tick_function(std::chrono::milliseconds d, std::function<void()> f)
         {
@@ -51,8 +50,7 @@ namespace crow
         {
             tick_function_();
             tick_timer_.expires_from_now(boost::posix_time::milliseconds(tick_interval_.count()));
-            tick_timer_.async_wait([this](const boost::system::error_code& ec)
-                                   {
+            tick_timer_.async_wait([this](const boost::system::error_code& ec) {
                         if (ec)
                             return;
                         on_tick(); });
@@ -70,8 +68,7 @@ namespace crow
             for (uint16_t i = 0; i < concurrency_; i++)
                 v.push_back(
                   std::async(
-                    std::launch::async, [this, i, &init_count]
-                    {
+                    std::launch::async, [this, i, &init_count] {
 
                         // thread local date string get function
                         auto last = std::chrono::steady_clock::now();
@@ -127,8 +124,7 @@ namespace crow
             {
                 tick_timer_.expires_from_now(boost::posix_time::milliseconds(tick_interval_.count()));
                 tick_timer_.async_wait(
-                  [this](const boost::system::error_code& ec)
-                  {
+                  [this](const boost::system::error_code& ec) {
                       if (ec)
                           return;
                       on_tick();
@@ -144,8 +140,7 @@ namespace crow
             CROW_LOG_INFO << "Call `app.loglevel(crow::LogLevel::Warning)` to hide Info level logs.";
 
             signals_.async_wait(
-              [&](const boost::system::error_code& /*error*/, int /*signal_number*/)
-              {
+              [&](const boost::system::error_code& /*error*/, int /*signal_number*/) {
                   stop();
               });
 
@@ -155,8 +150,7 @@ namespace crow
             do_accept();
 
             std::thread(
-              [this]
-              {
+              [this] {
                   io_service_.run();
                   CROW_LOG_INFO << "Exiting.";
               })
@@ -198,13 +192,11 @@ namespace crow
               get_cached_date_str_pool_[roundrobin_index_], *task_timer_pool_[roundrobin_index_], adaptor_ctx_);
             acceptor_.async_accept(
               p->socket(),
-              [this, p, &is](boost::system::error_code ec)
-              {
+              [this, p, &is](boost::system::error_code ec) {
                   if (!ec)
                   {
                       is.post(
-                        [p]
-                        { p->start(); });
+                        [p] { p->start(); });
                   }
                   else
                   {

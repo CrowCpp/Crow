@@ -20,8 +20,7 @@ namespace crow
         using context = void;
         SocketAdaptor(boost::asio::io_service& io_service, context*):
           socket_(io_service)
-        {
-        }
+        {}
 
         boost::asio::io_service& get_io_service()
         {
@@ -90,8 +89,7 @@ namespace crow
         using ssl_socket_t = boost::asio::ssl::stream<tcp::socket>;
         SSLAdaptor(boost::asio::io_service& io_service, context* ctx):
           ssl_socket_(new ssl_socket_t(io_service, *ctx))
-        {
-        }
+        {}
 
         boost::asio::ssl::stream<tcp::socket>& socket()
         {
@@ -159,8 +157,7 @@ namespace crow
         void start(F f)
         {
             ssl_socket_->async_handshake(boost::asio::ssl::stream_base::server,
-                                         [f](const boost::system::error_code& ec)
-                                         {
+                                         [f](const boost::system::error_code& ec) {
                                              f(ec);
                                          });
         }

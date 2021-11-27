@@ -237,8 +237,7 @@ namespace crow
 
         template<int N>
         struct single_tag_to_type
-        {
-        };
+        {};
 
         template<>
         struct single_tag_to_type<1>
@@ -294,8 +293,7 @@ namespace crow
 
         template<>
         struct last_element_type<>
-        {
-        };
+        {};
 
 
         // from http://stackoverflow.com/questions/13072359/c11-compile-time-array-with-logarithmic-evaluation-depth
@@ -313,8 +311,7 @@ namespace crow
 
         template<unsigned... I1, unsigned... I2>
         struct concat<seq<I1...>, seq<I2...>> : seq<I1..., (sizeof...(I1) + I2)...>
-        {
-        };
+        {};
 
         template<class S1, class S2>
         using Concat = Invoke<concat<S1, S2>>;
@@ -326,17 +323,14 @@ namespace crow
 
         template<unsigned N>
         struct gen_seq : Concat<GenSeq<N / 2>, GenSeq<N - N / 2>>
-        {
-        };
+        {};
 
         template<>
         struct gen_seq<0> : seq<>
-        {
-        };
+        {};
         template<>
         struct gen_seq<1> : seq<0>
-        {
-        };
+        {};
 
         template<typename Seq, typename Tuple>
         struct pop_back_helper;
@@ -365,23 +359,19 @@ namespace crow
         // from http://stackoverflow.com/questions/2118541/check-if-c0x-parameter-pack-contains-a-type
         template<typename Tp, typename... List>
         struct contains : std::true_type
-        {
-        };
+        {};
 
         template<typename Tp, typename Head, typename... Rest>
         struct contains<Tp, Head, Rest...> : std::conditional<std::is_same<Tp, Head>::value, std::true_type, contains<Tp, Rest...>>::type
-        {
-        };
+        {};
 
         template<typename Tp>
         struct contains<Tp> : std::false_type
-        {
-        };
+        {};
 
         template<typename T>
         struct empty_context
-        {
-        };
+        {};
 
         template<typename T>
         struct promote

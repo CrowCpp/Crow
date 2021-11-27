@@ -39,14 +39,12 @@ namespace crow
         /// Construct an empty request. (sets the method to `GET`)
         request():
           method(HTTPMethod::Get)
-        {
-        }
+        {}
 
         /// Construct a request with all values assigned.
         request(HTTPMethod method, std::string raw_url, std::string url, query_string url_params, ci_map headers, std::string body):
           method(method), raw_url(std::move(raw_url)), url(std::move(url)), url_params(std::move(url_params)), headers(std::move(headers)), body(std::move(body))
-        {
-        }
+        {}
 
         void add_header(std::string key, std::string value)
         {

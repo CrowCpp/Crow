@@ -87,8 +87,7 @@ namespace crow
               headers(req.headers),
               boundary(get_boundary(get_header_value("Content-Type"))),
               parts(parse_body(req.body))
-            {
-            }
+            {}
 
         private:
             std::string get_boundary(const std::string& header) const

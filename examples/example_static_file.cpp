@@ -11,8 +11,7 @@ int main()
 
     //
     CROW_ROUTE(app, "/")
-    ([](const crow::request&, crow::response& res)
-     {
+    ([](const crow::request&, crow::response& res) {
     //replace cat.jpg with your file path
     res.set_static_file_info("cat.jpg");
     res.end(); });

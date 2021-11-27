@@ -56,8 +56,7 @@ namespace crow
                         if (c < 0x20)
                         {
                             ret += "\\u00";
-                            auto to_hex = [](char c)
-                            {
+                            auto to_hex = [](char c) {
                                 c = c & 0xf;
                                 if (c < 10)
                                     return '0' + c;
@@ -445,8 +444,7 @@ namespace crow
                                 case 't': *tail++ = '\t'; break;
                                 case 'u':
                                 {
-                                    auto from_hex = [](char c)
-                                    {
+                                    auto from_hex = [](char c) {
                                         if (c >= 'a')
                                             return c - 'a' + 10;
                                         if (c >= 'A')
@@ -868,8 +866,7 @@ namespace crow
                             {
                                 case 'u':
                                 {
-                                    auto check = [](char c)
-                                    {
+                                    auto check = [](char c) {
                                         return ('0' <= c && c <= '9') ||
                                                ('a' <= c && c <= 'f') ||
                                                ('A' <= c && c <= 'F');

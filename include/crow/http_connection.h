@@ -30,8 +30,7 @@ namespace crow
         {
             template<typename T, void (T::*)(request&, response&, typename MW::context&) const = &T::before_handle>
             struct get
-            {
-            };
+            {};
         };
 
         template<typename MW>
@@ -39,8 +38,7 @@ namespace crow
         {
             template<typename T, void (T::*)(request&, response&, typename MW::context&) = &T::before_handle>
             struct get
-            {
-            };
+            {};
         };
 
         template<typename MW>
@@ -48,8 +46,7 @@ namespace crow
         {
             template<typename T, void (T::*)(request&, response&, typename MW::context&) const = &T::after_handle>
             struct get
-            {
-            };
+            {};
         };
 
         template<typename MW>
@@ -57,8 +54,7 @@ namespace crow
         {
             template<typename T, void (T::*)(request&, response&, typename MW::context&) = &T::after_handle>
             struct get
-            {
-            };
+            {};
         };
 
         template<typename T>
@@ -224,8 +220,7 @@ namespace crow
 
         void start()
         {
-            adaptor_.start([this](const boost::system::error_code& ec)
-                           {
+            adaptor_.start([this](const boost::system::error_code& ec) {
                 if (!ec)
                 {
                     start_deadline();
@@ -312,8 +307,7 @@ namespace crow
             if (!is_invalid_request)
             {
                 res.complete_request_handler_ = [] {};
-                res.is_alive_helper_ = [this]() -> bool
-                { return adaptor_.is_open(); };
+                res.is_alive_helper_ = [this]() -> bool { return adaptor_.is_open(); };
 
                 ctx_ = detail::context<Middlewares...>();
                 req.middleware_context = static_cast<void*>(&ctx_);
@@ -322,8 +316,7 @@ namespace crow
 
                 if (!res.completed_)
                 {
-                    res.complete_request_handler_ = [this]
-                    { this->complete_request(); };
+                    res.complete_request_handler_ = [this] { this->complete_request(); };
                     need_to_call_after_handlers_ = true;
                     handler_->handle(req, res);
                     if (add_keep_alive_)
@@ -567,8 +560,7 @@ namespace crow
             is_reading = true;
             adaptor_.socket().async_read_some(
               boost::asio::buffer(buffer_),
-              [this](const boost::system::error_code& ec, std::size_t bytes_transferred)
-              {
+              [this](const boost::system::error_code& ec, std::size_t bytes_transferred) {
                   bool error_while_reading = true;
                   if (!ec)
                   {
@@ -616,8 +608,7 @@ namespace crow
             is_writing = true;
             boost::asio::async_write(
               adaptor_.socket(), buffers_,
-              [&](const boost::system::error_code& ec, std::size_t /*bytes_transferred*/)
-              {
+              [&](const boost::system::error_code& ec, std::size_t /*bytes_transferred*/) {
                   is_writing = false;
                   res.clear();
                   res_body_copy_.clear();
@@ -659,8 +650,7 @@ namespace crow
         {
             cancel_deadline_timer();
 
-            task_id_ = task_timer_.schedule([this]
-                                            {
+            task_id_ = task_timer_.schedule([this] {
                 if (!adaptor_.is_open())
                 {
                     return;

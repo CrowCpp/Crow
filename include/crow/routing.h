@@ -30,12 +30,10 @@ namespace crow
     public:
         BaseRule(std::string rule):
           rule_(std::move(rule))
-        {
-        }
+        {}
 
         virtual ~BaseRule()
-        {
-        }
+        {}
 
         virtual void validate() = 0;
         std::unique_ptr<BaseRule> upgrade()
@@ -116,8 +114,7 @@ namespace crow
 
             template<typename F, int NInt, int NUint, int NDouble, int NString, typename S1, typename S2>
             struct call
-            {
-            };
+            {};
 
             template<typename F, int NInt, int NUint, int NDouble, int NString, typename... Args1, typename... Args2>
             struct call<F, NInt, NUint, NDouble, NString, black_magic::S<int64_t, Args1...>, black_magic::S<Args2...>>
@@ -183,8 +180,7 @@ namespace crow
 #else
                       [f]
 #endif
-                      (const request&, response& res, Args... args)
-                      {
+                      (const request&, response& res, Args... args) {
                           res = response(f(args...));
                           res.end();
                       });
@@ -289,8 +285,7 @@ namespace crow
 #else
               [f]
 #endif
-              (const request&, response& res)
-              {
+              (const request&, response& res) {
                   res = response(f());
                   res.end();
               });
@@ -312,8 +307,7 @@ namespace crow
 #else
               [f]
 #endif
-              (const crow::request& req, crow::response& res)
-              {
+              (const crow::request& req, crow::response& res) {
                   res = response(f(req));
                   res.end();
               });
@@ -335,8 +329,7 @@ namespace crow
 #else
               [f]
 #endif
-              (const crow::request&, crow::response& res)
-              {
+              (const crow::request&, crow::response& res) {
                   f(res);
               });
         }
@@ -378,12 +371,10 @@ namespace crow
     public:
         WebSocketRule(std::string rule):
           BaseRule(std::move(rule))
-        {
-        }
+        {}
 
         void validate() override
-        {
-        }
+        {}
 
         void handle(const request&, response& res, const routing_params&) override
         {
@@ -486,8 +477,7 @@ namespace crow
     public:
         DynamicRule(std::string rule):
           BaseRule(std::move(rule))
-        {
-        }
+        {}
 
         void validate() override
         {
@@ -566,8 +556,7 @@ namespace crow
 
         TaggedRule(std::string rule):
           BaseRule(std::move(rule))
-        {
-        }
+        {}
 
         void validate() override
         {
@@ -593,8 +582,7 @@ namespace crow
 #else
               [f]
 #endif
-              (const request&, response& res, Args... args)
-              {
+              (const request&, response& res, Args... args) {
                   res = response(f(args...));
                   res.end();
               });
@@ -619,8 +607,7 @@ namespace crow
 #else
               [f]
 #endif
-              (const crow::request& req, crow::response& res, Args... args)
-              {
+              (const crow::request& req, crow::response& res, Args... args) {
                   res = response(f(req, args...));
                   res.end();
               });
@@ -645,8 +632,7 @@ namespace crow
 #else
               [f]
 #endif
-              (const crow::request&, crow::response& res, Args... args)
-              {
+              (const crow::request&, crow::response& res, Args... args) {
                   f(res, args...);
               });
         }
@@ -719,15 +705,13 @@ namespace crow
                        blueprint_index == INVALID_BP_ID &&
                        children.size() < 2 &&
                        param == ParamType::MAX &&
-                       std::all_of(std::begin(children), std::end(children), [](Node* x)
-                                   { return x->param == ParamType::MAX; });
+                       std::all_of(std::begin(children), std::end(children), [](Node* x) { return x->param == ParamType::MAX; });
             }
         };
 
 
         Trie()
-        {
-        }
+        {}
 
         ///Check whether or not the trie is empty.
         bool is_empty()
@@ -838,8 +822,7 @@ namespace crow
             if (node == nullptr)
                 node = &head_;
 
-            auto update_found = [&found, &found_BP, &match_params](std::tuple<uint16_t, std::vector<uint16_t>, routing_params>& ret)
-            {
+            auto update_found = [&found, &found_BP, &match_params](std::tuple<uint16_t, std::vector<uint16_t>, routing_params>& ret) {
                 found_BP = std::move(std::get<1>(ret));
                 if (std::get<0>(ret) && (!found || found > std::get<0>(ret)))
                 {
@@ -1238,8 +1221,7 @@ namespace crow
     {
     public:
         Router()
-        {
-        }
+        {}
 
         DynamicRule& new_rule_dynamic(const std::string& rule)
         {
@@ -1276,8 +1258,7 @@ namespace crow
                 rule_without_trailing_slash.pop_back();
             }
 
-            ruleObject->foreach_method([&](int method)
-                                       {
+            ruleObject->foreach_method([&](int method) {
                         per_methods_[method].rules.emplace_back(ruleObject);
                         per_methods_[method].trie.add(rule, per_methods_[method].rules.size() - 1, BP_index != INVALID_BP_ID ? blueprints[BP_index]->prefix().length() : 0, BP_index);
 
@@ -1313,8 +1294,7 @@ namespace crow
                 methods.emplace_back(HTTPMethod::Get);
             for (auto& rule : blueprint->all_rules_)
             {
-                rule->foreach_method([&methods](unsigned method)
-                                     {
+                rule->foreach_method([&methods](unsigned method) {
                     HTTPMethod method_final = static_cast<HTTPMethod>(method);
                     if (std::find(methods.begin(), methods.end(), method_final) == methods.end())
                         methods.emplace_back(method_final); });
@@ -1457,8 +1437,7 @@ namespace crow
             // This is done to prevent a blueprint that has a prefix of "bp_prefix2" to be assumed as a child of one that has "bp_prefix".
             //
             // If any of the assertions is untrue, we delete the last item added, and continue using the blueprint list of the blueprint found before, the topmost being the router's list
-            auto verify_prefix = [&bp_i, &index, &blueprints, &found_bps]()
-            {
+            auto verify_prefix = [&bp_i, &index, &blueprints, &found_bps]() {
                 return index > 0 &&
                        bp_i[index] < blueprints.size() &&
                        blueprints[bp_i[index]]->prefix().substr(0, found_bps[index - 1]->prefix().length() + 1).compare(std::string(found_bps[index - 1]->prefix() + '/')) == 0;

@@ -12,8 +12,7 @@ namespace crow
 
         returnable(std::string ctype):
           content_type{ctype}
-        {
-        }
+        {}
 
         virtual ~returnable(){};
     };

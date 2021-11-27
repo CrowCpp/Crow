@@ -26,8 +26,7 @@ struct ExampleMiddleware
     }
 
     struct context
-    {
-    };
+    {};
 
     void before_handle(crow::request& req, crow::response& res, context& ctx)
     {
@@ -47,29 +46,24 @@ int main()
     app.get_middleware<ExampleMiddleware>().setMessage("hello");
 
     CROW_ROUTE(app, "/")
-      .name("hello")([]
-                     { return "Hello World!"; });
+      .name("hello")([] { return "Hello World!"; });
 
     CROW_ROUTE(app, "/about")
-    ([]()
-     { return "About Crow example."; });
+    ([]() { return "About Crow example."; });
 
     // a request to /path should be forwarded to /path/
     CROW_ROUTE(app, "/path/")
-    ([]()
-     { return "Trailing slash test case.."; });
+    ([]() { return "Trailing slash test case.."; });
 
     // simple json response
     CROW_ROUTE(app, "/json")
-    ([]
-     {
+    ([] {
         crow::json::wvalue x;
         x["message"] = "Hello, World!";
         return x; });
 
     CROW_ROUTE(app, "/hello/<int>")
-    ([](int count)
-     {
+    ([](int count) {
         if (count > 100)
             return crow::response(400);
         std::ostringstream os;
@@ -77,8 +71,7 @@ int main()
         return crow::response(os.str()); });
 
     CROW_ROUTE(app, "/add/<int>/<int>")
-    ([](crow::response& res, int a, int b)
-     {
+    ([](crow::response& res, int a, int b) {
         std::ostringstream os;
         os << a+b;
         res.write(os.str());
@@ -92,8 +85,7 @@ int main()
 
     // more json example
     CROW_ROUTE(app, "/add_json")
-      .methods(crow::HTTPMethod::Post)([](const crow::request& req)
-                                       {
+      .methods(crow::HTTPMethod::Post)([](const crow::request& req) {
         auto x = crow::json::load(req.body);
         if (!x)
             return crow::response(400);
@@ -102,8 +94,7 @@ int main()
         os << sum;
         return crow::response{os.str()}; });
 
-    app.route_dynamic("/params")([](const crow::request& req)
-                                 {
+    app.route_dynamic("/params")([](const crow::request& req) {
         std::ostringstream os;
         os << "Params: " << req.url_params << "\n\n";
         os << "The key 'foo' was " << (req.url_params.get("foo") == nullptr ? "not " : "") << "found.\n";

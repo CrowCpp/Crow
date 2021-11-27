@@ -313,8 +313,7 @@ namespace crow
         template<typename Adaptor>
         inline void write_buffer_list(std::vector<asio::const_buffer>& buffers, Adaptor& adaptor)
         {
-            boost::asio::write(adaptor.socket(), buffers, [this](std::error_code ec, std::size_t)
-                               {
+            boost::asio::write(adaptor.socket(), buffers, [this](std::error_code ec, std::size_t) {
                     if (!ec)
                     {
                         return false;

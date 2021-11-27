@@ -30,14 +30,12 @@ int main()
     crow::mustache::set_base(".");
 
     CROW_ROUTE(app, "/")
-    ([]
-     {
+    ([] {
         crow::mustache::context ctx;
         return crow::mustache::load("example_chat.html").render(); });
 
     CROW_ROUTE(app, "/logs")
-    ([]
-     {
+    ([] {
         CROW_LOG_INFO << "logs requested";
         crow::json::wvalue x;
         int start = max(0, (int)msgs.size()-100);
@@ -48,8 +46,7 @@ int main()
         return x; });
 
     CROW_ROUTE(app, "/logs/<int>")
-    ([](const crow::request& /*req*/, crow::response& res, int after)
-     {
+    ([](const crow::request& /*req*/, crow::response& res, int after) {
         CROW_LOG_INFO << "logs with last " << after;
         if (after < (int)msgs.size())
         {
@@ -77,8 +74,7 @@ int main()
         } });
 
     CROW_ROUTE(app, "/send")
-      .methods("GET"_method, "POST"_method)([](const crow::request& req)
-                                            {
+      .methods("GET"_method, "POST"_method)([](const crow::request& req) {
         CROW_LOG_INFO << "msg from client: " << req.body;
         broadcast(req.body);
         return ""; });

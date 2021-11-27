@@ -21,8 +21,7 @@ int main()
     auto data = json::load(read_all("data"));
     auto templ = compile(read_all("template"));
     auto partials = json::load(read_all("partials"));
-    set_loader([&](std::string name) -> std::string
-               {
+    set_loader([&](std::string name) -> std::string {
     if (partials.count(name)) {
       return partials[name].s();
     }

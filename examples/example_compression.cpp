@@ -7,16 +7,14 @@ int main()
     //crow::App<crow::CompressionGzip> app;
 
     CROW_ROUTE(app, "/hello")
-    ([&](const crow::request&, crow::response& res)
-     {
+    ([&](const crow::request&, crow::response& res) {
         res.compressed = false;
 
         res.body = "Hello World! This is uncompressed!";
         res.end(); });
 
     CROW_ROUTE(app, "/hello_compressed")
-    ([]()
-     { return "Hello World! This is compressed by default!"; });
+    ([]() { return "Hello World! This is compressed by default!"; });
 
 
     app.port(18080)

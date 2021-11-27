@@ -8,12 +8,10 @@ namespace crow
     struct UTF8
     {
         struct context
-        {
-        };
+        {};
 
         void before_handle(request& /*req*/, response& /*res*/, context& /*ctx*/)
-        {
-        }
+        {}
 
         void after_handle(request& /*req*/, response& res, context& /*ctx*/)
         {

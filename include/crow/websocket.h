@@ -127,8 +127,7 @@ namespace crow
             ///
             void send_ping(const std::string& msg) override
             {
-                dispatch([this, msg]
-                         {
+                dispatch([this, msg] {
                         auto header = build_header(0x9, msg.size());
                         write_buffers_.emplace_back(std::move(header));
                         write_buffers_.emplace_back(msg);
@@ -142,8 +141,7 @@ namespace crow
             ///
             void send_pong(const std::string& msg) override
             {
-                dispatch([this, msg]
-                         {
+                dispatch([this, msg] {
                         auto header = build_header(0xA, msg.size());
                         write_buffers_.emplace_back(std::move(header));
                         write_buffers_.emplace_back(msg);
@@ -153,8 +151,7 @@ namespace crow
             /// Send a binary encoded message.
             void send_binary(const std::string& msg) override
             {
-                dispatch([this, msg]
-                         {
+                dispatch([this, msg] {
                         auto header = build_header(2, msg.size());
                         write_buffers_.emplace_back(std::move(header));
                         write_buffers_.emplace_back(msg);
@@ -164,8 +161,7 @@ namespace crow
             /// Send a plaintext message.
             void send_text(const std::string& msg) override
             {
-                dispatch([this, msg]
-                         {
+                dispatch([this, msg] {
                         auto header = build_header(1, msg.size());
                         write_buffers_.emplace_back(std::move(header));
                         write_buffers_.emplace_back(msg);
@@ -179,8 +175,7 @@ namespace crow
             ///
             void close(const std::string& msg) override
             {
-                dispatch([this, msg]
-                         {
+                dispatch([this, msg] {
                         has_sent_close_ = true;
                         if (has_recv_close_ && !is_close_handler_called_)
                         {
@@ -335,8 +330,7 @@ namespace crow
 #ifdef CROW_ENABLE_DEBUG
                                                                         bytes_transferred
 #endif
-                          )
-                          {
+                          ) {
                               is_reading = false;
                               remaining_length16_ = ntohs(remaining_length16_);
                               remaining_length_ = remaining_length16_;
@@ -371,8 +365,7 @@ namespace crow
 #ifdef CROW_ENABLE_DEBUG
                                                                         bytes_transferred
 #endif
-                          )
-                          {
+                          ) {
                               is_reading = false;
                               remaining_length_ = ((1 == ntohl(1)) ? (remaining_length_) : (static_cast<uint64_t>(ntohl((remaining_length_)&0xFFFFFFFF)) << 32) | ntohl((remaining_length_) >> 32));
 #ifdef CROW_ENABLE_DEBUG
@@ -407,8 +400,7 @@ namespace crow
 #ifdef CROW_ENABLE_DEBUG
                                                                             bytes_transferred
 #endif
-                              )
-                              {
+                              ) {
                                   is_reading = false;
 #ifdef CROW_ENABLE_DEBUG
                                   if (!ec && bytes_transferred != 4)
@@ -444,8 +436,7 @@ namespace crow
                             to_read = remaining_length_;
                         adaptor_.socket().async_read_some(
                           boost::asio::buffer(buffer_, static_cast<std::size_t>(to_read)),
-                          [this](const boost::system::error_code& ec, std::size_t bytes_transferred)
-                          {
+                          [this](const boost::system::error_code& ec, std::size_t bytes_transferred) {
                               is_reading = false;
 
                               if (!ec)
@@ -591,8 +582,7 @@ namespace crow
                     }
                     boost::asio::async_write(
                       adaptor_.socket(), buffers,
-                      [&](const boost::system::error_code& ec, std::size_t /*bytes_transferred*/)
-                      {
+                      [&](const boost::system::error_code& ec, std::size_t /*bytes_transferred*/) {
                           sending_buffers_.clear();
                           if (!ec && !close_connection_)
                           {
