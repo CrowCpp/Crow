@@ -1,4 +1,4 @@
----
+﻿---
 BasedOnStyle: Mozilla
 AccessModifierOffset: '-4'
 AlignAfterOpenBracket: Align
@@ -32,7 +32,7 @@ BraceWrapping:
   AfterExternBlock: 'true'
   BeforeCatch: 'true'
   BeforeElse: 'true'
-  BeforeLambdaBody: 'false'
+#  BeforeLambdaBody: 'false'
   BeforeWhile: 'false'
   IndentBraces: 'false'
   SplitEmptyFunction: 'false'
