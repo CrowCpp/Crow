@@ -705,7 +705,9 @@ namespace crow
                        blueprint_index == INVALID_BP_ID &&
                        children.size() < 2 &&
                        param == ParamType::MAX &&
-                       std::all_of(std::begin(children), std::end(children), [](Node* x) { return x->param == ParamType::MAX; });
+                       std::all_of(std::begin(children), std::end(children), [](Node* x) {
+                           return x->param == ParamType::MAX;
+                       });
             }
         };
 
@@ -1259,15 +1261,16 @@ namespace crow
             }
 
             ruleObject->foreach_method([&](int method) {
-                        per_methods_[method].rules.emplace_back(ruleObject);
-                        per_methods_[method].trie.add(rule, per_methods_[method].rules.size() - 1, BP_index != INVALID_BP_ID ? blueprints[BP_index]->prefix().length() : 0, BP_index);
+                per_methods_[method].rules.emplace_back(ruleObject);
+                per_methods_[method].trie.add(rule, per_methods_[method].rules.size() - 1, BP_index != INVALID_BP_ID ? blueprints[BP_index]->prefix().length() : 0, BP_index);
 
-                        // directory case:
-                        //   request to '/about' url matches '/about/' rule
-                        if (has_trailing_slash)
-                        {
-                            per_methods_[method].trie.add(rule_without_trailing_slash, RULE_SPECIAL_REDIRECT_SLASH, BP_index != INVALID_BP_ID ? blueprints_[BP_index]->prefix().length() : 0, BP_index);
-                        } });
+                // directory case:
+                //   request to '/about' url matches '/about/' rule
+                if (has_trailing_slash)
+                {
+                    per_methods_[method].trie.add(rule_without_trailing_slash, RULE_SPECIAL_REDIRECT_SLASH, BP_index != INVALID_BP_ID ? blueprints_[BP_index]->prefix().length() : 0, BP_index);
+                }
+            });
         }
 
         void register_blueprint(Blueprint& blueprint)
@@ -1297,7 +1300,8 @@ namespace crow
                 rule->foreach_method([&methods](unsigned method) {
                     HTTPMethod method_final = static_cast<HTTPMethod>(method);
                     if (std::find(methods.begin(), methods.end(), method_final) == methods.end())
-                        methods.emplace_back(method_final); });
+                        methods.emplace_back(method_final);
+                });
             }
         }
 

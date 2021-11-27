@@ -51,9 +51,10 @@ namespace crow
             tick_function_();
             tick_timer_.expires_from_now(boost::posix_time::milliseconds(tick_interval_.count()));
             tick_timer_.async_wait([this](const boost::system::error_code& ec) {
-                        if (ec)
-                            return;
-                        on_tick(); });
+                if (ec)
+                    return;
+                on_tick();
+            });
         }
 
         void run()
@@ -69,13 +70,11 @@ namespace crow
                 v.push_back(
                   std::async(
                     std::launch::async, [this, i, &init_count] {
-
                         // thread local date string get function
                         auto last = std::chrono::steady_clock::now();
 
                         std::string date_str;
-                        auto update_date_str = [&]
-                        {
+                        auto update_date_str = [&] {
                             auto last_time_t = time(0);
                             tm my_tm;
 
@@ -89,8 +88,7 @@ namespace crow
                             date_str.resize(date_str_sz);
                         };
                         update_date_str();
-                        get_cached_date_str_pool_[i] = [&]()->std::string
-                        {
+                        get_cached_date_str_pool_[i] = [&]() -> std::string {
                             if (std::chrono::steady_clock::now() - last >= std::chrono::seconds(1))
                             {
                                 last = std::chrono::steady_clock::now();
@@ -104,8 +102,8 @@ namespace crow
                         task_timer.set_default_timeout(timeout_);
                         task_timer_pool_[i] = &task_timer;
 
-                        init_count ++;
-                        while(1)
+                        init_count++;
+                        while (1)
                         {
                             try
                             {
@@ -114,11 +112,13 @@ namespace crow
                                     // when io_service.run returns 0, there are no more works to do.
                                     break;
                                 }
-                            } catch(std::exception& e)
+                            }
+                            catch (std::exception& e)
                             {
                                 CROW_LOG_ERROR << "Worker Crash: An uncaught exception occurred: " << e.what();
                             }
-                        } }));
+                        }
+                    }));
 
             if (tick_function_ && tick_interval_.count() > 0)
             {
@@ -196,7 +196,9 @@ namespace crow
                   if (!ec)
                   {
                       is.post(
-                        [p] { p->start(); });
+                        [p] {
+                            p->start();
+                        });
                   }
                   else
                   {

@@ -128,10 +128,11 @@ namespace crow
             void send_ping(const std::string& msg) override
             {
                 dispatch([this, msg] {
-                        auto header = build_header(0x9, msg.size());
-                        write_buffers_.emplace_back(std::move(header));
-                        write_buffers_.emplace_back(msg);
-                        do_write(); });
+                    auto header = build_header(0x9, msg.size());
+                    write_buffers_.emplace_back(std::move(header));
+                    write_buffers_.emplace_back(msg);
+                    do_write();
+                });
             }
 
             ///
@@ -142,30 +143,33 @@ namespace crow
             void send_pong(const std::string& msg) override
             {
                 dispatch([this, msg] {
-                        auto header = build_header(0xA, msg.size());
-                        write_buffers_.emplace_back(std::move(header));
-                        write_buffers_.emplace_back(msg);
-                        do_write(); });
+                    auto header = build_header(0xA, msg.size());
+                    write_buffers_.emplace_back(std::move(header));
+                    write_buffers_.emplace_back(msg);
+                    do_write();
+                });
             }
 
             /// Send a binary encoded message.
             void send_binary(const std::string& msg) override
             {
                 dispatch([this, msg] {
-                        auto header = build_header(2, msg.size());
-                        write_buffers_.emplace_back(std::move(header));
-                        write_buffers_.emplace_back(msg);
-                        do_write(); });
+                    auto header = build_header(2, msg.size());
+                    write_buffers_.emplace_back(std::move(header));
+                    write_buffers_.emplace_back(msg);
+                    do_write();
+                });
             }
 
             /// Send a plaintext message.
             void send_text(const std::string& msg) override
             {
                 dispatch([this, msg] {
-                        auto header = build_header(1, msg.size());
-                        write_buffers_.emplace_back(std::move(header));
-                        write_buffers_.emplace_back(msg);
-                        do_write(); });
+                    auto header = build_header(1, msg.size());
+                    write_buffers_.emplace_back(std::move(header));
+                    write_buffers_.emplace_back(msg);
+                    do_write();
+                });
             }
 
             ///
@@ -176,17 +180,18 @@ namespace crow
             void close(const std::string& msg) override
             {
                 dispatch([this, msg] {
-                        has_sent_close_ = true;
-                        if (has_recv_close_ && !is_close_handler_called_)
-                        {
-                            is_close_handler_called_ = true;
-                            if (close_handler_)
-                                close_handler_(*this, msg);
-                        }
-                        auto header = build_header(0x8, msg.size());
-                        write_buffers_.emplace_back(std::move(header));
-                        write_buffers_.emplace_back(msg);
-                        do_write(); });
+                    has_sent_close_ = true;
+                    if (has_recv_close_ && !is_close_handler_called_)
+                    {
+                        is_close_handler_called_ = true;
+                        if (close_handler_)
+                            close_handler_(*this, msg);
+                    }
+                    auto header = build_header(0x8, msg.size());
+                    write_buffers_.emplace_back(std::move(header));
+                    write_buffers_.emplace_back(msg);
+                    do_write();
+                });
             }
 
             std::string get_remote_ip() override

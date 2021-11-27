@@ -22,10 +22,12 @@ int main()
     auto templ = compile(read_all("template"));
     auto partials = json::load(read_all("partials"));
     set_loader([&](std::string name) -> std::string {
-    if (partials.count(name)) {
-      return partials[name].s();
-    }
-    return ""; });
+        if (partials.count(name))
+        {
+            return partials[name].s();
+        }
+        return "";
+    });
     context ctx(data);
     cout << templ.render(ctx);
     return 0;

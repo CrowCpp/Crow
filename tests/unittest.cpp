@@ -37,8 +37,9 @@ TEST_CASE("Rule")
 
     // registering handler
     r([&x] {
-    x = 1;
-    return ""; });
+        x = 1;
+        return "";
+    });
 
     r.validate();
 
@@ -51,8 +52,9 @@ TEST_CASE("Rule")
 
     // registering handler with request argument
     r([&x](const crow::request&) {
-    x = 2;
-    return ""; });
+        x = 2;
+        return "";
+    });
 
     r.validate();
 
@@ -92,10 +94,14 @@ TEST_CASE("PathRouting")
     SimpleApp app;
 
     CROW_ROUTE(app, "/file")
-    ([] { return "file"; });
+    ([] {
+        return "file";
+    });
 
     CROW_ROUTE(app, "/path/")
-    ([] { return "path"; });
+    ([] {
+        return "path";
+    });
 
     app.validate();
 
@@ -149,31 +155,35 @@ TEST_CASE("RoutingTest")
 
     CROW_ROUTE(app, "/0/<uint>")
     ([&](uint32_t b) {
-    B = b;
-    return "OK"; });
+        B = b;
+        return "OK";
+    });
 
     CROW_ROUTE(app, "/1/<int>/<uint>")
     ([&](int a, uint32_t b) {
-    A = a;
-    B = b;
-    return "OK"; });
+        A = a;
+        B = b;
+        return "OK";
+    });
 
     CROW_ROUTE(app, "/4/<int>/<uint>/<double>/<string>")
     ([&](int a, uint32_t b, double c, string d) {
-    A = a;
-    B = b;
-    C = c;
-    D = d;
-    return "OK"; });
+        A = a;
+        B = b;
+        C = c;
+        D = d;
+        return "OK";
+    });
 
     CROW_ROUTE(app, "/5/<int>/<uint>/<double>/<string>/<path>")
     ([&](int a, uint32_t b, double c, string d, string e) {
-    A = a;
-    B = b;
-    C = c;
-    D = d;
-    E = e;
-    return "OK"; });
+        A = a;
+        B = b;
+        C = c;
+        D = d;
+        E = e;
+        return "OK";
+    });
 
     app.validate();
     // app.debug_print();
@@ -288,19 +298,28 @@ TEST_CASE("http_method")
 
     CROW_ROUTE(app, "/").methods("POST"_method,
                                  "GET"_method)([](const request& req) {
-    if (req.method == "GET"_method)
-      return "2";
-    else
-      return "1"; });
+        if (req.method == "GET"_method)
+            return "2";
+        else
+            return "1";
+    });
 
     CROW_ROUTE(app, "/get_only")
-      .methods("GET"_method)([](const request& /*req*/) { return "get"; });
+      .methods("GET"_method)([](const request& /*req*/) {
+          return "get";
+      });
     CROW_ROUTE(app, "/post_only")
-      .methods("POST"_method)([](const request& /*req*/) { return "post"; });
+      .methods("POST"_method)([](const request& /*req*/) {
+          return "post";
+      });
     CROW_ROUTE(app, "/patch_only")
-      .methods("PATCH"_method)([](const request& /*req*/) { return "patch"; });
+      .methods("PATCH"_method)([](const request& /*req*/) {
+          return "patch";
+      });
     CROW_ROUTE(app, "/purge_only")
-      .methods("PURGE"_method)([](const request& /*req*/) { return "purge"; });
+      .methods("PURGE"_method)([](const request& /*req*/) {
+          return "purge";
+      });
 
     app.validate();
     app.debug_print();
@@ -437,11 +456,15 @@ TEST_CASE("server_handling_error_request")
     static char buf[2048];
     SimpleApp app;
     CROW_ROUTE(app, "/")
-    ([] { return "A"; });
+    ([] {
+        return "A";
+    });
     // Server<SimpleApp> server(&app, LOCALHOST_ADDRESS, 45451);
     // auto _ = async(launch::async, [&]{server.run();});
     auto _ = async(launch::async,
-                   [&] { app.bindaddr(LOCALHOST_ADDRESS).port(45451).run(); });
+                   [&] {
+                       app.bindaddr(LOCALHOST_ADDRESS).port(45451).run();
+                   });
     app.wait_for_server_start();
     std::string sendmsg = "POX";
     asio::io_service is;
@@ -470,9 +493,13 @@ TEST_CASE("server_handling_error_request_http_version")
     static char buf[2048];
     SimpleApp app;
     CROW_ROUTE(app, "/")
-    ([] { return "A"; });
+    ([] {
+        return "A";
+    });
     auto _ = async(launch::async,
-                   [&] { app.bindaddr(LOCALHOST_ADDRESS).port(45451).run(); });
+                   [&] {
+                       app.bindaddr(LOCALHOST_ADDRESS).port(45451).run();
+                   });
     app.wait_for_server_start();
     std::string sendmsg = "POST /\r\nContent-Length:3\r\nX-HeaderTest: 123\r\n\r\nA=B\r\n";
     asio::io_service is;
@@ -501,14 +528,22 @@ TEST_CASE("multi_server")
     static char buf[2048];
     SimpleApp app1, app2;
     CROW_ROUTE(app1, "/").methods("GET"_method,
-                                  "POST"_method)([] { return "A"; });
+                                  "POST"_method)([] {
+        return "A";
+    });
     CROW_ROUTE(app2, "/").methods("GET"_method,
-                                  "POST"_method)([] { return "B"; });
+                                  "POST"_method)([] {
+        return "B";
+    });
 
     auto _ = async(launch::async,
-                   [&] { app1.bindaddr(LOCALHOST_ADDRESS).port(45451).run(); });
+                   [&] {
+                       app1.bindaddr(LOCALHOST_ADDRESS).port(45451).run();
+                   });
     auto _2 = async(launch::async,
-                    [&] { app2.bindaddr(LOCALHOST_ADDRESS).port(45452).run(); });
+                    [&] {
+                        app2.bindaddr(LOCALHOST_ADDRESS).port(45452).run();
+                    });
     app1.wait_for_server_start();
     app2.wait_for_server_start();
 
@@ -1161,9 +1196,10 @@ TEST_CASE("middleware_simple")
     decltype(app)::server_t server(&app, LOCALHOST_ADDRESS, 45451);
     CROW_ROUTE(app, "/")
     ([&](const crow::request& req) {
-    app.get_context<NullMiddleware>(req);
-    app.get_context<NullSimpleMiddleware>(req);
-    return ""; });
+        app.get_context<NullMiddleware>(req);
+        app.get_context<NullSimpleMiddleware>(req);
+        return "";
+    });
 }
 
 struct IntSettingMiddleware
@@ -1256,27 +1292,31 @@ TEST_CASE("middleware_context")
     int x{};
     CROW_ROUTE(app, "/")
     ([&](const request& req) {
-    {
-      auto& ctx = app.get_context<IntSettingMiddleware>(req);
-      x = ctx.val;
-    }
-    {
-      auto& ctx = app.get_context<FirstMW>(req);
-      ctx.v.push_back("handle");
-    }
+        {
+            auto& ctx = app.get_context<IntSettingMiddleware>(req);
+            x = ctx.val;
+        }
+        {
+            auto& ctx = app.get_context<FirstMW>(req);
+            ctx.v.push_back("handle");
+        }
 
-    return ""; });
+        return "";
+    });
     CROW_ROUTE(app, "/break")
     ([&](const request& req) {
-    {
-      auto& ctx = app.get_context<FirstMW>(req);
-      ctx.v.push_back("handle");
-    }
+        {
+            auto& ctx = app.get_context<FirstMW>(req);
+            ctx.v.push_back("handle");
+        }
 
-    return ""; });
+        return "";
+    });
 
     auto _ = async(launch::async,
-                   [&] { app.bindaddr(LOCALHOST_ADDRESS).port(45451).run(); });
+                   [&] {
+                       app.bindaddr(LOCALHOST_ADDRESS).port(45451).run();
+                   });
     app.wait_for_server_start();
     std::string sendmsg = "GET /\r\n\r\n";
     asio::io_service is;
@@ -1337,18 +1377,21 @@ TEST_CASE("middleware_cookieparser")
 
     CROW_ROUTE(app, "/")
     ([&](const request& req) {
-    {
-      auto& ctx = app.get_context<CookieParser>(req);
-      value1 = ctx.get_cookie("key1");
-      value2 = ctx.get_cookie("key2");
-      value3 = ctx.get_cookie("key3");
-      value4 = ctx.get_cookie("key4");
-    }
+        {
+            auto& ctx = app.get_context<CookieParser>(req);
+            value1 = ctx.get_cookie("key1");
+            value2 = ctx.get_cookie("key2");
+            value3 = ctx.get_cookie("key3");
+            value4 = ctx.get_cookie("key4");
+        }
 
-    return ""; });
+        return "";
+    });
 
     auto _ = async(launch::async,
-                   [&] { app.bindaddr(LOCALHOST_ADDRESS).port(45451).run(); });
+                   [&] {
+                       app.bindaddr(LOCALHOST_ADDRESS).port(45451).run();
+                   });
     app.wait_for_server_start();
     std::string sendmsg =
       "GET /\r\nCookie: key1=value1; key2=\"val=ue2\"; key3=\"val\"ue3\"; "
@@ -1380,10 +1423,14 @@ TEST_CASE("bug_quick_repeated_request")
     SimpleApp app;
 
     CROW_ROUTE(app, "/")
-    ([&] { return "hello"; });
+    ([&] {
+        return "hello";
+    });
 
     auto _ = async(launch::async,
-                   [&] { app.bindaddr(LOCALHOST_ADDRESS).port(45451).run(); });
+                   [&] {
+                       app.bindaddr(LOCALHOST_ADDRESS).port(45451).run();
+                   });
     app.wait_for_server_start();
     std::string sendmsg = "GET / HTTP/1.1\r\nHost: localhost\r\n\r\n";
     asio::io_service is;
@@ -1392,17 +1439,19 @@ TEST_CASE("bug_quick_repeated_request")
         for (int i = 0; i < 5; i++)
         {
             v.push_back(async(launch::async, [&] {
-        asio::ip::tcp::socket c(is);
-        c.connect(asio::ip::tcp::endpoint(
-            asio::ip::address::from_string(LOCALHOST_ADDRESS), 45451));
+                asio::ip::tcp::socket c(is);
+                c.connect(asio::ip::tcp::endpoint(
+                  asio::ip::address::from_string(LOCALHOST_ADDRESS), 45451));
 
-        for (int j = 0; j < 5; j++) {
-          c.send(asio::buffer(sendmsg));
+                for (int j = 0; j < 5; j++)
+                {
+                    c.send(asio::buffer(sendmsg));
 
-          size_t received = c.receive(asio::buffer(buf, 2048));
-          CHECK("hello" == std::string(buf + received - 5, buf + received));
-        }
-        c.close(); }));
+                    size_t received = c.receive(asio::buffer(buf, 2048));
+                    CHECK("hello" == std::string(buf + received - 5, buf + received));
+                }
+                c.close();
+            }));
         }
     }
     app.stop();
@@ -1418,13 +1467,16 @@ TEST_CASE("simple_url_params")
 
     CROW_ROUTE(app, "/params")
     ([&last_url_params](const crow::request& req) {
-    last_url_params = std::move(req.url_params);
-    return "OK"; });
+        last_url_params = std::move(req.url_params);
+        return "OK";
+    });
 
     /// params?h=1&foo=bar&lol&count[]=1&count[]=4&pew=5.2
 
     auto _ = async(launch::async,
-                   [&] { app.bindaddr(LOCALHOST_ADDRESS).port(45451).run(); });
+                   [&] {
+                       app.bindaddr(LOCALHOST_ADDRESS).port(45451).run();
+                   });
     app.wait_for_server_start();
     asio::io_service is;
     std::string sendmsg;
@@ -1578,23 +1630,29 @@ TEST_CASE("route_dynamic")
     SimpleApp app;
     int x = 1;
     app.route_dynamic("/")([&] {
-    x = 2;
-    return ""; });
+        x = 2;
+        return "";
+    });
 
     app.route_dynamic("/set4")([&](const request&) {
-    x = 4;
-    return ""; });
+        x = 4;
+        return "";
+    });
     app.route_dynamic("/set5")([&](const request&, response& res) {
-    x = 5;
-    res.end(); });
+        x = 5;
+        res.end();
+    });
 
     app.route_dynamic("/set_int/<int>")([&](int y) {
-    x = y;
-    return ""; });
+        x = y;
+        return "";
+    });
 
     try
     {
-        app.route_dynamic("/invalid_test/<double>/<path>")([]() { return ""; });
+        app.route_dynamic("/invalid_test/<double>/<path>")([]() {
+            return "";
+        });
         FAIL_CHECK();
     }
     catch (std::exception&)
@@ -1647,10 +1705,11 @@ TEST_CASE("multipart")
 
     CROW_ROUTE(app, "/multipart")
     ([](const crow::request& req, crow::response& res) {
-    multipart::message msg(req);
-    res.add_header("Content-Type", "multipart/form-data; boundary=CROW-BOUNDARY");
-    res.body = msg.dump();
-    res.end(); });
+        multipart::message msg(req);
+        res.add_header("Content-Type", "multipart/form-data; boundary=CROW-BOUNDARY");
+        res.body = msg.dump();
+        res.end();
+    });
 
     app.validate();
 
@@ -1678,14 +1737,16 @@ TEST_CASE("send_file")
 
     CROW_ROUTE(app, "/jpg")
     ([](const crow::request&, crow::response& res) {
-    res.set_static_file_info("tests/img/cat.jpg");
-    res.end(); });
+        res.set_static_file_info("tests/img/cat.jpg");
+        res.end();
+    });
 
     CROW_ROUTE(app, "/jpg2")
     ([](const crow::request&, crow::response& res) {
-    res.set_static_file_info(
-        "tests/img/cat2.jpg");  // This file is nonexistent on purpose
-    res.end(); });
+        res.set_static_file_info(
+          "tests/img/cat2.jpg"); // This file is nonexistent on purpose
+        res.end();
+    });
 
     app.validate();
 
@@ -1736,61 +1797,63 @@ TEST_CASE("stream_response")
 
     CROW_ROUTE(app, "/test")
     ([&key_response](const crow::request&, crow::response& res) {
-      res.body = key_response;
-      res.end(); });
+        res.body = key_response;
+        res.end();
+    });
 
     app.validate();
 
     //running the test on a separate thread to allow the client to sleep
     std::thread runTest([&app, &key_response, key_response_size]() {
+        auto _ = async(launch::async,
+                       [&] {
+                           app.bindaddr(LOCALHOST_ADDRESS).port(45451).run();
+                       });
+        app.wait_for_server_start();
+        asio::io_service is;
+        std::string sendmsg;
 
-    auto _ = async(launch::async,
-                   [&] { app.bindaddr(LOCALHOST_ADDRESS).port(45451).run(); });
-    app.wait_for_server_start();
-    asio::io_service is;
-    std::string sendmsg;
+        //Total bytes received
+        unsigned int received = 0;
+        sendmsg = "GET /test\r\n\r\n";
+        {
+            asio::streambuf b;
 
-    //Total bytes received
-    unsigned int received = 0;
-    sendmsg = "GET /test\r\n\r\n";
-    {
-      asio::streambuf b;
+            asio::ip::tcp::socket c(is);
+            c.connect(asio::ip::tcp::endpoint(
+              asio::ip::address::from_string(LOCALHOST_ADDRESS), 45451));
+            c.send(asio::buffer(sendmsg));
 
-      asio::ip::tcp::socket c(is);
-      c.connect(asio::ip::tcp::endpoint(
-          asio::ip::address::from_string(LOCALHOST_ADDRESS), 45451));
-      c.send(asio::buffer(sendmsg));
+            //consuming the headers, since we don't need those for the test
+            static char buf[2048];
+            size_t received_headers_bytes = 0;
 
-      //consuming the headers, since we don't need those for the test
-      static char buf[2048];
-      size_t received_headers_bytes = 0;
-
-      // magic number is 102 (it's the size of the headers, which is how much this line below needs to read)
-      const size_t headers_bytes = 102;
-      while (received_headers_bytes < headers_bytes)
-        received_headers_bytes += c.receive(asio::buffer(buf, 2048));
-      received += received_headers_bytes - headers_bytes; //add any extra that might have been received to the proper received count
+            // magic number is 102 (it's the size of the headers, which is how much this line below needs to read)
+            const size_t headers_bytes = 102;
+            while (received_headers_bytes < headers_bytes)
+                received_headers_bytes += c.receive(asio::buffer(buf, 2048));
+            received += received_headers_bytes - headers_bytes; //add any extra that might have been received to the proper received count
 
 
-      while (received < key_response_size)
-      {
-        asio::streambuf::mutable_buffers_type bufs = b.prepare(16384);
+            while (received < key_response_size)
+            {
+                asio::streambuf::mutable_buffers_type bufs = b.prepare(16384);
 
-        size_t n = c.receive(bufs);
-        b.commit(n);
-        received += n;
+                size_t n = c.receive(bufs);
+                b.commit(n);
+                received += n;
 
-        std::istream is(&b);
-        std::string s;
-        is >> s;
+                std::istream is(&b);
+                std::string s;
+                is >> s;
 
-        CHECK(key_response.substr(received-n, n) == s);
+                CHECK(key_response.substr(received - n, n) == s);
 
-        std::this_thread::sleep_for(std::chrono::milliseconds(20));
-      }
-
-    }
-    app.stop(); });
+                std::this_thread::sleep_for(std::chrono::milliseconds(20));
+            }
+        }
+        app.stop();
+    });
     runTest.join();
 } // stream_response
 
@@ -1803,20 +1866,28 @@ TEST_CASE("websocket")
     SimpleApp app;
 
     CROW_ROUTE(app, "/ws").websocket().onopen([&](websocket::connection&) {
-      connected = true;
-      CROW_LOG_INFO << "Connected websocket and value is " << connected; }).onmessage([&](websocket::connection& conn, const std::string& message, bool isbin) {
-      CROW_LOG_INFO << "Message is \"" << message << '\"';
-      if (!isbin && message == "PINGME")
-          conn.send_ping("");
-      else if (!isbin && message == "Hello")
-          conn.send_text("Hello back");
-      else if (isbin && message == "Hello bin")
-          conn.send_binary("Hello back bin"); }).onclose([&](websocket::connection&, const std::string&) { CROW_LOG_INFO << "Closing websocket"; });
+                                          connected = true;
+                                          CROW_LOG_INFO << "Connected websocket and value is " << connected;
+                                      })
+      .onmessage([&](websocket::connection& conn, const std::string& message, bool isbin) {
+          CROW_LOG_INFO << "Message is \"" << message << '\"';
+          if (!isbin && message == "PINGME")
+              conn.send_ping("");
+          else if (!isbin && message == "Hello")
+              conn.send_text("Hello back");
+          else if (isbin && message == "Hello bin")
+              conn.send_binary("Hello back bin");
+      })
+      .onclose([&](websocket::connection&, const std::string&) {
+          CROW_LOG_INFO << "Closing websocket";
+      });
 
     app.validate();
 
     auto _ = async(launch::async,
-                   [&] { app.bindaddr(LOCALHOST_ADDRESS).port(45451).run(); });
+                   [&] {
+                       app.bindaddr(LOCALHOST_ADDRESS).port(45451).run();
+                   });
     app.wait_for_server_start();
     asio::io_service is;
 
@@ -1962,28 +2033,38 @@ TEST_CASE("zlib_compression")
 
     // test deflate
     CROW_ROUTE(app_deflate, "/test_compress")
-    ([&]() { return expected_string; });
+    ([&]() {
+        return expected_string;
+    });
 
     CROW_ROUTE(app_deflate, "/test")
     ([&](const request&, response& res) {
         res.compressed = false;
 
         res.body = expected_string;
-        res.end(); });
+        res.end();
+    });
 
     // test gzip
     CROW_ROUTE(app_gzip, "/test_compress")
-    ([&]() { return expected_string; });
+    ([&]() {
+        return expected_string;
+    });
 
     CROW_ROUTE(app_gzip, "/test")
     ([&](const request&, response& res) {
         res.compressed = false;
 
         res.body = expected_string;
-        res.end(); });
+        res.end();
+    });
 
-    auto t1 = async(launch::async, [&] { app_deflate.bindaddr(LOCALHOST_ADDRESS).port(45451).use_compression(compression::algorithm::DEFLATE).run(); });
-    auto t2 = async(launch::async, [&] { app_gzip.bindaddr(LOCALHOST_ADDRESS).port(45452).use_compression(compression::algorithm::GZIP).run(); });
+    auto t1 = async(launch::async, [&] {
+        app_deflate.bindaddr(LOCALHOST_ADDRESS).port(45451).use_compression(compression::algorithm::DEFLATE).run();
+    });
+    auto t2 = async(launch::async, [&] {
+        app_gzip.bindaddr(LOCALHOST_ADDRESS).port(45452).use_compression(compression::algorithm::GZIP).run();
+    });
 
     app_deflate.wait_for_server_start();
     app_gzip.wait_for_server_start();
@@ -2146,13 +2227,19 @@ TEST_CASE("catchall")
     SimpleApp app2;
 
     CROW_ROUTE(app, "/place")
-    ([]() { return "place"; });
+    ([]() {
+        return "place";
+    });
 
     CROW_CATCHALL_ROUTE(app)
-    ([](response& res) { res.body = "!place"; });
+    ([](response& res) {
+        res.body = "!place";
+    });
 
     CROW_ROUTE(app2, "/place")
-    ([]() { return "place"; });
+    ([]() {
+        return "place";
+    });
 
     app.validate();
     app2.validate();
@@ -2212,16 +2299,24 @@ TEST_CASE("blueprint")
     crow::Blueprint sub_sub_bp("bp3");
 
     CROW_BP_ROUTE(sub_bp, "/hello")
-    ([]() { return "Hello world!"; });
+    ([]() {
+        return "Hello world!";
+    });
 
     CROW_BP_ROUTE(bp_not_sub, "/hello")
-    ([]() { return "Hello world!"; });
+    ([]() {
+        return "Hello world!";
+    });
 
     CROW_BP_ROUTE(sub_sub_bp, "/hi")
-    ([]() { return "Hi world!"; });
+    ([]() {
+        return "Hi world!";
+    });
 
     CROW_BP_CATCHALL_ROUTE(sub_bp)
-    ([]() { return response(200, "WRONG!!"); });
+    ([]() {
+        return response(200, "WRONG!!");
+    });
 
     app.register_blueprint(bp);
     app.register_blueprint(bp_not_sub);
@@ -2347,7 +2442,9 @@ TEST_CASE("get_port")
 
     const std::uint16_t port = 12345;
 
-    std::thread runTest([&]() { app.port(port).run(); });
+    std::thread runTest([&]() {
+        app.port(port).run();
+    });
 
     app.wait_for_server_start();
     CHECK(app.port() == port);
@@ -2364,9 +2461,13 @@ TEST_CASE("timeout")
         SimpleApp app;
 
         CROW_ROUTE(app, "/")
-        ([]() { return "hello"; });
+        ([]() {
+            return "hello";
+        });
 
-        auto _ = async(launch::async, [&] { app.bindaddr(LOCALHOST_ADDRESS).timeout(timeout).port(45451).run(); });
+        auto _ = async(launch::async, [&] {
+            app.bindaddr(LOCALHOST_ADDRESS).timeout(timeout).port(45451).run();
+        });
         app.wait_for_server_start();
         asio::io_service is;
         std::string sendmsg = "GET /\r\n\r\n";
@@ -2378,9 +2479,10 @@ TEST_CASE("timeout")
               asio::ip::address::from_string(LOCALHOST_ADDRESS), 45451));
 
             auto receive_future = async(launch::async, [&]() {
-        boost::system::error_code ec;
-        c.receive(asio::buffer(buf, 2048), 0, ec);
-        return ec; });
+                boost::system::error_code ec;
+                c.receive(asio::buffer(buf, 2048), 0, ec);
+                return ec;
+            });
             status = receive_future.wait_for(std::chrono::seconds(timeout - 1));
             CHECK(status == future_status::timeout);
 
@@ -2397,9 +2499,10 @@ TEST_CASE("timeout")
 
             size_t received;
             auto receive_future = async(launch::async, [&]() {
-        boost::system::error_code ec;
-        received = c.receive(asio::buffer(buf, 2048), 0, ec);
-        return ec; });
+                boost::system::error_code ec;
+                received = c.receive(asio::buffer(buf, 2048), 0, ec);
+                return ec;
+            });
             status = receive_future.wait_for(std::chrono::seconds(timeout - 1));
             CHECK(status == future_status::timeout);
 
@@ -2426,7 +2529,9 @@ TEST_CASE("task_timer")
 
     boost::asio::io_service io_service;
     work_guard_type work_guard(io_service.get_executor());
-    thread io_thread([&io_service]() { io_service.run(); });
+    thread io_thread([&io_service]() {
+        io_service.run();
+    });
 
     bool a = false;
     bool b = false;
@@ -2436,9 +2541,13 @@ TEST_CASE("task_timer")
     timer.set_default_timeout(7);
     CHECK(timer.get_default_timeout() == 7);
 
-    timer.schedule([&a]() { a = true; },
+    timer.schedule([&a]() {
+        a = true;
+    },
                    5);
-    timer.schedule([&b]() { b = true; });
+    timer.schedule([&b]() {
+        b = true;
+    });
 
     this_thread::sleep_for(chrono::seconds(4));
     CHECK(a == false);

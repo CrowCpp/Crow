@@ -231,7 +231,8 @@ namespace crow
                 {
                     CROW_LOG_ERROR << "Could not start adaptor: " << ec.message();
                     check_destroy();
-                } });
+                }
+            });
         }
 
         void handle_header()
@@ -307,7 +308,9 @@ namespace crow
             if (!is_invalid_request)
             {
                 res.complete_request_handler_ = [] {};
-                res.is_alive_helper_ = [this]() -> bool { return adaptor_.is_open(); };
+                res.is_alive_helper_ = [this]() -> bool {
+                    return adaptor_.is_open();
+                };
 
                 ctx_ = detail::context<Middlewares...>();
                 req.middleware_context = static_cast<void*>(&ctx_);
@@ -316,7 +319,9 @@ namespace crow
 
                 if (!res.completed_)
                 {
-                    res.complete_request_handler_ = [this] { this->complete_request(); };
+                    res.complete_request_handler_ = [this] {
+                        this->complete_request();
+                    };
                     need_to_call_after_handlers_ = true;
                     handler_->handle(req, res);
                     if (add_keep_alive_)
@@ -656,7 +661,8 @@ namespace crow
                     return;
                 }
                 adaptor_.shutdown_readwrite();
-                adaptor_.close(); });
+                adaptor_.close();
+            });
             CROW_LOG_DEBUG << this << " timer added: " << &task_timer_ << ' ' << task_id_;
         }
 

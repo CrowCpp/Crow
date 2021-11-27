@@ -11,10 +11,13 @@ int main()
         res.compressed = false;
 
         res.body = "Hello World! This is uncompressed!";
-        res.end(); });
+        res.end();
+    });
 
     CROW_ROUTE(app, "/hello_compressed")
-    ([]() { return "Hello World! This is compressed by default!"; });
+    ([]() {
+        return "Hello World! This is compressed by default!";
+    });
 
 
     app.port(18080)

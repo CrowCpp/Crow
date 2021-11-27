@@ -10,7 +10,9 @@ int main()
     crow::Blueprint sub_bp("bp2", "csstat", "cstemplate");
 
     CROW_BP_ROUTE(sub_bp, "/")
-    ([]() { return "Hello world!"; });
+    ([]() {
+        return "Hello world!";
+    });
 
     /*    CROW_BP_ROUTE(bp, "/templatt")
     ([]() {
@@ -23,7 +25,9 @@ int main()
     });
 */
     CROW_BP_CATCHALL_ROUTE(sub_bp)
-    ([]() { return "WRONG!!"; });
+    ([]() {
+        return "WRONG!!";
+    });
 
 
     bp.register_blueprint(sub_bp);

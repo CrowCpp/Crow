@@ -314,16 +314,17 @@ namespace crow
         inline void write_buffer_list(std::vector<asio::const_buffer>& buffers, Adaptor& adaptor)
         {
             boost::asio::write(adaptor.socket(), buffers, [this](std::error_code ec, std::size_t) {
-                    if (!ec)
-                    {
-                        return false;
-                    }
-                    else
-                    {
-                        CROW_LOG_ERROR << ec << " - happened while sending buffers";
-                        this->end();
-                        return true;
-                    } });
+                if (!ec)
+                {
+                    return false;
+                }
+                else
+                {
+                    CROW_LOG_ERROR << ec << " - happened while sending buffers";
+                    this->end();
+                    return true;
+                }
+            });
         }
     };
 } // namespace crow

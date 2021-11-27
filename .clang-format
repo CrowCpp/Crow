@@ -1,4 +1,4 @@
-﻿---
+---
 BasedOnStyle: Mozilla
 AccessModifierOffset: '-4'
 AlignAfterOpenBracket: Align
@@ -10,7 +10,7 @@ AllowShortBlocksOnASingleLine: 'true'
 AllowShortCaseLabelsOnASingleLine: 'true'
 AllowShortFunctionsOnASingleLine: All
 AllowShortIfStatementsOnASingleLine: 'true'
-AllowShortLambdasOnASingleLine: All
+AllowShortLambdasOnASingleLine: Empty
 AllowShortLoopsOnASingleLine: 'false'
 AlwaysBreakAfterDefinitionReturnType: None
 AlwaysBreakAfterReturnType: None

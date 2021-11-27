@@ -24,14 +24,18 @@ TEST_CASE("SSL")
     //crow::SimpleApp app2;
 
     CROW_ROUTE(app, "/")
-    ([]() { return "Hello world, I'm keycrt."; });
+    ([]() {
+        return "Hello world, I'm keycrt.";
+    });
     /*
     CROW_ROUTE(app2, "/")
     ([]() {
         return "Hello world, I'm pem.";
     });
 */
-    auto _ = async(std::launch::async, [&] { app.bindaddr(LOCALHOST_ADDRESS).port(45460).ssl_file("test.crt", "test.key").run(); });
+    auto _ = async(std::launch::async, [&] {
+        app.bindaddr(LOCALHOST_ADDRESS).port(45460).ssl_file("test.crt", "test.key").run();
+    });
     //auto _1 = async(std::launch::async,[&] { app2.bindaddr(LOCALHOST_ADDRESS).port(45461).ssl_file("test.pem").run(); });
 
     app.wait_for_server_start();

@@ -46,14 +46,20 @@ int main()
     app.get_middleware<ExampleMiddleware>().setMessage("hello");
 
     CROW_ROUTE(app, "/")
-      .name("hello")([] { return "Hello World!"; });
+      .name("hello")([] {
+          return "Hello World!";
+      });
 
     CROW_ROUTE(app, "/about")
-    ([]() { return "About Crow example."; });
+    ([]() {
+        return "About Crow example.";
+    });
 
     // a request to /path should be forwarded to /path/
     CROW_ROUTE(app, "/path/")
-    ([]() { return "Trailing slash test case.."; });
+    ([]() {
+        return "Trailing slash test case..";
+    });
 
 
     // simple json response
@@ -61,27 +67,31 @@ int main()
     ([] {
         crow::json::wvalue x({{"message", "Hello, World!"}});
         x["message2"] = "Hello, World.. Again!";
-        return x; });
+        return x;
+    });
 
     CROW_ROUTE(app, "/json-initializer-list-constructor")
-    ([] { return crow::json::wvalue({
-            {"first", "Hello world!"},                     /* stores a char const* hence a json::type::String */
-            {"second", std::string("How are you today?")}, /* stores a std::string hence a json::type::String. */
-            {"third", std::int64_t(54)},                   /* stores a 64-bit int hence a std::int64_t. */
-            {"fourth", std::uint64_t(54)},                 /* stores a 64-bit unsigned int hence a std::uint64_t. */
-            {"fifth", 54},                                 /* stores an int (as 54 is an int literal) hence a std::int64_t. */
-            {"sixth", 54u},                                /* stores an unsigned int (as 54u is a unsigned int literal) hence a std::uint64_t. */
-            {"seventh", 2.f},                              /* stores a float (as 2.f is a float literal) hence a double. */
-            {"eighth", 2.},                                /* stores a double (as 2. is a double literal) hence a double. */
-            {"ninth", nullptr},                            /* stores a std::nullptr hence json::type::Null . */
-            {"tenth", true}                                /* stores a bool hence json::type::True . */
-          }); });
+    ([] {
+        return crow::json::wvalue({
+          {"first", "Hello world!"},                     /* stores a char const* hence a json::type::String */
+          {"second", std::string("How are you today?")}, /* stores a std::string hence a json::type::String. */
+          {"third", std::int64_t(54)},                   /* stores a 64-bit int hence a std::int64_t. */
+          {"fourth", std::uint64_t(54)},                 /* stores a 64-bit unsigned int hence a std::uint64_t. */
+          {"fifth", 54},                                 /* stores an int (as 54 is an int literal) hence a std::int64_t. */
+          {"sixth", 54u},                                /* stores an unsigned int (as 54u is a unsigned int literal) hence a std::uint64_t. */
+          {"seventh", 2.f},                              /* stores a float (as 2.f is a float literal) hence a double. */
+          {"eighth", 2.},                                /* stores a double (as 2. is a double literal) hence a double. */
+          {"ninth", nullptr},                            /* stores a std::nullptr hence json::type::Null . */
+          {"tenth", true}                                /* stores a bool hence json::type::True . */
+        });
+    });
 
     // json list response
     CROW_ROUTE(app, "/json_list")
     ([] {
-        crow::json::wvalue x(crow::json::wvalue::list({1,2,3}));
-        return x; });
+        crow::json::wvalue x(crow::json::wvalue::list({1, 2, 3}));
+        return x;
+    });
 
     // To see it in action enter {ip}:18080/hello/{integer_between -2^32 and 100} and you should receive
     // {integer_between -2^31 and 100} bottles of beer!
@@ -91,7 +101,8 @@ int main()
             return crow::response(400);
         std::ostringstream os;
         os << count << " bottles of beer!";
-        return crow::response(os.str()); });
+        return crow::response(os.str());
+    });
 
     // Same as above, but using crow::status
     CROW_ROUTE(app, "/hello_status/<int>")
@@ -100,15 +111,17 @@ int main()
             return crow::response(crow::status::BAD_REQUEST);
         std::ostringstream os;
         os << count << " bottles of beer!";
-        return crow::response(os.str()); });
+        return crow::response(os.str());
+    });
 
     // To see it in action submit {ip}:18080/add/1/2 and you should receive 3 (exciting, isn't it)
     CROW_ROUTE(app, "/add/<int>/<int>")
     ([](crow::response& res, int a, int b) {
         std::ostringstream os;
-        os << a+b;
+        os << a + b;
         res.write(os.str());
-        res.end(); });
+        res.end();
+    });
 
     // Compile error with message "Handler type is mismatched with URL paramters"
     //CROW_ROUTE(app,"/another/<int>")
@@ -129,13 +142,14 @@ int main()
     //      * curl -d '{"a":1,"b":2}' {ip}:18080/add_json
     CROW_ROUTE(app, "/add_json")
       .methods("POST"_method)([](const crow::request& req) {
-        auto x = crow::json::load(req.body);
-        if (!x)
-            return crow::response(400);
-        int sum = x["a"].i()+x["b"].i();
-        std::ostringstream os;
-        os << sum;
-        return crow::response{os.str()}; });
+          auto x = crow::json::load(req.body);
+          if (!x)
+              return crow::response(400);
+          int sum = x["a"].i() + x["b"].i();
+          std::ostringstream os;
+          os << sum;
+          return crow::response{os.str()};
+      });
 
     // Example of a request taking URL parameters
     // If you want to activate all the functions just query
@@ -151,16 +165,18 @@ int main()
 
         // To get a double from the request
         // To see in action submit something like '/params?pew=42'
-        if(req.url_params.get("pew") != nullptr) {
+        if (req.url_params.get("pew") != nullptr)
+        {
             double countD = boost::lexical_cast<double>(req.url_params.get("pew"));
-            os << "The value of 'pew' is " <<  countD << '\n';
+            os << "The value of 'pew' is " << countD << '\n';
         }
 
         // To get a list from the request
         // You have to submit something like '/params?count[]=a&count[]=b' to have a list with two values (a and b)
         auto count = req.url_params.get_list("count");
         os << "The key 'count' contains " << count.size() << " value(s).\n";
-        for(const auto& countVal : count) {
+        for (const auto& countVal : count)
+        {
             os << " - " << countVal << '\n';
         }
 
@@ -168,21 +184,26 @@ int main()
         // You have to submit something like '/params?mydict[a]=b&mydict[abcd]=42' to have a list of pairs ((a, b) and (abcd, 42))
         auto mydict = req.url_params.get_dict("mydict");
         os << "The key 'dict' contains " << mydict.size() << " value(s).\n";
-        for(const auto& mydictVal : mydict) {
+        for (const auto& mydictVal : mydict)
+        {
             os << " - " << mydictVal.first << " -> " << mydictVal.second << '\n';
         }
 
-        return crow::response{os.str()}; });
+        return crow::response{os.str()};
+    });
 
     CROW_ROUTE(app, "/large")
-    ([] { return std::string(512 * 1024, ' '); });
+    ([] {
+        return std::string(512 * 1024, ' ');
+    });
 
     // Take a multipart/form-data request and print out its body
     CROW_ROUTE(app, "/multipart")
     ([](const crow::request& req) {
         crow::multipart::message msg(req);
         CROW_LOG_INFO << "body of the first part " << msg.parts[0].body;
-        return "it works!"; });
+        return "it works!";
+    });
 
     // enables all log
     app.loglevel(crow::LogLevel::Debug);
