@@ -38,67 +38,62 @@ namespace crow
 #ifdef CROW_ENABLE_SSL
     using ssl_context_t = boost::asio::ssl::context;
 #endif
-    ///The main server application
-
+    /// The main server application
     ///
     /// Use `SimpleApp` or `App<Middleware1, Middleware2, etc...>`
-    template <typename ... Middlewares>
+    template<typename... Middlewares>
     class Crow
     {
     public:
-        ///This crow application
+        /// This crow application
         using self_t = Crow;
-        ///The HTTP server
+        /// The HTTP server
         using server_t = Server<Crow, SocketAdaptor, Middlewares...>;
 #ifdef CROW_ENABLE_SSL
-        ///An HTTP server that runs on SSL with an SSLAdaptor
+        /// An HTTP server that runs on SSL with an SSLAdaptor
         using ssl_server_t = Server<Crow, SSLAdaptor, Middlewares...>;
 #endif
         Crow()
-        {
-        }
+        {}
 
-        ///Process an Upgrade request
-
+        /// Process an Upgrade request
         ///
-        ///Currently used to upgrrade an HTTP connection to a WebSocket connection
-        template <typename Adaptor>
+        /// Currently used to upgrrade an HTTP connection to a WebSocket connection
+        template<typename Adaptor>
         void handle_upgrade(const request& req, response& res, Adaptor&& adaptor)
         {
             router_.handle_upgrade(req, res, adaptor);
         }
 
-        ///Process the request and generate a response for it
+        /// Process the request and generate a response for it
         void handle(const request& req, response& res)
         {
             router_.handle(req, res);
         }
 
-        ///Create a dynamic route using a rule (**Use CROW_ROUTE instead**)
+        /// Create a dynamic route using a rule (**Use CROW_ROUTE instead**)
         DynamicRule& route_dynamic(std::string&& rule)
         {
             return router_.new_rule_dynamic(std::move(rule));
         }
 
         ///Create a route using a rule (**Use CROW_ROUTE instead**)
-        template <uint64_t Tag>
+        template<uint64_t Tag>
 #ifdef CROW_GCC83_WORKAROUND
         auto& route(std::string&& rule)
 #else
         auto route(std::string&& rule)
 #ifdef CROW_CAN_USE_CPP17
-            -> typename std::invoke_result<decltype(&Router::new_rule_tagged<Tag>),
-                                        Router, std::string&&>::type
+          -> typename std::invoke_result<decltype(&Router::new_rule_tagged<Tag>), Router, std::string&&>::type
 #else
-            -> typename std::result_of<decltype (&Router::new_rule_tagged<Tag>)(
-                Router, std::string&&)>::type
+          -> typename std::result_of<decltype (&Router::new_rule_tagged<Tag>)(Router, std::string&&)>::type
 #endif
 #endif
         {
             return router_.new_rule_tagged<Tag>(std::move(rule));
         }
 
-        ///Create a route for any requests without a proper route (**Use CROW_CATCHALL_ROUTE instead**)
+        /// Create a route for any requests without a proper route (**Use CROW_CATCHALL_ROUTE instead**)
         CatchallRule& catchall_route()
         {
             return router_.catchall_rule();
@@ -116,7 +111,7 @@ namespace crow
             return *this;
         }
 
-        ///Set the port that Crow will handle requests on
+        /// Set the port that Crow will handle requests on
         self_t& port(std::uint16_t port)
         {
             port_ = port;
@@ -128,34 +123,35 @@ namespace crow
             return port_;
         }
 
-        ///Set the connection timeout in seconds (default is 5)
+
+        /// Set the connection timeout in seconds (default is 5)
         self_t& timeout(std::uint8_t timeout)
         {
             timeout_ = timeout;
             return *this;
         }
 
-        ///Set the server name
+        /// Set the server name
         self_t& server_name(std::string server_name)
         {
             server_name_ = server_name;
             return *this;
         }
 
-        ///The IP address that Crow will handle requests on (default is 0.0.0.0)
+        /// The IP address that Crow will handle requests on (default is 0.0.0.0)
         self_t& bindaddr(std::string bindaddr)
         {
             bindaddr_ = bindaddr;
             return *this;
         }
 
-        ///Run the server on multiple threads using all available threads
+        /// Run the server on multiple threads using all available threads
         self_t& multithreaded()
         {
             return concurrency(std::thread::hardware_concurrency());
         }
 
-        ///Run the server on multiple threads using a specific number
+        /// Run the server on multiple threads using a specific number
         self_t& concurrency(std::uint16_t concurrency)
         {
             if (concurrency < 1)
@@ -164,8 +160,7 @@ namespace crow
             return *this;
         }
 
-        ///Set the server's log level
-
+        /// Set the server's log level
         ///
         /// Possible values are:<br>
         /// crow::LogLevel::Debug       (0)<br>
@@ -180,7 +175,6 @@ namespace crow
         }
 
         /// Set a response body size (in bytes) beyond which Crow automatically streams responses (Default is 1MiB)
-
         ///
         /// Any streamed response is unaffected by Crow's timer, and therefore won't timeout before a response is fully sent.
         self_t& stream_threshold(size_t threshold)
@@ -200,9 +194,10 @@ namespace crow
             return *this;
         }
 
-        ///Set a custom duration and function to run on every tick
-        template <typename Duration, typename Func>
-        self_t& tick(Duration d, Func f) {
+        /// Set a custom duration and function to run on every tick
+        template<typename Duration, typename Func>
+        self_t& tick(Duration d, Func f)
+        {
             tick_interval_ = std::chrono::duration_cast<std::chrono::milliseconds>(d);
             tick_function_ = f;
             return *this;
@@ -226,21 +221,18 @@ namespace crow
             return compression_used_;
         }
 #endif
-        ///A wrapper for `validate()` in the router
-
+        /// A wrapper for `validate()` in the router
         ///
-        ///Go through the rules, upgrade them if possible, and add them to the list of rules
+        /// Go through the rules, upgrade them if possible, and add them to the list of rules
         void validate()
         {
             if (!validated_)
             {
 
 #ifndef CROW_DISABLE_STATIC_DIR
-                route<crow::black_magic::get_parameter_tag(CROW_STATIC_ENDPOINT)>(CROW_STATIC_ENDPOINT)
-                ([](crow::response& res, std::string file_path_partial)
-                {
-                  res.set_static_file_info(CROW_STATIC_DIRECTORY + file_path_partial);
-                  res.end();
+                route<crow::black_magic::get_parameter_tag(CROW_STATIC_ENDPOINT)>(CROW_STATIC_ENDPOINT)([](crow::response& res, std::string file_path_partial) {
+                    res.set_static_file_info(CROW_STATIC_DIRECTORY + file_path_partial);
+                    res.end();
                 });
 
 #if defined(__APPLE__) || defined(__MACH__)
@@ -251,11 +243,9 @@ namespace crow
                     {
                         if (!bp->static_dir().empty())
                         {
-                            bp->new_rule_tagged<crow::black_magic::get_parameter_tag(CROW_STATIC_ENDPOINT)>(CROW_STATIC_ENDPOINT)
-                            ([bp](crow::response& res, std::string file_path_partial)
-                            {
-                              res.set_static_file_info(bp->static_dir() + '/' + file_path_partial);
-                              res.end();
+                            bp->new_rule_tagged<crow::black_magic::get_parameter_tag(CROW_STATIC_ENDPOINT)>(CROW_STATIC_ENDPOINT)([bp](crow::response& res, std::string file_path_partial) {
+                                res.set_static_file_info(bp->static_dir() + '/' + file_path_partial);
+                                res.end();
                             });
                         }
                     }
@@ -267,7 +257,7 @@ namespace crow
             }
         }
 
-        ///Notify anything using `wait_for_server_start()` to proceed
+        /// Notify anything using `wait_for_server_start()` to proceed
         void notify_server_start()
         {
             std::unique_lock<std::mutex> lock(start_mutex_);
@@ -275,7 +265,7 @@ namespace crow
             cv_started_.notify_all();
         }
 
-        ///Run the server
+        /// Run the server
         void run()
         {
 
@@ -304,22 +294,18 @@ namespace crow
             }
         }
 
-        ///Stop the server
+        /// Stop the server
         void stop()
         {
 #ifdef CROW_ENABLE_SSL
             if (ssl_used_)
             {
-		if (ssl_server_) {
-                    ssl_server_->stop();
-		}
+                if (ssl_server_) { ssl_server_->stop(); }
             }
             else
 #endif
             {
-		if (server_) {
-                    server_->stop();
-		}
+                if (server_) { server_->stop(); }
             }
         }
 
@@ -332,7 +318,7 @@ namespace crow
 
 #ifdef CROW_ENABLE_SSL
 
-        ///use certificate and key files for SSL
+        /// use certificate and key files for SSL
         self_t& ssl_file(const std::string& crt_filename, const std::string& key_filename)
         {
             ssl_used_ = true;
@@ -341,14 +327,11 @@ namespace crow
             ssl_context_.use_certificate_file(crt_filename, ssl_context_t::pem);
             ssl_context_.use_private_key_file(key_filename, ssl_context_t::pem);
             ssl_context_.set_options(
-                    boost::asio::ssl::context::default_workarounds
-                          | boost::asio::ssl::context::no_sslv2
-                          | boost::asio::ssl::context::no_sslv3
-                    );
+              boost::asio::ssl::context::default_workarounds | boost::asio::ssl::context::no_sslv2 | boost::asio::ssl::context::no_sslv3);
             return *this;
         }
 
-        ///use .pem file for SSL
+        /// use .pem file for SSL
         self_t& ssl_file(const std::string& pem_filename)
         {
             ssl_used_ = true;
@@ -356,10 +339,7 @@ namespace crow
             ssl_context_.set_verify_mode(boost::asio::ssl::verify_client_once);
             ssl_context_.load_verify_file(pem_filename);
             ssl_context_.set_options(
-                    boost::asio::ssl::context::default_workarounds
-                          | boost::asio::ssl::context::no_sslv2
-                          | boost::asio::ssl::context::no_sslv3
-                    );
+              boost::asio::ssl::context::default_workarounds | boost::asio::ssl::context::no_sslv2 | boost::asio::ssl::context::no_sslv3);
             return *this;
         }
 
@@ -375,25 +355,25 @@ namespace crow
             return ssl_used_;
         }
 #else
-        template <typename T, typename ... Remain>
+        template<typename T, typename... Remain>
         self_t& ssl_file(T&&, Remain&&...)
         {
             // We can't call .ssl() member function unless CROW_ENABLE_SSL is defined.
             static_assert(
-                    // make static_assert dependent to T; always false
-                    std::is_base_of<T, void>::value,
-                    "Define CROW_ENABLE_SSL to enable ssl support.");
+              // make static_assert dependent to T; always false
+              std::is_base_of<T, void>::value,
+              "Define CROW_ENABLE_SSL to enable ssl support.");
             return *this;
         }
 
-        template <typename T>
+        template<typename T>
         self_t& ssl(T&&)
         {
             // We can't call .ssl() member function unless CROW_ENABLE_SSL is defined.
             static_assert(
-                    // make static_assert dependent to T; always false
-                    std::is_base_of<T, void>::value,
-                    "Define CROW_ENABLE_SSL to enable ssl support.");
+              // make static_assert dependent to T; always false
+              std::is_base_of<T, void>::value,
+              "Define CROW_ENABLE_SSL to enable ssl support.");
             return *this;
         }
 
@@ -405,7 +385,7 @@ namespace crow
 
         // middleware
         using context_t = detail::context<Middlewares...>;
-        template <typename T>
+        template<typename T>
         typename T::context& get_context(const request& req)
         {
             static_assert(black_magic::contains<T, Middlewares...>::value, "App doesn't have the specified middleware type.");
@@ -413,13 +393,13 @@ namespace crow
             return ctx.template get<T>();
         }
 
-        template <typename T>
+        template<typename T>
         T& get_middleware()
         {
             return utility::get_element_by_type<T, Middlewares...>(middlewares_);
         }
 
-        ///Wait until the server has properly started
+        /// Wait until the server has properly started
         void wait_for_server_start()
         {
             std::unique_lock<std::mutex> lock(start_mutex_);
@@ -462,7 +442,7 @@ namespace crow
         std::condition_variable cv_started_;
         std::mutex start_mutex_;
     };
-    template <typename ... Middlewares>
+    template<typename... Middlewares>
     using App = Crow<Middlewares...>;
     using SimpleApp = Crow<>;
-}
+} // namespace crow

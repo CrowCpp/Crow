@@ -87,8 +87,7 @@ namespace crow
     public:
         logger(LogLevel level):
           level_(level)
-        {
-        }
+        {}
         ~logger()
         {
 #ifdef CROW_ENABLE_LOGGING

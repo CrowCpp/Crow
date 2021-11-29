@@ -14,7 +14,7 @@ int main()
         return "Hello world!";
     });
 
-/*    CROW_BP_ROUTE(bp, "/templatt")
+    /*    CROW_BP_ROUTE(bp, "/templatt")
     ([]() {
         crow::mustache::context ctxdat;
         ctxdat["messg"] = "fifty five!!";
@@ -24,7 +24,10 @@ int main()
         return page.render(ctxdat);
     });
 */
-    CROW_BP_CATCHALL_ROUTE(sub_bp)([](){return "WRONG!!";});
+    CROW_BP_CATCHALL_ROUTE(sub_bp)
+    ([]() {
+        return "WRONG!!";
+    });
 
 
     bp.register_blueprint(sub_bp);

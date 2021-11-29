@@ -15,7 +15,7 @@ void broadcast(const string& msg)
     x["msgs"][0] = msgs.back();
     x["last"] = msgs.size();
     string body = x.dump();
-    for(auto p : ress)
+    for (auto p : ress)
     {
         auto* res = p.first;
         CROW_LOG_DEBUG << res << " replied: " << body;
@@ -30,31 +30,31 @@ int main()
     crow::mustache::set_base(".");
 
     CROW_ROUTE(app, "/")
-    ([]{
+    ([] {
         crow::mustache::context ctx;
         return crow::mustache::load("example_chat.html").render();
     });
 
     CROW_ROUTE(app, "/logs")
-    ([]{
+    ([] {
         CROW_LOG_INFO << "logs requested";
         crow::json::wvalue x;
-        int start = max(0, (int)msgs.size()-100);
-        for(int i = start; i < (int)msgs.size(); i++)
-            x["msgs"][i-start] = msgs[i];
+        int start = max(0, (int)msgs.size() - 100);
+        for (int i = start; i < (int)msgs.size(); i++)
+            x["msgs"][i - start] = msgs[i];
         x["last"] = msgs.size();
         CROW_LOG_INFO << "logs completed";
         return x;
     });
 
     CROW_ROUTE(app, "/logs/<int>")
-    ([](const crow::request& /*req*/, crow::response& res, int after){
+    ([](const crow::request& /*req*/, crow::response& res, int after) {
         CROW_LOG_INFO << "logs with last " << after;
         if (after < (int)msgs.size())
         {
             crow::json::wvalue x;
-            for(int i = after; i < (int)msgs.size(); i ++)
-                x["msgs"][i-after] = msgs[i];
+            for (int i = after; i < (int)msgs.size(); i++)
+                x["msgs"][i - after] = msgs[i];
             x["last"] = msgs.size();
 
             res.write(x.dump());
@@ -63,7 +63,7 @@ int main()
         else
         {
             vector<pair<crow::response*, decltype(chrono::steady_clock::now())>> filtered;
-            for(auto p : ress)
+            for (auto p : ress)
             {
                 if (p.first->is_alive() && chrono::steady_clock::now() - p.second < chrono::seconds(30))
                     filtered.push_back(p);
@@ -77,15 +77,13 @@ int main()
     });
 
     CROW_ROUTE(app, "/send")
-        .methods("GET"_method, "POST"_method)
-    ([](const crow::request& req)
-    {
-        CROW_LOG_INFO << "msg from client: " << req.body;
-        broadcast(req.body);
-        return "";
-    });
+      .methods("GET"_method, "POST"_method)([](const crow::request& req) {
+          CROW_LOG_INFO << "msg from client: " << req.body;
+          broadcast(req.body);
+          return "";
+      });
 
     app.port(40080)
-        //.multithreaded()
-        .run();
+      //.multithreaded()
+      .run();
 }

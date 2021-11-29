@@ -12,6 +12,12 @@ steps:
   environment:
     COVERALLS_REPO_TOKEN:
       from_secret: coveralls_token
+    APP_ID:
+      from_secret: appid
+    APP_INSTALLATION:
+      from_secret: appins
+    PK:
+      from_secret: pk
 
   commands:
   - export DEBIAN_FRONTEND=noninteractive
@@ -19,7 +25,7 @@ steps:
   - export TRAVIS_JOB_ID=$DRONE_BUILD_NUMBER
   - export COVERALLS_PULL_REQUEST=$DRONE_PULL_REQUEST
   - apt-get -y update
-  - apt-get -y install libboost-all-dev doxygen mkdocs graphviz zlib1g-dev gcc clang make cmake python3 python3-pip git openssl libssl-dev
+  - apt-get -y install libboost-all-dev doxygen mkdocs graphviz zlib1g-dev gcc clang clang-format make cmake python3 python3-pip git openssl libssl-dev jq wget curl
   - git clone https://github.com/CrowCpp/cpp-coveralls.git
   - cd cpp-coveralls
   - pip3 install . --no-input
@@ -33,6 +39,11 @@ steps:
   - ctest -V -j4
   - cd ..
   - coveralls --verbose --exclude-pattern .*/http_parser_merged.h --exclude-pattern .*/TinySHA1.hpp
+  - git clone https://github.com/CrowCpp/crow-clang-format.git
+  - cd crow-clang-format
+  - chmod +x crow-clang-format.sh get-access-token.sh make-jwt.sh
+  - ./crow-clang-format.sh
+  - cd ..
   - export CC=/usr/bin/clang
   - export CXX=/usr/bin/clang++
   - mkdir build-clang

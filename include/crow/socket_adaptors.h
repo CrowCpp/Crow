@@ -18,10 +18,9 @@ namespace crow
     struct SocketAdaptor
     {
         using context = void;
-        SocketAdaptor(boost::asio::io_service& io_service, context*)
-            : socket_(io_service)
-        {
-        }
+        SocketAdaptor(boost::asio::io_service& io_service, context*):
+          socket_(io_service)
+        {}
 
         boost::asio::io_service& get_io_service()
         {
@@ -74,7 +73,7 @@ namespace crow
             socket_.shutdown(boost::asio::socket_base::shutdown_type::shutdown_receive, ec);
         }
 
-        template <typename F> 
+        template<typename F>
         void start(F f)
         {
             f(boost::system::error_code());
@@ -88,10 +87,9 @@ namespace crow
     {
         using context = boost::asio::ssl::context;
         using ssl_socket_t = boost::asio::ssl::stream<tcp::socket>;
-        SSLAdaptor(boost::asio::io_service& io_service, context* ctx)
-            : ssl_socket_(new ssl_socket_t(io_service, *ctx))
-        {
-        }
+        SSLAdaptor(boost::asio::io_service& io_service, context* ctx):
+          ssl_socket_(new ssl_socket_t(io_service, *ctx))
+        {}
 
         boost::asio::ssl::stream<tcp::socket>& socket()
         {
@@ -99,7 +97,7 @@ namespace crow
         }
 
         tcp::socket::lowest_layer_type&
-        raw_socket()
+          raw_socket()
         {
             return ssl_socket_->lowest_layer();
         }
@@ -155,16 +153,16 @@ namespace crow
             return GET_IO_SERVICE(raw_socket());
         }
 
-        template <typename F> 
+        template<typename F>
         void start(F f)
         {
             ssl_socket_->async_handshake(boost::asio::ssl::stream_base::server,
-                    [f](const boost::system::error_code& ec) {
-                        f(ec);
-                    });
+                                         [f](const boost::system::error_code& ec) {
+                                             f(ec);
+                                         });
         }
 
         std::unique_ptr<boost::asio::ssl::stream<tcp::socket>> ssl_socket_;
     };
 #endif
-}
+} // namespace crow
