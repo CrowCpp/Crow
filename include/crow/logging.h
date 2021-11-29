@@ -60,7 +60,7 @@ namespace crow
                     prefix = "CRITICAL";
                     break;
             }
-            std::cerr << "(" << timestamp() << ") [" << prefix << "] " << message;
+            std::cerr << "(" << timestamp() << ") [" << prefix << "] " << message << std::endl;
         }
 
     private:
@@ -93,7 +93,6 @@ namespace crow
 #ifdef CROW_ENABLE_LOGGING
             if (level_ >= get_current_log_level())
             {
-                stringstream_ << std::endl;
                 get_handler_ref()->log(stringstream_.str(), level_);
             }
 #endif
