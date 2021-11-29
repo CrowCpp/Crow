@@ -245,10 +245,10 @@ Searc/drone/src/include/crow/json.h:1422: warning: unable to resolve reference t
 /drone/src/include/crow/parser.h:172: warning: Member body (variable) of class crow::HTTPParser is not documented.
 /drone/src/include/crow/logging.h:36: warning: Member log(std::string message, LogLevel level)=0 (function) of class crow::ILogHandler is not documented.
 /drone/src/include/crow/logging.h:88: warning: Member logger(LogLevel level) (function) of class crow::logger is not documented.
-/drone/src/include/crow/logging.h:104: warning: Member operator<<(T const &value) (function) of class crow::logger is not documented.
-/drone/src/include/crow/logging.h:116: warning: Member setLogLevel(LogLevel level) (function) of class crow::logger is not documented.
-/drone/src/include/crow/logging.h:118: warning: Member setHandler(ILogHandler *handler) (function) of class crow::logger is not documented.
-/drone/src/include/crow/logging.h:120: warning: Member get_current_log_level() (function) of class crow::logger is not documented.
+/drone/src/include/crow/logging.h:103: warning: Member operator<<(T const &value) (function) of class crow::logger is not documented.
+/drone/src/include/crow/logging.h:115: warning: Member setLogLevel(LogLevel level) (function) of class crow::logger is not documented.
+/drone/src/include/crow/logging.h:117: warning: Member setHandler(ILogHandler *handler) (function) of class crow::logger is not documented.
+/drone/src/include/crow/logging.h:119: warning: Member get_current_log_level() (function) of class crow::logger is not documented.
 /drone/src/include/crow/query_string.h:301: warning: Member query_string(const query_string &qs) (function) of class crow::query_string is not documented.
 /drone/src/include/crow/query_string.h:310: warning: Member operator=(const query_string &qs) (function) of class crow::query_string is not documented.
 /drone/src/include/crow/query_string.h:321: warning: Member operator=(query_string &&qs) (function) of class crow::query_string is not documented.
@@ -797,5 +797,5 @@ Generating example index...
 finalizing index lists...
 writing tag file...
 Running plantuml with JAVA...
-lookup cache used 2649/65536 hits=23287 misses=2978
+lookup cache used 2649/65536 hits=23280 misses=2978
 finished...
