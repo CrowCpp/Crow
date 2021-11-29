@@ -53,7 +53,7 @@ IncludeCategories:
   - Regex:           '^"(llvm|llvm-c|clang|clang-c)/'
     Priority:        2
     SortPriority:    2
-    CaseSensitive:   true
+#    CaseSensitive:   true
   - Regex:           '^(<|"(gtest|gmock|isl|json)/)'
     Priority:        3
   - Regex:           '<[[:alnum:].]+>'
