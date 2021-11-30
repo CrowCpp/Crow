@@ -196,7 +196,7 @@ namespace crow
             asio::io_service& is = *io_service_pool_[service_idx];
             auto p = new Connection<Adaptor, Handler, Middlewares...>(
               is, handler_, server_name_, middlewares_,
-                get_cached_date_str_pool_[service_idx], *task_timer_pool_[service_idx], adaptor_ctx_, task_queue_length_pool_[service_idx]);
+              get_cached_date_str_pool_[service_idx], *task_timer_pool_[service_idx], adaptor_ctx_, task_queue_length_pool_[service_idx]);
             task_queue_length_pool_[service_idx] += 1;
             acceptor_.async_accept(
               p->socket(),

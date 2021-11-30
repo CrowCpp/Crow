@@ -187,7 +187,7 @@ namespace crow
           std::function<std::string()>& get_cached_date_str_f,
           detail::task_timer& task_timer,
           typename Adaptor::context* adaptor_ctx_,
-          int &queue_length_):
+          int& queue_length_):
           adaptor_(io_service, adaptor_ctx_),
           handler_(handler),
           parser_(this),
@@ -705,7 +705,7 @@ namespace crow
 
         size_t res_stream_threshold_;
 
-        int &queue_length;
+        int& queue_length;
     };
 
 } // namespace crow
