@@ -36,6 +36,7 @@ namespace crow
           server_name_(server_name),
           port_(port),
           bindaddr_(bindaddr),
+          task_queue_length_pool_(concurrency_),
           middlewares_(middlewares),
           adaptor_ctx_(adaptor_ctx)
         {}
@@ -63,7 +64,6 @@ namespace crow
                 io_service_pool_.emplace_back(new boost::asio::io_service());
             get_cached_date_str_pool_.resize(concurrency_);
             task_timer_pool_.resize(concurrency_);
-            task_queue_length_pool_.resize(concurrency_);
 
             std::vector<std::future<void>> v;
             std::atomic<int> init_count(0);
@@ -202,7 +202,7 @@ namespace crow
 
             acceptor_.async_accept(
               p->socket(),
-              [this, p, &is](boost::system::error_code ec) {
+              [this, p, &is, service_idx](boost::system::error_code ec) {
                   if (!ec)
                   {
                       is.post(
@@ -224,7 +224,6 @@ namespace crow
         std::vector<std::unique_ptr<asio::io_service>> io_service_pool_;
         std::vector<detail::task_timer*> task_timer_pool_;
         std::vector<std::function<std::string()>> get_cached_date_str_pool_;
-        std::vector<std::atomic<uint>> task_queue_length_pool_;
         tcp::acceptor acceptor_;
         boost::asio::signal_set signals_;
         boost::asio::deadline_timer tick_timer_;
@@ -235,7 +234,7 @@ namespace crow
         std::string server_name_;
         uint16_t port_;
         std::string bindaddr_;
-        unsigned int roundrobin_index_{};
+        std::vector<std::atomic<unsigned int>> task_queue_length_pool_;
 
         std::chrono::milliseconds tick_interval_;
         std::function<void()> tick_function_;
