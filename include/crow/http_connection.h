@@ -407,7 +407,7 @@ namespace crow
                 do_write_general();
             }
 
-            queue_length -= 1;
+            queue_length--;
         }
 
     private:
