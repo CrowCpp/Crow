@@ -53,7 +53,6 @@ namespace crow
             return crow::get_header_value(headers, key);
         }
 
-        // TODO find a better way to format this so that stuff aren't moved down a line
         // clang-format off
         response() {}
         explicit response(int code) : code(code) {}
@@ -242,27 +241,6 @@ namespace crow
             }
         }
 
-        /// Stream a static file.
-        template<typename Adaptor>
-        void do_stream_file(Adaptor& adaptor)
-        {
-            if (file_info.statResult == 0)
-            {
-                std::ifstream is(file_info.path.c_str(), std::ios::in | std::ios::binary);
-                write_streamed(is, adaptor);
-            }
-        }
-
-        /// Stream the response body (send the body in chunks).
-        template<typename Adaptor>
-        void do_stream_body(Adaptor& adaptor)
-        {
-            if (body.length() > 0)
-            {
-                write_streamed_string(body, adaptor);
-            }
-        }
-
     private:
         bool completed_{};
         std::function<void()> complete_request_handler_;
@@ -279,52 +257,6 @@ namespace crow
                 buffers.push_back(boost::asio::buffer(buf));
                 write_buffer_list(buffers, adaptor);
             }
-        }
-
-        // THIS METHOD DOES MODIFY THE BODY, AS IN IT EMPTIES IT
-        template<typename Adaptor>
-        void write_streamed_string(std::string& is, Adaptor& adaptor)
-        {
-            std::string buf;
-            std::vector<asio::const_buffer> buffers;
-
-            while (is.length() > 16384)
-            {
-                //buf.reserve(16385);
-                buf = is.substr(0, 16384);
-                is = is.substr(16384);
-                push_and_write(buffers, buf, adaptor);
-            }
-            // Collect whatever is left (less than 16KB) and send it down the socket
-            // buf.reserve(is.length());
-            buf = is;
-            is.clear();
-            push_and_write(buffers, buf, adaptor);
-        }
-
-        template<typename Adaptor>
-        inline void push_and_write(std::vector<asio::const_buffer>& buffers, std::string& buf, Adaptor& adaptor)
-        {
-            buffers.clear();
-            buffers.push_back(boost::asio::buffer(buf));
-            write_buffer_list(buffers, adaptor);
-        }
-
-        template<typename Adaptor>
-        inline void write_buffer_list(std::vector<asio::const_buffer>& buffers, Adaptor& adaptor)
-        {
-            boost::asio::write(adaptor.socket(), buffers, [this](std::error_code ec, std::size_t) {
-                if (!ec)
-                {
-                    return false;
-                }
-                else
-                {
-                    CROW_LOG_ERROR << ec << " - happened while sending buffers";
-                    this->end();
-                    return true;
-                }
-            });
         }
     };
 } // namespace crow
