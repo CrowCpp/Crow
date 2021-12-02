@@ -247,16 +247,5 @@ namespace crow
         std::function<bool()> is_alive_helper_;
         static_file_info file_info;
 
-        template<typename Stream, typename Adaptor>
-        void write_streamed(Stream& is, Adaptor& adaptor)
-        {
-            char buf[16384];
-            while (is.read(buf, sizeof(buf)).gcount() > 0)
-            {
-                std::vector<asio::const_buffer> buffers;
-                buffers.push_back(boost::asio::buffer(buf));
-                write_buffer_list(buffers, adaptor);
-            }
-        }
     };
 } // namespace crow

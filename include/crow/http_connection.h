@@ -572,6 +572,7 @@ namespace crow
                         //buf.reserve(16385);
                         buf = res.body.substr(0, 16384);
                         res.body = res.body.substr(16384);
+                        buffers.clear();
                         buffers.push_back(boost::asio::buffer(buf));
                         do_write_sync(buffers);
                     }
@@ -580,6 +581,7 @@ namespace crow
                     buf = res.body;
                     res.body.clear();
 
+                    buffers.clear();
                     buffers.push_back(boost::asio::buffer(buf));
                     do_write_sync(buffers);
                 }
