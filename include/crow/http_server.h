@@ -102,13 +102,13 @@ namespace crow
                         detail::task_timer task_timer(*io_service_pool_[i]);
                         task_timer.set_default_timeout(timeout_);
                         task_timer_pool_[i] = &task_timer;
+                        task_queue_length_pool_[i] = 0;
 
                         init_count++;
                         while (1)
                         {
                             try
                             {
-                                task_queue_length_pool_[i] = 0;
                                 if (io_service_pool_[i]->run() == 0)
                                 {
                                     // when io_service.run returns 0, there are no more works to do.
