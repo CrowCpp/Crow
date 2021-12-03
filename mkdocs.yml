@@ -53,6 +53,8 @@ nav:
             - Compression: guides/compression.md
             - Websockets: guides/websockets.md
             - Writing Tests: guides/testing.md
+        - Using Crow:
+            - HTTP Authorization: guides/auth.md
         - Server setup:
             - Proxies: guides/proxies.md
             - Systemd run on startup: guides/syste.md

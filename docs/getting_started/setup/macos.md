@@ -44,6 +44,10 @@ This will generate a `crow_all.h` file which you can use in the following steps
 
 
 ## Building Crow's tests/examples
+!!!note
+
+    This tutorial can be used for Crow projects built with CMake as well
+
 1. Download and install [Homebrew](https://brew.sh).
 2. Run `brew install cmake boost` in your terminal.
 3. Get Crow's source code (the entire source code).
@@ -55,3 +59,17 @@ This will generate a `crow_all.h` file which you can use in the following steps
 !!!note
 
         You can add options like `-DCROW_ENABLE_SSL`, `-DCROW_ENABLE_COMPRESSION`, or `-DCROW_AMALGAMATE` to `3.c` to build their tests/examples.
+
+## Compiling using a compiler directly
+All you need to do is run the following command:
+```
+g++ main.cpp -lpthread
+```
+!!!note
+
+    You'll need to install GCC via `brew install gcc`. the Clang compiler should be part of Xcode or Xcode command line tools.
+
+You can use arguments like `-DCROW_ENABLE_DEBUG`, `-DCROW_ENABLE_COMPRESSION -lz` for HTTP Compression, or `-DCROW_ENABLE_SSL -lssl` for HTTPS support, or even replace g++ with clang++.
+!!!warning
+
+    If you're using a version of boost prior to 1.69, you'll need to add the argument `-lboost_system` in order for you Crow application to compile correctly.
