@@ -187,7 +187,7 @@ namespace crow
           std::function<std::string()>& get_cached_date_str_f,
           detail::task_timer& task_timer,
           typename Adaptor::context* adaptor_ctx_,
-          std::atomic<unsigned int>& queue_length_):
+          std::atomic<unsigned int>& queue_length):
           adaptor_(io_service, adaptor_ctx_),
           handler_(handler),
           parser_(this),
@@ -196,7 +196,7 @@ namespace crow
           get_cached_date_str(get_cached_date_str_f),
           task_timer_(task_timer),
           res_stream_threshold_(handler->stream_threshold()),
-          queue_length(queue_length_)
+          queue_length_(queue_length)
         {
 #ifdef CROW_ENABLE_DEBUG
             connectionCount++;
@@ -406,8 +406,6 @@ namespace crow
             {
                 do_write_general();
             }
-
-            queue_length--;
         }
 
     private:
@@ -644,6 +642,7 @@ namespace crow
             CROW_LOG_DEBUG << this << " is_reading " << is_reading << " is_writing " << is_writing;
             if (!is_reading && !is_writing)
             {
+                queue_length_--;
                 CROW_LOG_DEBUG << this << " delete (idle) ";
                 delete this;
             }
@@ -705,7 +704,7 @@ namespace crow
 
         size_t res_stream_threshold_;
 
-        std::atomic<unsigned int>& queue_length;
+        std::atomic<unsigned int>& queue_length_;
     };
 
 } // namespace crow
