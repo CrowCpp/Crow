@@ -122,6 +122,7 @@ namespace crow
         }
 
         /// Return a "Temporary Redirect" response.
+
         ///
         /// Location can either be a route or a full URL.
         void redirect(const std::string& location)
@@ -131,6 +132,7 @@ namespace crow
         }
 
         /// Return a "Permanent Redirect" response.
+
         ///
         /// Location can either be a route or a full URL.
         void redirect_perm(const std::string& location)
@@ -140,6 +142,7 @@ namespace crow
         }
 
         /// Return a "Found (Moved Temporarily)" response.
+
         ///
         /// Location can either be a route or a full URL.
         void moved(const std::string& location)
@@ -149,6 +152,7 @@ namespace crow
         }
 
         /// Return a "Moved Permanently" response.
+
         ///
         /// Location can either be a route or a full URL.
         void moved_perm(const std::string& location)
@@ -201,6 +205,7 @@ namespace crow
         }
 
         /// This constains metadata (coming from the `stat` command) related to any static files associated with this response.
+
         ///
         /// Either a static file or a string body can be returned as 1 response.
         struct static_file_info

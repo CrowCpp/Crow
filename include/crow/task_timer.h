@@ -41,15 +41,13 @@ namespace crow
                 CROW_LOG_DEBUG << "task_timer cancelled: " << this << ' ' << id;
             }
 
-            ///
-            /// Schedule the given task to be executed after the default amount of
-            /// ticks.
+            /// Schedule the given task to be executed after the default amount of ticks.
+
             ///
             /// \return identifier_type Used to cancel the thread.
             /// It is not bound to this task_timer instance and in some cases could lead to
             /// undefined behavior if used with other task_timer objects or after the task
             /// has been successfully executed.
-            ///
             identifier_type schedule(const task_type& task)
             {
                 tasks_.insert(
@@ -60,8 +58,8 @@ namespace crow
                 return highest_id_;
             }
 
-            ///
             /// Schedule the given task to be executed after the given time.
+
             ///
             /// \param timeout The amount of ticks (seconds) to wait before execution.
             ///
@@ -69,7 +67,6 @@ namespace crow
             /// It is not bound to this task_timer instance and in some cases could lead to
             /// undefined behavior if used with other task_timer objects or after the task
             /// has been successfully executed.
-            ///
             identifier_type schedule(const task_type& task, std::uint8_t timeout)
             {
                 tasks_.insert({++highest_id_,
@@ -78,16 +75,13 @@ namespace crow
                 return highest_id_;
             }
 
-            ///
             /// Set the default timeout for this task_timer instance. (Default: 5)
-            ///
-            /// \param timeout The amount of ticks (seconds) to wait before execution.
-            ///
-            void set_default_timeout(std::uint8_t timeout) { default_timeout_ = timeout; }
 
             ///
+            /// \param timeout The amount of ticks (seconds) to wait before execution.
+            void set_default_timeout(std::uint8_t timeout) { default_timeout_ = timeout; }
+
             /// Get the default timeout. (Default: 5)
-            ///
             std::uint8_t get_default_timeout() const { return default_timeout_; }
 
         private:

@@ -14,7 +14,7 @@ namespace crow
     using namespace boost;
     using tcp = asio::ip::tcp;
 
-    ///A wrapper for the asio::ip::tcp::socket and asio::ssl::stream
+    /// A wrapper for the asio::ip::tcp::socket and asio::ssl::stream
     struct SocketAdaptor
     {
         using context = void;
