@@ -196,7 +196,6 @@ namespace crow
             }
 
         protected:
-
             /// Generate the websocket headers using an opcode and the message size (in bytes).
             std::string build_header(int opcode, size_t size)
             {
