@@ -39,6 +39,7 @@ namespace crow
     using ssl_context_t = boost::asio::ssl::context;
 #endif
     /// The main server application
+
     ///
     /// Use `SimpleApp` or `App<Middleware1, Middleware2, etc...>`
     template<typename... Middlewares>
@@ -57,6 +58,7 @@ namespace crow
         {}
 
         /// Process an Upgrade request
+
         ///
         /// Currently used to upgrrade an HTTP connection to a WebSocket connection
         template<typename Adaptor>
@@ -161,6 +163,7 @@ namespace crow
         }
 
         /// Set the server's log level
+
         ///
         /// Possible values are:<br>
         /// crow::LogLevel::Debug       (0)<br>
@@ -222,6 +225,7 @@ namespace crow
         }
 #endif
         /// A wrapper for `validate()` in the router
+
         ///
         /// Go through the rules, upgrade them if possible, and add them to the list of rules
         void validate()
