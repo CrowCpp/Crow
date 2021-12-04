@@ -83,11 +83,11 @@ namespace crow
         auto& route(std::string&& rule)
 #else
         auto route(std::string&& rule)
-#ifdef CROW_CAN_USE_CPP17
-          -> typename std::invoke_result<decltype(&Router::new_rule_tagged<Tag>), Router, std::string&&>::type
-#else
-          -> typename std::result_of<decltype (&Router::new_rule_tagged<Tag>)(Router, std::string&&)>::type
 #endif
+#if defined CROW_CAN_USE_CPP17 && !defined CROW_GCC83_WORKAROUND
+          -> typename std::invoke_result<decltype(&Router::new_rule_tagged<Tag>), Router, std::string&&>::type
+#elif !defined CROW_GCC83_WORKAROUND
+          -> typename std::result_of<decltype (&Router::new_rule_tagged<Tag>)(Router, std::string&&)>::type
 #endif
         {
             return router_.new_rule_tagged<Tag>(std::move(rule));
