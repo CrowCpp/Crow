@@ -36,6 +36,11 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
+         <loc>https://crowcpp.org/guides/auth/</loc>
+         <lastmod>2021-12-04</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
          <loc>https://crowcpp.org/guides/blueprints/</loc>
          <lastmod>2021-12-04</lastmod>
          <changefreq>daily</changefreq>

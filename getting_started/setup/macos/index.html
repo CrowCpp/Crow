@@ -541,6 +541,13 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#compiling-using-a-compiler-directly" class="md-nav__link">
+    Compiling using a compiler directly
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -877,12 +884,59 @@
       
       
         <label class="md-nav__link" for="__nav_3_2">
+          Using Crow
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Using Crow" data-md-level="2">
+        <label class="md-nav__title" for="__nav_3_2">
+          <span class="md-nav__icon md-icon"></span>
+          Using Crow
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../guides/auth/" class="md-nav__link">
+        HTTP Authorization
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_3" type="checkbox" id="__nav_3_3" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_3">
           Server setup
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <nav class="md-nav" aria-label="Server setup" data-md-level="2">
-        <label class="md-nav__title" for="__nav_3_2">
+        <label class="md-nav__title" for="__nav_3_3">
           <span class="md-nav__icon md-icon"></span>
           Server setup
         </label>
@@ -1095,6 +1149,13 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#compiling-using-a-compiler-directly" class="md-nav__link">
+    Compiling using a compiler directly
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -1159,6 +1220,10 @@ This will generate a <code>crow_all.h</code> file which you can use in the follo
 <li>Press <code>▶</code> to compile and run your Crow application.</li>
 </ol>
 <h2 id="building-crows-testsexamples">Building Crow's tests/examples</h2>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This tutorial can be used for Crow projects built with CMake as well</p>
+</div>
 <ol>
 <li>Download and install <a href="https://brew.sh">Homebrew</a>.</li>
 <li>Run <code>brew install cmake boost</code> in your terminal.</li>
@@ -1174,6 +1239,19 @@ This will generate a <code>crow_all.h</code> file which you can use in the follo
 <div class="admonition note">
 <p class="admonition-title">Note<p>You can add options like <code>-DCROW_ENABLE_SSL</code>, <code>-DCROW_ENABLE_COMPRESSION</code>, or <code>-DCROW_AMALGAMATE</code> to <code>3.c</code> to build their tests/examples.</p>
 </p>
+</div>
+<h2 id="compiling-using-a-compiler-directly">Compiling using a compiler directly</h2>
+<p>All you need to do is run the following command:
+<div class="highlight"><pre><span></span><code>g++ main.cpp -lpthread
+</code></pre></div></p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>You'll need to install GCC via <code>brew install gcc</code>. the Clang compiler should be part of Xcode or Xcode command line tools.</p>
+</div>
+<p>You can use arguments like <code>-DCROW_ENABLE_DEBUG</code>, <code>-DCROW_ENABLE_COMPRESSION -lz</code> for HTTP Compression, or <code>-DCROW_ENABLE_SSL -lssl</code> for HTTPS support, or even replace g++ with clang++.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>If you're using a version of boost prior to 1.69, you'll need to add the argument <code>-lboost_system</code> in order for you Crow application to compile correctly.</p>
 </div>
 
               

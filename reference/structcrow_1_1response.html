@@ -114,6 +114,7 @@ $(document).ready(function(){initNavTree('structcrow_1_1response.html',''); init
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
 Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structcrow_1_1response_1_1static__file__info.html">static_file_info</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">This constains metadata (coming from the <code>stat</code> command) related to any static files associated with this response.  <a href="structcrow_1_1response_1_1static__file__info.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
@@ -170,12 +171,16 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="stru
 void&#160;</td><td class="memItemRight" valign="bottom"><b>clear</b> ()</td></tr>
 <tr class="separator:a068269fc8b7f1df3d5421ccd384fe1f3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac04bbe2d4f54fd717cdffdb26af3e46f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structcrow_1_1response.html#ac04bbe2d4f54fd717cdffdb26af3e46f">redirect</a> (const std::string &amp;location)</td></tr>
+<tr class="memdesc:ac04bbe2d4f54fd717cdffdb26af3e46f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return a "Temporary Redirect" response.  <a href="structcrow_1_1response.html#ac04bbe2d4f54fd717cdffdb26af3e46f">More...</a><br /></td></tr>
 <tr class="separator:ac04bbe2d4f54fd717cdffdb26af3e46f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9e87a17c3cf8b434fd2a64a9b3d4b675"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structcrow_1_1response.html#a9e87a17c3cf8b434fd2a64a9b3d4b675">redirect_perm</a> (const std::string &amp;location)</td></tr>
+<tr class="memdesc:a9e87a17c3cf8b434fd2a64a9b3d4b675"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return a "Permanent Redirect" response.  <a href="structcrow_1_1response.html#a9e87a17c3cf8b434fd2a64a9b3d4b675">More...</a><br /></td></tr>
 <tr class="separator:a9e87a17c3cf8b434fd2a64a9b3d4b675"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a760bca5f5fdee03518d59d9538ce5432"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structcrow_1_1response.html#a760bca5f5fdee03518d59d9538ce5432">moved</a> (const std::string &amp;location)</td></tr>
+<tr class="memdesc:a760bca5f5fdee03518d59d9538ce5432"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return a "Found (Moved Temporarily)" response.  <a href="structcrow_1_1response.html#a760bca5f5fdee03518d59d9538ce5432">More...</a><br /></td></tr>
 <tr class="separator:a760bca5f5fdee03518d59d9538ce5432"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9ee58f8b775b2566418b298fe33c0dcc"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structcrow_1_1response.html#a9ee58f8b775b2566418b298fe33c0dcc">moved_perm</a> (const std::string &amp;location)</td></tr>
+<tr class="memdesc:a9ee58f8b775b2566418b298fe33c0dcc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return a "Moved Permanently" response.  <a href="structcrow_1_1response.html#a9ee58f8b775b2566418b298fe33c0dcc">More...</a><br /></td></tr>
 <tr class="separator:a9ee58f8b775b2566418b298fe33c0dcc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a82bba7eaacfee514c55630a13a85410e"><td class="memItemLeft" align="right" valign="top"><a id="a82bba7eaacfee514c55630a13a85410e"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>write</b> (const std::string &amp;body_part)</td></tr>
@@ -221,7 +226,7 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="stru
 <tr class="separator:a42e68ba33c040b10d3bc49392193f415"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a95f300c05782e1934dad522b6d6588cf"><td class="memItemLeft" align="right" valign="top"><a id="a95f300c05782e1934dad522b6d6588cf"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structcrow_1_1response.html#a95f300c05782e1934dad522b6d6588cf">manual_length_header</a> = false</td></tr>
-<tr class="memdesc:a95f300c05782e1934dad522b6d6588cf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether <a class="el" href="classcrow_1_1_crow.html">Crow</a> should automatically add a "Content-Length" header. <br /></td></tr>
+<tr class="memdesc:a95f300c05782e1934dad522b6d6588cf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether <a class="el" href="classcrow_1_1_crow.html" title="The main server application.">Crow</a> should automatically add a "Content-Length" header. <br /></td></tr>
 <tr class="separator:a95f300c05782e1934dad522b6d6588cf"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="friends"></a>
@@ -257,7 +262,8 @@ template&lt;typename Adaptor , typename Handler , typename... Middlewares&gt; </
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Return a "Found (Moved Temporarily)" response.</p>
+
+<p>Return a "Found (Moved Temporarily)" response. </p>
 <p>Location can either be a route or a full URL. </p>
 
 </div>
@@ -285,7 +291,8 @@ template&lt;typename Adaptor , typename Handler , typename... Middlewares&gt; </
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Return a "Moved Permanently" response.</p>
+
+<p>Return a "Moved Permanently" response. </p>
 <p>Location can either be a route or a full URL. </p>
 
 </div>
@@ -313,7 +320,8 @@ template&lt;typename Adaptor , typename Handler , typename... Middlewares&gt; </
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Return a "Temporary Redirect" response.</p>
+
+<p>Return a "Temporary Redirect" response. </p>
 <p>Location can either be a route or a full URL. </p>
 
 </div>
@@ -341,7 +349,8 @@ template&lt;typename Adaptor , typename Handler , typename... Middlewares&gt; </
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Return a "Permanent Redirect" response.</p>
+
+<p>Return a "Permanent Redirect" response. </p>
 <p>Location can either be a route or a full URL. </p>
 
 </div>

@@ -121,6 +121,7 @@ Inheritance diagram for crow::websocket::Connection&lt; Adaptor &gt;:</div>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a8c86760ae4680c1b48fb402beee51584"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcrow_1_1websocket_1_1_connection.html#a8c86760ae4680c1b48fb402beee51584">Connection</a> (const <a class="el" href="structcrow_1_1request.html">crow::request</a> &amp;req, Adaptor &amp;&amp;adaptor, std::function&lt; void(<a class="el" href="structcrow_1_1websocket_1_1connection.html">crow::websocket::connection</a> &amp;)&gt; open_handler, std::function&lt; void(<a class="el" href="structcrow_1_1websocket_1_1connection.html">crow::websocket::connection</a> &amp;, const std::string &amp;, bool)&gt; message_handler, std::function&lt; void(<a class="el" href="structcrow_1_1websocket_1_1connection.html">crow::websocket::connection</a> &amp;, const std::string &amp;)&gt; close_handler, std::function&lt; void(<a class="el" href="structcrow_1_1websocket_1_1connection.html">crow::websocket::connection</a> &amp;)&gt; error_handler, std::function&lt; bool(const <a class="el" href="structcrow_1_1request.html">crow::request</a> &amp;)&gt; accept_handler)</td></tr>
+<tr class="memdesc:a8c86760ae4680c1b48fb402beee51584"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor for a connection.  <a href="classcrow_1_1websocket_1_1_connection.html#a8c86760ae4680c1b48fb402beee51584">More...</a><br /></td></tr>
 <tr class="separator:a8c86760ae4680c1b48fb402beee51584"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7a11996bd55dcc65c1c376cea1dd7b00"><td class="memTemplParams" colspan="2"><a id="a7a11996bd55dcc65c1c376cea1dd7b00"></a>
 template&lt;typename CompletionHandler &gt; </td></tr>
@@ -133,8 +134,10 @@ template&lt;typename CompletionHandler &gt; </td></tr>
 <tr class="memdesc:ac3d4cebfc05076982ff002b7c3186ade"><td class="mdescLeft">&#160;</td><td class="mdescRight">Send data through the socket and return immediately. <br /></td></tr>
 <tr class="separator:ac3d4cebfc05076982ff002b7c3186ade"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6c5235850fd393aa6b5875fb4ea2ea4e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcrow_1_1websocket_1_1_connection.html#a6c5235850fd393aa6b5875fb4ea2ea4e">send_ping</a> (const std::string &amp;msg) override</td></tr>
+<tr class="memdesc:a6c5235850fd393aa6b5875fb4ea2ea4e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Send a "Ping" message.  <a href="classcrow_1_1websocket_1_1_connection.html#a6c5235850fd393aa6b5875fb4ea2ea4e">More...</a><br /></td></tr>
 <tr class="separator:a6c5235850fd393aa6b5875fb4ea2ea4e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae8eaad22a072354c995bb9999efb683b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcrow_1_1websocket_1_1_connection.html#ae8eaad22a072354c995bb9999efb683b">send_pong</a> (const std::string &amp;msg) override</td></tr>
+<tr class="memdesc:ae8eaad22a072354c995bb9999efb683b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Send a "Pong" message.  <a href="classcrow_1_1websocket_1_1_connection.html#ae8eaad22a072354c995bb9999efb683b">More...</a><br /></td></tr>
 <tr class="separator:ae8eaad22a072354c995bb9999efb683b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae28e1265b68dfe0f4f99a68a52a57979"><td class="memItemLeft" align="right" valign="top"><a id="ae28e1265b68dfe0f4f99a68a52a57979"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcrow_1_1websocket_1_1_connection.html#ae28e1265b68dfe0f4f99a68a52a57979">send_binary</a> (const std::string &amp;msg) override</td></tr>
@@ -145,6 +148,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <tr class="memdesc:aa60e803417bb2d13cda3f0da7d68459f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Send a plaintext message. <br /></td></tr>
 <tr class="separator:aa60e803417bb2d13cda3f0da7d68459f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a210e06034d286e82a3fd090b9a239c86"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcrow_1_1websocket_1_1_connection.html#a210e06034d286e82a3fd090b9a239c86">close</a> (const std::string &amp;msg) override</td></tr>
+<tr class="memdesc:a210e06034d286e82a3fd090b9a239c86"><td class="mdescLeft">&#160;</td><td class="mdescRight">Send a close signal.  <a href="classcrow_1_1websocket_1_1_connection.html#a210e06034d286e82a3fd090b9a239c86">More...</a><br /></td></tr>
 <tr class="separator:a210e06034d286e82a3fd090b9a239c86"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a92a7932bd7a942c106580c1bfeda4e6f"><td class="memItemLeft" align="right" valign="top"><a id="a92a7932bd7a942c106580c1bfeda4e6f"></a>
 std::string&#160;</td><td class="memItemRight" valign="bottom"><b>get_remote_ip</b> () override</td></tr>
@@ -164,8 +168,10 @@ std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
 <tr class="memdesc:acb61dbbdd467860fcb3b3026374dc85a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generate the websocket headers using an opcode and the message size (in bytes). <br /></td></tr>
 <tr class="separator:acb61dbbdd467860fcb3b3026374dc85a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a24f90aa6961994abef482699e7ffe037"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcrow_1_1websocket_1_1_connection.html#a24f90aa6961994abef482699e7ffe037">start</a> (std::string &amp;&amp;hello)</td></tr>
+<tr class="memdesc:a24f90aa6961994abef482699e7ffe037"><td class="mdescLeft">&#160;</td><td class="mdescRight">Send the HTTP upgrade response.  <a href="classcrow_1_1websocket_1_1_connection.html#a24f90aa6961994abef482699e7ffe037">More...</a><br /></td></tr>
 <tr class="separator:a24f90aa6961994abef482699e7ffe037"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:addd1692463d34ff141c02c48f0b46431"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcrow_1_1websocket_1_1_connection.html#addd1692463d34ff141c02c48f0b46431">do_read</a> ()</td></tr>
+<tr class="memdesc:addd1692463d34ff141c02c48f0b46431"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read a websocket message.  <a href="classcrow_1_1websocket_1_1_connection.html#addd1692463d34ff141c02c48f0b46431">More...</a><br /></td></tr>
 <tr class="separator:addd1692463d34ff141c02c48f0b46431"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aff28834d3434b6d24a01830667247111"><td class="memItemLeft" align="right" valign="top"><a id="aff28834d3434b6d24a01830667247111"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcrow_1_1websocket_1_1_connection.html#aff28834d3434b6d24a01830667247111">is_FIN</a> ()</td></tr>
@@ -176,8 +182,10 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class
 <tr class="memdesc:a47a804e0269c7e70f45434f7618c6e7b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Extract the opcode from the header. <br /></td></tr>
 <tr class="separator:a47a804e0269c7e70f45434f7618c6e7b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a41c1d8a6f57071a43edcb532d528780c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcrow_1_1websocket_1_1_connection.html#a41c1d8a6f57071a43edcb532d528780c">handle_fragment</a> ()</td></tr>
+<tr class="memdesc:a41c1d8a6f57071a43edcb532d528780c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Process the payload fragment.  <a href="classcrow_1_1websocket_1_1_connection.html#a41c1d8a6f57071a43edcb532d528780c">More...</a><br /></td></tr>
 <tr class="separator:a41c1d8a6f57071a43edcb532d528780c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7089a3814af7e3c6e6a82c22865ee852"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcrow_1_1websocket_1_1_connection.html#a7089a3814af7e3c6e6a82c22865ee852">do_write</a> ()</td></tr>
+<tr class="memdesc:a7089a3814af7e3c6e6a82c22865ee852"><td class="mdescLeft">&#160;</td><td class="mdescRight">Send the buffers' data through the socket.  <a href="classcrow_1_1websocket_1_1_connection.html#a7089a3814af7e3c6e6a82c22865ee852">More...</a><br /></td></tr>
 <tr class="separator:a7089a3814af7e3c6e6a82c22865ee852"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1f3552060d7e93a3a0d0f2ea9d84a8df"><td class="memItemLeft" align="right" valign="top"><a id="a1f3552060d7e93a3a0d0f2ea9d84a8df"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcrow_1_1websocket_1_1_connection.html#a1f3552060d7e93a3a0d0f2ea9d84a8df">check_destroy</a> ()</td></tr>
@@ -255,7 +263,8 @@ template&lt;typename Adaptor &gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Constructor for a connection.</p>
+
+<p>Constructor for a connection. </p>
 <p>Requires a request with an "Upgrade: websocket" header.<br  />
  Automatically handles the handshake. </p>
 
@@ -287,7 +296,8 @@ template&lt;typename Adaptor &gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Send a close signal.</p>
+
+<p>Send a close signal. </p>
 <p>Sets a flag to destroy the object once the message is sent. </p>
 
 <p>Implements <a class="el" href="structcrow_1_1websocket_1_1connection.html">crow::websocket::connection</a>.</p>
@@ -318,7 +328,8 @@ template&lt;typename Adaptor &gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Read a websocket message.</p>
+
+<p>Read a websocket message. </p>
 <p>Involves:<br  />
  Handling headers (opcodes, size).<br  />
  Unmasking the payload.<br  />
@@ -351,7 +362,8 @@ template&lt;typename Adaptor &gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Send the buffers' data through the socket.</p>
+
+<p>Send the buffers' data through the socket. </p>
 <p>Also destroyes the object if the Close flag is set. </p>
 
 </div>
@@ -380,7 +392,8 @@ template&lt;typename Adaptor &gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Process the payload fragment.</p>
+
+<p>Process the payload fragment. </p>
 <p>Unmasks the fragment, checks the opcode, merges fragments into 1 message body, and calls the appropriate handler. </p>
 
 </div>
@@ -410,7 +423,8 @@ template&lt;typename Adaptor &gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Send a "Ping" message.</p>
+
+<p>Send a "Ping" message. </p>
 <p>Usually invoked to check if the other point is still online. </p>
 
 <p>Implements <a class="el" href="structcrow_1_1websocket_1_1connection.html">crow::websocket::connection</a>.</p>
@@ -442,7 +456,8 @@ template&lt;typename Adaptor &gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Send a "Pong" message.</p>
+
+<p>Send a "Pong" message. </p>
 <p>Usually automatically invoked as a response to a "Ping" message. </p>
 
 <p>Implements <a class="el" href="structcrow_1_1websocket_1_1connection.html">crow::websocket::connection</a>.</p>
@@ -474,7 +489,8 @@ template&lt;typename Adaptor &gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Send the HTTP upgrade response.</p>
+
+<p>Send the HTTP upgrade response. </p>
 <p>Finishes the handshake process, then starts reading messages from the socket. </p>
 
 </div>

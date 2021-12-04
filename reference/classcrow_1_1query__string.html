@@ -128,18 +128,21 @@ Public Member Functions</h2></td></tr>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>clear</b> ()</td></tr>
 <tr class="separator:a19138a2e29bba49996bf67e7403da405"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7db05380bed403b88cb2fe6a5fdd8d75"><td class="memItemLeft" align="right" valign="top">char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcrow_1_1query__string.html#a7db05380bed403b88cb2fe6a5fdd8d75">get</a> (const std::string &amp;name) const</td></tr>
+<tr class="memdesc:a7db05380bed403b88cb2fe6a5fdd8d75"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get a value from a name, used for <code>?name=value</code>.  <a href="classcrow_1_1query__string.html#a7db05380bed403b88cb2fe6a5fdd8d75">More...</a><br /></td></tr>
 <tr class="separator:a7db05380bed403b88cb2fe6a5fdd8d75"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab0a81b08a5531b98c08b1a6a268ebea1"><td class="memItemLeft" align="right" valign="top"><a id="ab0a81b08a5531b98c08b1a6a268ebea1"></a>
 char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcrow_1_1query__string.html#ab0a81b08a5531b98c08b1a6a268ebea1">pop</a> (const std::string &amp;name)</td></tr>
 <tr class="memdesc:ab0a81b08a5531b98c08b1a6a268ebea1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Works similar to <a class="el" href="classcrow_1_1query__string.html#a7db05380bed403b88cb2fe6a5fdd8d75">get()</a> except it removes the item from the query string. <br /></td></tr>
 <tr class="separator:ab0a81b08a5531b98c08b1a6a268ebea1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a657e5fe435375cd31229944ed2ad5608"><td class="memItemLeft" align="right" valign="top">std::vector&lt; char * &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcrow_1_1query__string.html#a657e5fe435375cd31229944ed2ad5608">get_list</a> (const std::string &amp;name, bool use_brackets=true) const</td></tr>
+<tr class="memdesc:a657e5fe435375cd31229944ed2ad5608"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a list of values, passed as <code>?name[]=value1&amp;name[]=value2&amp;...name[]=valuen</code> with n being the size of the list.  <a href="classcrow_1_1query__string.html#a657e5fe435375cd31229944ed2ad5608">More...</a><br /></td></tr>
 <tr class="separator:a657e5fe435375cd31229944ed2ad5608"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8ef1a91122dc53e1235919e107fd1a9c"><td class="memItemLeft" align="right" valign="top"><a id="a8ef1a91122dc53e1235919e107fd1a9c"></a>
 std::vector&lt; char * &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcrow_1_1query__string.html#a8ef1a91122dc53e1235919e107fd1a9c">pop_list</a> (const std::string &amp;name, bool use_brackets=true)</td></tr>
 <tr class="memdesc:a8ef1a91122dc53e1235919e107fd1a9c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Similar to <a class="el" href="classcrow_1_1query__string.html#a657e5fe435375cd31229944ed2ad5608">get_list()</a> but it removes the. <br /></td></tr>
 <tr class="separator:a8ef1a91122dc53e1235919e107fd1a9c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af56add12ca6a7f0222956e353d1d40bb"><td class="memItemLeft" align="right" valign="top">std::unordered_map&lt; std::string, std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcrow_1_1query__string.html#af56add12ca6a7f0222956e353d1d40bb">get_dict</a> (const std::string &amp;name) const</td></tr>
+<tr class="memdesc:af56add12ca6a7f0222956e353d1d40bb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Works similar to <a class="el" href="classcrow_1_1query__string.html#a657e5fe435375cd31229944ed2ad5608">get_list()</a> except the brackets are mandatory must not be empty.  <a href="classcrow_1_1query__string.html#af56add12ca6a7f0222956e353d1d40bb">More...</a><br /></td></tr>
 <tr class="separator:af56add12ca6a7f0222956e353d1d40bb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0744b06ff0709ebbe7c2a1646564508b"><td class="memItemLeft" align="right" valign="top"><a id="a0744b06ff0709ebbe7c2a1646564508b"></a>
 std::unordered_map&lt; std::string, std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcrow_1_1query__string.html#a0744b06ff0709ebbe7c2a1646564508b">pop_dict</a> (const std::string &amp;name)</td></tr>
@@ -187,7 +190,8 @@ std::ostream &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operato
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Get a value from a name, used for <code>?name=value</code>.</p>
+
+<p>Get a value from a name, used for <code>?name=value</code>. </p>
 <p>Note: this method returns the value of the first occurrence of the key only, to return all occurrences, see <a class="el" href="classcrow_1_1query__string.html#a657e5fe435375cd31229944ed2ad5608">get_list()</a>. </p>
 
 </div>
@@ -215,7 +219,8 @@ std::ostream &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operato
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Works similar to <a class="el" href="classcrow_1_1query__string.html#a657e5fe435375cd31229944ed2ad5608">get_list()</a> except the brackets are mandatory must not be empty.</p>
+
+<p>Works similar to <a class="el" href="classcrow_1_1query__string.html#a657e5fe435375cd31229944ed2ad5608">get_list()</a> except the brackets are mandatory must not be empty. </p>
 <p>For example calling <code>get_dict(yourname)</code> on <code>?yourname[sub1]=42&amp;yourname[sub2]=84</code> would give a map containing <code>{sub1 : 42, sub2 : 84}</code>.</p>
 <p>if your query string has both empty brackets and ones with a key inside, use <a class="el" href="classcrow_1_1query__string.html#a8ef1a91122dc53e1235919e107fd1a9c" title="Similar to get_list() but it removes the.">pop_list()</a> to get all the values without a key before running this method. </p>
 
@@ -254,7 +259,8 @@ std::ostream &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operato
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Returns a list of values, passed as <code>?name[]=value1&amp;name[]=value2&amp;...name[]=valuen</code> with n being the size of the list.</p>
+
+<p>Returns a list of values, passed as <code>?name[]=value1&amp;name[]=value2&amp;...name[]=valuen</code> with n being the size of the list. </p>
 <p>Note: Square brackets in the above example are controlled by <code>use_brackets</code> boolean (true by default). If set to false, the example becomes <code>?name=value1,name=value2...name=valuen</code> </p>
 
 </div>

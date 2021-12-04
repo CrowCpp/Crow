@@ -222,152 +222,157 @@ $(document).ready(function(){initNavTree('http__response_8h_source.html',''); in
 <div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;        }</div>
 <div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;<span class="comment"></span> </div>
 <div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;<span class="comment">        /// Return a &quot;Temporary Redirect&quot; response.</span></div>
-<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;<span class="comment">        ///</span></div>
-<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;<span class="comment">        /// Location can either be a route or a full URL.</span></div>
-<div class="line"><a name="l00126"></a><span class="lineno"><a class="line" href="structcrow_1_1response.html#ac04bbe2d4f54fd717cdffdb26af3e46f">  126</a></span>&#160;<span class="comment"></span>        <span class="keywordtype">void</span> <a class="code" href="structcrow_1_1response.html#ac04bbe2d4f54fd717cdffdb26af3e46f">redirect</a>(<span class="keyword">const</span> std::string&amp; location)</div>
-<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;        {</div>
-<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;            <a class="code" href="structcrow_1_1response.html#aabc1f9b3264b8c5a2d05dcb409e8ff3f">code</a> = 307;</div>
-<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;            <a class="code" href="structcrow_1_1response.html#ab2b9a9b9795fa6330bd47b66a716cb0b">set_header</a>(<span class="stringliteral">&quot;Location&quot;</span>, location);</div>
-<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;        }</div>
-<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;<span class="comment">        /// Return a &quot;Permanent Redirect&quot; response.</span></div>
-<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;<span class="comment">        ///</span></div>
-<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;<span class="comment">        /// Location can either be a route or a full URL.</span></div>
-<div class="line"><a name="l00135"></a><span class="lineno"><a class="line" href="structcrow_1_1response.html#a9e87a17c3cf8b434fd2a64a9b3d4b675">  135</a></span>&#160;<span class="comment"></span>        <span class="keywordtype">void</span> <a class="code" href="structcrow_1_1response.html#a9e87a17c3cf8b434fd2a64a9b3d4b675">redirect_perm</a>(<span class="keyword">const</span> std::string&amp; location)</div>
-<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;        {</div>
-<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;            <a class="code" href="structcrow_1_1response.html#aabc1f9b3264b8c5a2d05dcb409e8ff3f">code</a> = 308;</div>
-<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;            <a class="code" href="structcrow_1_1response.html#ab2b9a9b9795fa6330bd47b66a716cb0b">set_header</a>(<span class="stringliteral">&quot;Location&quot;</span>, location);</div>
-<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;        }</div>
-<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160;<span class="comment">        /// Return a &quot;Found (Moved Temporarily)&quot; response.</span></div>
-<div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160;<span class="comment">        ///</span></div>
-<div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160;<span class="comment">        /// Location can either be a route or a full URL.</span></div>
-<div class="line"><a name="l00144"></a><span class="lineno"><a class="line" href="structcrow_1_1response.html#a760bca5f5fdee03518d59d9538ce5432">  144</a></span>&#160;<span class="comment"></span>        <span class="keywordtype">void</span> <a class="code" href="structcrow_1_1response.html#a760bca5f5fdee03518d59d9538ce5432">moved</a>(<span class="keyword">const</span> std::string&amp; location)</div>
-<div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160;        {</div>
-<div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;            <a class="code" href="structcrow_1_1response.html#aabc1f9b3264b8c5a2d05dcb409e8ff3f">code</a> = 302;</div>
-<div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;            <a class="code" href="structcrow_1_1response.html#ab2b9a9b9795fa6330bd47b66a716cb0b">set_header</a>(<span class="stringliteral">&quot;Location&quot;</span>, location);</div>
-<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;        }</div>
-<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;<span class="comment">        /// Return a &quot;Moved Permanently&quot; response.</span></div>
-<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;<span class="comment">        ///</span></div>
-<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;<span class="comment">        /// Location can either be a route or a full URL.</span></div>
-<div class="line"><a name="l00153"></a><span class="lineno"><a class="line" href="structcrow_1_1response.html#a9ee58f8b775b2566418b298fe33c0dcc">  153</a></span>&#160;<span class="comment"></span>        <span class="keywordtype">void</span> <a class="code" href="structcrow_1_1response.html#a9ee58f8b775b2566418b298fe33c0dcc">moved_perm</a>(<span class="keyword">const</span> std::string&amp; location)</div>
-<div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160;        {</div>
-<div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;            <a class="code" href="structcrow_1_1response.html#aabc1f9b3264b8c5a2d05dcb409e8ff3f">code</a> = 301;</div>
-<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;            <a class="code" href="structcrow_1_1response.html#ab2b9a9b9795fa6330bd47b66a716cb0b">set_header</a>(<span class="stringliteral">&quot;Location&quot;</span>, location);</div>
-<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;        }</div>
-<div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160; </div>
-<div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;        <span class="keywordtype">void</span> write(<span class="keyword">const</span> std::string&amp; body_part)</div>
-<div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;        {</div>
-<div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;            <a class="code" href="structcrow_1_1response.html#ae9f3cc153eac05954f1f4e599527892d">body</a> += body_part;</div>
-<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;        }</div>
-<div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;<span class="comment">        /// Set the response completion flag and call the handler (to send the response).</span></div>
-<div class="line"><a name="l00165"></a><span class="lineno"><a class="line" href="structcrow_1_1response.html#abef42200eca49c70dc1f5140ee3603ab">  165</a></span>&#160;<span class="comment"></span>        <span class="keywordtype">void</span> <a class="code" href="structcrow_1_1response.html#abef42200eca49c70dc1f5140ee3603ab">end</a>()</div>
-<div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160;        {</div>
-<div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;            <span class="keywordflow">if</span> (!completed_)</div>
-<div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;            {</div>
-<div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;                completed_ = <span class="keyword">true</span>;</div>
-<div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;                <span class="keywordflow">if</span> (<a class="code" href="structcrow_1_1response.html#a42e68ba33c040b10d3bc49392193f415">is_head_response</a>)</div>
-<div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160;                {</div>
-<div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;                    <a class="code" href="structcrow_1_1response.html#ab2b9a9b9795fa6330bd47b66a716cb0b">set_header</a>(<span class="stringliteral">&quot;Content-Length&quot;</span>, std::to_string(<a class="code" href="structcrow_1_1response.html#ae9f3cc153eac05954f1f4e599527892d">body</a>.size()));</div>
-<div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160;                    <a class="code" href="structcrow_1_1response.html#ae9f3cc153eac05954f1f4e599527892d">body</a> = <span class="stringliteral">&quot;&quot;</span>;</div>
-<div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160;                    <a class="code" href="structcrow_1_1response.html#a95f300c05782e1934dad522b6d6588cf">manual_length_header</a> = <span class="keyword">true</span>;</div>
-<div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160;                }</div>
-<div class="line"><a name="l00176"></a><span class="lineno">  176</span>&#160;                <span class="keywordflow">if</span> (complete_request_handler_)</div>
-<div class="line"><a name="l00177"></a><span class="lineno">  177</span>&#160;                {</div>
-<div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160;                    complete_request_handler_();</div>
+<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;<span class="comment"></span><span class="comment"></span> </div>
+<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;<span class="comment">        ///</span></div>
+<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;<span class="comment">        /// Location can either be a route or a full URL.</span></div>
+<div class="line"><a name="l00127"></a><span class="lineno"><a class="line" href="structcrow_1_1response.html#ac04bbe2d4f54fd717cdffdb26af3e46f">  127</a></span>&#160;<span class="comment"></span>        <span class="keywordtype">void</span> <a class="code" href="structcrow_1_1response.html#ac04bbe2d4f54fd717cdffdb26af3e46f">redirect</a>(<span class="keyword">const</span> std::string&amp; location)</div>
+<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;        {</div>
+<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;            <a class="code" href="structcrow_1_1response.html#aabc1f9b3264b8c5a2d05dcb409e8ff3f">code</a> = 307;</div>
+<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;            <a class="code" href="structcrow_1_1response.html#ab2b9a9b9795fa6330bd47b66a716cb0b">set_header</a>(<span class="stringliteral">&quot;Location&quot;</span>, location);</div>
+<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;        }</div>
+<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;<span class="comment">        /// Return a &quot;Permanent Redirect&quot; response.</span></div>
+<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;<span class="comment"></span><span class="comment"></span> </div>
+<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;<span class="comment">        ///</span></div>
+<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;<span class="comment">        /// Location can either be a route or a full URL.</span></div>
+<div class="line"><a name="l00137"></a><span class="lineno"><a class="line" href="structcrow_1_1response.html#a9e87a17c3cf8b434fd2a64a9b3d4b675">  137</a></span>&#160;<span class="comment"></span>        <span class="keywordtype">void</span> <a class="code" href="structcrow_1_1response.html#a9e87a17c3cf8b434fd2a64a9b3d4b675">redirect_perm</a>(<span class="keyword">const</span> std::string&amp; location)</div>
+<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;        {</div>
+<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;            <a class="code" href="structcrow_1_1response.html#aabc1f9b3264b8c5a2d05dcb409e8ff3f">code</a> = 308;</div>
+<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;            <a class="code" href="structcrow_1_1response.html#ab2b9a9b9795fa6330bd47b66a716cb0b">set_header</a>(<span class="stringliteral">&quot;Location&quot;</span>, location);</div>
+<div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160;        }</div>
+<div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160;<span class="comment">        /// Return a &quot;Found (Moved Temporarily)&quot; response.</span></div>
+<div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160;<span class="comment"></span><span class="comment"></span> </div>
+<div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160;<span class="comment">        ///</span></div>
+<div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;<span class="comment">        /// Location can either be a route or a full URL.</span></div>
+<div class="line"><a name="l00147"></a><span class="lineno"><a class="line" href="structcrow_1_1response.html#a760bca5f5fdee03518d59d9538ce5432">  147</a></span>&#160;<span class="comment"></span>        <span class="keywordtype">void</span> <a class="code" href="structcrow_1_1response.html#a760bca5f5fdee03518d59d9538ce5432">moved</a>(<span class="keyword">const</span> std::string&amp; location)</div>
+<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;        {</div>
+<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;            <a class="code" href="structcrow_1_1response.html#aabc1f9b3264b8c5a2d05dcb409e8ff3f">code</a> = 302;</div>
+<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;            <a class="code" href="structcrow_1_1response.html#ab2b9a9b9795fa6330bd47b66a716cb0b">set_header</a>(<span class="stringliteral">&quot;Location&quot;</span>, location);</div>
+<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;        }</div>
+<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;<span class="comment">        /// Return a &quot;Moved Permanently&quot; response.</span></div>
+<div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160;<span class="comment"></span><span class="comment"></span> </div>
+<div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;<span class="comment">        ///</span></div>
+<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;<span class="comment">        /// Location can either be a route or a full URL.</span></div>
+<div class="line"><a name="l00157"></a><span class="lineno"><a class="line" href="structcrow_1_1response.html#a9ee58f8b775b2566418b298fe33c0dcc">  157</a></span>&#160;<span class="comment"></span>        <span class="keywordtype">void</span> <a class="code" href="structcrow_1_1response.html#a9ee58f8b775b2566418b298fe33c0dcc">moved_perm</a>(<span class="keyword">const</span> std::string&amp; location)</div>
+<div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160;        {</div>
+<div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;            <a class="code" href="structcrow_1_1response.html#aabc1f9b3264b8c5a2d05dcb409e8ff3f">code</a> = 301;</div>
+<div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;            <a class="code" href="structcrow_1_1response.html#ab2b9a9b9795fa6330bd47b66a716cb0b">set_header</a>(<span class="stringliteral">&quot;Location&quot;</span>, location);</div>
+<div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;        }</div>
+<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160; </div>
+<div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;        <span class="keywordtype">void</span> write(<span class="keyword">const</span> std::string&amp; body_part)</div>
+<div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;        {</div>
+<div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;            <a class="code" href="structcrow_1_1response.html#ae9f3cc153eac05954f1f4e599527892d">body</a> += body_part;</div>
+<div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160;        }</div>
+<div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;<span class="comment">        /// Set the response completion flag and call the handler (to send the response).</span></div>
+<div class="line"><a name="l00169"></a><span class="lineno"><a class="line" href="structcrow_1_1response.html#abef42200eca49c70dc1f5140ee3603ab">  169</a></span>&#160;<span class="comment"></span>        <span class="keywordtype">void</span> <a class="code" href="structcrow_1_1response.html#abef42200eca49c70dc1f5140ee3603ab">end</a>()</div>
+<div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;        {</div>
+<div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160;            <span class="keywordflow">if</span> (!completed_)</div>
+<div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;            {</div>
+<div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160;                completed_ = <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160;                <span class="keywordflow">if</span> (<a class="code" href="structcrow_1_1response.html#a42e68ba33c040b10d3bc49392193f415">is_head_response</a>)</div>
+<div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160;                {</div>
+<div class="line"><a name="l00176"></a><span class="lineno">  176</span>&#160;                    <a class="code" href="structcrow_1_1response.html#ab2b9a9b9795fa6330bd47b66a716cb0b">set_header</a>(<span class="stringliteral">&quot;Content-Length&quot;</span>, std::to_string(<a class="code" href="structcrow_1_1response.html#ae9f3cc153eac05954f1f4e599527892d">body</a>.size()));</div>
+<div class="line"><a name="l00177"></a><span class="lineno">  177</span>&#160;                    <a class="code" href="structcrow_1_1response.html#ae9f3cc153eac05954f1f4e599527892d">body</a> = <span class="stringliteral">&quot;&quot;</span>;</div>
+<div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160;                    <a class="code" href="structcrow_1_1response.html#a95f300c05782e1934dad522b6d6588cf">manual_length_header</a> = <span class="keyword">true</span>;</div>
 <div class="line"><a name="l00179"></a><span class="lineno">  179</span>&#160;                }</div>
-<div class="line"><a name="l00180"></a><span class="lineno">  180</span>&#160;            }</div>
-<div class="line"><a name="l00181"></a><span class="lineno">  181</span>&#160;        }</div>
-<div class="line"><a name="l00182"></a><span class="lineno">  182</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00183"></a><span class="lineno">  183</span>&#160;<span class="comment">        /// Same as end() except it adds a body part right before ending.</span></div>
-<div class="line"><a name="l00184"></a><span class="lineno"><a class="line" href="structcrow_1_1response.html#a10da2e17421586b68f27ef1533ec677b">  184</a></span>&#160;<span class="comment"></span>        <span class="keywordtype">void</span> <a class="code" href="structcrow_1_1response.html#a10da2e17421586b68f27ef1533ec677b">end</a>(<span class="keyword">const</span> std::string&amp; body_part)</div>
-<div class="line"><a name="l00185"></a><span class="lineno">  185</span>&#160;        {</div>
-<div class="line"><a name="l00186"></a><span class="lineno">  186</span>&#160;            <a class="code" href="structcrow_1_1response.html#ae9f3cc153eac05954f1f4e599527892d">body</a> += body_part;</div>
-<div class="line"><a name="l00187"></a><span class="lineno">  187</span>&#160;            <a class="code" href="structcrow_1_1response.html#abef42200eca49c70dc1f5140ee3603ab">end</a>();</div>
-<div class="line"><a name="l00188"></a><span class="lineno">  188</span>&#160;        }</div>
-<div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160;<span class="comment">        /// Check if the connection is still alive (usually by checking the socket status).</span></div>
-<div class="line"><a name="l00191"></a><span class="lineno"><a class="line" href="structcrow_1_1response.html#ac29da52ee1e0b55086cd8eedd6c22da1">  191</a></span>&#160;<span class="comment"></span>        <span class="keywordtype">bool</span> <a class="code" href="structcrow_1_1response.html#ac29da52ee1e0b55086cd8eedd6c22da1">is_alive</a>()</div>
-<div class="line"><a name="l00192"></a><span class="lineno">  192</span>&#160;        {</div>
-<div class="line"><a name="l00193"></a><span class="lineno">  193</span>&#160;            <span class="keywordflow">return</span> is_alive_helper_ &amp;&amp; is_alive_helper_();</div>
-<div class="line"><a name="l00194"></a><span class="lineno">  194</span>&#160;        }</div>
-<div class="line"><a name="l00195"></a><span class="lineno">  195</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00196"></a><span class="lineno">  196</span>&#160;<span class="comment">        /// Check whether the response has a static file defined.</span></div>
-<div class="line"><a name="l00197"></a><span class="lineno"><a class="line" href="structcrow_1_1response.html#aff527a091cf5054e933a244b078648c1">  197</a></span>&#160;<span class="comment"></span>        <span class="keywordtype">bool</span> <a class="code" href="structcrow_1_1response.html#aff527a091cf5054e933a244b078648c1">is_static_type</a>()</div>
-<div class="line"><a name="l00198"></a><span class="lineno">  198</span>&#160;        {</div>
-<div class="line"><a name="l00199"></a><span class="lineno">  199</span>&#160;            <span class="keywordflow">return</span> file_info.path.size();</div>
-<div class="line"><a name="l00200"></a><span class="lineno">  200</span>&#160;        }</div>
-<div class="line"><a name="l00201"></a><span class="lineno">  201</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00202"></a><span class="lineno">  202</span>&#160;<span class="comment">        /// This constains metadata (coming from the `stat` command) related to any static files associated with this response.</span></div>
-<div class="line"><a name="l00203"></a><span class="lineno">  203</span>&#160;<span class="comment">        ///</span></div>
-<div class="line"><a name="l00204"></a><span class="lineno">  204</span>&#160;<span class="comment">        /// Either a static file or a string body can be returned as 1 response.</span></div>
-<div class="line"><a name="l00205"></a><span class="lineno"><a class="line" href="structcrow_1_1response_1_1static__file__info.html">  205</a></span>&#160;<span class="comment"></span>        <span class="keyword">struct </span><a class="code" href="structcrow_1_1response_1_1static__file__info.html">static_file_info</a></div>
-<div class="line"><a name="l00206"></a><span class="lineno">  206</span>&#160;        {</div>
-<div class="line"><a name="l00207"></a><span class="lineno">  207</span>&#160;            std::string path = <span class="stringliteral">&quot;&quot;</span>;</div>
-<div class="line"><a name="l00208"></a><span class="lineno">  208</span>&#160;            <span class="keyword">struct </span>stat statbuf;</div>
-<div class="line"><a name="l00209"></a><span class="lineno">  209</span>&#160;            <span class="keywordtype">int</span> statResult;</div>
-<div class="line"><a name="l00210"></a><span class="lineno">  210</span>&#160;        };</div>
-<div class="line"><a name="l00211"></a><span class="lineno">  211</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00212"></a><span class="lineno">  212</span>&#160;<span class="comment">        ///Return a static file as the response body</span></div>
-<div class="line"><a name="l00213"></a><span class="lineno"><a class="line" href="structcrow_1_1response.html#a8f5e5caa08c3e658bccd03996e1a778a">  213</a></span>&#160;<span class="comment"></span>        <span class="keywordtype">void</span> <a class="code" href="structcrow_1_1response.html#a8f5e5caa08c3e658bccd03996e1a778a">set_static_file_info</a>(std::string path)</div>
-<div class="line"><a name="l00214"></a><span class="lineno">  214</span>&#160;        {</div>
-<div class="line"><a name="l00215"></a><span class="lineno">  215</span>&#160;            file_info.path = path;</div>
-<div class="line"><a name="l00216"></a><span class="lineno">  216</span>&#160;            file_info.statResult = stat(file_info.path.c_str(), &amp;file_info.statbuf);</div>
-<div class="line"><a name="l00217"></a><span class="lineno">  217</span>&#160;<span class="preprocessor">#ifdef CROW_ENABLE_COMPRESSION</span></div>
-<div class="line"><a name="l00218"></a><span class="lineno">  218</span>&#160;            compressed = <span class="keyword">false</span>;</div>
-<div class="line"><a name="l00219"></a><span class="lineno">  219</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00220"></a><span class="lineno">  220</span>&#160;            <span class="keywordflow">if</span> (file_info.statResult == 0)</div>
-<div class="line"><a name="l00221"></a><span class="lineno">  221</span>&#160;            {</div>
-<div class="line"><a name="l00222"></a><span class="lineno">  222</span>&#160;                std::size_t last_dot = path.find_last_of(<span class="stringliteral">&quot;.&quot;</span>);</div>
-<div class="line"><a name="l00223"></a><span class="lineno">  223</span>&#160;                std::string extension = path.substr(last_dot + 1);</div>
-<div class="line"><a name="l00224"></a><span class="lineno">  224</span>&#160;                std::string mimeType = <span class="stringliteral">&quot;&quot;</span>;</div>
-<div class="line"><a name="l00225"></a><span class="lineno">  225</span>&#160;                <a class="code" href="structcrow_1_1response.html#aabc1f9b3264b8c5a2d05dcb409e8ff3f">code</a> = 200;</div>
-<div class="line"><a name="l00226"></a><span class="lineno">  226</span>&#160;                this-&gt;<a class="code" href="structcrow_1_1response.html#a16d1a8bcec6460ba97f90b80881693b8">add_header</a>(<span class="stringliteral">&quot;Content-length&quot;</span>, std::to_string(file_info.statbuf.st_size));</div>
-<div class="line"><a name="l00227"></a><span class="lineno">  227</span>&#160; </div>
-<div class="line"><a name="l00228"></a><span class="lineno">  228</span>&#160;                <span class="keywordflow">if</span> (extension != <span class="stringliteral">&quot;&quot;</span>)</div>
-<div class="line"><a name="l00229"></a><span class="lineno">  229</span>&#160;                {</div>
-<div class="line"><a name="l00230"></a><span class="lineno">  230</span>&#160;                    mimeType = mime_types.at(extension);</div>
-<div class="line"><a name="l00231"></a><span class="lineno">  231</span>&#160;                    <span class="keywordflow">if</span> (mimeType != <span class="stringliteral">&quot;&quot;</span>)</div>
-<div class="line"><a name="l00232"></a><span class="lineno">  232</span>&#160;                        this-&gt;<a class="code" href="structcrow_1_1response.html#a16d1a8bcec6460ba97f90b80881693b8">add_header</a>(<span class="stringliteral">&quot;Content-Type&quot;</span>, mimeType);</div>
-<div class="line"><a name="l00233"></a><span class="lineno">  233</span>&#160;                    <span class="keywordflow">else</span></div>
-<div class="line"><a name="l00234"></a><span class="lineno">  234</span>&#160;                        this-&gt;<a class="code" href="structcrow_1_1response.html#a16d1a8bcec6460ba97f90b80881693b8">add_header</a>(<span class="stringliteral">&quot;content-Type&quot;</span>, <span class="stringliteral">&quot;text/plain&quot;</span>);</div>
-<div class="line"><a name="l00235"></a><span class="lineno">  235</span>&#160;                }</div>
-<div class="line"><a name="l00236"></a><span class="lineno">  236</span>&#160;            }</div>
-<div class="line"><a name="l00237"></a><span class="lineno">  237</span>&#160;            <span class="keywordflow">else</span></div>
-<div class="line"><a name="l00238"></a><span class="lineno">  238</span>&#160;            {</div>
-<div class="line"><a name="l00239"></a><span class="lineno">  239</span>&#160;                code = 404;</div>
-<div class="line"><a name="l00240"></a><span class="lineno">  240</span>&#160;                this-&gt;<a class="code" href="structcrow_1_1response.html#abef42200eca49c70dc1f5140ee3603ab">end</a>();</div>
+<div class="line"><a name="l00180"></a><span class="lineno">  180</span>&#160;                <span class="keywordflow">if</span> (complete_request_handler_)</div>
+<div class="line"><a name="l00181"></a><span class="lineno">  181</span>&#160;                {</div>
+<div class="line"><a name="l00182"></a><span class="lineno">  182</span>&#160;                    complete_request_handler_();</div>
+<div class="line"><a name="l00183"></a><span class="lineno">  183</span>&#160;                }</div>
+<div class="line"><a name="l00184"></a><span class="lineno">  184</span>&#160;            }</div>
+<div class="line"><a name="l00185"></a><span class="lineno">  185</span>&#160;        }</div>
+<div class="line"><a name="l00186"></a><span class="lineno">  186</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00187"></a><span class="lineno">  187</span>&#160;<span class="comment">        /// Same as end() except it adds a body part right before ending.</span></div>
+<div class="line"><a name="l00188"></a><span class="lineno"><a class="line" href="structcrow_1_1response.html#a10da2e17421586b68f27ef1533ec677b">  188</a></span>&#160;<span class="comment"></span>        <span class="keywordtype">void</span> <a class="code" href="structcrow_1_1response.html#a10da2e17421586b68f27ef1533ec677b">end</a>(<span class="keyword">const</span> std::string&amp; body_part)</div>
+<div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160;        {</div>
+<div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160;            <a class="code" href="structcrow_1_1response.html#ae9f3cc153eac05954f1f4e599527892d">body</a> += body_part;</div>
+<div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160;            <a class="code" href="structcrow_1_1response.html#abef42200eca49c70dc1f5140ee3603ab">end</a>();</div>
+<div class="line"><a name="l00192"></a><span class="lineno">  192</span>&#160;        }</div>
+<div class="line"><a name="l00193"></a><span class="lineno">  193</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00194"></a><span class="lineno">  194</span>&#160;<span class="comment">        /// Check if the connection is still alive (usually by checking the socket status).</span></div>
+<div class="line"><a name="l00195"></a><span class="lineno"><a class="line" href="structcrow_1_1response.html#ac29da52ee1e0b55086cd8eedd6c22da1">  195</a></span>&#160;<span class="comment"></span>        <span class="keywordtype">bool</span> <a class="code" href="structcrow_1_1response.html#ac29da52ee1e0b55086cd8eedd6c22da1">is_alive</a>()</div>
+<div class="line"><a name="l00196"></a><span class="lineno">  196</span>&#160;        {</div>
+<div class="line"><a name="l00197"></a><span class="lineno">  197</span>&#160;            <span class="keywordflow">return</span> is_alive_helper_ &amp;&amp; is_alive_helper_();</div>
+<div class="line"><a name="l00198"></a><span class="lineno">  198</span>&#160;        }</div>
+<div class="line"><a name="l00199"></a><span class="lineno">  199</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00200"></a><span class="lineno">  200</span>&#160;<span class="comment">        /// Check whether the response has a static file defined.</span></div>
+<div class="line"><a name="l00201"></a><span class="lineno"><a class="line" href="structcrow_1_1response.html#aff527a091cf5054e933a244b078648c1">  201</a></span>&#160;<span class="comment"></span>        <span class="keywordtype">bool</span> <a class="code" href="structcrow_1_1response.html#aff527a091cf5054e933a244b078648c1">is_static_type</a>()</div>
+<div class="line"><a name="l00202"></a><span class="lineno">  202</span>&#160;        {</div>
+<div class="line"><a name="l00203"></a><span class="lineno">  203</span>&#160;            <span class="keywordflow">return</span> file_info.path.size();</div>
+<div class="line"><a name="l00204"></a><span class="lineno">  204</span>&#160;        }</div>
+<div class="line"><a name="l00205"></a><span class="lineno">  205</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00206"></a><span class="lineno">  206</span>&#160;<span class="comment">        /// This constains metadata (coming from the `stat` command) related to any static files associated with this response.</span></div>
+<div class="line"><a name="l00207"></a><span class="lineno">  207</span>&#160;<span class="comment"></span><span class="comment"></span> </div>
+<div class="line"><a name="l00208"></a><span class="lineno">  208</span>&#160;<span class="comment">        ///</span></div>
+<div class="line"><a name="l00209"></a><span class="lineno">  209</span>&#160;<span class="comment">        /// Either a static file or a string body can be returned as 1 response.</span></div>
+<div class="line"><a name="l00210"></a><span class="lineno"><a class="line" href="structcrow_1_1response_1_1static__file__info.html">  210</a></span>&#160;<span class="comment"></span>        <span class="keyword">struct </span><a class="code" href="structcrow_1_1response_1_1static__file__info.html">static_file_info</a></div>
+<div class="line"><a name="l00211"></a><span class="lineno">  211</span>&#160;        {</div>
+<div class="line"><a name="l00212"></a><span class="lineno">  212</span>&#160;            std::string path = <span class="stringliteral">&quot;&quot;</span>;</div>
+<div class="line"><a name="l00213"></a><span class="lineno">  213</span>&#160;            <span class="keyword">struct </span>stat statbuf;</div>
+<div class="line"><a name="l00214"></a><span class="lineno">  214</span>&#160;            <span class="keywordtype">int</span> statResult;</div>
+<div class="line"><a name="l00215"></a><span class="lineno">  215</span>&#160;        };</div>
+<div class="line"><a name="l00216"></a><span class="lineno">  216</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00217"></a><span class="lineno">  217</span>&#160;<span class="comment">        ///Return a static file as the response body</span></div>
+<div class="line"><a name="l00218"></a><span class="lineno"><a class="line" href="structcrow_1_1response.html#a8f5e5caa08c3e658bccd03996e1a778a">  218</a></span>&#160;<span class="comment"></span>        <span class="keywordtype">void</span> <a class="code" href="structcrow_1_1response.html#a8f5e5caa08c3e658bccd03996e1a778a">set_static_file_info</a>(std::string path)</div>
+<div class="line"><a name="l00219"></a><span class="lineno">  219</span>&#160;        {</div>
+<div class="line"><a name="l00220"></a><span class="lineno">  220</span>&#160;            file_info.path = path;</div>
+<div class="line"><a name="l00221"></a><span class="lineno">  221</span>&#160;            file_info.statResult = stat(file_info.path.c_str(), &amp;file_info.statbuf);</div>
+<div class="line"><a name="l00222"></a><span class="lineno">  222</span>&#160;<span class="preprocessor">#ifdef CROW_ENABLE_COMPRESSION</span></div>
+<div class="line"><a name="l00223"></a><span class="lineno">  223</span>&#160;            compressed = <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00224"></a><span class="lineno">  224</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00225"></a><span class="lineno">  225</span>&#160;            <span class="keywordflow">if</span> (file_info.statResult == 0)</div>
+<div class="line"><a name="l00226"></a><span class="lineno">  226</span>&#160;            {</div>
+<div class="line"><a name="l00227"></a><span class="lineno">  227</span>&#160;                std::size_t last_dot = path.find_last_of(<span class="stringliteral">&quot;.&quot;</span>);</div>
+<div class="line"><a name="l00228"></a><span class="lineno">  228</span>&#160;                std::string extension = path.substr(last_dot + 1);</div>
+<div class="line"><a name="l00229"></a><span class="lineno">  229</span>&#160;                std::string mimeType = <span class="stringliteral">&quot;&quot;</span>;</div>
+<div class="line"><a name="l00230"></a><span class="lineno">  230</span>&#160;                <a class="code" href="structcrow_1_1response.html#aabc1f9b3264b8c5a2d05dcb409e8ff3f">code</a> = 200;</div>
+<div class="line"><a name="l00231"></a><span class="lineno">  231</span>&#160;                this-&gt;<a class="code" href="structcrow_1_1response.html#a16d1a8bcec6460ba97f90b80881693b8">add_header</a>(<span class="stringliteral">&quot;Content-length&quot;</span>, std::to_string(file_info.statbuf.st_size));</div>
+<div class="line"><a name="l00232"></a><span class="lineno">  232</span>&#160; </div>
+<div class="line"><a name="l00233"></a><span class="lineno">  233</span>&#160;                <span class="keywordflow">if</span> (extension != <span class="stringliteral">&quot;&quot;</span>)</div>
+<div class="line"><a name="l00234"></a><span class="lineno">  234</span>&#160;                {</div>
+<div class="line"><a name="l00235"></a><span class="lineno">  235</span>&#160;                    mimeType = mime_types.at(extension);</div>
+<div class="line"><a name="l00236"></a><span class="lineno">  236</span>&#160;                    <span class="keywordflow">if</span> (mimeType != <span class="stringliteral">&quot;&quot;</span>)</div>
+<div class="line"><a name="l00237"></a><span class="lineno">  237</span>&#160;                        this-&gt;<a class="code" href="structcrow_1_1response.html#a16d1a8bcec6460ba97f90b80881693b8">add_header</a>(<span class="stringliteral">&quot;Content-Type&quot;</span>, mimeType);</div>
+<div class="line"><a name="l00238"></a><span class="lineno">  238</span>&#160;                    <span class="keywordflow">else</span></div>
+<div class="line"><a name="l00239"></a><span class="lineno">  239</span>&#160;                        this-&gt;<a class="code" href="structcrow_1_1response.html#a16d1a8bcec6460ba97f90b80881693b8">add_header</a>(<span class="stringliteral">&quot;content-Type&quot;</span>, <span class="stringliteral">&quot;text/plain&quot;</span>);</div>
+<div class="line"><a name="l00240"></a><span class="lineno">  240</span>&#160;                }</div>
 <div class="line"><a name="l00241"></a><span class="lineno">  241</span>&#160;            }</div>
-<div class="line"><a name="l00242"></a><span class="lineno">  242</span>&#160;        }</div>
-<div class="line"><a name="l00243"></a><span class="lineno">  243</span>&#160; </div>
-<div class="line"><a name="l00244"></a><span class="lineno">  244</span>&#160;    <span class="keyword">private</span>:</div>
-<div class="line"><a name="l00245"></a><span class="lineno">  245</span>&#160;        <span class="keywordtype">bool</span> completed_{};</div>
-<div class="line"><a name="l00246"></a><span class="lineno">  246</span>&#160;        std::function&lt;void()&gt; complete_request_handler_;</div>
-<div class="line"><a name="l00247"></a><span class="lineno">  247</span>&#160;        std::function&lt;bool()&gt; is_alive_helper_;</div>
-<div class="line"><a name="l00248"></a><span class="lineno">  248</span>&#160;        static_file_info file_info;</div>
-<div class="line"><a name="l00249"></a><span class="lineno">  249</span>&#160;    };</div>
-<div class="line"><a name="l00250"></a><span class="lineno">  250</span>&#160;} <span class="comment">// namespace crow</span></div>
+<div class="line"><a name="l00242"></a><span class="lineno">  242</span>&#160;            <span class="keywordflow">else</span></div>
+<div class="line"><a name="l00243"></a><span class="lineno">  243</span>&#160;            {</div>
+<div class="line"><a name="l00244"></a><span class="lineno">  244</span>&#160;                code = 404;</div>
+<div class="line"><a name="l00245"></a><span class="lineno">  245</span>&#160;                this-&gt;<a class="code" href="structcrow_1_1response.html#abef42200eca49c70dc1f5140ee3603ab">end</a>();</div>
+<div class="line"><a name="l00246"></a><span class="lineno">  246</span>&#160;            }</div>
+<div class="line"><a name="l00247"></a><span class="lineno">  247</span>&#160;        }</div>
+<div class="line"><a name="l00248"></a><span class="lineno">  248</span>&#160; </div>
+<div class="line"><a name="l00249"></a><span class="lineno">  249</span>&#160;    <span class="keyword">private</span>:</div>
+<div class="line"><a name="l00250"></a><span class="lineno">  250</span>&#160;        <span class="keywordtype">bool</span> completed_{};</div>
+<div class="line"><a name="l00251"></a><span class="lineno">  251</span>&#160;        std::function&lt;void()&gt; complete_request_handler_;</div>
+<div class="line"><a name="l00252"></a><span class="lineno">  252</span>&#160;        std::function&lt;bool()&gt; is_alive_helper_;</div>
+<div class="line"><a name="l00253"></a><span class="lineno">  253</span>&#160;        static_file_info file_info;</div>
+<div class="line"><a name="l00254"></a><span class="lineno">  254</span>&#160;    };</div>
+<div class="line"><a name="l00255"></a><span class="lineno">  255</span>&#160;} <span class="comment">// namespace crow</span></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
-<div class="ttc" id="astructcrow_1_1response_html_a8f5e5caa08c3e658bccd03996e1a778a"><div class="ttname"><a href="structcrow_1_1response.html#a8f5e5caa08c3e658bccd03996e1a778a">crow::response::set_static_file_info</a></div><div class="ttdeci">void set_static_file_info(std::string path)</div><div class="ttdoc">Return a static file as the response body.</div><div class="ttdef"><b>Definition:</b> http_response.h:213</div></div>
-<div class="ttc" id="astructcrow_1_1response_html_ac29da52ee1e0b55086cd8eedd6c22da1"><div class="ttname"><a href="structcrow_1_1response.html#ac29da52ee1e0b55086cd8eedd6c22da1">crow::response::is_alive</a></div><div class="ttdeci">bool is_alive()</div><div class="ttdoc">Check if the connection is still alive (usually by checking the socket status).</div><div class="ttdef"><b>Definition:</b> http_response.h:191</div></div>
-<div class="ttc" id="astructcrow_1_1response_1_1static__file__info_html"><div class="ttname"><a href="structcrow_1_1response_1_1static__file__info.html">crow::response::static_file_info</a></div><div class="ttdef"><b>Definition:</b> http_response.h:205</div></div>
-<div class="ttc" id="astructcrow_1_1response_html_ac04bbe2d4f54fd717cdffdb26af3e46f"><div class="ttname"><a href="structcrow_1_1response.html#ac04bbe2d4f54fd717cdffdb26af3e46f">crow::response::redirect</a></div><div class="ttdeci">void redirect(const std::string &amp;location)</div><div class="ttdef"><b>Definition:</b> http_response.h:126</div></div>
+<div class="ttc" id="astructcrow_1_1response_html_a8f5e5caa08c3e658bccd03996e1a778a"><div class="ttname"><a href="structcrow_1_1response.html#a8f5e5caa08c3e658bccd03996e1a778a">crow::response::set_static_file_info</a></div><div class="ttdeci">void set_static_file_info(std::string path)</div><div class="ttdoc">Return a static file as the response body.</div><div class="ttdef"><b>Definition:</b> http_response.h:218</div></div>
+<div class="ttc" id="astructcrow_1_1response_html_ac29da52ee1e0b55086cd8eedd6c22da1"><div class="ttname"><a href="structcrow_1_1response.html#ac29da52ee1e0b55086cd8eedd6c22da1">crow::response::is_alive</a></div><div class="ttdeci">bool is_alive()</div><div class="ttdoc">Check if the connection is still alive (usually by checking the socket status).</div><div class="ttdef"><b>Definition:</b> http_response.h:195</div></div>
+<div class="ttc" id="astructcrow_1_1response_1_1static__file__info_html"><div class="ttname"><a href="structcrow_1_1response_1_1static__file__info.html">crow::response::static_file_info</a></div><div class="ttdoc">This constains metadata (coming from the stat command) related to any static files associated with th...</div><div class="ttdef"><b>Definition:</b> http_response.h:210</div></div>
+<div class="ttc" id="astructcrow_1_1response_html_ac04bbe2d4f54fd717cdffdb26af3e46f"><div class="ttname"><a href="structcrow_1_1response.html#ac04bbe2d4f54fd717cdffdb26af3e46f">crow::response::redirect</a></div><div class="ttdeci">void redirect(const std::string &amp;location)</div><div class="ttdoc">Return a &quot;Temporary Redirect&quot; response.</div><div class="ttdef"><b>Definition:</b> http_response.h:127</div></div>
 <div class="ttc" id="astructcrow_1_1response_html_ae56cfc39f24a56748c11016842427fb3"><div class="ttname"><a href="structcrow_1_1response.html#ae56cfc39f24a56748c11016842427fb3">crow::response::headers</a></div><div class="ttdeci">ci_map headers</div><div class="ttdoc">HTTP headers.</div><div class="ttdef"><b>Definition:</b> http_response.h:30</div></div>
-<div class="ttc" id="astructcrow_1_1response_html_a10da2e17421586b68f27ef1533ec677b"><div class="ttname"><a href="structcrow_1_1response.html#a10da2e17421586b68f27ef1533ec677b">crow::response::end</a></div><div class="ttdeci">void end(const std::string &amp;body_part)</div><div class="ttdoc">Same as end() except it adds a body part right before ending.</div><div class="ttdef"><b>Definition:</b> http_response.h:184</div></div>
-<div class="ttc" id="astructcrow_1_1response_html_aff527a091cf5054e933a244b078648c1"><div class="ttname"><a href="structcrow_1_1response.html#aff527a091cf5054e933a244b078648c1">crow::response::is_static_type</a></div><div class="ttdeci">bool is_static_type()</div><div class="ttdoc">Check whether the response has a static file defined.</div><div class="ttdef"><b>Definition:</b> http_response.h:197</div></div>
+<div class="ttc" id="astructcrow_1_1response_html_a10da2e17421586b68f27ef1533ec677b"><div class="ttname"><a href="structcrow_1_1response.html#a10da2e17421586b68f27ef1533ec677b">crow::response::end</a></div><div class="ttdeci">void end(const std::string &amp;body_part)</div><div class="ttdoc">Same as end() except it adds a body part right before ending.</div><div class="ttdef"><b>Definition:</b> http_response.h:188</div></div>
+<div class="ttc" id="astructcrow_1_1response_html_aff527a091cf5054e933a244b078648c1"><div class="ttname"><a href="structcrow_1_1response.html#aff527a091cf5054e933a244b078648c1">crow::response::is_static_type</a></div><div class="ttdeci">bool is_static_type()</div><div class="ttdoc">Check whether the response has a static file defined.</div><div class="ttdef"><b>Definition:</b> http_response.h:201</div></div>
 <div class="ttc" id="aclasscrow_1_1_connection_html"><div class="ttname"><a href="classcrow_1_1_connection.html">crow::Connection</a></div><div class="ttdoc">An HTTP connection.</div><div class="ttdef"><b>Definition:</b> http_connection.h:177</div></div>
 <div class="ttc" id="astructcrow_1_1response_html_aabc1f9b3264b8c5a2d05dcb409e8ff3f"><div class="ttname"><a href="structcrow_1_1response.html#aabc1f9b3264b8c5a2d05dcb409e8ff3f">crow::response::code</a></div><div class="ttdeci">int code</div><div class="ttdoc">The Status code for the response.</div><div class="ttdef"><b>Definition:</b> http_response.h:28</div></div>
 <div class="ttc" id="astructcrow_1_1response_html_a9fb82c40e0c0844db70b7b86b4a23e9f"><div class="ttname"><a href="structcrow_1_1response.html#a9fb82c40e0c0844db70b7b86b4a23e9f">crow::response::is_completed</a></div><div class="ttdeci">bool is_completed() const noexcept</div><div class="ttdoc">Check if the response has completed (whether response.end() has been called)</div><div class="ttdef"><b>Definition:</b> http_response.h:109</div></div>
 <div class="ttc" id="astructcrow_1_1response_html"><div class="ttname"><a href="structcrow_1_1response.html">crow::response</a></div><div class="ttdoc">HTTP response.</div><div class="ttdef"><b>Definition:</b> http_response.h:23</div></div>
-<div class="ttc" id="astructcrow_1_1response_html_a760bca5f5fdee03518d59d9538ce5432"><div class="ttname"><a href="structcrow_1_1response.html#a760bca5f5fdee03518d59d9538ce5432">crow::response::moved</a></div><div class="ttdeci">void moved(const std::string &amp;location)</div><div class="ttdef"><b>Definition:</b> http_response.h:144</div></div>
-<div class="ttc" id="astructcrow_1_1response_html_a9e87a17c3cf8b434fd2a64a9b3d4b675"><div class="ttname"><a href="structcrow_1_1response.html#a9e87a17c3cf8b434fd2a64a9b3d4b675">crow::response::redirect_perm</a></div><div class="ttdeci">void redirect_perm(const std::string &amp;location)</div><div class="ttdef"><b>Definition:</b> http_response.h:135</div></div>
-<div class="ttc" id="astructcrow_1_1response_html_a9ee58f8b775b2566418b298fe33c0dcc"><div class="ttname"><a href="structcrow_1_1response.html#a9ee58f8b775b2566418b298fe33c0dcc">crow::response::moved_perm</a></div><div class="ttdeci">void moved_perm(const std::string &amp;location)</div><div class="ttdef"><b>Definition:</b> http_response.h:153</div></div>
+<div class="ttc" id="astructcrow_1_1response_html_a760bca5f5fdee03518d59d9538ce5432"><div class="ttname"><a href="structcrow_1_1response.html#a760bca5f5fdee03518d59d9538ce5432">crow::response::moved</a></div><div class="ttdeci">void moved(const std::string &amp;location)</div><div class="ttdoc">Return a &quot;Found (Moved Temporarily)&quot; response.</div><div class="ttdef"><b>Definition:</b> http_response.h:147</div></div>
+<div class="ttc" id="astructcrow_1_1response_html_a9e87a17c3cf8b434fd2a64a9b3d4b675"><div class="ttname"><a href="structcrow_1_1response.html#a9e87a17c3cf8b434fd2a64a9b3d4b675">crow::response::redirect_perm</a></div><div class="ttdeci">void redirect_perm(const std::string &amp;location)</div><div class="ttdoc">Return a &quot;Permanent Redirect&quot; response.</div><div class="ttdef"><b>Definition:</b> http_response.h:137</div></div>
+<div class="ttc" id="astructcrow_1_1response_html_a9ee58f8b775b2566418b298fe33c0dcc"><div class="ttname"><a href="structcrow_1_1response.html#a9ee58f8b775b2566418b298fe33c0dcc">crow::response::moved_perm</a></div><div class="ttdeci">void moved_perm(const std::string &amp;location)</div><div class="ttdoc">Return a &quot;Moved Permanently&quot; response.</div><div class="ttdef"><b>Definition:</b> http_response.h:157</div></div>
 <div class="ttc" id="astructcrow_1_1response_html_a16d1a8bcec6460ba97f90b80881693b8"><div class="ttname"><a href="structcrow_1_1response.html#a16d1a8bcec6460ba97f90b80881693b8">crow::response::add_header</a></div><div class="ttdeci">void add_header(std::string key, std::string value)</div><div class="ttdoc">Add a new header to the response.</div><div class="ttdef"><b>Definition:</b> http_response.h:46</div></div>
 <div class="ttc" id="astructcrow_1_1response_html_a95f300c05782e1934dad522b6d6588cf"><div class="ttname"><a href="structcrow_1_1response.html#a95f300c05782e1934dad522b6d6588cf">crow::response::manual_length_header</a></div><div class="ttdeci">bool manual_length_header</div><div class="ttdoc">Whether Crow should automatically add a &quot;Content-Length&quot; header.</div><div class="ttdef"><b>Definition:</b> http_response.h:36</div></div>
-<div class="ttc" id="astructcrow_1_1response_html_abef42200eca49c70dc1f5140ee3603ab"><div class="ttname"><a href="structcrow_1_1response.html#abef42200eca49c70dc1f5140ee3603ab">crow::response::end</a></div><div class="ttdeci">void end()</div><div class="ttdoc">Set the response completion flag and call the handler (to send the response).</div><div class="ttdef"><b>Definition:</b> http_response.h:165</div></div>
+<div class="ttc" id="astructcrow_1_1response_html_abef42200eca49c70dc1f5140ee3603ab"><div class="ttname"><a href="structcrow_1_1response.html#abef42200eca49c70dc1f5140ee3603ab">crow::response::end</a></div><div class="ttdeci">void end()</div><div class="ttdoc">Set the response completion flag and call the handler (to send the response).</div><div class="ttdef"><b>Definition:</b> http_response.h:169</div></div>
 <div class="ttc" id="astructcrow_1_1response_html_ab2b9a9b9795fa6330bd47b66a716cb0b"><div class="ttname"><a href="structcrow_1_1response.html#ab2b9a9b9795fa6330bd47b66a716cb0b">crow::response::set_header</a></div><div class="ttdeci">void set_header(std::string key, std::string value)</div><div class="ttdoc">Set the value of an existing header in the response.</div><div class="ttdef"><b>Definition:</b> http_response.h:39</div></div>
 <div class="ttc" id="astructcrow_1_1response_html_a42e68ba33c040b10d3bc49392193f415"><div class="ttname"><a href="structcrow_1_1response.html#a42e68ba33c040b10d3bc49392193f415">crow::response::is_head_response</a></div><div class="ttdeci">bool is_head_response</div><div class="ttdoc">Whether this is a response to a HEAD request.</div><div class="ttdef"><b>Definition:</b> http_response.h:35</div></div>
 <div class="ttc" id="astructcrow_1_1response_html_ae9f3cc153eac05954f1f4e599527892d"><div class="ttname"><a href="structcrow_1_1response.html#ae9f3cc153eac05954f1f4e599527892d">crow::response::body</a></div><div class="ttdeci">std::string body</div><div class="ttdoc">The actual payload containing the response data.</div><div class="ttdef"><b>Definition:</b> http_response.h:29</div></div>

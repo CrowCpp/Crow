@@ -6,18 +6,18 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="Routes define what happens when your client connects to a certain URL.">
+        <meta name="description" content="While Crow doesn&#x27;t directly support HTTP authentication, it does provide all the tools you need to build your own. This tutorial will show you how to setup basic and token authentication using Crow.">
       
       
       
-        <link rel="canonical" href="https://crowcpp.org/guides/routes/">
+        <link rel="canonical" href="https://crowcpp.org/guides/auth/">
       
       <link rel="icon" href="../../assets/favicon.svg">
       <meta name="generator" content="mkdocs-1.2.3, mkdocs-material-8.0.3">
     
     
       
-        <title>Routes - Crow</title>
+        <title>HTTP Authorization - Crow</title>
       
     
     
@@ -61,7 +61,7 @@
 </script>
 
 <noscript>
-<img referrerpolicy="no-referrer-when-downgrade" src="https://thee.dev/matomo/matomo.php?idsite=1&amp;rec=1&amp;action_name=Routes" style="border:0" alt="" />
+<img referrerpolicy="no-referrer-when-downgrade" src="https://thee.dev/matomo/matomo.php?idsite=1&amp;rec=1&amp;action_name=HTTP Authorization" style="border:0" alt="" />
 </noscript>
 <!-- End Matomo Code -->
 
@@ -93,7 +93,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#macro" class="md-skip">
+        <a href="#shared-information" class="md-skip">
           Skip to content
         </a>
       
@@ -158,7 +158,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Routes
+              HTTP Authorization
             
           </span>
         </div>
@@ -511,14 +511,12 @@
               
   
   
-    
-  
   
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_1" type="checkbox" id="__nav_3_1" checked>
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_1" type="checkbox" id="__nav_3_1" >
       
       
       
@@ -553,124 +551,11 @@
               
   
   
-    
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
-      
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          Routes
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../routes/" class="md-nav__link">
         Routes
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#macro" class="md-nav__link">
-    Macro
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#app" class="md-nav__link">
-    App
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#path-url" class="md-nav__link">
-    Path (URL)
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#methods" class="md-nav__link">
-    Methods
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#handler" class="md-nav__link">
-    Handler
-  </a>
-  
-    <nav class="md-nav" aria-label="Handler">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#request" class="md-nav__link">
-    Request
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#response" class="md-nav__link">
-    Response
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#return-statement" class="md-nav__link">
-    Return statement
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#returning-custom-classes" class="md-nav__link">
-    Returning custom classes
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#response-codes" class="md-nav__link">
-    Response codes
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#catchall-routes" class="md-nav__link">
-    Catchall routes
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -855,12 +740,14 @@
               
   
   
+    
+  
   
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_2" type="checkbox" id="__nav_3_2" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_2" type="checkbox" id="__nav_3_2" checked>
       
       
       
@@ -881,11 +768,96 @@
               
   
   
+    
   
-    <li class="md-nav__item">
-      <a href="../auth/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          HTTP Authorization
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         HTTP Authorization
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#shared-information" class="md-nav__link">
+    Shared information
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#basic-auth" class="md-nav__link">
+    Basic Auth
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#token-auth" class="md-nav__link">
+    Token Auth
+  </a>
+  
+    <nav class="md-nav" aria-label="Token Auth">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#access-tokens" class="md-nav__link">
+    Access Tokens
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#using-an-access-token" class="md-nav__link">
+    Using an Access Token
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#refresh-tokens" class="md-nav__link">
+    Refresh Tokens
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sessions" class="md-nav__link">
+    Sessions
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -1038,58 +1010,44 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#macro" class="md-nav__link">
-    Macro
+  <a href="#shared-information" class="md-nav__link">
+    Shared information
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#app" class="md-nav__link">
-    App
+  <a href="#basic-auth" class="md-nav__link">
+    Basic Auth
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#path-url" class="md-nav__link">
-    Path (URL)
+  <a href="#token-auth" class="md-nav__link">
+    Token Auth
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#methods" class="md-nav__link">
-    Methods
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#handler" class="md-nav__link">
-    Handler
-  </a>
-  
-    <nav class="md-nav" aria-label="Handler">
+    <nav class="md-nav" aria-label="Token Auth">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#request" class="md-nav__link">
-    Request
+  <a href="#access-tokens" class="md-nav__link">
+    Access Tokens
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#response" class="md-nav__link">
-    Response
+  <a href="#using-an-access-token" class="md-nav__link">
+    Using an Access Token
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#return-statement" class="md-nav__link">
-    Return statement
+  <a href="#refresh-tokens" class="md-nav__link">
+    Refresh Tokens
   </a>
   
 </li>
@@ -1100,22 +1058,8 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#returning-custom-classes" class="md-nav__link">
-    Returning custom classes
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#response-codes" class="md-nav__link">
-    Response codes
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#catchall-routes" class="md-nav__link">
-    Catchall routes
+  <a href="#sessions" class="md-nav__link">
+    Sessions
   </a>
   
 </li>
@@ -1133,78 +1077,61 @@
               
                 
 
-  <h1>Routes</h1>
+  <h1>HTTP Authorization</h1>
 
-<p>Routes define what happens when your client connects to a certain URL.<br></p>
-<h2 id="macro">Macro</h2>
-<p><code>CROW_ROUTE(app, url)</code><br>
-Can be replaced with <code class="highlight"><span class="n">app</span><span class="p">.</span><span class="n">route</span><span class="o">&lt;</span><span class="n">crow</span><span class="o">::</span><span class="n">black_magick</span><span class="o">::</span><span class="n">get_parameter_tag</span><span class="p">(</span><span class="n">url</span><span class="p">)</span><span class="o">&gt;</span><span class="p">(</span><span class="n">url</span><span class="p">)</span><span class="w"></span></code> or <code class="highlight"><span class="n">app</span><span class="p">.</span><span class="n">route_dynamic</span><span class="p">(</span><span class="n">url</span><span class="p">)</span><span class="w"></span></code> if you're using VS2013 or want runtime url evaluation. Although this usage is <strong>NOT</strong> recommended.</p>
-<h2 id="app">App</h2>
-<p>Which app class to assign the route to.</p>
-<h2 id="path-url">Path (URL)</h2>
-<p>Which relative path is assigned to the route.<br>
-Using <code>/hello</code> means the client will need to access <code>http://example.com/hello</code> in order to access the route.<br>
-A path can have parameters, for example <code>/hello/&lt;int&gt;</code> will allow a client to input an int into the url which will be in the handler (something like <code>http://example.com/hello/42</code>).<br>
-Parameters can be <code>&lt;int&gt;</code>, <code>&lt;uint&gt;</code>, <code>&lt;double&gt;</code>, <code>&lt;string&gt;</code>, or <code>&lt;path&gt;</code>.<br>
-It's worth nothing that the parameters also need to be defined in the handler, an example of using parameters would be to add 2 numbers based on input:
-<div class="highlight"><pre><span></span><code><span class="n">CROW_ROUTE</span><span class="p">(</span><span class="n">app</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;/add/&lt;int&gt;/&lt;int&gt;&quot;</span><span class="p">)</span><span class="w"></span>
-<span class="p">([](</span><span class="kt">int</span><span class="w"> </span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">b</span><span class="p">)</span><span class="w"></span>
-<span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">to_string</span><span class="p">(</span><span class="n">a</span><span class="o">+</span><span class="n">b</span><span class="p">);</span><span class="w"></span>
-<span class="p">});</span><span class="w"></span>
-</code></pre></div>
-you can see the first <code>&lt;int&gt;</code> is defined as <code>a</code> and the second as <code>b</code>. If you were to run this and call <code>http://example.com/add/1/2</code>, the result would be a page with <code>3</code>. Exciting!</p>
-<h2 id="methods">Methods</h2>
-<p>You can change the HTTP methods the route uses from just the default <code>GET</code> by using <code>method()</code>, your route macro should look like <code>CROW_ROUTE(app, "/add/&lt;int&gt;/&lt;int&gt;").methods(crow::HTTPMethod::GET, crow::HTTPMethod::PATCH)</code> or <code>CROW_ROUTE(app, "/add/&lt;int&gt;/&lt;int&gt;").methods("GET"_method, "PATCH"_method)</code>.</p>
+<p>While Crow doesn't directly support HTTP authentication, it does provide all the tools you need to build your own. This tutorial will show you how to setup basic and token authentication using Crow.</p>
+<h2 id="shared-information">Shared information</h2>
+<p>Every way boils down to the same basic flow:
+- The handler calls a verification function.
+- The handler provides a <code>request</code> and \&lt;optionally> a <code>response</code>.
+- The function returns a <code>bool</code> or <code>enum</code> status.
+- Handler either continues or stops executing based on the returned status.
+- Either the function or handler modify and <code>end()</code> the <code>response</code> in case of failure.</p>
+<p>For the purposes of this tutorial, we will assume that the verification function is defined as <code class="highlight"><span class="kt">bool</span><span class="w"> </span><span class="n">verify</span><span class="p">(</span><span class="n">crow</span><span class="o">::</span><span class="n">request</span><span class="w"> </span><span class="n">req</span><span class="p">,</span><span class="w"> </span><span class="n">crow</span><span class="o">::</span><span class="n">response</span><span class="w"> </span><span class="n">res</span><span class="p">)</span><span class="w"></span></code></p>
+<h2 id="basic-auth">Basic Auth</h2>
+<p>Basic HTTP authentication requires the client to send the Username and Password as a single string, separated by a colon (':') and then encoded as base64. This data needs to be placed in the <code>Authorization</code> header of the request. A sample header using the credentials "Username" and "Password" would look like this: <code>Authorization: Basic VXNlcm5hbWU6UGFzc3dvcmQ=</code>.<br><br></p>
+<p>We don't need to worry about creating the request, we only need to extract the credentials from the <code>Authorization</code> header and verify them.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>Crow handles <code>HEAD</code> and <code>OPTIONS</code> methods automatically. So adding those to your handler has no effect.</p>
+<p>There are multiple ways to verify the credentials. Most involve checking the username in a database, then checking a hash of the password against the stored password hash for that username. This tutorial will not go over them </p>
 </div>
-<h2 id="handler">Handler</h2>
-<p>Basically a piece of code that gets executed whenever the client calls the associated route, usually in the form of a <a href="https://en.cppreference.com/w/cpp/language/lambda">lambda expression</a>. It can be as simple as <code class="highlight"><span class="p">([](){</span><span class="k">return</span><span class="w"> </span><span class="s">&quot;Hello World&quot;</span><span class="p">})</span><span class="w"></span></code>.<br><br></p>
-<h3 id="request">Request</h3>
-<p>Handlers can also use information from the request by adding it as a parameter <code class="highlight"><span class="p">([](</span><span class="k">const</span><span class="w"> </span><span class="n">crow</span><span class="o">::</span><span class="n">request</span><span class="o">&amp;</span><span class="w"> </span><span class="n">req</span><span class="p">){...})</span><span class="w"></span></code>.<br><br></p>
-<p>You can also access the url parameters in the handler using <code class="highlight"><span class="n">req</span><span class="p">.</span><span class="n">url_params</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;param_name&quot;</span><span class="p">);</span><span class="w"></span></code>. If the parameter doesn't exist, <code>nullptr</code> is returned.<br><br></p>
-<p>For more information on <code>crow::request</code> go <a href="../../reference/structcrow_1_1request.html">here</a>.<br><br></p>
-<h3 id="response">Response</h3>
-<p>Crow also provides the ability to define a response in the parameters by using <code class="highlight"><span class="p">([](</span><span class="n">crow</span><span class="o">::</span><span class="n">response</span><span class="o">&amp;</span><span class="w"> </span><span class="n">res</span><span class="p">){...})</span><span class="w"></span></code>.<br><br></p>
-<p>Please note that in order to return a response defined as a parameter you'll need to use <code>res.end();</code>.<br><br></p>
-<p>Alternatively, you can define the response in the body and return it (<code class="highlight"><span class="p">([](){</span><span class="k">return</span><span class="w"> </span><span class="n">crow</span><span class="o">::</span><span class="n">response</span><span class="p">()})</span><span class="w"></span></code>).<br></p>
-<p>For more information on <code>crow::response</code> go <a href="../../reference/structcrow_1_1response.html">here</a>.<br><br></p>
-<h3 id="return-statement">Return statement</h3>
-<p>A <code>crow::response</code> is very strictly tied to a route. If you can have something in a response constructor, you can return it in a handler.<br><br>
-The main return type is <code>std::string</code>. although you could also return a <code>crow::json::wvalue</code> or <code>crow::multipart::message</code> directly.<br><br>
-For more information on the specific constructors for a <code>crow::response</code> go <a href="../../reference/structcrow_1_1response.html">here</a>.</p>
-<h2 id="returning-custom-classes">Returning custom classes</h2>
-<p><strong>Introduced in: <code>v0.3</code></strong><br><br>
-If you have your own class you want to return (without converting it to string and returning that), you can use the <code>crow::returnable</code> class.<br>
-to use the returnable class, you only need your class to publicly extend <code>crow::returnable</code>, add a <code>dump()</code> method that returns your class as an <code>std::string</code>, and add a constructor that has a <code>Content-Type</code> header as a string argument.<br><br></p>
-<p>your class should look like the following:
-<div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">a</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">crow</span><span class="o">::</span><span class="n">returnable</span><span class="w"> </span>
-<span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="n">a</span><span class="p">()</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">returnable</span><span class="p">(</span><span class="s">&quot;text/plain&quot;</span><span class="p">){};</span><span class="w"></span>
-
-<span class="w">    </span><span class="p">...</span><span class="w"></span>
-<span class="w">    </span><span class="p">...</span><span class="w"></span>
-<span class="w">    </span><span class="p">...</span><span class="w"></span>
-
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">dump</span><span class="p">()</span><span class="w"> </span><span class="k">override</span><span class="w"></span>
-<span class="w">    </span><span class="p">{</span><span class="w"></span>
-<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="n">as_string</span><span class="p">();</span><span class="w"></span>
-<span class="w">    </span><span class="p">}</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<p><br></p>
+<p>To do this we first need to get the <code>Authorization</code> header as a string by using the following code:
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">myauth</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">req</span><span class="p">.</span><span class="n">get_header_value</span><span class="p">(</span><span class="s">&quot;Authorization&quot;</span><span class="p">);</span><span class="w"></span>
 </code></pre></div>
-<br><br></p>
-<h2 id="response-codes">Response codes</h2>
-<p><strong>Introduced in: <code>master</code></strong><br><br></p>
-<p>instead of assigning a response code, you can use the <code>crow::status</code> enum, for example you can replace <code>crow::response(200)</code> with <code>crow::response(crow::status::OK)</code></p>
-<h2 id="catchall-routes">Catchall routes</h2>
-<p><strong>Introduced in: <code>v0.3</code></strong><br><br>
-By default, any request that Crow can't find a route for will return a simple 404 response. You can change that to return a default route using the <code>CROW_CATCHALL_ROUTE(app)</code> macro. Defining it is identical to a normal route, even when it comes to the <code>const crow::request&amp;</code> and <code>crow::response&amp;</code> parameters being optional.</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>For versions higher than 0.3 (excluding patches), Catchall routes handle 404 and 405 responses. The default response will contain the code 404 or 405.</p>
-</div>
+<br></p>
+<p>Next we need to isolate our encoded credentials and decode them as follows:
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">mycreds</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">myauth</span><span class="p">.</span><span class="n">substr</span><span class="p">(</span><span class="mi">6</span><span class="p">);</span><span class="w"></span>
+<span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">d_mycreds</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">crow</span><span class="o">::</span><span class="n">utility</span><span class="o">::</span><span class="n">base64decode</span><span class="p">(</span><span class="n">mycreds</span><span class="p">,</span><span class="w"> </span><span class="n">mycreds</span><span class="p">.</span><span class="n">size</span><span class="p">()</span><span class="cm">/*, URLSafe? (true/false)*/</span><span class="p">);</span><span class="w"></span>
+</code></pre></div>
+<br></p>
+<p>Now that we have our <code>username:password</code> string, we only need to separate it into 2 different strings and verify their validity:
+<div class="highlight"><pre><span></span><code><span class="kt">size_t</span><span class="w"> </span><span class="n">found</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">d_mycreds</span><span class="p">.</span><span class="n">find</span><span class="p">(</span><span class="sc">&#39;:&#39;</span><span class="p">);</span><span class="w"></span>
+<span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">username</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">d_mycreds</span><span class="p">.</span><span class="n">substr</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">found</span><span class="p">);</span><span class="w"></span>
+<span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">password</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">d_mycreds</span><span class="p">.</span><span class="n">substr</span><span class="p">(</span><span class="n">found</span><span class="o">+</span><span class="mi">1</span><span class="p">);</span><span class="w"></span>
+
+<span class="cm">/*Verify validity of username and password here*/</span><span class="w"></span>
+<span class="k">return</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span><span class="w"> </span><span class="c1">//or false if the username/password are invalid</span>
+</code></pre></div></p>
+<h2 id="token-auth">Token Auth</h2>
+<p>Tokens are some form of unique data that a server can provide to a client in order to verify the client's identity later. While on the surface level they don't provide more security than a strong password, they are designed to be less valuable by being <em>temporary</em> and providing <em>limited access</em>. Variables like expiration time and access scopes are heavily reliant on the implementation however.<br><br></p>
+<h3 id="access-tokens">Access Tokens</h3>
+<p>The kind of the token itself can vary depending on the implementation and project requirements: Many services use randomly generated strings as tokens. Then compare them against a database to retrieve the associated user data. Some services however prefer using data bearing tokens. One example of the latter kind is JWT, which uses JSON strings encoded in base64 and signed using a private key or an agreed upon secret. While this has the added hassle of signing the token to ensure that it's not been tampered with. It does allow for the client to issue tokens without ever needing to present a password or contact a server. The server would simply be able to verify the signature using the client's public key or secret.<br><br></p>
+<h3 id="using-an-access-token">Using an Access Token</h3>
+<p>Authenticating with an access token usually involves 2 stages: The first being acquiring the access token from an authority (either by providing credentials such as a username and a password to a server or generating a signed token). The scope of the token (what kind of information it can read or change) is usually defined in this step.<br><br></p>
+<p>The second stage is simply presenting the Token to the server when requesting a resource. This is even simpler than using basic authentication. All the client needs to do is provide the <code>Authorization</code> header with a keyword (usually <code>Bearer</code>) followed by the token itself (for example: <code>Authorization: Bearer ABC123</code>). Once the client has done that the server will need to acquire this token, which can easily be done as follows:<br></p>
+<p><div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">myauth</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">req</span><span class="p">.</span><span class="n">get_header_value</span><span class="p">(</span><span class="s">&quot;Authorization&quot;</span><span class="p">);</span><span class="w"></span>
+<span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">mycreds</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">myauth</span><span class="p">.</span><span class="n">substr</span><span class="p">(</span><span class="mi">7</span><span class="p">);</span><span class="w"> </span><span class="c1">// The length can change based on the keyword used</span>
+
+<span class="cm">/*Verify validity of the token here*/</span><span class="w"></span>
+<span class="k">return</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span><span class="w"> </span><span class="c1">//or false if the token is invalid</span>
+</code></pre></div>
+<br>
+The way of verifying the token is largely up to the implementation, and involves either Bearer token decoding and verification, or database access, neither of which is in this tutorial's scope.<br><br></p>
+<h3 id="refresh-tokens">Refresh Tokens</h3>
+<p>Some services may choose to provide a refresh token alongside the access token. this token can be used to request a new access token if the existing one has expired. It provides convenience and security in that it makes it possible to acquire new access tokens without the need to expose a password. The downside however is that it can allow a malicious entity to keep its access to a compromised account. As such refresh tokens need to be handled with care, kept secure, and always invalidated as soon as a client logs out or requests a new access token.</p>
+<h2 id="sessions">Sessions</h2>
+<p>While Crow does not provide built in support for user sessions, a community member was kind enough to provide their own implementation on one of the related issue, their comment along with the code is available <a href="https://github.com/CrowCpp/Crow/issues/144#issuecomment-860384771">here</a> (Please keep in mind that while we appreciate all efforts to push Crow forward, we cannot provide support for this implementation unless it becomes part of the core project).</p>
 
               
             </article>
@@ -1251,9 +1178,9 @@ By default, any request that Crow can't find a route for will return a simple 40
       
         
         <a
-          href="../app/"
+          href="../testing/"
           class="md-footer__link md-footer__link--prev"
-          aria-label="Previous: App"
+          aria-label="Previous: Writing Tests"
           rel="prev"
         >
           <div class="md-footer__button md-icon">
@@ -1264,7 +1191,7 @@ By default, any request that Crow can't find a route for will return a simple 40
               <span class="md-footer__direction">
                 Previous
               </span>
-              App
+              Writing Tests
             </div>
           </div>
         </a>
@@ -1274,9 +1201,9 @@ By default, any request that Crow can't find a route for will return a simple 40
       
         
         <a
-          href="../logging/"
+          href="../proxies/"
           class="md-footer__link md-footer__link--next"
-          aria-label="Next: Logging"
+          aria-label="Next: Proxies"
           rel="next"
         >
           <div class="md-footer__title">
@@ -1284,7 +1211,7 @@ By default, any request that Crow can't find a route for will return a simple 40
               <span class="md-footer__direction">
                 Next
               </span>
-              Logging
+              Proxies
             </div>
           </div>
           <div class="md-footer__button md-icon">

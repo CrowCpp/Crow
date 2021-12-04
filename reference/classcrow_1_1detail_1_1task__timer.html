@@ -127,43 +127,22 @@ Public Member Functions</h2></td></tr>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>cancel</b> (identifier_type id)</td></tr>
 <tr class="separator:a05b9d2725c0992aace3c50c942d56e92"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac1a35eb9b85887368b65e01c07d3c91c"><td class="memItemLeft" align="right" valign="top">identifier_type&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcrow_1_1detail_1_1task__timer.html#ac1a35eb9b85887368b65e01c07d3c91c">schedule</a> (const task_type &amp;task)</td></tr>
+<tr class="memdesc:ac1a35eb9b85887368b65e01c07d3c91c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Schedule the given task to be executed after the default amount of ticks.  <a href="classcrow_1_1detail_1_1task__timer.html#ac1a35eb9b85887368b65e01c07d3c91c">More...</a><br /></td></tr>
 <tr class="separator:ac1a35eb9b85887368b65e01c07d3c91c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a777c073f4e895c638d2cbbf6a27ad1fa"><td class="memItemLeft" align="right" valign="top">identifier_type&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcrow_1_1detail_1_1task__timer.html#a777c073f4e895c638d2cbbf6a27ad1fa">schedule</a> (const task_type &amp;task, std::uint8_t timeout)</td></tr>
+<tr class="memdesc:a777c073f4e895c638d2cbbf6a27ad1fa"><td class="mdescLeft">&#160;</td><td class="mdescRight">Schedule the given task to be executed after the given time.  <a href="classcrow_1_1detail_1_1task__timer.html#a777c073f4e895c638d2cbbf6a27ad1fa">More...</a><br /></td></tr>
 <tr class="separator:a777c073f4e895c638d2cbbf6a27ad1fa"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa67cab7afc1646a4127b0c6c97e5f5ea"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcrow_1_1detail_1_1task__timer.html#aa67cab7afc1646a4127b0c6c97e5f5ea">set_default_timeout</a> (std::uint8_t timeout)</td></tr>
+<tr class="memdesc:aa67cab7afc1646a4127b0c6c97e5f5ea"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the default timeout for this <a class="el" href="classcrow_1_1detail_1_1task__timer.html" title="A class for scheduling functions to be called after a specific amount of ticks. A tick is equal to 1 ...">task_timer</a> instance. (Default: 5)  <a href="classcrow_1_1detail_1_1task__timer.html#aa67cab7afc1646a4127b0c6c97e5f5ea">More...</a><br /></td></tr>
 <tr class="separator:aa67cab7afc1646a4127b0c6c97e5f5ea"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae11e1259251e562ea3be457457b3b287"><td class="memItemLeft" align="right" valign="top">std::uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcrow_1_1detail_1_1task__timer.html#ae11e1259251e562ea3be457457b3b287">get_default_timeout</a> () const</td></tr>
+<tr class="memitem:ae11e1259251e562ea3be457457b3b287"><td class="memItemLeft" align="right" valign="top"><a id="ae11e1259251e562ea3be457457b3b287"></a>
+std::uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcrow_1_1detail_1_1task__timer.html#ae11e1259251e562ea3be457457b3b287">get_default_timeout</a> () const</td></tr>
+<tr class="memdesc:ae11e1259251e562ea3be457457b3b287"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the default timeout. (Default: 5) <br /></td></tr>
 <tr class="separator:ae11e1259251e562ea3be457457b3b287"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>A class for scheduling functions to be called after a specific amount of ticks. A tick is equal to 1 second. </p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
-<a id="ae11e1259251e562ea3be457457b3b287"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae11e1259251e562ea3be457457b3b287">&#9670;&nbsp;</a></span>get_default_timeout()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::uint8_t crow::detail::task_timer::get_default_timeout </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<p>Get the default timeout. (Default: 5) </p>
-
-</div>
-</div>
 <a id="ac1a35eb9b85887368b65e01c07d3c91c"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ac1a35eb9b85887368b65e01c07d3c91c">&#9670;&nbsp;</a></span>schedule() <span class="overload">[1/2]</span></h2>
 
@@ -187,7 +166,8 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>cancel</b> (identifie
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Schedule the given task to be executed after the default amount of ticks.</p>
+
+<p>Schedule the given task to be executed after the default amount of ticks. </p>
 <dl class="section return"><dt>Returns</dt><dd>identifier_type Used to cancel the thread. It is not bound to this <a class="el" href="classcrow_1_1detail_1_1task__timer.html" title="A class for scheduling functions to be called after a specific amount of ticks. A tick is equal to 1 ...">task_timer</a> instance and in some cases could lead to undefined behavior if used with other <a class="el" href="classcrow_1_1detail_1_1task__timer.html" title="A class for scheduling functions to be called after a specific amount of ticks. A tick is equal to 1 ...">task_timer</a> objects or after the task has been successfully executed. </dd></dl>
 
 </div>
@@ -225,7 +205,8 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>cancel</b> (identifie
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Schedule the given task to be executed after the given time.</p>
+
+<p>Schedule the given task to be executed after the given time. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">timeout</td><td>The amount of ticks (seconds) to wait before execution.</td></tr>
@@ -259,7 +240,8 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>cancel</b> (identifie
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Set the default timeout for this <a class="el" href="classcrow_1_1detail_1_1task__timer.html" title="A class for scheduling functions to be called after a specific amount of ticks. A tick is equal to 1 ...">task_timer</a> instance. (Default: 5)</p>
+
+<p>Set the default timeout for this <a class="el" href="classcrow_1_1detail_1_1task__timer.html" title="A class for scheduling functions to be called after a specific amount of ticks. A tick is equal to 1 ...">task_timer</a> instance. (Default: 5) </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">timeout</td><td>The amount of ticks (seconds) to wait before execution. </td></tr>
