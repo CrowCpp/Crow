@@ -11,6 +11,7 @@
 namespace crow
 {
     /// A wrapper for `nodejs/http-parser`.
+
     ///
     /// Used to generate a \ref crow.request from the TCP socket buffer.
     template<typename Handler>

@@ -1,4 +1,4 @@
-// This file is generated from nginx/conf/mime.types using nginx_mime2cpp.py
+// This file is generated from nginx/conf/mime.types using nginx_mime2cpp.py on 2021-12-03.
 #include <unordered_map>
 #include <string>
 
@@ -21,6 +21,7 @@ namespace crow
       {"jad", "text/vnd.sun.j2me.app-descriptor"},
       {"wml", "text/vnd.wap.wml"},
       {"htc", "text/x-component"},
+      {"avif", "image/avif"},
       {"png", "image/png"},
       {"svgz", "image/svg+xml"},
       {"svg", "image/svg+xml"},
@@ -58,6 +59,7 @@ namespace crow
       {"xlsx", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"},
       {"docx", "application/vnd.openxmlformats-officedocument.wordprocessingml.document"},
       {"wmlc", "application/vnd.wap.wmlc"},
+      {"wasm", "application/wasm"},
       {"7z", "application/x-7z-compressed"},
       {"cco", "application/x-cocoa"},
       {"jardiff", "application/x-java-archive-diff"},

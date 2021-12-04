@@ -64,12 +64,11 @@ namespace crow
         class Connection : public connection
         {
         public:
-            ///
             /// Constructor for a connection.
+
             ///
             /// Requires a request with an "Upgrade: websocket" header.<br>
             /// Automatically handles the handshake.
-            ///
             Connection(const crow::request& req, Adaptor&& adaptor,
                        std::function<void(crow::websocket::connection&)> open_handler,
                        std::function<void(crow::websocket::connection&, const std::string&, bool)> message_handler,
@@ -120,11 +119,10 @@ namespace crow
                 adaptor_.get_io_service().post(handler);
             }
 
-            ///
             /// Send a "Ping" message.
+
             ///
             /// Usually invoked to check if the other point is still online.
-            ///
             void send_ping(const std::string& msg) override
             {
                 dispatch([this, msg] {
@@ -135,11 +133,10 @@ namespace crow
                 });
             }
 
-            ///
             /// Send a "Pong" message.
+
             ///
             /// Usually automatically invoked as a response to a "Ping" message.
-            ///
             void send_pong(const std::string& msg) override
             {
                 dispatch([this, msg] {
@@ -172,11 +169,10 @@ namespace crow
                 });
             }
 
-            ///
             /// Send a close signal.
+
             ///
             /// Sets a flag to destroy the object once the message is sent.
-            ///
             void close(const std::string& msg) override
             {
                 dispatch([this, msg] {
@@ -224,11 +220,10 @@ namespace crow
                 }
             }
 
-            ///
             /// Send the HTTP upgrade response.
+
             ///
             /// Finishes the handshake process, then starts reading messages from the socket.
-            ///
             void start(std::string&& hello)
             {
                 static std::string header = "HTTP/1.1 101 Switching Protocols\r\n"
@@ -246,14 +241,13 @@ namespace crow
                 do_read();
             }
 
-            ///
             /// Read a websocket message.
+
             ///
             /// Involves:<br>
             /// Handling headers (opcodes, size).<br>
             /// Unmasking the payload.<br>
             /// Reading the actual payload.<br>
-            ///
             void do_read()
             {
                 is_reading = true;
@@ -482,11 +476,10 @@ namespace crow
                 return (mini_header_ & 0x0f00) >> 8;
             }
 
-            ///
             /// Process the payload fragment.
+
             ///
             /// Unmasks the fragment, checks the opcode, merges fragments into 1 message body, and calls the appropriate handler.
-            ///
             void handle_fragment()
             {
                 if (has_mask_)
@@ -569,11 +562,10 @@ namespace crow
                 fragment_.clear();
             }
 
-            ///
             /// Send the buffers' data through the socket.
+
             ///
             /// Also destroyes the object if the Close flag is set.
-            ///
             void do_write()
             {
                 if (sending_buffers_.empty())
