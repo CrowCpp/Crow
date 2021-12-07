@@ -178,10 +178,10 @@ Searc/drone/src/include/crow/json.h:1423: warning: unable to resolve reference t
 /drone/src/include/crow/logging.h:42: warning: Member log(std::string message, LogLevel level) override (function) of class crow::CerrLogHandler is not documented.
 /drone/src/include/crow/ci_map.h:12: warning: Member operator()(const std::string &key) const (function) of class crow::ci_hash is not documented.
 /drone/src/include/crow/ci_map.h:29: warning: Member operator()(const std::string &l, const std::string &r) const (function) of class crow::ci_key_eq is not documented.
-/drone/src/include/crow/http_connection.h:182: warning: Member Connection(boost::asio::io_service &io_service, Handler *handler, const std::string &server_name, std::tuple< Middlewares... > *middlewares, std::function< std::string()> &get_cached_date_str_f, detail::task_timer &task_timer, typename Adaptor::context *adaptor_ctx_) (function) of class crow::Connection is not documented.
-/drone/src/include/crow/http_connection.h:221: warning: Member start() (function) of class crow::Connection is not documented.
-/drone/src/include/crow/http_connection.h:238: warning: Member handle_header() (function) of class crow::Connection is not documented.
-/drone/src/include/crow/http_connection.h:250: warning: Member handle() (function) of class crow::Connection is not documented.
+/drone/src/include/crow/http_connection.h:182: warning: Member Connection(boost::asio::io_service &io_service, Handler *handler, const std::string &server_name, std::tuple< Middlewares... > *middlewares, std::function< std::string()> &get_cached_date_str_f, detail::task_timer &task_timer, typename Adaptor::context *adaptor_ctx_, std::atomic< unsigned int > &queue_length) (function) of class crow::Connection is not documented.
+/drone/src/include/crow/http_connection.h:223: warning: Member start() (function) of class crow::Connection is not documented.
+/drone/src/include/crow/http_connection.h:240: warning: Member handle_header() (function) of class crow::Connection is not documented.
+/drone/src/include/crow/http_connection.h:252: warning: Member handle() (function) of class crow::Connection is not documented.
 /drone/src/include/crow/middlewares/cookie_parser.h:52: warning: Member before_handle(request &req, response &res, context &ctx) (function) of class crow::CookieParser is not documented.
 /drone/src/include/crow/middlewares/cookie_parser.h:98: warning: Member after_handle(request &, response &res, context &ctx) (function) of class crow::CookieParser is not documented.
 /drone/src/include/crow/middlewares/cookie_parser.h:38: warning: Member get_cookie(const std::string &key) const (function) of class crow::CookieParser::context is not documented.
@@ -311,12 +311,12 @@ Searc/drone/src/include/crow/json.h:1423: warning: unable to resolve reference t
 /drone/src/include/crow/routing.h:462: warning: Member methods(HTTPMethod method) (function) of class crow::RuleParameterTraits is not documented.
 /drone/src/include/crow/routing.h:469: warning: Member methods(HTTPMethod method, MethodArgs... args_method) (function) of class crow::RuleParameterTraits is not documented.
 /drone/src/include/crow/http_server.h:29: warning: Member Server(Handler *handler, std::string bindaddr, uint16_t port, std::string server_name=std::string("Crow/")+VERSION, std::tuple< Middlewares... > *middlewares=nullptr, uint16_t concurrency=1, uint8_t timeout=5, typename Adaptor::context *adaptor_ctx=nullptr) (function) of class crow::Server is not documented.
-/drone/src/include/crow/http_server.h:43: warning: Member set_tick_function(std::chrono::milliseconds d, std::function< void()> f) (function) of class crow::Server is not documented.
-/drone/src/include/crow/http_server.h:49: warning: Member on_tick() (function) of class crow::Server is not documented.
-/drone/src/include/crow/http_server.h:60: warning: Member run() (function) of class crow::Server is not documented.
-/drone/src/include/crow/http_server.h:160: warning: Member stop() (function) of class crow::Server is not documented.
-/drone/src/include/crow/http_server.h:167: warning: Member signal_clear() (function) of class crow::Server is not documented.
-/drone/src/include/crow/http_server.h:172: warning: Member signal_add(int signal_number) (function) of class crow::Server is not documented.
+/drone/src/include/crow/http_server.h:44: warning: Member set_tick_function(std::chrono::milliseconds d, std::function< void()> f) (function) of class crow::Server is not documented.
+/drone/src/include/crow/http_server.h:50: warning: Member on_tick() (function) of class crow::Server is not documented.
+/drone/src/include/crow/http_server.h:61: warning: Member run() (function) of class crow::Server is not documented.
+/drone/src/include/crow/http_server.h:162: warning: Member stop() (function) of class crow::Server is not documented.
+/drone/src/include/crow/http_server.h:169: warning: Member signal_clear() (function) of class crow::Server is not documented.
+/drone/src/include/crow/http_server.h:174: warning: Member signal_add(int signal_number) (function) of class crow::Server is not documented.
 hing for member function documentation...
 Creating members for template instances...
 Building page list...
@@ -797,5 +797,5 @@ Generating example index...
 finalizing index lists...
 writing tag file...
 Running plantuml with JAVA...
-lookup cache used 2642/65536 hits=23166 misses=2971
+lookup cache used 2657/65536 hits=23285 misses=2990
 finished...
