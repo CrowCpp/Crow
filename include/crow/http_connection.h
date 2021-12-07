@@ -643,7 +643,7 @@ namespace crow
             if (!is_reading && !is_writing)
             {
                 queue_length_--;
-                CROW_LOG_DEBUG << this << " delete (idle) ";
+                CROW_LOG_DEBUG << this << " delete (idle) (queue length: " << queue_length_ << ')';
                 delete this;
             }
         }

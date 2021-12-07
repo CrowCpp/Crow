@@ -192,9 +192,10 @@ namespace crow
 
         void do_accept()
         {
-            int service_idx = pick_io_service_idx();
+            uint16_t service_idx = pick_io_service_idx();
             asio::io_service& is = *io_service_pool_[service_idx];
             task_queue_length_pool_[service_idx]++;
+            CROW_LOG_DEBUG << &is << " {" <<  service_idx << "} queue length: " << task_queue_length_pool_[service_idx];
 
             auto p = new Connection<Adaptor, Handler, Middlewares...>(
               is, handler_, server_name_, middlewares_,
@@ -213,6 +214,7 @@ namespace crow
                   else
                   {
                       task_queue_length_pool_[service_idx]--;
+                      CROW_LOG_DEBUG << &is << " {" <<  service_idx << "} queue length: " << task_queue_length_pool_[service_idx];
                       delete p;
                   }
                   do_accept();
