@@ -22,6 +22,7 @@ namespace crow
     constexpr const uint16_t INVALID_BP_ID{0xFFFF};
 
     /// A base class for all rules.
+
     ///
     /// Used to provide a common interface for code dealing with different types of rules.<br>
     /// A Rule provides a URL, allowed HTTP methods, and handlers.
@@ -362,6 +363,7 @@ namespace crow
 
 
     /// A rule dealing with websockets.
+
     ///
     /// Provides the interface for the user to put in the necessary handlers for a websocket to work.
     class WebSocketRule : public BaseRule
@@ -437,6 +439,7 @@ namespace crow
     };
 
     /// Allows the user to assign parameters using functions.
+
     ///
     /// `rule.name("name").methods(HTTPMethod::POST)`
     template<typename T>
@@ -715,7 +718,7 @@ namespace crow
         Trie()
         {}
 
-        ///Check whether or not the trie is empty.
+        /// Check whether or not the trie is empty.
         bool is_empty()
         {
             return head_.children.empty();
@@ -1084,6 +1087,7 @@ namespace crow
     };
 
     /// A blueprint can be considered a smaller section of a Crow app, specifically where the router is conecerned.
+
     ///
     /// You can use blueprints to assign a common prefix to rules' prefix, set custom static and template folders, and set a custom catchall route.
     /// You can also assign nest blueprints for maximum Compartmentalization.

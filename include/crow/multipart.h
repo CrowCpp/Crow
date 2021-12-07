@@ -23,6 +23,7 @@ namespace crow
         };
 
         ///One part of the multipart message
+
         ///
         /// It is usually separated from other sections by a `boundary`
         struct part

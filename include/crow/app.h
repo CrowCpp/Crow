@@ -39,6 +39,7 @@ namespace crow
     using ssl_context_t = boost::asio::ssl::context;
 #endif
     /// The main server application
+
     ///
     /// Use `SimpleApp` or `App<Middleware1, Middleware2, etc...>`
     template<typename... Middlewares>
@@ -57,6 +58,7 @@ namespace crow
         {}
 
         /// Process an Upgrade request
+
         ///
         /// Currently used to upgrrade an HTTP connection to a WebSocket connection
         template<typename Adaptor>
@@ -77,12 +79,16 @@ namespace crow
             return router_.new_rule_dynamic(std::move(rule));
         }
 
-        /// Create a route using a rule (**Use CROW_ROUTE instead**)
+        ///Create a route using a rule (**Use CROW_ROUTE instead**)
         template<uint64_t Tag>
-        auto route(std::string&& rule)
-#ifdef CROW_CAN_USE_CPP17
-          -> typename std::invoke_result<decltype(&Router::new_rule_tagged<Tag>), Router, std::string&&>::type
+#ifdef CROW_GCC83_WORKAROUND
+        auto& route(std::string&& rule)
 #else
+        auto route(std::string&& rule)
+#endif
+#if defined CROW_CAN_USE_CPP17 && !defined CROW_GCC83_WORKAROUND
+          -> typename std::invoke_result<decltype(&Router::new_rule_tagged<Tag>), Router, std::string&&>::type
+#elif !defined CROW_GCC83_WORKAROUND
           -> typename std::result_of<decltype (&Router::new_rule_tagged<Tag>)(Router, std::string&&)>::type
 #endif
         {
@@ -157,6 +163,7 @@ namespace crow
         }
 
         /// Set the server's log level
+
         ///
         /// Possible values are:<br>
         /// crow::LogLevel::Debug       (0)<br>
@@ -218,6 +225,7 @@ namespace crow
         }
 #endif
         /// A wrapper for `validate()` in the router
+
         ///
         /// Go through the rules, upgrade them if possible, and add them to the list of rules
         void validate()

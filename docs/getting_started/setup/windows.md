@@ -5,7 +5,7 @@ Here's how you can install Crow on your Windows machine.
 Crow can be simply installed through VCPKG using the command `vcpkg install crow`
 
 ### Manually (source or release)
-#### Microsoft Visual Studio 2019 and VCPKG
+#### Microsoft Visual Studio and VCPKG
 The following guide will use `example_with_all.cpp` as the Crow application for demonstration purposes. VCPKG will be used only to install Crow's dependencies.
 
 1. Generate `crow_all.h` by navigating to the `scripts` folder and running `python3 merge_all.py ..\include crow_all.h`.
