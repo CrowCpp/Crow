@@ -36,6 +36,7 @@ namespace crow
           server_name_(server_name),
           port_(port),
           bindaddr_(bindaddr),
+          task_queue_length_pool_(concurrency_),
           middlewares_(middlewares),
           adaptor_ctx_(adaptor_ctx)
         {}
@@ -101,6 +102,7 @@ namespace crow
                         detail::task_timer task_timer(*io_service_pool_[i]);
                         task_timer.set_default_timeout(timeout_);
                         task_timer_pool_[i] = &task_timer;
+                        task_queue_length_pool_[i] = 0;
 
                         init_count++;
                         while (1)
@@ -175,24 +177,34 @@ namespace crow
         }
 
     private:
-        asio::io_service& pick_io_service()
+        uint16_t pick_io_service_idx()
         {
-            // TODO load balancing
-            roundrobin_index_++;
-            if (roundrobin_index_ >= io_service_pool_.size())
-                roundrobin_index_ = 0;
-            return *io_service_pool_[roundrobin_index_];
+            uint16_t min_queue_idx = 0;
+
+            // TODO improve load balancing
+            for (uint16_t i = 1; i < task_queue_length_pool_.size() && task_queue_length_pool_[min_queue_idx] > 0; i++)
+            // No need to check other io_services if the current one has no tasks
+            {
+                if (task_queue_length_pool_[i] < task_queue_length_pool_[min_queue_idx])
+                    min_queue_idx = i;
+            }
+            return min_queue_idx;
         }
 
         void do_accept()
         {
-            asio::io_service& is = pick_io_service();
+            uint16_t service_idx = pick_io_service_idx();
+            asio::io_service& is = *io_service_pool_[service_idx];
+            task_queue_length_pool_[service_idx]++;
+            CROW_LOG_DEBUG << &is << " {" << service_idx << "} queue length: " << task_queue_length_pool_[service_idx];
+
             auto p = new Connection<Adaptor, Handler, Middlewares...>(
               is, handler_, server_name_, middlewares_,
-              get_cached_date_str_pool_[roundrobin_index_], *task_timer_pool_[roundrobin_index_], adaptor_ctx_);
+              get_cached_date_str_pool_[service_idx], *task_timer_pool_[service_idx], adaptor_ctx_, task_queue_length_pool_[service_idx]);
+
             acceptor_.async_accept(
               p->socket(),
-              [this, p, &is](boost::system::error_code ec) {
+              [this, p, &is, service_idx](boost::system::error_code ec) {
                   if (!ec)
                   {
                       is.post(
@@ -202,6 +214,8 @@ namespace crow
                   }
                   else
                   {
+                      task_queue_length_pool_[service_idx]--;
+                      CROW_LOG_DEBUG << &is << " {" << service_idx << "} queue length: " << task_queue_length_pool_[service_idx];
                       delete p;
                   }
                   do_accept();
@@ -223,7 +237,7 @@ namespace crow
         std::string server_name_;
         uint16_t port_;
         std::string bindaddr_;
-        unsigned int roundrobin_index_{};
+        std::vector<std::atomic<unsigned int>> task_queue_length_pool_;
 
         std::chrono::milliseconds tick_interval_;
         std::function<void()> tick_function_;

@@ -186,7 +186,8 @@ namespace crow
           std::tuple<Middlewares...>* middlewares,
           std::function<std::string()>& get_cached_date_str_f,
           detail::task_timer& task_timer,
-          typename Adaptor::context* adaptor_ctx_):
+          typename Adaptor::context* adaptor_ctx_,
+          std::atomic<unsigned int>& queue_length):
           adaptor_(io_service, adaptor_ctx_),
           handler_(handler),
           parser_(this),
@@ -194,7 +195,8 @@ namespace crow
           middlewares_(middlewares),
           get_cached_date_str(get_cached_date_str_f),
           task_timer_(task_timer),
-          res_stream_threshold_(handler->stream_threshold())
+          res_stream_threshold_(handler->stream_threshold()),
+          queue_length_(queue_length)
         {
 #ifdef CROW_ENABLE_DEBUG
             connectionCount++;
@@ -698,7 +700,8 @@ namespace crow
             CROW_LOG_DEBUG << this << " is_reading " << is_reading << " is_writing " << is_writing;
             if (!is_reading && !is_writing)
             {
-                CROW_LOG_DEBUG << this << " delete (idle) ";
+                queue_length_--;
+                CROW_LOG_DEBUG << this << " delete (idle) (queue length: " << queue_length_ << ')';
                 delete this;
             }
         }
@@ -758,6 +761,8 @@ namespace crow
         detail::task_timer& task_timer_;
 
         size_t res_stream_threshold_;
+
+        std::atomic<unsigned int>& queue_length_;
     };
 
 } // namespace crow
