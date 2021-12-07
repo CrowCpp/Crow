@@ -177,12 +177,13 @@ namespace crow
         }
 
     private:
-        int pick_io_service_idx()
+        uint16_t pick_io_service_idx()
         {
-            int min_queue_idx = 0;
+            uint16_t min_queue_idx = 0;
 
             // TODO improve load balancing
-            for (uint16_t i = 1; i < task_queue_length_pool_.size(); i++)
+            for (uint16_t i = 1; i < task_queue_length_pool_.size() && task_queue_length_pool_[min_queue_idx] > 0; i++)
+            // No need to check other io_services if the current one has no tasks
             {
                 if (task_queue_length_pool_[i] < task_queue_length_pool_[min_queue_idx])
                     min_queue_idx = i;
