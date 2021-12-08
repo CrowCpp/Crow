@@ -61,9 +61,11 @@ Your class should look like the following:
 class a : public crow::returnable 
 {
     a() : returnable("text/plain"){};
+    
     ...
     ...
     ...
+    
     std::string dump() override
     {
         return this.as_string();
