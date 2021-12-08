@@ -999,7 +999,7 @@
 
 <p>Unit tests can be written in 2 ways for a Crow application.<br><br></p>
 <h2 id="the-handler-method">The handler method</h2>
-<p>Crow Allows users to handle requests that may not come from the network. This is done by calling the <code>handle(req, res)</code> method and providing a request and response objects. Which causes crow to identify and run the appropriate handler, returning the resulting response.</p>
+<p>Crow allows users to handle requests that may not come from the network. This is done by calling the <code>handle(req, res)</code> method and providing a request and response objects. Which causes crow to identify and run the appropriate handler, returning the resulting response.</p>
 <table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
 <span class="normal"> 2</span>
 <span class="normal"> 3</span>
@@ -1095,7 +1095,7 @@ Then send the HTTP request string through the socket inside a buffer, and read t
 Finally check the result against the expected one.</p>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
-<p>Be absolutely sure that the line <code>app.stop()</code> runs, whether the test fails or succeedes. Not running it WILL CAUSE OTHER TESTS TO FAIL AND THE TEST TO HANG UNTIL THE PROCESS IS TERMINATED.</p>
+<p>Be absolutely sure that the line <code>app.stop()</code> runs, whether the test fails or succeeds. Not running it WILL CAUSE OTHER TESTS TO FAIL AND THE TEST TO HANG UNTIL THE PROCESS IS TERMINATED.</p>
 </div>
 
               
