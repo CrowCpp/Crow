@@ -1,5 +1,5 @@
 A Crow app defines an interface to allow the developer access to all the different parts of the framework, without having to manually deal with each one.<br><br>
-An app allows access to the http server (for handling connections), router (for handling URLs and requests), Middlewares (for extending Crow), amoung many others.<br><br>
+An app allows access to the http server (for handling connections), router (for handling URLs and requests), Middlewares (for extending Crow), among many others.<br><br>
 
 Crow has 2 different app types:
 
