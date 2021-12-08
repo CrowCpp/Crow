@@ -14,7 +14,7 @@ Blueprints let you do the following:<br><br>
 You can define routes in a blueprint, similarly to how `#!cpp CROW_ROUTE(app, "/xyz")` works, you can use `#!cpp CROW_BP_ROUTE(blueprint, "/xyz")` to define a blueprint route.
 
 ### Define a Prefix
-Blueprints can have a prefix assigned to them. This can be done when creating a new blueprint as in `#!cpp crow::blueprint bp("prefix");`. This prefix will be applied to all routes belonging to the blueprint. truning a route such as `/crow/rocks` into `/prefix/crow/rocks`.
+Blueprints can have a prefix assigned to them. This can be done when creating a new blueprint as in `#!cpp crow::blueprint bp("prefix");`. This prefix will be applied to all routes belonging to the blueprint, turning a route such as `/crow/rocks` into `/prefix/crow/rocks`.
 
 !!!Warning
 
@@ -37,7 +37,7 @@ Similar to static directories, You can set a custom templates directory (relativ
     If you want to define a custom templates directory without defining a custom static directory, you can pass the static directory as an empty string. Making your constructor `#!cpp crow::blueprint bp("prefix", "", "custom_templates");`.
 
 ### Define a custom Catchall route
-You can define a custom catchall route for a blueprint by calling `#!cpp CROW_BP_CATCHALL_ROUTE(blueprint)`. This causes any requests with a URL starting with `/prefix` and no route found to call the blueprint's catchall route. if no catchall route is defined, Crow will default to either the parent blueprint or the app's catchall route.
+You can define a custom catchall route for a blueprint by calling `#!cpp CROW_BP_CATCHALL_ROUTE(blueprint)`. This causes any requests with a URL starting with `/prefix` and no route found to call the blueprint's catchall route. If no catchall route is defined, Crow will default to either the parent blueprint or the app's catchall route.
 
 ### Register other Blueprints
 Blueprints can also register other blueprints. This is done through `#!cpp blueprint.register_blueprint(blueprint_2);`. The child blueprint's routes become `/prefix/prefix_2/abc/xyz`.

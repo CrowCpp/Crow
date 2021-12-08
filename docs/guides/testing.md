@@ -1,7 +1,7 @@
 Unit tests can be written in 2 ways for a Crow application.<br><br>
 
 ## The handler method
-Crow Allows users to handle requests that may not come from the network. This is done by calling the `handle(req, res)` method and providing a request and response objects. Which causes crow to identify and run the appropriate handler, returning the resulting response.
+Crow allows users to handle requests that may not come from the network. This is done by calling the `handle(req, res)` method and providing a request and response objects. Which causes crow to identify and run the appropriate handler, returning the resulting response.
 
 ```cpp linenums="1"
   CROW_ROUTE(app, "/place")
@@ -74,4 +74,4 @@ Finally check the result against the expected one.
 
 !!! warning
 
-    Be absolutely sure that the line `app.stop()` runs, whether the test fails or succeedes. Not running it WILL CAUSE OTHER TESTS TO FAIL AND THE TEST TO HANG UNTIL THE PROCESS IS TERMINATED.
+    Be absolutely sure that the line `app.stop()` runs, whether the test fails or succeeds. Not running it WILL CAUSE OTHER TESTS TO FAIL AND THE TEST TO HANG UNTIL THE PROCESS IS TERMINATED.

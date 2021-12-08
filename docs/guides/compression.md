@@ -11,9 +11,9 @@ HTTP compression is by default disabled in crow. Do the following to enable it: 
 
     3<sup>rd</sup> point is not needed for MSVC or CMake projects using `Crow::Crow` since `vcpckg.json` and Crow's target already include zlib as a dependency.
 
-For the compression algorim you can use `crow::compression::algorithm::DEFLATE` or `crow::compression::algorithm::GZIP`.<br>
+For the compression algorithm you can use `crow::compression::algorithm::DEFLATE` or `crow::compression::algorithm::GZIP`.<br>
 And now your HTTP responses will be compressed.
 
 ## Websocket Compression
 Crow currently does not support Websocket compression.<br>
-Feel free to discuss the subject with us on Github if you're feeling adventurous and want to try to implement it. We appreciate all the help.
+Feel free to discuss the subject with us on GitHub if you're feeling adventurous and want to try to implement it. We appreciate all the help.
