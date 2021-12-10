@@ -3,13 +3,13 @@ An app allows access to the http server (for handling connections), router (for 
 
 Crow has 2 different app types:
 
-##SimpleApp
+## SimpleApp
 Has no middlewares.
 
-##App&lt;m1, m2, ...&gt;
+## App&lt;m1, m2, ...&gt;
 Has middlewares.
 
-##Using the app
+## Using the app
 To use a Crow app, simply define `#!cpp crow::SimpleApp` or `#!cpp crow::App<m1, m2 ...>` if you're using middlewares.<br>
 The methods of an app can be chained. That means that you can configure and run your app in the same code line.
 ``` cpp

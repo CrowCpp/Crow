@@ -9,7 +9,7 @@
 namespace crow
 {
     /// Find and return the value associated with the key. (returns an empty string if nothing is found)
-    template <typename T>
+    template<typename T>
     inline const std::string& get_header_value(const T& headers, const std::string& key)
     {
         if (headers.count(key))
@@ -20,33 +20,31 @@ namespace crow
         return empty;
     }
 
-	struct DetachHelper;
+    struct DetachHelper;
 
     /// An HTTP request.
     struct request
     {
         HTTPMethod method;
-        std::string raw_url; ///< The full URL containing the `?` and URL parameters.
-        std::string url; ///< The endpoint without any parameters.
+        std::string raw_url;     ///< The full URL containing the `?` and URL parameters.
+        std::string url;         ///< The endpoint without any parameters.
         query_string url_params; ///< The parameters associated with the request. (everything after the `?`)
         ci_map headers;
         std::string body;
-        std::string remoteIpAddress; ///< The IP address from which the request was sent.
+        std::string remote_ip_address; ///< The IP address from which the request was sent.
 
         void* middleware_context{};
         boost::asio::io_service* io_service{};
 
         /// Construct an empty request. (sets the method to `GET`)
-        request()
-            : method(HTTPMethod::Get)
-        {
-        }
+        request():
+          method(HTTPMethod::Get)
+        {}
 
         /// Construct a request with all values assigned.
-        request(HTTPMethod method, std::string raw_url, std::string url, query_string url_params, ci_map headers, std::string body)
-            : method(method), raw_url(std::move(raw_url)), url(std::move(url)), url_params(std::move(url_params)), headers(std::move(headers)), body(std::move(body))
-        {
-        }
+        request(HTTPMethod method, std::string raw_url, std::string url, query_string url_params, ci_map headers, std::string body):
+          method(method), raw_url(std::move(raw_url)), url(std::move(url)), url_params(std::move(url_params)), headers(std::move(headers)), body(std::move(body))
+        {}
 
         void add_header(std::string key, std::string value)
         {
@@ -71,6 +69,5 @@ namespace crow
         {
             io_service->dispatch(handler);
         }
-
     };
-}
+} // namespace crow

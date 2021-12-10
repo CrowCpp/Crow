@@ -18,6 +18,8 @@ output_path = sys.argv[2]
 
 middlewares = [x.rsplit(sep, 1)[-1][:-2] for x in glob(pt.join(header_path, ('crow'+sep+'middlewares'+sep+'*.h*')))]
 
+with open(header_path+'/../LICENSE', 'r') as file:
+    lsc = '/*' + file.read() + '*/'
 
 middlewares_actual = []
 if len(sys.argv) > 3:
@@ -83,7 +85,7 @@ for x in edges:
         assert order.index(x) < order.index(y), 'cyclic include detected'
 
 print(order)
-build = []
+build = [lsc]
 for header in order:
     d = open(pt.join(header_path, header)).read()
     build.append(re_depends.sub(lambda x: '\n', d))

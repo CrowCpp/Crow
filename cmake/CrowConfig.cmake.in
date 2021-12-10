@@ -1,0 +1,37 @@
+@PACKAGE_INIT@
+
+include(CMakeFindDependencyMacro)
+find_dependency(Boost 1.64 COMPONENTS system date_time)
+find_dependency(Threads)
+
+if(CROW_ENABLE_COMPRESSION)
+  find_dependency(ZLIB)
+endif()
+
+if(CROW_ENABLE_SSL)
+  find_dependency(OpenSSL)
+endif()
+
+include("${CMAKE_CURRENT_LIST_DIR}/CrowTargets.cmake")
+check_required_components("@PROJECT_NAME@")
+
+get_target_property(_CROW_ILL Crow::Crow INTERFACE_LINK_LIBRARIES)
+get_target_property(_CROW_ICD Crow::Crow INTERFACE_COMPILE_DEFINITIONS)
+
+list(REMOVE_ITEM _CROW_ILL "ZLIB::ZLIB" "OpenSSL::SSL")
+list(REMOVE_ITEM _CROW_ICD "CROW_ENABLE_SSL" "CROW_ENABLE_COMPRESSION")
+
+if(CROW_ENABLE_COMPRESSION)
+  list(APPEND _CROW_ILL "ZLIB::ZLIB")
+  list(APPEND _CROW_ICD "CROW_ENABLE_COMPRESSION")
+endif()
+
+if(CROW_ENABLE_SSL)
+  list(APPEND _CROW_ILL "OpenSSL::SSL")
+  list(APPEND _CROW_ICD "CROW_ENABLE_SSL")
+endif()
+
+set_target_properties(Crow::Crow PROPERTIES
+  INTERFACE_COMPILE_DEFINITIONS "${_CROW_ICD}"
+  INTERFACE_LINK_LIBRARIES "${_CROW_ILL}"
+)

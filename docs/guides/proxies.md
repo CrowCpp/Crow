@@ -8,7 +8,7 @@ We advise that you set crow up behind some form of reverse proxy if you plan on 
 
     When using a proxy, make sure that you **do not** compile Crow with SSL enabled. SSL should be handled by the proxy.
 
-##Apache2
+## Apache2
 
 Assuming you have both Apache2 and the modules [proxy](https://httpd.apache.org/docs/2.4/mod/mod_proxy.html), [proxy_http](https://httpd.apache.org/docs/2.4/mod/mod_proxy_http.html), [proxy_html](https://httpd.apache.org/docs/2.4/mod/mod_proxy_html.html) (if you plan on serving html pages), and [proxy_wstunnel](https://httpd.apache.org/docs/2.4/mod/mod_proxy_wstunnel.html) (if you plan on using websockets). You will need to enable those modules, which you can do using the following commands:
 
@@ -39,7 +39,7 @@ If you want crow to run in a subdirectory (such as `domain.abc/crow`) you can us
 
     If you're using an Arch Linux based OS. You will have to access `/etc/httpd/conf/httpd.conf` to enable modules and change configuration.
 
-##Nginx
+## Nginx
 
 Setting Nginx up is slightly simpler than Apache, all you need is the Nginx package itself. Once you've installed it, go to the configuration file (usually a `.conf` file located in `/etc/nginx`) and add the following lines to your server section (replace `localhost` and `40080` with the address and port you defined for your Crow App):
 

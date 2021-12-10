@@ -1,9 +1,9 @@
 Any middleware requires following 3 members:
-##struct context
+## struct context
 Storing data for the middleware; can be read from another middleware or handlers
 
 
-##before_handle
+## before_handle
 Called before handling the request.<br>
 If `res.end()` is called, the operation is halted. (`after_handle` will still be called)<br>
 2 signatures:<br>
@@ -17,7 +17,7 @@ You can access other middlewares' context by calling `#!cpp all_ctx.template get
 `#!cpp ctx == all_ctx.template get<CurrentMiddleware>()`
 
 
-##after_handle
+## after_handle
 Called after handling the request.<br>
 
 `#!cpp void after_handle(request& req, response& res, context& ctx)`

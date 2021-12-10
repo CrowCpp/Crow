@@ -1245,9 +1245,7 @@ static const int8_t unhex[256] =
           case 'M': parser->method = HTTP_MKCOL; /* or MOVE, MKACTIVITY, MERGE, M-SEARCH, MKCALENDAR */ break;
           case 'N': parser->method = HTTP_NOTIFY; break;
           case 'O': parser->method = HTTP_OPTIONS; break;
-          case 'P': parser->method = HTTP_POST;
-            /* or PROPFIND|PROPPATCH|PUT|PATCH|PURGE */
-            break;
+          case 'P': parser->method = HTTP_POST; /* or PROPFIND|PROPPATCH|PUT|PATCH|PURGE */ break;
           case 'R': parser->method = HTTP_REPORT; break;
           case 'S': parser->method = HTTP_SUBSCRIBE; /* or SEARCH */ break;
           case 'T': parser->method = HTTP_TRACE; break;
@@ -1404,6 +1402,12 @@ static const int8_t unhex[256] =
             break;
           case CROW_CR:
           case CROW_LF:
+            if (parser->method != HTTP_GET)
+            {
+                parser->state = s_dead;
+                CROW_SET_ERRNO(HPE_INVALID_VERSION);
+                goto error;
+            }
             parser->http_major = 0;
             parser->http_minor = 9;
             parser->state = (ch == CROW_CR) ?
