@@ -1139,6 +1139,16 @@ TEST_CASE("template_basic")
     CHECK("attack of killer tomatoes" == result);
 } // template_basic
 
+TEST_CASE("template_function")
+{
+  auto t = crow::mustache::compile("attack of {{func}}");
+  crow::mustache::context ctx;
+  ctx["name"] = "killer tomatoes";
+  ctx["func"] = [&](std::string){return std::string("{{name}}, IN SPACE!");};
+  auto result = t.render(ctx);
+  CHECK("attack of killer tomatoes, IN SPACE!" == result);
+}
+
 TEST_CASE("template_load")
 {
     crow::mustache::set_base(".");
