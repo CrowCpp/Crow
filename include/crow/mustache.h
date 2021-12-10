@@ -221,28 +221,28 @@ namespace crow
                                     else
                                         out += ctx.s;
                                     break;
-                                    case json::type::Function:
-                                        if (action.t == ActionType::Tag)
+                                case json::type::Function:
+                                    if (action.t == ActionType::Tag)
+                                    {
+                                        std::string execute_result = ctx.execute();
+                                        while (execute_result.find("{{") != std::string::npos)
                                         {
-                                          std::string execute_result = ctx.execute();
-                                          while (execute_result.find("{{") != std::string::npos)
-                                          {
-                                              template_t result_plug(execute_result);
-                                              execute_result = result_plug.render(*(stack[0]));
-                                          }
-                                          escape(execute_result, out);
-                                        }
-                                        else
-                                        {
-                                          std::string execute_result = ctx.execute();
-                                          while (execute_result.find("{{") != std::string::npos)
-                                          {
                                             template_t result_plug(execute_result);
                                             execute_result = result_plug.render(*(stack[0]));
-                                          }
-                                          out += execute_result;
                                         }
-                                        break;
+                                        escape(execute_result, out);
+                                    }
+                                    else
+                                    {
+                                        std::string execute_result = ctx.execute();
+                                        while (execute_result.find("{{") != std::string::npos)
+                                        {
+                                            template_t result_plug(execute_result);
+                                            execute_result = result_plug.render(*(stack[0]));
+                                        }
+                                        out += execute_result;
+                                    }
+                                    break;
                                 default:
                                     throw std::runtime_error("not implemented tag type" + boost::lexical_cast<std::string>(static_cast<int>(ctx.t())));
                             }

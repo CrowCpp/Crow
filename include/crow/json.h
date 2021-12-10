@@ -768,7 +768,7 @@ namespace crow
                         os << '}';
                     }
                     break;
-                case type::Function: os << "custom function"; break;
+                    case type::Function: os << "custom function"; break;
                 }
                 return os;
             }
@@ -1262,10 +1262,11 @@ namespace crow
                   si(value) {}
                 constexpr number(double value) noexcept:
                   d(value) {}
-            } num;                     ///< Value if type is a number.
-            std::string s;             ///< Value if type is a string.
-            std::unique_ptr<list> l;   ///< Value if type is a list.
-            std::unique_ptr<object> o; ///< Value if type is a JSON object.            std::function<std::string(std::string&)> f; //Value if type is a function (C++ lambda)
+            } num;                                      ///< Value if type is a number.
+            std::string s;                              ///< Value if type is a string.
+            std::unique_ptr<list> l;                    ///< Value if type is a list.
+            std::unique_ptr<object> o;                  ///< Value if type is a JSON object.
+            std::function<std::string(std::string&)> f; ///< Value if type is a function (C++ lambda)
 
         public:
             wvalue():
@@ -1535,7 +1536,7 @@ namespace crow
                 return *this;
             }
 
-            wvalue& operator = (const char* str)
+            wvalue& operator=(const char* str)
             {
                 reset();
                 t_ = type::String;
@@ -1543,7 +1544,7 @@ namespace crow
                 return *this;
             }
 
-            wvalue& operator = (const std::string& str)
+            wvalue& operator=(const std::string& str)
             {
                 reset();
                 t_ = type::String;
@@ -1639,14 +1640,14 @@ namespace crow
                 return *this;
             }
 
-            wvalue& operator = (std::function<std::string(std::string&)>&& func)
+            wvalue& operator=(std::function<std::string(std::string&)>&& func)
             {
                 reset();
                 t_ = type::Function;
                 f = std::move(func);
                 return *this;
             }
-            
+
             wvalue& operator[](unsigned index)
             {
                 if (t_ != type::List)
@@ -1870,9 +1871,10 @@ namespace crow
                         out.push_back('}');
                     }
                     break;
-                    
-                case type::Function:
-                    out += "custom function"; break;
+
+                    case type::Function:
+                        out += "custom function";
+                        break;
                 }
             }
 
