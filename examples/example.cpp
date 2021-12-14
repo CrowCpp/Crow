@@ -124,13 +124,15 @@ int main()
     });
 
     //same as the example above but uses mustache instead of stringstream
-    CROW_ROUTE(app,"/add_mustache/<int>/<int>")
-    ([](int a, int b){
-      auto t = crow::mustache::compile("Value is {{func}}");
-      crow::mustache::context ctx;
-      ctx["func"] = [&](std::string){return std::to_string(a+b);};
-      auto result = t.render(ctx);
-      return result;
+    CROW_ROUTE(app, "/add_mustache/<int>/<int>")
+    ([](int a, int b) {
+        auto t = crow::mustache::compile("Value is {{func}}");
+        crow::mustache::context ctx;
+        ctx["func"] = [&](std::string) {
+            return std::to_string(a + b);
+        };
+        auto result = t.render(ctx);
+        return result;
     });
 
     // Compile error with message "Handler type is mismatched with URL paramters"
