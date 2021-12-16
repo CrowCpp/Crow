@@ -280,6 +280,11 @@ namespace crow
             {
                 ssl_server_ = std::move(std::unique_ptr<ssl_server_t>(new ssl_server_t(this, bindaddr_, port_, server_name_, &middlewares_, concurrency_, timeout_, &ssl_context_)));
                 ssl_server_->set_tick_function(tick_interval_, tick_function_);
+                ssl_server_->signal_clear();
+                for (auto snum : signals_)
+                {
+                    ssl_server_->signal_add(snum);
+                }
                 notify_server_start();
                 ssl_server_->run();
             }
