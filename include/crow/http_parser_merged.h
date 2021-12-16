@@ -2568,7 +2568,7 @@ static const char *method_strings[] =
   return CROW_ELEM_AT(method_strings, m, "<unknown>");
 }
 
-const char *
+inline const char *
 http_status_str (enum http_status s)
 {
   switch (s) {
