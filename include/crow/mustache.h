@@ -222,20 +222,20 @@ namespace crow
                                         out += ctx.s;
                                     break;
                                 case json::type::Function:
+                                {
+                                    std::string execute_result = ctx.execute();
+                                    while (execute_result.find("{{") != std::string::npos)
                                     {
-                                        std::string execute_result = ctx.execute();
-                                        while (execute_result.find("{{") != std::string::npos)
-                                        {
-                                            template_t result_plug(execute_result);
-                                            execute_result = result_plug.render(*(stack[0]));
-                                        }
-
-                                        if (action.t == ActionType::Tag)
-                                            escape(execute_result, out);
-                                        else
-                                            out += execute_result;
+                                        template_t result_plug(execute_result);
+                                        execute_result = result_plug.render(*(stack[0]));
                                     }
-                                    break;
+
+                                    if (action.t == ActionType::Tag)
+                                        escape(execute_result, out);
+                                    else
+                                        out += execute_result;
+                                }
+                                break;
                                 default:
                                     throw std::runtime_error("not implemented tag type" + boost::lexical_cast<std::string>(static_cast<int>(ctx.t())));
                             }
