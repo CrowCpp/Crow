@@ -154,7 +154,7 @@ $(document).ready(function(){initNavTree('json_8h_source.html',''); initResizabl
 <div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;                    <span class="keywordflow">case</span> <span class="charliteral">&#39;\r&#39;</span>: ret += <span class="stringliteral">&quot;\\r&quot;</span>; <span class="keywordflow">break</span>;</div>
 <div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;                    <span class="keywordflow">case</span> <span class="charliteral">&#39;\t&#39;</span>: ret += <span class="stringliteral">&quot;\\t&quot;</span>; <span class="keywordflow">break</span>;</div>
 <div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;                    <span class="keywordflow">default</span>:</div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;                        <span class="keywordflow">if</span> (c &lt; 0x20)</div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;                        <span class="keywordflow">if</span> (c &gt;= 0 &amp;&amp; c &lt; 0x20)</div>
 <div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;                        {</div>
 <div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;                            ret += <span class="stringliteral">&quot;\\u00&quot;</span>;</div>
 <div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;                            <span class="keyword">auto</span> to_hex = [](<span class="keywordtype">char</span> c) {</div>
