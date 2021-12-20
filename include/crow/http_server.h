@@ -31,7 +31,7 @@ namespace crow
           signals_(io_service_),
           tick_timer_(io_service_),
           handler_(handler),
-          concurrency_(concurrency == 0 ? 1 : concurrency),
+          concurrency_(concurrency),
           timeout_(timeout),
           server_name_(server_name),
           port_(port),
@@ -137,8 +137,7 @@ namespace crow
             handler_->port(port_);
 
 
-            CROW_LOG_INFO << server_name_ << " server is running at " << (handler_->ssl_used() ? "https://" : "http://") << bindaddr_ << ":" << acceptor_.local_endpoint().port()
-                          << " using " << concurrency_ << " threads";
+            CROW_LOG_INFO << server_name_ << " server is running at " << (handler_->ssl_used() ? "https://" : "http://") << bindaddr_ << ":" << acceptor_.local_endpoint().port() << " using " << (concurrency_ + 1) << " threads"; // +1 is for the main thread
             CROW_LOG_INFO << "Call `app.loglevel(crow::LogLevel::Warning)` to hide Info level logs.";
 
             signals_.async_wait(

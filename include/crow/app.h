@@ -156,8 +156,9 @@ namespace crow
         /// Run the server on multiple threads using a specific number
         self_t& concurrency(std::uint16_t concurrency)
         {
-            if (concurrency < 1)
-                concurrency = 1;
+            if (concurrency < 2) // using 2 instead of 1 because 1 will be subtracted later.
+                concurrency = 2;
+            concurrency--; // Account for the main (acceptor) thread creating all the other threads.
             concurrency_ = concurrency;
             return *this;
         }
