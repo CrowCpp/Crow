@@ -36,7 +36,7 @@ namespace crow
           server_name_(server_name),
           port_(port),
           bindaddr_(bindaddr),
-          task_queue_length_pool_(concurrency_),
+          task_queue_length_pool_(concurrency_ - 1),
           middlewares_(middlewares),
           adaptor_ctx_(adaptor_ctx)
         {}
@@ -60,14 +60,15 @@ namespace crow
 
         void run()
         {
-            for (int i = 0; i < concurrency_; i++)
+            uint16_t worker_thread_count = concurrency_ - 1;
+            for (int i = 0; i < worker_thread_count; i++)
                 io_service_pool_.emplace_back(new boost::asio::io_service());
-            get_cached_date_str_pool_.resize(concurrency_);
-            task_timer_pool_.resize(concurrency_);
+            get_cached_date_str_pool_.resize(worker_thread_count);
+            task_timer_pool_.resize(worker_thread_count);
 
             std::vector<std::future<void>> v;
             std::atomic<int> init_count(0);
-            for (uint16_t i = 0; i < concurrency_; i++)
+            for (uint16_t i = 0; i < worker_thread_count; i++)
                 v.push_back(
                   std::async(
                     std::launch::async, [this, i, &init_count] {
@@ -137,7 +138,7 @@ namespace crow
             handler_->port(port_);
 
 
-            CROW_LOG_INFO << server_name_ << " server is running at " << (handler_->ssl_used() ? "https://" : "http://") << bindaddr_ << ":" << acceptor_.local_endpoint().port() << " using " << (concurrency_ + 1) << " threads"; // +1 is for the main thread
+            CROW_LOG_INFO << server_name_ << " server is running at " << (handler_->ssl_used() ? "https://" : "http://") << bindaddr_ << ":" << acceptor_.local_endpoint().port() << " using " << concurrency_ << " threads";
             CROW_LOG_INFO << "Call `app.loglevel(crow::LogLevel::Warning)` to hide Info level logs.";
 
             signals_.async_wait(
@@ -145,7 +146,7 @@ namespace crow
                   stop();
               });
 
-            while (concurrency_ != init_count)
+            while (worker_thread_count != init_count)
                 std::this_thread::yield();
 
             do_accept();
@@ -231,7 +232,7 @@ namespace crow
         boost::asio::deadline_timer tick_timer_;
 
         Handler* handler_;
-        uint16_t concurrency_{1};
+        uint16_t concurrency_{2};
         std::uint8_t timeout_;
         std::string server_name_;
         uint16_t port_;
