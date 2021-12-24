@@ -257,8 +257,8 @@ $(document).ready(function(){initNavTree('app_8h_source.html',''); initResizable
 <div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;<span class="comment">        /// Run the server on multiple threads using a specific number</span></div>
 <div class="line"><a name="l00157"></a><span class="lineno"><a class="line" href="classcrow_1_1_crow.html#a41686e6025705c1ab379b5ec71bbf983">  157</a></span>&#160;<span class="comment"></span>        <a class="code" href="classcrow_1_1_crow.html">self_t</a>&amp; <a class="code" href="classcrow_1_1_crow.html#a41686e6025705c1ab379b5ec71bbf983">concurrency</a>(std::uint16_t <a class="code" href="classcrow_1_1_crow.html#a41686e6025705c1ab379b5ec71bbf983">concurrency</a>)</div>
 <div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160;        {</div>
-<div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;            <span class="keywordflow">if</span> (<a class="code" href="classcrow_1_1_crow.html#a41686e6025705c1ab379b5ec71bbf983">concurrency</a> &lt; 1)</div>
-<div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;                <a class="code" href="classcrow_1_1_crow.html#a41686e6025705c1ab379b5ec71bbf983">concurrency</a> = 1;</div>
+<div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;            <span class="keywordflow">if</span> (<a class="code" href="classcrow_1_1_crow.html#a41686e6025705c1ab379b5ec71bbf983">concurrency</a> &lt; 2) <span class="comment">// Crow can have a minimum of 2 threads running</span></div>
+<div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;                <a class="code" href="classcrow_1_1_crow.html#a41686e6025705c1ab379b5ec71bbf983">concurrency</a> = 2;</div>
 <div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;            concurrency_ = <a class="code" href="classcrow_1_1_crow.html#a41686e6025705c1ab379b5ec71bbf983">concurrency</a>;</div>
 <div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;            <span class="keywordflow">return</span> *<span class="keyword">this</span>;</div>
 <div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;        }</div>
@@ -521,7 +521,7 @@ $(document).ready(function(){initNavTree('app_8h_source.html',''); initResizable
 <div class="line"><a name="l00420"></a><span class="lineno">  420</span>&#160;    <span class="keyword">private</span>:</div>
 <div class="line"><a name="l00421"></a><span class="lineno">  421</span>&#160;        std::uint8_t timeout_{5};</div>
 <div class="line"><a name="l00422"></a><span class="lineno">  422</span>&#160;        uint16_t port_ = 80;</div>
-<div class="line"><a name="l00423"></a><span class="lineno">  423</span>&#160;        uint16_t concurrency_ = 1;</div>
+<div class="line"><a name="l00423"></a><span class="lineno">  423</span>&#160;        uint16_t concurrency_ = 2;</div>
 <div class="line"><a name="l00424"></a><span class="lineno">  424</span>&#160;        <span class="keywordtype">bool</span> validated_ = <span class="keyword">false</span>;</div>
 <div class="line"><a name="l00425"></a><span class="lineno">  425</span>&#160;        std::string server_name_ = std::string(<span class="stringliteral">&quot;Crow/&quot;</span>) + VERSION;</div>
 <div class="line"><a name="l00426"></a><span class="lineno">  426</span>&#160;        std::string bindaddr_ = <span class="stringliteral">&quot;0.0.0.0&quot;</span>;</div>
@@ -595,7 +595,7 @@ $(document).ready(function(){initNavTree('app_8h_source.html',''); initResizable
 			<ul>
 				<li class="navelem"><a class="el" href="dir_d44c64559bbebec7f509842c48db8b23.html">include</a></li><li class="navelem"><a class="el" href="dir_d22c1cb87b72f01e1a7f207eb3bfd1ca.html">crow</a></li><li class="navelem"><b>app.h</b></li>
 				<li class="footer">
-					Generated on Sun Dec 19 2021 for Crow by <a href="http://www.doxygen.org/index.html">
+					Generated on Fri Dec 24 2021 for Crow by <a href="http://www.doxygen.org/index.html">
 					<img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.17.
 					Dark theme by <a href="http://majerle.eu" target="_new">Tilen Majerle</a>. Edited by <a href="https://github.com/The-EDev" target="_new">Farook Al-Sammarraie</a>. All rights reserved.
 				</li>
