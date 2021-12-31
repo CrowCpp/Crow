@@ -156,8 +156,8 @@ namespace crow
         /// Run the server on multiple threads using a specific number
         self_t& concurrency(std::uint16_t concurrency)
         {
-            if (concurrency < 1)
-                concurrency = 1;
+            if (concurrency < 2) // Crow can have a minimum of 2 threads running
+                concurrency = 2;
             concurrency_ = concurrency;
             return *this;
         }
@@ -420,7 +420,7 @@ namespace crow
     private:
         std::uint8_t timeout_{5};
         uint16_t port_ = 80;
-        uint16_t concurrency_ = 1;
+        uint16_t concurrency_ = 2;
         bool validated_ = false;
         std::string server_name_ = std::string("Crow/") + VERSION;
         std::string bindaddr_ = "0.0.0.0";
