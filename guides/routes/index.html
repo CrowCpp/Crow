@@ -1180,7 +1180,7 @@ For more information on the specific constructors for a <code>crow::response</co
 If you have your own class you want to return (without converting it to string and returning that), you can use the <code>crow::returnable</code> class.<br>
 to use the returnable class, you only need your class to publicly extend <code>crow::returnable</code>, add a <code>dump()</code> method that returns your class as an <code>std::string</code>, and add a constructor that has a <code>Content-Type</code> header as a string argument.<br><br></p>
 <p>Your class should look like the following:
-<div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">a</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">crow</span><span class="o">::</span><span class="n">returnable</span><span class="w"> </span>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">a</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">crow</span><span class="o">::</span><span class="n">returnable</span><span class="w"> </span>
 <span class="p">{</span><span class="w"></span>
 <span class="w">    </span><span class="n">a</span><span class="p">()</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">returnable</span><span class="p">(</span><span class="s">&quot;text/plain&quot;</span><span class="p">){};</span><span class="w"></span>
 

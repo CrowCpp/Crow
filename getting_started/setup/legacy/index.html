@@ -1342,24 +1342,24 @@
 <span class="nb">find_package</span><span class="p">(</span><span class="s">OpenSSL</span><span class="p">)</span>
 
 <span class="nb">if</span><span class="p">(</span><span class="s">OPENSSL_FOUND</span><span class="p">)</span>
-    <span class="nb">include_directories</span><span class="p">(</span><span class="o">${</span><span class="nv">OPENSSL_INCLUDE_DIR</span><span class="o">}</span><span class="p">)</span>
+<span class="w">    </span><span class="nb">include_directories</span><span class="p">(</span><span class="o">${</span><span class="nv">OPENSSL_INCLUDE_DIR</span><span class="o">}</span><span class="p">)</span>
 <span class="nb">endif</span><span class="p">()</span>
 
-<span class="nb">if</span> <span class="p">(</span><span class="s">NOT</span> <span class="s">CMAKE_BUILD_TYPE</span><span class="p">)</span>
-    <span class="nb">message</span><span class="p">(</span><span class="s">STATUS</span> <span class="s2">&quot;No build type selected, default to Release&quot;</span><span class="p">)</span>
-    <span class="nb">set</span><span class="p">(</span><span class="s">CMAKE_BUILD_TYPE</span> <span class="s2">&quot;Release&quot;</span><span class="p">)</span>
+<span class="nb">if</span> <span class="p">(</span><span class="s">NOT</span><span class="w"> </span><span class="s">CMAKE_BUILD_TYPE</span><span class="p">)</span>
+<span class="w">    </span><span class="nb">message</span><span class="p">(</span><span class="s">STATUS</span><span class="w"> </span><span class="s2">&quot;No build type selected, default to Release&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="nb">set</span><span class="p">(</span><span class="s">CMAKE_BUILD_TYPE</span><span class="w"> </span><span class="s2">&quot;Release&quot;</span><span class="p">)</span>
 <span class="nb">endif</span><span class="p">()</span>
 
 <span class="nb">if</span> <span class="p">(</span><span class="s">MSVC</span><span class="p">)</span>
-    <span class="nb">set</span><span class="p">(</span><span class="s">Boost_USE_STATIC_LIBS</span> <span class="s2">&quot;On&quot;</span><span class="p">)</span>
-    <span class="nb">find_package</span><span class="p">(</span> <span class="s">Boost</span> <span class="s">1.70</span> <span class="s">COMPONENTS</span> <span class="s">system</span> <span class="s">thread</span> <span class="s">regex</span> <span class="s">REQUIRED</span> <span class="p">)</span>
+<span class="w">    </span><span class="nb">set</span><span class="p">(</span><span class="s">Boost_USE_STATIC_LIBS</span><span class="w"> </span><span class="s2">&quot;On&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="nb">find_package</span><span class="p">(</span><span class="w"> </span><span class="s">Boost</span><span class="w"> </span><span class="s">1.70</span><span class="w"> </span><span class="s">COMPONENTS</span><span class="w"> </span><span class="s">system</span><span class="w"> </span><span class="s">thread</span><span class="w"> </span><span class="s">regex</span><span class="w"> </span><span class="s">REQUIRED</span><span class="w"> </span><span class="p">)</span>
 <span class="nb">else</span><span class="p">()</span>
-    <span class="nb">find_package</span><span class="p">(</span> <span class="s">Boost</span> <span class="s">1.70</span> <span class="s">COMPONENTS</span> <span class="s">system</span> <span class="s">thread</span> <span class="s">REQUIRED</span> <span class="p">)</span>
+<span class="w">    </span><span class="nb">find_package</span><span class="p">(</span><span class="w"> </span><span class="s">Boost</span><span class="w"> </span><span class="s">1.70</span><span class="w"> </span><span class="s">COMPONENTS</span><span class="w"> </span><span class="s">system</span><span class="w"> </span><span class="s">thread</span><span class="w"> </span><span class="s">REQUIRED</span><span class="w"> </span><span class="p">)</span>
 <span class="nb">endif</span><span class="p">()</span>
 
 <span class="nb">include_directories</span><span class="p">(</span><span class="o">${</span><span class="nv">Boost_INCLUDE_DIR</span><span class="o">}</span><span class="p">)</span>
 
-<span class="nb">set</span><span class="p">(</span><span class="s">PROJECT_INCLUDE_DIR</span> <span class="o">${</span><span class="nv">PROJECT_SOURCE_DIR</span><span class="o">}</span><span class="s">/include</span><span class="p">)</span>
+<span class="nb">set</span><span class="p">(</span><span class="s">PROJECT_INCLUDE_DIR</span><span class="w"> </span><span class="o">${</span><span class="nv">PROJECT_SOURCE_DIR</span><span class="o">}</span><span class="s">/include</span><span class="p">)</span>
 
 <span class="nb">include_directories</span><span class="p">(</span><span class="s2">&quot;${PROJECT_INCLUDE_DIR}&quot;</span><span class="p">)</span>
 </code></pre></div>

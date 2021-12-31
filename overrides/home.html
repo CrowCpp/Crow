@@ -221,15 +221,7 @@ code{
 <h3 style="text-align:center;">Crow is provided free of charge courtesy of everyone who is donating their money, time, and expertise to keep it going.<h3>
 <h3 style="text-align:center;">Help us make something great!</h3>
 
-<dev class="sbuttons">
-<h2 style="text-align:center;">Sponsors</h2>
-<object type="image/svg+xml" data="https://opencollective.com/crow/tiers/sponsor.svg?avatarHeight=128&button=false"></object><br>
-<h2 style="text-align:center;">Boosters</h2>
-<object type="image/svg+xml" data="https://opencollective.com/crow/tiers/booster.svg?avatarHeight=64&button=false"></object><br>
-<h2 style="text-align:center;">Backers</h2>
-<object type="image/svg+xml" data="https://opencollective.com/crow/tiers/backer.svg?avatarHeight=32&button=false"></object><br>
-<h2 style="text-align:center;">Donators</h2>
-<object type="image/svg+xml" data="https://opencollective.com/crow/tiers/donation.svg?avatarHeight=32&button=false"></object><br>
+<dev class="sbuttons" id="contributors">
 </dev>
 <dev class="sbuttons">
     <a href="https://opencollective.com/crow" title="Crow - OpenCollective" class="md-button crow-button">Fund Crow</a>
@@ -296,7 +288,158 @@ code{
 </dev>
 
 
+<script>
+let text = "";
 
+function convertRemToPixels(rem) {    
+    return rem * parseFloat(getComputedStyle(document.documentElement).fontSize);
+}
+
+function makeCard(name, img_url, ref, size = 6)
+{
+  let finalName = fixLong(name);
+  if (img_url == null)
+  {
+    img_url = AvatarImage(name);
+  }
+  return `<a title="${name}" href="${ref}" style=\"border-style: solid;border-width: .1rem;border-color: #00000080;border-radius: ${size/12}rem;width: ${size}rem;height: ${size}rem;box-shadow: 2px 5px 5px #00000040;margin-inline: ${size/12}rem;margin-bottom: ${size/12}rem;margin-top: ${size/12}rem;display: inline-block;\"><img style=\"width: ${size/2}rem;height: ${size/2}rem; border-radius: ${size/10}rem;margin-left: auto;margin-right: auto;display: block;margin-top: ${size/7.7}rem;\" src=\"${img_url}\"><p style=\"text-align: center;font-size: ${size/7.7}rem;\">${finalName}</p></a>`;
+}
+
+function fixLong(name)
+{
+  if (name.length > 12)
+  {
+    name = name.slice(0,9);
+    name += "...";
+  }
+  return name;
+}
+
+function GetColor(name)
+{
+  var r = 0;
+  var g = 0;
+  var b = 0;
+  if (name.length >= 3)
+  {
+    var i = 0;
+    for (i; i < name.length/3; i++)
+    {
+      r += name[i].charCodeAt();
+    }
+    r %= 256;
+    for (i; i < name.length*2/3; i++)
+    {
+      g += name[i].charCodeAt();
+    }
+    g %= 256;
+    for (i; i < name.length; i++)
+    {
+      b += name[i].charCodeAt();
+    }
+    b %= 256;
+    console.log(`rgb(${r},${g},${b})`);
+    return `rgb(${r},${g},${b})`;
+  }
+  return "rgb(0,0,0)";
+}
+
+function AvatarImage(name) 
+{
+  var letters = name.includes(' ') ? name[0] + name.split(' ').slice(-1)[0][0] : name.slice(0,2);
+  var canvas = document.createElement('canvas');
+  var context = canvas.getContext("2d");
+  var size = convertRemToPixels(3);
+  var color = GetColor(name);
+  canvas.width = size;
+  canvas.height = size;
+  context.font = Math.round(canvas.width / 2) + "px Arial";
+  context.textAlign = "center";
+  // Setup background and front color
+  context.fillStyle = color;
+  context.fillRect(0, 0, canvas.width, canvas.height);
+  
+  // Check the color brightness (0-255)
+  color = color.match(/^rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*(\d+(?:\.\d+)?))?\)$/);
+  r = color[1];
+  g = color[2];
+  b = color[3];
+  hsp = Math.sqrt(0.299 * (r * r) + 0.587 * (g * g) + 0.114 * (b * b));
+  
+  context.fillStyle = hsp > 150 ? "#333" : "#EEE"; // 150 was reached by trial and error
+  context.fillText(letters, size / 2, size / 1.5);
+  // Set image representation in default format (png)
+  dataURI = canvas.toDataURL();
+  // Dispose canvas element
+  canvas = null;
+  return dataURI;
+}
+
+async function getGHData()
+{
+  let x = await fetch("https://api.github.com/repos/crowcpp/crow/contributors?per_page=100");
+  let y = await x.json();
+  text += "<a href=\"https://github.com/CrowCpp/Crow\"><h2>Code Contributors</h2></a><section>  ";
+  if (y.length != null)
+  {
+    for(var i = 0; i < y.length; i++){let item = y[i]; text += makeCard(item.login, item.avatar_url, item.html_url, 3.5);}
+  }
+  else
+  {
+    text += "<h3>GitHub won't let us show our awesome Code Contributors at the moment.</h3>"
+  }
+  text += "</section><br><br>";
+}
+
+async function getData()
+{
+  let backers = [];
+  let boosters = [];
+  let sponsors = [];
+  let donations = [];
+
+  let x = await fetch("https://opencollective.com/crow/members/all.json");
+  let y = await x.json();
+  
+  for (var i = 0; i < y.length; i++)
+  {
+    let item = y[i];
+    if (item.role === "BACKER") {
+      if(item.tier === "Backer"){
+        backers.push(item);
+      }
+      else if(item.tier === "Booster"){
+        boosters.push(item);
+      }
+      else if(item.tier === "Sponsor"){
+        sponsors.push(item);
+      }
+      else if(item.tier === "Donation"){
+        donations.push(item);
+      }
+    }
+  }
+
+  text += "<section style=\"text-align: center;\"><a href=\"https://opencollective.com/crow/contribute/sponsor-30717/checkout\"><h2>Sponsors</h2></a>";
+  for(var i = 0; i < sponsors.length; i++){let item  = sponsors[i];  text += makeCard(item.name, item.image, item.profile, 10);}
+
+  text += "</section><br><section style=\"text-align: center;\"><a href=\"https://opencollective.com/crow/contribute/booster-30767/checkout\"><h2>Boosters</h2></a>";
+  for(var i = 0; i < boosters.length; i++){let item  = boosters[i];  text += makeCard(item.name, item.image, item.profile, 5);}
+
+  text += "</section><br><section style=\"text-align: center;\"><a href=\"https://opencollective.com/crow/contribute/backer-30716/checkout\"><h2>Backers</h2></a>";
+  for(var i = 0; i < backers.length; i++){let item   = backers[i];   text += makeCard(item.name, item.image, item.profile, 3.5);}
+
+  text += "</section><br><section style=\"text-align: center;\"><a href=\"https://opencollective.com/crow/contribute/donation-30769/checkout\"><h2>Donations</h2></a>";
+  for(var i = 0; i < donations.length; i++){let item = donations[i]; text += makeCard(item.name, item.image, item.profile, 3.5);}
+
+  text += "</section><section style=\"text-align: center;\">";
+  await getGHData();
+  text += "</section>";
+  document.getElementById("contributors").innerHTML = text;
+}
+
+getData();
+</script>
 
 {% endblock %}
 
