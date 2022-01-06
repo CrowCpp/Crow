@@ -1768,6 +1768,10 @@ namespace crow
                     {
                         if (v.nt == num_type::Floating_point)
                         {
+                            if(isnan(v.num.d)) {
+                                out += "null";
+                                break;
+                            }
 #ifdef _MSC_VER
 #define MSC_COMPATIBLE_SPRINTF(BUFFER_PTR, FORMAT_PTR, VALUE) sprintf_s((BUFFER_PTR), 128, (FORMAT_PTR), (VALUE))
 #else
