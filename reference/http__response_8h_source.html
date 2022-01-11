@@ -318,42 +318,43 @@ $(document).ready(function(){initNavTree('http__response_8h_source.html',''); in
 <div class="line"><a name="l00217"></a><span class="lineno">  217</span>&#160;<span class="comment">        ///Return a static file as the response body</span></div>
 <div class="line"><a name="l00218"></a><span class="lineno"><a class="line" href="structcrow_1_1response.html#a8f5e5caa08c3e658bccd03996e1a778a">  218</a></span>&#160;<span class="comment"></span>        <span class="keywordtype">void</span> <a class="code" href="structcrow_1_1response.html#a8f5e5caa08c3e658bccd03996e1a778a">set_static_file_info</a>(std::string path)</div>
 <div class="line"><a name="l00219"></a><span class="lineno">  219</span>&#160;        {</div>
-<div class="line"><a name="l00220"></a><span class="lineno">  220</span>&#160;            file_info.path = path;</div>
-<div class="line"><a name="l00221"></a><span class="lineno">  221</span>&#160;            file_info.statResult = stat(file_info.path.c_str(), &amp;file_info.statbuf);</div>
-<div class="line"><a name="l00222"></a><span class="lineno">  222</span>&#160;<span class="preprocessor">#ifdef CROW_ENABLE_COMPRESSION</span></div>
-<div class="line"><a name="l00223"></a><span class="lineno">  223</span>&#160;            compressed = <span class="keyword">false</span>;</div>
-<div class="line"><a name="l00224"></a><span class="lineno">  224</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00225"></a><span class="lineno">  225</span>&#160;            <span class="keywordflow">if</span> (file_info.statResult == 0)</div>
-<div class="line"><a name="l00226"></a><span class="lineno">  226</span>&#160;            {</div>
-<div class="line"><a name="l00227"></a><span class="lineno">  227</span>&#160;                std::size_t last_dot = path.find_last_of(<span class="stringliteral">&quot;.&quot;</span>);</div>
-<div class="line"><a name="l00228"></a><span class="lineno">  228</span>&#160;                std::string extension = path.substr(last_dot + 1);</div>
-<div class="line"><a name="l00229"></a><span class="lineno">  229</span>&#160;                std::string mimeType = <span class="stringliteral">&quot;&quot;</span>;</div>
-<div class="line"><a name="l00230"></a><span class="lineno">  230</span>&#160;                <a class="code" href="structcrow_1_1response.html#aabc1f9b3264b8c5a2d05dcb409e8ff3f">code</a> = 200;</div>
-<div class="line"><a name="l00231"></a><span class="lineno">  231</span>&#160;                this-&gt;<a class="code" href="structcrow_1_1response.html#a16d1a8bcec6460ba97f90b80881693b8">add_header</a>(<span class="stringliteral">&quot;Content-length&quot;</span>, std::to_string(file_info.statbuf.st_size));</div>
-<div class="line"><a name="l00232"></a><span class="lineno">  232</span>&#160; </div>
-<div class="line"><a name="l00233"></a><span class="lineno">  233</span>&#160;                <span class="keywordflow">if</span> (extension != <span class="stringliteral">&quot;&quot;</span>)</div>
-<div class="line"><a name="l00234"></a><span class="lineno">  234</span>&#160;                {</div>
-<div class="line"><a name="l00235"></a><span class="lineno">  235</span>&#160;                    mimeType = mime_types.at(extension);</div>
-<div class="line"><a name="l00236"></a><span class="lineno">  236</span>&#160;                    <span class="keywordflow">if</span> (mimeType != <span class="stringliteral">&quot;&quot;</span>)</div>
-<div class="line"><a name="l00237"></a><span class="lineno">  237</span>&#160;                        this-&gt;<a class="code" href="structcrow_1_1response.html#a16d1a8bcec6460ba97f90b80881693b8">add_header</a>(<span class="stringliteral">&quot;Content-Type&quot;</span>, mimeType);</div>
-<div class="line"><a name="l00238"></a><span class="lineno">  238</span>&#160;                    <span class="keywordflow">else</span></div>
-<div class="line"><a name="l00239"></a><span class="lineno">  239</span>&#160;                        this-&gt;<a class="code" href="structcrow_1_1response.html#a16d1a8bcec6460ba97f90b80881693b8">add_header</a>(<span class="stringliteral">&quot;content-Type&quot;</span>, <span class="stringliteral">&quot;text/plain&quot;</span>);</div>
-<div class="line"><a name="l00240"></a><span class="lineno">  240</span>&#160;                }</div>
-<div class="line"><a name="l00241"></a><span class="lineno">  241</span>&#160;            }</div>
-<div class="line"><a name="l00242"></a><span class="lineno">  242</span>&#160;            <span class="keywordflow">else</span></div>
-<div class="line"><a name="l00243"></a><span class="lineno">  243</span>&#160;            {</div>
-<div class="line"><a name="l00244"></a><span class="lineno">  244</span>&#160;                code = 404;</div>
-<div class="line"><a name="l00245"></a><span class="lineno">  245</span>&#160;                this-&gt;<a class="code" href="structcrow_1_1response.html#abef42200eca49c70dc1f5140ee3603ab">end</a>();</div>
-<div class="line"><a name="l00246"></a><span class="lineno">  246</span>&#160;            }</div>
-<div class="line"><a name="l00247"></a><span class="lineno">  247</span>&#160;        }</div>
-<div class="line"><a name="l00248"></a><span class="lineno">  248</span>&#160; </div>
-<div class="line"><a name="l00249"></a><span class="lineno">  249</span>&#160;    <span class="keyword">private</span>:</div>
-<div class="line"><a name="l00250"></a><span class="lineno">  250</span>&#160;        <span class="keywordtype">bool</span> completed_{};</div>
-<div class="line"><a name="l00251"></a><span class="lineno">  251</span>&#160;        std::function&lt;void()&gt; complete_request_handler_;</div>
-<div class="line"><a name="l00252"></a><span class="lineno">  252</span>&#160;        std::function&lt;bool()&gt; is_alive_helper_;</div>
-<div class="line"><a name="l00253"></a><span class="lineno">  253</span>&#160;        static_file_info file_info;</div>
-<div class="line"><a name="l00254"></a><span class="lineno">  254</span>&#160;    };</div>
-<div class="line"><a name="l00255"></a><span class="lineno">  255</span>&#160;} <span class="comment">// namespace crow</span></div>
+<div class="line"><a name="l00220"></a><span class="lineno">  220</span>&#160;            utility::sanitize_filename(path);</div>
+<div class="line"><a name="l00221"></a><span class="lineno">  221</span>&#160;            file_info.path = path;</div>
+<div class="line"><a name="l00222"></a><span class="lineno">  222</span>&#160;            file_info.statResult = stat(file_info.path.c_str(), &amp;file_info.statbuf);</div>
+<div class="line"><a name="l00223"></a><span class="lineno">  223</span>&#160;<span class="preprocessor">#ifdef CROW_ENABLE_COMPRESSION</span></div>
+<div class="line"><a name="l00224"></a><span class="lineno">  224</span>&#160;            compressed = <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00225"></a><span class="lineno">  225</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00226"></a><span class="lineno">  226</span>&#160;            <span class="keywordflow">if</span> (file_info.statResult == 0)</div>
+<div class="line"><a name="l00227"></a><span class="lineno">  227</span>&#160;            {</div>
+<div class="line"><a name="l00228"></a><span class="lineno">  228</span>&#160;                std::size_t last_dot = path.find_last_of(<span class="stringliteral">&quot;.&quot;</span>);</div>
+<div class="line"><a name="l00229"></a><span class="lineno">  229</span>&#160;                std::string extension = path.substr(last_dot + 1);</div>
+<div class="line"><a name="l00230"></a><span class="lineno">  230</span>&#160;                std::string mimeType = <span class="stringliteral">&quot;&quot;</span>;</div>
+<div class="line"><a name="l00231"></a><span class="lineno">  231</span>&#160;                <a class="code" href="structcrow_1_1response.html#aabc1f9b3264b8c5a2d05dcb409e8ff3f">code</a> = 200;</div>
+<div class="line"><a name="l00232"></a><span class="lineno">  232</span>&#160;                this-&gt;<a class="code" href="structcrow_1_1response.html#a16d1a8bcec6460ba97f90b80881693b8">add_header</a>(<span class="stringliteral">&quot;Content-length&quot;</span>, std::to_string(file_info.statbuf.st_size));</div>
+<div class="line"><a name="l00233"></a><span class="lineno">  233</span>&#160; </div>
+<div class="line"><a name="l00234"></a><span class="lineno">  234</span>&#160;                <span class="keywordflow">if</span> (extension != <span class="stringliteral">&quot;&quot;</span>)</div>
+<div class="line"><a name="l00235"></a><span class="lineno">  235</span>&#160;                {</div>
+<div class="line"><a name="l00236"></a><span class="lineno">  236</span>&#160;                    mimeType = mime_types.at(extension);</div>
+<div class="line"><a name="l00237"></a><span class="lineno">  237</span>&#160;                    <span class="keywordflow">if</span> (mimeType != <span class="stringliteral">&quot;&quot;</span>)</div>
+<div class="line"><a name="l00238"></a><span class="lineno">  238</span>&#160;                        this-&gt;<a class="code" href="structcrow_1_1response.html#a16d1a8bcec6460ba97f90b80881693b8">add_header</a>(<span class="stringliteral">&quot;Content-Type&quot;</span>, mimeType);</div>
+<div class="line"><a name="l00239"></a><span class="lineno">  239</span>&#160;                    <span class="keywordflow">else</span></div>
+<div class="line"><a name="l00240"></a><span class="lineno">  240</span>&#160;                        this-&gt;<a class="code" href="structcrow_1_1response.html#a16d1a8bcec6460ba97f90b80881693b8">add_header</a>(<span class="stringliteral">&quot;content-Type&quot;</span>, <span class="stringliteral">&quot;text/plain&quot;</span>);</div>
+<div class="line"><a name="l00241"></a><span class="lineno">  241</span>&#160;                }</div>
+<div class="line"><a name="l00242"></a><span class="lineno">  242</span>&#160;            }</div>
+<div class="line"><a name="l00243"></a><span class="lineno">  243</span>&#160;            <span class="keywordflow">else</span></div>
+<div class="line"><a name="l00244"></a><span class="lineno">  244</span>&#160;            {</div>
+<div class="line"><a name="l00245"></a><span class="lineno">  245</span>&#160;                code = 404;</div>
+<div class="line"><a name="l00246"></a><span class="lineno">  246</span>&#160;                this-&gt;<a class="code" href="structcrow_1_1response.html#abef42200eca49c70dc1f5140ee3603ab">end</a>();</div>
+<div class="line"><a name="l00247"></a><span class="lineno">  247</span>&#160;            }</div>
+<div class="line"><a name="l00248"></a><span class="lineno">  248</span>&#160;        }</div>
+<div class="line"><a name="l00249"></a><span class="lineno">  249</span>&#160; </div>
+<div class="line"><a name="l00250"></a><span class="lineno">  250</span>&#160;    <span class="keyword">private</span>:</div>
+<div class="line"><a name="l00251"></a><span class="lineno">  251</span>&#160;        <span class="keywordtype">bool</span> completed_{};</div>
+<div class="line"><a name="l00252"></a><span class="lineno">  252</span>&#160;        std::function&lt;void()&gt; complete_request_handler_;</div>
+<div class="line"><a name="l00253"></a><span class="lineno">  253</span>&#160;        std::function&lt;bool()&gt; is_alive_helper_;</div>
+<div class="line"><a name="l00254"></a><span class="lineno">  254</span>&#160;        static_file_info file_info;</div>
+<div class="line"><a name="l00255"></a><span class="lineno">  255</span>&#160;    };</div>
+<div class="line"><a name="l00256"></a><span class="lineno">  256</span>&#160;} <span class="comment">// namespace crow</span></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <div class="ttc" id="astructcrow_1_1response_html_a8f5e5caa08c3e658bccd03996e1a778a"><div class="ttname"><a href="structcrow_1_1response.html#a8f5e5caa08c3e658bccd03996e1a778a">crow::response::set_static_file_info</a></div><div class="ttdeci">void set_static_file_info(std::string path)</div><div class="ttdoc">Return a static file as the response body.</div><div class="ttdef"><b>Definition:</b> http_response.h:218</div></div>
@@ -381,7 +382,7 @@ $(document).ready(function(){initNavTree('http__response_8h_source.html',''); in
 			<ul>
 				<li class="navelem"><a class="el" href="dir_d44c64559bbebec7f509842c48db8b23.html">include</a></li><li class="navelem"><a class="el" href="dir_d22c1cb87b72f01e1a7f207eb3bfd1ca.html">crow</a></li><li class="navelem"><b>http_response.h</b></li>
 				<li class="footer">
-					Generated on Fri Dec 31 2021 for Crow by <a href="http://www.doxygen.org/index.html">
+					Generated on Tue Jan 11 2022 for Crow by <a href="http://www.doxygen.org/index.html">
 					<img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.17.
 					Dark theme by <a href="http://majerle.eu" target="_new">Tilen Majerle</a>. Edited by <a href="https://github.com/The-EDev" target="_new">Farook Al-Sammarraie</a>. All rights reserved.
 				</li>
