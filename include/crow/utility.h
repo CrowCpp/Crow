@@ -618,7 +618,7 @@ namespace crow
             return base64decode(data.c_str(), size, urlsafe);
         }
 
-        inline std::string sanitize_filename(std::string data, char replacement = '_')
+        inline static void sanitize_filename(std::string& data, char replacement = '_')
         {
             unsigned char i = 0, length_limit;
 
@@ -627,13 +627,14 @@ namespace crow
 
             for (; i < length_limit; i++)
             {
-                switch (data[i])
+                switch ((unsigned char)data[i])
                 {
-                    case '/':
+                    // WARNING While I can't see how using '\' or '/' would cause a problem, it still warrants an investigation
+                    //case '/':
                     case '?':
                     case '<':
                     case '>':
-                    case '\\':
+                    //case '\\':
                     case ':':
                     case '*':
                     case '|':
@@ -738,8 +739,6 @@ namespace crow
             boost::ireplace_all(data, "LPT7", str_replacement);
             boost::ireplace_all(data, "LPT8", str_replacement);
             boost::ireplace_all(data, "LPT9", str_replacement);
-
-            return data;
         }
 
     } // namespace utility

@@ -217,7 +217,7 @@ namespace crow
         ///Return a static file as the response body
         void set_static_file_info(std::string path)
         {
-            path = utility::sanitize_filename(path); //TODO create a no_copy function instead
+            utility::sanitize_filename(path);
             file_info.path = path;
             file_info.statResult = stat(file_info.path.c_str(), &file_info.statbuf);
 #ifdef CROW_ENABLE_COMPRESSION
