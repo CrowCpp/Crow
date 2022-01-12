@@ -8,6 +8,8 @@
 #include <functional>
 #include <string>
 
+#include <boost/algorithm/string.hpp>
+
 #include "crow/settings.h"
 
 namespace crow
@@ -544,6 +546,128 @@ template <typename F, typename Set>
             return base64encode(data, size, "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_");
         }
 
+        inline static void sanitize_filename(std::string& data, char replacement = '_')
+        {
+          unsigned char i = 0, length_limit;
+
+          length_limit = data.length() < 255 ? data.length() : 255;
+          data = data.substr(0, length_limit);
+
+          for (; i < length_limit; i++)
+          {
+            switch ((unsigned char)data[i])
+            {
+              // WARNING While I can't see how using '\' or '/' would cause a problem, it still warrants an investigation
+              //case '/':
+              case '?':
+              case '<':
+              case '>':
+              //case '\\':
+              case ':':
+              case '*':
+              case '|':
+              case '\"':
+
+              case 0x00:
+              case 0x01:
+              case 0x02:
+              case 0x03:
+              case 0x04:
+              case 0x05:
+              case 0x06:
+              case 0x07:
+              case 0x08:
+              case 0x09:
+              case 0x0a:
+              case 0x0b:
+              case 0x0c:
+              case 0x0d:
+              case 0x0e:
+              case 0x0f:
+              case 0x10:
+              case 0x11:
+              case 0x12:
+              case 0x13:
+              case 0x14:
+              case 0x15:
+              case 0x16:
+              case 0x17:
+              case 0x18:
+              case 0x19:
+              case 0x1a:
+              case 0x1b:
+              case 0x1c:
+              case 0x1d:
+              case 0x1e:
+              case 0x1f:
+
+              case 0x80:
+              case 0x81:
+              case 0x82:
+              case 0x83:
+              case 0x84:
+              case 0x85:
+              case 0x86:
+              case 0x87:
+              case 0x88:
+              case 0x89:
+              case 0x8a:
+              case 0x8b:
+              case 0x8c:
+              case 0x8d:
+              case 0x8e:
+              case 0x8f:
+              case 0x90:
+              case 0x91:
+              case 0x92:
+              case 0x93:
+              case 0x94:
+              case 0x95:
+              case 0x96:
+              case 0x97:
+              case 0x98:
+              case 0x99:
+              case 0x9a:
+              case 0x9b:
+              case 0x9c:
+              case 0x9d:
+              case 0x9e:
+              case 0x9f:
+
+                data[i] = replacement;
+                break;
+
+              default:
+                break;
+            }
+          }
+          std::string str_replacement(1, replacement);
+
+          boost::ireplace_all(data, "..", str_replacement);
+
+          boost::ireplace_all(data, "CON", str_replacement);
+          boost::ireplace_all(data, "PRN", str_replacement);
+          boost::ireplace_all(data, "AUX", str_replacement);
+          boost::ireplace_all(data, "NUL", str_replacement);
+          boost::ireplace_all(data, "COM1", str_replacement);
+          boost::ireplace_all(data, "COM2", str_replacement);
+          boost::ireplace_all(data, "COM3", str_replacement);
+          boost::ireplace_all(data, "COM4", str_replacement);
+          boost::ireplace_all(data, "COM5", str_replacement);
+          boost::ireplace_all(data, "COM6", str_replacement);
+          boost::ireplace_all(data, "COM7", str_replacement);
+          boost::ireplace_all(data, "COM8", str_replacement);
+          boost::ireplace_all(data, "COM9", str_replacement);
+          boost::ireplace_all(data, "LPT1", str_replacement);
+          boost::ireplace_all(data, "LPT2", str_replacement);
+          boost::ireplace_all(data, "LPT3", str_replacement);
+          boost::ireplace_all(data, "LPT4", str_replacement);
+          boost::ireplace_all(data, "LPT5", str_replacement);
+          boost::ireplace_all(data, "LPT6", str_replacement);
+          boost::ireplace_all(data, "LPT7", str_replacement);
+          boost::ireplace_all(data, "LPT8", str_replacement);
+          boost::ireplace_all(data, "LPT9", str_replacement);
+        }
 
     } // namespace utility
 }

@@ -6,6 +6,8 @@
 #include <functional>
 #include "crow/json.h"
 #include "crow/logging.h"
+#include "crow/utility.h"
+
 namespace crow
 {
     namespace mustache
@@ -144,6 +146,8 @@ namespace crow
                         case '"': out += "&quot;"; break;
                         case '\'': out += "&#39;"; break;
                         case '/': out += "&#x2F;"; break;
+                        case '`': out += "&#x60"; break;
+                        case '=': out += "&#x3D"; break;
                         default: out += *it; break;
                     }
                 }
@@ -596,7 +600,9 @@ namespace crow
 
         inline template_t load(const std::string& filename)
         {
-            return compile(detail::get_loader_ref()(filename));
+          std::string filename_sanitized(filename);
+          utility::sanitize_filename(filename_sanitized);
+          return compile(detail::get_loader_ref()(filename_sanitized));
         }
     }
 }
