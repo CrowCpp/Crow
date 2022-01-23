@@ -2437,9 +2437,10 @@ TEST_CASE("base64")
     CHECK(crow::utility::base64encode((unsigned char*)sample_bin2, 4) == sample_bin2_enc);
 
 
+    CHECK(crow::utility::base64decode(sample_base64) == sample_text);
     CHECK(crow::utility::base64decode(sample_base64, sample_base64.length()) == sample_text);
     CHECK(crow::utility::base64decode(sample_bin_enc, 8) == std::string(reinterpret_cast<char const*>(sample_bin)));
-    CHECK(crow::utility::base64decode(sample_bin_enc_url, 8, true) == std::string(reinterpret_cast<char const*>(sample_bin)));
+    CHECK(crow::utility::base64decode(sample_bin_enc_url, 8) == std::string(reinterpret_cast<char const*>(sample_bin)));
     CHECK(crow::utility::base64decode(sample_bin1_enc, 8) == std::string(reinterpret_cast<char const*>(sample_bin1)).substr(0, 5));
     CHECK(crow::utility::base64decode(sample_bin1_enc_np, 7) == std::string(reinterpret_cast<char const*>(sample_bin1)).substr(0, 5));
     CHECK(crow::utility::base64decode(sample_bin2_enc, 8) == std::string(reinterpret_cast<char const*>(sample_bin2)).substr(0, 4));

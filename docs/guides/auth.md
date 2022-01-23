@@ -29,7 +29,7 @@ std::string myauth = req.get_header_value("Authorization");
 Next we need to isolate our encoded credentials and decode them as follows:
 ```cpp
 std::string mycreds = myauth.substr(6);
-std::string d_mycreds = crow::utility::base64decode(mycreds, mycreds.size()/*, URLSafe? (true/false)*/);
+std::string d_mycreds = crow::utility::base64decode(mycreds, mycreds.size());
 ```
 <br>
 
