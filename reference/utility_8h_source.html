@@ -640,210 +640,217 @@ $(document).ready(function(){initNavTree('utility_8h_source.html',''); initResiz
 <div class="line"><a name="l00539"></a><span class="lineno">  539</span>&#160;            <span class="keywordflow">return</span> base64encode((<span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">char</span>*)data.c_str(), size, <span class="stringliteral">&quot;ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_&quot;</span>);</div>
 <div class="line"><a name="l00540"></a><span class="lineno">  540</span>&#160;        }</div>
 <div class="line"><a name="l00541"></a><span class="lineno">  541</span>&#160; </div>
-<div class="line"><a name="l00542"></a><span class="lineno">  542</span>&#160;        <span class="keyword">inline</span> <span class="keyword">static</span> std::string base64decode(<span class="keyword">const</span> <span class="keywordtype">char</span>* data, <span class="keywordtype">size_t</span> size, <span class="keywordtype">bool</span> urlsafe = <span class="keyword">false</span>)</div>
+<div class="line"><a name="l00542"></a><span class="lineno">  542</span>&#160;        <span class="keyword">inline</span> <span class="keyword">static</span> std::string base64decode(<span class="keyword">const</span> <span class="keywordtype">char</span>* data, <span class="keywordtype">size_t</span> size)</div>
 <div class="line"><a name="l00543"></a><span class="lineno">  543</span>&#160;        {</div>
-<div class="line"><a name="l00544"></a><span class="lineno">  544</span>&#160;            <span class="comment">// clang-format off</span></div>
-<div class="line"><a name="l00545"></a><span class="lineno">  545</span>&#160;            std::unordered_map&lt;char, unsigned char&gt; key ({</div>
-<div class="line"><a name="l00546"></a><span class="lineno">  546</span>&#160;            {<span class="charliteral">&#39;A&#39;</span>,  0},{<span class="charliteral">&#39;B&#39;</span>,  1},{<span class="charliteral">&#39;C&#39;</span>,  2},{<span class="charliteral">&#39;D&#39;</span>,  3},{<span class="charliteral">&#39;E&#39;</span>,  4},{<span class="charliteral">&#39;F&#39;</span>,  5},{<span class="charliteral">&#39;G&#39;</span>,  6},{<span class="charliteral">&#39;H&#39;</span>,  7},{<span class="charliteral">&#39;I&#39;</span>,  8},{<span class="charliteral">&#39;J&#39;</span>,  9},</div>
-<div class="line"><a name="l00547"></a><span class="lineno">  547</span>&#160;            {<span class="charliteral">&#39;K&#39;</span>, 10},{<span class="charliteral">&#39;L&#39;</span>, 11},{<span class="charliteral">&#39;M&#39;</span>, 12},{<span class="charliteral">&#39;N&#39;</span>, 13},{<span class="charliteral">&#39;O&#39;</span>, 14},{<span class="charliteral">&#39;P&#39;</span>, 15},{<span class="charliteral">&#39;Q&#39;</span>, 16},{<span class="charliteral">&#39;R&#39;</span>, 17},{<span class="charliteral">&#39;S&#39;</span>, 18},{<span class="charliteral">&#39;T&#39;</span>, 19},</div>
-<div class="line"><a name="l00548"></a><span class="lineno">  548</span>&#160;            {<span class="charliteral">&#39;U&#39;</span>, 20},{<span class="charliteral">&#39;V&#39;</span>, 21},{<span class="charliteral">&#39;W&#39;</span>, 22},{<span class="charliteral">&#39;X&#39;</span>, 23},{<span class="charliteral">&#39;Y&#39;</span>, 24},{<span class="charliteral">&#39;Z&#39;</span>, 25},{<span class="charliteral">&#39;a&#39;</span>, 26},{<span class="charliteral">&#39;b&#39;</span>, 27},{<span class="charliteral">&#39;c&#39;</span>, 28},{<span class="charliteral">&#39;d&#39;</span>, 29},</div>
-<div class="line"><a name="l00549"></a><span class="lineno">  549</span>&#160;            {<span class="charliteral">&#39;e&#39;</span>, 30},{<span class="charliteral">&#39;f&#39;</span>, 31},{<span class="charliteral">&#39;g&#39;</span>, 32},{<span class="charliteral">&#39;h&#39;</span>, 33},{<span class="charliteral">&#39;i&#39;</span>, 34},{<span class="charliteral">&#39;j&#39;</span>, 35},{<span class="charliteral">&#39;k&#39;</span>, 36},{<span class="charliteral">&#39;l&#39;</span>, 37},{<span class="charliteral">&#39;m&#39;</span>, 38},{<span class="charliteral">&#39;n&#39;</span>, 39},</div>
-<div class="line"><a name="l00550"></a><span class="lineno">  550</span>&#160;            {<span class="charliteral">&#39;o&#39;</span>, 40},{<span class="charliteral">&#39;p&#39;</span>, 41},{<span class="charliteral">&#39;q&#39;</span>, 42},{<span class="charliteral">&#39;r&#39;</span>, 43},{<span class="charliteral">&#39;s&#39;</span>, 44},{<span class="charliteral">&#39;t&#39;</span>, 45},{<span class="charliteral">&#39;u&#39;</span>, 46},{<span class="charliteral">&#39;v&#39;</span>, 47},{<span class="charliteral">&#39;w&#39;</span>, 48},{<span class="charliteral">&#39;x&#39;</span>, 49},</div>
-<div class="line"><a name="l00551"></a><span class="lineno">  551</span>&#160;            {<span class="charliteral">&#39;y&#39;</span>, 50},{<span class="charliteral">&#39;z&#39;</span>, 51},{<span class="charliteral">&#39;0&#39;</span>, 52},{<span class="charliteral">&#39;1&#39;</span>, 53},{<span class="charliteral">&#39;2&#39;</span>, 54},{<span class="charliteral">&#39;3&#39;</span>, 55},{<span class="charliteral">&#39;4&#39;</span>, 56},{<span class="charliteral">&#39;5&#39;</span>, 57},{<span class="charliteral">&#39;6&#39;</span>, 58},{<span class="charliteral">&#39;7&#39;</span>, 59},</div>
-<div class="line"><a name="l00552"></a><span class="lineno">  552</span>&#160;            {<span class="charliteral">&#39;8&#39;</span>, 60},{<span class="charliteral">&#39;9&#39;</span>, 61},{urlsafe ? <span class="charliteral">&#39;-&#39;</span> : <span class="charliteral">&#39;+&#39;</span>, 62},{urlsafe ? <span class="charliteral">&#39;_&#39;</span> : <span class="charliteral">&#39;/&#39;</span>, 63}});</div>
-<div class="line"><a name="l00553"></a><span class="lineno">  553</span>&#160; </div>
-<div class="line"><a name="l00554"></a><span class="lineno">  554</span>&#160;            <span class="comment">// clang-format on</span></div>
-<div class="line"><a name="l00555"></a><span class="lineno">  555</span>&#160; </div>
-<div class="line"><a name="l00556"></a><span class="lineno">  556</span>&#160;            <span class="comment">// Not padded</span></div>
-<div class="line"><a name="l00557"></a><span class="lineno">  557</span>&#160;            <span class="keywordflow">if</span> (size % 4 == 2)             <span class="comment">// missing last 2 characters</span></div>
-<div class="line"><a name="l00558"></a><span class="lineno">  558</span>&#160;                size = (size / 4 * 3) + 1; <span class="comment">// Not subtracting extra characters because they&#39;re truncated in int division</span></div>
-<div class="line"><a name="l00559"></a><span class="lineno">  559</span>&#160;            <span class="keywordflow">else</span> <span class="keywordflow">if</span> (size % 4 == 3)        <span class="comment">// missing last character</span></div>
-<div class="line"><a name="l00560"></a><span class="lineno">  560</span>&#160;                size = (size / 4 * 3) + 2; <span class="comment">// Not subtracting extra characters because they&#39;re truncated in int division</span></div>
-<div class="line"><a name="l00561"></a><span class="lineno">  561</span>&#160; </div>
-<div class="line"><a name="l00562"></a><span class="lineno">  562</span>&#160;            <span class="comment">// Padded</span></div>
-<div class="line"><a name="l00563"></a><span class="lineno">  563</span>&#160;            <span class="keywordflow">else</span> <span class="keywordflow">if</span> (data[size - 2] == <span class="charliteral">&#39;=&#39;</span>) <span class="comment">// padded with &#39;==&#39;</span></div>
-<div class="line"><a name="l00564"></a><span class="lineno">  564</span>&#160;                size = (size / 4 * 3) - 2;  <span class="comment">// == padding means the last block only has 1 character instead of 3, hence the &#39;-2&#39;</span></div>
-<div class="line"><a name="l00565"></a><span class="lineno">  565</span>&#160;            <span class="keywordflow">else</span> <span class="keywordflow">if</span> (data[size - 1] == <span class="charliteral">&#39;=&#39;</span>) <span class="comment">// padded with &#39;=&#39;</span></div>
-<div class="line"><a name="l00566"></a><span class="lineno">  566</span>&#160;                size = (size / 4 * 3) - 1;  <span class="comment">// = padding means the last block only has 2 character instead of 3, hence the &#39;-1&#39;</span></div>
-<div class="line"><a name="l00567"></a><span class="lineno">  567</span>&#160; </div>
-<div class="line"><a name="l00568"></a><span class="lineno">  568</span>&#160;            <span class="comment">// Padding not needed</span></div>
-<div class="line"><a name="l00569"></a><span class="lineno">  569</span>&#160;            <span class="keywordflow">else</span></div>
-<div class="line"><a name="l00570"></a><span class="lineno">  570</span>&#160;                size = size / 4 * 3;</div>
-<div class="line"><a name="l00571"></a><span class="lineno">  571</span>&#160; </div>
-<div class="line"><a name="l00572"></a><span class="lineno">  572</span>&#160;            std::string ret;</div>
-<div class="line"><a name="l00573"></a><span class="lineno">  573</span>&#160;            ret.resize(size);</div>
-<div class="line"><a name="l00574"></a><span class="lineno">  574</span>&#160;            <span class="keyword">auto</span> it = ret.begin();</div>
-<div class="line"><a name="l00575"></a><span class="lineno">  575</span>&#160; </div>
-<div class="line"><a name="l00576"></a><span class="lineno">  576</span>&#160;            <span class="comment">// These will be used to decode 1 character at a time</span></div>
-<div class="line"><a name="l00577"></a><span class="lineno">  577</span>&#160;            <span class="keywordtype">unsigned</span> <span class="keywordtype">char</span> odd;  <span class="comment">// char1 and char3</span></div>
-<div class="line"><a name="l00578"></a><span class="lineno">  578</span>&#160;            <span class="keywordtype">unsigned</span> <span class="keywordtype">char</span> even; <span class="comment">// char2 and char4</span></div>
-<div class="line"><a name="l00579"></a><span class="lineno">  579</span>&#160; </div>
-<div class="line"><a name="l00580"></a><span class="lineno">  580</span>&#160;            <span class="comment">// Take 4 character blocks to turn into 3</span></div>
-<div class="line"><a name="l00581"></a><span class="lineno">  581</span>&#160;            <span class="keywordflow">while</span> (size &gt;= 3)</div>
-<div class="line"><a name="l00582"></a><span class="lineno">  582</span>&#160;            {</div>
-<div class="line"><a name="l00583"></a><span class="lineno">  583</span>&#160;                <span class="comment">// dec_char1 = (char1 shifted 2 bits to the left) OR ((char2 AND 00110000) shifted 4 bits to the right))</span></div>
-<div class="line"><a name="l00584"></a><span class="lineno">  584</span>&#160;                odd = key[*data++];</div>
-<div class="line"><a name="l00585"></a><span class="lineno">  585</span>&#160;                even = key[*data++];</div>
-<div class="line"><a name="l00586"></a><span class="lineno">  586</span>&#160;                *it++ = (odd &lt;&lt; 2) | ((even &amp; 0x30) &gt;&gt; 4);</div>
-<div class="line"><a name="l00587"></a><span class="lineno">  587</span>&#160;                <span class="comment">// dec_char2 = ((char2 AND 00001111) shifted 4 bits left) OR ((char3 AND 00111100) shifted 2 bits right))</span></div>
-<div class="line"><a name="l00588"></a><span class="lineno">  588</span>&#160;                odd = key[*data++];</div>
-<div class="line"><a name="l00589"></a><span class="lineno">  589</span>&#160;                *it++ = ((even &amp; 0x0F) &lt;&lt; 4) | ((odd &amp; 0x3C) &gt;&gt; 2);</div>
-<div class="line"><a name="l00590"></a><span class="lineno">  590</span>&#160;                <span class="comment">// dec_char3 = ((char3 AND 00000011) shifted 6 bits left) OR (char4)</span></div>
-<div class="line"><a name="l00591"></a><span class="lineno">  591</span>&#160;                even = key[*data++];</div>
-<div class="line"><a name="l00592"></a><span class="lineno">  592</span>&#160;                *it++ = ((odd &amp; 0x03) &lt;&lt; 6) | (even);</div>
-<div class="line"><a name="l00593"></a><span class="lineno">  593</span>&#160; </div>
-<div class="line"><a name="l00594"></a><span class="lineno">  594</span>&#160;                size -= 3;</div>
-<div class="line"><a name="l00595"></a><span class="lineno">  595</span>&#160;            }</div>
-<div class="line"><a name="l00596"></a><span class="lineno">  596</span>&#160;            <span class="keywordflow">if</span> (size == 2)</div>
-<div class="line"><a name="l00597"></a><span class="lineno">  597</span>&#160;            {</div>
-<div class="line"><a name="l00598"></a><span class="lineno">  598</span>&#160;                <span class="comment">// d_char1 = (char1 shifted 2 bits to the left) OR ((char2 AND 00110000) shifted 4 bits to the right))</span></div>
-<div class="line"><a name="l00599"></a><span class="lineno">  599</span>&#160;                odd = key[*data++];</div>
-<div class="line"><a name="l00600"></a><span class="lineno">  600</span>&#160;                even = key[*data++];</div>
-<div class="line"><a name="l00601"></a><span class="lineno">  601</span>&#160;                *it++ = (odd &lt;&lt; 2) | ((even &amp; 0x30) &gt;&gt; 4);</div>
-<div class="line"><a name="l00602"></a><span class="lineno">  602</span>&#160;                <span class="comment">// d_char2 = ((char2 AND 00001111) shifted 4 bits left) OR ((char3 AND 00111100) shifted 2 bits right))</span></div>
-<div class="line"><a name="l00603"></a><span class="lineno">  603</span>&#160;                odd = key[*data++];</div>
-<div class="line"><a name="l00604"></a><span class="lineno">  604</span>&#160;                *it++ = ((even &amp; 0x0F) &lt;&lt; 4) | ((odd &amp; 0x3C) &gt;&gt; 2);</div>
-<div class="line"><a name="l00605"></a><span class="lineno">  605</span>&#160;            }</div>
-<div class="line"><a name="l00606"></a><span class="lineno">  606</span>&#160;            <span class="keywordflow">else</span> <span class="keywordflow">if</span> (size == 1)</div>
-<div class="line"><a name="l00607"></a><span class="lineno">  607</span>&#160;            {</div>
-<div class="line"><a name="l00608"></a><span class="lineno">  608</span>&#160;                <span class="comment">// d_char1 = (char1 shifted 2 bits to the left) OR ((char2 AND 00110000) shifted 4 bits to the right))</span></div>
-<div class="line"><a name="l00609"></a><span class="lineno">  609</span>&#160;                odd = key[*data++];</div>
-<div class="line"><a name="l00610"></a><span class="lineno">  610</span>&#160;                even = key[*data++];</div>
-<div class="line"><a name="l00611"></a><span class="lineno">  611</span>&#160;                *it++ = (odd &lt;&lt; 2) | ((even &amp; 0x30) &gt;&gt; 4);</div>
-<div class="line"><a name="l00612"></a><span class="lineno">  612</span>&#160;            }</div>
-<div class="line"><a name="l00613"></a><span class="lineno">  613</span>&#160;            <span class="keywordflow">return</span> ret;</div>
-<div class="line"><a name="l00614"></a><span class="lineno">  614</span>&#160;        }</div>
-<div class="line"><a name="l00615"></a><span class="lineno">  615</span>&#160; </div>
-<div class="line"><a name="l00616"></a><span class="lineno">  616</span>&#160;        <span class="keyword">inline</span> <span class="keyword">static</span> std::string base64decode(std::string data, <span class="keywordtype">size_t</span> size, <span class="keywordtype">bool</span> urlsafe = <span class="keyword">false</span>)</div>
-<div class="line"><a name="l00617"></a><span class="lineno">  617</span>&#160;        {</div>
-<div class="line"><a name="l00618"></a><span class="lineno">  618</span>&#160;            <span class="keywordflow">return</span> base64decode(data.c_str(), size, urlsafe);</div>
-<div class="line"><a name="l00619"></a><span class="lineno">  619</span>&#160;        }</div>
-<div class="line"><a name="l00620"></a><span class="lineno">  620</span>&#160; </div>
-<div class="line"><a name="l00621"></a><span class="lineno">  621</span>&#160;        <span class="keyword">inline</span> <span class="keyword">static</span> <span class="keywordtype">void</span> sanitize_filename(std::string&amp; data, <span class="keywordtype">char</span> replacement = <span class="charliteral">&#39;_&#39;</span>)</div>
-<div class="line"><a name="l00622"></a><span class="lineno">  622</span>&#160;        {</div>
-<div class="line"><a name="l00623"></a><span class="lineno">  623</span>&#160;            <span class="keywordtype">unsigned</span> <span class="keywordtype">char</span> i = 0, length_limit;</div>
-<div class="line"><a name="l00624"></a><span class="lineno">  624</span>&#160; </div>
-<div class="line"><a name="l00625"></a><span class="lineno">  625</span>&#160;            length_limit = data.length() &lt; 255 ? data.length() : 255;</div>
-<div class="line"><a name="l00626"></a><span class="lineno">  626</span>&#160;            data = data.substr(0, length_limit);</div>
+<div class="line"><a name="l00544"></a><span class="lineno">  544</span>&#160;            <span class="comment">// We accept both regular and url encoding here, as there does not seem to be any downside to that.</span></div>
+<div class="line"><a name="l00545"></a><span class="lineno">  545</span>&#160;            <span class="comment">// If we want to distinguish that we should use +/ for non-url and -_ for url.</span></div>
+<div class="line"><a name="l00546"></a><span class="lineno">  546</span>&#160; </div>
+<div class="line"><a name="l00547"></a><span class="lineno">  547</span>&#160;            <span class="comment">// Mapping logic from characters to [0-63]</span></div>
+<div class="line"><a name="l00548"></a><span class="lineno">  548</span>&#160;            <span class="keyword">auto</span> key = [](<span class="keywordtype">char</span> c) -&gt; <span class="keywordtype">unsigned</span> <span class="keywordtype">char</span> {</div>
+<div class="line"><a name="l00549"></a><span class="lineno">  549</span>&#160;                <span class="keywordflow">if</span> ((c &gt;= <span class="charliteral">&#39;A&#39;</span>) &amp;&amp; (c &lt;= <span class="charliteral">&#39;Z&#39;</span>)) <span class="keywordflow">return</span> c - <span class="charliteral">&#39;A&#39;</span>;</div>
+<div class="line"><a name="l00550"></a><span class="lineno">  550</span>&#160;                <span class="keywordflow">if</span> ((c &gt;= <span class="charliteral">&#39;a&#39;</span>) &amp;&amp; (c &lt;= <span class="charliteral">&#39;z&#39;</span>)) <span class="keywordflow">return</span> c - <span class="charliteral">&#39;a&#39;</span> + 26;</div>
+<div class="line"><a name="l00551"></a><span class="lineno">  551</span>&#160;                <span class="keywordflow">if</span> ((c &gt;= <span class="charliteral">&#39;0&#39;</span>) &amp;&amp; (c &lt;= <span class="charliteral">&#39;9&#39;</span>)) <span class="keywordflow">return</span> c - <span class="charliteral">&#39;0&#39;</span> + 52;</div>
+<div class="line"><a name="l00552"></a><span class="lineno">  552</span>&#160;                <span class="keywordflow">if</span> ((c == <span class="charliteral">&#39;+&#39;</span>) || (c == <span class="charliteral">&#39;-&#39;</span>)) <span class="keywordflow">return</span> 62;</div>
+<div class="line"><a name="l00553"></a><span class="lineno">  553</span>&#160;                <span class="keywordflow">if</span> ((c == <span class="charliteral">&#39;/&#39;</span>) || (c == <span class="charliteral">&#39;_&#39;</span>)) <span class="keywordflow">return</span> 63;</div>
+<div class="line"><a name="l00554"></a><span class="lineno">  554</span>&#160;                <span class="keywordflow">return</span> 0;</div>
+<div class="line"><a name="l00555"></a><span class="lineno">  555</span>&#160;            };</div>
+<div class="line"><a name="l00556"></a><span class="lineno">  556</span>&#160; </div>
+<div class="line"><a name="l00557"></a><span class="lineno">  557</span>&#160;            <span class="comment">// Not padded</span></div>
+<div class="line"><a name="l00558"></a><span class="lineno">  558</span>&#160;            <span class="keywordflow">if</span> (size % 4 == 2)             <span class="comment">// missing last 2 characters</span></div>
+<div class="line"><a name="l00559"></a><span class="lineno">  559</span>&#160;                size = (size / 4 * 3) + 1; <span class="comment">// Not subtracting extra characters because they&#39;re truncated in int division</span></div>
+<div class="line"><a name="l00560"></a><span class="lineno">  560</span>&#160;            <span class="keywordflow">else</span> <span class="keywordflow">if</span> (size % 4 == 3)        <span class="comment">// missing last character</span></div>
+<div class="line"><a name="l00561"></a><span class="lineno">  561</span>&#160;                size = (size / 4 * 3) + 2; <span class="comment">// Not subtracting extra characters because they&#39;re truncated in int division</span></div>
+<div class="line"><a name="l00562"></a><span class="lineno">  562</span>&#160; </div>
+<div class="line"><a name="l00563"></a><span class="lineno">  563</span>&#160;            <span class="comment">// Padded</span></div>
+<div class="line"><a name="l00564"></a><span class="lineno">  564</span>&#160;            <span class="keywordflow">else</span> <span class="keywordflow">if</span> (data[size - 2] == <span class="charliteral">&#39;=&#39;</span>) <span class="comment">// padded with &#39;==&#39;</span></div>
+<div class="line"><a name="l00565"></a><span class="lineno">  565</span>&#160;                size = (size / 4 * 3) - 2;  <span class="comment">// == padding means the last block only has 1 character instead of 3, hence the &#39;-2&#39;</span></div>
+<div class="line"><a name="l00566"></a><span class="lineno">  566</span>&#160;            <span class="keywordflow">else</span> <span class="keywordflow">if</span> (data[size - 1] == <span class="charliteral">&#39;=&#39;</span>) <span class="comment">// padded with &#39;=&#39;</span></div>
+<div class="line"><a name="l00567"></a><span class="lineno">  567</span>&#160;                size = (size / 4 * 3) - 1;  <span class="comment">// = padding means the last block only has 2 character instead of 3, hence the &#39;-1&#39;</span></div>
+<div class="line"><a name="l00568"></a><span class="lineno">  568</span>&#160; </div>
+<div class="line"><a name="l00569"></a><span class="lineno">  569</span>&#160;            <span class="comment">// Padding not needed</span></div>
+<div class="line"><a name="l00570"></a><span class="lineno">  570</span>&#160;            <span class="keywordflow">else</span></div>
+<div class="line"><a name="l00571"></a><span class="lineno">  571</span>&#160;                size = size / 4 * 3;</div>
+<div class="line"><a name="l00572"></a><span class="lineno">  572</span>&#160; </div>
+<div class="line"><a name="l00573"></a><span class="lineno">  573</span>&#160;            std::string ret;</div>
+<div class="line"><a name="l00574"></a><span class="lineno">  574</span>&#160;            ret.resize(size);</div>
+<div class="line"><a name="l00575"></a><span class="lineno">  575</span>&#160;            <span class="keyword">auto</span> it = ret.begin();</div>
+<div class="line"><a name="l00576"></a><span class="lineno">  576</span>&#160; </div>
+<div class="line"><a name="l00577"></a><span class="lineno">  577</span>&#160;            <span class="comment">// These will be used to decode 1 character at a time</span></div>
+<div class="line"><a name="l00578"></a><span class="lineno">  578</span>&#160;            <span class="keywordtype">unsigned</span> <span class="keywordtype">char</span> odd;  <span class="comment">// char1 and char3</span></div>
+<div class="line"><a name="l00579"></a><span class="lineno">  579</span>&#160;            <span class="keywordtype">unsigned</span> <span class="keywordtype">char</span> even; <span class="comment">// char2 and char4</span></div>
+<div class="line"><a name="l00580"></a><span class="lineno">  580</span>&#160; </div>
+<div class="line"><a name="l00581"></a><span class="lineno">  581</span>&#160;            <span class="comment">// Take 4 character blocks to turn into 3</span></div>
+<div class="line"><a name="l00582"></a><span class="lineno">  582</span>&#160;            <span class="keywordflow">while</span> (size &gt;= 3)</div>
+<div class="line"><a name="l00583"></a><span class="lineno">  583</span>&#160;            {</div>
+<div class="line"><a name="l00584"></a><span class="lineno">  584</span>&#160;                <span class="comment">// dec_char1 = (char1 shifted 2 bits to the left) OR ((char2 AND 00110000) shifted 4 bits to the right))</span></div>
+<div class="line"><a name="l00585"></a><span class="lineno">  585</span>&#160;                odd = key(*data++);</div>
+<div class="line"><a name="l00586"></a><span class="lineno">  586</span>&#160;                even = key(*data++);</div>
+<div class="line"><a name="l00587"></a><span class="lineno">  587</span>&#160;                *it++ = (odd &lt;&lt; 2) | ((even &amp; 0x30) &gt;&gt; 4);</div>
+<div class="line"><a name="l00588"></a><span class="lineno">  588</span>&#160;                <span class="comment">// dec_char2 = ((char2 AND 00001111) shifted 4 bits left) OR ((char3 AND 00111100) shifted 2 bits right))</span></div>
+<div class="line"><a name="l00589"></a><span class="lineno">  589</span>&#160;                odd = key(*data++);</div>
+<div class="line"><a name="l00590"></a><span class="lineno">  590</span>&#160;                *it++ = ((even &amp; 0x0F) &lt;&lt; 4) | ((odd &amp; 0x3C) &gt;&gt; 2);</div>
+<div class="line"><a name="l00591"></a><span class="lineno">  591</span>&#160;                <span class="comment">// dec_char3 = ((char3 AND 00000011) shifted 6 bits left) OR (char4)</span></div>
+<div class="line"><a name="l00592"></a><span class="lineno">  592</span>&#160;                even = key(*data++);</div>
+<div class="line"><a name="l00593"></a><span class="lineno">  593</span>&#160;                *it++ = ((odd &amp; 0x03) &lt;&lt; 6) | (even);</div>
+<div class="line"><a name="l00594"></a><span class="lineno">  594</span>&#160; </div>
+<div class="line"><a name="l00595"></a><span class="lineno">  595</span>&#160;                size -= 3;</div>
+<div class="line"><a name="l00596"></a><span class="lineno">  596</span>&#160;            }</div>
+<div class="line"><a name="l00597"></a><span class="lineno">  597</span>&#160;            <span class="keywordflow">if</span> (size == 2)</div>
+<div class="line"><a name="l00598"></a><span class="lineno">  598</span>&#160;            {</div>
+<div class="line"><a name="l00599"></a><span class="lineno">  599</span>&#160;                <span class="comment">// d_char1 = (char1 shifted 2 bits to the left) OR ((char2 AND 00110000) shifted 4 bits to the right))</span></div>
+<div class="line"><a name="l00600"></a><span class="lineno">  600</span>&#160;                odd = key(*data++);</div>
+<div class="line"><a name="l00601"></a><span class="lineno">  601</span>&#160;                even = key(*data++);</div>
+<div class="line"><a name="l00602"></a><span class="lineno">  602</span>&#160;                *it++ = (odd &lt;&lt; 2) | ((even &amp; 0x30) &gt;&gt; 4);</div>
+<div class="line"><a name="l00603"></a><span class="lineno">  603</span>&#160;                <span class="comment">// d_char2 = ((char2 AND 00001111) shifted 4 bits left) OR ((char3 AND 00111100) shifted 2 bits right))</span></div>
+<div class="line"><a name="l00604"></a><span class="lineno">  604</span>&#160;                odd = key(*data++);</div>
+<div class="line"><a name="l00605"></a><span class="lineno">  605</span>&#160;                *it++ = ((even &amp; 0x0F) &lt;&lt; 4) | ((odd &amp; 0x3C) &gt;&gt; 2);</div>
+<div class="line"><a name="l00606"></a><span class="lineno">  606</span>&#160;            }</div>
+<div class="line"><a name="l00607"></a><span class="lineno">  607</span>&#160;            <span class="keywordflow">else</span> <span class="keywordflow">if</span> (size == 1)</div>
+<div class="line"><a name="l00608"></a><span class="lineno">  608</span>&#160;            {</div>
+<div class="line"><a name="l00609"></a><span class="lineno">  609</span>&#160;                <span class="comment">// d_char1 = (char1 shifted 2 bits to the left) OR ((char2 AND 00110000) shifted 4 bits to the right))</span></div>
+<div class="line"><a name="l00610"></a><span class="lineno">  610</span>&#160;                odd = key(*data++);</div>
+<div class="line"><a name="l00611"></a><span class="lineno">  611</span>&#160;                even = key(*data++);</div>
+<div class="line"><a name="l00612"></a><span class="lineno">  612</span>&#160;                *it++ = (odd &lt;&lt; 2) | ((even &amp; 0x30) &gt;&gt; 4);</div>
+<div class="line"><a name="l00613"></a><span class="lineno">  613</span>&#160;            }</div>
+<div class="line"><a name="l00614"></a><span class="lineno">  614</span>&#160;            <span class="keywordflow">return</span> ret;</div>
+<div class="line"><a name="l00615"></a><span class="lineno">  615</span>&#160;        }</div>
+<div class="line"><a name="l00616"></a><span class="lineno">  616</span>&#160; </div>
+<div class="line"><a name="l00617"></a><span class="lineno">  617</span>&#160;        <span class="keyword">inline</span> <span class="keyword">static</span> std::string base64decode(<span class="keyword">const</span> std::string&amp; data, <span class="keywordtype">size_t</span> size)</div>
+<div class="line"><a name="l00618"></a><span class="lineno">  618</span>&#160;        {</div>
+<div class="line"><a name="l00619"></a><span class="lineno">  619</span>&#160;            <span class="keywordflow">return</span> base64decode(data.data(), size);</div>
+<div class="line"><a name="l00620"></a><span class="lineno">  620</span>&#160;        }</div>
+<div class="line"><a name="l00621"></a><span class="lineno">  621</span>&#160; </div>
+<div class="line"><a name="l00622"></a><span class="lineno">  622</span>&#160;        <span class="keyword">inline</span> <span class="keyword">static</span> std::string base64decode(<span class="keyword">const</span> std::string&amp; data)</div>
+<div class="line"><a name="l00623"></a><span class="lineno">  623</span>&#160;        {</div>
+<div class="line"><a name="l00624"></a><span class="lineno">  624</span>&#160;            <span class="keywordflow">return</span> base64decode(data.data(), data.length());</div>
+<div class="line"><a name="l00625"></a><span class="lineno">  625</span>&#160;        }</div>
+<div class="line"><a name="l00626"></a><span class="lineno">  626</span>&#160; </div>
 <div class="line"><a name="l00627"></a><span class="lineno">  627</span>&#160; </div>
-<div class="line"><a name="l00628"></a><span class="lineno">  628</span>&#160;            <span class="keywordflow">for</span> (; i &lt; length_limit; i++)</div>
-<div class="line"><a name="l00629"></a><span class="lineno">  629</span>&#160;            {</div>
-<div class="line"><a name="l00630"></a><span class="lineno">  630</span>&#160;                <span class="keywordflow">switch</span> ((<span class="keywordtype">unsigned</span> <span class="keywordtype">char</span>)data[i])</div>
-<div class="line"><a name="l00631"></a><span class="lineno">  631</span>&#160;                {</div>
-<div class="line"><a name="l00632"></a><span class="lineno">  632</span>&#160;                    <span class="comment">// WARNING While I can&#39;t see how using &#39;\&#39; or &#39;/&#39; would cause a problem, it still warrants an investigation</span></div>
-<div class="line"><a name="l00633"></a><span class="lineno">  633</span>&#160;                    <span class="comment">//case &#39;/&#39;:</span></div>
-<div class="line"><a name="l00634"></a><span class="lineno">  634</span>&#160;                    <span class="keywordflow">case</span> <span class="charliteral">&#39;?&#39;</span>:</div>
-<div class="line"><a name="l00635"></a><span class="lineno">  635</span>&#160;                    <span class="keywordflow">case</span> <span class="charliteral">&#39;&lt;&#39;</span>:</div>
-<div class="line"><a name="l00636"></a><span class="lineno">  636</span>&#160;                    <span class="keywordflow">case</span> <span class="charliteral">&#39;&gt;&#39;</span>:</div>
-<div class="line"><a name="l00637"></a><span class="lineno">  637</span>&#160;                    <span class="comment">//case &#39;\\&#39;:</span></div>
-<div class="line"><a name="l00638"></a><span class="lineno">  638</span>&#160;                    <span class="keywordflow">case</span> <span class="charliteral">&#39;:&#39;</span>:</div>
-<div class="line"><a name="l00639"></a><span class="lineno">  639</span>&#160;                    <span class="keywordflow">case</span> <span class="charliteral">&#39;*&#39;</span>:</div>
-<div class="line"><a name="l00640"></a><span class="lineno">  640</span>&#160;                    <span class="keywordflow">case</span> <span class="charliteral">&#39;|&#39;</span>:</div>
-<div class="line"><a name="l00641"></a><span class="lineno">  641</span>&#160;                    <span class="keywordflow">case</span> <span class="charliteral">&#39;\&quot;&#39;</span>:</div>
-<div class="line"><a name="l00642"></a><span class="lineno">  642</span>&#160; </div>
-<div class="line"><a name="l00643"></a><span class="lineno">  643</span>&#160;                    <span class="keywordflow">case</span> 0x00:</div>
-<div class="line"><a name="l00644"></a><span class="lineno">  644</span>&#160;                    <span class="keywordflow">case</span> 0x01:</div>
-<div class="line"><a name="l00645"></a><span class="lineno">  645</span>&#160;                    <span class="keywordflow">case</span> 0x02:</div>
-<div class="line"><a name="l00646"></a><span class="lineno">  646</span>&#160;                    <span class="keywordflow">case</span> 0x03:</div>
-<div class="line"><a name="l00647"></a><span class="lineno">  647</span>&#160;                    <span class="keywordflow">case</span> 0x04:</div>
-<div class="line"><a name="l00648"></a><span class="lineno">  648</span>&#160;                    <span class="keywordflow">case</span> 0x05:</div>
-<div class="line"><a name="l00649"></a><span class="lineno">  649</span>&#160;                    <span class="keywordflow">case</span> 0x06:</div>
-<div class="line"><a name="l00650"></a><span class="lineno">  650</span>&#160;                    <span class="keywordflow">case</span> 0x07:</div>
-<div class="line"><a name="l00651"></a><span class="lineno">  651</span>&#160;                    <span class="keywordflow">case</span> 0x08:</div>
-<div class="line"><a name="l00652"></a><span class="lineno">  652</span>&#160;                    <span class="keywordflow">case</span> 0x09:</div>
-<div class="line"><a name="l00653"></a><span class="lineno">  653</span>&#160;                    <span class="keywordflow">case</span> 0x0a:</div>
-<div class="line"><a name="l00654"></a><span class="lineno">  654</span>&#160;                    <span class="keywordflow">case</span> 0x0b:</div>
-<div class="line"><a name="l00655"></a><span class="lineno">  655</span>&#160;                    <span class="keywordflow">case</span> 0x0c:</div>
-<div class="line"><a name="l00656"></a><span class="lineno">  656</span>&#160;                    <span class="keywordflow">case</span> 0x0d:</div>
-<div class="line"><a name="l00657"></a><span class="lineno">  657</span>&#160;                    <span class="keywordflow">case</span> 0x0e:</div>
-<div class="line"><a name="l00658"></a><span class="lineno">  658</span>&#160;                    <span class="keywordflow">case</span> 0x0f:</div>
-<div class="line"><a name="l00659"></a><span class="lineno">  659</span>&#160;                    <span class="keywordflow">case</span> 0x10:</div>
-<div class="line"><a name="l00660"></a><span class="lineno">  660</span>&#160;                    <span class="keywordflow">case</span> 0x11:</div>
-<div class="line"><a name="l00661"></a><span class="lineno">  661</span>&#160;                    <span class="keywordflow">case</span> 0x12:</div>
-<div class="line"><a name="l00662"></a><span class="lineno">  662</span>&#160;                    <span class="keywordflow">case</span> 0x13:</div>
-<div class="line"><a name="l00663"></a><span class="lineno">  663</span>&#160;                    <span class="keywordflow">case</span> 0x14:</div>
-<div class="line"><a name="l00664"></a><span class="lineno">  664</span>&#160;                    <span class="keywordflow">case</span> 0x15:</div>
-<div class="line"><a name="l00665"></a><span class="lineno">  665</span>&#160;                    <span class="keywordflow">case</span> 0x16:</div>
-<div class="line"><a name="l00666"></a><span class="lineno">  666</span>&#160;                    <span class="keywordflow">case</span> 0x17:</div>
-<div class="line"><a name="l00667"></a><span class="lineno">  667</span>&#160;                    <span class="keywordflow">case</span> 0x18:</div>
-<div class="line"><a name="l00668"></a><span class="lineno">  668</span>&#160;                    <span class="keywordflow">case</span> 0x19:</div>
-<div class="line"><a name="l00669"></a><span class="lineno">  669</span>&#160;                    <span class="keywordflow">case</span> 0x1a:</div>
-<div class="line"><a name="l00670"></a><span class="lineno">  670</span>&#160;                    <span class="keywordflow">case</span> 0x1b:</div>
-<div class="line"><a name="l00671"></a><span class="lineno">  671</span>&#160;                    <span class="keywordflow">case</span> 0x1c:</div>
-<div class="line"><a name="l00672"></a><span class="lineno">  672</span>&#160;                    <span class="keywordflow">case</span> 0x1d:</div>
-<div class="line"><a name="l00673"></a><span class="lineno">  673</span>&#160;                    <span class="keywordflow">case</span> 0x1e:</div>
-<div class="line"><a name="l00674"></a><span class="lineno">  674</span>&#160;                    <span class="keywordflow">case</span> 0x1f:</div>
-<div class="line"><a name="l00675"></a><span class="lineno">  675</span>&#160; </div>
-<div class="line"><a name="l00676"></a><span class="lineno">  676</span>&#160;                    <span class="keywordflow">case</span> 0x80:</div>
-<div class="line"><a name="l00677"></a><span class="lineno">  677</span>&#160;                    <span class="keywordflow">case</span> 0x81:</div>
-<div class="line"><a name="l00678"></a><span class="lineno">  678</span>&#160;                    <span class="keywordflow">case</span> 0x82:</div>
-<div class="line"><a name="l00679"></a><span class="lineno">  679</span>&#160;                    <span class="keywordflow">case</span> 0x83:</div>
-<div class="line"><a name="l00680"></a><span class="lineno">  680</span>&#160;                    <span class="keywordflow">case</span> 0x84:</div>
-<div class="line"><a name="l00681"></a><span class="lineno">  681</span>&#160;                    <span class="keywordflow">case</span> 0x85:</div>
-<div class="line"><a name="l00682"></a><span class="lineno">  682</span>&#160;                    <span class="keywordflow">case</span> 0x86:</div>
-<div class="line"><a name="l00683"></a><span class="lineno">  683</span>&#160;                    <span class="keywordflow">case</span> 0x87:</div>
-<div class="line"><a name="l00684"></a><span class="lineno">  684</span>&#160;                    <span class="keywordflow">case</span> 0x88:</div>
-<div class="line"><a name="l00685"></a><span class="lineno">  685</span>&#160;                    <span class="keywordflow">case</span> 0x89:</div>
-<div class="line"><a name="l00686"></a><span class="lineno">  686</span>&#160;                    <span class="keywordflow">case</span> 0x8a:</div>
-<div class="line"><a name="l00687"></a><span class="lineno">  687</span>&#160;                    <span class="keywordflow">case</span> 0x8b:</div>
-<div class="line"><a name="l00688"></a><span class="lineno">  688</span>&#160;                    <span class="keywordflow">case</span> 0x8c:</div>
-<div class="line"><a name="l00689"></a><span class="lineno">  689</span>&#160;                    <span class="keywordflow">case</span> 0x8d:</div>
-<div class="line"><a name="l00690"></a><span class="lineno">  690</span>&#160;                    <span class="keywordflow">case</span> 0x8e:</div>
-<div class="line"><a name="l00691"></a><span class="lineno">  691</span>&#160;                    <span class="keywordflow">case</span> 0x8f:</div>
-<div class="line"><a name="l00692"></a><span class="lineno">  692</span>&#160;                    <span class="keywordflow">case</span> 0x90:</div>
-<div class="line"><a name="l00693"></a><span class="lineno">  693</span>&#160;                    <span class="keywordflow">case</span> 0x91:</div>
-<div class="line"><a name="l00694"></a><span class="lineno">  694</span>&#160;                    <span class="keywordflow">case</span> 0x92:</div>
-<div class="line"><a name="l00695"></a><span class="lineno">  695</span>&#160;                    <span class="keywordflow">case</span> 0x93:</div>
-<div class="line"><a name="l00696"></a><span class="lineno">  696</span>&#160;                    <span class="keywordflow">case</span> 0x94:</div>
-<div class="line"><a name="l00697"></a><span class="lineno">  697</span>&#160;                    <span class="keywordflow">case</span> 0x95:</div>
-<div class="line"><a name="l00698"></a><span class="lineno">  698</span>&#160;                    <span class="keywordflow">case</span> 0x96:</div>
-<div class="line"><a name="l00699"></a><span class="lineno">  699</span>&#160;                    <span class="keywordflow">case</span> 0x97:</div>
-<div class="line"><a name="l00700"></a><span class="lineno">  700</span>&#160;                    <span class="keywordflow">case</span> 0x98:</div>
-<div class="line"><a name="l00701"></a><span class="lineno">  701</span>&#160;                    <span class="keywordflow">case</span> 0x99:</div>
-<div class="line"><a name="l00702"></a><span class="lineno">  702</span>&#160;                    <span class="keywordflow">case</span> 0x9a:</div>
-<div class="line"><a name="l00703"></a><span class="lineno">  703</span>&#160;                    <span class="keywordflow">case</span> 0x9b:</div>
-<div class="line"><a name="l00704"></a><span class="lineno">  704</span>&#160;                    <span class="keywordflow">case</span> 0x9c:</div>
-<div class="line"><a name="l00705"></a><span class="lineno">  705</span>&#160;                    <span class="keywordflow">case</span> 0x9d:</div>
-<div class="line"><a name="l00706"></a><span class="lineno">  706</span>&#160;                    <span class="keywordflow">case</span> 0x9e:</div>
-<div class="line"><a name="l00707"></a><span class="lineno">  707</span>&#160;                    <span class="keywordflow">case</span> 0x9f:</div>
-<div class="line"><a name="l00708"></a><span class="lineno">  708</span>&#160; </div>
-<div class="line"><a name="l00709"></a><span class="lineno">  709</span>&#160;                        data[i] = replacement;</div>
-<div class="line"><a name="l00710"></a><span class="lineno">  710</span>&#160;                        <span class="keywordflow">break</span>;</div>
-<div class="line"><a name="l00711"></a><span class="lineno">  711</span>&#160; </div>
-<div class="line"><a name="l00712"></a><span class="lineno">  712</span>&#160;                    <span class="keywordflow">default</span>:</div>
-<div class="line"><a name="l00713"></a><span class="lineno">  713</span>&#160;                        <span class="keywordflow">break</span>;</div>
-<div class="line"><a name="l00714"></a><span class="lineno">  714</span>&#160;                }</div>
-<div class="line"><a name="l00715"></a><span class="lineno">  715</span>&#160;            }</div>
-<div class="line"><a name="l00716"></a><span class="lineno">  716</span>&#160;            std::string str_replacement(1, replacement);</div>
-<div class="line"><a name="l00717"></a><span class="lineno">  717</span>&#160; </div>
-<div class="line"><a name="l00718"></a><span class="lineno">  718</span>&#160;            boost::ireplace_all(data, <span class="stringliteral">&quot;..&quot;</span>, str_replacement);</div>
-<div class="line"><a name="l00719"></a><span class="lineno">  719</span>&#160; </div>
-<div class="line"><a name="l00720"></a><span class="lineno">  720</span>&#160;            boost::ireplace_all(data, <span class="stringliteral">&quot;CON&quot;</span>, str_replacement);</div>
-<div class="line"><a name="l00721"></a><span class="lineno">  721</span>&#160;            boost::ireplace_all(data, <span class="stringliteral">&quot;PRN&quot;</span>, str_replacement);</div>
-<div class="line"><a name="l00722"></a><span class="lineno">  722</span>&#160;            boost::ireplace_all(data, <span class="stringliteral">&quot;AUX&quot;</span>, str_replacement);</div>
-<div class="line"><a name="l00723"></a><span class="lineno">  723</span>&#160;            boost::ireplace_all(data, <span class="stringliteral">&quot;NUL&quot;</span>, str_replacement);</div>
-<div class="line"><a name="l00724"></a><span class="lineno">  724</span>&#160;            boost::ireplace_all(data, <span class="stringliteral">&quot;COM1&quot;</span>, str_replacement);</div>
-<div class="line"><a name="l00725"></a><span class="lineno">  725</span>&#160;            boost::ireplace_all(data, <span class="stringliteral">&quot;COM2&quot;</span>, str_replacement);</div>
-<div class="line"><a name="l00726"></a><span class="lineno">  726</span>&#160;            boost::ireplace_all(data, <span class="stringliteral">&quot;COM3&quot;</span>, str_replacement);</div>
-<div class="line"><a name="l00727"></a><span class="lineno">  727</span>&#160;            boost::ireplace_all(data, <span class="stringliteral">&quot;COM4&quot;</span>, str_replacement);</div>
-<div class="line"><a name="l00728"></a><span class="lineno">  728</span>&#160;            boost::ireplace_all(data, <span class="stringliteral">&quot;COM5&quot;</span>, str_replacement);</div>
-<div class="line"><a name="l00729"></a><span class="lineno">  729</span>&#160;            boost::ireplace_all(data, <span class="stringliteral">&quot;COM6&quot;</span>, str_replacement);</div>
-<div class="line"><a name="l00730"></a><span class="lineno">  730</span>&#160;            boost::ireplace_all(data, <span class="stringliteral">&quot;COM7&quot;</span>, str_replacement);</div>
-<div class="line"><a name="l00731"></a><span class="lineno">  731</span>&#160;            boost::ireplace_all(data, <span class="stringliteral">&quot;COM8&quot;</span>, str_replacement);</div>
-<div class="line"><a name="l00732"></a><span class="lineno">  732</span>&#160;            boost::ireplace_all(data, <span class="stringliteral">&quot;COM9&quot;</span>, str_replacement);</div>
-<div class="line"><a name="l00733"></a><span class="lineno">  733</span>&#160;            boost::ireplace_all(data, <span class="stringliteral">&quot;LPT1&quot;</span>, str_replacement);</div>
-<div class="line"><a name="l00734"></a><span class="lineno">  734</span>&#160;            boost::ireplace_all(data, <span class="stringliteral">&quot;LPT2&quot;</span>, str_replacement);</div>
-<div class="line"><a name="l00735"></a><span class="lineno">  735</span>&#160;            boost::ireplace_all(data, <span class="stringliteral">&quot;LPT3&quot;</span>, str_replacement);</div>
-<div class="line"><a name="l00736"></a><span class="lineno">  736</span>&#160;            boost::ireplace_all(data, <span class="stringliteral">&quot;LPT4&quot;</span>, str_replacement);</div>
-<div class="line"><a name="l00737"></a><span class="lineno">  737</span>&#160;            boost::ireplace_all(data, <span class="stringliteral">&quot;LPT5&quot;</span>, str_replacement);</div>
-<div class="line"><a name="l00738"></a><span class="lineno">  738</span>&#160;            boost::ireplace_all(data, <span class="stringliteral">&quot;LPT6&quot;</span>, str_replacement);</div>
-<div class="line"><a name="l00739"></a><span class="lineno">  739</span>&#160;            boost::ireplace_all(data, <span class="stringliteral">&quot;LPT7&quot;</span>, str_replacement);</div>
-<div class="line"><a name="l00740"></a><span class="lineno">  740</span>&#160;            boost::ireplace_all(data, <span class="stringliteral">&quot;LPT8&quot;</span>, str_replacement);</div>
-<div class="line"><a name="l00741"></a><span class="lineno">  741</span>&#160;            boost::ireplace_all(data, <span class="stringliteral">&quot;LPT9&quot;</span>, str_replacement);</div>
-<div class="line"><a name="l00742"></a><span class="lineno">  742</span>&#160;        }</div>
-<div class="line"><a name="l00743"></a><span class="lineno">  743</span>&#160; </div>
-<div class="line"><a name="l00744"></a><span class="lineno">  744</span>&#160;    } <span class="comment">// namespace utility</span></div>
-<div class="line"><a name="l00745"></a><span class="lineno">  745</span>&#160;} <span class="comment">// namespace crow</span></div>
+<div class="line"><a name="l00628"></a><span class="lineno">  628</span>&#160;        <span class="keyword">inline</span> <span class="keyword">static</span> <span class="keywordtype">void</span> sanitize_filename(std::string&amp; data, <span class="keywordtype">char</span> replacement = <span class="charliteral">&#39;_&#39;</span>)</div>
+<div class="line"><a name="l00629"></a><span class="lineno">  629</span>&#160;        {</div>
+<div class="line"><a name="l00630"></a><span class="lineno">  630</span>&#160;            <span class="keywordtype">unsigned</span> <span class="keywordtype">char</span> i = 0, length_limit;</div>
+<div class="line"><a name="l00631"></a><span class="lineno">  631</span>&#160; </div>
+<div class="line"><a name="l00632"></a><span class="lineno">  632</span>&#160;            length_limit = data.length() &lt; 255 ? data.length() : 255;</div>
+<div class="line"><a name="l00633"></a><span class="lineno">  633</span>&#160;            data = data.substr(0, length_limit);</div>
+<div class="line"><a name="l00634"></a><span class="lineno">  634</span>&#160; </div>
+<div class="line"><a name="l00635"></a><span class="lineno">  635</span>&#160;            <span class="keywordflow">for</span> (; i &lt; length_limit; i++)</div>
+<div class="line"><a name="l00636"></a><span class="lineno">  636</span>&#160;            {</div>
+<div class="line"><a name="l00637"></a><span class="lineno">  637</span>&#160;                <span class="keywordflow">switch</span> ((<span class="keywordtype">unsigned</span> <span class="keywordtype">char</span>)data[i])</div>
+<div class="line"><a name="l00638"></a><span class="lineno">  638</span>&#160;                {</div>
+<div class="line"><a name="l00639"></a><span class="lineno">  639</span>&#160;                    <span class="comment">// WARNING While I can&#39;t see how using &#39;\&#39; or &#39;/&#39; would cause a problem, it still warrants an investigation</span></div>
+<div class="line"><a name="l00640"></a><span class="lineno">  640</span>&#160;                    <span class="comment">//case &#39;/&#39;:</span></div>
+<div class="line"><a name="l00641"></a><span class="lineno">  641</span>&#160;                    <span class="keywordflow">case</span> <span class="charliteral">&#39;?&#39;</span>:</div>
+<div class="line"><a name="l00642"></a><span class="lineno">  642</span>&#160;                    <span class="keywordflow">case</span> <span class="charliteral">&#39;&lt;&#39;</span>:</div>
+<div class="line"><a name="l00643"></a><span class="lineno">  643</span>&#160;                    <span class="keywordflow">case</span> <span class="charliteral">&#39;&gt;&#39;</span>:</div>
+<div class="line"><a name="l00644"></a><span class="lineno">  644</span>&#160;                    <span class="comment">//case &#39;\\&#39;:</span></div>
+<div class="line"><a name="l00645"></a><span class="lineno">  645</span>&#160;                    <span class="keywordflow">case</span> <span class="charliteral">&#39;:&#39;</span>:</div>
+<div class="line"><a name="l00646"></a><span class="lineno">  646</span>&#160;                    <span class="keywordflow">case</span> <span class="charliteral">&#39;*&#39;</span>:</div>
+<div class="line"><a name="l00647"></a><span class="lineno">  647</span>&#160;                    <span class="keywordflow">case</span> <span class="charliteral">&#39;|&#39;</span>:</div>
+<div class="line"><a name="l00648"></a><span class="lineno">  648</span>&#160;                    <span class="keywordflow">case</span> <span class="charliteral">&#39;\&quot;&#39;</span>:</div>
+<div class="line"><a name="l00649"></a><span class="lineno">  649</span>&#160; </div>
+<div class="line"><a name="l00650"></a><span class="lineno">  650</span>&#160;                    <span class="keywordflow">case</span> 0x00:</div>
+<div class="line"><a name="l00651"></a><span class="lineno">  651</span>&#160;                    <span class="keywordflow">case</span> 0x01:</div>
+<div class="line"><a name="l00652"></a><span class="lineno">  652</span>&#160;                    <span class="keywordflow">case</span> 0x02:</div>
+<div class="line"><a name="l00653"></a><span class="lineno">  653</span>&#160;                    <span class="keywordflow">case</span> 0x03:</div>
+<div class="line"><a name="l00654"></a><span class="lineno">  654</span>&#160;                    <span class="keywordflow">case</span> 0x04:</div>
+<div class="line"><a name="l00655"></a><span class="lineno">  655</span>&#160;                    <span class="keywordflow">case</span> 0x05:</div>
+<div class="line"><a name="l00656"></a><span class="lineno">  656</span>&#160;                    <span class="keywordflow">case</span> 0x06:</div>
+<div class="line"><a name="l00657"></a><span class="lineno">  657</span>&#160;                    <span class="keywordflow">case</span> 0x07:</div>
+<div class="line"><a name="l00658"></a><span class="lineno">  658</span>&#160;                    <span class="keywordflow">case</span> 0x08:</div>
+<div class="line"><a name="l00659"></a><span class="lineno">  659</span>&#160;                    <span class="keywordflow">case</span> 0x09:</div>
+<div class="line"><a name="l00660"></a><span class="lineno">  660</span>&#160;                    <span class="keywordflow">case</span> 0x0a:</div>
+<div class="line"><a name="l00661"></a><span class="lineno">  661</span>&#160;                    <span class="keywordflow">case</span> 0x0b:</div>
+<div class="line"><a name="l00662"></a><span class="lineno">  662</span>&#160;                    <span class="keywordflow">case</span> 0x0c:</div>
+<div class="line"><a name="l00663"></a><span class="lineno">  663</span>&#160;                    <span class="keywordflow">case</span> 0x0d:</div>
+<div class="line"><a name="l00664"></a><span class="lineno">  664</span>&#160;                    <span class="keywordflow">case</span> 0x0e:</div>
+<div class="line"><a name="l00665"></a><span class="lineno">  665</span>&#160;                    <span class="keywordflow">case</span> 0x0f:</div>
+<div class="line"><a name="l00666"></a><span class="lineno">  666</span>&#160;                    <span class="keywordflow">case</span> 0x10:</div>
+<div class="line"><a name="l00667"></a><span class="lineno">  667</span>&#160;                    <span class="keywordflow">case</span> 0x11:</div>
+<div class="line"><a name="l00668"></a><span class="lineno">  668</span>&#160;                    <span class="keywordflow">case</span> 0x12:</div>
+<div class="line"><a name="l00669"></a><span class="lineno">  669</span>&#160;                    <span class="keywordflow">case</span> 0x13:</div>
+<div class="line"><a name="l00670"></a><span class="lineno">  670</span>&#160;                    <span class="keywordflow">case</span> 0x14:</div>
+<div class="line"><a name="l00671"></a><span class="lineno">  671</span>&#160;                    <span class="keywordflow">case</span> 0x15:</div>
+<div class="line"><a name="l00672"></a><span class="lineno">  672</span>&#160;                    <span class="keywordflow">case</span> 0x16:</div>
+<div class="line"><a name="l00673"></a><span class="lineno">  673</span>&#160;                    <span class="keywordflow">case</span> 0x17:</div>
+<div class="line"><a name="l00674"></a><span class="lineno">  674</span>&#160;                    <span class="keywordflow">case</span> 0x18:</div>
+<div class="line"><a name="l00675"></a><span class="lineno">  675</span>&#160;                    <span class="keywordflow">case</span> 0x19:</div>
+<div class="line"><a name="l00676"></a><span class="lineno">  676</span>&#160;                    <span class="keywordflow">case</span> 0x1a:</div>
+<div class="line"><a name="l00677"></a><span class="lineno">  677</span>&#160;                    <span class="keywordflow">case</span> 0x1b:</div>
+<div class="line"><a name="l00678"></a><span class="lineno">  678</span>&#160;                    <span class="keywordflow">case</span> 0x1c:</div>
+<div class="line"><a name="l00679"></a><span class="lineno">  679</span>&#160;                    <span class="keywordflow">case</span> 0x1d:</div>
+<div class="line"><a name="l00680"></a><span class="lineno">  680</span>&#160;                    <span class="keywordflow">case</span> 0x1e:</div>
+<div class="line"><a name="l00681"></a><span class="lineno">  681</span>&#160;                    <span class="keywordflow">case</span> 0x1f:</div>
+<div class="line"><a name="l00682"></a><span class="lineno">  682</span>&#160; </div>
+<div class="line"><a name="l00683"></a><span class="lineno">  683</span>&#160;                    <span class="keywordflow">case</span> 0x80:</div>
+<div class="line"><a name="l00684"></a><span class="lineno">  684</span>&#160;                    <span class="keywordflow">case</span> 0x81:</div>
+<div class="line"><a name="l00685"></a><span class="lineno">  685</span>&#160;                    <span class="keywordflow">case</span> 0x82:</div>
+<div class="line"><a name="l00686"></a><span class="lineno">  686</span>&#160;                    <span class="keywordflow">case</span> 0x83:</div>
+<div class="line"><a name="l00687"></a><span class="lineno">  687</span>&#160;                    <span class="keywordflow">case</span> 0x84:</div>
+<div class="line"><a name="l00688"></a><span class="lineno">  688</span>&#160;                    <span class="keywordflow">case</span> 0x85:</div>
+<div class="line"><a name="l00689"></a><span class="lineno">  689</span>&#160;                    <span class="keywordflow">case</span> 0x86:</div>
+<div class="line"><a name="l00690"></a><span class="lineno">  690</span>&#160;                    <span class="keywordflow">case</span> 0x87:</div>
+<div class="line"><a name="l00691"></a><span class="lineno">  691</span>&#160;                    <span class="keywordflow">case</span> 0x88:</div>
+<div class="line"><a name="l00692"></a><span class="lineno">  692</span>&#160;                    <span class="keywordflow">case</span> 0x89:</div>
+<div class="line"><a name="l00693"></a><span class="lineno">  693</span>&#160;                    <span class="keywordflow">case</span> 0x8a:</div>
+<div class="line"><a name="l00694"></a><span class="lineno">  694</span>&#160;                    <span class="keywordflow">case</span> 0x8b:</div>
+<div class="line"><a name="l00695"></a><span class="lineno">  695</span>&#160;                    <span class="keywordflow">case</span> 0x8c:</div>
+<div class="line"><a name="l00696"></a><span class="lineno">  696</span>&#160;                    <span class="keywordflow">case</span> 0x8d:</div>
+<div class="line"><a name="l00697"></a><span class="lineno">  697</span>&#160;                    <span class="keywordflow">case</span> 0x8e:</div>
+<div class="line"><a name="l00698"></a><span class="lineno">  698</span>&#160;                    <span class="keywordflow">case</span> 0x8f:</div>
+<div class="line"><a name="l00699"></a><span class="lineno">  699</span>&#160;                    <span class="keywordflow">case</span> 0x90:</div>
+<div class="line"><a name="l00700"></a><span class="lineno">  700</span>&#160;                    <span class="keywordflow">case</span> 0x91:</div>
+<div class="line"><a name="l00701"></a><span class="lineno">  701</span>&#160;                    <span class="keywordflow">case</span> 0x92:</div>
+<div class="line"><a name="l00702"></a><span class="lineno">  702</span>&#160;                    <span class="keywordflow">case</span> 0x93:</div>
+<div class="line"><a name="l00703"></a><span class="lineno">  703</span>&#160;                    <span class="keywordflow">case</span> 0x94:</div>
+<div class="line"><a name="l00704"></a><span class="lineno">  704</span>&#160;                    <span class="keywordflow">case</span> 0x95:</div>
+<div class="line"><a name="l00705"></a><span class="lineno">  705</span>&#160;                    <span class="keywordflow">case</span> 0x96:</div>
+<div class="line"><a name="l00706"></a><span class="lineno">  706</span>&#160;                    <span class="keywordflow">case</span> 0x97:</div>
+<div class="line"><a name="l00707"></a><span class="lineno">  707</span>&#160;                    <span class="keywordflow">case</span> 0x98:</div>
+<div class="line"><a name="l00708"></a><span class="lineno">  708</span>&#160;                    <span class="keywordflow">case</span> 0x99:</div>
+<div class="line"><a name="l00709"></a><span class="lineno">  709</span>&#160;                    <span class="keywordflow">case</span> 0x9a:</div>
+<div class="line"><a name="l00710"></a><span class="lineno">  710</span>&#160;                    <span class="keywordflow">case</span> 0x9b:</div>
+<div class="line"><a name="l00711"></a><span class="lineno">  711</span>&#160;                    <span class="keywordflow">case</span> 0x9c:</div>
+<div class="line"><a name="l00712"></a><span class="lineno">  712</span>&#160;                    <span class="keywordflow">case</span> 0x9d:</div>
+<div class="line"><a name="l00713"></a><span class="lineno">  713</span>&#160;                    <span class="keywordflow">case</span> 0x9e:</div>
+<div class="line"><a name="l00714"></a><span class="lineno">  714</span>&#160;                    <span class="keywordflow">case</span> 0x9f:</div>
+<div class="line"><a name="l00715"></a><span class="lineno">  715</span>&#160; </div>
+<div class="line"><a name="l00716"></a><span class="lineno">  716</span>&#160;                        data[i] = replacement;</div>
+<div class="line"><a name="l00717"></a><span class="lineno">  717</span>&#160;                        <span class="keywordflow">break</span>;</div>
+<div class="line"><a name="l00718"></a><span class="lineno">  718</span>&#160; </div>
+<div class="line"><a name="l00719"></a><span class="lineno">  719</span>&#160;                    <span class="keywordflow">default</span>:</div>
+<div class="line"><a name="l00720"></a><span class="lineno">  720</span>&#160;                        <span class="keywordflow">break</span>;</div>
+<div class="line"><a name="l00721"></a><span class="lineno">  721</span>&#160;                }</div>
+<div class="line"><a name="l00722"></a><span class="lineno">  722</span>&#160;            }</div>
+<div class="line"><a name="l00723"></a><span class="lineno">  723</span>&#160;            std::string str_replacement(1, replacement);</div>
+<div class="line"><a name="l00724"></a><span class="lineno">  724</span>&#160; </div>
+<div class="line"><a name="l00725"></a><span class="lineno">  725</span>&#160;            boost::ireplace_all(data, <span class="stringliteral">&quot;..&quot;</span>, str_replacement);</div>
+<div class="line"><a name="l00726"></a><span class="lineno">  726</span>&#160; </div>
+<div class="line"><a name="l00727"></a><span class="lineno">  727</span>&#160;            boost::ireplace_all(data, <span class="stringliteral">&quot;CON&quot;</span>, str_replacement);</div>
+<div class="line"><a name="l00728"></a><span class="lineno">  728</span>&#160;            boost::ireplace_all(data, <span class="stringliteral">&quot;PRN&quot;</span>, str_replacement);</div>
+<div class="line"><a name="l00729"></a><span class="lineno">  729</span>&#160;            boost::ireplace_all(data, <span class="stringliteral">&quot;AUX&quot;</span>, str_replacement);</div>
+<div class="line"><a name="l00730"></a><span class="lineno">  730</span>&#160;            boost::ireplace_all(data, <span class="stringliteral">&quot;NUL&quot;</span>, str_replacement);</div>
+<div class="line"><a name="l00731"></a><span class="lineno">  731</span>&#160;            boost::ireplace_all(data, <span class="stringliteral">&quot;COM1&quot;</span>, str_replacement);</div>
+<div class="line"><a name="l00732"></a><span class="lineno">  732</span>&#160;            boost::ireplace_all(data, <span class="stringliteral">&quot;COM2&quot;</span>, str_replacement);</div>
+<div class="line"><a name="l00733"></a><span class="lineno">  733</span>&#160;            boost::ireplace_all(data, <span class="stringliteral">&quot;COM3&quot;</span>, str_replacement);</div>
+<div class="line"><a name="l00734"></a><span class="lineno">  734</span>&#160;            boost::ireplace_all(data, <span class="stringliteral">&quot;COM4&quot;</span>, str_replacement);</div>
+<div class="line"><a name="l00735"></a><span class="lineno">  735</span>&#160;            boost::ireplace_all(data, <span class="stringliteral">&quot;COM5&quot;</span>, str_replacement);</div>
+<div class="line"><a name="l00736"></a><span class="lineno">  736</span>&#160;            boost::ireplace_all(data, <span class="stringliteral">&quot;COM6&quot;</span>, str_replacement);</div>
+<div class="line"><a name="l00737"></a><span class="lineno">  737</span>&#160;            boost::ireplace_all(data, <span class="stringliteral">&quot;COM7&quot;</span>, str_replacement);</div>
+<div class="line"><a name="l00738"></a><span class="lineno">  738</span>&#160;            boost::ireplace_all(data, <span class="stringliteral">&quot;COM8&quot;</span>, str_replacement);</div>
+<div class="line"><a name="l00739"></a><span class="lineno">  739</span>&#160;            boost::ireplace_all(data, <span class="stringliteral">&quot;COM9&quot;</span>, str_replacement);</div>
+<div class="line"><a name="l00740"></a><span class="lineno">  740</span>&#160;            boost::ireplace_all(data, <span class="stringliteral">&quot;LPT1&quot;</span>, str_replacement);</div>
+<div class="line"><a name="l00741"></a><span class="lineno">  741</span>&#160;            boost::ireplace_all(data, <span class="stringliteral">&quot;LPT2&quot;</span>, str_replacement);</div>
+<div class="line"><a name="l00742"></a><span class="lineno">  742</span>&#160;            boost::ireplace_all(data, <span class="stringliteral">&quot;LPT3&quot;</span>, str_replacement);</div>
+<div class="line"><a name="l00743"></a><span class="lineno">  743</span>&#160;            boost::ireplace_all(data, <span class="stringliteral">&quot;LPT4&quot;</span>, str_replacement);</div>
+<div class="line"><a name="l00744"></a><span class="lineno">  744</span>&#160;            boost::ireplace_all(data, <span class="stringliteral">&quot;LPT5&quot;</span>, str_replacement);</div>
+<div class="line"><a name="l00745"></a><span class="lineno">  745</span>&#160;            boost::ireplace_all(data, <span class="stringliteral">&quot;LPT6&quot;</span>, str_replacement);</div>
+<div class="line"><a name="l00746"></a><span class="lineno">  746</span>&#160;            boost::ireplace_all(data, <span class="stringliteral">&quot;LPT7&quot;</span>, str_replacement);</div>
+<div class="line"><a name="l00747"></a><span class="lineno">  747</span>&#160;            boost::ireplace_all(data, <span class="stringliteral">&quot;LPT8&quot;</span>, str_replacement);</div>
+<div class="line"><a name="l00748"></a><span class="lineno">  748</span>&#160;            boost::ireplace_all(data, <span class="stringliteral">&quot;LPT9&quot;</span>, str_replacement);</div>
+<div class="line"><a name="l00749"></a><span class="lineno">  749</span>&#160;        }</div>
+<div class="line"><a name="l00750"></a><span class="lineno">  750</span>&#160; </div>
+<div class="line"><a name="l00751"></a><span class="lineno">  751</span>&#160;    } <span class="comment">// namespace utility</span></div>
+<div class="line"><a name="l00752"></a><span class="lineno">  752</span>&#160;} <span class="comment">// namespace crow</span></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <div class="ttc" id="astructcrow_1_1black__magic_1_1_s_html"><div class="ttname"><a href="structcrow_1_1black__magic_1_1_s.html">crow::black_magic::S</a></div><div class="ttdef"><b>Definition:</b> utility.h:219</div></div>
@@ -875,7 +882,7 @@ $(document).ready(function(){initNavTree('utility_8h_source.html',''); initResiz
 			<ul>
 				<li class="navelem"><a class="el" href="dir_d44c64559bbebec7f509842c48db8b23.html">include</a></li><li class="navelem"><a class="el" href="dir_d22c1cb87b72f01e1a7f207eb3bfd1ca.html">crow</a></li><li class="navelem"><b>utility.h</b></li>
 				<li class="footer">
-					Generated on Sun Jan 23 2022 for Crow by <a href="http://www.doxygen.org/index.html">
+					Generated on Mon Jan 24 2022 for Crow by <a href="http://www.doxygen.org/index.html">
 					<img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.17.
 					Dark theme by <a href="http://majerle.eu" target="_new">Tilen Majerle</a>. Edited by <a href="https://github.com/The-EDev" target="_new">Farook Al-Sammarraie</a>. All rights reserved.
 				</li>
