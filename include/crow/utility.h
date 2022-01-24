@@ -539,19 +539,20 @@ namespace crow
             return base64encode((const unsigned char*)data.c_str(), size, "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_");
         }
 
-        inline static std::string base64decode(const char* data, size_t size, bool urlsafe = false)
+        inline static std::string base64decode(const char* data, size_t size)
         {
-            // clang-format off
-            std::unordered_map<char, unsigned char> key ({
-            {'A',  0},{'B',  1},{'C',  2},{'D',  3},{'E',  4},{'F',  5},{'G',  6},{'H',  7},{'I',  8},{'J',  9},
-            {'K', 10},{'L', 11},{'M', 12},{'N', 13},{'O', 14},{'P', 15},{'Q', 16},{'R', 17},{'S', 18},{'T', 19},
-            {'U', 20},{'V', 21},{'W', 22},{'X', 23},{'Y', 24},{'Z', 25},{'a', 26},{'b', 27},{'c', 28},{'d', 29},
-            {'e', 30},{'f', 31},{'g', 32},{'h', 33},{'i', 34},{'j', 35},{'k', 36},{'l', 37},{'m', 38},{'n', 39},
-            {'o', 40},{'p', 41},{'q', 42},{'r', 43},{'s', 44},{'t', 45},{'u', 46},{'v', 47},{'w', 48},{'x', 49},
-            {'y', 50},{'z', 51},{'0', 52},{'1', 53},{'2', 54},{'3', 55},{'4', 56},{'5', 57},{'6', 58},{'7', 59},
-            {'8', 60},{'9', 61},{urlsafe ? '-' : '+', 62},{urlsafe ? '_' : '/', 63}});
+            // We accept both regular and url encoding here, as there does not seem to be any downside to that.
+            // If we want to distinguish that we should use +/ for non-url and -_ for url.
 
-            // clang-format on
+            // Mapping logic from characters to [0-63]
+            auto key = [](char c) -> unsigned char {
+                if ((c >= 'A') && (c <= 'Z')) return c - 'A';
+                if ((c >= 'a') && (c <= 'z')) return c - 'a' + 26;
+                if ((c >= '0') && (c <= '9')) return c - '0' + 52;
+                if ((c == '+') || (c == '-')) return 62;
+                if ((c == '/') || (c == '_')) return 63;
+                return 0;
+            };
 
             // Not padded
             if (size % 4 == 2)             // missing last 2 characters
@@ -581,14 +582,14 @@ namespace crow
             while (size >= 3)
             {
                 // dec_char1 = (char1 shifted 2 bits to the left) OR ((char2 AND 00110000) shifted 4 bits to the right))
-                odd = key[*data++];
-                even = key[*data++];
+                odd = key(*data++);
+                even = key(*data++);
                 *it++ = (odd << 2) | ((even & 0x30) >> 4);
                 // dec_char2 = ((char2 AND 00001111) shifted 4 bits left) OR ((char3 AND 00111100) shifted 2 bits right))
-                odd = key[*data++];
+                odd = key(*data++);
                 *it++ = ((even & 0x0F) << 4) | ((odd & 0x3C) >> 2);
                 // dec_char3 = ((char3 AND 00000011) shifted 6 bits left) OR (char4)
-                even = key[*data++];
+                even = key(*data++);
                 *it++ = ((odd & 0x03) << 6) | (even);
 
                 size -= 3;
@@ -596,27 +597,33 @@ namespace crow
             if (size == 2)
             {
                 // d_char1 = (char1 shifted 2 bits to the left) OR ((char2 AND 00110000) shifted 4 bits to the right))
-                odd = key[*data++];
-                even = key[*data++];
+                odd = key(*data++);
+                even = key(*data++);
                 *it++ = (odd << 2) | ((even & 0x30) >> 4);
                 // d_char2 = ((char2 AND 00001111) shifted 4 bits left) OR ((char3 AND 00111100) shifted 2 bits right))
-                odd = key[*data++];
+                odd = key(*data++);
                 *it++ = ((even & 0x0F) << 4) | ((odd & 0x3C) >> 2);
             }
             else if (size == 1)
             {
                 // d_char1 = (char1 shifted 2 bits to the left) OR ((char2 AND 00110000) shifted 4 bits to the right))
-                odd = key[*data++];
-                even = key[*data++];
+                odd = key(*data++);
+                even = key(*data++);
                 *it++ = (odd << 2) | ((even & 0x30) >> 4);
             }
             return ret;
         }
 
-        inline static std::string base64decode(std::string data, size_t size, bool urlsafe = false)
+        inline static std::string base64decode(const std::string& data, size_t size)
         {
-            return base64decode(data.c_str(), size, urlsafe);
+            return base64decode(data.data(), size);
         }
+
+        inline static std::string base64decode(const std::string& data)
+        {
+            return base64decode(data.data(), data.length());
+        }
+
 
         inline static void sanitize_filename(std::string& data, char replacement = '_')
         {
