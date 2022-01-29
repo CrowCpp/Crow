@@ -727,8 +727,8 @@ Generating docs for com/drone/src/include/crow/routing.h:143: warning: Member op
 /drone/src/include/crow/mustache.h:25: warning: Member what() const (function) of class crow::mustache::invalid_template_exception is not documented.
 /drone/src/include/crow/mustache.h:29: warning: Member msg (variable) of class crow::mustache::invalid_template_exception is not documented.
 /drone/src/include/crow/mustache.h:59: warning: Member template_t(std::string body) (function) of class crow::mustache::template_t is not documented.
-/drone/src/include/crow/mustache.h:342: warning: Member render() (function) of class crow::mustache::template_t is not documented.
-/drone/src/include/crow/mustache.h:352: warning: Member render(context &ctx) (function) of class crow::mustache::template_t is not documented.
+/drone/src/include/crow/mustache.h:342: warning: Member render() const (function) of class crow::mustache::template_t is not documented.
+/drone/src/include/crow/mustache.h:352: warning: Member render(context &ctx) const (function) of class crow::mustache::template_t is not documented.
 /drone/src/include/crow/utility.h:448: warning: Member parent_t (typedef) of class crow::utility::function_traits is not documented.
 /drone/src/include/crow/utility.h:450: warning: Member result_type (typedef) of class crow::utility::function_traits is not documented.
 /drone/src/include/crow/utility.h:452: warning: Member arg (typedef) of class crow::utility::function_traits is not documented.
