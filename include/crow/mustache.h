@@ -64,11 +64,11 @@ namespace crow
             }
 
         private:
-            std::string tag_name(const Action& action)
+            std::string tag_name(const Action& action) const
             {
                 return body_.substr(action.start, action.end - action.start);
             }
-            auto find_context(const std::string& name, const std::vector<context*>& stack, bool shouldUseOnlyFirstStackValue = false) -> std::pair<bool, context&>
+            auto find_context(const std::string& name, const std::vector<context*>& stack, bool shouldUseOnlyFirstStackValue = false) const -> std::pair<bool, context&>
             {
                 if (name == ".")
                 {
@@ -133,7 +133,7 @@ namespace crow
                 return {false, empty_str};
             }
 
-            void escape(const std::string& in, std::string& out)
+            void escape(const std::string& in, std::string& out) const
             {
                 out.reserve(out.size() + in.size());
                 for (auto it = in.begin(); it != in.end(); ++it)
@@ -153,7 +153,7 @@ namespace crow
                 }
             }
 
-            bool isTagInsideObjectBlock(const int& current, const std::vector<context*>& stack)
+            bool isTagInsideObjectBlock(const int& current, const std::vector<context*>& stack) const
             {
                 int openedBlock = 0;
                 int totalBlocksBefore = 0;
@@ -179,7 +179,7 @@ namespace crow
                 return false;
             }
 
-            void render_internal(int actionBegin, int actionEnd, std::vector<context*>& stack, std::string& out, int indent)
+            void render_internal(int actionBegin, int actionEnd, std::vector<context*>& stack, std::string& out, int indent) const
             {
                 int current = actionBegin;
 
@@ -323,7 +323,7 @@ namespace crow
                 auto& fragment = fragments_[actionEnd];
                 render_fragment(fragment, indent, out);
             }
-            void render_fragment(const std::pair<int, int> fragment, int indent, std::string& out)
+            void render_fragment(const std::pair<int, int> fragment, int indent, std::string& out) const
             {
                 if (indent)
                 {
@@ -339,7 +339,7 @@ namespace crow
             }
 
         public:
-            std::string render()
+            std::string render() const
             {
                 context empty_ctx;
                 std::vector<context*> stack;
@@ -349,7 +349,7 @@ namespace crow
                 render_internal(0, fragments_.size() - 1, stack, ret, 0);
                 return ret;
             }
-            std::string render(context& ctx)
+            std::string render(context& ctx) const
             {
                 std::vector<context*> stack;
                 stack.emplace_back(&ctx);
