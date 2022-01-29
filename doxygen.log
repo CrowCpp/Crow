@@ -142,7 +142,7 @@ Computing class usage relations...
 Flushing cached template relations that have become invalid...
 Computing class relations...
 Add enum values to enums...
-Searc/drone/src/include/crow/json.h:1430: warning: unable to resolve reference to 'reset()' for \ref command
+Searc/drone/src/include/crow/json.h:1434: warning: unable to resolve reference to 'reset()' for \ref command
 /drone/src/include/crow/routing.h:32: warning: Member BaseRule(std::string rule) (function) of class crow::BaseRule is not documented.
 /drone/src/include/crow/routing.h:39: warning: Member validate()=0 (function) of class crow::BaseRule is not documented.
 /drone/src/include/crow/routing.h:40: warning: Member upgrade() (function) of class crow::BaseRule is not documented.
@@ -644,59 +644,59 @@ Generating docs for com/drone/src/include/crow/routing.h:143: warning: Member op
 /drone/src/include/crow/json.h:625: warning: Member set_error() (function) of class crow::json::rvalue is not documented.
 /drone/src/include/crow/json.h:630: warning: Member error() const (function) of class crow::json::rvalue is not documented.
 /drone/src/include/crow/json.h:635: warning: Member keys() (function) of class crow::json::rvalue is not documented.
-/drone/src/include/crow/json.h:1236: warning: Member object (typedef) of class crow::json::wvalue is not documented.
-/drone/src/include/crow/json.h:1243: warning: Member list (typedef) of class crow::json::wvalue is not documented.
-/drone/src/include/crow/json.h:1245: warning: Member t() const (function) of class crow::json::wvalue is not documented.
-/drone/src/include/crow/json.h:1275: warning: Member wvalue(std::nullptr_t) (function) of class crow::json::wvalue is not documented.
-/drone/src/include/crow/json.h:1278: warning: Member wvalue(bool value) (function) of class crow::json::wvalue is not documented.
-/drone/src/include/crow/json.h:1281: warning: Member wvalue(std::uint8_t value) (function) of class crow::json::wvalue is not documented.
-/drone/src/include/crow/json.h:1283: warning: Member wvalue(std::uint16_t value) (function) of class crow::json::wvalue is not documented.
-/drone/src/include/crow/json.h:1285: warning: Member wvalue(std::uint32_t value) (function) of class crow::json::wvalue is not documented.
-/drone/src/include/crow/json.h:1287: warning: Member wvalue(std::uint64_t value) (function) of class crow::json::wvalue is not documented.
-/drone/src/include/crow/json.h:1290: warning: Member wvalue(std::int8_t value) (function) of class crow::json::wvalue is not documented.
-/drone/src/include/crow/json.h:1292: warning: Member wvalue(std::int16_t value) (function) of class crow::json::wvalue is not documented.
-/drone/src/include/crow/json.h:1294: warning: Member wvalue(std::int32_t value) (function) of class crow::json::wvalue is not documented.
-/drone/src/include/crow/json.h:1296: warning: Member wvalue(std::int64_t value) (function) of class crow::json::wvalue is not documented.
-/drone/src/include/crow/json.h:1299: warning: Member wvalue(float value) (function) of class crow::json::wvalue is not documented.
-/drone/src/include/crow/json.h:1301: warning: Member wvalue(double value) (function) of class crow::json::wvalue is not documented.
-/drone/src/include/crow/json.h:1304: warning: Member wvalue(char const *value) (function) of class crow::json::wvalue is not documented.
-/drone/src/include/crow/json.h:1307: warning: Member wvalue(std::string const &value) (function) of class crow::json::wvalue is not documented.
-/drone/src/include/crow/json.h:1309: warning: Member wvalue(std::string &&value) (function) of class crow::json::wvalue is not documented.
-/drone/src/include/crow/json.h:1312: warning: Member wvalue(std::initializer_list< std::pair< std::string const, wvalue >> initializer_list) (function) of class crow::json::wvalue is not documented.
-/drone/src/include/crow/json.h:1315: warning: Member wvalue(object const &value) (function) of class crow::json::wvalue is not documented.
-/drone/src/include/crow/json.h:1317: warning: Member wvalue(object &&value) (function) of class crow::json::wvalue is not documented.
-/drone/src/include/crow/json.h:1320: warning: Member wvalue(const list &r) (function) of class crow::json::wvalue is not documented.
-/drone/src/include/crow/json.h:1329: warning: Member wvalue(list &r) (function) of class crow::json::wvalue is not documented.
-/drone/src/include/crow/json.h:1377: warning: Member wvalue(const wvalue &r) (function) of class crow::json::wvalue is not documented.
-/drone/src/include/crow/json.h:1414: warning: Member wvalue(wvalue &&r) (function) of class crow::json::wvalue is not documented.
-/drone/src/include/crow/json.h:1420: warning: Member operator=(wvalue &&r) (function) of class crow::json::wvalue is not documented.
-/drone/src/include/crow/json.h:1430: warning: unable to resolve reference to 'reset()' for \ref command
-/drone/src/include/crow/json.h:1436: warning: Member reset() (function) of class crow::json::wvalue is not documented.
-/drone/src/include/crow/json.h:1443: warning: Member operator=(std::nullptr_t) (function) of class crow::json::wvalue is not documented.
-/drone/src/include/crow/json.h:1448: warning: Member operator=(bool value) (function) of class crow::json::wvalue is not documented.
-/drone/src/include/crow/json.h:1458: warning: Member operator=(double value) (function) of class crow::json::wvalue is not documented.
-/drone/src/include/crow/json.h:1467: warning: Member operator=(unsigned short value) (function) of class crow::json::wvalue is not documented.
-/drone/src/include/crow/json.h:1476: warning: Member operator=(short value) (function) of class crow::json::wvalue is not documented.
-/drone/src/include/crow/json.h:1485: warning: Member operator=(long long value) (function) of class crow::json::wvalue is not documented.
-/drone/src/include/crow/json.h:1494: warning: Member operator=(long value) (function) of class crow::json::wvalue is not documented.
-/drone/src/include/crow/json.h:1503: warning: Member operator=(int value) (function) of class crow::json::wvalue is not documented.
-/drone/src/include/crow/json.h:1512: warning: Member operator=(unsigned long long value) (function) of class crow::json::wvalue is not documented.
-/drone/src/include/crow/json.h:1521: warning: Member operator=(unsigned long value) (function) of class crow::json::wvalue is not documented.
-/drone/src/include/crow/json.h:1530: warning: Member operator=(unsigned int value) (function) of class crow::json::wvalue is not documented.
-/drone/src/include/crow/json.h:1539: warning: Member operator=(const char *str) (function) of class crow::json::wvalue is not documented.
-/drone/src/include/crow/json.h:1547: warning: Member operator=(const std::string &str) (function) of class crow::json::wvalue is not documented.
-/drone/src/include/crow/json.h:1555: warning: Member operator=(list &&v) (function) of class crow::json::wvalue is not documented.
-/drone/src/include/crow/json.h:1573: warning: Member operator=(const std::vector< T > &v) (function) of class crow::json::wvalue is not documented.
-/drone/src/include/crow/json.h:1590: warning: Member operator=(std::initializer_list< std::pair< std::string const, wvalue >> initializer_list) (function) of class crow::json::wvalue is not documented.
-/drone/src/include/crow/json.h:1609: warning: Member operator=(object const &value) (function) of class crow::json::wvalue is not documented.
-/drone/src/include/crow/json.h:1628: warning: Member operator=(object &&value) (function) of class crow::json::wvalue is not documented.
-/drone/src/include/crow/json.h:1643: warning: Member operator=(std::function< std::string(std::string &)> &&func) (function) of class crow::json::wvalue is not documented.
-/drone/src/include/crow/json.h:1651: warning: Member operator[](unsigned index) (function) of class crow::json::wvalue is not documented.
-/drone/src/include/crow/json.h:1663: warning: Member count(const std::string &str) (function) of class crow::json::wvalue is not documented.
-/drone/src/include/crow/json.h:1672: warning: Member operator[](const std::string &str) (function) of class crow::json::wvalue is not documented.
-/drone/src/include/crow/json.h:1682: warning: Member keys() const (function) of class crow::json::wvalue is not documented.
-/drone/src/include/crow/json.h:1694: warning: Member execute(std::string txt="") const (function) of class crow::json::wvalue is not documented.
-/drone/src/include/crow/json.h:1882: warning: Member dump() const (function) of class crow::json::wvalue is not documented.
+/drone/src/include/crow/json.h:1240: warning: Member object (typedef) of class crow::json::wvalue is not documented.
+/drone/src/include/crow/json.h:1247: warning: Member list (typedef) of class crow::json::wvalue is not documented.
+/drone/src/include/crow/json.h:1249: warning: Member t() const (function) of class crow::json::wvalue is not documented.
+/drone/src/include/crow/json.h:1279: warning: Member wvalue(std::nullptr_t) (function) of class crow::json::wvalue is not documented.
+/drone/src/include/crow/json.h:1282: warning: Member wvalue(bool value) (function) of class crow::json::wvalue is not documented.
+/drone/src/include/crow/json.h:1285: warning: Member wvalue(std::uint8_t value) (function) of class crow::json::wvalue is not documented.
+/drone/src/include/crow/json.h:1287: warning: Member wvalue(std::uint16_t value) (function) of class crow::json::wvalue is not documented.
+/drone/src/include/crow/json.h:1289: warning: Member wvalue(std::uint32_t value) (function) of class crow::json::wvalue is not documented.
+/drone/src/include/crow/json.h:1291: warning: Member wvalue(std::uint64_t value) (function) of class crow::json::wvalue is not documented.
+/drone/src/include/crow/json.h:1294: warning: Member wvalue(std::int8_t value) (function) of class crow::json::wvalue is not documented.
+/drone/src/include/crow/json.h:1296: warning: Member wvalue(std::int16_t value) (function) of class crow::json::wvalue is not documented.
+/drone/src/include/crow/json.h:1298: warning: Member wvalue(std::int32_t value) (function) of class crow::json::wvalue is not documented.
+/drone/src/include/crow/json.h:1300: warning: Member wvalue(std::int64_t value) (function) of class crow::json::wvalue is not documented.
+/drone/src/include/crow/json.h:1303: warning: Member wvalue(float value) (function) of class crow::json::wvalue is not documented.
+/drone/src/include/crow/json.h:1305: warning: Member wvalue(double value) (function) of class crow::json::wvalue is not documented.
+/drone/src/include/crow/json.h:1308: warning: Member wvalue(char const *value) (function) of class crow::json::wvalue is not documented.
+/drone/src/include/crow/json.h:1311: warning: Member wvalue(std::string const &value) (function) of class crow::json::wvalue is not documented.
+/drone/src/include/crow/json.h:1313: warning: Member wvalue(std::string &&value) (function) of class crow::json::wvalue is not documented.
+/drone/src/include/crow/json.h:1316: warning: Member wvalue(std::initializer_list< std::pair< std::string const, wvalue >> initializer_list) (function) of class crow::json::wvalue is not documented.
+/drone/src/include/crow/json.h:1319: warning: Member wvalue(object const &value) (function) of class crow::json::wvalue is not documented.
+/drone/src/include/crow/json.h:1321: warning: Member wvalue(object &&value) (function) of class crow::json::wvalue is not documented.
+/drone/src/include/crow/json.h:1324: warning: Member wvalue(const list &r) (function) of class crow::json::wvalue is not documented.
+/drone/src/include/crow/json.h:1333: warning: Member wvalue(list &r) (function) of class crow::json::wvalue is not documented.
+/drone/src/include/crow/json.h:1381: warning: Member wvalue(const wvalue &r) (function) of class crow::json::wvalue is not documented.
+/drone/src/include/crow/json.h:1418: warning: Member wvalue(wvalue &&r) (function) of class crow::json::wvalue is not documented.
+/drone/src/include/crow/json.h:1424: warning: Member operator=(wvalue &&r) (function) of class crow::json::wvalue is not documented.
+/drone/src/include/crow/json.h:1434: warning: unable to resolve reference to 'reset()' for \ref command
+/drone/src/include/crow/json.h:1440: warning: Member reset() (function) of class crow::json::wvalue is not documented.
+/drone/src/include/crow/json.h:1447: warning: Member operator=(std::nullptr_t) (function) of class crow::json::wvalue is not documented.
+/drone/src/include/crow/json.h:1452: warning: Member operator=(bool value) (function) of class crow::json::wvalue is not documented.
+/drone/src/include/crow/json.h:1462: warning: Member operator=(double value) (function) of class crow::json::wvalue is not documented.
+/drone/src/include/crow/json.h:1471: warning: Member operator=(unsigned short value) (function) of class crow::json::wvalue is not documented.
+/drone/src/include/crow/json.h:1480: warning: Member operator=(short value) (function) of class crow::json::wvalue is not documented.
+/drone/src/include/crow/json.h:1489: warning: Member operator=(long long value) (function) of class crow::json::wvalue is not documented.
+/drone/src/include/crow/json.h:1498: warning: Member operator=(long value) (function) of class crow::json::wvalue is not documented.
+/drone/src/include/crow/json.h:1507: warning: Member operator=(int value) (function) of class crow::json::wvalue is not documented.
+/drone/src/include/crow/json.h:1516: warning: Member operator=(unsigned long long value) (function) of class crow::json::wvalue is not documented.
+/drone/src/include/crow/json.h:1525: warning: Member operator=(unsigned long value) (function) of class crow::json::wvalue is not documented.
+/drone/src/include/crow/json.h:1534: warning: Member operator=(unsigned int value) (function) of class crow::json::wvalue is not documented.
+/drone/src/include/crow/json.h:1543: warning: Member operator=(const char *str) (function) of class crow::json::wvalue is not documented.
+/drone/src/include/crow/json.h:1551: warning: Member operator=(const std::string &str) (function) of class crow::json::wvalue is not documented.
+/drone/src/include/crow/json.h:1559: warning: Member operator=(list &&v) (function) of class crow::json::wvalue is not documented.
+/drone/src/include/crow/json.h:1577: warning: Member operator=(const std::vector< T > &v) (function) of class crow::json::wvalue is not documented.
+/drone/src/include/crow/json.h:1594: warning: Member operator=(std::initializer_list< std::pair< std::string const, wvalue >> initializer_list) (function) of class crow::json::wvalue is not documented.
+/drone/src/include/crow/json.h:1613: warning: Member operator=(object const &value) (function) of class crow::json::wvalue is not documented.
+/drone/src/include/crow/json.h:1632: warning: Member operator=(object &&value) (function) of class crow::json::wvalue is not documented.
+/drone/src/include/crow/json.h:1647: warning: Member operator=(std::function< std::string(std::string &)> &&func) (function) of class crow::json::wvalue is not documented.
+/drone/src/include/crow/json.h:1655: warning: Member operator[](unsigned index) (function) of class crow::json::wvalue is not documented.
+/drone/src/include/crow/json.h:1667: warning: Member count(const std::string &str) (function) of class crow::json::wvalue is not documented.
+/drone/src/include/crow/json.h:1676: warning: Member operator[](const std::string &str) (function) of class crow::json::wvalue is not documented.
+/drone/src/include/crow/json.h:1686: warning: Member keys() const (function) of class crow::json::wvalue is not documented.
+/drone/src/include/crow/json.h:1698: warning: Member execute(std::string txt="") const (function) of class crow::json::wvalue is not documented.
+/drone/src/include/crow/json.h:1886: warning: Member dump() const (function) of class crow::json::wvalue is not documented.
 /drone/src/include/crow/returnable.h:13: warning: Member returnable(std::string ctype) (function) of class crow::returnable is not documented.
 /drone/src/include/crow/returnable.h:10: warning: Member content_type (variable) of class crow::returnable is not documented.
 /drone/src/include/crow/json.h:171: warning: Member iterator (typedef) of class crow::json::detail::r_string is not documented.
@@ -798,5 +798,5 @@ Generating example index...
 finalizing index lists...
 writing tag file...
 Running plantuml with JAVA...
-lookup cache used 2667/65536 hits=23460 misses=3000
+lookup cache used 2667/65536 hits=23462 misses=3000
 finished...
