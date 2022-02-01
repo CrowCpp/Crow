@@ -44,10 +44,11 @@ TEST_CASE("Rule")
     r.validate();
 
     response res;
+    request req;
 
     // executing handler
     CHECK(0 == x);
-    r.handle(request(), res, routing_params());
+    r.handle(req, res, routing_params());
     CHECK(1 == x);
 
     // registering handler with request argument
@@ -60,7 +61,7 @@ TEST_CASE("Rule")
 
     // executing handler
     CHECK(1 == x);
-    r.handle(request(), res, routing_params());
+    r.handle(req, res, routing_params());
     CHECK(2 == x);
 } // Rule
 
@@ -1373,6 +1374,56 @@ TEST_CASE("middleware_context")
     }
     app.stop();
 } // middleware_context
+
+struct LocalSecretMiddleware : crow::ILocalMiddleware {
+    struct context
+    {};
+
+    void before_handle(request& /*req*/, response& res, context& /*ctx*/)
+    {
+        res.code = 403;
+        res.end();
+    }
+
+    void after_handle(request& /*req*/, response& /*res*/, context& /*ctx*/)
+    {}
+};
+
+TEST_CASE("local_middleware")
+{
+    App<LocalSecretMiddleware> app;
+
+    CROW_ROUTE(app, "/")
+    ([]() {
+        return "works!";
+    });
+
+    CROW_ROUTE(app, "/secret")
+    .middlewares<decltype(app), LocalSecretMiddleware>()
+    ([]() {
+        return "works!";
+    });
+
+    app.validate();
+
+    // Local middleware is handled at router level, so we don't have to send requests manually
+    {
+        request req;
+        response res;
+        req.url = "/";
+        app.handle(req, res);
+        CHECK(200 == res.code);
+    }
+
+    {
+        request req;
+        response res;
+        req.url = "/secret";
+        app.handle(req, res);
+        CHECK(403 == res.code);
+    }
+
+} // local_middleware
 
 TEST_CASE("middleware_cookieparser")
 {

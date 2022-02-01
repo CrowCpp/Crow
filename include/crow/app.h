@@ -68,7 +68,7 @@ namespace crow
         }
 
         /// Process the request and generate a response for it
-        void handle(const request& req, response& res)
+        void handle(request& req, response& res)
         {
             router_.handle(req, res);
         }
@@ -394,6 +394,7 @@ namespace crow
 
         // middleware
         using context_t = detail::context<Middlewares...>;
+        using mw_container_t = std::tuple<Middlewares...>;
         template<typename T>
         typename T::context& get_context(const request& req)
         {
