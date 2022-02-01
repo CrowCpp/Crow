@@ -9,10 +9,12 @@
 #include <iostream>
 #include <utility>
 
-namespace crow {
+namespace crow
+{
 
-    /// Local middleware should extend ILocalMiddleware 
-    struct ILocalMiddleware {
+    /// Local middleware should extend ILocalMiddleware
+    struct ILocalMiddleware
+    {
         using call_global = std::false_type;
     };
 
@@ -51,7 +53,8 @@ namespace crow {
         };
 
         template<typename MW>
-        struct check_global_call_false {
+        struct check_global_call_false
+        {
             template<typename T, typename std::enable_if<T::call_global::value == false, bool>::type = true>
             struct get
             {};
@@ -117,16 +120,17 @@ namespace crow {
             mw.after_handle(req, res, ctx.template get<MW>());
         }
 
-        
-        template<template<typename QueryMW> class CallCriteria, // Checks if QueryMW should be called in this context 
-            int N, typename Context, typename Container>
+
+        template<template<typename QueryMW> class CallCriteria, // Checks if QueryMW should be called in this context
+                 int N, typename Context, typename Container>
         typename std::enable_if<(N < std::tuple_size<typename std::remove_reference<Container>::type>::value), bool>::type
           middleware_call_helper(Container& middlewares, request& req, response& res, Context& ctx)
         {
 
             using CurrentMW = typename std::tuple_element<N, typename std::remove_reference<Container>::type>::type;
 
-            if (!CallCriteria<CurrentMW>::value) {
+            if (!CallCriteria<CurrentMW>::value)
+            {
                 return middleware_call_helper<CallCriteria, N + 1, Context, Container>(middlewares, req, res, ctx);
             }
 
@@ -165,7 +169,8 @@ namespace crow {
         {
             using parent_context_t = typename Context::template partial<N - 1>;
             using CurrentMW = typename std::tuple_element<N, typename std::remove_reference<Container>::type>::type;
-            if (CallCriteria<CurrentMW>::value) {
+            if (CallCriteria<CurrentMW>::value)
+            {
                 after_handler_call<CurrentMW, Context, parent_context_t>(std::get<N>(middlewares), req, res, ctx, static_cast<parent_context_t&>(ctx));
             }
         }
@@ -175,7 +180,8 @@ namespace crow {
         {
             using parent_context_t = typename Context::template partial<N - 1>;
             using CurrentMW = typename std::tuple_element<N, typename std::remove_reference<Container>::type>::type;
-            if (CallCriteria<CurrentMW>::value) {
+            if (CallCriteria<CurrentMW>::value)
+            {
                 after_handler_call<CurrentMW, Context, parent_context_t>(std::get<N>(middlewares), req, res, ctx, static_cast<parent_context_t&>(ctx));
             }
             after_handlers_call_helper<CallCriteria, N - 1, Context, Container>(middlewares, ctx, req, res);
@@ -206,9 +212,7 @@ namespace crow {
         }
 
         template<typename F, typename... Args>
-        typename std::enable_if<black_magic::is_callable<F, crow::request&, crow::response&, Args...>::value
-            && !black_magic::is_callable<F, const crow::request, crow::response&, Args...>::value
-        >::type
+        typename std::enable_if<black_magic::is_callable<F, crow::request&, crow::response&, Args...>::value && !black_magic::is_callable<F, const crow::request, crow::response&, Args...>::value>::type
           wrapped_handler_call(crow::request& req, crow::response& res, const F& f, Args&&... args)
         {
             static_assert(std::is_same<void, decltype(f(std::declval<crow::request&>(), std::declval<crow::response&>(), std::declval<Args>()...))>::value,
@@ -266,7 +270,7 @@ namespace crow {
                 auto& container = *reinterpret_cast<typename App::mw_container_t*>(req.middleware_container);
 
                 bool completed = middleware_call_helper<middleware_call_criteria,
-                    0, typename App::context_t, typename App::mw_container_t>(container, req, res, ctx);
+                                                        0, typename App::context_t, typename App::mw_container_t>(container, req, res, ctx);
 
                 if (completed) return;
 
@@ -284,20 +288,20 @@ namespace crow {
 
         template<typename Route, typename App, typename... Middlewares>
         struct handler_call_bridge
-        {   
+        {
             template<typename MW>
             using check_app_contains = typename black_magic::has_type<MW, typename App::mw_container_t>;
 
             static_assert(black_magic::all_true<(std::is_base_of<crow::ILocalMiddleware, Middlewares>::value)...>::value,
-              "Local middleware has to inherit crow::ILocalMiddleware");
+                          "Local middleware has to inherit crow::ILocalMiddleware");
 
             static_assert(black_magic::all_true<(check_app_contains<Middlewares>::value)...>::value,
-              "Local middleware has to be listed in app middleware");
+                          "Local middleware has to be listed in app middleware");
 
             template<typename F>
             void operator()(F&& f) const
             {
-                auto wrapped = handler_middleware_wrapper<F, App, Middlewares...> {std::forward<F>(f)};
+                auto wrapped = handler_middleware_wrapper<F, App, Middlewares...>{std::forward<F>(f)};
                 tptr->operator()(std::move(wrapped));
             }
 

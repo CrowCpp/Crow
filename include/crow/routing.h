@@ -571,7 +571,8 @@ namespace crow
         }
 
         template<typename Func>
-        void operator()(Func&& f) {
+        void operator()(Func&& f)
+        {
             handler_ = (
 #ifdef CROW_CAN_USE_CPP14
               [f = std::move(f)]
@@ -598,14 +599,11 @@ namespace crow
                 mustache::set_base("templates");
 
             detail::routing_handler_call_helper::call<
-                detail::routing_handler_call_helper::call_params<decltype(handler_)>,
-                0, 0, 0, 0,
-                black_magic::S<Args...>,
-                black_magic::S<>>()
-                (
-                    detail::routing_handler_call_helper::call_params<decltype(handler_)>
-                    {handler_, params, req, res}
-                );
+              detail::routing_handler_call_helper::call_params<decltype(handler_)>,
+              0, 0, 0, 0,
+              black_magic::S<Args...>,
+              black_magic::S<>>()(
+              detail::routing_handler_call_helper::call_params<decltype(handler_)>{handler_, params, req, res});
         }
 
         /// Enable local middleware for this handler

@@ -1142,12 +1142,14 @@ TEST_CASE("template_basic")
 
 TEST_CASE("template_function")
 {
-  auto t = crow::mustache::compile("attack of {{func}}");
-  crow::mustache::context ctx;
-  ctx["name"] = "killer tomatoes";
-  ctx["func"] = [&](std::string){return std::string("{{name}}, IN SPACE!");};
-  auto result = t.render(ctx);
-  CHECK("attack of killer tomatoes, IN SPACE!" == result);
+    auto t = crow::mustache::compile("attack of {{func}}");
+    crow::mustache::context ctx;
+    ctx["name"] = "killer tomatoes";
+    ctx["func"] = [&](std::string) {
+        return std::string("{{name}}, IN SPACE!");
+    };
+    auto result = t.render(ctx);
+    CHECK("attack of killer tomatoes, IN SPACE!" == result);
 }
 
 TEST_CASE("template_load")
@@ -1375,7 +1377,8 @@ TEST_CASE("middleware_context")
     app.stop();
 } // middleware_context
 
-struct LocalSecretMiddleware : crow::ILocalMiddleware {
+struct LocalSecretMiddleware : crow::ILocalMiddleware
+{
     struct context
     {};
 
@@ -1399,10 +1402,9 @@ TEST_CASE("local_middleware")
     });
 
     CROW_ROUTE(app, "/secret")
-    .middlewares<decltype(app), LocalSecretMiddleware>()
-    ([]() {
-        return "works!";
-    });
+      .middlewares<decltype(app), LocalSecretMiddleware>()([]() {
+          return "works!";
+      });
 
     app.validate();
 

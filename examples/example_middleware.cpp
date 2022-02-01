@@ -43,11 +43,10 @@ int main()
     });
 
     CROW_ROUTE(app, "/secret")
-    // Enable SecretContentGuard for this handler
-    .middlewares<decltype(app), SecretContentGuard>()
-    ([]() {
-        return "";
-    });
+      // Enable SecretContentGuard for this handler
+      .middlewares<decltype(app), SecretContentGuard>()([]() {
+          return "";
+      });
 
     app.port(18080).run();
 

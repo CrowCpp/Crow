@@ -177,7 +177,7 @@ namespace crow
                 req.io_service = &adaptor_.get_io_service();
 
                 detail::middleware_call_helper<detail::middleware_call_criteria_only_global,
-                    0, decltype(ctx_), decltype(*middlewares_)>(*middlewares_, req, res, ctx_);
+                                               0, decltype(ctx_), decltype(*middlewares_)>(*middlewares_, req, res, ctx_);
 
                 if (!res.completed_)
                 {
