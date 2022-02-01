@@ -1774,8 +1774,8 @@ namespace crow
                     {
                         if (v.nt == num_type::Floating_point)
                         {
-                            if(isnan(v.num.data) || isinf(v.num.data)){
-                                CROW_LOG_WARNING << "JSON value is NaN or infinite."
+                            if(isnan(v.num.d) || isinf(v.num.d)){
+                                CROW_LOG_WARNING << "JSON value is NaN or infinite.";
                                 break;
                             }
 #ifdef _MSC_VER
