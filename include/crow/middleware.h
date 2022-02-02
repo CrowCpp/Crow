@@ -274,13 +274,18 @@ namespace crow
 
                 if (completed) return;
 
-                wrapped_handler_call(req, res, f, std::forward<Args>(args)...);
+                auto glob_completion_handler = std::move(res.complete_request_handler_);
+                auto completion_handler = [&ctx, &container, &req, &res, &glob_completion_handler] {
+                    after_handlers_call_helper<
+                      middleware_call_criteria,
+                      std::tuple_size<typename App::mw_container_t>::value - 1,
+                      typename App::context_t,
+                      typename App::mw_container_t>(container, ctx, req, res);
+                    glob_completion_handler();
+                };
+                res.complete_request_handler_ = std::move(completion_handler);
 
-                after_handlers_call_helper<
-                  middleware_call_criteria,
-                  std::tuple_size<typename App::mw_container_t>::value - 1,
-                  typename App::context_t,
-                  typename App::mw_container_t>(container, ctx, req, res);
+                wrapped_handler_call(req, res, f, std::forward<Args>(args)...);
             }
 
             F f;
