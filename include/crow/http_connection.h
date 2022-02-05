@@ -200,7 +200,7 @@ namespace crow
         {
 #ifdef CROW_ENABLE_DEBUG
             connectionCount++;
-            CROW_LOG_DEBUG << "Connection open, total " << connectionCount << ", " << this;
+            CROW_LOG_DEBUG << "Connection (" << this << ") allocated, total: " << connectionCount;
 #endif
         }
 
@@ -210,7 +210,7 @@ namespace crow
             cancel_deadline_timer();
 #ifdef CROW_ENABLE_DEBUG
             connectionCount--;
-            CROW_LOG_DEBUG << "Connection closed, total " << connectionCount << ", " << this;
+            CROW_LOG_DEBUG << "Connection (" << this << ") freed, total: " << connectionCount;
 #endif
         }
 
@@ -240,7 +240,7 @@ namespace crow
         void handle_header()
         {
             // HTTP 1.1 Expect: 100-continue
-            if (parser_.check_version(1, 1) && parser_.headers.count("expect") && get_header_value(parser_.headers, "expect") == "100-continue")
+            if (parser_.http_major == 1 && parser_.http_minor == 1 && get_header_value(parser_.headers, "expect") == "100-continue") // Using the parser because the request isn't made yet.
             {
                 buffers_.clear();
                 static std::string expect_100_continue = "HTTP/1.1 100 Continue\r\n\r\n";
@@ -260,39 +260,39 @@ namespace crow
 
             req.remote_ip_address = adaptor_.remote_endpoint().address().to_string();
 
-            if (parser_.check_version(1, 0))
+            add_keep_alive_ = req.keep_alive;
+            close_connection_ = req.close_connection;
+
+            if (req.check_version(1, 1)) // HTTP/1.1
             {
-                // HTTP/1.0
-                if (req.headers.count("connection"))
-                {
-                    if (boost::iequals(req.get_header_value("connection"), "Keep-Alive"))
-                        add_keep_alive_ = true;
-                }
-                else
-                    close_connection_ = true;
-            }
-            else if (parser_.check_version(1, 1))
-            {
-                // HTTP/1.1
-                if (req.headers.count("connection"))
-                {
-                    if (req.get_header_value("connection") == "close")
-                        close_connection_ = true;
-                    else if (boost::iequals(req.get_header_value("connection"), "Keep-Alive"))
-                        add_keep_alive_ = true;
-                }
                 if (!req.headers.count("host"))
                 {
                     is_invalid_request = true;
                     res = response(400);
                 }
-                if (parser_.is_upgrade())
+                if (req.upgrade)
                 {
-                    if (req.get_header_value("upgrade") == "h2c")
+#ifdef CROW_ENABLE_SSL
+                    if (handler_->ssl_used())
                     {
-                        // TODO HTTP/2
+                        if (req.get_header_value("upgrade") == "h2")
+                        {
+                        // TODO(ipkn): HTTP/2
+                        // currently, ignore upgrade header
+                        }
+                    }
+                    else if (req.get_header_value("upgrade") == "h2c")
+                    {
+                        // TODO(ipkn): HTTP/2
                         // currently, ignore upgrade header
                     }
+#else
+                    if (req.get_header_value("upgrade") == "h2c")
+                    {
+                        // TODO(ipkn): HTTP/2
+                        // currently, ignore upgrade header
+                    }
+#endif
                     else
                     {
                         close_connection_ = true;
@@ -302,8 +302,7 @@ namespace crow
                 }
             }
 
-            CROW_LOG_INFO << "Request: " << boost::lexical_cast<std::string>(adaptor_.remote_endpoint()) << " " << this << " HTTP/" << parser_.http_major << "." << parser_.http_minor << ' '
-                          << method_name(req.method) << " " << req.url;
+            CROW_LOG_INFO << "Request: " << boost::lexical_cast<std::string>(adaptor_.remote_endpoint()) << " " << this << " HTTP/" << (char)(req.http_ver_major + 48) << "." << (char)(req.http_ver_minor + 48) << ' ' << method_name(req.method) << " " << req.url;
 
 
             need_to_call_after_handlers_ = false;
@@ -420,7 +419,7 @@ namespace crow
                 //delete this;
                 return;
             }
-
+            // TODO(EDev): HTTP version in status codes should be dynamic
             // Keep in sync with common.h/status
             static std::unordered_map<int, std::string> statusCodes = {
               {status::CONTINUE, "HTTP/1.1 100 Continue\r\n"},
@@ -465,8 +464,7 @@ namespace crow
               {status::VARIANT_ALSO_NEGOTIATES, "HTTP/1.1 506 Variant Also Negotiates\r\n"},
             };
 
-            static std::string seperator = ": ";
-            static std::string crlf = "\r\n";
+            static const std::string seperator = ": ";
 
             buffers_.clear();
             buffers_.reserve(4 * (res.headers.size() + 5) + 3);
@@ -538,6 +536,16 @@ namespace crow
                     do_write_sync(buffers);
                 }
             }
+            is_writing = false;
+            if (close_connection_)
+            {
+                //boost::asio::socket_base::linger option(true, 30);
+                //adaptor_.raw_socket().set_option(option);
+                adaptor_.shutdown_readwrite();
+                adaptor_.close();
+                //CROW_LOG_DEBUG << this << " from write (sync)(1)";
+                check_destroy();
+            }
 
             res.end();
             res.clear();
@@ -587,6 +595,16 @@ namespace crow
                     buffers.push_back(boost::asio::buffer(buf));
                     do_write_sync(buffers);
                 }
+                is_writing = false;
+                if (close_connection_)
+                {
+                    //boost::asio::socket_base::linger option(true, 30);
+                    //adaptor_.raw_socket().set_option(option);
+                    adaptor_.shutdown_readwrite();
+                    adaptor_.close();
+                    //CROW_LOG_DEBUG << this << " from write (sync)(1)";
+                    check_destroy();
+                }
 
                 res.end();
                 res.clear();
@@ -618,7 +636,7 @@ namespace crow
                       adaptor_.shutdown_read();
                       adaptor_.close();
                       is_reading = false;
-                      CROW_LOG_DEBUG << this << " from read(1)";
+                      CROW_LOG_DEBUG << this << " from read(1) with description: \"" << http_errno_description(static_cast<http_errno>(parser_.http_errno)) << '\"';
                       check_destroy();
                   }
                   else if (close_connection_)
@@ -676,13 +694,6 @@ namespace crow
             boost::asio::write(adaptor_.socket(), buffers, [&](std::error_code ec, std::size_t) {
                 if (!ec)
                 {
-                    if (close_connection_)
-                    {
-                        adaptor_.shutdown_write();
-                        adaptor_.close();
-                        CROW_LOG_DEBUG << this << " from write (sync)(1)";
-                        check_destroy();
-                    }
                     return false;
                 }
                 else

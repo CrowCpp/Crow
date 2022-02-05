@@ -10,7 +10,7 @@
 
 using namespace boost;
 
-//TODO SSL test with .pem file
+// TODO(EDev): SSL test with .pem file
 TEST_CASE("SSL")
 {
     static char buf[2048];

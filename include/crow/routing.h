@@ -19,7 +19,7 @@
 namespace crow
 {
 
-    constexpr const uint16_t INVALID_BP_ID{0xFFFF};
+    constexpr const uint16_t INVALID_BP_ID{((uint16_t)-1)};
 
     /// A base class for all rules.
 
@@ -1399,7 +1399,7 @@ namespace crow
                 CROW_LOG_INFO << "Redirecting to a url with trailing slash: " << req.url;
                 res = response(301);
 
-                // TODO absolute url building
+                // TODO(ipkn) absolute url building
                 if (req.get_header_value("Host").empty())
                 {
                     res.add_header("Location", req.url + "/");
@@ -1515,7 +1515,7 @@ namespace crow
             else if (req.method == HTTPMethod::Head)
             {
                 method_actual = HTTPMethod::Get;
-                res.is_head_response = true;
+                res.skip_body = true;
             }
             else if (req.method == HTTPMethod::Options)
             {
@@ -1601,7 +1601,7 @@ namespace crow
                 CROW_LOG_INFO << "Redirecting to a url with trailing slash: " << req.url;
                 res = response(301);
 
-                // TODO absolute url building
+                // TODO(ipkn) absolute url building
                 if (req.get_header_value("Host").empty())
                 {
                     res.add_header("Location", req.url + "/");

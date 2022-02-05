@@ -17,16 +17,9 @@
 #include <boost/operators.hpp>
 #include <vector>
 
+#include "crow/common.h"
 #include "crow/settings.h"
 #include "crow/returnable.h"
-
-#if defined(__GNUG__) || defined(__clang__)
-#define crow_json_likely(x) __builtin_expect(x, 1)
-#define crow_json_unlikely(x) __builtin_expect(x, 0)
-#else
-#define crow_json_likely(x) x
-#define crow_json_unlikely(x) x
-#endif
 
 
 namespace crow
@@ -830,7 +823,7 @@ namespace crow
 
                 bool consume(char c)
                 {
-                    if (crow_json_unlikely(*data != c))
+                    if (CROW_UNLIKELY(*data != c))
                         return false;
                     data++;
                     return true;
@@ -844,13 +837,13 @@ namespace crow
 
                 rvalue decode_string()
                 {
-                    if (crow_json_unlikely(!consume('"')))
+                    if (CROW_UNLIKELY(!consume('"')))
                         return {};
                     char* start = data;
                     uint8_t has_escaping = 0;
                     while (1)
                     {
-                        if (crow_json_likely(*data != '"' && *data != '\\' && *data != '\0'))
+                        if (CROW_LIKELY(*data != '"' && *data != '\\' && *data != '\0'))
                         {
                             data++;
                         }
@@ -905,13 +898,13 @@ namespace crow
                 rvalue decode_list()
                 {
                     rvalue ret(type::List);
-                    if (crow_json_unlikely(!consume('[')))
+                    if (CROW_UNLIKELY(!consume('[')))
                     {
                         ret.set_error();
                         return ret;
                     }
                     ws_skip();
-                    if (crow_json_unlikely(*data == ']'))
+                    if (CROW_UNLIKELY(*data == ']'))
                     {
                         data++;
                         return ret;
@@ -920,7 +913,7 @@ namespace crow
                     while (1)
                     {
                         auto v = decode_value();
-                        if (crow_json_unlikely(!v))
+                        if (CROW_UNLIKELY(!v))
                         {
                             ret.set_error();
                             break;
@@ -932,7 +925,7 @@ namespace crow
                             data++;
                             break;
                         }
-                        if (crow_json_unlikely(!consume(',')))
+                        if (CROW_UNLIKELY(!consume(',')))
                         {
                             ret.set_error();
                             break;
@@ -957,7 +950,7 @@ namespace crow
                         DigitsAfterE,
                         Invalid,
                     } state{Minus};
-                    while (crow_json_likely(state != Invalid))
+                    while (CROW_LIKELY(state != Invalid))
                     {
                         switch (*data)
                         {
@@ -1054,7 +1047,7 @@ namespace crow
                                     return {};*/
                                 break;
                             default:
-                                if (crow_json_likely(state == NumberParsingState::ZeroFirst ||
+                                if (CROW_LIKELY(state == NumberParsingState::ZeroFirst ||
                                                      state == NumberParsingState::Digits ||
                                                      state == NumberParsingState::DigitsAfterPoints ||
                                                      state == NumberParsingState::DigitsAfterE))
@@ -1125,7 +1118,7 @@ namespace crow
                 rvalue decode_object()
                 {
                     rvalue ret(type::Object);
-                    if (crow_json_unlikely(!consume('{')))
+                    if (CROW_UNLIKELY(!consume('{')))
                     {
                         ret.set_error();
                         return ret;
@@ -1133,7 +1126,7 @@ namespace crow
 
                     ws_skip();
 
-                    if (crow_json_unlikely(*data == '}'))
+                    if (CROW_UNLIKELY(*data == '}'))
                     {
                         data++;
                         return ret;
@@ -1142,26 +1135,26 @@ namespace crow
                     while (1)
                     {
                         auto t = decode_string();
-                        if (crow_json_unlikely(!t))
+                        if (CROW_UNLIKELY(!t))
                         {
                             ret.set_error();
                             break;
                         }
 
                         ws_skip();
-                        if (crow_json_unlikely(!consume(':')))
+                        if (CROW_UNLIKELY(!consume(':')))
                         {
                             ret.set_error();
                             break;
                         }
 
-                        // TODO caching key to speed up (flyweight?)
+                        // TODO(ipkn) caching key to speed up (flyweight?)
                         // I have no idea how flyweight could apply here, but maybe some speedup can happen if we stopped checking type since decode_string returns a string anyway
                         auto key = t.s();
 
                         ws_skip();
                         auto v = decode_value();
-                        if (crow_json_unlikely(!v))
+                        if (CROW_UNLIKELY(!v))
                         {
                             ret.set_error();
                             break;
@@ -1170,12 +1163,12 @@ namespace crow
 
                         v.key_ = std::move(key);
                         ret.emplace_back(std::move(v));
-                        if (crow_json_unlikely(*data == '}'))
+                        if (CROW_UNLIKELY(*data == '}'))
                         {
                             data++;
                             break;
                         }
-                        if (crow_json_unlikely(!consume(',')))
+                        if (CROW_UNLIKELY(!consume(',')))
                         {
                             ret.set_error();
                             break;
@@ -1895,6 +1888,3 @@ namespace crow
         //}
     } // namespace json
 } // namespace crow
-
-#undef crow_json_likely
-#undef crow_json_unlikely

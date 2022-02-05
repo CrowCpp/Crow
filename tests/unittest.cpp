@@ -624,7 +624,7 @@ TEST_CASE("json_read")
     CHECK(1 == x.size());
     CHECK(false == x.has("mess"));
     REQUIRE_THROWS(x["mess"]);
-    // TODO returning false is better than exception
+    // TODO(ipkn) returning false is better than exception
     // ASSERT_THROW(3 == x["message"]);
     CHECK(12 == x["message"].size());
 
@@ -823,7 +823,7 @@ TEST_CASE("json_copy_r_to_w_to_w_to_r")
     CHECK("baz" == x["obj"]["other"]);
     CHECK("other" == x["obj"]["other"].key());
 } // json_copy_r_to_w_to_w_to_r
-//TODO maybe combine these
+//TODO(EDev): maybe combine these
 
 TEST_CASE("json::wvalue::wvalue(bool)")
 {
@@ -1779,16 +1779,14 @@ TEST_CASE("send_file")
         response res;
 
         req.url = "/jpg";
+        req.http_ver_major = 1;
 
         app.handle(req, res);
 
         CHECK(200 == res.code);
         CHECK("image/jpeg" == res.headers.find("Content-Type")->second);
-        CHECK(to_string(statbuf.st_size) ==
-              res.headers.find("Content-Length")->second);
+        CHECK(to_string(statbuf.st_size) == res.headers.find("Content-Length")->second);
     }
-
-    //TODO test content
 } // send_file
 
 TEST_CASE("stream_response")
@@ -1825,7 +1823,7 @@ TEST_CASE("stream_response")
 
         //Total bytes received
         unsigned int received = 0;
-        sendmsg = "GET /test\r\n\r\n";
+        sendmsg = "GET /test HTTP/1.0\r\n\r\n";
         {
             asio::streambuf b;
 
@@ -1859,7 +1857,7 @@ TEST_CASE("stream_response")
 
                 CHECK(key_response.substr(received - n, n) == s);
 
-                std::this_thread::sleep_for(std::chrono::milliseconds(20));
+                //std::this_thread::sleep_for(std::chrono::milliseconds(20));
             }
         }
         app.stop();
@@ -2452,7 +2450,7 @@ TEST_CASE("get_port")
 
     const std::uint16_t port = 12345;
 
-    std::thread runTest([&]() {
+    auto _ = async(launch::async, [&] {
         app.port(port).run();
     });
 
@@ -2460,7 +2458,6 @@ TEST_CASE("get_port")
     CHECK(app.port() == port);
     app.stop();
 
-    runTest.join();
 } // get_port
 
 TEST_CASE("timeout")
