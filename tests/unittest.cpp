@@ -2435,14 +2435,43 @@ TEST_CASE("base64")
     CHECK(crow::utility::base64encode((unsigned char*)sample_bin2, 4) == sample_bin2_enc);
 
 
+    CHECK(crow::utility::base64decode(sample_base64) == sample_text);
     CHECK(crow::utility::base64decode(sample_base64, sample_base64.length()) == sample_text);
     CHECK(crow::utility::base64decode(sample_bin_enc, 8) == std::string(reinterpret_cast<char const*>(sample_bin)));
-    CHECK(crow::utility::base64decode(sample_bin_enc_url, 8, true) == std::string(reinterpret_cast<char const*>(sample_bin)));
+    CHECK(crow::utility::base64decode(sample_bin_enc_url, 8) == std::string(reinterpret_cast<char const*>(sample_bin)));
     CHECK(crow::utility::base64decode(sample_bin1_enc, 8) == std::string(reinterpret_cast<char const*>(sample_bin1)).substr(0, 5));
     CHECK(crow::utility::base64decode(sample_bin1_enc_np, 7) == std::string(reinterpret_cast<char const*>(sample_bin1)).substr(0, 5));
     CHECK(crow::utility::base64decode(sample_bin2_enc, 8) == std::string(reinterpret_cast<char const*>(sample_bin2)).substr(0, 4));
     CHECK(crow::utility::base64decode(sample_bin2_enc_np, 6) == std::string(reinterpret_cast<char const*>(sample_bin2)).substr(0, 4));
 } // base64
+
+TEST_CASE("sanitize_filename")
+{
+    auto sanitize_filename = [](string s) {
+        crow::utility::sanitize_filename(s);
+        return s;
+    };
+    CHECK(sanitize_filename("abc/def") == "abc/def");
+    CHECK(sanitize_filename("abc/../def") == "abc/_/def");
+    CHECK(sanitize_filename("abc/..\\..\\..//.../def") == "abc/_\\_\\_//_./def");
+    CHECK(sanitize_filename("abc/..../def") == "abc/_../def");
+    CHECK(sanitize_filename("abc/x../def") == "abc/x../def");
+    CHECK(sanitize_filename("../etc/passwd") == "_/etc/passwd");
+    CHECK(sanitize_filename("abc/AUX") == "abc/_");
+    CHECK(sanitize_filename("abc/AUX/foo") == "abc/_/foo");
+    CHECK(sanitize_filename("abc/AUX:") == "abc/__");
+    CHECK(sanitize_filename("abc/AUXxy") == "abc/AUXxy");
+    CHECK(sanitize_filename("abc/AUX.xy") == "abc/_.xy");
+    CHECK(sanitize_filename("abc/NUL") == "abc/_");
+    CHECK(sanitize_filename("abc/NU") == "abc/NU");
+    CHECK(sanitize_filename("abc/NuL") == "abc/_");
+    CHECK(sanitize_filename("abc/LPT1\\") == "abc/_\\");
+    CHECK(sanitize_filename("abc/COM1") == "abc/_");
+    CHECK(sanitize_filename("ab?<>:*|\"cd") == "ab_______cd");
+    CHECK(sanitize_filename("abc/COM9") == "abc/_");
+    CHECK(sanitize_filename("abc/COM") == "abc/COM");
+    CHECK(sanitize_filename("abc/CON") == "abc/_");
+}
 
 TEST_CASE("get_port")
 {

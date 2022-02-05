@@ -9,8 +9,6 @@
 #include <string>
 #include <unordered_map>
 
-#include <boost/algorithm/string.hpp>
-
 #include "crow/settings.h"
 
 namespace crow
@@ -539,19 +537,20 @@ namespace crow
             return base64encode((const unsigned char*)data.c_str(), size, "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_");
         }
 
-        inline static std::string base64decode(const char* data, size_t size, bool urlsafe = false)
+        inline static std::string base64decode(const char* data, size_t size)
         {
-            // clang-format off
-            std::unordered_map<char, unsigned char> key ({
-            {'A',  0},{'B',  1},{'C',  2},{'D',  3},{'E',  4},{'F',  5},{'G',  6},{'H',  7},{'I',  8},{'J',  9},
-            {'K', 10},{'L', 11},{'M', 12},{'N', 13},{'O', 14},{'P', 15},{'Q', 16},{'R', 17},{'S', 18},{'T', 19},
-            {'U', 20},{'V', 21},{'W', 22},{'X', 23},{'Y', 24},{'Z', 25},{'a', 26},{'b', 27},{'c', 28},{'d', 29},
-            {'e', 30},{'f', 31},{'g', 32},{'h', 33},{'i', 34},{'j', 35},{'k', 36},{'l', 37},{'m', 38},{'n', 39},
-            {'o', 40},{'p', 41},{'q', 42},{'r', 43},{'s', 44},{'t', 45},{'u', 46},{'v', 47},{'w', 48},{'x', 49},
-            {'y', 50},{'z', 51},{'0', 52},{'1', 53},{'2', 54},{'3', 55},{'4', 56},{'5', 57},{'6', 58},{'7', 59},
-            {'8', 60},{'9', 61},{urlsafe ? '-' : '+', 62},{urlsafe ? '_' : '/', 63}});
+            // We accept both regular and url encoding here, as there does not seem to be any downside to that.
+            // If we want to distinguish that we should use +/ for non-url and -_ for url.
 
-            // clang-format on
+            // Mapping logic from characters to [0-63]
+            auto key = [](char c) -> unsigned char {
+                if ((c >= 'A') && (c <= 'Z')) return c - 'A';
+                if ((c >= 'a') && (c <= 'z')) return c - 'a' + 26;
+                if ((c >= '0') && (c <= '9')) return c - '0' + 52;
+                if ((c == '+') || (c == '-')) return 62;
+                if ((c == '/') || (c == '_')) return 63;
+                return 0;
+            };
 
             // Not padded
             if (size % 4 == 2)             // missing last 2 characters
@@ -581,14 +580,14 @@ namespace crow
             while (size >= 3)
             {
                 // dec_char1 = (char1 shifted 2 bits to the left) OR ((char2 AND 00110000) shifted 4 bits to the right))
-                odd = key[*data++];
-                even = key[*data++];
+                odd = key(*data++);
+                even = key(*data++);
                 *it++ = (odd << 2) | ((even & 0x30) >> 4);
                 // dec_char2 = ((char2 AND 00001111) shifted 4 bits left) OR ((char3 AND 00111100) shifted 2 bits right))
-                odd = key[*data++];
+                odd = key(*data++);
                 *it++ = ((even & 0x0F) << 4) | ((odd & 0x3C) >> 2);
                 // dec_char3 = ((char3 AND 00000011) shifted 6 bits left) OR (char4)
-                even = key[*data++];
+                even = key(*data++);
                 *it++ = ((odd & 0x03) << 6) | (even);
 
                 size -= 3;
@@ -596,149 +595,108 @@ namespace crow
             if (size == 2)
             {
                 // d_char1 = (char1 shifted 2 bits to the left) OR ((char2 AND 00110000) shifted 4 bits to the right))
-                odd = key[*data++];
-                even = key[*data++];
+                odd = key(*data++);
+                even = key(*data++);
                 *it++ = (odd << 2) | ((even & 0x30) >> 4);
                 // d_char2 = ((char2 AND 00001111) shifted 4 bits left) OR ((char3 AND 00111100) shifted 2 bits right))
-                odd = key[*data++];
+                odd = key(*data++);
                 *it++ = ((even & 0x0F) << 4) | ((odd & 0x3C) >> 2);
             }
             else if (size == 1)
             {
                 // d_char1 = (char1 shifted 2 bits to the left) OR ((char2 AND 00110000) shifted 4 bits to the right))
-                odd = key[*data++];
-                even = key[*data++];
+                odd = key(*data++);
+                even = key(*data++);
                 *it++ = (odd << 2) | ((even & 0x30) >> 4);
             }
             return ret;
         }
 
-        inline static std::string base64decode(std::string data, size_t size, bool urlsafe = false)
+        inline static std::string base64decode(const std::string& data, size_t size)
         {
-            return base64decode(data.c_str(), size, urlsafe);
+            return base64decode(data.data(), size);
         }
+
+        inline static std::string base64decode(const std::string& data)
+        {
+            return base64decode(data.data(), data.length());
+        }
+
 
         inline static void sanitize_filename(std::string& data, char replacement = '_')
         {
-            unsigned char i = 0, length_limit;
+            if (data.length() > 255)
+                data.resize(255);
 
-            length_limit = data.length() < 255 ? data.length() : 255;
-            data = data.substr(0, length_limit);
-
-            for (; i < length_limit; i++)
-            {
-                switch ((unsigned char)data[i])
+            static const auto toUpper = [](char c) {
+                return ((c >= 'a') && (c <= 'z')) ? (c - ('a' - 'A')) : c;
+            };
+            // Check for special device names. The Windows behavior is really odd here, it will consider both AUX and AUX.txt
+            // a special device. Thus we search for the string (case-insensitive), and then check if the string ends or if
+            // is has a dangerous follow up character (.:\/)
+            auto sanitizeSpecialFile = [](std::string& source, unsigned ofs, const char* pattern, bool includeNumber, char replacement) {
+                unsigned i = ofs, len = source.length();
+                const char* p = pattern;
+                while (*p)
                 {
-                    // WARNING While I can't see how using '\' or '/' would cause a problem, it still warrants an investigation
-                    //case '/':
-                    case '?':
-                    case '<':
-                    case '>':
-                    //case '\\':
-                    case ':':
-                    case '*':
-                    case '|':
-                    case '\"':
+                    if (i >= len) return;
+                    if (toUpper(source[i]) != *p) return;
+                    ++i;
+                    ++p;
+                }
+                if (includeNumber)
+                {
+                    if ((i >= len) || (source[i] < '1') || (source[i] > '9')) return;
+                    ++i;
+                }
+                if ((i >= len) || (source[i] == '.') || (source[i] == ':') || (source[i] == '/') || (source[i] == '\\'))
+                {
+                    source.erase(ofs + 1, (i - ofs) - 1);
+                    source[ofs] = replacement;
+                }
+            };
+            bool checkForSpecialEntries = true;
+            for (unsigned i = 0; i < data.length(); ++i)
+            {
+                // Recognize directory traversals and the special devices CON/PRN/AUX/NULL/COM[1-]/LPT[1-9]
+                if (checkForSpecialEntries)
+                {
+                    checkForSpecialEntries = false;
+                    switch (toUpper(data[i]))
+                    {
+                        case 'A':
+                            sanitizeSpecialFile(data, i, "AUX", false, replacement);
+                            break;
+                        case 'C':
+                            sanitizeSpecialFile(data, i, "CON", false, replacement);
+                            sanitizeSpecialFile(data, i, "COM", true, replacement);
+                            break;
+                        case 'L':
+                            sanitizeSpecialFile(data, i, "LPT", true, replacement);
+                            break;
+                        case 'N':
+                            sanitizeSpecialFile(data, i, "NUL", false, replacement);
+                            break;
+                        case 'P':
+                            sanitizeSpecialFile(data, i, "PRN", false, replacement);
+                            break;
+                        case '.':
+                            sanitizeSpecialFile(data, i, "..", false, replacement);
+                            break;
+                    }
+                }
 
-                    case 0x00:
-                    case 0x01:
-                    case 0x02:
-                    case 0x03:
-                    case 0x04:
-                    case 0x05:
-                    case 0x06:
-                    case 0x07:
-                    case 0x08:
-                    case 0x09:
-                    case 0x0a:
-                    case 0x0b:
-                    case 0x0c:
-                    case 0x0d:
-                    case 0x0e:
-                    case 0x0f:
-                    case 0x10:
-                    case 0x11:
-                    case 0x12:
-                    case 0x13:
-                    case 0x14:
-                    case 0x15:
-                    case 0x16:
-                    case 0x17:
-                    case 0x18:
-                    case 0x19:
-                    case 0x1a:
-                    case 0x1b:
-                    case 0x1c:
-                    case 0x1d:
-                    case 0x1e:
-                    case 0x1f:
-
-                    case 0x80:
-                    case 0x81:
-                    case 0x82:
-                    case 0x83:
-                    case 0x84:
-                    case 0x85:
-                    case 0x86:
-                    case 0x87:
-                    case 0x88:
-                    case 0x89:
-                    case 0x8a:
-                    case 0x8b:
-                    case 0x8c:
-                    case 0x8d:
-                    case 0x8e:
-                    case 0x8f:
-                    case 0x90:
-                    case 0x91:
-                    case 0x92:
-                    case 0x93:
-                    case 0x94:
-                    case 0x95:
-                    case 0x96:
-                    case 0x97:
-                    case 0x98:
-                    case 0x99:
-                    case 0x9a:
-                    case 0x9b:
-                    case 0x9c:
-                    case 0x9d:
-                    case 0x9e:
-                    case 0x9f:
-
-                        data[i] = replacement;
-                        break;
-
-                    default:
-                        break;
+                // Sanitize individual characters
+                unsigned char c = data[i];
+                if ((c < ' ') || ((c >= 0x80) && (c <= 0x9F)) || (c == '?') || (c == '<') || (c == '>') || (c == ':') || (c == '*') || (c == '|') || (c == '\"'))
+                {
+                    data[i] = replacement;
+                }
+                else if ((c == '/') || (c == '\\'))
+                {
+                    checkForSpecialEntries = true;
                 }
             }
-            std::string str_replacement(1, replacement);
-
-            boost::ireplace_all(data, "..", str_replacement);
-
-            boost::ireplace_all(data, "CON", str_replacement);
-            boost::ireplace_all(data, "PRN", str_replacement);
-            boost::ireplace_all(data, "AUX", str_replacement);
-            boost::ireplace_all(data, "NUL", str_replacement);
-            boost::ireplace_all(data, "COM1", str_replacement);
-            boost::ireplace_all(data, "COM2", str_replacement);
-            boost::ireplace_all(data, "COM3", str_replacement);
-            boost::ireplace_all(data, "COM4", str_replacement);
-            boost::ireplace_all(data, "COM5", str_replacement);
-            boost::ireplace_all(data, "COM6", str_replacement);
-            boost::ireplace_all(data, "COM7", str_replacement);
-            boost::ireplace_all(data, "COM8", str_replacement);
-            boost::ireplace_all(data, "COM9", str_replacement);
-            boost::ireplace_all(data, "LPT1", str_replacement);
-            boost::ireplace_all(data, "LPT2", str_replacement);
-            boost::ireplace_all(data, "LPT3", str_replacement);
-            boost::ireplace_all(data, "LPT4", str_replacement);
-            boost::ireplace_all(data, "LPT5", str_replacement);
-            boost::ireplace_all(data, "LPT6", str_replacement);
-            boost::ireplace_all(data, "LPT7", str_replacement);
-            boost::ireplace_all(data, "LPT8", str_replacement);
-            boost::ireplace_all(data, "LPT9", str_replacement);
 
         }
 
