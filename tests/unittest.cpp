@@ -1141,12 +1141,14 @@ TEST_CASE("template_basic")
 
 TEST_CASE("template_function")
 {
-  auto t = crow::mustache::compile("attack of {{func}}");
-  crow::mustache::context ctx;
-  ctx["name"] = "killer tomatoes";
-  ctx["func"] = [&](std::string){return std::string("{{name}}, IN SPACE!");};
-  auto result = t.render(ctx);
-  CHECK("attack of killer tomatoes, IN SPACE!" == result);
+    auto t = crow::mustache::compile("attack of {{func}}");
+    crow::mustache::context ctx;
+    ctx["name"] = "killer tomatoes";
+    ctx["func"] = [&](std::string) {
+        return std::string("{{name}}, IN SPACE!");
+    };
+    auto result = t.render(ctx);
+    CHECK("attack of killer tomatoes, IN SPACE!" == result);
 }
 
 TEST_CASE("template_load")
@@ -2135,14 +2137,14 @@ TEST_CASE("zlib_compression")
             std::string response_deflate;
             std::string response_gzip;
 
-            for (unsigned i{0}; i<2048; i++)
+            for (unsigned i{0}; i < 2048; i++)
             {
                 if (buf_deflate[i] == 0)
                 {
                     bool end = true;
-                    for(unsigned j=i;j<2048;j++)
+                    for (unsigned j = i; j < 2048; j++)
                     {
-                        if (buf_deflate[j]!=0)
+                        if (buf_deflate[j] != 0)
                         {
                             end = false;
                             break;
@@ -2158,14 +2160,14 @@ TEST_CASE("zlib_compression")
                 response_deflate.push_back(buf_deflate[i]);
             }
 
-            for (unsigned i{0}; i<2048; i++)
+            for (unsigned i{0}; i < 2048; i++)
             {
                 if (buf_gzip[i] == 0)
                 {
                     bool end = true;
-                    for(unsigned j=i;j<2048;j++)
+                    for (unsigned j = i; j < 2048; j++)
                     {
-                        if (buf_gzip[j]!=0)
+                        if (buf_gzip[j] != 0)
                         {
                             end = false;
                             break;
@@ -2181,8 +2183,8 @@ TEST_CASE("zlib_compression")
                 response_gzip.push_back(buf_gzip[i]);
             }
 
-            response_deflate = inflate_string(response_deflate.substr(response_deflate.find("\r\n\r\n")+4));
-            response_gzip = inflate_string(response_gzip.substr(response_gzip.find("\r\n\r\n")+4));
+            response_deflate = inflate_string(response_deflate.substr(response_deflate.find("\r\n\r\n") + 4));
+            response_gzip = inflate_string(response_gzip.substr(response_gzip.find("\r\n\r\n") + 4));
 
             socket[0].close();
             socket[1].close();

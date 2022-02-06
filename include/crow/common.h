@@ -283,6 +283,7 @@ namespace crow
     }
 } // namespace crow
 
+// clang-format off
 #ifndef CROW_MSVC_WORKAROUND
 constexpr crow::HTTPMethod operator"" _method(const char* str, size_t /*len*/)
 {
@@ -330,3 +331,4 @@ constexpr crow::HTTPMethod operator"" _method(const char* str, size_t /*len*/)
                                                            throw std::runtime_error("invalid http method");
 }
 #endif
+// clang-format on

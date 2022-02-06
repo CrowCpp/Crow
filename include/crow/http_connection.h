@@ -277,8 +277,8 @@ namespace crow
                     {
                         if (req.get_header_value("upgrade") == "h2")
                         {
-                        // TODO(ipkn): HTTP/2
-                        // currently, ignore upgrade header
+                            // TODO(ipkn): HTTP/2
+                            // currently, ignore upgrade header
                         }
                     }
                     else if (req.get_header_value("upgrade") == "h2c")

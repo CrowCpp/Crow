@@ -11,6 +11,7 @@
  * 350258965909f249f9c59823aac240313e0d0120 (cannot be implemented due to upgrade)
  */
 
+// clang-format off
 #pragma once
 #include "crow/common.h"
 namespace crow
@@ -2013,3 +2014,5 @@ http_parser_set_max_header_size(uint32_t size) {
 
 }
 }
+
+// clang-format on

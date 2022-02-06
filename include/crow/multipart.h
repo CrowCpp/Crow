@@ -96,10 +96,10 @@ namespace crow
                 size_t found = header.find("boundary=");
                 if (found)
                 {
-                    std::string to_return (header.substr(found + 9));
+                    std::string to_return(header.substr(found + 9));
                     if (to_return[0] == '\"')
                     {
-                        to_return = to_return.substr(1, to_return.length()-2);
+                        to_return = to_return.substr(1, to_return.length() - 2);
                     }
                     return to_return;
                 }

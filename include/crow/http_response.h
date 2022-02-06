@@ -32,7 +32,7 @@ namespace crow
 #ifdef CROW_ENABLE_COMPRESSION
         bool compressed = true; ///< If compression is enabled and this is false, the individual response will not be compressed.
 #endif
-        bool skip_body = false;     ///< Whether this is a response to a HEAD request.
+        bool skip_body = false;            ///< Whether this is a response to a HEAD request.
         bool manual_length_header = false; ///< Whether Crow should automatically add a "Content-Length" header.
 
         /// Set the value of an existing header in the response.

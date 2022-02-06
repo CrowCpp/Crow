@@ -1051,9 +1051,9 @@ namespace crow
                                 break;
                             default:
                                 if (CROW_LIKELY(state == NumberParsingState::ZeroFirst ||
-                                                     state == NumberParsingState::Digits ||
-                                                     state == NumberParsingState::DigitsAfterPoints ||
-                                                     state == NumberParsingState::DigitsAfterE))
+                                                state == NumberParsingState::Digits ||
+                                                state == NumberParsingState::DigitsAfterPoints ||
+                                                state == NumberParsingState::DigitsAfterE))
                                     return {type::Number, start, data};
                                 else
                                     return {};

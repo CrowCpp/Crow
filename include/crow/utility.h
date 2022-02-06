@@ -697,7 +697,6 @@ namespace crow
                     checkForSpecialEntries = true;
                 }
             }
-
         }
 
     } // namespace utility
