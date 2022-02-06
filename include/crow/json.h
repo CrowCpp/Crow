@@ -1774,7 +1774,7 @@ namespace crow
                     {
                         if (v.nt == num_type::Floating_point)
                         {
-                            if(isnan(v.num.d) || isinf(v.num.d))
+                            if (isnan(v.num.d) || isinf(v.num.d))
                             {
                                 CROW_LOG_WARNING << "Invalid JSON value detected (" << v.num.d << "), ignoring";
                                 break;
