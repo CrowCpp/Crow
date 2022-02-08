@@ -16,7 +16,7 @@
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/operators.hpp>
 #include <vector>
-#include <cmath>
+#include <math.h>
 
 #include "crow/settings.h"
 #include "crow/returnable.h"
@@ -1776,7 +1776,8 @@ namespace crow
                         {
                             if (isnan(v.num.d) || isinf(v.num.d))
                             {
-                                CROW_LOG_WARNING << "Invalid JSON value detected (" << v.num.d << "), ignoring";
+                                out += "null";
+                                CROW_LOG_WARNING << "Invalid JSON value detected (" << v.num.d << "), value set to null";
                                 break;
                             }
 #ifdef _MSC_VER
