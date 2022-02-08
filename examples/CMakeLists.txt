@@ -79,6 +79,10 @@ add_executable(example_blueprint example_blueprint.cpp)
 add_warnings_optimizations(example_blueprint)
 target_link_libraries(example_blueprint PUBLIC Crow::Crow)
 
+add_executable(example_middleware example_middleware.cpp)
+add_warnings_optimizations(example_middleware)
+target_link_libraries(example_middleware PUBLIC Crow::Crow)
+
 if(MSVC)
   add_executable(example_vs example_vs.cpp)
   add_warnings_optimizations(example_vs)
