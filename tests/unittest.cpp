@@ -1394,6 +1394,8 @@ struct LocalSecretMiddleware : crow::ILocalMiddleware
 
 TEST_CASE("local_middleware")
 {
+    static char buf[2048];
+
     App<LocalSecretMiddleware> app;
 
     CROW_ROUTE(app, "/")
@@ -1408,23 +1410,36 @@ TEST_CASE("local_middleware")
 
     app.validate();
 
-    // Local middleware is handled at router level, so we don't have to send requests manually
+    auto _ = async(launch::async,
+                   [&] {
+                       app.bindaddr(LOCALHOST_ADDRESS).port(45451).run();
+                   });
+    app.wait_for_server_start();
+    asio::io_service is;
+
     {
-        request req;
-        response res;
-        req.url = "/";
-        app.handle(req, res);
-        CHECK(200 == res.code);
+        asio::ip::tcp::socket c(is);
+        c.connect(asio::ip::tcp::endpoint(
+          asio::ip::address::from_string(LOCALHOST_ADDRESS), 45451));
+        c.send(asio::buffer("GET /\r\n\r\n"));
+        c.receive(asio::buffer(buf, 2048));
+        c.close();
+
+        CHECK(std::string(buf).find("200") != std::string::npos);
     }
 
     {
-        request req;
-        response res;
-        req.url = "/secret";
-        app.handle(req, res);
-        CHECK(403 == res.code);
+        asio::ip::tcp::socket c(is);
+        c.connect(asio::ip::tcp::endpoint(
+          asio::ip::address::from_string(LOCALHOST_ADDRESS), 45451));
+        c.send(asio::buffer("GET /secret\r\n\r\n"));
+        c.receive(asio::buffer(buf, 2048));
+        c.close();
+
+        CHECK(std::string(buf).find("403") != std::string::npos);
     }
 
+    app.stop();
 } // local_middleware
 
 TEST_CASE("middleware_cookieparser")
