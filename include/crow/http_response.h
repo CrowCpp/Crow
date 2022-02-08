@@ -19,7 +19,8 @@ namespace crow
     template<typename Adaptor, typename Handler, typename... Middlewares>
     class Connection;
 
-    namespace detail {
+    namespace detail
+    {
         template<typename F, typename App, typename... Middlewares>
         struct handler_middleware_wrapper;
     } // namespace detail
