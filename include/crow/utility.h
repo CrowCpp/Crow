@@ -695,7 +695,7 @@ namespace crow
                 else if ((c == '/') || (c == '\\'))
                 {
                     //TODO(EDev): uncomment below once #332 is merged
-                    if (/*CROW_UNLIKELY(*/i == 0/*)*/) //Prevent Unix Absolute Paths (Windows Absolute Paths are prevented with `(c == ':')`)
+                    if (/*CROW_UNLIKELY(*/ i == 0 /*)*/) //Prevent Unix Absolute Paths (Windows Absolute Paths are prevented with `(c == ':')`)
                     {
                         data[i] = replacement;
                     }
