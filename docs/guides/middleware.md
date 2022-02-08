@@ -63,7 +63,7 @@ After this, you can enable it for specific handlers.
 
 ```cpp
 CROW_ROUTE(app, "/with_middleware")
-.middlewares<decltype(app), LocalMiddleware>()
+.CROW_MIDDLEWARES(app, LocalMiddleware)
 ([]() {
     return "Hello world!";
 });

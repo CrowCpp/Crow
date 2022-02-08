@@ -44,7 +44,7 @@ int main()
 
     CROW_ROUTE(app, "/secret")
       // Enable SecretContentGuard for this handler
-      .middlewares<decltype(app), SecretContentGuard>()([]() {
+      .CROW_MIDDLEWARES(app, SecretContentGuard)([]() {
           return "";
       });
 

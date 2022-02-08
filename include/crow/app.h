@@ -29,6 +29,7 @@
 #else
 #define CROW_ROUTE(app, url) app.route<crow::black_magic::get_parameter_tag(url)>(url)
 #define CROW_BP_ROUTE(blueprint, url) blueprint.new_rule_tagged<crow::black_magic::get_parameter_tag(url)>(url)
+#define CROW_MIDDLEWARES(app, ...) middlewares<decltype(app), __VA_ARGS__>()
 #endif
 #define CROW_CATCHALL_ROUTE(app) app.catchall_route()
 #define CROW_BP_CATCHALL_ROUTE(blueprint) blueprint.catchall_rule()
