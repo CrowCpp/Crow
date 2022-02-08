@@ -632,7 +632,9 @@ namespace crow
 
         inline std::string load_text(const std::string& filename)
         {
-            return detail::get_loader_ref()(filename);
+            std::string filename_sanitized(filename);
+            utility::sanitize_filename(filename_sanitized);
+            return detail::get_loader_ref()(filename_sanitized);
         }
 
         inline template_t load(const std::string& filename)
