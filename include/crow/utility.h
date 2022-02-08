@@ -690,6 +690,7 @@ namespace crow
                 unsigned char c = data[i];
                 if ((c < ' ') || ((c >= 0x80) && (c <= 0x9F)) || (c == '?') || (c == '<') || (c == '>') || (c == ':') || (c == '*') || (c == '|') || (c == '\"'))
                 {
+                    if ((c == ':') && (i == 1)) continue; // permits absolute windows path X:\\we\love\windows (or it'll turn into X_\\we\hate\windows
                     data[i] = replacement;
                 }
                 else if ((c == '/') || (c == '\\'))
