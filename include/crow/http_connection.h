@@ -302,7 +302,7 @@ namespace crow
                 }
             }
 
-            CROW_LOG_INFO << "Request: " << boost::lexical_cast<std::string>(adaptor_.remote_endpoint()) << " " << this << " HTTP/" << (char)(req.http_ver_major + 48) << "." << (char)(req.http_ver_minor + 48) << ' ' << method_name(req.method) << " " << req.url;
+            CROW_LOG_INFO << "Request: " << boost::lexical_cast<std::string>(adaptor_.remote_endpoint()) << " " << this << " HTTP/" << (char)(req.http_ver_major + '0') << "." << (char)(req.http_ver_minor + '0') << ' ' << method_name(req.method) << " " << req.url;
 
 
             need_to_call_after_handlers_ = false;
@@ -539,11 +539,9 @@ namespace crow
             is_writing = false;
             if (close_connection_)
             {
-                //boost::asio::socket_base::linger option(true, 30);
-                //adaptor_.raw_socket().set_option(option);
                 adaptor_.shutdown_readwrite();
                 adaptor_.close();
-                //CROW_LOG_DEBUG << this << " from write (sync)(1)";
+                CROW_LOG_DEBUG << this << " from write (static)";
                 check_destroy();
             }
 
@@ -598,11 +596,9 @@ namespace crow
                 is_writing = false;
                 if (close_connection_)
                 {
-                    //boost::asio::socket_base::linger option(true, 30);
-                    //adaptor_.raw_socket().set_option(option);
                     adaptor_.shutdown_readwrite();
                     adaptor_.close();
-                    //CROW_LOG_DEBUG << this << " from write (sync)(1)";
+                    CROW_LOG_DEBUG << this << " from write (res_stream)";
                     check_destroy();
                 }
 

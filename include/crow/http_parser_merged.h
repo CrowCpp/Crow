@@ -125,7 +125,6 @@ enum http_connection_flags // This is basically 7 booleans placed into 1 integer
   CROW_XX(INVALID_CONSTANT, "invalid constant string")                                  \
   CROW_XX(INVALID_INTERNAL_STATE, "encountered unexpected internal state")              \
   CROW_XX(STRICT, "strict mode assertion failed")                                       \
-  /*CROW_XX(PAUSED, "parser is paused")*/ /*There's no need to pause the parser */      \
   CROW_XX(UNKNOWN, "an unknown error occurred")                                         \
   CROW_XX(INVALID_TRANSFER_ENCODING, "request has invalid transfer-encoding")           \
 

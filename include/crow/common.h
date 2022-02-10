@@ -6,15 +6,6 @@
 #include <iostream>
 #include "crow/utility.h"
 
-// TODO(EDev): Adding C++20's [[likely]] and [[unlikely]] attributes might be useful
-#if defined(__GNUG__) || defined(__clang__)
-#define CROW_LIKELY(X) __builtin_expect(!!(X), 1)
-#define CROW_UNLIKELY(X) __builtin_expect(!!(X), 0)
-#else
-#define CROW_LIKELY(X) (X)
-#define CROW_UNLIKELY(X) (X)
-#endif
-
 namespace crow
 {
     const char cr = '\r';

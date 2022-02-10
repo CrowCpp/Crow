@@ -70,17 +70,8 @@ namespace crow
             {
                 self->headers.emplace(std::move(self->header_field), std::move(self->header_value));
             }
-            //NOTE(EDev): it seems that the problem is with crow's policy on closing the connection for HTTP_VERSION < 1.0, the behaviour for that in crow is "don't close the connection, but don't send a keep-alive either"
 
-            // HTTP1.1 = always send keep_alive, HTTP1.0 = only send if header exists, HTTP?.? = never send
-            self->keep_alive = (self->http_major == 1 && self->http_minor == 0) ?
-                                 ((self->flags & F_CONNECTION_KEEP_ALIVE) ? true : false) :
-                                 ((self->http_major == 1 && self->http_minor == 1) ? true : false);
-
-            // HTTP1.1 = only close if close header exists, HTTP1.0 = always close unless keep_alive header exists, HTTP?.?= never close
-            self->close_connection = (self->http_major == 1 && self->http_minor == 0) ?
-                                       ((self->flags & F_CONNECTION_KEEP_ALIVE) ? false : true) :
-                                       ((self->http_major == 1 && self->http_minor == 1) ? ((self->flags & F_CONNECTION_CLOSE) ? true : false) : false);
+            self->set_connection_parameters();
 
             self->process_header();
             return 0;
@@ -155,6 +146,21 @@ namespace crow
         inline void process_message()
         {
             handler_->handle();
+        }
+
+        inline void set_connection_parameters()
+        {
+            //NOTE(EDev): it seems that the problem is with crow's policy on closing the connection for HTTP_VERSION < 1.0, the behaviour for that in crow is "don't close the connection, but don't send a keep-alive either"
+
+            // HTTP1.1 = always send keep_alive, HTTP1.0 = only send if header exists, HTTP?.? = never send
+            keep_alive = (http_major == 1 && http_minor == 0) ?
+                                 ((flags & F_CONNECTION_KEEP_ALIVE) ? true : false) :
+                                 ((http_major == 1 && http_minor == 1) ? true : false);
+
+            // HTTP1.1 = only close if close header exists, HTTP1.0 = always close unless keep_alive header exists, HTTP?.?= never close
+            close_connection = (http_major == 1 && http_minor == 0) ?
+                                       ((flags & F_CONNECTION_KEEP_ALIVE) ? false : true) :
+                                       ((http_major == 1 && http_minor == 1) ? ((flags & F_CONNECTION_CLOSE) ? true : false) : false);
         }
 
         /// Take the parsed HTTP request data and convert it to a \ref crow.request

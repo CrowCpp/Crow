@@ -93,10 +93,11 @@ namespace crow
         private:
             std::string get_boundary(const std::string& header) const
             {
-                size_t found = header.find("boundary=");
+                constexpr char boundary_text[] = "boundary=";
+                size_t found = header.find(boundary_text);
                 if (found)
                 {
-                    std::string to_return(header.substr(found + 9));
+                    std::string to_return(header.substr(found + strlen(boundary_text)));
                     if (to_return[0] == '\"')
                     {
                         to_return = to_return.substr(1, to_return.length() - 2);

@@ -18,7 +18,7 @@
 #include <vector>
 #include <math.h>
 
-#include "crow/common.h"
+#include "crow/utility.h"
 #include "crow/settings.h"
 #include "crow/returnable.h"
 #include "crow/logging.h"
