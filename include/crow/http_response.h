@@ -243,6 +243,7 @@ namespace crow
             else
             {
                 code = 404;
+                file_info.path.clear();
                 this->end();
             }
         }
