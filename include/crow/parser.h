@@ -154,13 +154,13 @@ namespace crow
 
             // HTTP1.1 = always send keep_alive, HTTP1.0 = only send if header exists, HTTP?.? = never send
             keep_alive = (http_major == 1 && http_minor == 0) ?
-                                 ((flags & F_CONNECTION_KEEP_ALIVE) ? true : false) :
-                                 ((http_major == 1 && http_minor == 1) ? true : false);
+                           ((flags & F_CONNECTION_KEEP_ALIVE) ? true : false) :
+                           ((http_major == 1 && http_minor == 1) ? true : false);
 
             // HTTP1.1 = only close if close header exists, HTTP1.0 = always close unless keep_alive header exists, HTTP?.?= never close
             close_connection = (http_major == 1 && http_minor == 0) ?
-                                       ((flags & F_CONNECTION_KEEP_ALIVE) ? false : true) :
-                                       ((http_major == 1 && http_minor == 1) ? ((flags & F_CONNECTION_CLOSE) ? true : false) : false);
+                                 ((flags & F_CONNECTION_KEEP_ALIVE) ? false : true) :
+                                 ((http_major == 1 && http_minor == 1) ? ((flags & F_CONNECTION_CLOSE) ? true : false) : false);
         }
 
         /// Take the parsed HTTP request data and convert it to a \ref crow.request

@@ -702,8 +702,8 @@ namespace crow
                     data[i] = replacement;
                 }
                 else if ((c == '/') || (c == '\\'))
-                    {
-                    if (CROW_UNLIKELY( i == 0 )) //Prevent Unix Absolute Paths (Windows Absolute Paths are prevented with `(c == ':')`)
+                {
+                    if (CROW_UNLIKELY(i == 0)) //Prevent Unix Absolute Paths (Windows Absolute Paths are prevented with `(c == ':')`)
                     {
                         data[i] = replacement;
                     }
@@ -711,9 +711,9 @@ namespace crow
                     {
                         checkForSpecialEntries = true;
                     }
-                    }
                 }
             }
+        }
 
     } // namespace utility
 } // namespace crow
