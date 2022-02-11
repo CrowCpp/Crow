@@ -738,14 +738,24 @@ $(document).ready(function(){initNavTree('mustache_8h_source.html',''); initResi
 <div class="line"><a name="l00637"></a><span class="lineno">  637</span>&#160;            <span class="keywordflow">return</span> detail::get_loader_ref()(filename_sanitized);</div>
 <div class="line"><a name="l00638"></a><span class="lineno">  638</span>&#160;        }</div>
 <div class="line"><a name="l00639"></a><span class="lineno">  639</span>&#160; </div>
-<div class="line"><a name="l00640"></a><span class="lineno">  640</span>&#160;        <span class="keyword">inline</span> template_t load(<span class="keyword">const</span> std::string&amp; filename)</div>
+<div class="line"><a name="l00640"></a><span class="lineno">  640</span>&#160;        <span class="keyword">inline</span> std::string load_text_unsafe(<span class="keyword">const</span> std::string&amp; filename)</div>
 <div class="line"><a name="l00641"></a><span class="lineno">  641</span>&#160;        {</div>
-<div class="line"><a name="l00642"></a><span class="lineno">  642</span>&#160;            std::string filename_sanitized(filename);</div>
-<div class="line"><a name="l00643"></a><span class="lineno">  643</span>&#160;            utility::sanitize_filename(filename_sanitized);</div>
-<div class="line"><a name="l00644"></a><span class="lineno">  644</span>&#160;            <span class="keywordflow">return</span> compile(detail::get_loader_ref()(filename_sanitized));</div>
-<div class="line"><a name="l00645"></a><span class="lineno">  645</span>&#160;        }</div>
-<div class="line"><a name="l00646"></a><span class="lineno">  646</span>&#160;    } <span class="comment">// namespace mustache</span></div>
-<div class="line"><a name="l00647"></a><span class="lineno">  647</span>&#160;} <span class="comment">// namespace crow</span></div>
+<div class="line"><a name="l00642"></a><span class="lineno">  642</span>&#160;            <span class="keywordflow">return</span> detail::get_loader_ref()(filename);</div>
+<div class="line"><a name="l00643"></a><span class="lineno">  643</span>&#160;        }</div>
+<div class="line"><a name="l00644"></a><span class="lineno">  644</span>&#160; </div>
+<div class="line"><a name="l00645"></a><span class="lineno">  645</span>&#160;        <span class="keyword">inline</span> template_t load(<span class="keyword">const</span> std::string&amp; filename)</div>
+<div class="line"><a name="l00646"></a><span class="lineno">  646</span>&#160;        {</div>
+<div class="line"><a name="l00647"></a><span class="lineno">  647</span>&#160;            std::string filename_sanitized(filename);</div>
+<div class="line"><a name="l00648"></a><span class="lineno">  648</span>&#160;            utility::sanitize_filename(filename_sanitized);</div>
+<div class="line"><a name="l00649"></a><span class="lineno">  649</span>&#160;            <span class="keywordflow">return</span> compile(detail::get_loader_ref()(filename_sanitized));</div>
+<div class="line"><a name="l00650"></a><span class="lineno">  650</span>&#160;        }</div>
+<div class="line"><a name="l00651"></a><span class="lineno">  651</span>&#160; </div>
+<div class="line"><a name="l00652"></a><span class="lineno">  652</span>&#160;        <span class="keyword">inline</span> template_t load_unsafe(<span class="keyword">const</span> std::string&amp; filename)</div>
+<div class="line"><a name="l00653"></a><span class="lineno">  653</span>&#160;        {</div>
+<div class="line"><a name="l00654"></a><span class="lineno">  654</span>&#160;            <span class="keywordflow">return</span> compile(detail::get_loader_ref()(filename));</div>
+<div class="line"><a name="l00655"></a><span class="lineno">  655</span>&#160;        }</div>
+<div class="line"><a name="l00656"></a><span class="lineno">  656</span>&#160;    } <span class="comment">// namespace mustache</span></div>
+<div class="line"><a name="l00657"></a><span class="lineno">  657</span>&#160;} <span class="comment">// namespace crow</span></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <div class="ttc" id="astructcrow_1_1mustache_1_1_action_html"><div class="ttname"><a href="structcrow_1_1mustache_1_1_action.html">crow::mustache::Action</a></div><div class="ttdef"><b>Definition:</b> mustache.h:43</div></div>
@@ -757,7 +767,7 @@ $(document).ready(function(){initNavTree('mustache_8h_source.html',''); initResi
 			<ul>
 				<li class="navelem"><a class="el" href="dir_d44c64559bbebec7f509842c48db8b23.html">include</a></li><li class="navelem"><a class="el" href="dir_d22c1cb87b72f01e1a7f207eb3bfd1ca.html">crow</a></li><li class="navelem"><b>mustache.h</b></li>
 				<li class="footer">
-					Generated on Thu Feb 10 2022 for Crow by <a href="http://www.doxygen.org/index.html">
+					Generated on Fri Feb 11 2022 for Crow by <a href="http://www.doxygen.org/index.html">
 					<img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.17.
 					Dark theme by <a href="http://majerle.eu" target="_new">Tilen Majerle</a>. Edited by <a href="https://github.com/The-EDev" target="_new">Farook Al-Sammarraie</a>. All rights reserved.
 				</li>

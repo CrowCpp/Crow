@@ -27,6 +27,7 @@ var structcrow_1_1response =
     [ "redirect_perm", "structcrow_1_1response.html#a9e87a17c3cf8b434fd2a64a9b3d4b675", null ],
     [ "set_header", "structcrow_1_1response.html#ab2b9a9b9795fa6330bd47b66a716cb0b", null ],
     [ "set_static_file_info", "structcrow_1_1response.html#a8f5e5caa08c3e658bccd03996e1a778a", null ],
+    [ "set_static_file_info_unsafe", "structcrow_1_1response.html#adaaa1a62451d41e6f3831463296b4c08", null ],
     [ "write", "structcrow_1_1response.html#a82bba7eaacfee514c55630a13a85410e", null ],
     [ "crow::Connection", "structcrow_1_1response.html#a13cd54cff7b7cea484654c3e9ace415d", null ],
     [ "body", "structcrow_1_1response.html#ae9f3cc153eac05954f1f4e599527892d", null ],
