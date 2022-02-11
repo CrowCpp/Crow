@@ -146,8 +146,8 @@ namespace crow
                         case '"': out += "&quot;"; break;
                         case '\'': out += "&#39;"; break;
                         case '/': out += "&#x2F;"; break;
-                        case '`': out += "&#x60"; break;
-                        case '=': out += "&#x3D"; break;
+                        case '`': out += "&#x60;"; break;
+                        case '=': out += "&#x3D;"; break;
                         default: out += *it; break;
                     }
                 }
