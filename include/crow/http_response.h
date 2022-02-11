@@ -214,10 +214,16 @@ namespace crow
             int statResult;
         };
 
-        ///Return a static file as the response body
+        /// Return a static file as the response body
         void set_static_file_info(std::string path)
         {
             utility::sanitize_filename(path);
+            set_static_file_info_unsafe(path);
+        }
+
+        /// Return a static file as the response body without sanitizing the path (use set_static_file_info instead)
+        void set_static_file_info_unsafe(std::string path)
+        {
             file_info.path = path;
             file_info.statResult = stat(file_info.path.c_str(), &file_info.statbuf);
 #ifdef CROW_ENABLE_COMPRESSION
@@ -243,6 +249,7 @@ namespace crow
             else
             {
                 code = 404;
+                file_info.path.clear();
                 this->end();
             }
         }
