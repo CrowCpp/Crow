@@ -258,16 +258,10 @@ namespace crow
         struct is_callable
         {
             template<typename F2, typename... Args2>
-            static std::true_type __test(decltype(std::declval<F2>()(std::declval<Args2>()...))*)
-            {
-                return {};
-            }
+            static std::true_type __test(decltype(std::declval<F2>()(std::declval<Args2>()...))*);
 
             template<typename F2, typename... Args2>
-            static std::false_type __test(...)
-            {
-                return {};
-            }
+            static std::false_type __test(...);
 
             static constexpr bool value = decltype(__test<F, Args...>(nullptr))::value;
         };
