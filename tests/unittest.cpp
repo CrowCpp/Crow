@@ -2541,6 +2541,7 @@ TEST_CASE("sanitize_filename")
     CHECK(sanitize_filename("abc/COM9") == "abc/_");
     CHECK(sanitize_filename("abc/COM") == "abc/COM");
     CHECK(sanitize_filename("abc/CON") == "abc/_");
+    CHECK(sanitize_filename("/abc/") == "_abc/");
 }
 
 TEST_CASE("get_port")
