@@ -1,7 +1,7 @@
 var classcrow_1_1_web_socket_rule =
 [
     [ "WebSocketRule", "classcrow_1_1_web_socket_rule.html#a06deaa752206ca131e28b9b4cbb025ab", null ],
-    [ "handle", "classcrow_1_1_web_socket_rule.html#a685d7cce7873eb389114df18f7f2c416", null ],
+    [ "handle", "classcrow_1_1_web_socket_rule.html#a9ad6f1bc43582a657dbe70b193eb4c33", null ],
     [ "handle_upgrade", "classcrow_1_1_web_socket_rule.html#ae8f210dcc1c8e8a309ce24d97d549445", null ],
     [ "onaccept", "classcrow_1_1_web_socket_rule.html#a77c85942686646c9b496d56367053c65", null ],
     [ "onclose", "classcrow_1_1_web_socket_rule.html#abdca486bb9ef580878510ed8359741c2", null ],

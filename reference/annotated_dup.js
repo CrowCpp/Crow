@@ -4,6 +4,7 @@ var annotated_dup =
       [ "black_magic", null, [
         [ "arguments", "structcrow_1_1black__magic_1_1arguments.html", "structcrow_1_1black__magic_1_1arguments" ],
         [ "arguments< 0 >", "structcrow_1_1black__magic_1_1arguments_3_010_01_4.html", "structcrow_1_1black__magic_1_1arguments_3_010_01_4" ],
+        [ "bool_pack", "structcrow_1_1black__magic_1_1bool__pack.html", null ],
         [ "CallHelper", "structcrow_1_1black__magic_1_1_call_helper.html", null ],
         [ "CallHelper< F, S< Args... > >", "structcrow_1_1black__magic_1_1_call_helper_3_01_f_00_01_s_3_01_args_8_8_8_01_4_01_4.html", null ],
         [ "compute_parameter_tag_from_args_list", "structcrow_1_1black__magic_1_1compute__parameter__tag__from__args__list.html", null ],
@@ -19,6 +20,11 @@ var annotated_dup =
         [ "gen_seq", "structcrow_1_1black__magic_1_1gen__seq.html", null ],
         [ "gen_seq< 0 >", "structcrow_1_1black__magic_1_1gen__seq_3_010_01_4.html", null ],
         [ "gen_seq< 1 >", "structcrow_1_1black__magic_1_1gen__seq_3_011_01_4.html", null ],
+        [ "has_type", "structcrow_1_1black__magic_1_1has__type.html", null ],
+        [ "has_type< T, std::tuple< T, Ts... > >", "structcrow_1_1black__magic_1_1has__type_3_01_t_00_01std_1_1tuple_3_01_t_00_01_ts_8_8_8_01_4_01_4.html", null ],
+        [ "has_type< T, std::tuple< U, Ts... > >", "structcrow_1_1black__magic_1_1has__type_3_01_t_00_01std_1_1tuple_3_01_u_00_01_ts_8_8_8_01_4_01_4.html", null ],
+        [ "has_type< T, std::tuple<> >", "structcrow_1_1black__magic_1_1has__type_3_01_t_00_01std_1_1tuple_3_4_01_4.html", null ],
+        [ "is_callable", "structcrow_1_1black__magic_1_1is__callable.html", null ],
         [ "last_element_type", "structcrow_1_1black__magic_1_1last__element__type.html", "structcrow_1_1black__magic_1_1last__element__type" ],
         [ "last_element_type<>", "structcrow_1_1black__magic_1_1last__element__type_3_4.html", null ],
         [ "OutOfRange", "structcrow_1_1black__magic_1_1_out_of_range.html", "structcrow_1_1black__magic_1_1_out_of_range" ],
@@ -61,12 +67,18 @@ var annotated_dup =
         [ "check_before_handle_arity_3_const", "structcrow_1_1detail_1_1check__before__handle__arity__3__const.html", [
           [ "get", "structcrow_1_1detail_1_1check__before__handle__arity__3__const_1_1get.html", null ]
         ] ],
+        [ "check_global_call_false", "structcrow_1_1detail_1_1check__global__call__false.html", [
+          [ "get", "structcrow_1_1detail_1_1check__global__call__false_1_1get.html", null ]
+        ] ],
         [ "context", "structcrow_1_1detail_1_1context.html", "structcrow_1_1detail_1_1context" ],
         [ "get_index_of_element_from_tuple_by_type_impl", "structcrow_1_1detail_1_1get__index__of__element__from__tuple__by__type__impl.html", null ],
         [ "get_index_of_element_from_tuple_by_type_impl< T, N, T, Args... >", "structcrow_1_1detail_1_1get__index__of__element__from__tuple__by__type__impl_3_01_t_00_01_n_00_01_t_00_01_args_8_8_8_01_4.html", null ],
         [ "get_index_of_element_from_tuple_by_type_impl< T, N, U, Args... >", "structcrow_1_1detail_1_1get__index__of__element__from__tuple__by__type__impl_3_01_t_00_01_n_00_01_u_00_01_args_8_8_8_01_4.html", null ],
+        [ "handler_call_bridge", "structcrow_1_1detail_1_1handler__call__bridge.html", "structcrow_1_1detail_1_1handler__call__bridge" ],
+        [ "handler_middleware_wrapper", "structcrow_1_1detail_1_1handler__middleware__wrapper.html", "structcrow_1_1detail_1_1handler__middleware__wrapper" ],
         [ "is_after_handle_arity_3_impl", "structcrow_1_1detail_1_1is__after__handle__arity__3__impl.html", null ],
         [ "is_before_handle_arity_3_impl", "structcrow_1_1detail_1_1is__before__handle__arity__3__impl.html", null ],
+        [ "middleware_call_criteria_only_global", "structcrow_1_1detail_1_1middleware__call__criteria__only__global.html", null ],
         [ "partial_context", "structcrow_1_1detail_1_1partial__context.html", "structcrow_1_1detail_1_1partial__context" ],
         [ "partial_context<>", "structcrow_1_1detail_1_1partial__context_3_4.html", "structcrow_1_1detail_1_1partial__context_3_4" ],
         [ "task_timer", "classcrow_1_1detail_1_1task__timer.html", "classcrow_1_1detail_1_1task__timer" ]
@@ -105,6 +117,7 @@ var annotated_dup =
       [ "Crow", "classcrow_1_1_crow.html", "classcrow_1_1_crow" ],
       [ "DynamicRule", "classcrow_1_1_dynamic_rule.html", "classcrow_1_1_dynamic_rule" ],
       [ "HTTPParser", "structcrow_1_1_h_t_t_p_parser.html", "structcrow_1_1_h_t_t_p_parser" ],
+      [ "ILocalMiddleware", "structcrow_1_1_i_local_middleware.html", "structcrow_1_1_i_local_middleware" ],
       [ "ILogHandler", "classcrow_1_1_i_log_handler.html", "classcrow_1_1_i_log_handler" ],
       [ "logger", "classcrow_1_1logger.html", "classcrow_1_1logger" ],
       [ "query_string", "classcrow_1_1query__string.html", "classcrow_1_1query__string" ],

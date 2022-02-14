@@ -10,6 +10,7 @@ var structcrow_1_1request =
     [ "headers", "structcrow_1_1request.html#a86d6c2a93b50611c4a5b5643b6da6540", null ],
     [ "io_service", "structcrow_1_1request.html#aeb396e1380312b44ebc9646cf73dbb00", null ],
     [ "method", "structcrow_1_1request.html#a79ac893dd6ad4ec5752dea0cec65ce71", null ],
+    [ "middleware_container", "structcrow_1_1request.html#a7b0dbe01000f103306f1b8370e0394b4", null ],
     [ "middleware_context", "structcrow_1_1request.html#a9de0c8721b1c26aab317db0bcdcf1b8a", null ],
     [ "raw_url", "structcrow_1_1request.html#a72f5504a56f9ba70d7d33f86aaf9bc8a", null ],
     [ "remote_ip_address", "structcrow_1_1request.html#aa8a04e30e2249f04614f233d25ffaad7", null ],

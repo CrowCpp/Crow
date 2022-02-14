@@ -122,6 +122,9 @@ using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="cla
 <tr class="memitem:a980ca09ad971f8915a3575d9a94fe78c"><td class="memItemLeft" align="right" valign="top"><a id="a980ca09ad971f8915a3575d9a94fe78c"></a>
 using&#160;</td><td class="memItemRight" valign="bottom"><b>context_t</b> = <a class="el" href="structcrow_1_1detail_1_1context.html">detail::context</a>&lt; Middlewares... &gt;</td></tr>
 <tr class="separator:a980ca09ad971f8915a3575d9a94fe78c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa78aacbc64349155aab3f81d32715189"><td class="memItemLeft" align="right" valign="top"><a id="aa78aacbc64349155aab3f81d32715189"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>mw_container_t</b> = std::tuple&lt; Middlewares... &gt;</td></tr>
+<tr class="separator:aa78aacbc64349155aab3f81d32715189"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
@@ -129,10 +132,10 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a6e435bf5275735effd32647772bdbd04"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classcrow_1_1_crow.html#a6e435bf5275735effd32647772bdbd04">handle_upgrade</a> (const <a class="el" href="structcrow_1_1request.html">request</a> &amp;req, <a class="el" href="structcrow_1_1response.html">response</a> &amp;res, Adaptor &amp;&amp;adaptor)</td></tr>
 <tr class="memdesc:a6e435bf5275735effd32647772bdbd04"><td class="mdescLeft">&#160;</td><td class="mdescRight">Process an Upgrade request.  <a href="classcrow_1_1_crow.html#a6e435bf5275735effd32647772bdbd04">More...</a><br /></td></tr>
 <tr class="separator:a6e435bf5275735effd32647772bdbd04"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9e0d9a96cd8be5374758f538cc057f26"><td class="memItemLeft" align="right" valign="top"><a id="a9e0d9a96cd8be5374758f538cc057f26"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcrow_1_1_crow.html#a9e0d9a96cd8be5374758f538cc057f26">handle</a> (const <a class="el" href="structcrow_1_1request.html">request</a> &amp;req, <a class="el" href="structcrow_1_1response.html">response</a> &amp;res)</td></tr>
-<tr class="memdesc:a9e0d9a96cd8be5374758f538cc057f26"><td class="mdescLeft">&#160;</td><td class="mdescRight">Process the request and generate a response for it. <br /></td></tr>
-<tr class="separator:a9e0d9a96cd8be5374758f538cc057f26"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a39304d67bfac6bde2a2940b3cc6438b1"><td class="memItemLeft" align="right" valign="top"><a id="a39304d67bfac6bde2a2940b3cc6438b1"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcrow_1_1_crow.html#a39304d67bfac6bde2a2940b3cc6438b1">handle</a> (<a class="el" href="structcrow_1_1request.html">request</a> &amp;req, <a class="el" href="structcrow_1_1response.html">response</a> &amp;res)</td></tr>
+<tr class="memdesc:a39304d67bfac6bde2a2940b3cc6438b1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Process the request and generate a response for it. <br /></td></tr>
+<tr class="separator:a39304d67bfac6bde2a2940b3cc6438b1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0f408e47d261ad55ccfd8eb5f351c22e"><td class="memItemLeft" align="right" valign="top"><a id="a0f408e47d261ad55ccfd8eb5f351c22e"></a>
 <a class="el" href="classcrow_1_1_dynamic_rule.html">DynamicRule</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcrow_1_1_crow.html#a0f408e47d261ad55ccfd8eb5f351c22e">route_dynamic</a> (std::string &amp;&amp;rule)</td></tr>
 <tr class="memdesc:a0f408e47d261ad55ccfd8eb5f351c22e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a dynamic route using a rule (<b>Use CROW_ROUTE instead</b>) <br /></td></tr>
@@ -400,7 +403,7 @@ template&lt;typename... Middlewares&gt; </div>
 			<ul>
 				<li class="navelem"><b>crow</b></li><li class="navelem"><a class="el" href="classcrow_1_1_crow.html">Crow</a></li>
 				<li class="footer">
-					Generated on Sat Feb 12 2022 for Crow by <a href="http://www.doxygen.org/index.html">
+					Generated on Mon Feb 14 2022 for Crow by <a href="http://www.doxygen.org/index.html">
 					<img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.17.
 					Dark theme by <a href="http://majerle.eu" target="_new">Tilen Majerle</a>. Edited by <a href="https://github.com/The-EDev" target="_new">Farook Al-Sammarraie</a>. All rights reserved.
 				</li>

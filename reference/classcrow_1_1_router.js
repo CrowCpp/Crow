@@ -7,7 +7,7 @@ var classcrow_1_1_router =
     [ "get_error", "classcrow_1_1_router.html#a68b3861332db76b182ae0ff07262c55a", null ],
     [ "get_found_bp", "classcrow_1_1_router.html#a4d65ef343dc5bfbc6c80cb0987a19151", null ],
     [ "get_recursive_child_methods", "classcrow_1_1_router.html#a6438f06d942775e79cc4c12cb954b658", null ],
-    [ "handle", "classcrow_1_1_router.html#a6b7a5a19c6aa65f229eecaf47bda4dde", null ],
+    [ "handle", "classcrow_1_1_router.html#abb676a8adf587ffa6cb0737c19c21de7", null ],
     [ "handle_upgrade", "classcrow_1_1_router.html#a2b37f05675d075c3de79f6a4de42320d", null ],
     [ "internal_add_rule_object", "classcrow_1_1_router.html#a20f16874473f813c92ee8b9df771a437", null ],
     [ "new_rule_dynamic", "classcrow_1_1_router.html#ac3ccb4f72fa43650356b485d744c49cb", null ],

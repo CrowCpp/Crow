@@ -11,6 +11,7 @@ var dir_d22c1cb87b72f01e1a7f207eb3bfd1ca =
     [ "http_server.h", "http__server_8h_source.html", null ],
     [ "json.h", "json_8h_source.html", null ],
     [ "logging.h", "logging_8h_source.html", null ],
+    [ "middleware.h", "middleware_8h_source.html", null ],
     [ "middleware_context.h", "middleware__context_8h_source.html", null ],
     [ "mime_types.h", "mime__types_8h_source.html", null ],
     [ "multipart.h", "multipart_8h_source.html", null ],

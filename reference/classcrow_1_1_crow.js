@@ -1,6 +1,7 @@
 var classcrow_1_1_crow =
 [
     [ "context_t", "classcrow_1_1_crow.html#a980ca09ad971f8915a3575d9a94fe78c", null ],
+    [ "mw_container_t", "classcrow_1_1_crow.html#aa78aacbc64349155aab3f81d32715189", null ],
     [ "self_t", "classcrow_1_1_crow.html#a5b0a203a6f9070ea8010227dcdbcec60", null ],
     [ "server_t", "classcrow_1_1_crow.html#a5df810d2619e31c2f024cc4e45898997", null ],
     [ "Crow", "classcrow_1_1_crow.html#a7a6ce30b00d6d2beb901ffbb3160c137", null ],
@@ -10,7 +11,7 @@ var classcrow_1_1_crow =
     [ "debug_print", "classcrow_1_1_crow.html#a839c1e6f82d577308eb6f0d4948a4fbb", null ],
     [ "get_context", "classcrow_1_1_crow.html#ab9f401a95ab8fdc6ec65d542899954cc", null ],
     [ "get_middleware", "classcrow_1_1_crow.html#a416e872b703c27154845aca516d0a417", null ],
-    [ "handle", "classcrow_1_1_crow.html#a9e0d9a96cd8be5374758f538cc057f26", null ],
+    [ "handle", "classcrow_1_1_crow.html#a39304d67bfac6bde2a2940b3cc6438b1", null ],
     [ "handle_upgrade", "classcrow_1_1_crow.html#a6e435bf5275735effd32647772bdbd04", null ],
     [ "loglevel", "classcrow_1_1_crow.html#a7b6c225d3bba772eeadad89ebde68d21", null ],
     [ "multithreaded", "classcrow_1_1_crow.html#a0149b20b7f6c0123292286f54638d456", null ],

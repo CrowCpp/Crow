@@ -2,11 +2,9 @@ var classcrow_1_1_tagged_rule =
 [
     [ "self_t", "classcrow_1_1_tagged_rule.html#aae5d1683e30a8d4e058666b7d12dea14", null ],
     [ "TaggedRule", "classcrow_1_1_tagged_rule.html#a058a079101cee2bcc5936c785c6c76f6", null ],
-    [ "handle", "classcrow_1_1_tagged_rule.html#a919704d5a12bfebb209c866d2726c855", null ],
-    [ "operator()", "classcrow_1_1_tagged_rule.html#a578c5809e9b533b496a6a6eab0d1929c", null ],
-    [ "operator()", "classcrow_1_1_tagged_rule.html#a9d799cbc205754526437946405794712", null ],
-    [ "operator()", "classcrow_1_1_tagged_rule.html#a29464cfa7fff2e104942c220c8a10f05", null ],
-    [ "operator()", "classcrow_1_1_tagged_rule.html#a95f1a9e8863c43d34d01c9a15881fdc2", null ],
+    [ "handle", "classcrow_1_1_tagged_rule.html#adcbf056e4db8f2673bc7c9bcb1608588", null ],
+    [ "middlewares", "classcrow_1_1_tagged_rule.html#ada7598b85158f3008e6679f3dbab075f", null ],
+    [ "operator()", "classcrow_1_1_tagged_rule.html#aa4edba914ac43596699df3b8bdf2b7b8", null ],
     [ "operator()", "classcrow_1_1_tagged_rule.html#aeed24311bbc5faa60e5c07ffcad2a5de", null ],
     [ "validate", "classcrow_1_1_tagged_rule.html#aafb046bbb0f1b47c1d56bfae72ef390a", null ]
 ];

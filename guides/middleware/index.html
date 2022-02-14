@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="Any middleware requires following 3 members:">
+        <meta name="description" content="Middleware is used for altering and inspecting requests before and after the handler call.">
       
       
       
@@ -93,7 +93,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#struct-context" class="md-skip">
+        <a href="#before_handle" class="md-skip">
           Skip to content
         </a>
       
@@ -669,13 +669,6 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#struct-context" class="md-nav__link">
-    struct context
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#before_handle" class="md-nav__link">
     before_handle
   </a>
@@ -685,6 +678,20 @@
         <li class="md-nav__item">
   <a href="#after_handle" class="md-nav__link">
     after_handle
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#using-middleware" class="md-nav__link">
+    Using middleware
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#examples" class="md-nav__link">
+    Examples
   </a>
   
 </li>
@@ -976,13 +983,6 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#struct-context" class="md-nav__link">
-    struct context
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#before_handle" class="md-nav__link">
     before_handle
   </a>
@@ -992,6 +992,20 @@
         <li class="md-nav__item">
   <a href="#after_handle" class="md-nav__link">
     after_handle
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#using-middleware" class="md-nav__link">
+    Using middleware
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#examples" class="md-nav__link">
+    Examples
   </a>
   
 </li>
@@ -1011,28 +1025,81 @@
 
   <h1>Middleware</h1>
 
-<p>Any middleware requires following 3 members:</p>
-<h2 id="struct-context">struct context</h2>
-<p>Storing data for the middleware; can be read from another middleware or handlers</p>
+<p>Middleware is used for altering and inspecting requests before and after the handler call.</p>
+<p>Any middleware requires the following 3 members:</p>
+<ul>
+<li>A context struct for storing the middleware data.</li>
+<li>A <code>before_handle</code> method, which is called before the handler. If <code>res.end()</code> is called, the operation is halted.</li>
+<li>A <code>after_handle</code> method, which is called after the handler.</li>
+</ul>
 <h2 id="before_handle">before_handle</h2>
-<p>Called before handling the request.<br>
-If <code>res.end()</code> is called, the operation is halted. (<code>after_handle</code> will still be called)<br>
-2 signatures:<br>
-<code class="highlight"><span class="kt">void</span><span class="w"> </span><span class="n">before_handle</span><span class="p">(</span><span class="n">request</span><span class="o">&amp;</span><span class="w"> </span><span class="n">req</span><span class="p">,</span><span class="w"> </span><span class="n">response</span><span class="o">&amp;</span><span class="w"> </span><span class="n">res</span><span class="p">,</span><span class="w"> </span><span class="n">context</span><span class="o">&amp;</span><span class="w"> </span><span class="n">ctx</span><span class="p">)</span><span class="w"></span></code>
-    if you only need to access this middleware's context.
-<div class="highlight"><pre><span></span><code><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">AllContext</span><span class="o">&gt;</span><span class="w"></span>
-<span class="kt">void</span><span class="w"> </span><span class="n">before_handle</span><span class="p">(</span><span class="n">request</span><span class="o">&amp;</span><span class="w"> </span><span class="n">req</span><span class="p">,</span><span class="w"> </span><span class="n">response</span><span class="o">&amp;</span><span class="w"> </span><span class="n">res</span><span class="p">,</span><span class="w"> </span><span class="n">context</span><span class="o">&amp;</span><span class="w"> </span><span class="n">ctx</span><span class="p">,</span><span class="w"> </span><span class="n">AllContext</span><span class="o">&amp;</span><span class="w"> </span><span class="n">all_ctx</span><span class="p">)</span><span class="w"></span>
+<p>There are two possible signatures for before_handle</p>
+<ol>
+<li>if you only need to access this middleware's context.</li>
+</ol>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">before_handle</span><span class="p">(</span><span class="n">request</span><span class="o">&amp;</span><span class="w"> </span><span class="n">req</span><span class="p">,</span><span class="w"> </span><span class="n">response</span><span class="o">&amp;</span><span class="w"> </span><span class="n">res</span><span class="p">,</span><span class="w"> </span><span class="n">context</span><span class="o">&amp;</span><span class="w"> </span><span class="n">ctx</span><span class="p">)</span><span class="w"></span>
 </code></pre></div>
-You can access other middlewares' context by calling <code class="highlight"><span class="n">all_ctx</span><span class="p">.</span><span class="k">template</span><span class="w"> </span><span class="n">get</span><span class="o">&lt;</span><span class="n">MW</span><span class="o">&gt;</span><span class="p">()</span><span class="w"></span></code><br>
-<code class="highlight"><span class="n">ctx</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">all_ctx</span><span class="p">.</span><span class="k">template</span><span class="w"> </span><span class="n">get</span><span class="o">&lt;</span><span class="n">CurrentMiddleware</span><span class="o">&gt;</span><span class="p">()</span><span class="w"></span></code></p>
+<ol>
+<li>To get access to other middlewares context
+<div class="highlight"><pre><span></span><code><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">AllContext</span><span class="o">&gt;</span><span class="w"></span>
+<span class="kt">void</span><span class="w"> </span><span class="n">before_handle</span><span class="p">(</span><span class="n">request</span><span class="o">&amp;</span><span class="w"> </span><span class="n">req</span><span class="p">,</span><span class="w"> </span><span class="n">response</span><span class="o">&amp;</span><span class="w"> </span><span class="n">res</span><span class="p">,</span><span class="w"> </span><span class="n">context</span><span class="o">&amp;</span><span class="w"> </span><span class="n">ctx</span><span class="p">,</span><span class="w"> </span><span class="n">AllContext</span><span class="o">&amp;</span><span class="w"> </span><span class="n">all_ctx</span><span class="p">)</span><span class="w"> </span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">other_ctx</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">all_ctx</span><span class="p">.</span><span class="k">template</span><span class="w"> </span><span class="n">get</span><span class="o">&lt;</span><span class="n">OtherMiddleware</span><span class="o">&gt;</span><span class="p">();</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</code></pre></div></li>
+</ol>
 <h2 id="after_handle">after_handle</h2>
-<p>Called after handling the request.<br></p>
-<p><code class="highlight"><span class="kt">void</span><span class="w"> </span><span class="n">after_handle</span><span class="p">(</span><span class="n">request</span><span class="o">&amp;</span><span class="w"> </span><span class="n">req</span><span class="p">,</span><span class="w"> </span><span class="n">response</span><span class="o">&amp;</span><span class="w"> </span><span class="n">res</span><span class="p">,</span><span class="w"> </span><span class="n">context</span><span class="o">&amp;</span><span class="w"> </span><span class="n">ctx</span><span class="p">)</span><span class="w"></span></code>
-<div class="highlight"><pre><span></span><code><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">AllContext</span><span class="o">&gt;</span><span class="w"></span>
-<span class="kt">void</span><span class="w"> </span><span class="n">after_handle</span><span class="p">(</span><span class="n">request</span><span class="o">&amp;</span><span class="w"> </span><span class="n">req</span><span class="p">,</span><span class="w"> </span><span class="n">response</span><span class="o">&amp;</span><span class="w"> </span><span class="n">res</span><span class="p">,</span><span class="w"> </span><span class="n">context</span><span class="o">&amp;</span><span class="w"> </span><span class="n">ctx</span><span class="p">,</span><span class="w"> </span><span class="n">AllContext</span><span class="o">&amp;</span><span class="w"> </span><span class="n">all_ctx</span><span class="p">)</span><span class="w"></span>
+<p>There are two possible signatures for after_handle</p>
+<ol>
+<li>if you only need to access this middleware's context.</li>
+</ol>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">after_handle</span><span class="p">(</span><span class="n">request</span><span class="o">&amp;</span><span class="w"> </span><span class="n">req</span><span class="p">,</span><span class="w"> </span><span class="n">response</span><span class="o">&amp;</span><span class="w"> </span><span class="n">res</span><span class="p">,</span><span class="w"> </span><span class="n">context</span><span class="o">&amp;</span><span class="w"> </span><span class="n">ctx</span><span class="p">)</span><span class="w"></span>
 </code></pre></div>
-<br><br>
-This was pulled from <code>cookie_parser.h</code>. Further Editing required, possibly use parts of <a href="https://github.com/ipkn/crow/wiki/Middleware">@ipkn's wiki page</a>.</p>
+<ol>
+<li>To get access to other middlewares context
+<div class="highlight"><pre><span></span><code><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">AllContext</span><span class="o">&gt;</span><span class="w"></span>
+<span class="kt">void</span><span class="w"> </span><span class="n">after_handle</span><span class="p">(</span><span class="n">request</span><span class="o">&amp;</span><span class="w"> </span><span class="n">req</span><span class="p">,</span><span class="w"> </span><span class="n">response</span><span class="o">&amp;</span><span class="w"> </span><span class="n">res</span><span class="p">,</span><span class="w"> </span><span class="n">context</span><span class="o">&amp;</span><span class="w"> </span><span class="n">ctx</span><span class="p">,</span><span class="w"> </span><span class="n">AllContext</span><span class="o">&amp;</span><span class="w"> </span><span class="n">all_ctx</span><span class="p">)</span><span class="w"> </span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">other_ctx</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">all_ctx</span><span class="p">.</span><span class="k">template</span><span class="w"> </span><span class="n">get</span><span class="o">&lt;</span><span class="n">OtherMiddleware</span><span class="o">&gt;</span><span class="p">();</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</code></pre></div></li>
+</ol>
+<h2 id="using-middleware">Using middleware</h2>
+<p>All middleware has to be registered in the Crow application and is enabled globally by default.</p>
+<div class="highlight"><pre><span></span><code><span class="n">crow</span><span class="o">::</span><span class="n">App</span><span class="o">&lt;</span><span class="n">FirstMiddleware</span><span class="p">,</span><span class="w"> </span><span class="n">SecondMiddleware</span><span class="o">&gt;</span><span class="w"> </span><span class="n">app</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<p>if you want to enable some middleware only for specific handlers, you have to extend it from <code>crow::ILocalMiddleware</code>.</p>
+<div class="highlight"><pre><span></span><code><span class="k">struct</span><span class="w"> </span><span class="nc">LocalMiddleware</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">crow</span><span class="o">::</span><span class="n">ILocalMiddleware</span><span class="w"> </span>
+<span class="p">{</span><span class="w"></span>
+<span class="p">...</span><span class="w"> </span>
+</code></pre></div>
+<p>After this, you can enable it for specific handlers.</p>
+<div class="highlight"><pre><span></span><code><span class="n">CROW_ROUTE</span><span class="p">(</span><span class="n">app</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;/with_middleware&quot;</span><span class="p">)</span><span class="w"></span>
+<span class="p">.</span><span class="n">CROW_MIDDLEWARES</span><span class="p">(</span><span class="n">app</span><span class="p">,</span><span class="w"> </span><span class="n">LocalMiddleware</span><span class="p">)</span><span class="w"></span>
+<span class="p">([]()</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="s">&quot;Hello world!&quot;</span><span class="p">;</span><span class="w"></span>
+<span class="p">});</span><span class="w"></span>
+</code></pre></div>
+<h2 id="examples">Examples</h2>
+<p>A local middleware that can be used to guard admin handlers</p>
+<div class="highlight"><pre><span></span><code><span class="k">struct</span><span class="w"> </span><span class="nc">AdminAreaGuard</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">crow</span><span class="o">::</span><span class="n">ILocalMiddleware</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="k">struct</span><span class="w"> </span><span class="nc">context</span><span class="w"></span>
+<span class="w">    </span><span class="p">{};</span><span class="w"></span>
+
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">before_handle</span><span class="p">(</span><span class="n">crow</span><span class="o">::</span><span class="n">request</span><span class="o">&amp;</span><span class="w"> </span><span class="n">req</span><span class="p">,</span><span class="w"> </span><span class="n">crow</span><span class="o">::</span><span class="n">response</span><span class="o">&amp;</span><span class="w"> </span><span class="n">res</span><span class="p">,</span><span class="w"> </span><span class="n">context</span><span class="o">&amp;</span><span class="w"> </span><span class="n">ctx</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">req</span><span class="p">.</span><span class="n">remote_ip_address</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">ADMIN_IP</span><span class="p">)</span><span class="w"> </span>
+<span class="w">        </span><span class="p">{</span><span class="w"></span>
+<span class="w">            </span><span class="n">res</span><span class="p">.</span><span class="n">code</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">403</span><span class="p">;</span><span class="w"></span>
+<span class="w">            </span><span class="n">res</span><span class="p">.</span><span class="n">end</span><span class="p">();</span><span class="w"></span>
+<span class="w">        </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">after_handle</span><span class="p">(</span><span class="n">crow</span><span class="o">::</span><span class="n">request</span><span class="o">&amp;</span><span class="w"> </span><span class="n">req</span><span class="p">,</span><span class="w"> </span><span class="n">crow</span><span class="o">::</span><span class="n">response</span><span class="o">&amp;</span><span class="w"> </span><span class="n">res</span><span class="p">,</span><span class="w"> </span><span class="n">context</span><span class="o">&amp;</span><span class="w"> </span><span class="n">ctx</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="p">{}</span><span class="w"> </span>
+<span class="p">};</span><span class="w"></span>
+</code></pre></div>
 
               
             </article>

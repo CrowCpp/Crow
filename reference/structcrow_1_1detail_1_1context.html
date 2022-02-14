@@ -130,18 +130,18 @@ template&lt;typename T &gt; </td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="friends"></a>
 Friends</h2></td></tr>
-<tr class="memitem:a8abc3c93ac4c6a95e8a527fa1a3c1347"><td class="memTemplParams" colspan="2"><a id="a8abc3c93ac4c6a95e8a527fa1a3c1347"></a>
-template&lt;int N, typename Context , typename Container &gt; </td></tr>
-<tr class="memitem:a8abc3c93ac4c6a95e8a527fa1a3c1347"><td class="memTemplItemLeft" align="right" valign="top">std::enable_if&lt;(N==0)&gt;::type&#160;</td><td class="memTemplItemRight" valign="bottom"><b>after_handlers_call_helper</b> (Container &amp;middlewares, Context &amp;ctx, <a class="el" href="structcrow_1_1request.html">request</a> &amp;req, <a class="el" href="structcrow_1_1response.html">response</a> &amp;res)</td></tr>
-<tr class="separator:a8abc3c93ac4c6a95e8a527fa1a3c1347"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a27dbff957b9a6547f5c6775b18423cc2"><td class="memTemplParams" colspan="2"><a id="a27dbff957b9a6547f5c6775b18423cc2"></a>
-template&lt;int N, typename Context , typename Container &gt; </td></tr>
-<tr class="memitem:a27dbff957b9a6547f5c6775b18423cc2"><td class="memTemplItemLeft" align="right" valign="top">std::enable_if&lt;(N &gt; 0)&gt;::type&#160;</td><td class="memTemplItemRight" valign="bottom"><b>after_handlers_call_helper</b> (Container &amp;middlewares, Context &amp;ctx, <a class="el" href="structcrow_1_1request.html">request</a> &amp;req, <a class="el" href="structcrow_1_1response.html">response</a> &amp;res)</td></tr>
-<tr class="separator:a27dbff957b9a6547f5c6775b18423cc2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac4a2d03a6f52cba172f8d6b7e0bf0230"><td class="memTemplParams" colspan="2"><a id="ac4a2d03a6f52cba172f8d6b7e0bf0230"></a>
-template&lt;int N, typename Context , typename Container , typename CurrentMW , typename... Middlewares2&gt; </td></tr>
-<tr class="memitem:ac4a2d03a6f52cba172f8d6b7e0bf0230"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><b>middleware_call_helper</b> (Container &amp;middlewares, <a class="el" href="structcrow_1_1request.html">request</a> &amp;req, <a class="el" href="structcrow_1_1response.html">response</a> &amp;res, Context &amp;ctx)</td></tr>
-<tr class="separator:ac4a2d03a6f52cba172f8d6b7e0bf0230"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8a16e746afbf791a8d4bbdceeaed9619"><td class="memTemplParams" colspan="2"><a id="a8a16e746afbf791a8d4bbdceeaed9619"></a>
+template&lt;template&lt; typename QueryMW &gt; class CallCriteria, int N, typename Context , typename Container &gt; </td></tr>
+<tr class="memitem:a8a16e746afbf791a8d4bbdceeaed9619"><td class="memTemplItemLeft" align="right" valign="top">std::enable_if&lt;(N==0)&gt;::type&#160;</td><td class="memTemplItemRight" valign="bottom"><b>after_handlers_call_helper</b> (Container &amp;middlewares, Context &amp;ctx, <a class="el" href="structcrow_1_1request.html">request</a> &amp;req, <a class="el" href="structcrow_1_1response.html">response</a> &amp;res)</td></tr>
+<tr class="separator:a8a16e746afbf791a8d4bbdceeaed9619"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a26b8bceebe175fa78f6a95c7db539b38"><td class="memTemplParams" colspan="2"><a id="a26b8bceebe175fa78f6a95c7db539b38"></a>
+template&lt;template&lt; typename QueryMW &gt; class CallCriteria, int N, typename Context , typename Container &gt; </td></tr>
+<tr class="memitem:a26b8bceebe175fa78f6a95c7db539b38"><td class="memTemplItemLeft" align="right" valign="top">std::enable_if&lt;(N &gt; 0)&gt;::type&#160;</td><td class="memTemplItemRight" valign="bottom"><b>after_handlers_call_helper</b> (Container &amp;middlewares, Context &amp;ctx, <a class="el" href="structcrow_1_1request.html">request</a> &amp;req, <a class="el" href="structcrow_1_1response.html">response</a> &amp;res)</td></tr>
+<tr class="separator:a26b8bceebe175fa78f6a95c7db539b38"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a204b856c7511ca827c957297241b4b69"><td class="memTemplParams" colspan="2"><a id="a204b856c7511ca827c957297241b4b69"></a>
+template&lt;template&lt; typename QueryMW &gt; class CallCriteria, int N, typename Context , typename Container &gt; </td></tr>
+<tr class="memitem:a204b856c7511ca827c957297241b4b69"><td class="memTemplItemLeft" align="right" valign="top">std::enable_if&lt;(N&lt; std::tuple_size&lt; typename std::remove_reference&lt; Container &gt;::type &gt;::value), bool &gt;::type&#160;</td><td class="memTemplItemRight" valign="bottom"><b>middleware_call_helper</b> (Container &amp;middlewares, <a class="el" href="structcrow_1_1request.html">request</a> &amp;req, <a class="el" href="structcrow_1_1response.html">response</a> &amp;res, Context &amp;ctx)</td></tr>
+<tr class="separator:a204b856c7511ca827c957297241b4b69"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <hr/>The documentation for this struct was generated from the following file:<ul>
 <li>/drone/src/include/crow/<a class="el" href="middleware__context_8h_source.html">middleware_context.h</a></li>
@@ -153,7 +153,7 @@ template&lt;int N, typename Context , typename Container , typename CurrentMW , 
 			<ul>
 				<li class="navelem"><b>crow</b></li><li class="navelem"><b>detail</b></li><li class="navelem"><a class="el" href="structcrow_1_1detail_1_1context.html">context</a></li>
 				<li class="footer">
-					Generated on Sat Feb 12 2022 for Crow by <a href="http://www.doxygen.org/index.html">
+					Generated on Mon Feb 14 2022 for Crow by <a href="http://www.doxygen.org/index.html">
 					<img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.17.
 					Dark theme by <a href="http://majerle.eu" target="_new">Tilen Majerle</a>. Edited by <a href="https://github.com/The-EDev" target="_new">Farook Al-Sammarraie</a>. All rights reserved.
 				</li>

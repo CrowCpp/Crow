@@ -135,49 +135,44 @@ $(document).ready(function(){initNavTree('middleware__context_8h_source.html',''
 <div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;        };</div>
 <div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160; </div>
 <div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160; </div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160; </div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;        <span class="keyword">template</span>&lt;<span class="keywordtype">int</span> N, <span class="keyword">typename</span> Context, <span class="keyword">typename</span> Container, <span class="keyword">typename</span> CurrentMW, <span class="keyword">typename</span>... Middlewares&gt;</div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;        <span class="keywordtype">bool</span> middleware_call_helper(Container&amp; middlewares, <a class="code" href="structcrow_1_1request.html">request</a>&amp; req, <a class="code" href="structcrow_1_1response.html">response</a>&amp; res, Context&amp; ctx);</div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160; </div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160; </div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160; </div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;        <span class="keyword">template</span>&lt;<span class="keyword">typename</span>... Middlewares&gt;</div>
-<div class="line"><a name="l00044"></a><span class="lineno"><a class="line" href="structcrow_1_1detail_1_1context.html">   44</a></span>&#160;        <span class="keyword">struct </span><a class="code" href="structcrow_1_1detail_1_1context.html">context</a> : <span class="keyword">private</span> <a class="code" href="structcrow_1_1detail_1_1partial__context.html">partial_context</a>&lt;Middlewares...&gt;</div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;        <span class="comment">//struct context : private Middlewares::context... // simple but less type-safe</span></div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;        {</div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;            <span class="keyword">template</span>&lt;<span class="keywordtype">int</span> N, <span class="keyword">typename</span> Context, <span class="keyword">typename</span> Container&gt;</div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;            <span class="keyword">friend</span> <span class="keyword">typename</span> std::enable_if&lt;(N == 0)&gt;::type after_handlers_call_helper(Container&amp; middlewares, Context&amp; ctx, <a class="code" href="structcrow_1_1request.html">request</a>&amp; req, <a class="code" href="structcrow_1_1response.html">response</a>&amp; res);</div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;            <span class="keyword">template</span>&lt;<span class="keywordtype">int</span> N, <span class="keyword">typename</span> Context, <span class="keyword">typename</span> Container&gt;</div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;            <span class="keyword">friend</span> <span class="keyword">typename</span> std::enable_if&lt;(N &gt; 0)&gt;::type after_handlers_call_helper(Container&amp; middlewares, Context&amp; ctx, <a class="code" href="structcrow_1_1request.html">request</a>&amp; req, <a class="code" href="structcrow_1_1response.html">response</a>&amp; res);</div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160; </div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;            <span class="keyword">template</span>&lt;<span class="keywordtype">int</span> N, <span class="keyword">typename</span> Context, <span class="keyword">typename</span> Container, <span class="keyword">typename</span> CurrentMW, <span class="keyword">typename</span>... Middlewares2&gt;</div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;            <span class="keyword">friend</span> <span class="keywordtype">bool</span> middleware_call_helper(Container&amp; middlewares, <a class="code" href="structcrow_1_1request.html">request</a>&amp; req, <a class="code" href="structcrow_1_1response.html">response</a>&amp; res, Context&amp; ctx);</div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160; </div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;            <span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;            <span class="keyword">typename</span> T::context&amp; get()</div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;            {</div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;                <span class="keywordflow">return</span> <span class="keyword">static_cast&lt;</span>typename T::context&amp;<span class="keyword">&gt;</span>(*this);</div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;            }</div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160; </div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;            <span class="keyword">template</span>&lt;<span class="keywordtype">int</span> N&gt;</div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;            <span class="keyword">using</span> partial = <span class="keyword">typename</span> <a class="code" href="structcrow_1_1detail_1_1partial__context.html">partial_context</a>&lt;Middlewares...&gt;::template partial&lt;N&gt;;</div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;        };</div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;    } <span class="comment">// namespace detail</span></div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;} <span class="comment">// namespace crow</span></div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;        <span class="keyword">template</span>&lt;<span class="keyword">typename</span>... Middlewares&gt;</div>
+<div class="line"><a name="l00038"></a><span class="lineno"><a class="line" href="structcrow_1_1detail_1_1context.html">   38</a></span>&#160;        <span class="keyword">struct </span><a class="code" href="structcrow_1_1detail_1_1context.html">context</a> : <span class="keyword">private</span> <a class="code" href="structcrow_1_1detail_1_1partial__context.html">partial_context</a>&lt;Middlewares...&gt;</div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;        <span class="comment">//struct context : private Middlewares::context... // simple but less type-safe</span></div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;        {</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;            <span class="keyword">template</span>&lt;<span class="keyword">template</span>&lt;<span class="keyword">typename</span> QueryMW&gt; <span class="keyword">class </span>CallCriteria, <span class="keywordtype">int</span> N, <span class="keyword">typename</span> Context, <span class="keyword">typename</span> Container&gt;</div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;            <span class="keyword">friend</span> <span class="keyword">typename</span> std::enable_if&lt;(N == 0)&gt;::type after_handlers_call_helper(Container&amp; middlewares, Context&amp; ctx, <a class="code" href="structcrow_1_1request.html">request</a>&amp; req, <a class="code" href="structcrow_1_1response.html">response</a>&amp; res);</div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;            <span class="keyword">template</span>&lt;<span class="keyword">template</span>&lt;<span class="keyword">typename</span> QueryMW&gt; <span class="keyword">class </span>CallCriteria, <span class="keywordtype">int</span> N, <span class="keyword">typename</span> Context, <span class="keyword">typename</span> Container&gt;</div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;            <span class="keyword">friend</span> <span class="keyword">typename</span> std::enable_if&lt;(N &gt; 0)&gt;::type after_handlers_call_helper(Container&amp; middlewares, Context&amp; ctx, <a class="code" href="structcrow_1_1request.html">request</a>&amp; req, <a class="code" href="structcrow_1_1response.html">response</a>&amp; res);</div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160; </div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;            <span class="keyword">template</span>&lt;<span class="keyword">template</span>&lt;<span class="keyword">typename</span> QueryMW&gt; <span class="keyword">class </span>CallCriteria, <span class="keywordtype">int</span> N, <span class="keyword">typename</span> Context, <span class="keyword">typename</span> Container&gt;</div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;            <span class="keyword">friend</span> <span class="keyword">typename</span> std::enable_if&lt;(N &lt; std::tuple_size&lt;typename std::remove_reference&lt;Container&gt;::type&gt;::value), <span class="keywordtype">bool</span>&gt;::type</div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;              middleware_call_helper(Container&amp; middlewares, <a class="code" href="structcrow_1_1request.html">request</a>&amp; req, <a class="code" href="structcrow_1_1response.html">response</a>&amp; res, Context&amp; ctx);</div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160; </div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;            <span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;            <span class="keyword">typename</span> T::context&amp; get()</div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;            {</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;                <span class="keywordflow">return</span> <span class="keyword">static_cast&lt;</span>typename T::context&amp;<span class="keyword">&gt;</span>(*this);</div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;            }</div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160; </div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;            <span class="keyword">template</span>&lt;<span class="keywordtype">int</span> N&gt;</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;            <span class="keyword">using</span> partial = <span class="keyword">typename</span> <a class="code" href="structcrow_1_1detail_1_1partial__context.html">partial_context</a>&lt;Middlewares...&gt;::template partial&lt;N&gt;;</div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;        };</div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;    } <span class="comment">// namespace detail</span></div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;} <span class="comment">// namespace crow</span></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
-<div class="ttc" id="astructcrow_1_1black__magic_1_1last__element__type_html"><div class="ttname"><a href="structcrow_1_1black__magic_1_1last__element__type.html">crow::black_magic::last_element_type</a></div><div class="ttdef"><b>Definition:</b> utility.h:291</div></div>
+<div class="ttc" id="astructcrow_1_1black__magic_1_1last__element__type_html"><div class="ttname"><a href="structcrow_1_1black__magic_1_1last__element__type.html">crow::black_magic::last_element_type</a></div><div class="ttdef"><b>Definition:</b> utility.h:325</div></div>
 <div class="ttc" id="astructcrow_1_1request_html"><div class="ttname"><a href="structcrow_1_1request.html">crow::request</a></div><div class="ttdoc">An HTTP request.</div><div class="ttdef"><b>Definition:</b> http_request.h:26</div></div>
-<div class="ttc" id="astructcrow_1_1response_html"><div class="ttname"><a href="structcrow_1_1response.html">crow::response</a></div><div class="ttdoc">HTTP response.</div><div class="ttdef"><b>Definition:</b> http_response.h:23</div></div>
-<div class="ttc" id="astructcrow_1_1detail_1_1context_html"><div class="ttname"><a href="structcrow_1_1detail_1_1context.html">crow::detail::context</a></div><div class="ttdef"><b>Definition:</b> middleware_context.h:44</div></div>
+<div class="ttc" id="astructcrow_1_1response_html"><div class="ttname"><a href="structcrow_1_1response.html">crow::response</a></div><div class="ttdoc">HTTP response.</div><div class="ttdef"><b>Definition:</b> http_response.h:29</div></div>
+<div class="ttc" id="astructcrow_1_1detail_1_1context_html"><div class="ttname"><a href="structcrow_1_1detail_1_1context.html">crow::detail::context</a></div><div class="ttdef"><b>Definition:</b> middleware_context.h:38</div></div>
 <div class="ttc" id="astructcrow_1_1detail_1_1partial__context_html"><div class="ttname"><a href="structcrow_1_1detail_1_1partial__context.html">crow::detail::partial_context</a></div><div class="ttdef"><b>Definition:</b> middleware_context.h:14</div></div>
-<div class="ttc" id="astructcrow_1_1black__magic_1_1pop__back_html"><div class="ttname"><a href="structcrow_1_1black__magic_1_1pop__back.html">crow::black_magic::pop_back</a></div><div class="ttdef"><b>Definition:</b> utility.h:349</div></div>
+<div class="ttc" id="astructcrow_1_1black__magic_1_1pop__back_html"><div class="ttname"><a href="structcrow_1_1black__magic_1_1pop__back.html">crow::black_magic::pop_back</a></div><div class="ttdef"><b>Definition:</b> utility.h:383</div></div>
 <!-- start footer part -->
 		<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
 			<ul>
 				<li class="navelem"><a class="el" href="dir_d44c64559bbebec7f509842c48db8b23.html">include</a></li><li class="navelem"><a class="el" href="dir_d22c1cb87b72f01e1a7f207eb3bfd1ca.html">crow</a></li><li class="navelem"><b>middleware_context.h</b></li>
 				<li class="footer">
-					Generated on Sat Feb 12 2022 for Crow by <a href="http://www.doxygen.org/index.html">
+					Generated on Mon Feb 14 2022 for Crow by <a href="http://www.doxygen.org/index.html">
 					<img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.17.
 					Dark theme by <a href="http://majerle.eu" target="_new">Tilen Majerle</a>. Edited by <a href="https://github.com/The-EDev" target="_new">Farook Al-Sammarraie</a>. All rights reserved.
 				</li>
