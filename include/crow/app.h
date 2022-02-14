@@ -29,6 +29,7 @@
 #else
 #define CROW_ROUTE(app, url) app.route<crow::black_magic::get_parameter_tag(url)>(url)
 #define CROW_BP_ROUTE(blueprint, url) blueprint.new_rule_tagged<crow::black_magic::get_parameter_tag(url)>(url)
+#define CROW_MIDDLEWARES(app, ...) middlewares<decltype(app), __VA_ARGS__>()
 #endif
 #define CROW_CATCHALL_ROUTE(app) app.catchall_route()
 #define CROW_BP_CATCHALL_ROUTE(blueprint) blueprint.catchall_rule()
@@ -68,7 +69,7 @@ namespace crow
         }
 
         /// Process the request and generate a response for it
-        void handle(const request& req, response& res)
+        void handle(request& req, response& res)
         {
             router_.handle(req, res);
         }
@@ -394,6 +395,7 @@ namespace crow
 
         // middleware
         using context_t = detail::context<Middlewares...>;
+        using mw_container_t = std::tuple<Middlewares...>;
         template<typename T>
         typename T::context& get_context(const request& req)
         {

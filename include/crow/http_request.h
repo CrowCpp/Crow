@@ -34,6 +34,7 @@ namespace crow
         std::string remote_ip_address; ///< The IP address from which the request was sent.
 
         void* middleware_context{};
+        void* middleware_container{};
         boost::asio::io_service* io_service{};
 
         /// Construct an empty request. (sets the method to `GET`)

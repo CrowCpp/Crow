@@ -237,6 +237,40 @@ namespace crow
             static constexpr bool value = sizeof(__test<F, Args...>(0)) == sizeof(char);
         };
 
+        // Check Tuple contains type T
+        template<typename T, typename Tuple>
+        struct has_type;
+
+        template<typename T>
+        struct has_type<T, std::tuple<>> : std::false_type
+        {};
+
+        template<typename T, typename U, typename... Ts>
+        struct has_type<T, std::tuple<U, Ts...>> : has_type<T, std::tuple<Ts...>>
+        {};
+
+        template<typename T, typename... Ts>
+        struct has_type<T, std::tuple<T, Ts...>> : std::true_type
+        {};
+
+        // Check F is callable with Args
+        template<typename F, typename... Args>
+        struct is_callable
+        {
+            template<typename F2, typename... Args2>
+            static std::true_type __test(decltype(std::declval<F2>()(std::declval<Args2>()...))*);
+
+            template<typename F2, typename... Args2>
+            static std::false_type __test(...);
+
+            static constexpr bool value = decltype(__test<F, Args...>(nullptr))::value;
+        };
+
+        // Kind of fold expressions in C++11
+        template<bool...>
+        struct bool_pack;
+        template<bool... bs>
+        using all_true = std::is_same<bool_pack<bs..., true>, bool_pack<true, bs...>>;
 
         template<int N>
         struct single_tag_to_type
