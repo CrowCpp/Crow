@@ -44,10 +44,11 @@ TEST_CASE("Rule")
     r.validate();
 
     response res;
+    request req;
 
     // executing handler
     CHECK(0 == x);
-    r.handle(request(), res, routing_params());
+    r.handle(req, res, routing_params());
     CHECK(1 == x);
 
     // registering handler with request argument
@@ -60,7 +61,7 @@ TEST_CASE("Rule")
 
     // executing handler
     CHECK(1 == x);
-    r.handle(request(), res, routing_params());
+    r.handle(req, res, routing_params());
     CHECK(2 == x);
 } // Rule
 
@@ -1375,6 +1376,71 @@ TEST_CASE("middleware_context")
     }
     app.stop();
 } // middleware_context
+
+struct LocalSecretMiddleware : crow::ILocalMiddleware
+{
+    struct context
+    {};
+
+    void before_handle(request& /*req*/, response& res, context& /*ctx*/)
+    {
+        res.code = 403;
+        res.end();
+    }
+
+    void after_handle(request& /*req*/, response& /*res*/, context& /*ctx*/)
+    {}
+};
+
+TEST_CASE("local_middleware")
+{
+    static char buf[2048];
+
+    App<LocalSecretMiddleware> app;
+
+    CROW_ROUTE(app, "/")
+    ([]() {
+        return "works!";
+    });
+
+    CROW_ROUTE(app, "/secret")
+      .middlewares<decltype(app), LocalSecretMiddleware>()([]() {
+          return "works!";
+      });
+
+    app.validate();
+
+    auto _ = async(launch::async,
+                   [&] {
+                       app.bindaddr(LOCALHOST_ADDRESS).port(45451).run();
+                   });
+    app.wait_for_server_start();
+    asio::io_service is;
+
+    {
+        asio::ip::tcp::socket c(is);
+        c.connect(asio::ip::tcp::endpoint(
+          asio::ip::address::from_string(LOCALHOST_ADDRESS), 45451));
+        c.send(asio::buffer("GET /\r\n\r\n"));
+        c.receive(asio::buffer(buf, 2048));
+        c.close();
+
+        CHECK(std::string(buf).find("200") != std::string::npos);
+    }
+
+    {
+        asio::ip::tcp::socket c(is);
+        c.connect(asio::ip::tcp::endpoint(
+          asio::ip::address::from_string(LOCALHOST_ADDRESS), 45451));
+        c.send(asio::buffer("GET /secret\r\n\r\n"));
+        c.receive(asio::buffer(buf, 2048));
+        c.close();
+
+        CHECK(std::string(buf).find("403") != std::string::npos);
+    }
+
+    app.stop();
+} // local_middleware
 
 TEST_CASE("middleware_cookieparser")
 {

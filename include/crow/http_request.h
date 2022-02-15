@@ -34,6 +34,7 @@ namespace crow
         bool keep_alive, close_connection, upgrade;
 
         void* middleware_context{};
+        void* middleware_container{};
         boost::asio::io_service* io_service{};
 
         /// Construct an empty request. (sets the method to `GET`)

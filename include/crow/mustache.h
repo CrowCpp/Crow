@@ -146,8 +146,8 @@ namespace crow
                         case '"': out += "&quot;"; break;
                         case '\'': out += "&#39;"; break;
                         case '/': out += "&#x2F;"; break;
-                        case '`': out += "&#x60"; break;
-                        case '=': out += "&#x3D"; break;
+                        case '`': out += "&#x60;"; break;
+                        case '=': out += "&#x3D;"; break;
                         default: out += *it; break;
                     }
                 }
@@ -637,11 +637,21 @@ namespace crow
             return detail::get_loader_ref()(filename_sanitized);
         }
 
+        inline std::string load_text_unsafe(const std::string& filename)
+        {
+            return detail::get_loader_ref()(filename);
+        }
+
         inline template_t load(const std::string& filename)
         {
             std::string filename_sanitized(filename);
             utility::sanitize_filename(filename_sanitized);
             return compile(detail::get_loader_ref()(filename_sanitized));
+        }
+
+        inline template_t load_unsafe(const std::string& filename)
+        {
+            return compile(detail::get_loader_ref()(filename));
         }
     } // namespace mustache
 } // namespace crow
