@@ -137,16 +137,13 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>process_header</b> ()
 <tr class="memitem:a6aaafa15ad10e3165b547edecd66f174"><td class="memItemLeft" align="right" valign="top"><a id="a6aaafa15ad10e3165b547edecd66f174"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>process_message</b> ()</td></tr>
 <tr class="separator:a6aaafa15ad10e3165b547edecd66f174"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac825fa6827ccc49ea6c6a1c3c203d919"><td class="memItemLeft" align="right" valign="top"><a id="ac825fa6827ccc49ea6c6a1c3c203d919"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>set_connection_parameters</b> ()</td></tr>
+<tr class="separator:ac825fa6827ccc49ea6c6a1c3c203d919"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4c1e61f6ed620123661ffb95070c9ca0"><td class="memItemLeft" align="right" valign="top"><a id="a4c1e61f6ed620123661ffb95070c9ca0"></a>
 <a class="el" href="structcrow_1_1request.html">request</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structcrow_1_1_h_t_t_p_parser.html#a4c1e61f6ed620123661ffb95070c9ca0">to_request</a> () const</td></tr>
 <tr class="memdesc:a4c1e61f6ed620123661ffb95070c9ca0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Take the parsed HTTP request data and convert it to a <a class="el" href="structcrow_1_1request.html">crow::request</a>. <br /></td></tr>
 <tr class="separator:a4c1e61f6ed620123661ffb95070c9ca0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af1ee5e3d7c354ad27a6c7fba88411557"><td class="memItemLeft" align="right" valign="top"><a id="af1ee5e3d7c354ad27a6c7fba88411557"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>is_upgrade</b> () const</td></tr>
-<tr class="separator:af1ee5e3d7c354ad27a6c7fba88411557"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aed543224b225e4d21ae06633c4c3be58"><td class="memItemLeft" align="right" valign="top"><a id="aed543224b225e4d21ae06633c4c3be58"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>check_version</b> (int major, int minor) const</td></tr>
-<tr class="separator:aed543224b225e4d21ae06633c4c3be58"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
@@ -199,6 +196,14 @@ ci_map&#160;</td><td class="memItemRight" valign="bottom"><b>headers</b></td></t
 <tr class="memitem:a38b29e8668db22997d92a2040a40eb69"><td class="memItemLeft" align="right" valign="top"><a id="a38b29e8668db22997d92a2040a40eb69"></a>
 std::string&#160;</td><td class="memItemRight" valign="bottom"><b>body</b></td></tr>
 <tr class="separator:a38b29e8668db22997d92a2040a40eb69"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae7475276c3cf8fbfb08084e9b5cb213c"><td class="memItemLeft" align="right" valign="top"><a id="ae7475276c3cf8fbfb08084e9b5cb213c"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structcrow_1_1_h_t_t_p_parser.html#ae7475276c3cf8fbfb08084e9b5cb213c">keep_alive</a></td></tr>
+<tr class="memdesc:ae7475276c3cf8fbfb08084e9b5cb213c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether or not the server should send a <code>connection: Keep-Alive</code> header to the client. <br /></td></tr>
+<tr class="separator:ae7475276c3cf8fbfb08084e9b5cb213c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afb0601e8d022a4db2b0cb1e08aa93238"><td class="memItemLeft" align="right" valign="top"><a id="afb0601e8d022a4db2b0cb1e08aa93238"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structcrow_1_1_h_t_t_p_parser.html#afb0601e8d022a4db2b0cb1e08aa93238">close_connection</a></td></tr>
+<tr class="memdesc:afb0601e8d022a4db2b0cb1e08aa93238"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether or not the server should shut down the TCP connection once a response is sent. <br /></td></tr>
+<tr class="separator:afb0601e8d022a4db2b0cb1e08aa93238"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8c9ef70473ed6548872bcb217965203e"><td class="memItemLeft" align="right" valign="top"><a id="a8c9ef70473ed6548872bcb217965203e"></a>
 Handler *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structcrow_1_1_h_t_t_p_parser.html#a8c9ef70473ed6548872bcb217965203e">handler_</a></td></tr>
 <tr class="memdesc:a8c9ef70473ed6548872bcb217965203e"><td class="mdescLeft">&#160;</td><td class="mdescRight">This is currently an HTTP connection object (<a class="el" href="classcrow_1_1_connection.html">crow::Connection</a>). <br /></td></tr>
@@ -220,7 +225,7 @@ struct crow::HTTPParser&lt; Handler &gt;</h3>
 			<ul>
 				<li class="navelem"><b>crow</b></li><li class="navelem"><a class="el" href="structcrow_1_1_h_t_t_p_parser.html">HTTPParser</a></li>
 				<li class="footer">
-					Generated on Mon Feb 14 2022 for Crow by <a href="http://www.doxygen.org/index.html">
+					Generated on Tue Feb 15 2022 for Crow by <a href="http://www.doxygen.org/index.html">
 					<img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.17.
 					Dark theme by <a href="http://majerle.eu" target="_new">Tilen Majerle</a>. Edited by <a href="https://github.com/The-EDev" target="_new">Farook Al-Sammarraie</a>. All rights reserved.
 				</li>

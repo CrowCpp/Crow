@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['is_5fhead_5fresponse_432',['is_head_response',['../structcrow_1_1response.html#a42e68ba33c040b10d3bc49392193f415',1,'crow::response']]]
+  ['keep_5falive_435',['keep_alive',['../structcrow_1_1_h_t_t_p_parser.html#ae7475276c3cf8fbfb08084e9b5cb213c',1,'crow::HTTPParser']]]
 ];

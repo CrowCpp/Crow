@@ -34,6 +34,6 @@ var structcrow_1_1response =
     [ "body", "structcrow_1_1response.html#ae9f3cc153eac05954f1f4e599527892d", null ],
     [ "code", "structcrow_1_1response.html#aabc1f9b3264b8c5a2d05dcb409e8ff3f", null ],
     [ "headers", "structcrow_1_1response.html#ae56cfc39f24a56748c11016842427fb3", null ],
-    [ "is_head_response", "structcrow_1_1response.html#a42e68ba33c040b10d3bc49392193f415", null ],
-    [ "manual_length_header", "structcrow_1_1response.html#a95f300c05782e1934dad522b6d6588cf", null ]
+    [ "manual_length_header", "structcrow_1_1response.html#a95f300c05782e1934dad522b6d6588cf", null ],
+    [ "skip_body", "structcrow_1_1response.html#a548c4f5e059a7bb3b2560b7ac5800011", null ]
 ];
