@@ -1,6 +1,6 @@
 #pragma once
 // settings for crow
-// TODO - replace with runtime config. libucl?
+// TODO(ipkn) replace with runtime config. libucl?
 
 /* #ifdef - enables debug mode */
 //#define CROW_ENABLE_DEBUG

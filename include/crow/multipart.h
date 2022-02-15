@@ -13,7 +13,6 @@ namespace crow
     namespace multipart
     {
         const std::string dd = "--";
-        const std::string crlf = "\r\n";
 
         /// The first part in a section, contains metadata about the part
         struct header
@@ -28,6 +27,7 @@ namespace crow
         /// It is usually separated from other sections by a `boundary`
         struct part
         {
+            //TODO(EDev): restructure this to an `unordered_map<string, header>` with string being `header::value.first`
             std::vector<header> headers; ///< (optional) The first part before the data, Contains information regarding the type of data and encoding
             std::string body;            ///< The actual data in the part
         };
@@ -35,7 +35,7 @@ namespace crow
         /// The parsed multipart request/response
         struct message : public returnable
         {
-            ci_map headers;
+            ci_map headers;          ///< The request/response headers
             std::string boundary;    ///< The text boundary that separates different `parts`
             std::vector<part> parts; ///< The individual parts of the message
 
@@ -93,9 +93,17 @@ namespace crow
         private:
             std::string get_boundary(const std::string& header) const
             {
-                size_t found = header.find("boundary=");
+                constexpr char boundary_text[] = "boundary=";
+                size_t found = header.find(boundary_text);
                 if (found)
-                    return header.substr(found + 9);
+                {
+                    std::string to_return(header.substr(found + strlen(boundary_text)));
+                    if (to_return[0] == '\"')
+                    {
+                        to_return = to_return.substr(1, to_return.length() - 2);
+                    }
+                    return to_return;
+                }
                 return std::string();
             }
 

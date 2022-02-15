@@ -11,6 +11,15 @@
 
 #include "crow/settings.h"
 
+// TODO(EDev): Adding C++20's [[likely]] and [[unlikely]] attributes might be useful
+#if defined(__GNUG__) || defined(__clang__)
+#define CROW_LIKELY(X) __builtin_expect(!!(X), 1)
+#define CROW_UNLIKELY(X) __builtin_expect(!!(X), 0)
+#else
+#define CROW_LIKELY(X) (X)
+#define CROW_UNLIKELY(X) (X)
+#endif
+
 namespace crow
 {
     namespace black_magic
@@ -728,8 +737,7 @@ namespace crow
                 }
                 else if ((c == '/') || (c == '\\'))
                 {
-                    //TODO(EDev): uncomment below once #332 is merged
-                    if (/*CROW_UNLIKELY(*/ i == 0 /*)*/) //Prevent Unix Absolute Paths (Windows Absolute Paths are prevented with `(c == ':')`)
+                    if (CROW_UNLIKELY(i == 0)) //Prevent Unix Absolute Paths (Windows Absolute Paths are prevented with `(c == ':')`)
                     {
                         data[i] = replacement;
                     }
