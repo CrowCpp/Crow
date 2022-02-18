@@ -356,7 +356,6 @@ namespace crow
             }
 
         public:
-
             /// Output a returnable template from this mustache template
             rendered_template render() const
             {
