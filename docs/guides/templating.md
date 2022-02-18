@@ -26,3 +26,8 @@ To return a mustache template, you need to load a page using `#!cpp auto page = 
 You also need to set up the context by using `#!cpp crow::mustache::context ctx;`. Then you need to assign the keys and values, this can be done the same way you assign values to a json write value (`ctx["key"] = value;`).<br>
 With your context and page ready, just `#!cpp return page.render(ctx);`. This will use the context data to return a filled template.<br>
 Alternatively you could just render the page without a context using `#!cpp return page.render();`.
+
+!!! note
+
+    `#!cpp page.render();` returns a crow::returnable class in order to set the `Content-Type` header. to get a simple string, use `#!cpp page.render_string()` instead.
+
