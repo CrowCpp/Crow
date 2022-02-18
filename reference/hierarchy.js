@@ -120,7 +120,8 @@ var hierarchy =
     [ "crow::response", "structcrow_1_1response.html", null ],
     [ "crow::returnable", "structcrow_1_1returnable.html", [
       [ "crow::json::wvalue", "classcrow_1_1json_1_1wvalue.html", null ],
-      [ "crow::multipart::message", "structcrow_1_1multipart_1_1message.html", null ]
+      [ "crow::multipart::message", "structcrow_1_1multipart_1_1message.html", null ],
+      [ "crow::mustache::rendered_template", "structcrow_1_1mustache_1_1rendered__template.html", null ]
     ] ],
     [ "crow::Router", "classcrow_1_1_router.html", null ],
     [ "crow::routing_params", "structcrow_1_1routing__params.html", null ],

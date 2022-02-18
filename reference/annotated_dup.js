@@ -94,6 +94,7 @@ var annotated_dup =
       [ "mustache", null, [
         [ "Action", "structcrow_1_1mustache_1_1_action.html", "structcrow_1_1mustache_1_1_action" ],
         [ "invalid_template_exception", "classcrow_1_1mustache_1_1invalid__template__exception.html", "classcrow_1_1mustache_1_1invalid__template__exception" ],
+        [ "rendered_template", "structcrow_1_1mustache_1_1rendered__template.html", "structcrow_1_1mustache_1_1rendered__template" ],
         [ "template_t", "classcrow_1_1mustache_1_1template__t.html", "classcrow_1_1mustache_1_1template__t" ]
       ] ],
       [ "utility", null, [

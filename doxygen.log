@@ -120,23 +120,23 @@ Flushing cached te/drone/src/include/crow/utility.h:512: warning: Compound crow:
 /drone/src/include/crow/routing.h:133: warning: Compound crow::detail::routing_handler_call_helper::call< F, NInt, NUint, NDouble, NString, black_magic::S< uint64_t, Args1... >, black_magic::S< Args2... > > is not documented.
 /drone/src/include/crow/middleware.h:262: warning: Compound crow::detail::handler_middleware_wrapper::middleware_call_criteria is not documented.
 /drone/src/include/crow/http_response.h:25: warning: Compound crow::detail::handler_middleware_wrapper is not documented.
+/drone/src/include/crow/routing.h:123: warning: Compound crow::detail::routing_handler_call_helper::call< F, NInt, NUint, NDouble, NString, black_magic::S< int64_t, Args1... >, black_magic::S< Args2... > > is not documented.
 /drone/src/include/crow/routing.h:273: warning: Compound crow::CatchallRule is not documented.
 /drone/src/include/crow/utility.h:165: warning: Compound crow::black_magic::compute_parameter_tag_from_args_list< Arg, Args... > is not documented.
-/drone/src/include/crow/mustache.h:44: warning: Compound crow::mustache::Action is not documented.
+/drone/src/include/crow/mustache.h:61: warning: Compound crow::mustache::Action is not documented.
 /drone/src/include/crow/middlewares/utf-8.h:9: warning: Compound crow::UTF8 is not documented.
 /drone/src/include/crow/middleware_context.h:31: warning: Compound crow::detail::partial_context<> is not documented.
 /drone/src/include/crow/utility.h:464: warning: Compound crow::detail::get_index_of_element_from_tuple_by_type_impl< T, N, T, Args... > is not documented.
 /drone/src/include/crow/http_server.h:27: warning: Compound crow::Server is not documented.
 /drone/src/include/crow/utility.h:321: warning: Compound crow::black_magic::arguments is not documented.
 /drone/src/include/crow/middleware_context.h:15: warning: Compound crow::detail::partial_context is not documented.
-/drone/src/include/crow/mustache.h:20: warning: Compound crow::mustache::invalid_template_exception is not documented.
+/drone/src/include/crow/mustache.h:21: warning: Compound crow::mustache::invalid_template_exception is not documented.
 /drone/src/include/crow/logging.h:86: warning: Compound crow::logger is not documented.
 /drone/src/include/crow/utility.h:386: warning: Compound crow::black_magic::pop_back_helper< seq< N... >, Tuple > is not documented.
 /drone/src/include/crow/routing.h:110: warning: Compound crow::detail::routing_handler_call_helper::call_params is not documented.
 /drone/src/include/crow/middleware_context.h:40: warning: Compound crow::detail::context is not documented.
 /drone/src/include/crow/utility.h:501: warning: Compound crow::utility::function_traits< R(ClassType::*)(Args...) const > is not documented.
 /drone/src/include/crow/middleware.h:301: warning: Compound crow::detail::handler_call_bridge is not documented.
-/drone/src/include/crow/routing.h:123: warning: Compound crow::detail::routing_handler_call_helper::call< F, NInt, NUint, NDouble, NString, black_magic::S< int64_t, Args1... >, black_magic::S< Args2... > > is not documented.
 /drone/src/include/crow/middleware.h:81: warning: Compound crow::detail::is_after_handle_arity_3_impl is not documented.
 /drone/src/include/crow/common.h:225: warning: Compound crow::routing_params is not documented.
 /drone/src/include/crow/logging.h:34: warning: Compound crow::ILogHandler is not documented.
@@ -145,6 +145,7 @@ Flushing cached te/drone/src/include/crow/utility.h:512: warning: Compound crow:
 /drone/src/include/crow/middleware.h:65: warning: Compound crow::detail::is_before_handle_arity_3_impl is not documented.
 /drone/src/include/crow/middleware.h:193: warning: Compound crow::detail::middleware_call_criteria_only_global is not documented.
 /drone/src/include/crow/middlewares/cookie_parser.h:32: warning: Compound crow::CookieParser is not documented.
+/drone/src/include/crow/mustache.h:34: warning: Compound crow::mustache::rendered_template is not documented.
 /drone/src/include/crow/routing.h:103: warning: Compound crow::detail::routing_handler_call_helper::call_pair is not documented.
 /drone/src/include/crow/json.h:1429: warning: unable to resolve reference to 'reset()' for \ref command
 /drone/src/include/crow/routing.h:33: warning: Member BaseRule(std::string rule) (function) of class crow::BaseRule is not documented.
@@ -739,17 +740,20 @@ Generating docs for compound crow::detail::check_global_/drone/src/include/crow/
 /drone/src/include/crow/multipart.h:42: warning: Member get_header_value(const std::string &key) const (function) of class crow::multipart::message is not documented.
 /drone/src/include/crow/returnable.h:13: warning: Member returnable(std::string ctype) (function) of class crow::returnable is not documented.
 /drone/src/include/crow/returnable.h:10: warning: Member content_type (variable) of class crow::returnable is not documented.
-/drone/src/include/crow/mustache.h:49: warning: Member Action(ActionType t, size_t start, size_t end, size_t pos=0) (function) of class crow::mustache::Action is not documented.
-/drone/src/include/crow/mustache.h:45: warning: Member start (variable) of class crow::mustache::Action is not documented.
-/drone/src/include/crow/mustache.h:46: warning: Member end (variable) of class crow::mustache::Action is not documented.
-/drone/src/include/crow/mustache.h:47: warning: Member pos (variable) of class crow::mustache::Action is not documented.
-/drone/src/include/crow/mustache.h:48: warning: Member t (variable) of class crow::mustache::Action is not documented.
-/drone/src/include/crow/mustache.h:22: warning: Member invalid_template_exception(const std::string &msg) (function) of class crow::mustache::invalid_template_exception is not documented.
-/drone/src/include/crow/mustache.h:25: warning: Member what() const (function) of class crow::mustache::invalid_template_exception is not documented.
-/drone/src/include/crow/mustache.h:29: warning: Member msg (variable) of class crow::mustache::invalid_template_exception is not documented.
-/drone/src/include/crow/mustache.h:59: warning: Member template_t(std::string body) (function) of class crow::mustache::template_t is not documented.
-/drone/src/include/crow/mustache.h:342: warning: Member render() const (function) of class crow::mustache::template_t is not documented.
-/drone/src/include/crow/mustache.h:352: warning: Member render(context &ctx) const (function) of class crow::mustache::template_t is not documented.
+/drone/src/include/crow/mustache.h:66: warning: Member Action(ActionType t, size_t start, size_t end, size_t pos=0) (function) of class crow::mustache::Action is not documented.
+/drone/src/include/crow/mustache.h:62: warning: Member start (variable) of class crow::mustache::Action is not documented.
+/drone/src/include/crow/mustache.h:63: warning: Member end (variable) of class crow::mustache::Action is not documented.
+/drone/src/include/crow/mustache.h:64: warning: Member pos (variable) of class crow::mustache::Action is not documented.
+/drone/src/include/crow/mustache.h:65: warning: Member t (variable) of class crow::mustache::Action is not documented.
+/drone/src/include/crow/mustache.h:23: warning: Member invalid_template_exception(const std::string &msg) (function) of class crow::mustache::invalid_template_exception is not documented.
+/drone/src/include/crow/mustache.h:26: warning: Member what() const (function) of class crow::mustache::invalid_template_exception is not documented.
+/drone/src/include/crow/mustache.h:30: warning: Member msg (variable) of class crow::mustache::invalid_template_exception is not documented.
+/drone/src/include/crow/mustache.h:38: warning: Member rendered_template(std::string &body) (function) of class crow::mustache::rendered_template is not documented.
+/drone/src/include/crow/mustache.h:43: warning: Member dump() const override (function) of class crow::mustache::rendered_template is not documented.
+/drone/src/include/crow/returnable.h:13: warning: Member returnable(std::string ctype) (function) of class crow::returnable is not documented.
+/drone/src/include/crow/mustache.h:41: warning: Member body_ (variable) of class crow::mustache::rendered_template is not documented.
+/drone/src/include/crow/returnable.h:10: warning: Member content_type (variable) of class crow::returnable is not documented.
+/drone/src/include/crow/mustache.h:76: warning: Member template_t(std::string body) (function) of class crow::mustache::template_t is not documented.
 /drone/src/include/crow/utility.h:491: warning: Member parent_t (typedef) of class crow::utility::function_traits is not documented.
 /drone/src/include/crow/utility.h:493: warning: Member result_type (typedef) of class crow::utility::function_traits is not documented.
 /drone/src/include/crow/utility.h:495: warning: Member arg (typedef) of class crow::utility::function_traits is not documented.
@@ -811,6 +815,7 @@ Generating docs for compound crow::multipart::message...
 Generating docs for compound crow::multipart::part...
 Generating docs for compound crow::mustache::Action...
 Generating docs for compound crow::mustache::invalid_template_exception...
+Generating docs for compound crow::mustache::rendered_template...
 Generating docs for compound crow::mustache::template_t...
 Generating docs for compound crow::utility::function_traits...
 Generating docs for compound crow::utility::function_traits< R(ClassType::*)(Args...) const >...
@@ -834,5 +839,5 @@ Generating example index...
 finalizing index lists...
 writing tag file...
 Running plantuml with JAVA...
-lookup cache used 2833/65536 hits=24173 misses=3167
+lookup cache used 2861/65536 hits=24261 misses=3197
 finished...

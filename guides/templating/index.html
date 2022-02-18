@@ -13,7 +13,7 @@
         <link rel="canonical" href="https://crowcpp.org/guides/templating/">
       
       <link rel="icon" href="../../assets/favicon.svg">
-      <meta name="generator" content="mkdocs-1.2.3, mkdocs-material-8.1.11">
+      <meta name="generator" content="mkdocs-1.2.3, mkdocs-material-8.2.1">
     
     
       
@@ -21,7 +21,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.50e68009.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.e8d9bf0c.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.e6a45f82.min.css">
@@ -1035,6 +1035,7 @@
               
                 
 
+
   <h1>Templating (Mustache)</h1>
 
 <p>Templating is when you return an html page with custom data. You can probably tell why that's useful.<br><br></p>
@@ -1059,6 +1060,10 @@
 You also need to set up the context by using <code class="highlight"><span class="n">crow</span><span class="o">::</span><span class="n">mustache</span><span class="o">::</span><span class="n">context</span><span class="w"> </span><span class="n">ctx</span><span class="p">;</span><span class="w"></span></code>. Then you need to assign the keys and values, this can be done the same way you assign values to a json write value (<code>ctx["key"] = value;</code>).<br>
 With your context and page ready, just <code class="highlight"><span class="k">return</span><span class="w"> </span><span class="n">page</span><span class="p">.</span><span class="n">render</span><span class="p">(</span><span class="n">ctx</span><span class="p">);</span><span class="w"></span></code>. This will use the context data to return a filled template.<br>
 Alternatively you could just render the page without a context using <code class="highlight"><span class="k">return</span><span class="w"> </span><span class="n">page</span><span class="p">.</span><span class="n">render</span><span class="p">();</span><span class="w"></span></code>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><code class="highlight"><span class="n">page</span><span class="p">.</span><span class="n">render</span><span class="p">();</span><span class="w"></span></code> returns a crow::returnable class in order to set the <code>Content-Type</code> header. to get a simple string, use <code class="highlight"><span class="n">page</span><span class="p">.</span><span class="n">render_string</span><span class="p">()</span><span class="w"></span></code> instead.</p>
+</div>
 
               
             </article>
@@ -1195,10 +1200,10 @@ Alternatively you could just render the page without a context using <code class
     <div class="md-dialog" data-md-component="dialog">
       <div class="md-dialog__inner md-typeset"></div>
     </div>
-    <script id="__config" type="application/json">{"base": "../..", "features": "navigation.tabs", "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../../assets/javascripts/workers/search.092fa1f6.min.js"}</script>
+    <script id="__config" type="application/json">{"base": "../..", "features": "navigation.tabs", "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../../assets/javascripts/workers/search.bd0b6b67.min.js"}</script>
     
     
-      <script src="../../assets/javascripts/bundle.5a9542cf.min.js"></script>
+      <script src="../../assets/javascripts/bundle.8aa65030.min.js"></script>
       
     
   </body>

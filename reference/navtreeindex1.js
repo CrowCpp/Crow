@@ -40,10 +40,12 @@ var NAVTREEINDEX1 =
 "classcrow_1_1mustache_1_1invalid__template__exception.html#a2a598ed4d91525b8642ec0c0c4b711a9":[0,0,0,4,1,0],
 "classcrow_1_1mustache_1_1invalid__template__exception.html#a6ec8bc8b03e34a5d2443d2f080e9b739":[0,0,0,4,1,2],
 "classcrow_1_1mustache_1_1invalid__template__exception.html#afe324639897b33eeda550fc4e3ecc34e":[0,0,0,4,1,1],
-"classcrow_1_1mustache_1_1template__t.html":[0,0,0,4,2],
-"classcrow_1_1mustache_1_1template__t.html#a1abc5e3288e0a41cdf3bd148c6a41a6a":[0,0,0,4,2,1],
-"classcrow_1_1mustache_1_1template__t.html#a8c37d92fba8f0a4cf4d4f7a254847ccc":[0,0,0,4,2,0],
-"classcrow_1_1mustache_1_1template__t.html#ad362cfe3f41e90eaf9181e5c4fc3381d":[0,0,0,4,2,2],
+"classcrow_1_1mustache_1_1template__t.html":[0,0,0,4,3],
+"classcrow_1_1mustache_1_1template__t.html#a17175fc5cda74aca475286f75aa2b941":[0,0,0,4,3,2],
+"classcrow_1_1mustache_1_1template__t.html#a21199e08a066d7c66b5728354c2c40fd":[0,0,0,4,3,3],
+"classcrow_1_1mustache_1_1template__t.html#a67caf7e23349a829b913c897ab882a8e":[0,0,0,4,3,1],
+"classcrow_1_1mustache_1_1template__t.html#a85ce237f9d06fdb02e15919479fbf2d9":[0,0,0,4,3,4],
+"classcrow_1_1mustache_1_1template__t.html#a8c37d92fba8f0a4cf4d4f7a254847ccc":[0,0,0,4,3,0],
 "classcrow_1_1query__string.html":[0,0,0,21],
 "classcrow_1_1query__string.html#a0744b06ff0709ebbe7c2a1646564508b":[0,0,0,21,11],
 "classcrow_1_1query__string.html#a19138a2e29bba49996bf67e7403da405":[0,0,0,21,3],
@@ -247,7 +249,5 @@ var NAVTREEINDEX1 =
 "structcrow_1_1detail_1_1context.html#a26b8bceebe175fa78f6a95c7db539b38":[0,0,0,1,6,3],
 "structcrow_1_1detail_1_1context.html#a836ff37a47e92e44b7f937687bfb06e5":[0,0,0,1,6,1],
 "structcrow_1_1detail_1_1context.html#a8a16e746afbf791a8d4bbdceeaed9619":[0,0,0,1,6,2],
-"structcrow_1_1detail_1_1context.html#aed24bba34e07bac2e533be71003ce1f1":[0,0,0,1,6,0],
-"structcrow_1_1detail_1_1get__index__of__element__from__tuple__by__type__impl.html":[0,0,0,1,7],
-"structcrow_1_1detail_1_1get__index__of__element__from__tuple__by__type__impl_3_01_t_00_01_n_00_01_t_00_01_args_8_8_8_01_4.html":[0,0,0,1,8]
+"structcrow_1_1detail_1_1context.html#aed24bba34e07bac2e533be71003ce1f1":[0,0,0,1,6,0]
 };
