@@ -1531,7 +1531,7 @@ TEST_CASE("middleware_cors")
 
     auto& cors = app.get_middleware<crow::CORSHandler>();
     cors.prefix("/origin")
-        .origin("test.test");
+      .origin("test.test");
 
     CROW_ROUTE(app, "/")
     ([&](const request& req) {
