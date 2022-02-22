@@ -130,12 +130,17 @@ namespace crow
         {
             url.clear();
             raw_url.clear();
-            header_building_state = 0;
             header_field.clear();
             header_value.clear();
             headers.clear();
             url_params.clear();
             body.clear();
+            header_building_state = 0;
+            qs_point = 0;
+            http_major = 0;
+            http_minor = 0;
+            keep_alive = false;
+            close_connection = false;
         }
 
         inline void process_header()
