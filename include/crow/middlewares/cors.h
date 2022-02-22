@@ -10,8 +10,8 @@ namespace crow
     struct CORSRules
     {
         friend struct crow::CORSHandler;
-        // Set Access-Control-Allow-Origin. Default is "*"
 
+        // Set Access-Control-Allow-Origin. Default is "*"
         CORSRules& origin(const std::string& origin)
         {
             origin_ = origin;
@@ -64,13 +64,14 @@ namespace crow
             return *this;
         }
 
-        // Ignore CORS
+        // Ignore CORS and don't send any headers
         void ignore()
         {
             ignore_ = true;
         }
 
     private:
+        // build comma separated list
         void add_list_item(std::string& list, const std::string& val)
         {
             if (list == "*") list = "";
@@ -78,6 +79,7 @@ namespace crow
             list += val;
         }
 
+        // Set header `key` to `value` if it is not set
         void set_header(const std::string& key, const std::string& value, crow::response& res)
         {
             if (value.size() == 0) return;
@@ -85,6 +87,7 @@ namespace crow
             res.add_header(key, value);
         }
 
+        // Set response headers
         void apply(crow::response& res)
         {
             if (ignore_) return;
@@ -96,6 +99,7 @@ namespace crow
         }
 
         bool ignore_ = false;
+        // TODO: support multiple origins that are dynamically selected
         std::string origin_ = "*";
         std::string methods_ = "*";
         std::string headers_ = "*";
@@ -103,7 +107,11 @@ namespace crow
         bool allow_credentials_ = false;
     };
 
-    // CORSHandler is used for enforcing CORS policies
+    /// CORSHandler is a global middleware for setting CORS headers.
+    ///
+    /// By default, it sets Access-Control-Allow-Origin/Methods/Headers to "*".
+    /// The default behaviour can be changed with the `global()` cors rule.
+    /// Additional rules for prexies can be added with `prefix()`.
     struct CORSHandler
     {
         struct context
