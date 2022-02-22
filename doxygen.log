@@ -230,9 +230,9 @@ Flushing cached te/drone/src/include/crow/utility.h:512: warning: Compound crow:
 /drone/src/include/crow/parser.h:96: warning: Member HTTPParser(Handler *handler) (function) of class crow::HTTPParser is not documented.
 /drone/src/include/crow/parser.h:124: warning: Member done() (function) of class crow::HTTPParser is not documented.
 /drone/src/include/crow/parser.h:129: warning: Member clear() (function) of class crow::HTTPParser is not documented.
-/drone/src/include/crow/parser.h:141: warning: Member process_header() (function) of class crow::HTTPParser is not documented.
-/drone/src/include/crow/parser.h:146: warning: Member process_message() (function) of class crow::HTTPParser is not documented.
-/drone/src/include/crow/parser.h:151: warning: Member set_connection_parameters() (function) of class crow::HTTPParser is not documented.
+/drone/src/include/crow/parser.h:146: warning: Member process_header() (function) of class crow::HTTPParser is not documented.
+/drone/src/include/crow/parser.h:151: warning: Member process_message() (function) of class crow::HTTPParser is not documented.
+/drone/src/include/crow/parser.h:156: warning: Member set_connection_parameters() (function) of class crow::HTTPParser is not documented.
 /drone/src/include/crow/parser.h:20: warning: Member on_message_begin(http_parser *self_) (function) of class crow::HTTPParser is not documented.
 /drone/src/include/crow/parser.h:26: warning: Member on_url(http_parser *self_, const char *at, size_t length) (function) of class crow::HTTPParser is not documented.
 /drone/src/include/crow/parser.h:32: warning: Member on_header_field(http_parser *self_, const char *at, size_t length) (function) of class crow::HTTPParser is not documented.
@@ -240,13 +240,13 @@ Flushing cached te/drone/src/include/crow/utility.h:512: warning: Compound crow:
 /drone/src/include/crow/parser.h:66: warning: Member on_headers_complete(http_parser *self_) (function) of class crow::HTTPParser is not documented.
 /drone/src/include/crow/parser.h:79: warning: Member on_body(http_parser *self_, const char *at, size_t length) (function) of class crow::HTTPParser is not documented.
 /drone/src/include/crow/parser.h:85: warning: Member on_message_complete(http_parser *self_) (function) of class crow::HTTPParser is not documented.
-/drone/src/include/crow/parser.h:172: warning: Member raw_url (variable) of class crow::HTTPParser is not documented.
-/drone/src/include/crow/parser.h:173: warning: Member url (variable) of class crow::HTTPParser is not documented.
-/drone/src/include/crow/parser.h:175: warning: Member header_building_state (variable) of class crow::HTTPParser is not documented.
-/drone/src/include/crow/parser.h:176: warning: Member header_field (variable) of class crow::HTTPParser is not documented.
-/drone/src/include/crow/parser.h:177: warning: Member header_value (variable) of class crow::HTTPParser is not documented.
-/drone/src/include/crow/parser.h:178: warning: Member headers (variable) of class crow::HTTPParser is not documented.
-/drone/src/include/crow/parser.h:180: warning: Member body (variable) of class crow::HTTPParser is not documented.
+/drone/src/include/crow/parser.h:177: warning: Member raw_url (variable) of class crow::HTTPParser is not documented.
+/drone/src/include/crow/parser.h:178: warning: Member url (variable) of class crow::HTTPParser is not documented.
+/drone/src/include/crow/parser.h:180: warning: Member header_building_state (variable) of class crow::HTTPParser is not documented.
+/drone/src/include/crow/parser.h:181: warning: Member header_field (variable) of class crow::HTTPParser is not documented.
+/drone/src/include/crow/parser.h:182: warning: Member header_value (variable) of class crow::HTTPParser is not documented.
+/drone/src/include/crow/parser.h:183: warning: Member headers (variable) of class crow::HTTPParser is not documented.
+/drone/src/include/crow/parser.h:185: warning: Member body (variable) of class crow::HTTPParser is not documented.
 /drone/src/include/crow/middleware.h:18: warning: Member call_global (typedef) of class crow::ILocalMiddleware is not documented.
 /drone/src/include/crow/logging.h:36: warning: Member log(std::string message, LogLevel level)=0 (function) of class crow::ILogHandler is not documented.
 /drone/src/include/crow/logging.h:88: warning: Member logger(LogLevel level) (function) of class crow::logger is not documented.
@@ -839,5 +839,5 @@ Generating example index...
 finalizing index lists...
 writing tag file...
 Running plantuml with JAVA...
-lookup cache used 2861/65536 hits=24261 misses=3197
+lookup cache used 2861/65536 hits=24265 misses=3197
 finished...
