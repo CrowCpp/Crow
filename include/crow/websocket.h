@@ -22,6 +22,7 @@ namespace crow
         struct connection
         {
             virtual void send_binary(const std::string& msg) = 0;
+            virtual void send_binary_blocking(const std::string& msg, boost::system::error_code& ec) = 0;
             virtual void send_text(const std::string& msg) = 0;
             virtual void send_ping(const std::string& msg) = 0;
             virtual void send_pong(const std::string& msg) = 0;
@@ -156,6 +157,36 @@ namespace crow
                     write_buffers_.emplace_back(msg);
                     do_write();
                 });
+            }
+            
+            /// Send a binary encoded message in blocking mode.
+            void send_binary_blocking(const std::string& msg, boost::system::error_code& ec) override
+            {
+                auto header = build_header(2, msg.size());
+                std::vector<boost::asio::const_buffer> buffer;
+                buffer.emplace_back(boost::asio::buffer(header));
+                buffer.emplace_back(boost::asio::buffer(msg));
+
+                boost::asio::io_service service;
+                boost::asio::deadline_timer deadline_timer(service);
+                deadline_timer.expires_from_now(boost::posix_time::seconds(3));
+
+                deadline_timer.async_wait([&](const boost::system::error_code& err)
+                {
+                    if(!err)
+                    {
+                        ec = boost::system::errc::make_error_code(boost::system::errc::timed_out);
+                        adaptor_.socket().shutdown(boost::asio::ip::tcp::socket::shutdown_send);
+                    }
+                });
+
+                dispatch([&, this]
+                {
+                    boost::asio::write(adaptor_.socket(), buffer, boost::asio::transfer_all(), ec);
+                    deadline_timer.cancel();
+                });
+
+                service.run();
             }
 
             /// Send a plaintext message.
