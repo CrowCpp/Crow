@@ -176,7 +176,7 @@ namespace crow
                     if(!err)
                     {
                         ec = boost::system::errc::make_error_code(boost::system::errc::timed_out);
-                        adaptor_.socket().shutdown(boost::asio::ip::tcp::socket::shutdown_send);
+                        adaptor_.shutdown_write();
                     }
                 });
 
