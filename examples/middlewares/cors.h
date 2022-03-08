@@ -9,13 +9,17 @@ int main()
 
     // Customize CORS
     auto& cors = app.get_middleware<crow::CORSHandler>();
-    // Default rules
-    cors.global()
-      .methods("POST"_method, "GET"_method);
-    // Rules for prefix /cors
-    cors.prefix("/cors")
-      .origin("example.com");
 
+    // clang-format off
+    cors
+      .global()
+        .headers("X-Custom-Header", "Upgrade-Insecure-Requests")
+        .methods("POST"_method, "GET"_method)
+      .prefix("/cors")
+        .origin("example.com")
+      .prefix("/nocors")
+        .ignore();
+    // clang-format on
 
     CROW_ROUTE(app, "/")
     ([]() {

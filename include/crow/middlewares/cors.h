@@ -1,6 +1,7 @@
 #pragma once
 #include "crow/http_request.h"
 #include "crow/http_response.h"
+#include "crow/routing.h"
 
 namespace crow
 {
@@ -70,7 +71,20 @@ namespace crow
             ignore_ = true;
         }
 
+        // Handle CORS on specific prefix path
+        CORSRules& prefix(const std::string& prefix);
+
+        // Handle CORS for specific blueprint
+        CORSRules& blueprint(const Blueprint& bp);
+
+        // Global CORS policy
+        CORSRules& global();
+
     private:
+        CORSRules() = delete;
+        CORSRules(CORSHandler* handler):
+          handler_(handler) {}
+
         // build comma separated list
         void add_list_item(std::string& list, const std::string& val)
         {
@@ -80,7 +94,7 @@ namespace crow
         }
 
         // Set header `key` to `value` if it is not set
-        void set_header(const std::string& key, const std::string& value, crow::response& res)
+        void set_header_no_override(const std::string& key, const std::string& value, crow::response& res)
         {
             if (value.size() == 0) return;
             if (!get_header_value(res.headers, key).empty()) return;
@@ -91,11 +105,11 @@ namespace crow
         void apply(crow::response& res)
         {
             if (ignore_) return;
-            set_header("Access-Control-Allow-Origin", origin_, res);
-            set_header("Access-Control-Allow-Methods", methods_, res);
-            set_header("Access-Control-Allow-Headers", headers_, res);
-            set_header("Access-Control-Max-Age", max_age_, res);
-            if (allow_credentials_) set_header("Access-Control-Allow-Credentials", "true", res);
+            set_header_no_override("Access-Control-Allow-Origin", origin_, res);
+            set_header_no_override("Access-Control-Allow-Methods", methods_, res);
+            set_header_no_override("Access-Control-Allow-Headers", headers_, res);
+            set_header_no_override("Access-Control-Max-Age", max_age_, res);
+            if (allow_credentials_) set_header_no_override("Access-Control-Allow-Credentials", "true", res);
         }
 
         bool ignore_ = false;
@@ -105,6 +119,8 @@ namespace crow
         std::string headers_ = "*";
         std::string max_age_;
         bool allow_credentials_ = false;
+
+        CORSHandler* handler_;
     };
 
     /// CORSHandler is a global middleware for setting CORS headers.
@@ -129,7 +145,14 @@ namespace crow
         // Handle CORS on specific prefix path
         CORSRules& prefix(const std::string& prefix)
         {
-            rules.emplace_back(prefix, CORSRules{});
+            rules.emplace_back(prefix, CORSRules(this));
+            return rules.back().second;
+        }
+
+        // Handle CORS for specific blueprint
+        CORSRules& blueprint(const Blueprint& bp)
+        {
+            rules.emplace_back(bp.prefix(), CORSRules(this));
             return rules.back().second;
         }
 
@@ -142,8 +165,10 @@ namespace crow
     private:
         CORSRules& find_rule(const std::string& path)
         {
+            // TODO: use a trie in case of many rules
             for (auto& rule : rules)
             {
+                // Check if path starts with a rules prefix
                 if (path.rfind(rule.first, 0) == 0)
                 {
                     return rule.second;
@@ -153,7 +178,22 @@ namespace crow
         }
 
         std::vector<std::pair<std::string, CORSRules>> rules;
-        CORSRules default_;
+        CORSRules default_ = CORSRules(this);
     };
+
+    CORSRules& CORSRules::prefix(const std::string& prefix)
+    {
+        return handler_->prefix(prefix);
+    }
+
+    CORSRules& CORSRules::blueprint(const Blueprint& bp)
+    {
+        return handler_->blueprint(bp);
+    }
+
+    CORSRules& CORSRules::global()
+    {
+        return handler_->global();
+    }
 
 } // namespace crow

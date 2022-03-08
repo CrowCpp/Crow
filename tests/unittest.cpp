@@ -1530,16 +1530,26 @@ TEST_CASE("middleware_cors")
     App<crow::CORSHandler> app;
 
     auto& cors = app.get_middleware<crow::CORSHandler>();
-    cors.prefix("/origin")
-      .origin("test.test");
+    // clang-format off
+    cors
+      .prefix("/origin")
+        .origin("test.test")
+      .prefix("/nocors")
+        .ignore();
+    // clang-format on
 
     CROW_ROUTE(app, "/")
-    ([&](const request& req) {
+    ([&](const request&) {
         return "-";
     });
 
     CROW_ROUTE(app, "/origin")
-    ([&](const request& req) {
+    ([&](const request&) {
+        return "-";
+    });
+
+    CROW_ROUTE(app, "/nocors/path")
+    ([&](const request&) {
         return "-";
     });
 
@@ -1561,7 +1571,6 @@ TEST_CASE("middleware_cors")
         c.receive(asio::buffer(buf, 2048));
         c.close();
 
-        std::cout << std::string(buf) << std::endl;
         CHECK(std::string(buf).find("Access-Control-Allow-Origin: *") != std::string::npos);
     }
 
@@ -1575,8 +1584,20 @@ TEST_CASE("middleware_cors")
         c.receive(asio::buffer(buf, 2048));
         c.close();
 
-        std::cout << std::string(buf) << std::endl;
         CHECK(std::string(buf).find("Access-Control-Allow-Origin: test.test") != std::string::npos);
+    }
+
+    {
+        asio::ip::tcp::socket c(is);
+        c.connect(asio::ip::tcp::endpoint(
+          asio::ip::address::from_string(LOCALHOST_ADDRESS), 45451));
+
+        c.send(asio::buffer("GET /nocors/path\r\n\r\n"));
+
+        c.receive(asio::buffer(buf, 2048));
+        c.close();
+
+        CHECK(std::string(buf).find("Access-Control-Allow-Origin:") == std::string::npos);
     }
 
     app.stop();
