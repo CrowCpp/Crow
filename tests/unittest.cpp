@@ -12,6 +12,7 @@
 #include "catch.hpp"
 #include "crow.h"
 #include "crow/middlewares/cookie_parser.h"
+#include "crow/middlewares/cors.h"
 
 using namespace std;
 using namespace crow;
@@ -1520,6 +1521,87 @@ TEST_CASE("middleware_cookieparser")
     }
     app.stop();
 } // middleware_cookieparser
+
+
+TEST_CASE("middleware_cors")
+{
+    static char buf[5012];
+
+    App<crow::CORSHandler> app;
+
+    auto& cors = app.get_middleware<crow::CORSHandler>();
+    // clang-format off
+    cors
+      .prefix("/origin")
+        .origin("test.test")
+      .prefix("/nocors")
+        .ignore();
+    // clang-format on
+
+    CROW_ROUTE(app, "/")
+    ([&](const request&) {
+        return "-";
+    });
+
+    CROW_ROUTE(app, "/origin")
+    ([&](const request&) {
+        return "-";
+    });
+
+    CROW_ROUTE(app, "/nocors/path")
+    ([&](const request&) {
+        return "-";
+    });
+
+    auto _ = async(launch::async,
+                   [&] {
+                       app.bindaddr(LOCALHOST_ADDRESS).port(45451).run();
+                   });
+
+    app.wait_for_server_start();
+    asio::io_service is;
+
+    {
+        asio::ip::tcp::socket c(is);
+        c.connect(asio::ip::tcp::endpoint(
+          asio::ip::address::from_string(LOCALHOST_ADDRESS), 45451));
+
+        c.send(asio::buffer("GET /\r\n\r\n"));
+
+        c.receive(asio::buffer(buf, 2048));
+        c.close();
+
+        CHECK(std::string(buf).find("Access-Control-Allow-Origin: *") != std::string::npos);
+    }
+
+    {
+        asio::ip::tcp::socket c(is);
+        c.connect(asio::ip::tcp::endpoint(
+          asio::ip::address::from_string(LOCALHOST_ADDRESS), 45451));
+
+        c.send(asio::buffer("GET /origin\r\n\r\n"));
+
+        c.receive(asio::buffer(buf, 2048));
+        c.close();
+
+        CHECK(std::string(buf).find("Access-Control-Allow-Origin: test.test") != std::string::npos);
+    }
+
+    {
+        asio::ip::tcp::socket c(is);
+        c.connect(asio::ip::tcp::endpoint(
+          asio::ip::address::from_string(LOCALHOST_ADDRESS), 45451));
+
+        c.send(asio::buffer("GET /nocors/path\r\n\r\n"));
+
+        c.receive(asio::buffer(buf, 2048));
+        c.close();
+
+        CHECK(std::string(buf).find("Access-Control-Allow-Origin:") == std::string::npos);
+    }
+
+    app.stop();
+} // middleware_cors
 
 TEST_CASE("bug_quick_repeated_request")
 {
