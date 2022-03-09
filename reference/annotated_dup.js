@@ -115,6 +115,8 @@ var annotated_dup =
       [ "ci_key_eq", "structcrow_1_1ci__key__eq.html", "structcrow_1_1ci__key__eq" ],
       [ "Connection", "classcrow_1_1_connection.html", "classcrow_1_1_connection" ],
       [ "CookieParser", "structcrow_1_1_cookie_parser.html", "structcrow_1_1_cookie_parser" ],
+      [ "CORSHandler", "structcrow_1_1_c_o_r_s_handler.html", "structcrow_1_1_c_o_r_s_handler" ],
+      [ "CORSRules", "structcrow_1_1_c_o_r_s_rules.html", "structcrow_1_1_c_o_r_s_rules" ],
       [ "Crow", "classcrow_1_1_crow.html", "classcrow_1_1_crow" ],
       [ "DynamicRule", "classcrow_1_1_dynamic_rule.html", "classcrow_1_1_dynamic_rule" ],
       [ "HTTPParser", "structcrow_1_1_h_t_t_p_parser.html", "structcrow_1_1_h_t_t_p_parser" ],
