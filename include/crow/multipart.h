@@ -23,11 +23,8 @@ namespace crow
             std::string value;                                   ///< The first part of the header, usually `Content-Type` or `Content-Disposition`
             std::unordered_map<std::string, std::string> params; ///< The parameters of the header, come after the `value`
 
-            inline int i() const { return std::stoi(value); }    ///< Return \ref value as integer
-            inline double d() const { return std::stod(value); } ///< Return \ref value as double
-
-            operator int() const { return i(); }
-            operator double() const { return d(); }
+            operator int() const { return std::stoi(value); }    ///< Returns \ref value as integer
+            operator double() const { return std::stod(value); } ///< Returns \ref value as double
         };
 
         /// Multipart header map (key is header key).
@@ -61,11 +58,8 @@ namespace crow
             mph_map headers;  ///< (optional) The first part before the data, Contains information regarding the type of data and encoding
             std::string body; ///< The actual data in the part
 
-            inline int i() const { return std::stoi(body); }    ///< Return \ref body as integer
-            inline double d() const { return std::stod(body); } ///< Return \ref body as double
-
-            operator int() const { return i(); }
-            operator double() const { return d(); }
+            operator int() const { return std::stoi(body); }    ///< Returns \ref body as integer
+            operator double() const { return std::stod(body); } ///< Returns \ref body as double
 
             const header& get_header_object(const std::string& key) const
             {
