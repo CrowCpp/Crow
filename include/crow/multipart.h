@@ -6,20 +6,48 @@
 
 #include "crow/http_request.h"
 #include "crow/returnable.h"
+#include "crow/ci_map.h"
 
 namespace crow
 {
+
     /// Encapsulates anything related to processing and organizing `multipart/xyz` messages
     namespace multipart
     {
+
         const std::string dd = "--";
 
         /// The first part in a section, contains metadata about the part
         struct header
         {
-            std::pair<std::string, std::string> value;           ///< The first part of the header, usually `Content-Type` or `Content-Disposition`
+            std::string value;                                   ///< The first part of the header, usually `Content-Type` or `Content-Disposition`
             std::unordered_map<std::string, std::string> params; ///< The parameters of the header, come after the `value`
+
+            operator int() const { return std::stoi(value); }    ///< Returns \ref value as integer
+            operator double() const { return std::stod(value); } ///< Returns \ref value as double
         };
+
+        /// Multipart header map (key is header key).
+        using mph_map = std::unordered_multimap<std::string, header, ci_hash, ci_key_eq>;
+
+        /// Find and return the value object associated with the key. (returns an empty class if nothing is found)
+        template<typename O, typename T>
+        inline const O& get_header_value_object(const T& headers, const std::string& key)
+        {
+            if (headers.count(key))
+            {
+                return headers.find(key)->second;
+            }
+            static O empty;
+            return empty;
+        }
+
+        /// Same as \ref get_header_value_Object() but for \ref multipart.header
+        template<typename T>
+        inline const header& get_header_object(const T& headers, const std::string& key)
+        {
+            return get_header_value_object<header>(headers, key);
+        }
 
         ///One part of the multipart message
 
@@ -27,10 +55,20 @@ namespace crow
         /// It is usually separated from other sections by a `boundary`
         struct part
         {
-            //TODO(EDev): restructure this to an `unordered_map<string, header>` with string being `header::value.first`
-            std::vector<header> headers; ///< (optional) The first part before the data, Contains information regarding the type of data and encoding
-            std::string body;            ///< The actual data in the part
+            mph_map headers;  ///< (optional) The first part before the data, Contains information regarding the type of data and encoding
+            std::string body; ///< The actual data in the part
+
+            operator int() const { return std::stoi(body); }    ///< Returns \ref body as integer
+            operator double() const { return std::stod(body); } ///< Returns \ref body as double
+
+            const header& get_header_object(const std::string& key) const
+            {
+                return multipart::get_header_object(headers, key);
+            }
         };
+
+        /// Multipart map (key is the name parameter).
+        using mp_map = std::unordered_multimap<std::string, part, ci_hash, ci_key_eq>;
 
         /// The parsed multipart request/response
         struct message : public returnable
@@ -38,10 +76,16 @@ namespace crow
             ci_map headers;          ///< The request/response headers
             std::string boundary;    ///< The text boundary that separates different `parts`
             std::vector<part> parts; ///< The individual parts of the message
+            mp_map part_map;         ///< The individual parts of the message, organized in a map with the `name` header parameter being the key
 
             const std::string& get_header_value(const std::string& key) const
             {
                 return crow::get_header_value(headers, key);
+            }
+
+            part get_part_by_name(const std::string& name)
+            {
+                return part_map.find(name)->second;
             }
 
             /// Represent all parts as a string (**does not include message headers**)
@@ -64,10 +108,10 @@ namespace crow
             {
                 std::stringstream str;
                 part item = parts[part_];
-                for (header item_h : item.headers)
+                for (auto& item_h : item.headers)
                 {
-                    str << item_h.value.first << ": " << item_h.value.second;
-                    for (auto& it : item_h.params)
+                    str << item_h.first << ": " << item_h.second.value;
+                    for (auto& it : item_h.second.params)
                     {
                         str << "; " << it.first << '=' << pad(it.second);
                     }
@@ -80,15 +124,28 @@ namespace crow
 
             /// Default constructor using default values
             message(const ci_map& headers, const std::string& boundary, const std::vector<part>& sections):
-              returnable("multipart/form-data"), headers(headers), boundary(boundary), parts(sections) {}
+              returnable("multipart/form-data; boundary=CROW-BOUNDARY"), headers(headers), boundary(boundary), parts(sections)
+            {
+                if (!boundary.empty())
+                    content_type = "multipart/form-data; boundary=" + boundary;
+                for (auto& item : parts)
+                {
+                    part_map.emplace(
+                      (get_header_object(item.headers, "Content-Disposition").params.find("name")->second),
+                      item);
+                }
+            }
 
             /// Create a multipart message from a request data
             message(const request& req):
-              returnable("multipart/form-data"),
+              returnable("multipart/form-data; boundary=CROW-BOUNDARY"),
               headers(req.headers),
-              boundary(get_boundary(get_header_value("Content-Type"))),
-              parts(parse_body(req.body))
-            {}
+              boundary(get_boundary(get_header_value("Content-Type")))
+            {
+                if (!boundary.empty())
+                    content_type = "multipart/form-data; boundary=" + boundary;
+                parse_body(req.body, parts, part_map);
+            }
 
         private:
             std::string get_boundary(const std::string& header) const
@@ -107,13 +164,12 @@ namespace crow
                 return std::string();
             }
 
-            std::vector<part> parse_body(std::string body)
+            void parse_body(std::string body, std::vector<part>& sections, mp_map& part_map)
             {
-
-                std::vector<part> sections;
 
                 std::string delimiter = dd + boundary;
 
+                // TODO(EDev): Exit on error
                 while (body != (crlf))
                 {
                     size_t found = body.find(delimiter);
@@ -124,10 +180,13 @@ namespace crow
                     body.erase(0, found + delimiter.length() + 2);
                     if (!section.empty())
                     {
-                        sections.emplace_back(parse_section(section));
+                        part parsed_section(parse_section(section));
+                        part_map.emplace(
+                          (get_header_object(parsed_section.headers, "Content-Disposition").params.find("name")->second),
+                          parsed_section);
+                        sections.push_back(std::move(parsed_section));
                     }
                 }
-                return sections;
             }
 
             part parse_section(std::string& section)
@@ -151,6 +210,7 @@ namespace crow
 
                     size_t found = lines.find(crlf);
                     std::string line = lines.substr(0, found);
+                    std::string key;
                     lines.erase(0, found + 2);
                     // Add the header if available
                     if (!line.empty())
@@ -163,8 +223,9 @@ namespace crow
                             line = std::string();
 
                         size_t header_split = header.find(": ");
+                        key = header.substr(0, header_split);
 
-                        to_add.value = std::pair<std::string, std::string>(header.substr(0, header_split), header.substr(header_split + 2));
+                        to_add.value = header.substr(header_split + 2);
                     }
 
                     // Add the parameters
@@ -183,7 +244,7 @@ namespace crow
 
                         to_add.params.emplace(param.substr(0, param_split), trim(value));
                     }
-                    part.headers.emplace_back(to_add);
+                    part.headers.emplace(key, to_add);
                 }
             }
 
