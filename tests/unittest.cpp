@@ -463,10 +463,7 @@ TEST_CASE("server_handling_error_request")
     });
     // Server<SimpleApp> server(&app, LOCALHOST_ADDRESS, 45451);
     // auto _ = async(launch::async, [&]{server.run();});
-    auto _ = async(launch::async,
-                   [&] {
-                       app.bindaddr(LOCALHOST_ADDRESS).port(45451).run();
-                   });
+    auto _ = app.bindaddr(LOCALHOST_ADDRESS).port(45451).run_async();
     app.wait_for_server_start();
     std::string sendmsg = "POX";
     asio::io_service is;
@@ -498,10 +495,7 @@ TEST_CASE("server_handling_error_request_http_version")
     ([] {
         return "A";
     });
-    auto _ = async(launch::async,
-                   [&] {
-                       app.bindaddr(LOCALHOST_ADDRESS).port(45451).run();
-                   });
+    auto _ = app.bindaddr(LOCALHOST_ADDRESS).port(45451).run_async();
     app.wait_for_server_start();
     std::string sendmsg = "POST /\r\nContent-Length:3\r\nX-HeaderTest: 123\r\n\r\nA=B\r\n";
     asio::io_service is;
@@ -538,14 +532,8 @@ TEST_CASE("multi_server")
         return "B";
     });
 
-    auto _ = async(launch::async,
-                   [&] {
-                       app1.bindaddr(LOCALHOST_ADDRESS).port(45451).run();
-                   });
-    auto _2 = async(launch::async,
-                    [&] {
-                        app2.bindaddr(LOCALHOST_ADDRESS).port(45452).run();
-                    });
+    auto _ = app1.bindaddr(LOCALHOST_ADDRESS).port(45451).run_async();
+    auto _2 = app2.bindaddr(LOCALHOST_ADDRESS).port(45452).run_async();
     app1.wait_for_server_start();
     app2.wait_for_server_start();
 
@@ -1354,10 +1342,7 @@ TEST_CASE("middleware_context")
         return "";
     });
 
-    auto _ = async(launch::async,
-                   [&] {
-                       app.bindaddr(LOCALHOST_ADDRESS).port(45451).run();
-                   });
+    auto _ = app.bindaddr(LOCALHOST_ADDRESS).port(45451).run_async();
     app.wait_for_server_start();
     std::string sendmsg = "GET /\r\n\r\n";
     asio::io_service is;
@@ -1438,10 +1423,7 @@ TEST_CASE("local_middleware")
 
     app.validate();
 
-    auto _ = async(launch::async,
-                   [&] {
-                       app.bindaddr(LOCALHOST_ADDRESS).port(45451).run();
-                   });
+    auto _ = app.bindaddr(LOCALHOST_ADDRESS).port(45451).run_async();
     app.wait_for_server_start();
     asio::io_service is;
 
@@ -1494,10 +1476,7 @@ TEST_CASE("middleware_cookieparser")
         return "";
     });
 
-    auto _ = async(launch::async,
-                   [&] {
-                       app.bindaddr(LOCALHOST_ADDRESS).port(45451).run();
-                   });
+    auto _ = app.bindaddr(LOCALHOST_ADDRESS).port(45451).run_async();
     app.wait_for_server_start();
     std::string sendmsg =
       "GET /\r\nCookie: key1=value1; key2=\"val=ue2\"; key3=\"val\"ue3\"; "
@@ -1614,10 +1593,7 @@ TEST_CASE("bug_quick_repeated_request")
         return "hello";
     });
 
-    auto _ = async(launch::async,
-                   [&] {
-                       app.bindaddr(LOCALHOST_ADDRESS).port(45451).run();
-                   });
+    auto _ = app.bindaddr(LOCALHOST_ADDRESS).port(45451).run_async();
     app.wait_for_server_start();
     std::string sendmsg = "GET / HTTP/1.1\r\nHost: localhost\r\n\r\n";
     asio::io_service is;
@@ -1660,10 +1636,7 @@ TEST_CASE("simple_url_params")
 
     /// params?h=1&foo=bar&lol&count[]=1&count[]=4&pew=5.2
 
-    auto _ = async(launch::async,
-                   [&] {
-                       app.bindaddr(LOCALHOST_ADDRESS).port(45451).run();
-                   });
+    auto _ = app.bindaddr(LOCALHOST_ADDRESS).port(45451).run_async();
     app.wait_for_server_start();
     asio::io_service is;
     std::string sendmsg;
@@ -1886,6 +1859,24 @@ TEST_CASE("route_dynamic")
 
 TEST_CASE("multipart")
 {
+    //
+    //--CROW-BOUNDARY
+    //Content-Disposition: form-data; name=\"hello\"
+    //
+    //world
+    //--CROW-BOUNDARY
+    //Content-Disposition: form-data; name=\"world\"
+    //
+    //hello
+    //--CROW-BOUNDARY
+    //Content-Disposition: form-data; name=\"multiline\"
+    //
+    //text
+    //text
+    //text
+    //--CROW-BOUNDARY--
+    //
+
     std::string test_string = "--CROW-BOUNDARY\r\nContent-Disposition: form-data; name=\"hello\"\r\n\r\nworld\r\n--CROW-BOUNDARY\r\nContent-Disposition: form-data; name=\"world\"\r\n\r\nhello\r\n--CROW-BOUNDARY\r\nContent-Disposition: form-data; name=\"multiline\"\r\n\r\ntext\ntext\ntext\r\n--CROW-BOUNDARY--\r\n";
 
     SimpleApp app;
@@ -1893,7 +1884,6 @@ TEST_CASE("multipart")
     CROW_ROUTE(app, "/multipart")
     ([](const crow::request& req, crow::response& res) {
         multipart::message msg(req);
-        res.add_header("Content-Type", "multipart/form-data; boundary=CROW-BOUNDARY");
         res.body = msg.dump();
         res.end();
     });
@@ -1906,6 +1896,25 @@ TEST_CASE("multipart")
 
         req.url = "/multipart";
         req.add_header("Content-Type", "multipart/form-data; boundary=CROW-BOUNDARY");
+        req.body = test_string;
+
+        app.handle(req, res);
+
+        CHECK(test_string == res.body);
+
+
+        multipart::message msg(req);
+        CHECK("hello" == msg.get_part_by_name("world").body);
+        CHECK("form-data" == msg.get_part_by_name("hello").get_header_object("Content-Disposition").value);
+    }
+
+    // Check with `"` encapsulating the boundary (.NET clients do this)
+    {
+        request req;
+        response res;
+
+        req.url = "/multipart";
+        req.add_header("Content-Type", "multipart/form-data; boundary=\"CROW-BOUNDARY\"");
         req.body = test_string;
 
         app.handle(req, res);
@@ -1988,12 +1997,9 @@ TEST_CASE("stream_response")
 
     app.validate();
 
-    //running the test on a separate thread to allow the client to sleep
+    // running the test on a separate thread to allow the client to sleep
     std::thread runTest([&app, &key_response, key_response_size]() {
-        auto _ = async(launch::async,
-                       [&] {
-                           app.bindaddr(LOCALHOST_ADDRESS).port(45451).run();
-                       });
+        auto _ = app.bindaddr(LOCALHOST_ADDRESS).port(45451).run_async();
         app.wait_for_server_start();
         asio::io_service is;
         std::string sendmsg;
@@ -2069,10 +2075,7 @@ TEST_CASE("websocket")
 
     app.validate();
 
-    auto _ = async(launch::async,
-                   [&] {
-                       app.bindaddr(LOCALHOST_ADDRESS).port(45451).run();
-                   });
+    auto _ = app.bindaddr(LOCALHOST_ADDRESS).port(45451).run_async();
     app.wait_for_server_start();
     asio::io_service is;
 
@@ -2244,12 +2247,8 @@ TEST_CASE("zlib_compression")
         res.end();
     });
 
-    auto t1 = async(launch::async, [&] {
-        app_deflate.bindaddr(LOCALHOST_ADDRESS).port(45451).use_compression(compression::algorithm::DEFLATE).run();
-    });
-    auto t2 = async(launch::async, [&] {
-        app_gzip.bindaddr(LOCALHOST_ADDRESS).port(45452).use_compression(compression::algorithm::GZIP).run();
-    });
+    auto t1 = app_deflate.bindaddr(LOCALHOST_ADDRESS).port(45451).use_compression(compression::algorithm::DEFLATE).run_async();
+    auto t2 = app_gzip.bindaddr(LOCALHOST_ADDRESS).port(45452).use_compression(compression::algorithm::GZIP).run_async();
 
     app_deflate.wait_for_server_start();
     app_gzip.wait_for_server_start();
@@ -2668,9 +2667,7 @@ TEST_CASE("get_port")
 
     const std::uint16_t port = 12345;
 
-    auto _ = async(launch::async, [&] {
-        app.port(port).run();
-    });
+    auto _ = app.port(port).run_async();
 
     app.wait_for_server_start();
     CHECK(app.port() == port);
@@ -2690,9 +2687,8 @@ TEST_CASE("timeout")
             return "hello";
         });
 
-        auto _ = async(launch::async, [&] {
-            app.bindaddr(LOCALHOST_ADDRESS).timeout(timeout).port(45451).run();
-        });
+        auto _ = app.bindaddr(LOCALHOST_ADDRESS).timeout(timeout).port(45451).run_async();
+
         app.wait_for_server_start();
         asio::io_service is;
         std::string sendmsg = "GET /\r\n\r\n";
