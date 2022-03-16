@@ -2248,7 +2248,7 @@ TEST_CASE("zlib_compression")
     });
 
     auto t1 = app_deflate.bindaddr(LOCALHOST_ADDRESS).port(45451).use_compression(compression::algorithm::DEFLATE).run_async();
-    auto t2 = app_deflate.bindaddr(LOCALHOST_ADDRESS).port(45452).use_compression(compression::algorithm::GZIP).run_async();
+    auto t2 = app_gzip.bindaddr(LOCALHOST_ADDRESS).port(45452).use_compression(compression::algorithm::GZIP).run_async();
 
     app_deflate.wait_for_server_start();
     app_gzip.wait_for_server_start();

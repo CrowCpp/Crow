@@ -307,7 +307,7 @@ namespace crow
         /// Non-blocking version of \ref run()
         std::future<void> run_async()
         {
-            return std::async(std::launch::async, [&] {run();});
+            return std::async(std::launch::async, [&] {this->run();});
         }
 
         /// Stop the server
