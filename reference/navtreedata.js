@@ -23,6 +23,11 @@ for the JavaScript code in this file
 var NAVTREE =
 [
   [ "Crow", "index.html", [
+    [ "Namespace Members", "namespacemembers.html", [
+      [ "All", "namespacemembers.html", null ],
+      [ "Functions", "namespacemembers_func.html", null ],
+      [ "Typedefs", "namespacemembers_type.html", null ]
+    ] ],
     [ "Classes", "annotated.html", [
       [ "Class List", "annotated.html", "annotated_dup" ],
       [ "Class Hierarchy", "hierarchy.html", "hierarchy" ],
@@ -42,8 +47,8 @@ var NAVTREE =
 var NAVTREEINDEX =
 [
 ".html",
-"classcrow_1_1json_1_1wvalue.html#a69aa995526ba24ca17d8dec78e74cc01",
-"structcrow_1_1black__magic_1_1single__tag__to__type_3_015_01_4.html#ad53ca85dec2074626b9c59bdbfc3ca8c"
+"classcrow_1_1json_1_1wvalue.html#a60871591b1b0d88555c0d8d7a720dd7b",
+"structcrow_1_1black__magic_1_1single__tag__to__type_3_013_01_4.html#acb7925b6aa7481f3fcf056b218d9b9ee"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

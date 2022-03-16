@@ -22,6 +22,7 @@ var classcrow_1_1_crow =
     [ "route", "classcrow_1_1_crow.html#af221cb25926e5dabc2da21a7a1c9713c", null ],
     [ "route_dynamic", "classcrow_1_1_crow.html#a0f408e47d261ad55ccfd8eb5f351c22e", null ],
     [ "run", "classcrow_1_1_crow.html#a193d8b03f717234a841cd92f72c6b4b5", null ],
+    [ "run_async", "classcrow_1_1_crow.html#aac4f72d944fb35caaf2d82cd21287269", null ],
     [ "server_name", "classcrow_1_1_crow.html#ae0e400a1757bd68f716b82753a5a1a73", null ],
     [ "signal_add", "classcrow_1_1_crow.html#acf706e62049ea737aec5a79e61e1fe3f", null ],
     [ "signal_clear", "classcrow_1_1_crow.html#a11832be23c0a0296b5ed2023361f6205", null ],

@@ -97,6 +97,8 @@ $(document).ready(function(){initNavTree('namespacecrow_1_1multipart.html',''); 
 <div class="header">
   <div class="summary">
 <a href="#nested-classes">Classes</a> &#124;
+<a href="#typedef-members">Typedefs</a> &#124;
+<a href="#func-members">Functions</a> &#124;
 <a href="#var-members">Variables</a>  </div>
   <div class="headertitle">
 <div class="title">crow::multipart Namespace Reference</div>  </div>
@@ -118,6 +120,30 @@ Classes</h2></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">One part of the multipart message.  <a href="structcrow_1_1multipart_1_1part.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="typedef-members"></a>
+Typedefs</h2></td></tr>
+<tr class="memitem:a6a2722b508669592976047a34d6eba0c"><td class="memItemLeft" align="right" valign="top"><a id="a6a2722b508669592976047a34d6eba0c"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacecrow_1_1multipart.html#a6a2722b508669592976047a34d6eba0c">mph_map</a> = std::unordered_multimap&lt; std::string, <a class="el" href="structcrow_1_1multipart_1_1header.html">header</a>, <a class="el" href="structcrow_1_1ci__hash.html">ci_hash</a>, <a class="el" href="structcrow_1_1ci__key__eq.html">ci_key_eq</a> &gt;</td></tr>
+<tr class="memdesc:a6a2722b508669592976047a34d6eba0c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Multipart header map (key is header key). <br /></td></tr>
+<tr class="separator:a6a2722b508669592976047a34d6eba0c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a071bb6d802c0edd823147fa6acaebb2b"><td class="memItemLeft" align="right" valign="top"><a id="a071bb6d802c0edd823147fa6acaebb2b"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacecrow_1_1multipart.html#a071bb6d802c0edd823147fa6acaebb2b">mp_map</a> = std::unordered_multimap&lt; std::string, <a class="el" href="structcrow_1_1multipart_1_1part.html">part</a>, <a class="el" href="structcrow_1_1ci__hash.html">ci_hash</a>, <a class="el" href="structcrow_1_1ci__key__eq.html">ci_key_eq</a> &gt;</td></tr>
+<tr class="memdesc:a071bb6d802c0edd823147fa6acaebb2b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Multipart map (key is the name parameter). <br /></td></tr>
+<tr class="separator:a071bb6d802c0edd823147fa6acaebb2b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
+Functions</h2></td></tr>
+<tr class="memitem:adb2a619f5ebb5d00a19d3e96dc3b0433"><td class="memTemplParams" colspan="2"><a id="adb2a619f5ebb5d00a19d3e96dc3b0433"></a>
+template&lt;typename O , typename T &gt; </td></tr>
+<tr class="memitem:adb2a619f5ebb5d00a19d3e96dc3b0433"><td class="memTemplItemLeft" align="right" valign="top">const O &amp;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacecrow_1_1multipart.html#adb2a619f5ebb5d00a19d3e96dc3b0433">get_header_value_object</a> (const T &amp;headers, const std::string &amp;key)</td></tr>
+<tr class="memdesc:adb2a619f5ebb5d00a19d3e96dc3b0433"><td class="mdescLeft">&#160;</td><td class="mdescRight">Find and return the value object associated with the key. (returns an empty class if nothing is found) <br /></td></tr>
+<tr class="separator:adb2a619f5ebb5d00a19d3e96dc3b0433"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acecc1d3d17777095c4439ce5159f035d"><td class="memTemplParams" colspan="2"><a id="acecc1d3d17777095c4439ce5159f035d"></a>
+template&lt;typename T &gt; </td></tr>
+<tr class="memitem:acecc1d3d17777095c4439ce5159f035d"><td class="memTemplItemLeft" align="right" valign="top">const <a class="el" href="structcrow_1_1multipart_1_1header.html">header</a> &amp;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacecrow_1_1multipart.html#acecc1d3d17777095c4439ce5159f035d">get_header_object</a> (const T &amp;headers, const std::string &amp;key)</td></tr>
+<tr class="memdesc:acecc1d3d17777095c4439ce5159f035d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Same as get_header_value_Object() but for <a class="el" href="structcrow_1_1multipart_1_1header.html">multipart::header</a>. <br /></td></tr>
+<tr class="separator:acecc1d3d17777095c4439ce5159f035d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="var-members"></a>
 Variables</h2></td></tr>
 <tr class="memitem:a7abf735303db9e568bea5787e1a63b72"><td class="memItemLeft" align="right" valign="top"><a id="a7abf735303db9e568bea5787e1a63b72"></a>
@@ -133,7 +159,7 @@ const std::string&#160;</td><td class="memItemRight" valign="bottom"><b>dd</b> =
 			<ul>
 				<li class="navelem"><b>crow</b></li><li class="navelem"><a class="el" href="namespacecrow_1_1multipart.html">multipart</a></li>
 				<li class="footer">
-					Generated on Wed Mar 9 2022 for Crow by <a href="http://www.doxygen.org/index.html">
+					Generated on Wed Mar 16 2022 for Crow by <a href="http://www.doxygen.org/index.html">
 					<img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.17.
 					Dark theme by <a href="http://majerle.eu" target="_new">Tilen Majerle</a>. Edited by <a href="https://github.com/The-EDev" target="_new">Farook Al-Sammarraie</a>. All rights reserved.
 				</li>

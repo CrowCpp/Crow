@@ -7,8 +7,10 @@ var searchData=
   ['get_5fdefault_5ftimeout_75',['get_default_timeout',['../classcrow_1_1detail_1_1task__timer.html#ae11e1259251e562ea3be457457b3b287',1,'crow::detail::task_timer']]],
   ['get_5fdict_76',['get_dict',['../classcrow_1_1query__string.html#af56add12ca6a7f0222956e353d1d40bb',1,'crow::query_string']]],
   ['get_5ferror_77',['get_error',['../classcrow_1_1_router.html#a68b3861332db76b182ae0ff07262c55a',1,'crow::Router']]],
-  ['get_5findex_5fof_5felement_5ffrom_5ftuple_5fby_5ftype_5fimpl_78',['get_index_of_element_from_tuple_by_type_impl',['../structcrow_1_1detail_1_1get__index__of__element__from__tuple__by__type__impl.html',1,'crow::detail']]],
-  ['get_5findex_5fof_5felement_5ffrom_5ftuple_5fby_5ftype_5fimpl_3c_20t_2c_20n_2c_20t_2c_20args_2e_2e_2e_20_3e_79',['get_index_of_element_from_tuple_by_type_impl&lt; T, N, T, Args... &gt;',['../structcrow_1_1detail_1_1get__index__of__element__from__tuple__by__type__impl_3_01_t_00_01_n_00_01_t_00_01_args_8_8_8_01_4.html',1,'crow::detail']]],
-  ['get_5findex_5fof_5felement_5ffrom_5ftuple_5fby_5ftype_5fimpl_3c_20t_2c_20n_2c_20u_2c_20args_2e_2e_2e_20_3e_80',['get_index_of_element_from_tuple_by_type_impl&lt; T, N, U, Args... &gt;',['../structcrow_1_1detail_1_1get__index__of__element__from__tuple__by__type__impl_3_01_t_00_01_n_00_01_u_00_01_args_8_8_8_01_4.html',1,'crow::detail']]],
-  ['get_5flist_81',['get_list',['../classcrow_1_1query__string.html#a657e5fe435375cd31229944ed2ad5608',1,'crow::query_string']]]
+  ['get_5fheader_5fobject_78',['get_header_object',['../namespacecrow_1_1multipart.html#acecc1d3d17777095c4439ce5159f035d',1,'crow::multipart']]],
+  ['get_5fheader_5fvalue_5fobject_79',['get_header_value_object',['../namespacecrow_1_1multipart.html#adb2a619f5ebb5d00a19d3e96dc3b0433',1,'crow::multipart']]],
+  ['get_5findex_5fof_5felement_5ffrom_5ftuple_5fby_5ftype_5fimpl_80',['get_index_of_element_from_tuple_by_type_impl',['../structcrow_1_1detail_1_1get__index__of__element__from__tuple__by__type__impl.html',1,'crow::detail']]],
+  ['get_5findex_5fof_5felement_5ffrom_5ftuple_5fby_5ftype_5fimpl_3c_20t_2c_20n_2c_20t_2c_20args_2e_2e_2e_20_3e_81',['get_index_of_element_from_tuple_by_type_impl&lt; T, N, T, Args... &gt;',['../structcrow_1_1detail_1_1get__index__of__element__from__tuple__by__type__impl_3_01_t_00_01_n_00_01_t_00_01_args_8_8_8_01_4.html',1,'crow::detail']]],
+  ['get_5findex_5fof_5felement_5ffrom_5ftuple_5fby_5ftype_5fimpl_3c_20t_2c_20n_2c_20u_2c_20args_2e_2e_2e_20_3e_82',['get_index_of_element_from_tuple_by_type_impl&lt; T, N, U, Args... &gt;',['../structcrow_1_1detail_1_1get__index__of__element__from__tuple__by__type__impl_3_01_t_00_01_n_00_01_u_00_01_args_8_8_8_01_4.html',1,'crow::detail']]],
+  ['get_5flist_83',['get_list',['../classcrow_1_1query__string.html#a657e5fe435375cd31229944ed2ad5608',1,'crow::query_string']]]
 ];
