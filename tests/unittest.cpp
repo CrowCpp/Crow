@@ -532,7 +532,7 @@ TEST_CASE("multi_server")
         return "B";
     });
 
-    auto _  = app1.bindaddr(LOCALHOST_ADDRESS).port(45451).run_async();
+    auto _ = app1.bindaddr(LOCALHOST_ADDRESS).port(45451).run_async();
     auto _2 = app2.bindaddr(LOCALHOST_ADDRESS).port(45452).run_async();
     app1.wait_for_server_start();
     app2.wait_for_server_start();
