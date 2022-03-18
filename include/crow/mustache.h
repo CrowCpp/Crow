@@ -631,6 +631,13 @@ namespace crow
                 static std::string template_base_directory = "templates";
                 return template_base_directory;
             }
+
+            /// A base directory not related to any blueprint
+            inline std::string& get_global_template_base_directory_ref()
+            {
+                static std::string template_base_directory = "templates";
+                return template_base_directory;
+            }
         } // namespace detail
 
         inline std::string default_loader(const std::string& filename)
@@ -660,6 +667,17 @@ namespace crow
         inline void set_base(const std::string& path)
         {
             auto& base = detail::get_template_base_directory_ref();
+            base = path;
+            if (base.back() != '\\' &&
+                base.back() != '/')
+            {
+                base += '/';
+            }
+        }
+
+        inline void set_global_base(const std::string& path)
+        {
+            auto& base = detail::get_global_template_base_directory_ref();
             base = path;
             if (base.back() != '\\' &&
                 base.back() != '/')
