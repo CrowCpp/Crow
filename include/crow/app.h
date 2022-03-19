@@ -179,6 +179,7 @@ namespace crow
         }
 
         /// Set a response body size (in bytes) beyond which Crow automatically streams responses (Default is 1MiB)
+
         ///
         /// Any streamed response is unaffected by Crow's timer, and therefore won't timeout before a response is fully sent.
         self_t& stream_threshold(size_t threshold)
