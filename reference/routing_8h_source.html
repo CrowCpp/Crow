@@ -696,8 +696,8 @@ $(document).ready(function(){initNavTree('routing_8h_source.html',''); initResiz
 <div class="line"><a name="l00595"></a><span class="lineno">  595</span>&#160;<span class="keyword">        </span>{</div>
 <div class="line"><a name="l00596"></a><span class="lineno">  596</span>&#160;            <span class="keywordflow">if</span> (!custom_templates_base.empty())</div>
 <div class="line"><a name="l00597"></a><span class="lineno">  597</span>&#160;                mustache::set_base(custom_templates_base);</div>
-<div class="line"><a name="l00598"></a><span class="lineno">  598</span>&#160;            <span class="keywordflow">else</span> <span class="keywordflow">if</span> (mustache::detail::get_template_base_directory_ref() != <span class="stringliteral">&quot;templates&quot;</span>)</div>
-<div class="line"><a name="l00599"></a><span class="lineno">  599</span>&#160;                mustache::set_base(<span class="stringliteral">&quot;templates&quot;</span>);</div>
+<div class="line"><a name="l00598"></a><span class="lineno">  598</span>&#160;            <span class="keywordflow">else</span> <span class="keywordflow">if</span> (mustache::detail::get_template_base_directory_ref() != mustache::detail::get_global_template_base_directory_ref())</div>
+<div class="line"><a name="l00599"></a><span class="lineno">  599</span>&#160;                mustache::set_base(mustache::detail::get_global_template_base_directory_ref());</div>
 <div class="line"><a name="l00600"></a><span class="lineno">  600</span>&#160; </div>
 <div class="line"><a name="l00601"></a><span class="lineno">  601</span>&#160;            <a class="code" href="structcrow_1_1detail_1_1routing__handler__call__helper_1_1call.html">detail::routing_handler_call_helper::call</a>&lt;</div>
 <div class="line"><a name="l00602"></a><span class="lineno">  602</span>&#160;              <a class="code" href="structcrow_1_1detail_1_1routing__handler__call__helper_1_1call__params.html">detail::routing_handler_call_helper::call_params</a>&lt;decltype(handler_)&gt;,</div>
@@ -1751,7 +1751,7 @@ $(document).ready(function(){initNavTree('routing_8h_source.html',''); initResiz
 			<ul>
 				<li class="navelem"><a class="el" href="dir_d44c64559bbebec7f509842c48db8b23.html">include</a></li><li class="navelem"><a class="el" href="dir_d22c1cb87b72f01e1a7f207eb3bfd1ca.html">crow</a></li><li class="navelem"><b>routing.h</b></li>
 				<li class="footer">
-					Generated on Wed Mar 16 2022 for Crow by <a href="http://www.doxygen.org/index.html">
+					Generated on Sat Mar 19 2022 for Crow by <a href="http://www.doxygen.org/index.html">
 					<img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.17.
 					Dark theme by <a href="http://majerle.eu" target="_new">Tilen Majerle</a>. Edited by <a href="https://github.com/The-EDev" target="_new">Farook Al-Sammarraie</a>. All rights reserved.
 				</li>
