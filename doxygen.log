@@ -130,7 +130,7 @@ Searching f/drone/src/include/crow/utility.h:512: warning: Compound crow::utilit
 /drone/src/include/crow/utility.h:321: warning: Compound crow::black_magic::arguments is not documented.
 /drone/src/include/crow/middleware_context.h:15: warning: Compound crow::detail::partial_context is not documented.
 /drone/src/include/crow/mustache.h:21: warning: Compound crow::mustache::invalid_template_exception is not documented.
-/drone/src/include/crow/logging.h:86: warning: Compound crow::logger is not documented.
+/drone/src/include/crow/logging.h:94: warning: Compound crow::logger is not documented.
 /drone/src/include/crow/utility.h:386: warning: Compound crow::black_magic::pop_back_helper< seq< N... >, Tuple > is not documented.
 /drone/src/include/crow/routing.h:110: warning: Compound crow::detail::routing_handler_call_helper::call_params is not documented.
 /drone/src/include/crow/middleware_context.h:40: warning: Compound crow::detail::context is not documented.
@@ -353,11 +353,11 @@ Generating docs for compound crow::DynamicRule...
 Generating docs for compound crow::HTTPParser...
 Generating docs for compound crow::ILocalMiddleware./drone/src/include/crow/middleware.h:18: warning: Member call_global (typedef) of class crow::ILocalMiddleware is not documented.
 /drone/src/include/crow/logging.h:36: warning: Member log(std::string message, LogLevel level)=0 (function) of class crow::ILogHandler is not documented.
-/drone/src/include/crow/logging.h:88: warning: Member logger(LogLevel level) (function) of class crow::logger is not documented.
-/drone/src/include/crow/logging.h:103: warning: Member operator<<(T const &value) (function) of class crow::logger is not documented.
-/drone/src/include/crow/logging.h:115: warning: Member setLogLevel(LogLevel level) (function) of class crow::logger is not documented.
-/drone/src/include/crow/logging.h:117: warning: Member setHandler(ILogHandler *handler) (function) of class crow::logger is not documented.
-/drone/src/include/crow/logging.h:119: warning: Member get_current_log_level() (function) of class crow::logger is not documented.
+/drone/src/include/crow/logging.h:96: warning: Member logger(LogLevel level) (function) of class crow::logger is not documented.
+/drone/src/include/crow/logging.h:111: warning: Member operator<<(T const &value) (function) of class crow::logger is not documented.
+/drone/src/include/crow/logging.h:123: warning: Member setLogLevel(LogLevel level) (function) of class crow::logger is not documented.
+/drone/src/include/crow/logging.h:125: warning: Member setHandler(ILogHandler *handler) (function) of class crow::logger is not documented.
+/drone/src/include/crow/logging.h:127: warning: Member get_current_log_level() (function) of class crow::logger is not documented.
 /drone/src/include/crow/query_string.h:301: warning: Member query_string(const query_string &qs) (function) of class crow::query_string is not documented.
 /drone/src/include/crow/query_string.h:310: warning: Member operator=(const query_string &qs) (function) of class crow::query_string is not documented.
 /drone/src/include/crow/query_string.h:321: warning: Member operator=(query_string &&qs) (function) of class crow::query_string is not documented.
@@ -866,5 +866,5 @@ Generating example index...
 finalizing index lists...
 writing tag file...
 Running plantuml with JAVA...
-lookup cache used 2989/65536 hits=25786 misses=3341
+lookup cache used 2989/65536 hits=25792 misses=3341
 finished...
