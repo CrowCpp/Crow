@@ -137,7 +137,7 @@ Searching f/drone/src/include/crow/utility.h:512: warning: Compound crow::utilit
 /drone/src/include/crow/utility.h:501: warning: Compound crow::utility::function_traits< R(ClassType::*)(Args...) const > is not documented.
 /drone/src/include/crow/middleware.h:301: warning: Compound crow::detail::handler_call_bridge is not documented.
 /drone/src/include/crow/middleware.h:81: warning: Compound crow::detail::is_after_handle_arity_3_impl is not documented.
-/drone/src/include/crow/common.h:225: warning: Compound crow::routing_params is not documented.
+/drone/src/include/crow/common.h:226: warning: Compound crow::routing_params is not documented.
 /drone/src/include/crow/logging.h:34: warning: Compound crow::ILogHandler is not documented.
 /drone/src/include/crow/middlewares/cookie_parser.h:34: warning: Compound crow::CookieParser::context is not documented.
 /drone/src/include/crow/logging.h:40: warning: Compound crow::CerrLogHandler is not documented.
@@ -412,15 +412,15 @@ Generating docs for compound crow::ILocalMiddleware./drone/src/include/crow/midd
 /drone/src/include/crow/routing.h:1444: warning: Member handle(request &req, response &res) (function) of class crow::Router is not documented.
 /drone/src/include/crow/routing.h:1574: warning: Member debug_print() (function) of class crow::Router is not documented.
 /drone/src/include/crow/routing.h:1583: warning: Member blueprints() (function) of class crow::Router is not documented.
-/drone/src/include/crow/common.h:231: warning: Member debug_print() const (function) of class crow::routing_params is not documented.
-/drone/src/include/crow/common.h:249: warning: Member get(unsigned) const (function) of class crow::routing_params is not documented.
-/drone/src/include/crow/common.h:253: warning: Member get(unsigned index) const (function) of class crow::routing_params is not documented.
-/drone/src/include/crow/common.h:259: warning: Member get(unsigned index) const (function) of class crow::routing_params is not documented.
-/drone/src/include/crow/common.h:265: warning: Member get(unsigned index) const (function) of class crow::routing_params is not documented.
-/drone/src/include/crow/common.h:226: warning: Member int_params (variable) of class crow::routing_params is not documented.
-/drone/src/include/crow/common.h:227: warning: Member uint_params (variable) of class crow::routing_params is not documented.
-/drone/src/include/crow/common.h:228: warning: Member double_params (variable) of class crow::routing_params is not documented.
-/drone/src/include/crow/common.h:229: warning: Member string_params (variable) of class crow::routing_params is not documented.
+/drone/src/include/crow/common.h:232: warning: Member debug_print() const (function) of class crow::routing_params is not documented.
+/drone/src/include/crow/common.h:250: warning: Member get(unsigned) const (function) of class crow::routing_params is not documented.
+/drone/src/include/crow/common.h:254: warning: Member get(unsigned index) const (function) of class crow::routing_params is not documented.
+/drone/src/include/crow/common.h:260: warning: Member get(unsigned index) const (function) of class crow::routing_params is not documented.
+/drone/src/include/crow/common.h:266: warning: Member get(unsigned index) const (function) of class crow::routing_params is not documented.
+/drone/src/include/crow/common.h:227: warning: Member int_params (variable) of class crow::routing_params is not documented.
+/drone/src/include/crow/common.h:228: warning: Member uint_params (variable) of class crow::routing_params is not documented.
+/drone/src/include/crow/common.h:229: warning: Member double_params (variable) of class crow::routing_params is not documented.
+/drone/src/include/crow/common.h:230: warning: Member string_params (variable) of class crow::routing_params is not documented.
 /drone/src/include/crow/routing.h:449: warning: Member self_t (typedef) of class crow::RuleParameterTraits is not documented.
 /drone/src/include/crow/routing.h:450: warning: Member websocket() (function) of class crow::RuleParameterTraits is not documented.
 /drone/src/include/crow/routing.h:457: warning: Member name(std::string name) noexcept (function) of class crow::RuleParameterTraits is not documented.
@@ -866,5 +866,5 @@ Generating example index...
 finalizing index lists...
 writing tag file...
 Running plantuml with JAVA...
-lookup cache used 2987/65536 hits=25784 misses=3339
+lookup cache used 2989/65536 hits=25786 misses=3341
 finished...
