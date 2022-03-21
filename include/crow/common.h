@@ -205,6 +205,7 @@ namespace crow
         NOT_IMPLEMENTED               = 501,
         BAD_GATEWAY                   = 502,
         SERVICE_UNAVAILABLE           = 503,
+        GATEWAY_TIMEOUT               = 504,
         VARIANT_ALSO_NEGOTIATES       = 506
     };
 

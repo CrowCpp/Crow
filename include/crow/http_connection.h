@@ -322,6 +322,7 @@ namespace crow
               {status::NOT_IMPLEMENTED, "HTTP/1.1 501 Not Implemented\r\n"},
               {status::BAD_GATEWAY, "HTTP/1.1 502 Bad Gateway\r\n"},
               {status::SERVICE_UNAVAILABLE, "HTTP/1.1 503 Service Unavailable\r\n"},
+              {status::GATEWAY_TIMEOUT, "HTTP/1.1 504 Gateway Timeout\r\n"},
               {status::VARIANT_ALSO_NEGOTIATES, "HTTP/1.1 506 Variant Also Negotiates\r\n"},
             };
 
