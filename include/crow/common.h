@@ -14,7 +14,7 @@ namespace crow
 
     enum class HTTPMethod : char
     {
-#ifndef DELETE
+#ifdef THISWILLNOTBEDEFINED
         DELETE = 0,
         GET,
         HEAD,
@@ -95,7 +95,7 @@ namespace crow
         Subscribe,
         Unsubscribe,
 
-        Mkcalendar,
+        MkCalendar,
 
         Link,
         Unlink,
@@ -313,7 +313,7 @@ constexpr crow::HTTPMethod operator"" _method(const char* str, size_t /*len*/)
            crow::black_magic::is_equ_p(str, "SUBSCRIBE", 9)    ? crow::HTTPMethod::Subscribe :
            crow::black_magic::is_equ_p(str, "UNSUBSCRIBE", 11) ? crow::HTTPMethod::Unsubscribe :
 
-           crow::black_magic::is_equ_p(str, "MKCALENDAR", 10) ? crow::HTTPMethod::Mkcalendar :
+           crow::black_magic::is_equ_p(str, "MKCALENDAR", 10) ? crow::HTTPMethod::MkCalendar :
 
            crow::black_magic::is_equ_p(str, "LINK", 4)   ? crow::HTTPMethod::Link :
            crow::black_magic::is_equ_p(str, "UNLINK", 6) ? crow::HTTPMethod::Unlink :
