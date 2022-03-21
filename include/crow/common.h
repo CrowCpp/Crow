@@ -14,7 +14,7 @@ namespace crow
 
     enum class HTTPMethod : char
     {
-#ifdef THISWILLNOTBEDEFINED
+#ifndef DELETE
         DELETE = 0,
         GET,
         HEAD,
