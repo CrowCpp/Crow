@@ -16,7 +16,7 @@ You can generate your own single header file by navigating to the `scripts` fold
 python3 merge_all.py ../include crow_all.h
 ```
 This will generate a `crow_all.h` file which you can use in the following steps
-!!!warning
+!!! warning
 
     `crow_all.h` is recommended only for small, possibly single source file projects. For larger projects, it is advised to use the multi-header version.
 
@@ -44,7 +44,7 @@ This will generate a `crow_all.h` file which you can use in the following steps
 
 
 ## Building Crow's tests/examples
-!!!note
+!!! note
 
     This tutorial can be used for Crow projects built with CMake as well
 
@@ -56,20 +56,20 @@ This will generate a `crow_all.h` file which you can use in the following steps
     2. `cd build`
     3. `cmake ..`
     4. `make -j12`
-!!!note
+!!! note
 
-        You can add options like `-DCROW_ENABLE_SSL`, `-DCROW_ENABLE_COMPRESSION`, or `-DCROW_AMALGAMATE` to `3.c` to build their tests/examples.
+        You can add options like `-DCROW_ENABLE_SSL`, `-DCROW_ENABLE_COMPRESSION`, or `-DCROW_AMALGAMATE` to `cmake ..` to build their tests/examples.
 
 ## Compiling using a compiler directly
 All you need to do is run the following command:
 ```
 g++ main.cpp -lpthread
 ```
-!!!note
+!!! note
 
-    You'll need to install GCC via `brew install gcc`. the Clang compiler should be part of Xcode or Xcode command line tools.
+    You'll need to install GCC via `brew install gcc`. the Clang compiler should be part of XCode or XCode command line tools.
 
 You can use arguments like `-DCROW_ENABLE_DEBUG`, `-DCROW_ENABLE_COMPRESSION -lz` for HTTP Compression, or `-DCROW_ENABLE_SSL -lssl` for HTTPS support, or even replace g++ with clang++.
-!!!warning
+!!! warning
 
     If you're using a version of boost prior to 1.69, you'll need to add the argument `-lboost_system` in order for you Crow application to compile correctly.

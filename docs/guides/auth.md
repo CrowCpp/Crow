@@ -11,7 +11,7 @@ Every way boils down to the same basic flow:
 For the purposes of this tutorial, we will assume that the verification function is defined as `#!cpp bool verify(crow::request req, crow::response res)`
 
 ## Basic Auth
-Basic HTTP authentication requires the client to send the Username and Password as a single string, separated by a colon (':') and then encoded as base64. This data needs to be placed in the `Authorization` header of the request. A sample header using the credentials "Username" and "Password" would look like this: `Authorization: Basic VXNlcm5hbWU6UGFzc3dvcmQ=`.<br><br>
+Basic HTTP authentication requires the client to send the Username and Password as a single string, separated by a colon (':') and then encoded as Base64. This data needs to be placed in the `Authorization` header of the request. A sample header using the credentials "Username" and "Password" would look like this: `Authorization: Basic VXNlcm5hbWU6UGFzc3dvcmQ=`.<br><br>
 
 We don't need to worry about creating the request, we only need to extract the credentials from the `Authorization` header and verify them.
 !!! note
@@ -47,7 +47,7 @@ return true; //or false if the username/password are invalid
 Tokens are some form of unique data that a server can provide to a client in order to verify the client's identity later. While on the surface level they don't provide more security than a strong password, they are designed to be less valuable by being *temporary* and providing *limited access*. Variables like expiration time and access scopes are heavily reliant on the implementation however.<br><br>
 
 ### Access Tokens
-The kind of the token itself can vary depending on the implementation and project requirements: Many services use randomly generated strings as tokens. Then compare them against a database to retrieve the associated user data. Some services however prefer using data bearing tokens. One example of the latter kind is JWT, which uses JSON strings encoded in base64 and signed using a private key or an agreed upon secret. While this has the added hassle of signing the token to ensure that it's not been tampered with. It does allow for the client to issue tokens without ever needing to present a password or contact a server. The server would simply be able to verify the signature using the client's public key or secret.<br><br>
+The kind of the token itself can vary depending on the implementation and project requirements: Many services use randomly generated strings as tokens. Then compare them against a database to retrieve the associated user data. Some services however prefer using data bearing tokens. One example of the latter kind is JWT, which uses JSON strings encoded in Base64 and signed using a private key or an agreed upon secret. While this has the added hassle of signing the token to ensure that it's not been tampered with. It does allow for the client to issue tokens without ever needing to present a password or contact a server. The server would simply be able to verify the signature using the client's public key or secret.<br><br>
 
 ### Using an Access Token
 Authenticating with an access token usually involves 2 stages: The first being acquiring the access token from an authority (either by providing credentials such as a username and a password to a server or generating a signed token). The scope of the token (what kind of information it can read or change) is usually defined in this step.<br><br>
