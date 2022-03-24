@@ -9,7 +9,7 @@ A websocket route follows the macro with `.websocket()` which is then followed b
     By default, Crow allows Clients to send unmasked websocket messages, which is useful for debugging but goes against the protocol specification. Production Crow applications should enforce the protocol by adding `#!cpp #define CROW_ENFORCE_WS_SPEC` to their source code.
 
 
-- `#!cpp onaccept([&](const crow::request&){handler code goes here})` (This handler has to return bool)
+- `#!cpp onaccept([&](const crow::request&){handler code goes here})` (This handler has to return `bool`)
 - `#!cpp onopen([&](crow::websocket::connection& conn){handler code goes here})`
 - `#!cpp onmessage([&](crow::websocket::connection& conn, const std::string message, bool is_binary){handler code goes here})`
 - `#!cpp onerror([&](crow::websocket::connection& conn){handler code goes here})`

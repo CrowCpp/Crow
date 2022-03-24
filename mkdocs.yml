@@ -52,9 +52,11 @@ nav:
             - Blueprints: guides/blueprints.md
             - Compression: guides/compression.md
             - Websockets: guides/websockets.md
+            - Base64: guides/base64.md
             - Writing Tests: guides/testing.md
         - Using Crow:
             - HTTP Authorization: guides/auth.md
+            - CORS Setup: guides/CORS.md
         - Server setup:
             - Proxies: guides/proxies.md
             - Systemd run on startup: guides/syste.md
