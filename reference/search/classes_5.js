@@ -1,7 +1,12 @@
 var searchData=
 [
-  ['function_5ftraits_275',['function_traits',['../structcrow_1_1utility_1_1function__traits.html',1,'crow::utility']]],
-  ['function_5ftraits_3c_20r_28classtype_3a_3a_2a_29_28args_2e_2e_2e_29_20const_20_3e_276',['function_traits&lt; R(ClassType::*)(Args...) const &gt;',['../structcrow_1_1utility_1_1function__traits_3_01_r_07_class_type_1_1_5_08_07_args_8_8_8_08_01const_01_4.html',1,'crow::utility']]],
-  ['function_5ftraits_3c_20r_28classtype_3a_3a_2a_29_28args_2e_2e_2e_29_3e_277',['function_traits&lt; R(ClassType::*)(Args...)&gt;',['../structcrow_1_1utility_1_1function__traits_3_01_r_07_class_type_1_1_5_08_07_args_8_8_8_08_4.html',1,'crow::utility']]],
-  ['function_5ftraits_3c_20std_3a_3afunction_3c_20r_28args_2e_2e_2e_29_3e_20_3e_278',['function_traits&lt; std::function&lt; R(Args...)&gt; &gt;',['../structcrow_1_1utility_1_1function__traits_3_01std_1_1function_3_01_r_07_args_8_8_8_08_4_01_4.html',1,'crow::utility']]]
+  ['handler_5fcall_5fbridge_218',['handler_call_bridge',['../structcrow_1_1detail_1_1handler__call__bridge.html',1,'crow::detail']]],
+  ['handler_5fmiddleware_5fwrapper_219',['handler_middleware_wrapper',['../structcrow_1_1detail_1_1handler__middleware__wrapper.html',1,'crow::detail']]],
+  ['handler_5ftype_5fhelper_220',['handler_type_helper',['../structcrow_1_1detail_1_1routing__handler__call__helper_1_1_wrapped_1_1handler__type__helper.html',1,'crow::detail::routing_handler_call_helper::Wrapped']]],
+  ['handler_5ftype_5fhelper_3c_20argswrapped_2e_2e_2e_20_3e_221',['handler_type_helper&lt; ArgsWrapped... &gt;',['../structcrow_1_1detail_1_1routing__handler__call__helper_1_1_wrapped_1_1handler__type__helper.html',1,'crow::detail::routing_handler_call_helper::Wrapped']]],
+  ['handler_5ftype_5fhelper_3c_20const_20request_20_26_2c_20args_2e_2e_2e_20_3e_222',['handler_type_helper&lt; const request &amp;, Args... &gt;',['../structcrow_1_1detail_1_1routing__handler__call__helper_1_1_wrapped_1_1handler__type__helper_3_012f01fc0d25e96ed100e3017a66fd4b36.html',1,'crow::detail::routing_handler_call_helper::Wrapped']]],
+  ['handler_5ftype_5fhelper_3c_20const_20request_20_26_2c_20response_20_26_2c_20args_2e_2e_2e_20_3e_223',['handler_type_helper&lt; const request &amp;, response &amp;, Args... &gt;',['../structcrow_1_1detail_1_1routing__handler__call__helper_1_1_wrapped_1_1handler__type__helper_3_01e78e01f0ab35f7c7c9ae99998f83560a.html',1,'crow::detail::routing_handler_call_helper::Wrapped']]],
+  ['header_224',['header',['../structcrow_1_1multipart_1_1header.html',1,'crow::multipart']]],
+  ['httpparser_225',['HTTPParser',['../structcrow_1_1_h_t_t_p_parser.html',1,'crow']]],
+  ['httpparser_3c_20crow_3a_3aconnection_20_3e_226',['HTTPParser&lt; crow::Connection &gt;',['../structcrow_1_1_h_t_t_p_parser.html',1,'crow']]]
 ];

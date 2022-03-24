@@ -101,6 +101,9 @@ $(document).ready(function(){initNavTree('functions.html',''); initResizable(); 
 <li>add_header()
 : <a class="el" href="structcrow_1_1response.html#a16d1a8bcec6460ba97f90b80881693b8">crow::response</a>
 </li>
+<li>allow_credentials()
+: <a class="el" href="structcrow_1_1_c_o_r_s_rules.html#abca9739b2819cb386123997aab7b0dec">crow::CORSRules</a>
+</li>
 </ul>
 
 
@@ -110,6 +113,10 @@ $(document).ready(function(){initNavTree('functions.html',''); initResizable(); 
 </li>
 <li>bindaddr()
 : <a class="el" href="classcrow_1_1_crow.html#a75777f82b6519c86d71446eb9285d774">crow::Crow&lt; Middlewares &gt;</a>
+</li>
+<li>blueprint()
+: <a class="el" href="structcrow_1_1_c_o_r_s_handler.html#a218d078e061f8d2ad4c16e7db6022cad">crow::CORSHandler</a>
+, <a class="el" href="structcrow_1_1_c_o_r_s_rules.html#ac26c50868a334cdd3601c7cd2f2a5248">crow::CORSRules</a>
 </li>
 <li>body
 : <a class="el" href="structcrow_1_1multipart_1_1part.html#acbfa0a181e86a89dccdf70d985365695">crow::multipart::part</a>
@@ -159,6 +166,9 @@ $(document).ready(function(){initNavTree('functions.html',''); initResizable(); 
 <li>d()
 : <a class="el" href="classcrow_1_1json_1_1rvalue.html#a4a3e33d65b812ed583814a7ac2e1f448">crow::json::rvalue</a>
 </li>
+<li>debug_print()
+: <a class="el" href="classcrow_1_1_crow.html#a839c1e6f82d577308eb6f0d4948a4fbb">crow::Crow&lt; Middlewares &gt;</a>
+</li>
 <li>dispatch()
 : <a class="el" href="structcrow_1_1request.html#ac3e72e3fe415c68618dee999e3984160">crow::request</a>
 , <a class="el" href="classcrow_1_1websocket_1_1_connection.html#a7a11996bd55dcc65c1c376cea1dd7b00">crow::websocket::Connection&lt; Adaptor &gt;</a>
@@ -170,7 +180,7 @@ $(document).ready(function(){initNavTree('functions.html',''); initResizable(); 
 : <a class="el" href="classcrow_1_1websocket_1_1_connection.html#a7089a3814af7e3c6e6a82c22865ee852">crow::websocket::Connection&lt; Adaptor &gt;</a>
 </li>
 <li>dump()
-: <a class="el" href="structcrow_1_1multipart_1_1message.html#adac4c7af1a5d0eb66c2accbaf80e0196">crow::multipart::message</a>
+: <a class="el" href="structcrow_1_1multipart_1_1message.html#abeeebf36687f9cbdf06a6521eac1ce33">crow::multipart::message</a>
 </li>
 </ul>
 
@@ -211,6 +221,10 @@ $(document).ready(function(){initNavTree('functions.html',''); initResizable(); 
 <li>get_list()
 : <a class="el" href="classcrow_1_1query__string.html#a657e5fe435375cd31229944ed2ad5608">crow::query_string</a>
 </li>
+<li>global()
+: <a class="el" href="structcrow_1_1_c_o_r_s_handler.html#a969edd2b3d6768d067147839a430a976">crow::CORSHandler</a>
+, <a class="el" href="structcrow_1_1_c_o_r_s_rules.html#a1684428b8d96050e7dbb852b526ec5a2">crow::CORSRules</a>
+</li>
 </ul>
 
 
@@ -230,8 +244,9 @@ $(document).ready(function(){initNavTree('functions.html',''); initResizable(); 
 <li>has()
 : <a class="el" href="classcrow_1_1json_1_1rvalue.html#a48ac4fff801f365fb2b82f1ed7ebe983">crow::json::rvalue</a>
 </li>
-<li>headers
-: <a class="el" href="structcrow_1_1multipart_1_1message.html#ae333adda5d66d21018a978e6a3c317dd">crow::multipart::message</a>
+<li>headers()
+: <a class="el" href="structcrow_1_1_c_o_r_s_rules.html#acd966b06be1d0a8077cb4ead3defa2dd">crow::CORSRules</a>
+, <a class="el" href="structcrow_1_1multipart_1_1message.html#ae333adda5d66d21018a978e6a3c317dd">crow::multipart::message</a>
 , <a class="el" href="structcrow_1_1multipart_1_1part.html#a8ff7f3aac814d93500d475da150fcbc6">crow::multipart::part</a>
 , <a class="el" href="structcrow_1_1response.html#ae56cfc39f24a56748c11016842427fb3">crow::response</a>
 </li>
@@ -241,6 +256,9 @@ $(document).ready(function(){initNavTree('functions.html',''); initResizable(); 
 <h3><a id="index_i"></a>- i -</h3><ul>
 <li>i()
 : <a class="el" href="classcrow_1_1json_1_1rvalue.html#a1a9a1a3616d6484bf3dcdb941cf8e6da">crow::json::rvalue</a>
+</li>
+<li>ignore()
+: <a class="el" href="structcrow_1_1_c_o_r_s_rules.html#af7c411616ad51fb531a6ef0e0de4efe2">crow::CORSRules</a>
 </li>
 <li>is_alive()
 : <a class="el" href="structcrow_1_1response.html#ac29da52ee1e0b55086cd8eedd6c22da1">crow::response</a>
@@ -281,8 +299,14 @@ $(document).ready(function(){initNavTree('functions.html',''); initResizable(); 
 <li>manual_length_header
 : <a class="el" href="structcrow_1_1response.html#a95f300c05782e1934dad522b6d6588cf">crow::response</a>
 </li>
+<li>max_age()
+: <a class="el" href="structcrow_1_1_c_o_r_s_rules.html#aa3721c183750d7317d165c1b89013717">crow::CORSRules</a>
+</li>
 <li>message()
-: <a class="el" href="structcrow_1_1multipart_1_1message.html#a0007fa0cadffae1a8d16fac169d1527b">crow::multipart::message</a>
+: <a class="el" href="structcrow_1_1multipart_1_1message.html#a32946a0f39a8d024aaf4643116a7561b">crow::multipart::message</a>
+</li>
+<li>methods()
+: <a class="el" href="structcrow_1_1_c_o_r_s_rules.html#a345cef92c2f28444e505646d429717cb">crow::CORSRules</a>
 </li>
 <li>middlewares()
 : <a class="el" href="classcrow_1_1_tagged_rule.html#ada7598b85158f3008e6679f3dbab075f">crow::TaggedRule&lt; Args &gt;</a>
@@ -316,6 +340,9 @@ $(document).ready(function(){initNavTree('functions.html',''); initResizable(); 
 <li>operator std::string()
 : <a class="el" href="classcrow_1_1json_1_1rvalue.html#a2d5dd8607112a132fe070dee432987ae">crow::json::rvalue</a>
 </li>
+<li>origin()
+: <a class="el" href="structcrow_1_1_c_o_r_s_rules.html#a1d7a6517c7c256046065b2a02a25f6fa">crow::CORSRules</a>
+</li>
 </ul>
 
 
@@ -339,11 +366,15 @@ $(document).ready(function(){initNavTree('functions.html',''); initResizable(); 
 : <a class="el" href="classcrow_1_1query__string.html#a8ef1a91122dc53e1235919e107fd1a9c">crow::query_string</a>
 </li>
 <li>port()
-: <a class="el" href="classcrow_1_1_crow.html#a365f9c95fc2bd8bb583967f499c1f4a1">crow::Crow&lt; Middlewares &gt;</a>
+: <a class="el" href="classcrow_1_1_crow.html#a87d0e10ed791c6847d8b7dfff2369aae">crow::Crow&lt; Middlewares &gt;</a>
 </li>
 <li>post()
 : <a class="el" href="structcrow_1_1request.html#a33aa146a3914864ce82ef22136451601">crow::request</a>
 , <a class="el" href="classcrow_1_1websocket_1_1_connection.html#ac3d4cebfc05076982ff002b7c3186ade">crow::websocket::Connection&lt; Adaptor &gt;</a>
+</li>
+<li>prefix()
+: <a class="el" href="structcrow_1_1_c_o_r_s_handler.html#a2805b07fdc18c36a89d5ad3886c3a5f5">crow::CORSHandler</a>
+, <a class="el" href="structcrow_1_1_c_o_r_s_rules.html#a98b09d1b3ebcc8db99a845333dc1ffff">crow::CORSRules</a>
 </li>
 </ul>
 
@@ -448,7 +479,7 @@ $(document).ready(function(){initNavTree('functions.html',''); initResizable(); 
 : <a class="el" href="classcrow_1_1_crow.html#a0266672657128919ab9a067d93f3868f">crow::Crow&lt; Middlewares &gt;</a>
 </li>
 <li>stream_threshold()
-: <a class="el" href="classcrow_1_1_crow.html#ae92390d22f6fc99987c41a617be71d64">crow::Crow&lt; Middlewares &gt;</a>
+: <a class="el" href="classcrow_1_1_crow.html#a0a7b45c935e58d199eb1bcba86003232">crow::Crow&lt; Middlewares &gt;</a>
 </li>
 </ul>
 
@@ -510,7 +541,7 @@ $(document).ready(function(){initNavTree('functions.html',''); initResizable(); 
 		<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
 			<ul>
 				<li class="footer">
-					Generated on Mon Mar 21 2022 for Crow by <a href="http://www.doxygen.org/index.html">
+					Generated on Thu Mar 24 2022 for Crow by <a href="http://www.doxygen.org/index.html">
 					<img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.17.
 					Dark theme by <a href="http://majerle.eu" target="_new">Tilen Majerle</a>. Edited by <a href="https://github.com/The-EDev" target="_new">Farook Al-Sammarraie</a>. All rights reserved.
 				</li>
