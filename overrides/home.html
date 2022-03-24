@@ -446,7 +446,7 @@ async function getData()
   text += "</section><br><section style=\"text-align: center;\"><a href=\"https://opencollective.com/crow/contribute/donation-30769/checkout\"><h2>Donations</h2></a>";
   for(var i = 0; i < donations.length; i++){let item = donations[i]; text += makeCard(item.name, item.image, item.profile, 3.5);}
 
-  text += "</section><br><section style=\"text-align: center;\"><a href=\"https://opencollective.com/crow/contribute/booster-30767/checkout\"><h2>GitHub Sponsors</h2></a>";
+  text += "</section><br><section style=\"text-align: center;\"><a href=\"https://github.com/sponsors/CrowCpp\"><h2>GitHub Sponsors</h2></a>";
   for(var i = 0; i < ghsponsors.length; i++){let item  = ghsponsors[i];  text += makeCard(item.handle, item.avatar, item.profile, 5);}
 
   text += "</section><section style=\"text-align: center;\">";
