@@ -7,26 +7,26 @@ namespace crow
 {
     struct CORSHandler;
 
-    // CORSRules is used for tuning cors policies
+    /// Used for tuning CORS policies
     struct CORSRules
     {
         friend struct crow::CORSHandler;
 
-        // Set Access-Control-Allow-Origin. Default is "*"
+        /// Set Access-Control-Allow-Origin. Default is "*"
         CORSRules& origin(const std::string& origin)
         {
             origin_ = origin;
             return *this;
         }
 
-        // Set Access-Control-Allow-Methods. Default is "*"
+        /// Set Access-Control-Allow-Methods. Default is "*"
         CORSRules& methods(crow::HTTPMethod method)
         {
             add_list_item(methods_, crow::method_name(method));
             return *this;
         }
 
-        // Set Access-Control-Allow-Methods. Default is "*"
+        /// Set Access-Control-Allow-Methods. Default is "*"
         template<typename... Methods>
         CORSRules& methods(crow::HTTPMethod method, Methods... method_list)
         {
@@ -35,14 +35,14 @@ namespace crow
             return *this;
         }
 
-        // Set Access-Control-Allow-Headers. Default is "*"
+        /// Set Access-Control-Allow-Headers. Default is "*"
         CORSRules& headers(const std::string& header)
         {
             add_list_item(headers_, header);
             return *this;
         }
 
-        // Set Access-Control-Allow-Headers. Default is "*"
+        /// Set Access-Control-Allow-Headers. Default is "*"
         template<typename... Headers>
         CORSRules& headers(const std::string& header, Headers... header_list)
         {
@@ -51,33 +51,33 @@ namespace crow
             return *this;
         }
 
-        // Set Access-Control-Max-Age. Default is none
+        /// Set Access-Control-Max-Age. Default is none
         CORSRules& max_age(int max_age)
         {
             max_age_ = std::to_string(max_age);
             return *this;
         }
 
-        // Enable Access-Control-Allow-Credentials
+        /// Enable Access-Control-Allow-Credentials
         CORSRules& allow_credentials()
         {
             allow_credentials_ = true;
             return *this;
         }
 
-        // Ignore CORS and don't send any headers
+        /// Ignore CORS and don't send any headers
         void ignore()
         {
             ignore_ = true;
         }
 
-        // Handle CORS on specific prefix path
+        /// Handle CORS on specific prefix path
         CORSRules& prefix(const std::string& prefix);
 
-        // Handle CORS for specific blueprint
+        /// Handle CORS for specific blueprint
         CORSRules& blueprint(const Blueprint& bp);
 
-        // Global CORS policy
+        /// Global CORS policy
         CORSRules& global();
 
     private:
@@ -85,7 +85,7 @@ namespace crow
         CORSRules(CORSHandler* handler):
           handler_(handler) {}
 
-        // build comma separated list
+        /// build comma separated list
         void add_list_item(std::string& list, const std::string& val)
         {
             if (list == "*") list = "";
@@ -93,7 +93,7 @@ namespace crow
             list += val;
         }
 
-        // Set header `key` to `value` if it is not set
+        /// Set header `key` to `value` if it is not set
         void set_header_no_override(const std::string& key, const std::string& value, crow::response& res)
         {
             if (value.size() == 0) return;
@@ -101,7 +101,7 @@ namespace crow
             res.add_header(key, value);
         }
 
-        // Set response headers
+        /// Set response headers
         void apply(crow::response& res)
         {
             if (ignore_) return;
@@ -124,6 +124,7 @@ namespace crow
     };
 
     /// CORSHandler is a global middleware for setting CORS headers.
+
     ///
     /// By default, it sets Access-Control-Allow-Origin/Methods/Headers to "*".
     /// The default behaviour can be changed with the `global()` cors rule.
@@ -142,21 +143,21 @@ namespace crow
             rule.apply(res);
         }
 
-        // Handle CORS on specific prefix path
+        /// Handle CORS on a specific prefix path
         CORSRules& prefix(const std::string& prefix)
         {
             rules.emplace_back(prefix, CORSRules(this));
             return rules.back().second;
         }
 
-        // Handle CORS for specific blueprint
+        /// Handle CORS for a specific blueprint
         CORSRules& blueprint(const Blueprint& bp)
         {
             rules.emplace_back(bp.prefix(), CORSRules(this));
             return rules.back().second;
         }
 
-        // Global CORS policy
+        /// Get the global CORS policy
         CORSRules& global()
         {
             return default_;

@@ -1,5 +1,9 @@
 Crow comes with a simple and easy to use logging system.<br><br>
 
+!!! note
+
+    Currently Crow's Logger is not linked to the Crow application, meaning if an executable has more than one Crow application they'll be sharing any variables or classes relating to Logging.
+
 ## Setting up logging level
 You can set up the level at which crow displays logs by using the app's `loglevel(crow::LogLevel)` method.<br><br>
 
@@ -22,7 +26,13 @@ To set a logLevel, just use `#!cpp app.loglevel(crow::LogLevel::Warning)`, This 
 ## Writing a log
 Writing a log is as simple as `#!cpp CROW_LOG_<LOG LEVEL> << "Hello";` (replace&lt;LOG LEVEL&gt; with the actual level in all caps, so you have `CROW_LOG_WARNING`).
 
+!!! note
+
+    Log times are reported in GMT timezone by default. This is because HTTP requires all reported times for requests and responses to be in GMT. This can be changed by using the macro `CROW_USE_LOCALTIMEZONE` which will set **only the log timezone** to the server's local timezone.
+
 ## Creating A custom logger
+**Introduced in: `master`**<br><br>
+
 Assuming you have an existing logger or Crow's default format just doesn't work for you. Crow allows you to use a custom logger for any log made using the `CROW_LOG_<LOG LEVEL>` macro.<br>
 All you need is a class extending `#!cpp crow::ILogHandler` containing the method `#!cpp void log(std::string, crow::LogLevel)`.<br>
 Once you have your custom logger, you need to set it via `#!cpp crow::logger::setHandler(&MyLogger);`. Here's a full example:<br>

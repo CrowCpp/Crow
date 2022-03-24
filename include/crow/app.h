@@ -121,6 +121,7 @@ namespace crow
             return *this;
         }
 
+        /// Get the port that Crow will handle requests on
         std::uint16_t port()
         {
             return port_;
@@ -178,7 +179,7 @@ namespace crow
             return *this;
         }
 
-        /// Set a response body size (in bytes) beyond which Crow automatically streams responses (Default is 1MiB)
+        /// Set the response body size (in bytes) beyond which Crow automatically streams responses (Default is 1MiB)
 
         ///
         /// Any streamed response is unaffected by Crow's timer, and therefore won't timeout before a response is fully sent.
@@ -188,6 +189,7 @@ namespace crow
             return *this;
         }
 
+        /// Get the response body size (in bytes) beyond which Crow automatically streams responses
         size_t& stream_threshold()
         {
             return res_stream_threshold_;
@@ -328,6 +330,7 @@ namespace crow
             }
         }
 
+        /// Print the routing paths defined for each HTTP method
         void debug_print()
         {
             CROW_LOG_DEBUG << "Routing:";

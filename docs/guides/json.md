@@ -25,13 +25,19 @@ For more info on read values go [here](/reference/classcrow_1_1json_1_1rvalue.ht
 ## wvalue
 JSON write value, used for creating, editing and converting JSON to a string.<br><br>
 
-!!!note
+!!! note
 
     setting a `wvalue` to object type can be done by simply assigning a value to whatever string key you like, something like `#!cpp wval["key1"] = val1;`. Keep in mind that val1 can be any of the above types.
 
-A `wvalue` can be treated as an object or even a list (setting a value by using `json[3] = 32` for example). Please note that this will remove the data in the value if it isn't of List type.<br><br>
+A `wvalue` can be treated as an object or even a list (setting a value by using `json[3] = 32` for example). Please note that this will remove the data in the value if it isn't of List type.
 
-Additionally, a `wvalue` can be initialized as an object using an initializer list, an example object would be `wvalue x = {{"a", 1}, {"b", 2}}`. Or as a list using `wvalue x = json::wvalue::list({1, 2, 3})`, lists can include any type that `wvalue` supports.
+!!! warning
+
+    JSON does not allow floating point values like `NaN` or `INF`, Crow will output `null` instead of `NaN` or `INF` when converting `wvalue` to a string. (`{"Key": NaN}` becomes `{"Key": null}`) (master and later)
+
+<br><br>
+
+Additionally, a `wvalue` can be initialized as an object using an initializer list, an example object would be `wvalue x = {{"a", 1}, {"b", 2}}`. Or as a list using `wvalue x = json::wvalue::list({1, 2, 3})`, lists can include any type that `wvalue` supports.<br><br>
 
 An object type `wvalue` uses `std::unordered_map` by default, if you want to have your returned `wvalue` key value pairs be sorted (using `std::map`) you can add `#!cpp #define CROW_JSON_USE_MAP` to the top of your program.<br><br>
     
@@ -39,6 +45,6 @@ A JSON `wvalue` can be returned directly inside a route handler, this will cause
 
 For more info on write values go [here](../../reference/classcrow_1_1json_1_1wvalue.html).
 
-!!!note
+!!! note
 
     Crow's json exceptions can be disabled by using the `#!cpp #define CROW_JSON_NO_ERROR_CHECK` macro. This should increase the program speed with the drawback of having unexpected behavious when used incorrectly (e.g. by attempting to parse an invalid json object).

@@ -2,7 +2,7 @@ Routes define what happens when your client connects to a certain URL.<br>
 
 ## Macro
 `CROW_ROUTE(app, url)`<br>
-Can be replaced with `#!cpp app.route<crow::black_magick::get_parameter_tag(url)>(url)` or `#!cpp app.route_dynamic(url)` if you're using VS2013 or want runtime url evaluation. Although this usage is **NOT** recommended.
+Can be replaced with `#!cpp app.route<crow::black_magick::get_parameter_tag(url)>(url)` or `#!cpp app.route_dynamic(url)` if you're using VS2013 or want runtime URL evaluation. Although this usage is **NOT** recommended.
 ## App
 Which app class to assign the route to.
 ## Path (URL)
@@ -33,7 +33,7 @@ Basically a piece of code that gets executed whenever the client calls the assoc
 ### Request
 Handlers can also use information from the request by adding it as a parameter `#!cpp ([](const crow::request& req){...})`.<br><br>
 
-You can also access the url parameters in the handler using `#!cpp req.url_params.get("param_name");`. If the parameter doesn't exist, `nullptr` is returned.<br><br>
+You can also access the URL parameters in the handler using `#!cpp req.url_params.get("param_name");`. If the parameter doesn't exist, `nullptr` is returned.<br><br>
 
 For more information on `crow::request` go [here](../../reference/structcrow_1_1request.html).<br><br>
 
@@ -82,6 +82,6 @@ Instead of assigning a response code, you can use the `crow::status` enum, for e
 ## Catchall routes
 **Introduced in: `v0.3`**<br><br>
 By default, any request that Crow can't find a route for will return a simple 404 response. You can change that to return a default route using the `CROW_CATCHALL_ROUTE(app)` macro. Defining it is identical to a normal route, even when it comes to the `const crow::request&` and `crow::response&` parameters being optional.
-!!!note
+!!! note
 
     For versions higher than 0.3 (excluding patches), Catchall routes handle 404 and 405 responses. The default response will contain the code 404 or 405.

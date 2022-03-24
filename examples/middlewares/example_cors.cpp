@@ -1,7 +1,6 @@
 #include "crow.h"
 #include "crow/middlewares/cors.h"
 
-
 int main()
 {
     // Enable CORS

@@ -1,4 +1,4 @@
-This page explains how to set Crow up for use with your project (***For versions 0.3+2 and lower***).
+This page explains how to set Crow up for use with your project (***For versions 0.3+4 and lower***).
 
 
 ##Requirements
@@ -34,7 +34,7 @@ Use your package manager to install the following:
 Microsoft Visual Studio 2019 (older versions not tested)
 
 ##Downloading
-Either run `git clone https://github.com/crowcpp/crow.git` or download `crow_all.h` from the releases section. You can also download a zip of the project on github.
+Either run `git clone https://github.com/crowcpp/crow.git` or download `crow_all.h` from the releases section. You can also download a zip of the project on Github.
 
 ##Includes folder
 1. Copy the `/includes` folder to your project's root folder.
@@ -126,7 +126,7 @@ cd build
 cmake ..
 make
 ```
-Running Cmake will create `crow_all.h` file and place it in the build directory.<br>
+Running CMake will create `crow_all.h` file and place it in the build directory.<br>
 
 You can run tests with following command:
 ```

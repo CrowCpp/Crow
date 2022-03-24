@@ -32,14 +32,20 @@ You can also download the `crow_all.h` file and simply include that into your pr
 <br><br>
 ### Installing from source
 #### Using CMake
-1. Download Crow's source code (Either through github's UI or by using<br> `git clone https://github.com/CrowCpp/Crow.git`).
+1. Download Crow's source code (Either through Github's UI or by using<br> `git clone https://github.com/CrowCpp/Crow.git`).
 2. Run `mkdir build` inside of crow's source directory.
 3. Navigate to the new "build" directory and run the following:<br>
 `cmake .. -DCROW_BUILD_EXAMPLES=OFF -DCROW_BUILD_TESTS=OFF`
 4. Run `make install`.
-!!!note
+
+!!! note
 
     You can ignore `-DCROW_BUILD_EXAMPLES=OFF -DCROW_BUILD_TESTS=OFF` if you want to build the Examples and Unit Tests.
+
+!!! note
+
+    You can uninstall Crow at a later time using `make uninstall`.
+
 <br>
 #### Manually
 Crow can be installed manually on your Linux computer.
@@ -53,13 +59,15 @@ Crow can be installed manually on your Linux computer.
     Copy Crow's `include` directory to the `/usr/local/include` directory.
 
 ##### Single header (crow_all.h)
-!!!warning
+!!! warning
 
     `crow_all.h` is recommended only for small, possibly single source file projects, and ideally should not be installed on your system.
+
 navigate to the `scripts` directory and run `./merge_all.py ../include crow_all.h`. This will generate a `crow_all.h` file that you can use in your projects.
-!!!note
+!!! note
 
     You can also include or exclude middlewares from your `crow_all.h` by using `-i` or `-e` followed by the middleware header file names separated by a comma (e.g. `merge_all.py ../include crow_all.h -e cookie_parser` to exclude the cookie parser middleware).
+
 ## Compiling your project
 ### Using CMake
 In order to get your CMake project to work with Crow, all you need are the following lines in your CMakeLists.txt:
@@ -74,6 +82,6 @@ All you need to do is run the following command:
 g++ main.cpp -lpthread
 ```
 You can use arguments like `-DCROW_ENABLE_DEBUG`, `-DCROW_ENABLE_COMPRESSION -lz` for HTTP Compression, or `-DCROW_ENABLE_SSL -lssl` for HTTPS support, or even replace g++ with clang++.
-!!!warning
+!!! warning
 
     If you're using a version of boost prior to 1.69, you'll need to add the argument `-lboost_system` in order for you Crow application to compile correctly.

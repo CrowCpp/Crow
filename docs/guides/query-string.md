@@ -1,4 +1,4 @@
-A query string is the part of the url that comes after a `?` character, it is usually formatted as `key=value&otherkey=othervalue`.
+A query string is the part of the URL that comes after a `?` character, it is usually formatted as `key=value&otherkey=othervalue`.
 <br><br>
 
 Crow supports query strings through `crow::request::url_params`. The object is of type `crow::query_string` and can has the following functions:<br>
@@ -12,7 +12,7 @@ Works the same as `get`, but removes the returned value.
     `crow::request::url_params` is a const value, therefore for pop (also pop_list and pop_dict) to work, a copy needs to be made.
 
 ## get_list(name)
-A url can be `http://example.com?key[]=value1&key[]=value2&key[]=value3`. Using `get_list("key")` on such a url returns an `std::vector<std::string>` containing `[value1, value2, value3]`.<br><br>
+A URL can be `http://example.com?key[]=value1&key[]=value2&key[]=value3`. Using `get_list("key")` on such a URL returns an `std::vector<std::string>` containing `[value1, value2, value3]`.<br><br>
 
 `#!cpp get_list("key", false)` can be used to parse `http://example.com?key=value1&key=value2&key=value3`
 ## pop_list(name)

@@ -22,6 +22,7 @@
 
 namespace crow
 {
+    /// @cond SKIP
     namespace black_magic
     {
 #ifndef CROW_MSVC_WORKAROUND
@@ -528,6 +529,7 @@ namespace crow
             template<size_t i>
             using arg = typename std::tuple_element<i, std::tuple<Args...>>::type;
         };
+        /// @endcond
 
         inline static std::string base64encode(const unsigned char* data, size_t size, const char* key = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/")
         {
