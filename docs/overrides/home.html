@@ -419,6 +419,20 @@ async function getData()
       }
     }
   }
+  
+  let ghx = await fetch("https://gh-sponsors-dsdpxxx9d-filiptronicek.vercel.app/sponsors/CrowCpp");
+  let ghy = await fetch("https://gh-sponsors-dsdpxxx9d-filiptronicek.vercel.app/count/CrowCpp");
+  let ghsponsors = await ghx.json();
+  ghsponsors = ghsponsors.sponsors;
+  let ghx_count = await ghy.json();
+  ghx_count = ghx_count.sponsors.count;
+
+  if (ghx_count > ghsponsors.length)
+  {
+    let priv_count = ghx_count - ghsponsors.length;
+    ghsponsors.push({handle: priv_count = 1 ? "Private sponsor" : `${priv_count} Private sponsors`, avatar:null, profile:"https://github.com/CrowCpp"});
+  }
+
 
   text += "<section style=\"text-align: center;\"><a href=\"https://opencollective.com/crow/contribute/sponsor-30717/checkout\"><h2>Sponsors</h2></a>";
   for(var i = 0; i < sponsors.length; i++){let item  = sponsors[i];  text += makeCard(item.name, item.image, item.profile, 10);}
@@ -431,6 +445,9 @@ async function getData()
 
   text += "</section><br><section style=\"text-align: center;\"><a href=\"https://opencollective.com/crow/contribute/donation-30769/checkout\"><h2>Donations</h2></a>";
   for(var i = 0; i < donations.length; i++){let item = donations[i]; text += makeCard(item.name, item.image, item.profile, 3.5);}
+
+  text += "</section><br><section style=\"text-align: center;\"><a href=\"https://opencollective.com/crow/contribute/booster-30767/checkout\"><h2>GitHub Sponsors</h2></a>";
+  for(var i = 0; i < ghsponsors.length; i++){let item  = ghsponsors[i];  text += makeCard(item.handle, item.avatar, item.profile, 5);}
 
   text += "</section><section style=\"text-align: center;\">";
   await getGHData();
