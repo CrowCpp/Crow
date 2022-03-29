@@ -1,6 +1,6 @@
 # Maintainer: The-EDev <farook@the-e-dev.com>
 pkgname=crow
-pkgver=master
+pkgver=1.0
 pkgrel=1
 pkgdesc="A Fast and Easy to use C++ microframework for the web."
 arch=(any)
