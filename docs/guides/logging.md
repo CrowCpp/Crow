@@ -31,7 +31,7 @@ Writing a log is as simple as `#!cpp CROW_LOG_<LOG LEVEL> << "Hello";` (replace&
     Log times are reported in GMT timezone by default. This is because HTTP requires all reported times for requests and responses to be in GMT. This can be changed by using the macro `CROW_USE_LOCALTIMEZONE` which will set **only the log timezone** to the server's local timezone.
 
 ## Creating A custom logger
-**Introduced in: `master`**<br><br>
+**Introduced in: `v1.0`**<br><br>
 
 Assuming you have an existing logger or Crow's default format just doesn't work for you. Crow allows you to use a custom logger for any log made using the `CROW_LOG_<LOG LEVEL>` macro.<br>
 All you need is a class extending `#!cpp crow::ILogHandler` containing the method `#!cpp void log(std::string, crow::LogLevel)`.<br>
