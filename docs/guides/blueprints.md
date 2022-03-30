@@ -1,6 +1,4 @@
-!!! Warning
-
-    This feature is currently only available on the "master" branch.
+**Introduced in: `v1.0`**<br><br>
     
 Crow supports flask style blueprints.<br>
 A blueprint is a limited app. It cannot handle networking. But it can handle routes.<br>

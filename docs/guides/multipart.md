@@ -21,7 +21,7 @@ A message can be created either by defining the headers, boundary, and individua
 
 Once a multipart message has been made, the individual parts can be accessed throughout `msg.parts`, `parts` is an `std::vector`.<br><br>
 
-**Introduced in: `master`**<br><br>
+**Introduced in: `v1.0`**<br><br>
 
 Part headers are organized in a similar way to request and response headers, and can be retrieved via `crow::multipart::get_header_object("header-key")`. This function returns a `crow::multipart::header` object.<br><br>
 

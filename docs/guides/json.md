@@ -33,7 +33,7 @@ A `wvalue` can be treated as an object or even a list (setting a value by using 
 
 !!! warning
 
-    JSON does not allow floating point values like `NaN` or `INF`, Crow will output `null` instead of `NaN` or `INF` when converting `wvalue` to a string. (`{"Key": NaN}` becomes `{"Key": null}`) (master and later)
+    JSON does not allow floating point values like `NaN` or `INF`, Crow will output `null` instead of `NaN` or `INF` when converting `wvalue` to a string. (`{"Key": NaN}` becomes `{"Key": null}`)
 
 <br><br>
 
