@@ -775,7 +775,7 @@ namespace crow
             if (pos == req_url.size())
             {
                 found_BP = std::move(*blueprints);
-                return {node->rule_index, *blueprints, *params};
+                return std::tuple<uint16_t, std::vector<uint16_t>, routing_params>{node->rule_index, *blueprints, *params};
             }
 
             bool found_fragment = false;
@@ -902,7 +902,7 @@ namespace crow
             if (!found_fragment)
                 found_BP = std::move(*blueprints);
 
-            return {found, found_BP, match_params}; //Called after all the recursions have been done
+            return std::tuple<uint16_t, std::vector<uint16_t>, routing_params>{found, found_BP, match_params}; //Called after all the recursions have been done
         }
 
         //This functions assumes any blueprint info passed is valid
