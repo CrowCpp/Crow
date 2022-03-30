@@ -876,7 +876,7 @@ $(document).ready(function(){initNavTree('routing_8h_source.html',''); initResiz
 <div class="line"><a name="l00775"></a><span class="lineno">  775</span>&#160;            <span class="keywordflow">if</span> (pos == req_url.size())</div>
 <div class="line"><a name="l00776"></a><span class="lineno">  776</span>&#160;            {</div>
 <div class="line"><a name="l00777"></a><span class="lineno">  777</span>&#160;                found_BP = std::move(*blueprints);</div>
-<div class="line"><a name="l00778"></a><span class="lineno">  778</span>&#160;                <span class="keywordflow">return</span> {node-&gt;rule_index, *blueprints, *params};</div>
+<div class="line"><a name="l00778"></a><span class="lineno">  778</span>&#160;                <span class="keywordflow">return</span> std::tuple&lt;uint16_t, std::vector&lt;uint16_t&gt;, routing_params&gt;{node-&gt;rule_index, *blueprints, *params};</div>
 <div class="line"><a name="l00779"></a><span class="lineno">  779</span>&#160;            }</div>
 <div class="line"><a name="l00780"></a><span class="lineno">  780</span>&#160; </div>
 <div class="line"><a name="l00781"></a><span class="lineno">  781</span>&#160;            <span class="keywordtype">bool</span> found_fragment = <span class="keyword">false</span>;</div>
@@ -1003,7 +1003,7 @@ $(document).ready(function(){initNavTree('routing_8h_source.html',''); initResiz
 <div class="line"><a name="l00902"></a><span class="lineno">  902</span>&#160;            <span class="keywordflow">if</span> (!found_fragment)</div>
 <div class="line"><a name="l00903"></a><span class="lineno">  903</span>&#160;                found_BP = std::move(*blueprints);</div>
 <div class="line"><a name="l00904"></a><span class="lineno">  904</span>&#160; </div>
-<div class="line"><a name="l00905"></a><span class="lineno">  905</span>&#160;            <span class="keywordflow">return</span> {found, found_BP, match_params}; <span class="comment">//Called after all the recursions have been done</span></div>
+<div class="line"><a name="l00905"></a><span class="lineno">  905</span>&#160;            <span class="keywordflow">return</span> std::tuple&lt;uint16_t, std::vector&lt;uint16_t&gt;, routing_params&gt;{found, found_BP, match_params}; <span class="comment">//Called after all the recursions have been done</span></div>
 <div class="line"><a name="l00906"></a><span class="lineno">  906</span>&#160;        }</div>
 <div class="line"><a name="l00907"></a><span class="lineno">  907</span>&#160; </div>
 <div class="line"><a name="l00908"></a><span class="lineno">  908</span>&#160;        <span class="comment">//This functions assumes any blueprint info passed is valid</span></div>
