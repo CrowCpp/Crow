@@ -1050,34 +1050,38 @@
 <h2 id="before_handle">before_handle</h2>
 <p>There are two possible signatures for before_handle</p>
 <ol>
-<li>if you only need to access this middleware's context.</li>
-</ol>
+<li>
+<p>if you only need to access this middleware's context.</p>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">before_handle</span><span class="p">(</span><span class="n">request</span><span class="o">&amp;</span><span class="w"> </span><span class="n">req</span><span class="p">,</span><span class="w"> </span><span class="n">response</span><span class="o">&amp;</span><span class="w"> </span><span class="n">res</span><span class="p">,</span><span class="w"> </span><span class="n">context</span><span class="o">&amp;</span><span class="w"> </span><span class="n">ctx</span><span class="p">)</span><span class="w"></span>
 </code></pre></div>
-<ol>
-<li>To get access to other middlewares context
+</li>
+<li>
+<p>To get access to other middlewares context</p>
 <div class="highlight"><pre><span></span><code><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">AllContext</span><span class="o">&gt;</span><span class="w"></span>
 <span class="kt">void</span><span class="w"> </span><span class="n">before_handle</span><span class="p">(</span><span class="n">request</span><span class="o">&amp;</span><span class="w"> </span><span class="n">req</span><span class="p">,</span><span class="w"> </span><span class="n">response</span><span class="o">&amp;</span><span class="w"> </span><span class="n">res</span><span class="p">,</span><span class="w"> </span><span class="n">context</span><span class="o">&amp;</span><span class="w"> </span><span class="n">ctx</span><span class="p">,</span><span class="w"> </span><span class="n">AllContext</span><span class="o">&amp;</span><span class="w"> </span><span class="n">all_ctx</span><span class="p">)</span><span class="w"> </span>
 <span class="p">{</span><span class="w"></span>
 <span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">other_ctx</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">all_ctx</span><span class="p">.</span><span class="k">template</span><span class="w"> </span><span class="n">get</span><span class="o">&lt;</span><span class="n">OtherMiddleware</span><span class="o">&gt;</span><span class="p">();</span><span class="w"></span>
 <span class="p">}</span><span class="w"></span>
-</code></pre></div></li>
+</code></pre></div>
+</li>
 </ol>
 <h2 id="after_handle">after_handle</h2>
 <p>There are two possible signatures for after_handle</p>
 <ol>
-<li>if you only need to access this middleware's context.</li>
-</ol>
+<li>
+<p>if you only need to access this middleware's context.</p>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">after_handle</span><span class="p">(</span><span class="n">request</span><span class="o">&amp;</span><span class="w"> </span><span class="n">req</span><span class="p">,</span><span class="w"> </span><span class="n">response</span><span class="o">&amp;</span><span class="w"> </span><span class="n">res</span><span class="p">,</span><span class="w"> </span><span class="n">context</span><span class="o">&amp;</span><span class="w"> </span><span class="n">ctx</span><span class="p">)</span><span class="w"></span>
 </code></pre></div>
-<ol>
-<li>To get access to other middlewares context
+</li>
+<li>
+<p>To get access to other middlewares context</p>
 <div class="highlight"><pre><span></span><code><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">AllContext</span><span class="o">&gt;</span><span class="w"></span>
 <span class="kt">void</span><span class="w"> </span><span class="n">after_handle</span><span class="p">(</span><span class="n">request</span><span class="o">&amp;</span><span class="w"> </span><span class="n">req</span><span class="p">,</span><span class="w"> </span><span class="n">response</span><span class="o">&amp;</span><span class="w"> </span><span class="n">res</span><span class="p">,</span><span class="w"> </span><span class="n">context</span><span class="o">&amp;</span><span class="w"> </span><span class="n">ctx</span><span class="p">,</span><span class="w"> </span><span class="n">AllContext</span><span class="o">&amp;</span><span class="w"> </span><span class="n">all_ctx</span><span class="p">)</span><span class="w"> </span>
 <span class="p">{</span><span class="w"></span>
 <span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">other_ctx</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">all_ctx</span><span class="p">.</span><span class="k">template</span><span class="w"> </span><span class="n">get</span><span class="o">&lt;</span><span class="n">OtherMiddleware</span><span class="o">&gt;</span><span class="p">();</span><span class="w"></span>
 <span class="p">}</span><span class="w"></span>
-</code></pre></div></li>
+</code></pre></div>
+</li>
 </ol>
 <h2 id="using-middleware">Using middleware</h2>
 <p>All middleware has to be registered in the Crow application and is enabled globally by default.</p>
