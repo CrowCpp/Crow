@@ -11,18 +11,19 @@ There are two possible signatures for before_handle
 
 1. if you only need to access this middleware's context.
 
-```cpp
-void before_handle(request& req, response& res, context& ctx)
-```
+    ```cpp
+    void before_handle(request& req, response& res, context& ctx)
+    ```
 
 2. To get access to other middlewares context
-``` cpp
-template <typename AllContext>
-void before_handle(request& req, response& res, context& ctx, AllContext& all_ctx) 
-{
-    auto other_ctx = all_ctx.template get<OtherMiddleware>();
-}
-```
+
+    ``` cpp
+    template <typename AllContext>
+    void before_handle(request& req, response& res, context& ctx, AllContext& all_ctx) 
+    {
+        auto other_ctx = all_ctx.template get<OtherMiddleware>();
+    }
+    ```
 
 
 ## after_handle
@@ -30,18 +31,19 @@ There are two possible signatures for after_handle
 
 1. if you only need to access this middleware's context.
 
-```cpp
-void after_handle(request& req, response& res, context& ctx)
-```
+    ```cpp
+    void after_handle(request& req, response& res, context& ctx)
+    ```
 
 2. To get access to other middlewares context
-``` cpp
-template <typename AllContext>
-void after_handle(request& req, response& res, context& ctx, AllContext& all_ctx) 
-{
-    auto other_ctx = all_ctx.template get<OtherMiddleware>();
-}
-```
+
+    ``` cpp
+    template <typename AllContext>
+    void after_handle(request& req, response& res, context& ctx, AllContext& all_ctx) 
+    {
+        auto other_ctx = all_ctx.template get<OtherMiddleware>();
+    }
+    ```
 
 ## Using middleware
 
