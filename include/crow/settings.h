@@ -8,9 +8,6 @@
 /* #ifdef - enables logging */
 #define CROW_ENABLE_LOGGING
 
-/* #ifdef - enables ssl */
-//#define CROW_ENABLE_SSL
-
 /* #ifdef - enforces section 5.2 and 6.1 of RFC6455 (only accepting masked messages from clients) */
 //#define CROW_ENFORCE_WS_SPEC
 

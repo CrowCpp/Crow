@@ -4,11 +4,17 @@ include(CMakeFindDependencyMacro)
 find_dependency(Boost 1.64 COMPONENTS system date_time)
 find_dependency(Threads)
 
-if(CROW_ENABLE_COMPRESSION)
+set(CROW_INSTALLED_FEATURES "@CROW_FEATURES@")
+
+if(NOT DEFINED CROW_FEATURES)
+  set(CROW_FEATURES ${CROW_INSTALLED_FEATURES})
+endif()
+
+if("compression" IN_LIST CROW_FEATURES)
   find_dependency(ZLIB)
 endif()
 
-if(CROW_ENABLE_SSL)
+if("ssl" IN_LIST CROW_FEATURES)
   find_dependency(OpenSSL)
 endif()
 
@@ -21,12 +27,12 @@ get_target_property(_CROW_ICD Crow::Crow INTERFACE_COMPILE_DEFINITIONS)
 list(REMOVE_ITEM _CROW_ILL "ZLIB::ZLIB" "OpenSSL::SSL")
 list(REMOVE_ITEM _CROW_ICD "CROW_ENABLE_SSL" "CROW_ENABLE_COMPRESSION")
 
-if(CROW_ENABLE_COMPRESSION)
+if("compression" IN_LIST CROW_FEATURES)
   list(APPEND _CROW_ILL "ZLIB::ZLIB")
   list(APPEND _CROW_ICD "CROW_ENABLE_COMPRESSION")
 endif()
 
-if(CROW_ENABLE_SSL)
+if("ssl" IN_LIST CROW_FEATURES)
   list(APPEND _CROW_ILL "OpenSSL::SSL")
   list(APPEND _CROW_ICD "CROW_ENABLE_SSL")
 endif()

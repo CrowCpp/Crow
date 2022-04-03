@@ -18,7 +18,7 @@ endif()
 
 add_subdirectory(template)
 add_subdirectory(multi_file)
-if (CROW_ENABLE_SSL)
+if ("ssl" IN_LIST CROW_FEATURES)
 	add_subdirectory(ssl)
 endif()
 add_subdirectory(img)
