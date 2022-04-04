@@ -380,7 +380,7 @@ $(document).ready(function(){initNavTree('common_8h_source.html',''); initResiza
 <div class="line"><a name="l00279"></a><span class="lineno">  279</span>&#160; </div>
 <div class="line"><a name="l00280"></a><span class="lineno">  280</span>&#160;<span class="comment">// clang-format off</span></div>
 <div class="line"><a name="l00281"></a><span class="lineno">  281</span>&#160;<span class="preprocessor">#ifndef CROW_MSVC_WORKAROUND</span></div>
-<div class="line"><a name="l00282"></a><span class="lineno">  282</span>&#160;constexpr crow::HTTPMethod <span class="keyword">operator</span><span class="stringliteral">&quot;&quot;</span> _method(<span class="keyword">const</span> <span class="keywordtype">char</span>* str, <span class="keywordtype">size_t</span> <span class="comment">/*len*/</span>)</div>
+<div class="line"><a name="l00282"></a><span class="lineno">  282</span>&#160;constexpr crow::HTTPMethod method_from_string(<span class="keyword">const</span> <span class="keywordtype">char</span>* str)</div>
 <div class="line"><a name="l00283"></a><span class="lineno">  283</span>&#160;{</div>
 <div class="line"><a name="l00284"></a><span class="lineno">  284</span>&#160;    <span class="keywordflow">return</span> crow::black_magic::is_equ_p(str, <span class="stringliteral">&quot;GET&quot;</span>, 3)    ? crow::HTTPMethod::Get :</div>
 <div class="line"><a name="l00285"></a><span class="lineno">  285</span>&#160;           crow::black_magic::is_equ_p(str, <span class="stringliteral">&quot;DELETE&quot;</span>, 6) ? crow::HTTPMethod::Delete :</div>
@@ -425,8 +425,13 @@ $(document).ready(function(){initNavTree('common_8h_source.html',''); initResiza
 <div class="line"><a name="l00324"></a><span class="lineno">  324</span>&#160;           crow::black_magic::is_equ_p(str, <span class="stringliteral">&quot;SOURCE&quot;</span>, 6) ? crow::HTTPMethod::Source :</div>
 <div class="line"><a name="l00325"></a><span class="lineno">  325</span>&#160;                                                           <span class="keywordflow">throw</span> std::runtime_error(<span class="stringliteral">&quot;invalid http method&quot;</span>);</div>
 <div class="line"><a name="l00326"></a><span class="lineno">  326</span>&#160;}</div>
-<div class="line"><a name="l00327"></a><span class="lineno">  327</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00328"></a><span class="lineno">  328</span>&#160;<span class="comment">// clang-format on</span></div>
+<div class="line"><a name="l00327"></a><span class="lineno">  327</span>&#160; </div>
+<div class="line"><a name="l00328"></a><span class="lineno">  328</span>&#160;constexpr crow::HTTPMethod <span class="keyword">operator</span><span class="stringliteral">&quot;&quot;</span>_method(<span class="keyword">const</span> <span class="keywordtype">char</span>* str, <span class="keywordtype">size_t</span> <span class="comment">/*len*/</span>) </div>
+<div class="line"><a name="l00329"></a><span class="lineno">  329</span>&#160;{</div>
+<div class="line"><a name="l00330"></a><span class="lineno">  330</span>&#160;    <span class="keywordflow">return</span> method_from_string( str );</div>
+<div class="line"><a name="l00331"></a><span class="lineno">  331</span>&#160;}</div>
+<div class="line"><a name="l00332"></a><span class="lineno">  332</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00333"></a><span class="lineno">  333</span>&#160;<span class="comment">// clang-format on</span></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
@@ -434,7 +439,7 @@ $(document).ready(function(){initNavTree('common_8h_source.html',''); initResiza
 			<ul>
 				<li class="navelem"><a class="el" href="dir_d44c64559bbebec7f509842c48db8b23.html">include</a></li><li class="navelem"><a class="el" href="dir_d22c1cb87b72f01e1a7f207eb3bfd1ca.html">crow</a></li><li class="navelem"><b>common.h</b></li>
 				<li class="footer">
-					Generated on Fri Apr 1 2022 for Crow by <a href="http://www.doxygen.org/index.html">
+					Generated on Mon Apr 4 2022 for Crow by <a href="http://www.doxygen.org/index.html">
 					<img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.17.
 					Dark theme by <a href="http://majerle.eu" target="_new">Tilen Majerle</a>. Edited by <a href="https://github.com/The-EDev" target="_new">Farook Al-Sammarraie</a>. All rights reserved.
 				</li>
