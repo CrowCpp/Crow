@@ -152,7 +152,7 @@ namespace crow
             {
                 constexpr char boundary_text[] = "boundary=";
                 size_t found = header.find(boundary_text);
-                if (found)
+                if (found != std::string::npos)
                 {
                     std::string to_return(header.substr(found + strlen(boundary_text)));
                     if (to_return[0] == '\"')
@@ -173,6 +173,11 @@ namespace crow
                 while (body != (crlf))
                 {
                     size_t found = body.find(delimiter);
+                    if (found == std::string::npos)
+                    {
+                        // did not find delimiter; probably an ill-formed body; ignore the rest
+                        break;
+                    }
                     std::string section = body.substr(0, found);
 
                     // +2 is the CRLF.
