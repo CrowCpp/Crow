@@ -173,7 +173,8 @@ namespace crow
                 while (body != (crlf))
                 {
                     size_t found = body.find(delimiter);
-                    if (found == std::string::npos) {
+                    if (found == std::string::npos)
+                    {
                         // did not find delimiter; probably an ill-formed body; ignore the rest
                         break;
                     }
