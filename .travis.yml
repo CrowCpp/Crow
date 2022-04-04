@@ -46,7 +46,7 @@ before_script:
   - mkdir build
   - cd build
   - cmake --version
-  - cmake .. -DCROW_ENABLE_COMPRESSION=ON -DCROW_ENABLE_SSL=ON -DCROW_AMALGAMATE=ON
+  - cmake .. -DCROW_FEATURES="ssl;compression" -DCROW_AMALGAMATE=ON
 
 script: make -j4 && ctest -V -j4
 
