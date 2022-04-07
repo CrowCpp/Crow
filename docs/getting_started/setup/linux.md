@@ -6,10 +6,11 @@ Here's how you can install Crow on your favorite GNU/Linux distro.
  - boost library & development headers (1.64 or later).
  - **(optional)** ZLib for HTTP Compression.
  - **(optional)** OpenSSL for HTTPS support.
- - **(optional)** CMake and Python3 to build tests and/or examples.
-!!!note
+ - **(optional)** CMake for building tests, examples, and/or installing Crow.
+ - **(optional)** Python3 to build tests and/or examples.
+!!! note
 
-    Crow's CI uses `g++-9.3` and `clang-7.0` running on AMD64 (x86_64) and ARM64v8 architectures.
+    Crow's CI uses `g++-9.4` and `clang-10.0` running on AMD64 (x86_64) and ARM64v8 architectures.
 
 
 <br><br>
@@ -41,6 +42,10 @@ You can also download the `crow_all.h` file and simply include that into your pr
 !!! note
 
     You can ignore `-DCROW_BUILD_EXAMPLES=OFF -DCROW_BUILD_TESTS=OFF` if you want to build the Examples and Unit Tests.
+
+!!! note
+
+    While building you can set the `CROW_FEATURES` variable (as a `;` separated list). You can use an argument such as `-DCROW_FEATURES="ssl;compression"`.
 
 !!! note
 
@@ -76,6 +81,10 @@ find_package(Crow)
 target_link_libraries(your_project PUBLIC Crow::Crow)
 ```
 From there CMake should handle compiling and linking your project.
+!!! note
+
+    For optional features like HTTP Compression or HTTPS you can set the `CROW_FEATURES` variable using lines such as `set(CROW_FEATURES "ssl;compression")`, `set(CROW_FEATURES ssl compression)`, or `set(CROW_FEATURES ssl)`.
+
 ### Directly using a compiler
 All you need to do is run the following command:
 ```
