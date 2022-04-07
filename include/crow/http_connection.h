@@ -129,27 +129,12 @@ namespace crow
                 }
                 if (req.upgrade)
                 {
-#ifdef CROW_ENABLE_SSL
-                    if (handler_->ssl_used())
-                    {
-                        if (req.get_header_value("upgrade") == "h2")
-                        {
-                            // TODO(ipkn): HTTP/2
-                            // currently, ignore upgrade header
-                        }
-                    }
-                    else if (req.get_header_value("upgrade") == "h2c")
+                    // h2 or h2c headers
+                    if (req.get_header_value("upgrade").substr(0, 2) == "h2")
                     {
                         // TODO(ipkn): HTTP/2
                         // currently, ignore upgrade header
                     }
-#else
-                    if (req.get_header_value("upgrade") == "h2c")
-                    {
-                        // TODO(ipkn): HTTP/2
-                        // currently, ignore upgrade header
-                    }
-#endif
                     else
                     {
                         close_connection_ = true;
