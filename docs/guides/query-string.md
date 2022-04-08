@@ -24,7 +24,7 @@ The key in the map is what's in the brackets (`sub_key1` for example), and the v
 ## pop_dict(name)
 **Introduced in: `v0.3`**<br><br>
 Works the same as `get_dict` but removing the values from the query string.
-!!!warning
+!!! warning
 
     if your query string contains both a list and dictionary with the same key, it is best to use `pop_list` before either `get_dict` or `pop_dict`, since a map cannot contain more than one value per key, each item in the list will override the previous and only the last will remain with an empty key.
 
