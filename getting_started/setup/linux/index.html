@@ -1208,11 +1208,12 @@
 <li>boost library &amp; development headers (1.64 or later).</li>
 <li><strong>(optional)</strong> ZLib for HTTP Compression.</li>
 <li><strong>(optional)</strong> OpenSSL for HTTPS support.</li>
-<li><strong>(optional)</strong> CMake and Python3 to build tests and/or examples.</li>
+<li><strong>(optional)</strong> CMake for building tests, examples, and/or installing Crow.</li>
+<li><strong>(optional)</strong> Python3 to build tests and/or examples.</li>
 </ul>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>Crow's CI uses <code>g++-9.3</code> and <code>clang-7.0</code> running on AMD64 (x86_64) and ARM64v8 architectures.</p>
+<p>Crow's CI uses <code>g++-9.4</code> and <code>clang-10.0</code> running on AMD64 (x86_64) and ARM64v8 architectures.</p>
 </div>
 <p><br><br></p>
 <h3 id="using-a-package-manager">Using a package Manager</h3>
@@ -1241,6 +1242,10 @@ You can also download the <code>crow_all.h</code> file and simply include that i
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>You can ignore <code>-DCROW_BUILD_EXAMPLES=OFF -DCROW_BUILD_TESTS=OFF</code> if you want to build the Examples and Unit Tests.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>While building you can set the <code>CROW_FEATURES</code> variable (as a <code>;</code> separated list). You can use an argument such as <code>-DCROW_FEATURES="ssl;compression"</code>.</p>
 </div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -1274,6 +1279,10 @@ You can also download the <code>crow_all.h</code> file and simply include that i
 target_link_libraries(your_project PUBLIC Crow::Crow)
 </code></pre></div>
 From there CMake should handle compiling and linking your project.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>For optional features like HTTP Compression or HTTPS you can set the <code>CROW_FEATURES</code> variable using lines such as <code>set(CROW_FEATURES "ssl;compression")</code>, <code>set(CROW_FEATURES ssl compression)</code>, or <code>set(CROW_FEATURES ssl)</code>.</p>
+</div>
 <h3 id="directly-using-a-compiler">Directly using a compiler</h3>
 <p>All you need to do is run the following command:
 <div class="highlight"><pre><span></span><code>g++ main.cpp -lpthread
