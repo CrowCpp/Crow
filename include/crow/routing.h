@@ -26,6 +26,7 @@ namespace crow
 
     namespace detail
     {
+        /// Typesafe wrapper for storing lists of middleware as their indices in the App
         struct middleware_indices
         {
             template<typename App>
@@ -35,25 +36,26 @@ namespace crow
             template<typename App, typename MW, typename... Middlewares>
             void push()
             {
-                static_assert(black_magic::has_type<MW, typename App::mw_container_t>::value, "Middleware must be present in app");
-                indices_.push_back(black_magic::tuple_index<MW, typename App::mw_container_t>::value);
+                using MwContainer = typename App::mw_container_t;
+                static_assert(black_magic::has_type<MW, MwContainer>::value, "Middleware must be present in app");
+                int idx = black_magic::tuple_index<MW, MwContainer>::value;
+                indices_.push_back(idx);
                 push<App, Middlewares...>();
             }
 
-            void merge_front(const detail::middleware_indices& idcs)
+            void merge_front(const detail::middleware_indices& other)
             {
-                indices_.insert(indices_.begin(), idcs.indices_.cbegin(), idcs.indices_.cend());
+                indices_.insert(indices_.begin(), other.indices_.cbegin(), other.indices_.cend());
             }
 
-            void merge_back(const detail::middleware_indices& idcs)
+            void merge_back(const detail::middleware_indices& other)
             {
-                indices_.insert(indices_.end(), idcs.indices_.cbegin(), idcs.indices_.cend());
+                indices_.insert(indices_.end(), other.indices_.cbegin(), other.indices_.cend());
             }
 
-            void pop(const detail::middleware_indices& idcs)
+            void pop_back(const detail::middleware_indices& other)
             {
-                for (auto _ : idcs.indices_)
-                    indices_.pop_back();
+                indices_.resize(indices_.size() - other.indices_.size());
             }
 
             bool empty() const
@@ -67,6 +69,12 @@ namespace crow
                 indices_.erase(std::unique(indices_.begin(), indices_.end()), indices_.end());
             }
 
+            const std::vector<int>& indices()
+            {
+                return indices_;
+            }
+
+        private:
             std::vector<int> indices_;
         };
     } // namespace detail
@@ -1331,7 +1339,7 @@ namespace crow
                     }
                 }
                 validate_bp(blueprint->blueprints_, current_mw);
-                current_mw.pop(blueprint->mw_indices_);
+                current_mw.pop_back(blueprint->mw_indices_);
             }
         }
 
@@ -1644,13 +1652,13 @@ namespace crow
             {
                 auto& ctx = *reinterpret_cast<typename App::context_t*>(req.middleware_context);
                 auto& container = *reinterpret_cast<typename App::mw_container_t*>(req.middleware_container);
-                detail::middleware_call_criteria_dynamic crit{rule->mw_indices_.indices_};
+                detail::middleware_call_criteria_dynamic<false> crit_fwd(rule->mw_indices_.indices());
 
                 auto glob_completion_handler = std::move(res.complete_request_handler_);
                 res.complete_request_handler_ = [] {};
 
-                detail::middleware_call_helper<detail::middleware_call_criteria_dynamic,
-                                               0, typename App::context_t, typename App::mw_container_t>(crit, container, req, res, ctx);
+                detail::middleware_call_helper<decltype(crit_fwd),
+                                               0, typename App::context_t, typename App::mw_container_t>(crit_fwd, container, req, res, ctx);
 
                 if (res.completed_)
                 {
@@ -1658,12 +1666,14 @@ namespace crow
                     return;
                 }
 
-                res.complete_request_handler_ = [&rule, &crit, &ctx, &container, &req, &res, &glob_completion_handler] {
+                res.complete_request_handler_ = [&rule, &ctx, &container, &req, &res, &glob_completion_handler] {
+                    detail::middleware_call_criteria_dynamic<true> crit_bwd(rule->mw_indices_.indices());
+
                     detail::after_handlers_call_helper<
-                      detail::middleware_call_criteria_dynamic,
+                      decltype(crit_bwd),
                       std::tuple_size<typename App::mw_container_t>::value - 1,
                       typename App::context_t,
-                      typename App::mw_container_t>(crit, container, ctx, req, res);
+                      typename App::mw_container_t>(crit_bwd, container, ctx, req, res);
                     glob_completion_handler();
                 };
             }

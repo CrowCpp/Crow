@@ -262,14 +262,52 @@ namespace crow
             res.end();
         }
 
+        template<bool Reversed>
         struct middleware_call_criteria_dynamic
+        {};
+
+        template<>
+        struct middleware_call_criteria_dynamic<false>
         {
+            middleware_call_criteria_dynamic(const std::vector<int>& indices):
+              indices(indices), slider(0) {}
+
             template<typename>
-            const bool enabled(int i) const
+            bool enabled(int mw_index) const
             {
-                return std::find(indices_.begin(), indices_.end(), i) != indices_.end();
+                if (slider < int(indices.size()) && indices[slider] == mw_index)
+                {
+                    slider++;
+                    return true;
+                }
+                return false;
             }
-            const std::vector<int>& indices_;
+
+        private:
+            const std::vector<int>& indices;
+            mutable int slider;
+        };
+
+        template<>
+        struct middleware_call_criteria_dynamic<true>
+        {
+            middleware_call_criteria_dynamic(const std::vector<int>& indices):
+              indices(indices), slider(int(indices.size()) - 1) {}
+
+            template<typename>
+            bool enabled(int mw_index) const
+            {
+                if (slider >= 0 && indices[slider] == mw_index)
+                {
+                    slider--;
+                    return true;
+                }
+                return false;
+            }
+
+        private:
+            const std::vector<int>& indices;
+            mutable int slider;
         };
 
     } // namespace detail
