@@ -55,6 +55,7 @@ TEST_CASE("SSL")
 
         size_t x = 0;
         size_t y = 0;
+        long z = 0;
 
         while (x < 121)
         {
@@ -63,7 +64,17 @@ TEST_CASE("SSL")
             buf[y] = '\0';
         }
 
-        CHECK(std::string("Hello world, I'm keycrt.") == std::string(buf));
+        std::string to_test(buf);
+
+        if ((z = to_test.length() - 24) >= 0)
+        {
+
+            CHECK(std::string("Hello world, I'm keycrt.") == to_test.substr(z));
+        }
+        else
+        {
+            CHECK(std::string("Hello world, I'm keycrt.").substr((z*-1)) == to_test);
+        }
     }
 
     /*
