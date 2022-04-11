@@ -324,5 +324,10 @@ constexpr crow::HTTPMethod operator"" _method(const char* str, size_t /*len*/)
            crow::black_magic::is_equ_p(str, "SOURCE", 6) ? crow::HTTPMethod::Source :
                                                            throw std::runtime_error("invalid http method");
 }
+
+constexpr crow::HTTPMethod operator"" _method(const char* str, size_t /*len*/)
+{
+    return method_from_string( str );
+}
 #endif
 // clang-format on
