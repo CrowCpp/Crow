@@ -38,14 +38,14 @@ namespace crow
         struct context : private partial_context<Middlewares...>
         //struct context : private Middlewares::context... // simple but less type-safe
         {
-            template<template<typename QueryMW> class CallCriteria, int N, typename Context, typename Container>
-            friend typename std::enable_if<(N == 0)>::type after_handlers_call_helper(Container& middlewares, Context& ctx, request& req, response& res);
-            template<template<typename QueryMW> class CallCriteria, int N, typename Context, typename Container>
-            friend typename std::enable_if<(N > 0)>::type after_handlers_call_helper(Container& middlewares, Context& ctx, request& req, response& res);
+            template<typename CallCriteria, int N, typename Context, typename Container>
+            friend typename std::enable_if<(N == 0)>::type after_handlers_call_helper(const CallCriteria& cc, Container& middlewares, Context& ctx, request& req, response& res);
+            template<typename CallCriteria, int N, typename Context, typename Container>
+            friend typename std::enable_if<(N > 0)>::type after_handlers_call_helper(const CallCriteria& cc, Container& middlewares, Context& ctx, request& req, response& res);
 
-            template<template<typename QueryMW> class CallCriteria, int N, typename Context, typename Container>
+            template<typename CallCriteria, int N, typename Context, typename Container>
             friend typename std::enable_if<(N < std::tuple_size<typename std::remove_reference<Container>::type>::value), bool>::type
-              middleware_call_helper(Container& middlewares, request& req, response& res, Context& ctx);
+              middleware_call_helper(const CallCriteria& cc, Container& middlewares, request& req, response& res, Context& ctx);
 
             template<typename T>
             typename T::context& get()

@@ -19,11 +19,7 @@ namespace crow
     template<typename Adaptor, typename Handler, typename... Middlewares>
     class Connection;
 
-    namespace detail
-    {
-        template<typename F, typename App, typename... Middlewares>
-        struct handler_middleware_wrapper;
-    } // namespace detail
+    class Router;
 
     /// HTTP response
     struct response
@@ -31,8 +27,7 @@ namespace crow
         template<typename Adaptor, typename Handler, typename... Middlewares>
         friend class crow::Connection;
 
-        template<typename F, typename App, typename... Middlewares>
-        friend struct crow::detail::handler_middleware_wrapper;
+        friend class Router;
 
         int code{200};    ///< The Status code for the response.
         std::string body; ///< The actual payload containing the response data.

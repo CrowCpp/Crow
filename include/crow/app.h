@@ -71,7 +71,7 @@ namespace crow
         /// Process the request and generate a response for it
         void handle(request& req, response& res)
         {
-            router_.handle(req, res);
+            router_.handle<self_t>(req, res);
         }
 
         /// Create a dynamic route using a rule (**Use CROW_ROUTE instead**)

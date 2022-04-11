@@ -7,6 +7,8 @@
 #include <memory>
 #include <boost/lexical_cast.hpp>
 #include <vector>
+#include <algorithm>
+#include <type_traits>
 
 #include "crow/common.h"
 #include "crow/http_response.h"
@@ -21,6 +23,53 @@ namespace crow
 {
 
     constexpr const uint16_t INVALID_BP_ID{((uint16_t)-1)};
+
+    namespace detail
+    {
+        struct middleware_indices
+        {
+            template<typename App>
+            void push()
+            {}
+
+            template<typename App, typename MW, typename... Middlewares>
+            void push()
+            {
+                static_assert(black_magic::has_type<MW, typename App::mw_container_t>::value, "Middleware must be present in app");
+                indices_.push_back(black_magic::tuple_index<MW, typename App::mw_container_t>::value);
+                push<App, Middlewares...>();
+            }
+
+            void merge_front(const detail::middleware_indices& idcs)
+            {
+                indices_.insert(indices_.begin(), idcs.indices_.cbegin(), idcs.indices_.cend());
+            }
+
+            void merge_back(const detail::middleware_indices& idcs)
+            {
+                indices_.insert(indices_.end(), idcs.indices_.cbegin(), idcs.indices_.cend());
+            }
+
+            void pop(const detail::middleware_indices& idcs)
+            {
+                for (auto _ : idcs.indices_)
+                    indices_.pop_back();
+            }
+
+            bool empty() const
+            {
+                return indices_.empty();
+            }
+
+            void pack()
+            {
+                std::sort(indices_.begin(), indices_.end());
+                indices_.erase(std::unique(indices_.begin(), indices_.end()), indices_.end());
+            }
+
+            std::vector<int> indices_;
+        };
+    } // namespace detail
 
     /// A base class for all rules.
 
@@ -74,7 +123,6 @@ namespace crow
             }
         }
 
-
         std::string custom_templates_base;
 
         const std::string& rule() { return rule_; }
@@ -86,6 +134,8 @@ namespace crow
         std::string name_;
 
         std::unique_ptr<BaseRule> rule_to_upgrade_;
+
+        detail::middleware_indices mw_indices_;
 
         friend class Router;
         friend class Blueprint;
@@ -474,6 +524,14 @@ namespace crow
             static_cast<self_t*>(this)->methods_ |= 1 << static_cast<int>(method);
             return static_cast<self_t&>(*this);
         }
+
+        /// Enable local middleware for this handler
+        template<typename App, typename... Middlewares>
+        self_t& middlewares()
+        {
+            static_cast<self_t*>(this)->mw_indices_.template push<App, Middlewares...>();
+            return static_cast<self_t&>(*this);
+        }
     };
 
     /// A rule that can change its parameters during runtime.
@@ -605,16 +663,6 @@ namespace crow
               black_magic::S<Args...>,
               black_magic::S<>>()(
               detail::routing_handler_call_helper::call_params<decltype(handler_)>{handler_, params, req, res});
-        }
-
-        /// Enable local middleware for this handler
-        template<typename App, typename... Middlewares>
-        crow::detail::handler_call_bridge<TaggedRule<Args...>, App, Middlewares...>
-          middlewares()
-        {
-            // the handler_call_bridge allows the functor to be placed directly after this function
-            // instead of wrapping it with more parentheses
-            return {this};
         }
 
     private:
@@ -1128,6 +1176,12 @@ namespace crow
             return catchall_rule_;
         }
 
+        template<typename App, typename... Middlewares>
+        void middlewares()
+        {
+            mw_indices_.push<App, Middlewares...>();
+        }
+
     private:
         void apply_blueprint(Blueprint& blueprint)
         {
@@ -1153,6 +1207,7 @@ namespace crow
         std::vector<std::unique_ptr<BaseRule>> all_rules_;
         CatchallRule catchall_rule_;
         std::vector<Blueprint*> blueprints_;
+        detail::middleware_indices mw_indices_;
 
         friend class Router;
     };
@@ -1199,6 +1254,8 @@ namespace crow
                 rule_without_trailing_slash.pop_back();
             }
 
+            ruleObject->mw_indices_.pack();
+
             ruleObject->foreach_method([&](int method) {
                 per_methods_[method].rules.emplace_back(ruleObject);
                 per_methods_[method].trie.add(rule, per_methods_[method].rules.size() - 1, BP_index != INVALID_BP_ID ? blueprints[BP_index]->prefix().length() : 0, BP_index);
@@ -1244,7 +1301,7 @@ namespace crow
             }
         }
 
-        void validate_bp(std::vector<Blueprint*> blueprints)
+        void validate_bp(std::vector<Blueprint*> blueprints, detail::middleware_indices& current_mw)
         {
             for (unsigned i = 0; i < blueprints.size(); i++)
             {
@@ -1259,6 +1316,8 @@ namespace crow
                         per_methods_[i].trie.add(blueprint->prefix(), 0, blueprint->prefix().length(), i);
                     }
                 }
+
+                current_mw.merge_back(blueprint->mw_indices_);
                 for (auto& rule : blueprint->all_rules_)
                 {
                     if (rule)
@@ -1267,17 +1326,20 @@ namespace crow
                         if (upgraded)
                             rule = std::move(upgraded);
                         rule->validate();
+                        rule->mw_indices_.merge_front(current_mw);
                         internal_add_rule_object(rule->rule(), rule.get(), i, blueprints);
                     }
                 }
-                validate_bp(blueprint->blueprints_);
+                validate_bp(blueprint->blueprints_, current_mw);
+                current_mw.pop(blueprint->mw_indices_);
             }
         }
 
         void validate()
         {
             //Take all the routes from the registered blueprints and add them to `all_rules_` to be processed.
-            validate_bp(blueprints_);
+            detail::middleware_indices blueprint_mw;
+            validate_bp(blueprints_, blueprint_mw);
 
             for (auto& rule : all_rules_)
             {
@@ -1442,6 +1504,7 @@ namespace crow
             return std::string();
         }
 
+        template<typename App>
         void handle(request& req, response& res)
         {
             HTTPMethod method_actual = req.method;
@@ -1554,7 +1617,8 @@ namespace crow
             // any uncaught exceptions become 500s
             try
             {
-                rules[rule_index]->handle(req, res, std::get<2>(found));
+                auto& rule = rules[rule_index];
+                handle_rule<App>(rule, req, res, std::get<2>(found));
             }
             catch (std::exception& e)
             {
@@ -1570,6 +1634,47 @@ namespace crow
                 res.end();
                 return;
             }
+        }
+
+        template<typename App>
+        typename std::enable_if<std::tuple_size<typename App::mw_container_t>::value != 0, void>::type
+          handle_rule(BaseRule* rule, crow::request& req, crow::response& res, const crow::routing_params& rp)
+        {
+            if (!rule->mw_indices_.empty())
+            {
+                auto& ctx = *reinterpret_cast<typename App::context_t*>(req.middleware_context);
+                auto& container = *reinterpret_cast<typename App::mw_container_t*>(req.middleware_container);
+                detail::middleware_call_criteria_dynamic crit{rule->mw_indices_.indices_};
+
+                auto glob_completion_handler = std::move(res.complete_request_handler_);
+                res.complete_request_handler_ = [] {};
+
+                detail::middleware_call_helper<detail::middleware_call_criteria_dynamic,
+                                               0, typename App::context_t, typename App::mw_container_t>(crit, container, req, res, ctx);
+
+                if (res.completed_)
+                {
+                    glob_completion_handler();
+                    return;
+                }
+
+                res.complete_request_handler_ = [&rule, &crit, &ctx, &container, &req, &res, &glob_completion_handler] {
+                    detail::after_handlers_call_helper<
+                      detail::middleware_call_criteria_dynamic,
+                      std::tuple_size<typename App::mw_container_t>::value - 1,
+                      typename App::context_t,
+                      typename App::mw_container_t>(crit, container, ctx, req, res);
+                    glob_completion_handler();
+                };
+            }
+            rule->handle(req, res, rp);
+        }
+
+        template<typename App>
+        typename std::enable_if<std::tuple_size<typename App::mw_container_t>::value == 0, void>::type
+          handle_rule(BaseRule* rule, crow::request& req, crow::response& res, const crow::routing_params& rp)
+        {
+            rule->handle(req, res, rp);
         }
 
         void debug_print()
