@@ -263,6 +263,46 @@ namespace crow
         struct has_type<T, std::tuple<T, Ts...>> : std::true_type
         {};
 
+        // Find index of type in tuple
+        template<class T, class Tuple>
+        struct tuple_index;
+
+        template<class T, class... Types>
+        struct tuple_index<T, std::tuple<T, Types...>>
+        {
+            static const int value = 0;
+        };
+
+        template<class T, class U, class... Types>
+        struct tuple_index<T, std::tuple<U, Types...>>
+        {
+            static const int value = 1 + tuple_index<T, std::tuple<Types...>>::value;
+        };
+
+        // Extract element from forward tuple or get default
+#ifdef CROW_CAN_USE_CPP14
+        template<typename T, typename Tup>
+        typename std::enable_if<has_type<T&, Tup>::value, typename std::decay<T>::type&&>::type
+          tuple_extract(Tup& tup)
+        {
+            return std::move(std::get<T&>(tup));
+        }
+#else
+        template<typename T, typename Tup>
+        typename std::enable_if<has_type<T&, Tup>::value, T&&>::type
+          tuple_extract(Tup& tup)
+        {
+            return std::move(std::get<tuple_index<T&, Tup>::value>(tup));
+        }
+#endif
+
+        template<typename T, typename Tup>
+        typename std::enable_if<!has_type<T&, Tup>::value, T>::type
+          tuple_extract(Tup&)
+        {
+            return T{};
+        }
+
         // Check F is callable with Args
         template<typename F, typename... Args>
         struct is_callable

@@ -58,6 +58,12 @@ namespace crow
         Crow()
         {}
 
+        /// Construct Crow with a subset of middleware
+        template<typename... Ts>
+        Crow(Ts&&... ts):
+          middlewares_(make_middleware_tuple(std::forward<Ts>(ts)...))
+        {}
+
         /// Process an Upgrade request
 
         ///
@@ -430,6 +436,17 @@ namespace crow
                 return;
             cv_started_.wait(lock);
         }
+
+    private:
+        template<typename... Ts>
+        std::tuple<Middlewares...> make_middleware_tuple(Ts&&... ts)
+        {
+            auto fwd = std::forward_as_tuple((ts)...);
+            return std::make_tuple(
+              std::forward<Middlewares>(
+                black_magic::tuple_extract<Middlewares, decltype(fwd)>(fwd))...);
+        }
+
 
     private:
         std::uint8_t timeout_{5};

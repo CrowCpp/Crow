@@ -1452,6 +1452,19 @@ TEST_CASE("local_middleware")
     app.stop();
 } // local_middleware
 
+struct OnlyMoveConstructor
+{
+    OnlyMoveConstructor(int) {}
+    OnlyMoveConstructor(const OnlyMoveConstructor&) = delete;
+    OnlyMoveConstructor(OnlyMoveConstructor&&) = default;
+};
+
+TEST_CASE("app_constructor")
+{
+    App<NullMiddleware, OnlyMoveConstructor, FirstMW, SecondMW>
+      app(OnlyMoveConstructor(1), SecondMW{});
+} // app_constructor
+
 TEST_CASE("middleware_cookieparser")
 {
     static char buf[2048];
