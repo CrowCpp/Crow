@@ -1286,7 +1286,7 @@ struct SecondMW : public std::conditional<Local, crow::ILocalMiddleware, empty_t
     void before_handle(request& req, response& res, context&, AllContext& all_ctx)
     {
         all_ctx.template get<FirstMW<Local>>().v.push_back("2 before");
-        if (req.url == "/break") res.end();
+        if (req.url.find("/break") != std::string::npos) res.end();
     }
 
     template<typename AllContext>
@@ -1461,6 +1461,7 @@ TEST_CASE("local_middleware")
 
 TEST_CASE("middleware_blueprint")
 {
+    // Same logic as middleware_context, but middleware is added with blueprints
     static char buf[2048];
 
     App<FirstMW<true>, SecondMW<true>, ThirdMW<true>> app;
@@ -1471,6 +1472,8 @@ TEST_CASE("middleware_blueprint")
     Blueprint bp2("b", "c2", "c2");
     bp2.CROW_MIDDLEWARES(app, SecondMW<true>);
 
+    Blueprint bp3("c", "c3", "c3");
+
     CROW_BP_ROUTE(bp2, "/")
       .CROW_MIDDLEWARES(app, ThirdMW<true>)([&app](const crow::request& req) {
           {
@@ -1480,19 +1483,29 @@ TEST_CASE("middleware_blueprint")
           return "";
       });
 
+    CROW_BP_ROUTE(bp3, "/break")
+      .CROW_MIDDLEWARES(app, SecondMW<true>, ThirdMW<true>)([&app](const crow::request& req) {
+          {
+              auto& ctx = app.get_context<FirstMW<true>>(req);
+              ctx.v.push_back("handle");
+          }
+          return "";
+      });
+
+    bp1.register_blueprint(bp3);
     bp1.register_blueprint(bp2);
     app.register_blueprint(bp1);
 
     auto _ = app.bindaddr(LOCALHOST_ADDRESS).port(45451).run_async();
     app.wait_for_server_start();
-    std::string sendmsg = "GET /a/b/\r\n\r\n";
+
     asio::io_service is;
     {
         asio::ip::tcp::socket c(is);
         c.connect(asio::ip::tcp::endpoint(
           asio::ip::address::from_string(LOCALHOST_ADDRESS), 45451));
 
-        c.send(asio::buffer(sendmsg));
+        c.send(asio::buffer("GET /a/b/\r\n\r\n"));
 
         c.receive(asio::buffer(buf, 2048));
         c.close();
@@ -1507,6 +1520,24 @@ TEST_CASE("middleware_blueprint")
         CHECK("3 after" == out[4]);
         CHECK("2 after" == out[5]);
         CHECK("1 after" == out[6]);
+    }
+    {
+        asio::ip::tcp::socket c(is);
+        c.connect(asio::ip::tcp::endpoint(
+          asio::ip::address::from_string(LOCALHOST_ADDRESS), 45451));
+
+        c.send(asio::buffer("GET /a/c/break\r\n\r\n"));
+
+        c.receive(asio::buffer(buf, 2048));
+        c.close();
+    }
+    {
+        auto& out = test_middleware_context_vector;
+        CHECK(4 == out.size());
+        CHECK("1 before" == out[0]);
+        CHECK("2 before" == out[1]);
+        CHECK("2 after" == out[2]);
+        CHECK("1 after" == out[3]);
     }
 
     app.stop();

@@ -38,6 +38,7 @@ namespace crow
             {
                 using MwContainer = typename App::mw_container_t;
                 static_assert(black_magic::has_type<MW, MwContainer>::value, "Middleware must be present in app");
+                static_assert(std::is_base_of<crow::ILocalMiddleware, MW>::value, "Middleware must extend ILocalMiddleware");
                 int idx = black_magic::tuple_index<MW, MwContainer>::value;
                 indices_.push_back(idx);
                 push<App, Middlewares...>();
@@ -63,6 +64,7 @@ namespace crow
                 return indices_.empty();
             }
 
+            // Sorts indices and filters out duplicates to allow fast lookups with traversal
             void pack()
             {
                 std::sort(indices_.begin(), indices_.end());
