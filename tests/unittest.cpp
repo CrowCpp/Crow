@@ -1926,8 +1926,10 @@ TEST_CASE("multipart")
 TEST_CASE("send_file")
 {
 
-    struct stat statbuf;
-    stat("tests/img/cat.jpg", &statbuf);
+    struct stat statbuf_cat;
+    stat("tests/img/cat.jpg", &statbuf_cat);
+    struct stat statbuf_badext;
+    stat("tests/img/filewith.badext", &statbuf_badext);
 
     SimpleApp app;
 
@@ -1941,6 +1943,12 @@ TEST_CASE("send_file")
     ([](const crow::request&, crow::response& res) {
         res.set_static_file_info(
           "tests/img/cat2.jpg"); // This file is nonexistent on purpose
+        res.end();
+    });
+
+    CROW_ROUTE(app, "/filewith.badext")
+    ([](const crow::request&, crow::response& res) {
+        res.set_static_file_info("tests/img/filewith.badext");
         res.end();
     });
 
@@ -1971,7 +1979,21 @@ TEST_CASE("send_file")
 
         CHECK(200 == res.code);
         CHECK("image/jpeg" == res.headers.find("Content-Type")->second);
-        CHECK(to_string(statbuf.st_size) == res.headers.find("Content-Length")->second);
+        CHECK(to_string(statbuf_cat.st_size) == res.headers.find("Content-Length")->second);
+    }
+
+    //Unknown extension check
+    {
+        request req;
+        response res;
+
+        req.url = "/filewith.badext";
+        req.http_ver_major = 1;
+
+        CHECK_NOTHROW(app.handle(req, res));
+        CHECK(200 == res.code);
+        CHECK("text/plain" == res.headers.find("Content-Type")->second);
+        CHECK(to_string(statbuf_badext.st_size) == res.headers.find("Content-Length")->second);
     }
 } // send_file
 
