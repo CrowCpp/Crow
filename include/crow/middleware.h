@@ -201,7 +201,6 @@ namespace crow
         };
 
         template<typename F, typename... Args>
-        //typename std::enable_if<black_magic::is_callable<F, Args...>::value>::type
         typename std::enable_if<black_magic::CallHelper<F, black_magic::S<Args...>>::value, void>::type
           wrapped_handler_call(crow::request& /*req*/, crow::response& res, const F& f, Args&&... args)
         {
@@ -213,7 +212,6 @@ namespace crow
         }
 
         template<typename F, typename... Args>
-        //typename std::enable_if<black_magic::is_callable<F, crow::request, Args...>::value>::type
         typename std::enable_if<
           !black_magic::CallHelper<F, black_magic::S<Args...>>::value &&
             black_magic::CallHelper<F, black_magic::S<crow::request&, Args...>>::value,
@@ -228,7 +226,6 @@ namespace crow
         }
 
         template<typename F, typename... Args>
-        //typename std::enable_if<black_magic::is_callable<F, crow::response&, Args...>::value>::type
         typename std::enable_if<
           !black_magic::CallHelper<F, black_magic::S<Args...>>::value &&
             !black_magic::CallHelper<F, black_magic::S<crow::request&, Args...>>::value &&
@@ -243,7 +240,6 @@ namespace crow
         }
 
         template<typename F, typename... Args>
-        //typename std::enable_if<black_magic::is_callable<F, crow::request&, crow::response&, Args...>::value && !black_magic::is_callable<F, const crow::request, crow::response&, Args...>::value>::type
         typename std::enable_if<
           !black_magic::CallHelper<F, black_magic::S<Args...>>::value &&
             !black_magic::CallHelper<F, black_magic::S<crow::request&, Args...>>::value &&
@@ -266,7 +262,6 @@ namespace crow
             !black_magic::CallHelper<F, black_magic::S<crow::response&, Args...>>::value &&
             !black_magic::CallHelper<F, black_magic::S<const crow::request&, crow::response&, Args...>>::value,
           void>::type
-          //typename std::enable_if<black_magic::is_callable<F, const crow::request, crow::response&, Args...>::value>::type
           wrapped_handler_call(crow::request& req, crow::response& res, const F& f, Args&&... args)
         {
             static_assert(std::is_same<void, decltype(f(std::declval<crow::request&>(), std::declval<crow::response&>(), std::declval<Args>()...))>::value,
