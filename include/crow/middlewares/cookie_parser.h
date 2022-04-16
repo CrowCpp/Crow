@@ -1,4 +1,6 @@
 #pragma once
+#include <boost/date_time.hpp>
+#include <boost/optional.hpp>
 #include <boost/algorithm/string/trim.hpp>
 #include "crow/http_request.h"
 #include "crow/http_response.h"
@@ -30,10 +32,140 @@ namespace crow
 
     struct CookieParser
     {
+        // Cookie stores key, value and attributes
+        struct Cookie
+        {
+            enum class SameSitePolicy
+            {
+                Strict,
+                Lax,
+                None
+            };
+
+            template<typename U>
+            Cookie(const std::string& key, U&& value):
+              Cookie()
+            {
+                key_ = key;
+                value_ = std::forward<U>(value);
+            }
+
+
+            // format cookie to HTTP header format
+            std::string format() const
+            {
+                const static std::string DIVIDER = "; ";
+                const static auto* HTTP_FACET =
+                  new boost::posix_time::time_facet("%a, %d %b %Y %H:%M:%S GMT");
+
+                std::stringstream ss;
+                ss << key_ << '=';
+                ss << (value_.empty() ? "\"\"" : value_);
+                if (expires_at_)
+                {
+                    ss << DIVIDER << "Expires=";
+                    ss.imbue(std::locale(std::locale::classic(), HTTP_FACET));
+                    ss << *expires_at_;
+                }
+                if (max_age_ > 0) ss << DIVIDER << "Max-Age=" << max_age_;
+                if (!domain_.empty()) ss << DIVIDER << "Domain=" << domain_;
+                if (!path_.empty()) ss << DIVIDER << "Path=" << path_;
+                if (secure_) ss << DIVIDER << "Secure";
+                if (httponly_) ss << DIVIDER << "HttpOnly";
+                if (same_site_)
+                {
+                    ss << DIVIDER << "SameSite=";
+                    switch (*same_site_)
+                    {
+                        case SameSitePolicy::Strict:
+                            ss << "Strict";
+                            break;
+                        case SameSitePolicy::Lax:
+                            ss << "Lax";
+                            break;
+                        case SameSitePolicy::None:
+                            ss << "None";
+                            break;
+                    }
+                }
+                return ss.str();
+            }
+
+            // Expires attribute
+            Cookie& expires(const boost::posix_time::ptime& time)
+            {
+                expires_at_ = time;
+                return *this;
+            }
+
+            // Max-Age attribute
+            Cookie& max_age(long long age)
+            {
+                max_age_ = age;
+                return *this;
+            }
+
+            Cookie& max_age(const boost::posix_time::time_duration& dt)
+            {
+                max_age_ = dt.seconds();
+                return *this;
+            }
+
+            // Domain attribute
+            Cookie& domain(const std::string& name)
+            {
+                domain_ = name;
+                return *this;
+            }
+
+            // Path attribute
+            Cookie& path(const std::string& path)
+            {
+                path_ = path;
+                return *this;
+            }
+
+            // Secured attribute
+            Cookie& secure()
+            {
+                secure_ = true;
+                return *this;
+            }
+
+            // HttpOnly attribute
+            Cookie& httponly()
+            {
+                httponly_ = true;
+                return *this;
+            }
+
+            // SameSite attribute
+            Cookie& same_site(SameSitePolicy ssp)
+            {
+                same_site_ = ssp;
+                return *this;
+            }
+
+        private:
+            Cookie() = default;
+
+        private:
+            std::string key_;
+            std::string value_;
+            long long max_age_ = 0;
+            std::string domain_ = "";
+            std::string path_ = "";
+            bool secure_ = false;
+            bool httponly_ = false;
+            boost::optional<boost::posix_time::ptime> expires_at_{};
+            boost::optional<SameSitePolicy> same_site_{};
+        };
+
+
         struct context
         {
             std::unordered_map<std::string, std::string> jar;
-            std::unordered_map<std::string, std::string> cookies_to_add;
+            std::vector<Cookie> cookies_to_add;
 
             std::string get_cookie(const std::string& key) const
             {
@@ -43,14 +175,17 @@ namespace crow
                 return {};
             }
 
-            void set_cookie(const std::string& key, const std::string& value)
+            template<typename U>
+            Cookie& set_cookie(const std::string& key, U&& value)
             {
-                cookies_to_add.emplace(key, value);
+                cookies_to_add.emplace_back(key, std::forward<U>(value));
+                return cookies_to_add.back();
             }
         };
 
         void before_handle(request& req, response& res, context& ctx)
         {
+            // TODO: remove copies, use string_view with c++17
             int count = req.headers.count("Cookie");
             if (!count)
                 return;
@@ -97,12 +232,9 @@ namespace crow
 
         void after_handle(request& /*req*/, response& res, context& ctx)
         {
-            for (auto& cookie : ctx.cookies_to_add)
+            for (const auto& cookie : ctx.cookies_to_add)
             {
-                if (cookie.second.empty())
-                    res.add_header("Set-Cookie", cookie.first + "=\"\"");
-                else
-                    res.add_header("Set-Cookie", cookie.first + "=" + cookie.second);
+                res.add_header("Set-Cookie", cookie.format());
             }
         }
     };
