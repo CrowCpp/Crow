@@ -50,7 +50,6 @@ namespace crow
                 value_ = std::forward<U>(value);
             }
 
-
             // format cookie to HTTP header format
             std::string format() const
             {
@@ -67,7 +66,7 @@ namespace crow
                     ss.imbue(std::locale(std::locale::classic(), HTTP_FACET));
                     ss << *expires_at_;
                 }
-                if (max_age_ > 0) ss << DIVIDER << "Max-Age=" << max_age_;
+                if (max_age_) ss << DIVIDER << "Max-Age=" << *max_age_;
                 if (!domain_.empty()) ss << DIVIDER << "Domain=" << domain_;
                 if (!path_.empty()) ss << DIVIDER << "Path=" << path_;
                 if (secure_) ss << DIVIDER << "Secure";
@@ -152,7 +151,7 @@ namespace crow
         private:
             std::string key_;
             std::string value_;
-            long long max_age_ = 0;
+            boost::optional<long long> max_age_{};
             std::string domain_ = "";
             std::string path_ = "";
             bool secure_ = false;
