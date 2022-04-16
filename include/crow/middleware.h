@@ -248,7 +248,7 @@ namespace crow
           !black_magic::CallHelper<F, black_magic::S<Args...>>::value &&
             !black_magic::CallHelper<F, black_magic::S<crow::request&, Args...>>::value &&
             !black_magic::CallHelper<F, black_magic::S<crow::response&, Args...>>::value &&
-          black_magic::CallHelper<F, black_magic::S<const crow::request&, crow::response&, Args...>>::value,
+            black_magic::CallHelper<F, black_magic::S<const crow::request&, crow::response&, Args...>>::value,
           void>::type
           wrapped_handler_call(crow::request& req, crow::response& res, const F& f, Args&&... args)
         {
