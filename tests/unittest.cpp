@@ -1542,7 +1542,7 @@ TEST_CASE("middleware_cookieparser_format")
     {
         auto tp = boost::posix_time::time_from_string("2000-11-01 23:59:59.000");
         auto c = Cookie("key", "value")
-                   .expires(tp);
+                   .expires(boost::posix_time::to_tm(tp));
         auto s = c.format();
         CHECK(valid(s, 2));
         CHECK(s.find("Expires=Wed, 01 Nov 2000 23:59:59 GMT") != std::string::npos);

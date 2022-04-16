@@ -1,5 +1,5 @@
 #pragma once
-#include <boost/date_time.hpp>
+#include <iomanip>
 #include <boost/optional.hpp>
 #include <boost/algorithm/string/trim.hpp>
 #include "crow/http_request.h"
@@ -54,8 +54,7 @@ namespace crow
             std::string format() const
             {
                 const static std::string DIVIDER = "; ";
-                const static auto* HTTP_FACET =
-                  new boost::posix_time::time_facet("%a, %d %b %Y %H:%M:%S GMT");
+                const static char* HTTP_DATE_FORMAT = "%a, %d %b %Y %H:%M:%S GMT";
 
                 std::stringstream ss;
                 ss << key_ << '=';
@@ -63,8 +62,7 @@ namespace crow
                 if (expires_at_)
                 {
                     ss << DIVIDER << "Expires=";
-                    ss.imbue(std::locale(std::locale::classic(), HTTP_FACET));
-                    ss << *expires_at_;
+                    ss << std::put_time(expires_at_.get_ptr(), HTTP_DATE_FORMAT);
                 }
                 if (max_age_) ss << DIVIDER << "Max-Age=" << *max_age_;
                 if (!domain_.empty()) ss << DIVIDER << "Domain=" << domain_;
@@ -91,22 +89,16 @@ namespace crow
             }
 
             // Expires attribute
-            Cookie& expires(const boost::posix_time::ptime& time)
+            Cookie& expires(const std::tm& time)
             {
                 expires_at_ = time;
                 return *this;
             }
 
             // Max-Age attribute
-            Cookie& max_age(long long age)
+            Cookie& max_age(long long seconds)
             {
-                max_age_ = age;
-                return *this;
-            }
-
-            Cookie& max_age(const boost::posix_time::time_duration& dt)
-            {
-                max_age_ = dt.seconds();
+                max_age_ = seconds;
                 return *this;
             }
 
@@ -156,7 +148,7 @@ namespace crow
             std::string path_ = "";
             bool secure_ = false;
             bool httponly_ = false;
-            boost::optional<boost::posix_time::ptime> expires_at_{};
+            boost::optional<std::tm> expires_at_{};
             boost::optional<SameSitePolicy> same_site_{};
         };
 
