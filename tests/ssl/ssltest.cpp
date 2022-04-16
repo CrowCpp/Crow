@@ -73,7 +73,7 @@ TEST_CASE("SSL")
         }
         else
         {
-            CHECK(std::string("Hello world, I'm keycrt.").substr((z*-1)) == to_test);
+            CHECK(std::string("Hello world, I'm keycrt.").substr((z * -1)) == to_test);
         }
     }
 
