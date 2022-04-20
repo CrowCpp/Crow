@@ -251,7 +251,9 @@ namespace crow
                     if (mimeType != mime_types.end())
                     {
                         this->add_header("Content-Type", mimeType->second);
-                    } else {
+                    }
+                    else
+                    {
                         this->add_header("Content-Type", "text/plain");
                     }
                 }
