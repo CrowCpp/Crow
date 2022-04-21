@@ -243,7 +243,7 @@ namespace crow
                 std::size_t last_dot = path.find_last_of(".");
                 std::string extension = path.substr(last_dot + 1);
                 code = 200;
-                this->add_header("Content-length", std::to_string(file_info.statbuf.st_size));
+                this->add_header("Content-Length", std::to_string(file_info.statbuf.st_size));
 
                 if (!extension.empty())
                 {
