@@ -239,7 +239,8 @@ namespace crow
 
 #ifndef CROW_DISABLE_STATIC_DIR
                 route<crow::black_magic::get_parameter_tag(CROW_STATIC_ENDPOINT)>(CROW_STATIC_ENDPOINT)([](crow::response& res, std::string file_path_partial) {
-                    res.set_static_file_info(CROW_STATIC_DIRECTORY + file_path_partial);
+                    utility::sanitize_filename(file_path_partial);
+                    res.set_static_file_info_unsafe(CROW_STATIC_DIRECTORY + file_path_partial);
                     res.end();
                 });
 
@@ -252,7 +253,8 @@ namespace crow
                         if (!bp->static_dir().empty())
                         {
                             bp->new_rule_tagged<crow::black_magic::get_parameter_tag(CROW_STATIC_ENDPOINT)>(CROW_STATIC_ENDPOINT)([bp](crow::response& res, std::string file_path_partial) {
-                                res.set_static_file_info(bp->static_dir() + '/' + file_path_partial);
+                                utility::sanitize_filename(file_path_partial);
+                                res.set_static_file_info_unsafe(bp->static_dir() + '/' + file_path_partial);
                                 res.end();
                             });
                         }
