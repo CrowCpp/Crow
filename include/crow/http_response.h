@@ -242,17 +242,20 @@ namespace crow
             {
                 std::size_t last_dot = path.find_last_of(".");
                 std::string extension = path.substr(last_dot + 1);
-                std::string mimeType = "";
                 code = 200;
-                this->add_header("Content-length", std::to_string(file_info.statbuf.st_size));
+                this->add_header("Content-Length", std::to_string(file_info.statbuf.st_size));
 
-                if (extension != "")
+                if (!extension.empty())
                 {
-                    mimeType = mime_types.at(extension);
-                    if (mimeType != "")
-                        this->add_header("Content-Type", mimeType);
+                    const auto mimeType = mime_types.find(extension);
+                    if (mimeType != mime_types.end())
+                    {
+                        this->add_header("Content-Type", mimeType->second);
+                    }
                     else
-                        this->add_header("content-Type", "text/plain");
+                    {
+                        this->add_header("Content-Type", "text/plain");
+                    }
                 }
             }
             else
