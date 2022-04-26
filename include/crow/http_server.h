@@ -182,7 +182,9 @@ namespace crow
             uint16_t min_queue_idx = 0;
 
             // TODO improve load balancing
-            for (uint16_t i = 1; i < task_queue_length_pool_.size() && task_queue_length_pool_[min_queue_idx] > 0; i++)
+            // size_t is used here to avoid the security issue https://codeql.github.com/codeql-query-help/cpp/cpp-comparison-with-wider-type/
+            // even though the max value of this can be only uint16_t as concurrency is uint16_t.
+            for (size_t i = 1; i < task_queue_length_pool_.size() && task_queue_length_pool_[min_queue_idx] > 0; i++)
             // No need to check other io_services if the current one has no tasks
             {
                 if (task_queue_length_pool_[i] < task_queue_length_pool_[min_queue_idx])
