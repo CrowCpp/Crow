@@ -96,7 +96,7 @@ Searching f/drone/src/include/crow/routing.h:632: warning: Compound crow::Trie::
 /drone/src/include/crow/routing.h:153: warning: Compound crow::detail::routing_handler_call_helper::call< F, NInt, NUint, NDouble, NString, black_magic::S< std::string, Args1... >, black_magic::S< Args2... > > is not documented.
 /drone/src/include/crow/routing.h:143: warning: Compound crow::detail::routing_handler_call_helper::call< F, NInt, NUint, NDouble, NString, black_magic::S< double, Args1... >, black_magic::S< Args2... > > is not documented.
 /drone/src/include/crow/routing.h:133: warning: Compound crow::detail::routing_handler_call_helper::call< F, NInt, NUint, NDouble, NString, black_magic::S< uint64_t, Args1... >, black_magic::S< Args2... > > is not documented.
-/drone/src/include/crow/middleware.h:262: warning: Compound crow::detail::handler_middleware_wrapper::middleware_call_criteria is not documented.
+/drone/src/include/crow/middleware.h:279: warning: Compound crow::detail::handler_middleware_wrapper::middleware_call_criteria is not documented.
 /drone/src/include/crow/http_response.h:25: warning: Compound crow::detail::handler_middleware_wrapper is not documented.
 /drone/src/include/crow/routing.h:123: warning: Compound crow::detail::routing_handler_call_helper::call< F, NInt, NUint, NDouble, NString, black_magic::S< int64_t, Args1... >, black_magic::S< Args2... > > is not documented.
 /drone/src/include/crow/routing.h:273: warning: Compound crow::CatchallRule is not documented.
@@ -109,7 +109,7 @@ Searching f/drone/src/include/crow/routing.h:632: warning: Compound crow::Trie::
 /drone/src/include/crow/logging.h:94: warning: Compound crow::logger is not documented.
 /drone/src/include/crow/routing.h:110: warning: Compound crow::detail::routing_handler_call_helper::call_params is not documented.
 /drone/src/include/crow/middleware_context.h:40: warning: Compound crow::detail::context is not documented.
-/drone/src/include/crow/middleware.h:301: warning: Compound crow::detail::handler_call_bridge is not documented.
+/drone/src/include/crow/middleware.h:318: warning: Compound crow::detail::handler_call_bridge is not documented.
 /drone/src/include/crow/middleware.h:81: warning: Compound crow::detail::is_after_handle_arity_3_impl is not documented.
 /drone/src/include/crow/logging.h:34: warning: Compound crow::ILogHandler is not documented.
 /drone/src/include/crow/middlewares/cookie_parser.h:34: warning: Compound crow::CookieParser::context is not documented.
@@ -452,12 +452,12 @@ Generating docs for compound crow::ILocalMiddleware./drone/src/include/crow/midd
 /drone/src/include/crow/middleware_context.h:42: warning: Member after_handlers_call_helper(Container &middlewares, Context &ctx, request &req, response &res) (friend) of class crow::detail::context is not documented.
 /drone/src/include/crow/middleware_context.h:44: warning: Member after_handlers_call_helper(Container &middlewares, Context &ctx, request &req, response &res) (friend) of class crow::detail::context is not documented.
 /drone/src/include/crow/middleware_context.h:48: warning: Member middleware_call_helper(Container &middlewares, request &req, response &res, Context &ctx) (friend) of class crow::detail::context is not documented.
-/drone/src/include/crow/middleware.h:303: warning: Member check_app_contains (typedef) of class crow::detail::handler_call_bridge is not documented.
-/drone/src/include/crow/middleware.h:312: warning: Member operator()(F &&f) const (function) of class crow::detail::handler_call_bridge is not documented.
-/drone/src/include/crow/middleware.h:318: warning: Member tptr (variable) of class crow::detail::handler_call_bridge is not documented.
-/drone/src/include/crow/middleware.h:267: warning: Member operator()(crow::request &req, crow::response &res, Args &&... args) const (function) of class crow::detail::handler_middleware_wrapper is not documented.
-/drone/src/include/crow/middleware.h:296: warning: Member f (variable) of class crow::detail::handler_middleware_wrapper is not documented.
-/drone/src/include/crow/middleware.h:263: warning: Member value (variable) of class crow::detail::handler_middleware_wrapper::middleware_call_criteria is not documented.
+/drone/src/include/crow/middleware.h:320: warning: Member check_app_contains (typedef) of class crow::detail::handler_call_bridge is not documented.
+/drone/src/include/crow/middleware.h:329: warning: Member operator()(F &&f) const (function) of class crow::detail::handler_call_bridge is not documented.
+/drone/src/include/crow/middleware.h:335: warning: Member tptr (variable) of class crow::detail::handler_call_bridge is not documented.
+/drone/src/include/crow/middleware.h:284: warning: Member operator()(crow::request &req, crow::response &res, Args &&... args) const (function) of class crow::detail::handler_middleware_wrapper is not documented.
+/drone/src/include/crow/middleware.h:313: warning: Member f (variable) of class crow::detail::handler_middleware_wrapper is not documented.
+/drone/src/include/crow/middleware.h:280: warning: Member value (variable) of class crow::detail::handler_middleware_wrapper::middleware_call_criteria is not documented.
 /drone/src/include/crow/middleware.h:83: warning: Member f(typename check_after_handle_arity_3_const< T >::template get< C > *) (function) of class crow::detail::is_after_handle_arity_3_impl is not documented.
 /drone/src/include/crow/middleware.h:86: warning: Member f(typename check_after_handle_arity_3< T >::template get< C > *) (function) of class crow::detail::is_after_handle_arity_3_impl is not documented.
 /drone/src/include/crow/middleware.h:89: warning: Member f(...) (function) of class crow::detail::is_after_handle_arity_3_impl is not documented.
@@ -707,5 +707,5 @@ Generating example index...
 finalizing index lists...
 writing tag file...
 Running plantuml with JAVA...
-lookup cache used 2726/65536 hits=24248 misses=3066
+lookup cache used 2726/65536 hits=24272 misses=3066
 finished...

@@ -301,131 +301,148 @@ $(document).ready(function(){initNavTree('middleware_8h_source.html',''); initRe
 <div class="line"><a name="l00200"></a><span class="lineno">  200</span>&#160;            <span class="keyword">static</span> <span class="keyword">const</span> <span class="keywordtype">bool</span> value = decltype(f&lt;MW&gt;(<span class="keyword">nullptr</span>))::value;</div>
 <div class="line"><a name="l00201"></a><span class="lineno">  201</span>&#160;        };</div>
 <div class="line"><a name="l00202"></a><span class="lineno">  202</span>&#160; </div>
-<div class="line"><a name="l00203"></a><span class="lineno">  203</span>&#160;        <span class="comment">// wrapped_handler_call transparently wraps a handler call behind (req, res, args...)</span></div>
-<div class="line"><a name="l00204"></a><span class="lineno">  204</span>&#160;        <span class="keyword">template</span>&lt;<span class="keyword">typename</span> F, <span class="keyword">typename</span>... Args&gt;</div>
-<div class="line"><a name="l00205"></a><span class="lineno">  205</span>&#160;        <span class="keyword">typename</span> std::enable_if&lt;black_magic::is_callable&lt;F, <span class="keyword">const</span> <a class="code" href="structcrow_1_1request.html">crow::request</a>, <a class="code" href="structcrow_1_1response.html">crow::response</a>&amp;, Args...&gt;::value&gt;::type</div>
-<div class="line"><a name="l00206"></a><span class="lineno">  206</span>&#160;          wrapped_handler_call(<a class="code" href="structcrow_1_1request.html">crow::request</a>&amp; req, <a class="code" href="structcrow_1_1response.html">crow::response</a>&amp; res, <span class="keyword">const</span> F&amp; f, Args&amp;&amp;... args)</div>
-<div class="line"><a name="l00207"></a><span class="lineno">  207</span>&#160;        {</div>
-<div class="line"><a name="l00208"></a><span class="lineno">  208</span>&#160;            static_assert(std::is_same&lt;<span class="keywordtype">void</span>, decltype(f(std::declval&lt;crow::request&gt;(), std::declval&lt;crow::response&amp;&gt;(), std::declval&lt;Args&gt;()...))&gt;::value,</div>
-<div class="line"><a name="l00209"></a><span class="lineno">  209</span>&#160;                          <span class="stringliteral">&quot;Handler function with response argument should have void return type&quot;</span>);</div>
-<div class="line"><a name="l00210"></a><span class="lineno">  210</span>&#160; </div>
-<div class="line"><a name="l00211"></a><span class="lineno">  211</span>&#160;            f(req, res, std::forward&lt;Args&gt;(args)...);</div>
+<div class="line"><a name="l00203"></a><span class="lineno">  203</span>&#160;        <span class="keyword">template</span>&lt;<span class="keyword">typename</span> F, <span class="keyword">typename</span>... Args&gt;</div>
+<div class="line"><a name="l00204"></a><span class="lineno">  204</span>&#160;        <span class="keyword">typename</span> std::enable_if&lt;black_magic::CallHelper&lt;F, black_magic::S&lt;Args...&gt;&gt;::value, <span class="keywordtype">void</span>&gt;::type</div>
+<div class="line"><a name="l00205"></a><span class="lineno">  205</span>&#160;          wrapped_handler_call(<a class="code" href="structcrow_1_1request.html">crow::request</a>&amp; <span class="comment">/*req*/</span>, <a class="code" href="structcrow_1_1response.html">crow::response</a>&amp; res, <span class="keyword">const</span> F&amp; f, Args&amp;&amp;... args)</div>
+<div class="line"><a name="l00206"></a><span class="lineno">  206</span>&#160;        {</div>
+<div class="line"><a name="l00207"></a><span class="lineno">  207</span>&#160;            static_assert(!std::is_same&lt;<span class="keywordtype">void</span>, decltype(f(std::declval&lt;Args&gt;()...))&gt;::value,</div>
+<div class="line"><a name="l00208"></a><span class="lineno">  208</span>&#160;                          <span class="stringliteral">&quot;Handler function cannot have void return type; valid return types: string, int, crow::response, crow::returnable&quot;</span>);</div>
+<div class="line"><a name="l00209"></a><span class="lineno">  209</span>&#160; </div>
+<div class="line"><a name="l00210"></a><span class="lineno">  210</span>&#160;            res = <a class="code" href="structcrow_1_1response.html">crow::response</a>(f(std::forward&lt;Args&gt;(args)...));</div>
+<div class="line"><a name="l00211"></a><span class="lineno">  211</span>&#160;            res.<a class="code" href="structcrow_1_1response.html#abef42200eca49c70dc1f5140ee3603ab">end</a>();</div>
 <div class="line"><a name="l00212"></a><span class="lineno">  212</span>&#160;        }</div>
 <div class="line"><a name="l00213"></a><span class="lineno">  213</span>&#160; </div>
 <div class="line"><a name="l00214"></a><span class="lineno">  214</span>&#160;        <span class="keyword">template</span>&lt;<span class="keyword">typename</span> F, <span class="keyword">typename</span>... Args&gt;</div>
-<div class="line"><a name="l00215"></a><span class="lineno">  215</span>&#160;        <span class="keyword">typename</span> std::enable_if&lt;black_magic::is_callable&lt;F, <a class="code" href="structcrow_1_1request.html">crow::request</a>&amp;, <a class="code" href="structcrow_1_1response.html">crow::response</a>&amp;, Args...&gt;::value &amp;&amp; !black_magic::is_callable&lt;F, <span class="keyword">const</span> <a class="code" href="structcrow_1_1request.html">crow::request</a>, <a class="code" href="structcrow_1_1response.html">crow::response</a>&amp;, Args...&gt;::value&gt;::type</div>
-<div class="line"><a name="l00216"></a><span class="lineno">  216</span>&#160;          wrapped_handler_call(<a class="code" href="structcrow_1_1request.html">crow::request</a>&amp; req, <a class="code" href="structcrow_1_1response.html">crow::response</a>&amp; res, <span class="keyword">const</span> F&amp; f, Args&amp;&amp;... args)</div>
-<div class="line"><a name="l00217"></a><span class="lineno">  217</span>&#160;        {</div>
-<div class="line"><a name="l00218"></a><span class="lineno">  218</span>&#160;            static_assert(std::is_same&lt;<span class="keywordtype">void</span>, decltype(f(std::declval&lt;crow::request&amp;&gt;(), std::declval&lt;crow::response&amp;&gt;(), std::declval&lt;Args&gt;()...))&gt;::value,</div>
-<div class="line"><a name="l00219"></a><span class="lineno">  219</span>&#160;                          <span class="stringliteral">&quot;Handler function with response argument should have void return type&quot;</span>);</div>
-<div class="line"><a name="l00220"></a><span class="lineno">  220</span>&#160; </div>
-<div class="line"><a name="l00221"></a><span class="lineno">  221</span>&#160;            f(req, res, std::forward&lt;Args&gt;(args)...);</div>
-<div class="line"><a name="l00222"></a><span class="lineno">  222</span>&#160;        }</div>
+<div class="line"><a name="l00215"></a><span class="lineno">  215</span>&#160;        <span class="keyword">typename</span> std::enable_if&lt;</div>
+<div class="line"><a name="l00216"></a><span class="lineno">  216</span>&#160;          !black_magic::CallHelper&lt;F, black_magic::S&lt;Args...&gt;&gt;::value &amp;&amp;</div>
+<div class="line"><a name="l00217"></a><span class="lineno">  217</span>&#160;            black_magic::CallHelper&lt;F, black_magic::S&lt;<a class="code" href="structcrow_1_1request.html">crow::request</a>&amp;, Args...&gt;&gt;::value,</div>
+<div class="line"><a name="l00218"></a><span class="lineno">  218</span>&#160;          <span class="keywordtype">void</span>&gt;::type</div>
+<div class="line"><a name="l00219"></a><span class="lineno">  219</span>&#160;          wrapped_handler_call(<a class="code" href="structcrow_1_1request.html">crow::request</a>&amp; req, <a class="code" href="structcrow_1_1response.html">crow::response</a>&amp; res, <span class="keyword">const</span> F&amp; f, Args&amp;&amp;... args)</div>
+<div class="line"><a name="l00220"></a><span class="lineno">  220</span>&#160;        {</div>
+<div class="line"><a name="l00221"></a><span class="lineno">  221</span>&#160;            static_assert(!std::is_same&lt;<span class="keywordtype">void</span>, decltype(f(std::declval&lt;crow::request&gt;(), std::declval&lt;Args&gt;()...))&gt;::value,</div>
+<div class="line"><a name="l00222"></a><span class="lineno">  222</span>&#160;                          <span class="stringliteral">&quot;Handler function cannot have void return type; valid return types: string, int, crow::response, crow::returnable&quot;</span>);</div>
 <div class="line"><a name="l00223"></a><span class="lineno">  223</span>&#160; </div>
-<div class="line"><a name="l00224"></a><span class="lineno">  224</span>&#160;        <span class="keyword">template</span>&lt;<span class="keyword">typename</span> F, <span class="keyword">typename</span>... Args&gt;</div>
-<div class="line"><a name="l00225"></a><span class="lineno">  225</span>&#160;        <span class="keyword">typename</span> std::enable_if&lt;black_magic::is_callable&lt;F, <a class="code" href="structcrow_1_1response.html">crow::response</a>&amp;, Args...&gt;::value&gt;::type</div>
-<div class="line"><a name="l00226"></a><span class="lineno">  226</span>&#160;          wrapped_handler_call(<a class="code" href="structcrow_1_1request.html">crow::request</a>&amp; <span class="comment">/*req*/</span>, <a class="code" href="structcrow_1_1response.html">crow::response</a>&amp; res, <span class="keyword">const</span> F&amp; f, Args&amp;&amp;... args)</div>
-<div class="line"><a name="l00227"></a><span class="lineno">  227</span>&#160;        {</div>
-<div class="line"><a name="l00228"></a><span class="lineno">  228</span>&#160;            static_assert(std::is_same&lt;<span class="keywordtype">void</span>, decltype(f(std::declval&lt;crow::response&amp;&gt;(), std::declval&lt;Args&gt;()...))&gt;::value,</div>
-<div class="line"><a name="l00229"></a><span class="lineno">  229</span>&#160;                          <span class="stringliteral">&quot;Handler function with response argument should have void return type&quot;</span>);</div>
-<div class="line"><a name="l00230"></a><span class="lineno">  230</span>&#160; </div>
-<div class="line"><a name="l00231"></a><span class="lineno">  231</span>&#160;            f(res, std::forward&lt;Args&gt;(args)...);</div>
-<div class="line"><a name="l00232"></a><span class="lineno">  232</span>&#160;        }</div>
-<div class="line"><a name="l00233"></a><span class="lineno">  233</span>&#160; </div>
-<div class="line"><a name="l00234"></a><span class="lineno">  234</span>&#160;        <span class="keyword">template</span>&lt;<span class="keyword">typename</span> F, <span class="keyword">typename</span>... Args&gt;</div>
-<div class="line"><a name="l00235"></a><span class="lineno">  235</span>&#160;        <span class="keyword">typename</span> std::enable_if&lt;black_magic::is_callable&lt;F, <a class="code" href="structcrow_1_1request.html">crow::request</a>, Args...&gt;::value&gt;::type</div>
-<div class="line"><a name="l00236"></a><span class="lineno">  236</span>&#160;          wrapped_handler_call(<a class="code" href="structcrow_1_1request.html">crow::request</a>&amp; req, <a class="code" href="structcrow_1_1response.html">crow::response</a>&amp; res, <span class="keyword">const</span> F&amp; f, Args&amp;&amp;... args)</div>
-<div class="line"><a name="l00237"></a><span class="lineno">  237</span>&#160;        {</div>
-<div class="line"><a name="l00238"></a><span class="lineno">  238</span>&#160;            static_assert(!std::is_same&lt;<span class="keywordtype">void</span>, decltype(f(std::declval&lt;crow::request&gt;(), std::declval&lt;Args&gt;()...))&gt;::value,</div>
-<div class="line"><a name="l00239"></a><span class="lineno">  239</span>&#160;                          <span class="stringliteral">&quot;Handler function cannot have void return type; valid return types: string, int, crow::response, crow::returnable&quot;</span>);</div>
-<div class="line"><a name="l00240"></a><span class="lineno">  240</span>&#160; </div>
-<div class="line"><a name="l00241"></a><span class="lineno">  241</span>&#160;            res = <a class="code" href="structcrow_1_1response.html">crow::response</a>(f(req, std::forward&lt;Args&gt;(args)...));</div>
-<div class="line"><a name="l00242"></a><span class="lineno">  242</span>&#160;            res.<a class="code" href="structcrow_1_1response.html#abef42200eca49c70dc1f5140ee3603ab">end</a>();</div>
-<div class="line"><a name="l00243"></a><span class="lineno">  243</span>&#160;        }</div>
-<div class="line"><a name="l00244"></a><span class="lineno">  244</span>&#160; </div>
-<div class="line"><a name="l00245"></a><span class="lineno">  245</span>&#160;        <span class="keyword">template</span>&lt;<span class="keyword">typename</span> F, <span class="keyword">typename</span>... Args&gt;</div>
-<div class="line"><a name="l00246"></a><span class="lineno">  246</span>&#160;        <span class="keyword">typename</span> std::enable_if&lt;black_magic::is_callable&lt;F, Args...&gt;::value&gt;::type</div>
-<div class="line"><a name="l00247"></a><span class="lineno">  247</span>&#160;          wrapped_handler_call(<a class="code" href="structcrow_1_1request.html">crow::request</a>&amp; <span class="comment">/*req*/</span>, <a class="code" href="structcrow_1_1response.html">crow::response</a>&amp; res, <span class="keyword">const</span> F&amp; f, Args&amp;&amp;... args)</div>
-<div class="line"><a name="l00248"></a><span class="lineno">  248</span>&#160;        {</div>
-<div class="line"><a name="l00249"></a><span class="lineno">  249</span>&#160;            static_assert(!std::is_same&lt;<span class="keywordtype">void</span>, decltype(f(std::declval&lt;Args&gt;()...))&gt;::value,</div>
-<div class="line"><a name="l00250"></a><span class="lineno">  250</span>&#160;                          <span class="stringliteral">&quot;Handler function cannot have void return type; valid return types: string, int, crow::response, crow::returnable&quot;</span>);</div>
-<div class="line"><a name="l00251"></a><span class="lineno">  251</span>&#160; </div>
-<div class="line"><a name="l00252"></a><span class="lineno">  252</span>&#160;            res = <a class="code" href="structcrow_1_1response.html">crow::response</a>(f(std::forward&lt;Args&gt;(args)...));</div>
-<div class="line"><a name="l00253"></a><span class="lineno">  253</span>&#160;            res.<a class="code" href="structcrow_1_1response.html#abef42200eca49c70dc1f5140ee3603ab">end</a>();</div>
-<div class="line"><a name="l00254"></a><span class="lineno">  254</span>&#160;        }</div>
-<div class="line"><a name="l00255"></a><span class="lineno">  255</span>&#160; </div>
-<div class="line"><a name="l00256"></a><span class="lineno">  256</span>&#160;        <span class="keyword">template</span>&lt;<span class="keyword">typename</span> F, <span class="keyword">typename</span> App, <span class="keyword">typename</span>... Middlewares&gt;</div>
-<div class="line"><a name="l00257"></a><span class="lineno">  257</span>&#160;        <span class="keyword">struct </span>handler_middleware_wrapper</div>
-<div class="line"><a name="l00258"></a><span class="lineno">  258</span>&#160;        {</div>
-<div class="line"><a name="l00259"></a><span class="lineno">  259</span>&#160;            <span class="comment">// CallCriteria bound to the current Middlewares pack</span></div>
-<div class="line"><a name="l00260"></a><span class="lineno">  260</span>&#160;            <span class="keyword">template</span>&lt;<span class="keyword">typename</span> MW&gt;</div>
-<div class="line"><a name="l00261"></a><span class="lineno"><a class="line" href="structcrow_1_1detail_1_1handler__middleware__wrapper_1_1middleware__call__criteria.html">  261</a></span>&#160;            <span class="keyword">struct </span><a class="code" href="structcrow_1_1detail_1_1handler__middleware__wrapper_1_1middleware__call__criteria.html">middleware_call_criteria</a></div>
-<div class="line"><a name="l00262"></a><span class="lineno">  262</span>&#160;            {</div>
-<div class="line"><a name="l00263"></a><span class="lineno">  263</span>&#160;                <span class="keyword">static</span> constexpr <span class="keywordtype">bool</span> value = black_magic::has_type&lt;MW, std::tuple&lt;Middlewares...&gt;&gt;::value;</div>
-<div class="line"><a name="l00264"></a><span class="lineno">  264</span>&#160;            };</div>
-<div class="line"><a name="l00265"></a><span class="lineno">  265</span>&#160; </div>
-<div class="line"><a name="l00266"></a><span class="lineno">  266</span>&#160;            <span class="keyword">template</span>&lt;<span class="keyword">typename</span>... Args&gt;</div>
-<div class="line"><a name="l00267"></a><span class="lineno">  267</span>&#160;            <span class="keywordtype">void</span> operator()(<a class="code" href="structcrow_1_1request.html">crow::request</a>&amp; req, <a class="code" href="structcrow_1_1response.html">crow::response</a>&amp; res, Args&amp;&amp;... args)<span class="keyword"> const</span></div>
-<div class="line"><a name="l00268"></a><span class="lineno">  268</span>&#160;<span class="keyword">            </span>{</div>
-<div class="line"><a name="l00269"></a><span class="lineno">  269</span>&#160;                <span class="keyword">auto</span>&amp; ctx = *<span class="keyword">reinterpret_cast&lt;</span>typename <a class="code" href="structcrow_1_1detail_1_1context.html">App::context_t</a>*<span class="keyword">&gt;</span>(req.middleware_context);</div>
-<div class="line"><a name="l00270"></a><span class="lineno">  270</span>&#160;                <span class="keyword">auto</span>&amp; container = *<span class="keyword">reinterpret_cast&lt;</span>typename App::mw_container_t*<span class="keyword">&gt;</span>(req.middleware_container);</div>
-<div class="line"><a name="l00271"></a><span class="lineno">  271</span>&#160; </div>
-<div class="line"><a name="l00272"></a><span class="lineno">  272</span>&#160;                <span class="keyword">auto</span> glob_completion_handler = std::move(res.complete_request_handler_);</div>
-<div class="line"><a name="l00273"></a><span class="lineno">  273</span>&#160;                res.complete_request_handler_ = [] {};</div>
-<div class="line"><a name="l00274"></a><span class="lineno">  274</span>&#160; </div>
-<div class="line"><a name="l00275"></a><span class="lineno">  275</span>&#160;                middleware_call_helper&lt;middleware_call_criteria,</div>
-<div class="line"><a name="l00276"></a><span class="lineno">  276</span>&#160;                                       0, <span class="keyword">typename</span> <a class="code" href="structcrow_1_1detail_1_1context.html">App::context_t</a>, <span class="keyword">typename</span> App::mw_container_t&gt;(container, req, res, ctx);</div>
-<div class="line"><a name="l00277"></a><span class="lineno">  277</span>&#160; </div>
-<div class="line"><a name="l00278"></a><span class="lineno">  278</span>&#160;                <span class="keywordflow">if</span> (res.completed_)</div>
-<div class="line"><a name="l00279"></a><span class="lineno">  279</span>&#160;                {</div>
-<div class="line"><a name="l00280"></a><span class="lineno">  280</span>&#160;                    glob_completion_handler();</div>
-<div class="line"><a name="l00281"></a><span class="lineno">  281</span>&#160;                    <span class="keywordflow">return</span>;</div>
-<div class="line"><a name="l00282"></a><span class="lineno">  282</span>&#160;                }</div>
-<div class="line"><a name="l00283"></a><span class="lineno">  283</span>&#160; </div>
-<div class="line"><a name="l00284"></a><span class="lineno">  284</span>&#160;                res.complete_request_handler_ = [&amp;ctx, &amp;container, &amp;req, &amp;res, &amp;glob_completion_handler] {</div>
-<div class="line"><a name="l00285"></a><span class="lineno">  285</span>&#160;                    after_handlers_call_helper&lt;</div>
-<div class="line"><a name="l00286"></a><span class="lineno">  286</span>&#160;                      middleware_call_criteria,</div>
-<div class="line"><a name="l00287"></a><span class="lineno">  287</span>&#160;                      std::tuple_size&lt;typename App::mw_container_t&gt;::value - 1,</div>
-<div class="line"><a name="l00288"></a><span class="lineno">  288</span>&#160;                      <span class="keyword">typename</span> <a class="code" href="structcrow_1_1detail_1_1context.html">App::context_t</a>,</div>
-<div class="line"><a name="l00289"></a><span class="lineno">  289</span>&#160;                      <span class="keyword">typename</span> App::mw_container_t&gt;(container, ctx, req, res);</div>
-<div class="line"><a name="l00290"></a><span class="lineno">  290</span>&#160;                    glob_completion_handler();</div>
-<div class="line"><a name="l00291"></a><span class="lineno">  291</span>&#160;                };</div>
-<div class="line"><a name="l00292"></a><span class="lineno">  292</span>&#160; </div>
-<div class="line"><a name="l00293"></a><span class="lineno">  293</span>&#160;                wrapped_handler_call(req, res, f, std::forward&lt;Args&gt;(args)...);</div>
-<div class="line"><a name="l00294"></a><span class="lineno">  294</span>&#160;            }</div>
-<div class="line"><a name="l00295"></a><span class="lineno">  295</span>&#160; </div>
-<div class="line"><a name="l00296"></a><span class="lineno">  296</span>&#160;            F f;</div>
-<div class="line"><a name="l00297"></a><span class="lineno">  297</span>&#160;        };</div>
-<div class="line"><a name="l00298"></a><span class="lineno">  298</span>&#160; </div>
-<div class="line"><a name="l00299"></a><span class="lineno">  299</span>&#160;        <span class="keyword">template</span>&lt;<span class="keyword">typename</span> Route, <span class="keyword">typename</span> App, <span class="keyword">typename</span>... Middlewares&gt;</div>
-<div class="line"><a name="l00300"></a><span class="lineno"><a class="line" href="structcrow_1_1detail_1_1handler__call__bridge.html">  300</a></span>&#160;        <span class="keyword">struct </span><a class="code" href="structcrow_1_1detail_1_1handler__call__bridge.html">handler_call_bridge</a></div>
-<div class="line"><a name="l00301"></a><span class="lineno">  301</span>&#160;        {</div>
-<div class="line"><a name="l00302"></a><span class="lineno">  302</span>&#160;            <span class="keyword">template</span>&lt;<span class="keyword">typename</span> MW&gt;</div>
-<div class="line"><a name="l00303"></a><span class="lineno">  303</span>&#160;            <span class="keyword">using</span> check_app_contains = <span class="keyword">typename</span> black_magic::has_type&lt;MW, typename App::mw_container_t&gt;;</div>
-<div class="line"><a name="l00304"></a><span class="lineno">  304</span>&#160; </div>
-<div class="line"><a name="l00305"></a><span class="lineno">  305</span>&#160;            static_assert(black_magic::all_true&lt;(std::is_base_of&lt;crow::ILocalMiddleware, Middlewares&gt;::value)...&gt;::value,</div>
-<div class="line"><a name="l00306"></a><span class="lineno">  306</span>&#160;                          <span class="stringliteral">&quot;Local middleware has to inherit crow::ILocalMiddleware&quot;</span>);</div>
-<div class="line"><a name="l00307"></a><span class="lineno">  307</span>&#160; </div>
-<div class="line"><a name="l00308"></a><span class="lineno">  308</span>&#160;            static_assert(black_magic::all_true&lt;(check_app_contains&lt;Middlewares&gt;::value)...&gt;::value,</div>
-<div class="line"><a name="l00309"></a><span class="lineno">  309</span>&#160;                          <span class="stringliteral">&quot;Local middleware has to be listed in app middleware&quot;</span>);</div>
-<div class="line"><a name="l00310"></a><span class="lineno">  310</span>&#160; </div>
-<div class="line"><a name="l00311"></a><span class="lineno">  311</span>&#160;            <span class="keyword">template</span>&lt;<span class="keyword">typename</span> F&gt;</div>
-<div class="line"><a name="l00312"></a><span class="lineno">  312</span>&#160;            <span class="keywordtype">void</span> operator()(F&amp;&amp; f)<span class="keyword"> const</span></div>
-<div class="line"><a name="l00313"></a><span class="lineno">  313</span>&#160;<span class="keyword">            </span>{</div>
-<div class="line"><a name="l00314"></a><span class="lineno">  314</span>&#160;                <span class="keyword">auto</span> wrapped = <a class="code" href="structcrow_1_1detail_1_1handler__middleware__wrapper.html">handler_middleware_wrapper</a>&lt;F, <a class="code" href="classcrow_1_1_crow.html">App</a>, Middlewares...&gt;{std::forward&lt;F&gt;(f)};</div>
-<div class="line"><a name="l00315"></a><span class="lineno">  315</span>&#160;                tptr-&gt;operator()(std::move(wrapped));</div>
-<div class="line"><a name="l00316"></a><span class="lineno">  316</span>&#160;            }</div>
-<div class="line"><a name="l00317"></a><span class="lineno">  317</span>&#160; </div>
-<div class="line"><a name="l00318"></a><span class="lineno">  318</span>&#160;            Route* tptr;</div>
-<div class="line"><a name="l00319"></a><span class="lineno">  319</span>&#160;        };</div>
-<div class="line"><a name="l00320"></a><span class="lineno">  320</span>&#160; </div>
-<div class="line"><a name="l00321"></a><span class="lineno">  321</span>&#160;    } <span class="comment">// namespace detail</span></div>
-<div class="line"><a name="l00322"></a><span class="lineno">  322</span>&#160;} <span class="comment">// namespace crow</span></div>
+<div class="line"><a name="l00224"></a><span class="lineno">  224</span>&#160;            res = <a class="code" href="structcrow_1_1response.html">crow::response</a>(f(req, std::forward&lt;Args&gt;(args)...));</div>
+<div class="line"><a name="l00225"></a><span class="lineno">  225</span>&#160;            res.<a class="code" href="structcrow_1_1response.html#abef42200eca49c70dc1f5140ee3603ab">end</a>();</div>
+<div class="line"><a name="l00226"></a><span class="lineno">  226</span>&#160;        }</div>
+<div class="line"><a name="l00227"></a><span class="lineno">  227</span>&#160; </div>
+<div class="line"><a name="l00228"></a><span class="lineno">  228</span>&#160;        <span class="keyword">template</span>&lt;<span class="keyword">typename</span> F, <span class="keyword">typename</span>... Args&gt;</div>
+<div class="line"><a name="l00229"></a><span class="lineno">  229</span>&#160;        <span class="keyword">typename</span> std::enable_if&lt;</div>
+<div class="line"><a name="l00230"></a><span class="lineno">  230</span>&#160;          !black_magic::CallHelper&lt;F, black_magic::S&lt;Args...&gt;&gt;::value &amp;&amp;</div>
+<div class="line"><a name="l00231"></a><span class="lineno">  231</span>&#160;            !black_magic::CallHelper&lt;F, black_magic::S&lt;<a class="code" href="structcrow_1_1request.html">crow::request</a>&amp;, Args...&gt;&gt;::value &amp;&amp;</div>
+<div class="line"><a name="l00232"></a><span class="lineno">  232</span>&#160;            black_magic::CallHelper&lt;F, black_magic::S&lt;<a class="code" href="structcrow_1_1response.html">crow::response</a>&amp;, Args...&gt;&gt;::value,</div>
+<div class="line"><a name="l00233"></a><span class="lineno">  233</span>&#160;          <span class="keywordtype">void</span>&gt;::type</div>
+<div class="line"><a name="l00234"></a><span class="lineno">  234</span>&#160;          wrapped_handler_call(<a class="code" href="structcrow_1_1request.html">crow::request</a>&amp; <span class="comment">/*req*/</span>, <a class="code" href="structcrow_1_1response.html">crow::response</a>&amp; res, <span class="keyword">const</span> F&amp; f, Args&amp;&amp;... args)</div>
+<div class="line"><a name="l00235"></a><span class="lineno">  235</span>&#160;        {</div>
+<div class="line"><a name="l00236"></a><span class="lineno">  236</span>&#160;            static_assert(std::is_same&lt;<span class="keywordtype">void</span>, decltype(f(std::declval&lt;crow::response&amp;&gt;(), std::declval&lt;Args&gt;()...))&gt;::value,</div>
+<div class="line"><a name="l00237"></a><span class="lineno">  237</span>&#160;                          <span class="stringliteral">&quot;Handler function with response argument should have void return type&quot;</span>);</div>
+<div class="line"><a name="l00238"></a><span class="lineno">  238</span>&#160; </div>
+<div class="line"><a name="l00239"></a><span class="lineno">  239</span>&#160;            f(res, std::forward&lt;Args&gt;(args)...);</div>
+<div class="line"><a name="l00240"></a><span class="lineno">  240</span>&#160;        }</div>
+<div class="line"><a name="l00241"></a><span class="lineno">  241</span>&#160; </div>
+<div class="line"><a name="l00242"></a><span class="lineno">  242</span>&#160;        <span class="keyword">template</span>&lt;<span class="keyword">typename</span> F, <span class="keyword">typename</span>... Args&gt;</div>
+<div class="line"><a name="l00243"></a><span class="lineno">  243</span>&#160;        <span class="keyword">typename</span> std::enable_if&lt;</div>
+<div class="line"><a name="l00244"></a><span class="lineno">  244</span>&#160;          !black_magic::CallHelper&lt;F, black_magic::S&lt;Args...&gt;&gt;::value &amp;&amp;</div>
+<div class="line"><a name="l00245"></a><span class="lineno">  245</span>&#160;            !black_magic::CallHelper&lt;F, black_magic::S&lt;<a class="code" href="structcrow_1_1request.html">crow::request</a>&amp;, Args...&gt;&gt;::value &amp;&amp;</div>
+<div class="line"><a name="l00246"></a><span class="lineno">  246</span>&#160;            !black_magic::CallHelper&lt;F, black_magic::S&lt;<a class="code" href="structcrow_1_1response.html">crow::response</a>&amp;, Args...&gt;&gt;::value &amp;&amp;</div>
+<div class="line"><a name="l00247"></a><span class="lineno">  247</span>&#160;            black_magic::CallHelper&lt;F, black_magic::S&lt;<span class="keyword">const</span> <a class="code" href="structcrow_1_1request.html">crow::request</a>&amp;, <a class="code" href="structcrow_1_1response.html">crow::response</a>&amp;, Args...&gt;&gt;::value,</div>
+<div class="line"><a name="l00248"></a><span class="lineno">  248</span>&#160;          <span class="keywordtype">void</span>&gt;::type</div>
+<div class="line"><a name="l00249"></a><span class="lineno">  249</span>&#160;          wrapped_handler_call(<a class="code" href="structcrow_1_1request.html">crow::request</a>&amp; req, <a class="code" href="structcrow_1_1response.html">crow::response</a>&amp; res, <span class="keyword">const</span> F&amp; f, Args&amp;&amp;... args)</div>
+<div class="line"><a name="l00250"></a><span class="lineno">  250</span>&#160;        {</div>
+<div class="line"><a name="l00251"></a><span class="lineno">  251</span>&#160;            static_assert(std::is_same&lt;<span class="keywordtype">void</span>, decltype(f(std::declval&lt;crow::request&amp;&gt;(), std::declval&lt;crow::response&amp;&gt;(), std::declval&lt;Args&gt;()...))&gt;::value,</div>
+<div class="line"><a name="l00252"></a><span class="lineno">  252</span>&#160;                          <span class="stringliteral">&quot;Handler function with response argument should have void return type&quot;</span>);</div>
+<div class="line"><a name="l00253"></a><span class="lineno">  253</span>&#160; </div>
+<div class="line"><a name="l00254"></a><span class="lineno">  254</span>&#160;            f(req, res, std::forward&lt;Args&gt;(args)...);</div>
+<div class="line"><a name="l00255"></a><span class="lineno">  255</span>&#160;        }</div>
+<div class="line"><a name="l00256"></a><span class="lineno">  256</span>&#160; </div>
+<div class="line"><a name="l00257"></a><span class="lineno">  257</span>&#160;        <span class="comment">// wrapped_handler_call transparently wraps a handler call behind (req, res, args...)</span></div>
+<div class="line"><a name="l00258"></a><span class="lineno">  258</span>&#160;        <span class="keyword">template</span>&lt;<span class="keyword">typename</span> F, <span class="keyword">typename</span>... Args&gt;</div>
+<div class="line"><a name="l00259"></a><span class="lineno">  259</span>&#160;        <span class="keyword">typename</span> std::enable_if&lt;</div>
+<div class="line"><a name="l00260"></a><span class="lineno">  260</span>&#160;          !black_magic::CallHelper&lt;F, black_magic::S&lt;Args...&gt;&gt;::value &amp;&amp;</div>
+<div class="line"><a name="l00261"></a><span class="lineno">  261</span>&#160;            !black_magic::CallHelper&lt;F, black_magic::S&lt;<a class="code" href="structcrow_1_1request.html">crow::request</a>&amp;, Args...&gt;&gt;::value &amp;&amp;</div>
+<div class="line"><a name="l00262"></a><span class="lineno">  262</span>&#160;            !black_magic::CallHelper&lt;F, black_magic::S&lt;<a class="code" href="structcrow_1_1response.html">crow::response</a>&amp;, Args...&gt;&gt;::value &amp;&amp;</div>
+<div class="line"><a name="l00263"></a><span class="lineno">  263</span>&#160;            !black_magic::CallHelper&lt;F, black_magic::S&lt;<span class="keyword">const</span> <a class="code" href="structcrow_1_1request.html">crow::request</a>&amp;, <a class="code" href="structcrow_1_1response.html">crow::response</a>&amp;, Args...&gt;&gt;::value,</div>
+<div class="line"><a name="l00264"></a><span class="lineno">  264</span>&#160;          <span class="keywordtype">void</span>&gt;::type</div>
+<div class="line"><a name="l00265"></a><span class="lineno">  265</span>&#160;          wrapped_handler_call(<a class="code" href="structcrow_1_1request.html">crow::request</a>&amp; req, <a class="code" href="structcrow_1_1response.html">crow::response</a>&amp; res, <span class="keyword">const</span> F&amp; f, Args&amp;&amp;... args)</div>
+<div class="line"><a name="l00266"></a><span class="lineno">  266</span>&#160;        {</div>
+<div class="line"><a name="l00267"></a><span class="lineno">  267</span>&#160;            static_assert(std::is_same&lt;<span class="keywordtype">void</span>, decltype(f(std::declval&lt;crow::request&amp;&gt;(), std::declval&lt;crow::response&amp;&gt;(), std::declval&lt;Args&gt;()...))&gt;::value,</div>
+<div class="line"><a name="l00268"></a><span class="lineno">  268</span>&#160;                          <span class="stringliteral">&quot;Handler function with response argument should have void return type&quot;</span>);</div>
+<div class="line"><a name="l00269"></a><span class="lineno">  269</span>&#160; </div>
+<div class="line"><a name="l00270"></a><span class="lineno">  270</span>&#160;            f(req, res, std::forward&lt;Args&gt;(args)...);</div>
+<div class="line"><a name="l00271"></a><span class="lineno">  271</span>&#160;        }</div>
+<div class="line"><a name="l00272"></a><span class="lineno">  272</span>&#160; </div>
+<div class="line"><a name="l00273"></a><span class="lineno">  273</span>&#160;        <span class="keyword">template</span>&lt;<span class="keyword">typename</span> F, <span class="keyword">typename</span> App, <span class="keyword">typename</span>... Middlewares&gt;</div>
+<div class="line"><a name="l00274"></a><span class="lineno">  274</span>&#160;        <span class="keyword">struct </span>handler_middleware_wrapper</div>
+<div class="line"><a name="l00275"></a><span class="lineno">  275</span>&#160;        {</div>
+<div class="line"><a name="l00276"></a><span class="lineno">  276</span>&#160;            <span class="comment">// CallCriteria bound to the current Middlewares pack</span></div>
+<div class="line"><a name="l00277"></a><span class="lineno">  277</span>&#160;            <span class="keyword">template</span>&lt;<span class="keyword">typename</span> MW&gt;</div>
+<div class="line"><a name="l00278"></a><span class="lineno"><a class="line" href="structcrow_1_1detail_1_1handler__middleware__wrapper_1_1middleware__call__criteria.html">  278</a></span>&#160;            <span class="keyword">struct </span><a class="code" href="structcrow_1_1detail_1_1handler__middleware__wrapper_1_1middleware__call__criteria.html">middleware_call_criteria</a></div>
+<div class="line"><a name="l00279"></a><span class="lineno">  279</span>&#160;            {</div>
+<div class="line"><a name="l00280"></a><span class="lineno">  280</span>&#160;                <span class="keyword">static</span> constexpr <span class="keywordtype">bool</span> value = black_magic::has_type&lt;MW, std::tuple&lt;Middlewares...&gt;&gt;::value;</div>
+<div class="line"><a name="l00281"></a><span class="lineno">  281</span>&#160;            };</div>
+<div class="line"><a name="l00282"></a><span class="lineno">  282</span>&#160; </div>
+<div class="line"><a name="l00283"></a><span class="lineno">  283</span>&#160;            <span class="keyword">template</span>&lt;<span class="keyword">typename</span>... Args&gt;</div>
+<div class="line"><a name="l00284"></a><span class="lineno">  284</span>&#160;            <span class="keywordtype">void</span> operator()(<a class="code" href="structcrow_1_1request.html">crow::request</a>&amp; req, <a class="code" href="structcrow_1_1response.html">crow::response</a>&amp; res, Args&amp;&amp;... args)<span class="keyword"> const</span></div>
+<div class="line"><a name="l00285"></a><span class="lineno">  285</span>&#160;<span class="keyword">            </span>{</div>
+<div class="line"><a name="l00286"></a><span class="lineno">  286</span>&#160;                <span class="keyword">auto</span>&amp; ctx = *<span class="keyword">reinterpret_cast&lt;</span>typename <a class="code" href="structcrow_1_1detail_1_1context.html">App::context_t</a>*<span class="keyword">&gt;</span>(req.middleware_context);</div>
+<div class="line"><a name="l00287"></a><span class="lineno">  287</span>&#160;                <span class="keyword">auto</span>&amp; container = *<span class="keyword">reinterpret_cast&lt;</span>typename App::mw_container_t*<span class="keyword">&gt;</span>(req.middleware_container);</div>
+<div class="line"><a name="l00288"></a><span class="lineno">  288</span>&#160; </div>
+<div class="line"><a name="l00289"></a><span class="lineno">  289</span>&#160;                <span class="keyword">auto</span> glob_completion_handler = std::move(res.complete_request_handler_);</div>
+<div class="line"><a name="l00290"></a><span class="lineno">  290</span>&#160;                res.complete_request_handler_ = [] {};</div>
+<div class="line"><a name="l00291"></a><span class="lineno">  291</span>&#160; </div>
+<div class="line"><a name="l00292"></a><span class="lineno">  292</span>&#160;                middleware_call_helper&lt;middleware_call_criteria,</div>
+<div class="line"><a name="l00293"></a><span class="lineno">  293</span>&#160;                                       0, <span class="keyword">typename</span> <a class="code" href="structcrow_1_1detail_1_1context.html">App::context_t</a>, <span class="keyword">typename</span> App::mw_container_t&gt;(container, req, res, ctx);</div>
+<div class="line"><a name="l00294"></a><span class="lineno">  294</span>&#160; </div>
+<div class="line"><a name="l00295"></a><span class="lineno">  295</span>&#160;                <span class="keywordflow">if</span> (res.completed_)</div>
+<div class="line"><a name="l00296"></a><span class="lineno">  296</span>&#160;                {</div>
+<div class="line"><a name="l00297"></a><span class="lineno">  297</span>&#160;                    glob_completion_handler();</div>
+<div class="line"><a name="l00298"></a><span class="lineno">  298</span>&#160;                    <span class="keywordflow">return</span>;</div>
+<div class="line"><a name="l00299"></a><span class="lineno">  299</span>&#160;                }</div>
+<div class="line"><a name="l00300"></a><span class="lineno">  300</span>&#160; </div>
+<div class="line"><a name="l00301"></a><span class="lineno">  301</span>&#160;                res.complete_request_handler_ = [&amp;ctx, &amp;container, &amp;req, &amp;res, &amp;glob_completion_handler] {</div>
+<div class="line"><a name="l00302"></a><span class="lineno">  302</span>&#160;                    after_handlers_call_helper&lt;</div>
+<div class="line"><a name="l00303"></a><span class="lineno">  303</span>&#160;                      middleware_call_criteria,</div>
+<div class="line"><a name="l00304"></a><span class="lineno">  304</span>&#160;                      std::tuple_size&lt;typename App::mw_container_t&gt;::value - 1,</div>
+<div class="line"><a name="l00305"></a><span class="lineno">  305</span>&#160;                      <span class="keyword">typename</span> <a class="code" href="structcrow_1_1detail_1_1context.html">App::context_t</a>,</div>
+<div class="line"><a name="l00306"></a><span class="lineno">  306</span>&#160;                      <span class="keyword">typename</span> App::mw_container_t&gt;(container, ctx, req, res);</div>
+<div class="line"><a name="l00307"></a><span class="lineno">  307</span>&#160;                    glob_completion_handler();</div>
+<div class="line"><a name="l00308"></a><span class="lineno">  308</span>&#160;                };</div>
+<div class="line"><a name="l00309"></a><span class="lineno">  309</span>&#160; </div>
+<div class="line"><a name="l00310"></a><span class="lineno">  310</span>&#160;                wrapped_handler_call(req, res, f, std::forward&lt;Args&gt;(args)...);</div>
+<div class="line"><a name="l00311"></a><span class="lineno">  311</span>&#160;            }</div>
+<div class="line"><a name="l00312"></a><span class="lineno">  312</span>&#160; </div>
+<div class="line"><a name="l00313"></a><span class="lineno">  313</span>&#160;            F f;</div>
+<div class="line"><a name="l00314"></a><span class="lineno">  314</span>&#160;        };</div>
+<div class="line"><a name="l00315"></a><span class="lineno">  315</span>&#160; </div>
+<div class="line"><a name="l00316"></a><span class="lineno">  316</span>&#160;        <span class="keyword">template</span>&lt;<span class="keyword">typename</span> Route, <span class="keyword">typename</span> App, <span class="keyword">typename</span>... Middlewares&gt;</div>
+<div class="line"><a name="l00317"></a><span class="lineno"><a class="line" href="structcrow_1_1detail_1_1handler__call__bridge.html">  317</a></span>&#160;        <span class="keyword">struct </span><a class="code" href="structcrow_1_1detail_1_1handler__call__bridge.html">handler_call_bridge</a></div>
+<div class="line"><a name="l00318"></a><span class="lineno">  318</span>&#160;        {</div>
+<div class="line"><a name="l00319"></a><span class="lineno">  319</span>&#160;            <span class="keyword">template</span>&lt;<span class="keyword">typename</span> MW&gt;</div>
+<div class="line"><a name="l00320"></a><span class="lineno">  320</span>&#160;            <span class="keyword">using</span> check_app_contains = <span class="keyword">typename</span> black_magic::has_type&lt;MW, typename App::mw_container_t&gt;;</div>
+<div class="line"><a name="l00321"></a><span class="lineno">  321</span>&#160; </div>
+<div class="line"><a name="l00322"></a><span class="lineno">  322</span>&#160;            static_assert(black_magic::all_true&lt;(std::is_base_of&lt;crow::ILocalMiddleware, Middlewares&gt;::value)...&gt;::value,</div>
+<div class="line"><a name="l00323"></a><span class="lineno">  323</span>&#160;                          <span class="stringliteral">&quot;Local middleware has to inherit crow::ILocalMiddleware&quot;</span>);</div>
+<div class="line"><a name="l00324"></a><span class="lineno">  324</span>&#160; </div>
+<div class="line"><a name="l00325"></a><span class="lineno">  325</span>&#160;            static_assert(black_magic::all_true&lt;(check_app_contains&lt;Middlewares&gt;::value)...&gt;::value,</div>
+<div class="line"><a name="l00326"></a><span class="lineno">  326</span>&#160;                          <span class="stringliteral">&quot;Local middleware has to be listed in app middleware&quot;</span>);</div>
+<div class="line"><a name="l00327"></a><span class="lineno">  327</span>&#160; </div>
+<div class="line"><a name="l00328"></a><span class="lineno">  328</span>&#160;            <span class="keyword">template</span>&lt;<span class="keyword">typename</span> F&gt;</div>
+<div class="line"><a name="l00329"></a><span class="lineno">  329</span>&#160;            <span class="keywordtype">void</span> operator()(F&amp;&amp; f)<span class="keyword"> const</span></div>
+<div class="line"><a name="l00330"></a><span class="lineno">  330</span>&#160;<span class="keyword">            </span>{</div>
+<div class="line"><a name="l00331"></a><span class="lineno">  331</span>&#160;                <span class="keyword">auto</span> wrapped = <a class="code" href="structcrow_1_1detail_1_1handler__middleware__wrapper.html">handler_middleware_wrapper</a>&lt;F, <a class="code" href="classcrow_1_1_crow.html">App</a>, Middlewares...&gt;{std::forward&lt;F&gt;(f)};</div>
+<div class="line"><a name="l00332"></a><span class="lineno">  332</span>&#160;                tptr-&gt;operator()(std::move(wrapped));</div>
+<div class="line"><a name="l00333"></a><span class="lineno">  333</span>&#160;            }</div>
+<div class="line"><a name="l00334"></a><span class="lineno">  334</span>&#160; </div>
+<div class="line"><a name="l00335"></a><span class="lineno">  335</span>&#160;            Route* tptr;</div>
+<div class="line"><a name="l00336"></a><span class="lineno">  336</span>&#160;        };</div>
+<div class="line"><a name="l00337"></a><span class="lineno">  337</span>&#160; </div>
+<div class="line"><a name="l00338"></a><span class="lineno">  338</span>&#160;    } <span class="comment">// namespace detail</span></div>
+<div class="line"><a name="l00339"></a><span class="lineno">  339</span>&#160;} <span class="comment">// namespace crow</span></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
-<div class="ttc" id="astructcrow_1_1detail_1_1handler__middleware__wrapper_1_1middleware__call__criteria_html"><div class="ttname"><a href="structcrow_1_1detail_1_1handler__middleware__wrapper_1_1middleware__call__criteria.html">crow::detail::handler_middleware_wrapper::middleware_call_criteria</a></div><div class="ttdef"><b>Definition:</b> middleware.h:261</div></div>
+<div class="ttc" id="astructcrow_1_1detail_1_1handler__middleware__wrapper_1_1middleware__call__criteria_html"><div class="ttname"><a href="structcrow_1_1detail_1_1handler__middleware__wrapper_1_1middleware__call__criteria.html">crow::detail::handler_middleware_wrapper::middleware_call_criteria</a></div><div class="ttdef"><b>Definition:</b> middleware.h:278</div></div>
 <div class="ttc" id="astructcrow_1_1detail_1_1is__before__handle__arity__3__impl_html"><div class="ttname"><a href="structcrow_1_1detail_1_1is__before__handle__arity__3__impl.html">crow::detail::is_before_handle_arity_3_impl</a></div><div class="ttdef"><b>Definition:</b> middleware.h:64</div></div>
-<div class="ttc" id="astructcrow_1_1detail_1_1handler__call__bridge_html"><div class="ttname"><a href="structcrow_1_1detail_1_1handler__call__bridge.html">crow::detail::handler_call_bridge</a></div><div class="ttdef"><b>Definition:</b> middleware.h:300</div></div>
+<div class="ttc" id="astructcrow_1_1detail_1_1handler__call__bridge_html"><div class="ttname"><a href="structcrow_1_1detail_1_1handler__call__bridge.html">crow::detail::handler_call_bridge</a></div><div class="ttdef"><b>Definition:</b> middleware.h:317</div></div>
 <div class="ttc" id="astructcrow_1_1detail_1_1check__before__handle__arity__3_html"><div class="ttname"><a href="structcrow_1_1detail_1_1check__before__handle__arity__3.html">crow::detail::check_before_handle_arity_3</a></div><div class="ttdef"><b>Definition:</b> middleware.h:32</div></div>
 <div class="ttc" id="astructcrow_1_1detail_1_1check__after__handle__arity__3__const_html"><div class="ttname"><a href="structcrow_1_1detail_1_1check__after__handle__arity__3__const.html">crow::detail::check_after_handle_arity_3_const</a></div><div class="ttdef"><b>Definition:</b> middleware.h:40</div></div>
 <div class="ttc" id="aclasscrow_1_1_crow_html"><div class="ttname"><a href="classcrow_1_1_crow.html">crow::Crow</a></div><div class="ttdoc">The main server application.</div><div class="ttdef"><b>Definition:</b> app.h:47</div></div>
@@ -450,7 +467,7 @@ $(document).ready(function(){initNavTree('middleware_8h_source.html',''); initRe
 			<ul>
 				<li class="navelem"><a class="el" href="dir_d44c64559bbebec7f509842c48db8b23.html">include</a></li><li class="navelem"><a class="el" href="dir_d22c1cb87b72f01e1a7f207eb3bfd1ca.html">crow</a></li><li class="navelem"><b>middleware.h</b></li>
 				<li class="footer">
-					Generated on Fri Apr 22 2022 for Crow by <a href="http://www.doxygen.org/index.html">
+					Generated on Tue Apr 26 2022 for Crow by <a href="http://www.doxygen.org/index.html">
 					<img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.17.
 					Dark theme by <a href="http://majerle.eu" target="_new">Tilen Majerle</a>. Edited by <a href="https://github.com/The-EDev" target="_new">Farook Al-Sammarraie</a>. All rights reserved.
 				</li>
