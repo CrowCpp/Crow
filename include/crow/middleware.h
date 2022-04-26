@@ -200,39 +200,22 @@ namespace crow
             static const bool value = decltype(f<MW>(nullptr))::value;
         };
 
-        // wrapped_handler_call transparently wraps a handler call behind (req, res, args...)
         template<typename F, typename... Args>
-        typename std::enable_if<black_magic::is_callable<F, const crow::request, crow::response&, Args...>::value>::type
-          wrapped_handler_call(crow::request& req, crow::response& res, const F& f, Args&&... args)
-        {
-            static_assert(std::is_same<void, decltype(f(std::declval<crow::request>(), std::declval<crow::response&>(), std::declval<Args>()...))>::value,
-                          "Handler function with response argument should have void return type");
-
-            f(req, res, std::forward<Args>(args)...);
-        }
-
-        template<typename F, typename... Args>
-        typename std::enable_if<black_magic::is_callable<F, crow::request&, crow::response&, Args...>::value && !black_magic::is_callable<F, const crow::request, crow::response&, Args...>::value>::type
-          wrapped_handler_call(crow::request& req, crow::response& res, const F& f, Args&&... args)
-        {
-            static_assert(std::is_same<void, decltype(f(std::declval<crow::request&>(), std::declval<crow::response&>(), std::declval<Args>()...))>::value,
-                          "Handler function with response argument should have void return type");
-
-            f(req, res, std::forward<Args>(args)...);
-        }
-
-        template<typename F, typename... Args>
-        typename std::enable_if<black_magic::is_callable<F, crow::response&, Args...>::value>::type
+        typename std::enable_if<black_magic::CallHelper<F, black_magic::S<Args...>>::value, void>::type
           wrapped_handler_call(crow::request& /*req*/, crow::response& res, const F& f, Args&&... args)
         {
-            static_assert(std::is_same<void, decltype(f(std::declval<crow::response&>(), std::declval<Args>()...))>::value,
-                          "Handler function with response argument should have void return type");
+            static_assert(!std::is_same<void, decltype(f(std::declval<Args>()...))>::value,
+                          "Handler function cannot have void return type; valid return types: string, int, crow::response, crow::returnable");
 
-            f(res, std::forward<Args>(args)...);
+            res = crow::response(f(std::forward<Args>(args)...));
+            res.end();
         }
 
         template<typename F, typename... Args>
-        typename std::enable_if<black_magic::is_callable<F, crow::request, Args...>::value>::type
+        typename std::enable_if<
+          !black_magic::CallHelper<F, black_magic::S<Args...>>::value &&
+            black_magic::CallHelper<F, black_magic::S<crow::request&, Args...>>::value,
+          void>::type
           wrapped_handler_call(crow::request& req, crow::response& res, const F& f, Args&&... args)
         {
             static_assert(!std::is_same<void, decltype(f(std::declval<crow::request>(), std::declval<Args>()...))>::value,
@@ -243,14 +226,48 @@ namespace crow
         }
 
         template<typename F, typename... Args>
-        typename std::enable_if<black_magic::is_callable<F, Args...>::value>::type
+        typename std::enable_if<
+          !black_magic::CallHelper<F, black_magic::S<Args...>>::value &&
+            !black_magic::CallHelper<F, black_magic::S<crow::request&, Args...>>::value &&
+            black_magic::CallHelper<F, black_magic::S<crow::response&, Args...>>::value,
+          void>::type
           wrapped_handler_call(crow::request& /*req*/, crow::response& res, const F& f, Args&&... args)
         {
-            static_assert(!std::is_same<void, decltype(f(std::declval<Args>()...))>::value,
-                          "Handler function cannot have void return type; valid return types: string, int, crow::response, crow::returnable");
+            static_assert(std::is_same<void, decltype(f(std::declval<crow::response&>(), std::declval<Args>()...))>::value,
+                          "Handler function with response argument should have void return type");
 
-            res = crow::response(f(std::forward<Args>(args)...));
-            res.end();
+            f(res, std::forward<Args>(args)...);
+        }
+
+        template<typename F, typename... Args>
+        typename std::enable_if<
+          !black_magic::CallHelper<F, black_magic::S<Args...>>::value &&
+            !black_magic::CallHelper<F, black_magic::S<crow::request&, Args...>>::value &&
+            !black_magic::CallHelper<F, black_magic::S<crow::response&, Args...>>::value &&
+            black_magic::CallHelper<F, black_magic::S<const crow::request&, crow::response&, Args...>>::value,
+          void>::type
+          wrapped_handler_call(crow::request& req, crow::response& res, const F& f, Args&&... args)
+        {
+            static_assert(std::is_same<void, decltype(f(std::declval<crow::request&>(), std::declval<crow::response&>(), std::declval<Args>()...))>::value,
+                          "Handler function with response argument should have void return type");
+
+            f(req, res, std::forward<Args>(args)...);
+        }
+
+        // wrapped_handler_call transparently wraps a handler call behind (req, res, args...)
+        template<typename F, typename... Args>
+        typename std::enable_if<
+          !black_magic::CallHelper<F, black_magic::S<Args...>>::value &&
+            !black_magic::CallHelper<F, black_magic::S<crow::request&, Args...>>::value &&
+            !black_magic::CallHelper<F, black_magic::S<crow::response&, Args...>>::value &&
+            !black_magic::CallHelper<F, black_magic::S<const crow::request&, crow::response&, Args...>>::value,
+          void>::type
+          wrapped_handler_call(crow::request& req, crow::response& res, const F& f, Args&&... args)
+        {
+            static_assert(std::is_same<void, decltype(f(std::declval<crow::request&>(), std::declval<crow::response&>(), std::declval<Args>()...))>::value,
+                          "Handler function with response argument should have void return type");
+
+            f(req, res, std::forward<Args>(args)...);
         }
 
         template<typename F, typename App, typename... Middlewares>
