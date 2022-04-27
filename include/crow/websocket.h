@@ -390,7 +390,15 @@ namespace crow
                     }
                     break;
                     case WebSocketReadState::Mask:
-                        if (has_mask_)
+                        if (remaining_length_ > max_payload_bytes_)
+                        {
+                            close_connection_ = true;
+                            adaptor_.close();
+                            if (error_handler_)
+                              error_handler_(*this);
+                            check_destroy();
+                        }
+                        else if (has_mask_)
                         {
                             boost::asio::async_read(
                               adaptor_.socket(), boost::asio::buffer((char*)&mask_, 4),
@@ -620,6 +628,7 @@ namespace crow
             WebSocketReadState state_{WebSocketReadState::MiniHeader};
             uint16_t remaining_length16_{0};
             uint64_t remaining_length_{0};
+            uint64_t max_payload_bytes_{UINT64_MAX};
             bool close_connection_{false};
             bool is_reading{false};
             bool has_mask_{false};
