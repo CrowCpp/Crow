@@ -400,7 +400,7 @@ namespace crow
                             close_connection_ = true;
                             adaptor_.close();
                             if (error_handler_)
-                              error_handler_(*this);
+                                error_handler_(*this);
                             check_destroy();
                         }
                         else if (has_mask_)
