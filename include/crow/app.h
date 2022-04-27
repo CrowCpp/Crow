@@ -367,6 +367,22 @@ namespace crow
             return *this;
         }
 
+        /// Use certificate chain and key files for SSL
+        self_t& ssl_chainfile(const std::string& crt_filename, const std::string& key_filename)
+        {
+            ssl_used_ = true;
+            ssl_context_.set_verify_mode(boost::asio::ssl::verify_peer);
+            ssl_context_.set_verify_mode(boost::asio::ssl::verify_client_once);
+            ssl_context_.use_certificate_chain_file(crt_filename);
+            ssl_context_.use_private_key_file(key_filename, ssl_context_t::pem);
+            ssl_context_.set_options(
+              boost::asio::ssl::context::default_workarounds
+              | boost::asio::ssl::context::no_sslv2
+              | boost::asio::ssl::context::no_sslv3
+              );
+            return *this;
+        }
+
         self_t& ssl(boost::asio::ssl::context&& ctx)
         {
             ssl_used_ = true;
@@ -381,6 +397,17 @@ namespace crow
 #else
         template<typename T, typename... Remain>
         self_t& ssl_file(T&&, Remain&&...)
+        {
+            // We can't call .ssl() member function unless CROW_ENABLE_SSL is defined.
+            static_assert(
+              // make static_assert dependent to T; always false
+              std::is_base_of<T, void>::value,
+              "Define CROW_ENABLE_SSL to enable ssl support.");
+            return *this;
+        }
+
+        template<typename T, typename... Remain>
+        self_t& ssl_chainfile(T&&, Remain&&...)
         {
             // We can't call .ssl() member function unless CROW_ENABLE_SSL is defined.
             static_assert(
