@@ -33,6 +33,7 @@ var structcrow_1_1response =
     [ "crow::detail::handler_middleware_wrapper", "structcrow_1_1response.html#a6396075bc1b5a8a8689782ad19d3996b", null ],
     [ "body", "structcrow_1_1response.html#ae9f3cc153eac05954f1f4e599527892d", null ],
     [ "code", "structcrow_1_1response.html#aabc1f9b3264b8c5a2d05dcb409e8ff3f", null ],
+    [ "compressed", "structcrow_1_1response.html#af87163fd1c7e18650c7691e07f58c7de", null ],
     [ "headers", "structcrow_1_1response.html#ae56cfc39f24a56748c11016842427fb3", null ],
     [ "manual_length_header", "structcrow_1_1response.html#a95f300c05782e1934dad522b6d6588cf", null ],
     [ "skip_body", "structcrow_1_1response.html#a548c4f5e059a7bb3b2560b7ac5800011", null ]

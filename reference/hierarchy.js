@@ -100,6 +100,7 @@ var hierarchy =
     [ "crow::json::rvalue", "classcrow_1_1json_1_1rvalue.html", null ],
     [ "crow::Server< Handler, Adaptor, Middlewares >", "classcrow_1_1_server.html", null ],
     [ "crow::SocketAdaptor", "structcrow_1_1_socket_adaptor.html", null ],
+    [ "crow::SSLAdaptor", "structcrow_1_1_s_s_l_adaptor.html", null ],
     [ "crow::response::static_file_info", "structcrow_1_1response_1_1static__file__info.html", null ],
     [ "crow::detail::task_timer", "classcrow_1_1detail_1_1task__timer.html", null ],
     [ "template rebind< partial_context >", null, [

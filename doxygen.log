@@ -86,7 +86,8 @@ Searching for documented variables...
 Building interface member list...
 Building member list...
 Searching for friends...
-Searching f/drone/src/include/crow/routing.h:632: warning: Compound crow::Trie::Node is not documented.
+Searching f/drone/src/include/crow/socket_adaptors.h:87: warning: Compound crow::SSLAdaptor is not documented.
+/drone/src/include/crow/routing.h:632: warning: Compound crow::Trie::Node is not documented.
 /drone/src/include/crow/routing.h:248: warning: Compound crow::detail::routing_handler_call_helper::Wrapped::handler_type_helper< const request &, response &, Args... > is not documented.
 /drone/src/include/crow/routing.h:241: warning: Compound crow::detail::routing_handler_call_helper::Wrapped::handler_type_helper< const request &, Args... > is not documented.
 /drone/src/include/crow/routing.h:234: warning: Compound crow::detail::routing_handler_call_helper::Wrapped::handler_type_helper is not documented.
@@ -120,12 +121,12 @@ Searching f/drone/src/include/crow/routing.h:632: warning: Compound crow::Trie::
 /drone/src/include/crow/mustache.h:34: warning: Compound crow::mustache::rendered_template is not documented.
 /drone/src/include/crow/routing.h:103: warning: Compound crow::detail::routing_handler_call_helper::call_pair is not documented.
 /drone/src/include/crow/json.h:1432: warning: unable to resolve reference to 'reset()' for \ref command
-/drone/src/include/crow/multipart.h:45: warning: unable to resolve reference to 'get_header_value_Object()' for \ref command
 /drone/src/include/crow/routing.h:33: warning: Member BaseRule(std::string rule) (function) of class crow::BaseRule is not documented.
 /drone/src/include/crow/routing.h:40: warning: Member validate()=0 (function) of class crow::BaseRule is not documented.
 /drone/src/include/crow/routing.h:41: warning: Member upgrade() (function) of class crow::BaseRule is not documented.
 /drone/src/include/crow/routing.h:48: warning: Member handle(request &, response &, const routing_params &)=0 (function) of class crow::BaseRule is not documented.
 /drone/src/include/crow/routing.h:49: warning: Member handle_upgrade(const request &, response &res, SocketAdaptor &&) (function) of class crow::BaseRule is not documented.
+/drone/src/include/crow/routing.h:55: warning: Member handle_upgrade(const request &, response &res, SSLAdaptor &&) (function) of class crow::BaseRule is not documented.
 /drone/src/include/crow/routing.h:62: warning: Member get_methods() (function) of class crow::BaseRule is not documented.
 /drone/src/include/crow/routing.h:68: warning: Member foreach_method(F f) (function) of class crow::BaseRule is not documented.
 /drone/src/include/crow/routing.h:80: warning: Member rule() (function) of class crow::BaseRule is not documented.
@@ -163,16 +164,18 @@ Searching f/drone/src/include/crow/routing.h:632: warning: Compound crow::Trie::
 /drone/src/include/crow/middlewares/cookie_parser.h:36: warning: Member cookies_to_add (variable) of class crow::CookieParser::context is not documented.
 /drone/src/include/crow/middlewares/cors.h:137: warning: Member before_handle(crow::request &, crow::response &, context &) (function) of class crow::CORSHandler is not documented.
 /drone/src/include/crow/middlewares/cors.h:140: warning: Member after_handle(crow::request &req, crow::response &res, context &) (function) of class crow::CORSHandler is not documented.
-/drone/src/include/crow/app.h:411: warning: Member context_t (typedef) of class crow::Crow is not documented.
-/drone/src/include/crow/app.h:412: warning: Member mw_container_t (typedef) of class crow::Crow is not documented.
+/drone/src/include/crow/app.h:435: warning: Member context_t (typedef) of class crow::Crow is not documented.
+/drone/src/include/crow/app.h:436: warning: Member mw_container_t (typedef) of class crow::Crow is not documented.
 /drone/src/include/crow/app.h:105: warning: Member signal_clear() (function) of class crow::Crow is not documented.
 /drone/src/include/crow/app.h:111: warning: Member signal_add(int signal_number) (function) of class crow::Crow is not documented.
 /drone/src/include/crow/app.h:198: warning: Member register_blueprint(Blueprint &blueprint) (function) of class crow::Crow is not documented.
-/drone/src/include/crow/app.h:383: warning: Member ssl_file(T &&, Remain &&...) (function) of class crow::Crow is not documented.
-/drone/src/include/crow/app.h:394: warning: Member ssl(T &&) (function) of class crow::Crow is not documented.
-/drone/src/include/crow/app.h:404: warning: Member ssl_used() const (function) of class crow::Crow is not documented.
-/drone/src/include/crow/app.h:414: warning: Member get_context(const request &req) (function) of class crow::Crow is not documented.
-/drone/src/include/crow/app.h:422: warning: Member get_middleware() (function) of class crow::Crow is not documented.
+/drone/src/include/crow/app.h:214: warning: Member use_compression(compression::algorithm algorithm) (function) of class crow::Crow is not documented.
+/drone/src/include/crow/app.h:221: warning: Member compression_algorithm() (function) of class crow::Crow is not documented.
+/drone/src/include/crow/app.h:226: warning: Member compression_used() const (function) of class crow::Crow is not documented.
+/drone/src/include/crow/app.h:383: warning: Member ssl(boost::asio::ssl::context &&ctx) (function) of class crow::Crow is not documented.
+/drone/src/include/crow/app.h:390: warning: Member ssl_used() const (function) of class crow::Crow is not documented.
+/drone/src/include/crow/app.h:438: warning: Member get_context(const request &req) (function) of class crow::Crow is not documented.
+/drone/src/include/crow/app.h:446: warning: Member get_middleware() (function) of class crow::Crow is not documented.
 /drone/src/include/crow/routing.h:483: warning: Member DynamicRule(std::string rule) (function) of class crow::DynamicRule is not documented.
 /drone/src/include/crow/routing.h:487: warning: Member validate() override (function) of class crow::DynamicRule is not documented.
 /drone/src/include/crow/routing.h:495: warning: Member handle(request &req, response &res, const routing_params &params) override (function) of class crow::DynamicRule is not documented.
@@ -182,6 +185,7 @@ Searching f/drone/src/include/crow/routing.h:632: warning: Compound crow::Trie::
 /drone/src/include/crow/routing.h:33: warning: Member BaseRule(std::string rule) (function) of class crow::BaseRule is not documented.
 /drone/src/include/crow/routing.h:41: warning: Member upgrade() (function) of class crow::BaseRule is not documented.
 /drone/src/include/crow/routing.h:49: warning: Member handle_upgrade(const request &, response &res, SocketAdaptor &&) (function) of class crow::BaseRule is not documented.
+/drone/src/include/crow/routing.h:55: warning: Member handle_upgrade(const request &, response &res, SSLAdaptor &&) (function) of class crow::BaseRule is not documented.
 /drone/src/include/crow/routing.h:62: warning: Member get_methods() (function) of class crow::BaseRule is not documented.
 /drone/src/include/crow/routing.h:68: warning: Member foreach_method(F f) (function) of class crow::BaseRule is not documented.
 /drone/src/include/crow/routing.h:80: warning: Member rule() (function) of class crow::BaseRule is not documented.
@@ -361,8 +365,8 @@ Generating docs for compound crow::ILocalMiddleware./drone/src/include/crow/midd
 /drone/src/include/crow/routing.h:1301: warning: Member handle_upgrade(const request &req, response &res, Adaptor &&adaptor) (function) of class crow::Router is not documented.
 /drone/src/include/crow/routing.h:1373: warning: Member get_found_bp(std::vector< uint16_t > &bp_i, std::vector< Blueprint * > &blueprints, std::vector< Blueprint * > &found_bps, uint16_t index=0) (function) of class crow::Router is not documented.
 /drone/src/include/crow/routing.h:1445: warning: Member handle(request &req, response &res) (function) of class crow::Router is not documented.
-/drone/src/include/crow/routing.h:1575: warning: Member debug_print() (function) of class crow::Router is not documented.
-/drone/src/include/crow/routing.h:1584: warning: Member blueprints() (function) of class crow::Router is not documented.
+/drone/src/include/crow/routing.h:1573: warning: Member debug_print() (function) of class crow::Router is not documented.
+/drone/src/include/crow/routing.h:1582: warning: Member blueprints() (function) of class crow::Router is not documented.
 /drone/src/include/crow/routing.h:450: warning: Member self_t (typedef) of class crow::RuleParameterTraits is not documented.
 /drone/src/include/crow/routing.h:451: warning: Member websocket() (function) of class crow::RuleParameterTraits is not documented.
 /drone/src/include/crow/routing.h:458: warning: Member name(std::string name) noexcept (function) of class crow::RuleParameterTraits is not documented.
@@ -386,6 +390,20 @@ Generating docs for compound crow::ILocalMiddleware./drone/src/include/crow/midd
 /drone/src/include/crow/socket_adaptors.h:70: warning: Member shutdown_read() (function) of class crow::SocketAdaptor is not documented.
 /drone/src/include/crow/socket_adaptors.h:77: warning: Member start(F f) (function) of class crow::SocketAdaptor is not documented.
 /drone/src/include/crow/socket_adaptors.h:82: warning: Member socket_ (variable) of class crow::SocketAdaptor is not documented.
+/drone/src/include/crow/socket_adaptors.h:88: warning: Member context (typedef) of class crow::SSLAdaptor is not documented.
+/drone/src/include/crow/socket_adaptors.h:89: warning: Member ssl_socket_t (typedef) of class crow::SSLAdaptor is not documented.
+/drone/src/include/crow/socket_adaptors.h:90: warning: Member SSLAdaptor(boost::asio::io_service &io_service, context *ctx) (function) of class crow::SSLAdaptor is not documented.
+/drone/src/include/crow/socket_adaptors.h:94: warning: Member socket() (function) of class crow::SSLAdaptor is not documented.
+/drone/src/include/crow/socket_adaptors.h:100: warning: Member raw_socket() (function) of class crow::SSLAdaptor is not documented.
+/drone/src/include/crow/socket_adaptors.h:105: warning: Member remote_endpoint() (function) of class crow::SSLAdaptor is not documented.
+/drone/src/include/crow/socket_adaptors.h:110: warning: Member is_open() (function) of class crow::SSLAdaptor is not documented.
+/drone/src/include/crow/socket_adaptors.h:115: warning: Member close() (function) of class crow::SSLAdaptor is not documented.
+/drone/src/include/crow/socket_adaptors.h:124: warning: Member shutdown_readwrite() (function) of class crow::SSLAdaptor is not documented.
+/drone/src/include/crow/socket_adaptors.h:133: warning: Member shutdown_write() (function) of class crow::SSLAdaptor is not documented.
+/drone/src/include/crow/socket_adaptors.h:142: warning: Member shutdown_read() (function) of class crow::SSLAdaptor is not documented.
+/drone/src/include/crow/socket_adaptors.h:151: warning: Member get_io_service() (function) of class crow::SSLAdaptor is not documented.
+/drone/src/include/crow/socket_adaptors.h:157: warning: Member start(F f) (function) of class crow::SSLAdaptor is not documented.
+/drone/src/include/crow/socket_adaptors.h:165: warning: Member ssl_socket_ (variable) of class crow::SSLAdaptor is not documented.
 /drone/src/include/crow/routing.h:560: warning: Member self_t (typedef) of class crow::TaggedRule is not documented.
 /drone/src/include/crow/routing.h:450: warning: Member self_t (typedef) of class RuleParameterTraits< TaggedRule< Args... > > is not documented.
 /drone/src/include/crow/routing.h:562: warning: Member TaggedRule(std::string rule) (function) of class crow::TaggedRule is not documented.
@@ -396,6 +414,7 @@ Generating docs for compound crow::ILocalMiddleware./drone/src/include/crow/midd
 /drone/src/include/crow/routing.h:33: warning: Member BaseRule(std::string rule) (function) of class crow::BaseRule is not documented.
 /drone/src/include/crow/routing.h:41: warning: Member upgrade() (function) of class crow::BaseRule is not documented.
 /drone/src/include/crow/routing.h:49: warning: Member handle_upgrade(const request &, response &res, SocketAdaptor &&) (function) of class crow::BaseRule is not documented.
+/drone/src/include/crow/routing.h:55: warning: Member handle_upgrade(const request &, response &res, SSLAdaptor &&) (function) of class crow::BaseRule is not documented.
 /drone/src/include/crow/routing.h:62: warning: Member get_methods() (function) of class crow::BaseRule is not documented.
 /drone/src/include/crow/routing.h:68: warning: Member foreach_method(F f) (function) of class crow::BaseRule is not documented.
 /drone/src/include/crow/routing.h:80: warning: Member rule() (function) of class crow::BaseRule is not documented.
@@ -427,6 +446,7 @@ Generating docs for compound crow::ILocalMiddleware./drone/src/include/crow/midd
 /drone/src/include/crow/routing.h:380: warning: Member validate() override (function) of class crow::WebSocketRule is not documented.
 /drone/src/include/crow/routing.h:383: warning: Member handle(request &, response &res, const routing_params &) override (function) of class crow::WebSocketRule is not documented.
 /drone/src/include/crow/routing.h:389: warning: Member handle_upgrade(const request &req, response &, SocketAdaptor &&adaptor) override (function) of class crow::WebSocketRule is not documented.
+/drone/src/include/crow/routing.h:394: warning: Member handle_upgrade(const request &req, response &, SSLAdaptor &&adaptor) override (function) of class crow::WebSocketRule is not documented.
 /drone/src/include/crow/routing.h:401: warning: Member onopen(Func f) (function) of class crow::WebSocketRule is not documented.
 /drone/src/include/crow/routing.h:408: warning: Member onmessage(Func f) (function) of class crow::WebSocketRule is not documented.
 /drone/src/include/crow/routing.h:415: warning: Member onclose(Func f) (function) of class crow::WebSocketRule is not documented.
@@ -513,6 +533,7 @@ Generating docs for compound crow::Router...
 Generating docs for compound crow::RuleParameterTraits...
 Generating docs for compound crow::Server...
 Generating docs for compound crow::SocketAdaptor...
+Generating docs for compound crow::SSLAdaptor...
 Generating docs for compound crow::TaggedRule...
 Generating docs for compound crow::Trie...
 Generating docs for nested compound crow::Trie::Node...
@@ -551,7 +572,7 @@ Generating docs for compound crow::detail::routing_handler_call_helper::Wrapped.
 Generating docs for nested compound crow::detail::routing_handler_call_helper::Wrapped::handler_type_helper...
 Generating docs for nested compound crow::detail::routing_handler_call_helper::Wrapped::handler_type_helper< const request &, Args... >...
 Generating docs for nested compound crow::detail::routing_handler_call_helper::Wrapped::handler_type_helper< const request &, response &, Args... >...
-Generating docs for nested compound crow::detail::routing_handler_call_helper/drone/src/include/crow/routing.h:194: warning: Member req_handler_wrapper(Func f) (function) of class crow::detail::routing_handler_call_helper::Wrapped::req_handler_wrapper is not documented.
+Generating docs for nested c/drone/src/include/crow/routing.h:194: warning: Member req_handler_wrapper(Func f) (function) of class crow::detail::routing_handler_call_helper::Wrapped::req_handler_wrapper is not documented.
 /drone/src/include/crow/routing.h:199: warning: Member operator()(const request &req, response &res, Args... args) (function) of class crow::detail::routing_handler_call_helper::Wrapped::req_handler_wrapper is not documented.
 /drone/src/include/crow/routing.h:205: warning: Member f (variable) of class crow::detail::routing_handler_call_helper::Wrapped::req_handler_wrapper is not documented.
 /drone/src/include/crow/json.h:232: warning: Member rvalue(type t) noexcept (function) of class crow::json::rvalue is not documented.
@@ -645,7 +666,6 @@ Generating docs for nested compound crow::detail::routing_handler_call_helper/dr
 /drone/src/include/crow/json.h:167: warning: Member size() const (function) of class crow::json::detail::r_string is not documented.
 /drone/src/include/crow/json.h:174: warning: Member owned_ (variable) of class crow::json::detail::r_string is not documented.
 /drone/src/include/crow/json.h:175: warning: Member operator<<(std::ostream &os, const r_string &s) (friend) of class crow::json::detail::r_string is not documented.
-/drone/src/include/crow/multipart.h:45: warning: unable to resolve reference to 'get_header_value_Object()' for \ref command
 /drone/src/include/crow/multipart.h:18: warning: Member dd (variable) of namespace crow::multipart is not documented.
 /drone/src/include/crow/multipart.h:81: warning: Member get_header_value(const std::string &key) const (function) of class crow::multipart::message is not documented.
 /drone/src/include/crow/multipart.h:86: warning: Member get_part_by_name(const std::string &name) (function) of class crow::multipart::message is not documented.
@@ -677,7 +697,7 @@ Generating docs for nested compound crow::detail::routing_handler_call_helper/dr
 /drone/src/include/crow/websocket.h:193: warning: Member get_remote_ip() override (function) of class crow::websocket::Connection is not documented.
 /drone/src/include/crow/websocket.h:32: warning: Member userdata(void *u) (function) of class crow::websocket::connection is not documented.
 /drone/src/include/crow/websocket.h:33: warning: Member userdata() (function) of class crow::websocket::connection is not documented.
-::Wrapped::req_handler_wrapper...
+ompound crow::detail::routing_handler_call_helper::Wrapped::req_handler_wrapper...
 Generating docs for compound crow::json::rvalue...
 Generating docs for compound crow::json::wvalue...
 Generating docs for compound crow::json::detail::r_string...
@@ -707,5 +727,5 @@ Generating example index...
 finalizing index lists...
 writing tag file...
 Running plantuml with JAVA...
-lookup cache used 2727/65536 hits=24274 misses=3067
+lookup cache used 2794/65536 hits=24682 misses=3139
 finished...

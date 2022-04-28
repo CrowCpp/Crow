@@ -80,6 +80,7 @@ var annotated_dup =
       [ "RuleParameterTraits", "structcrow_1_1_rule_parameter_traits.html", "structcrow_1_1_rule_parameter_traits" ],
       [ "Server", "classcrow_1_1_server.html", "classcrow_1_1_server" ],
       [ "SocketAdaptor", "structcrow_1_1_socket_adaptor.html", "structcrow_1_1_socket_adaptor" ],
+      [ "SSLAdaptor", "structcrow_1_1_s_s_l_adaptor.html", "structcrow_1_1_s_s_l_adaptor" ],
       [ "TaggedRule", "classcrow_1_1_tagged_rule.html", "classcrow_1_1_tagged_rule" ],
       [ "Trie", "classcrow_1_1_trie.html", "classcrow_1_1_trie" ],
       [ "UTF8", "structcrow_1_1_u_t_f8.html", "structcrow_1_1_u_t_f8" ],

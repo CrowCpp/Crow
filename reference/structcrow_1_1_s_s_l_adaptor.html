@@ -5,7 +5,7 @@
 		<meta http-equiv="X-UA-Compatible" content="IE=9"/>
 		<meta name="generator" content="Doxygen 1.8.17"/>
 		<meta name="viewport" content="width=device-width, initial-scale=1"/>
-		<title>Crow: crow::SocketAdaptor Struct Reference</title>
+		<title>Crow: crow::SSLAdaptor Struct Reference</title>
 		<link href="tabs.css" rel="stylesheet" type="text/css"/>
 		<script type="text/javascript" src="jquery.js"></script>
 		<script type="text/javascript" src="dynsections.js"></script>
@@ -76,7 +76,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </div>
 <script type="text/javascript">
 /* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
-$(document).ready(function(){initNavTree('structcrow_1_1_socket_adaptor.html',''); initResizable(); });
+$(document).ready(function(){initNavTree('structcrow_1_1_s_s_l_adaptor.html',''); initResizable(); });
 /* @license-end */
 </script>
 <div id="doc-content">
@@ -99,71 +99,65 @@ $(document).ready(function(){initNavTree('structcrow_1_1_socket_adaptor.html',''
 <a href="#pub-types">Public Types</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pub-attribs">Public Attributes</a> &#124;
-<a href="structcrow_1_1_socket_adaptor-members.html">List of all members</a>  </div>
+<a href="structcrow_1_1_s_s_l_adaptor-members.html">List of all members</a>  </div>
   <div class="headertitle">
-<div class="title">crow::SocketAdaptor Struct Reference</div>  </div>
+<div class="title">crow::SSLAdaptor Struct Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
-
-<p>A wrapper for the asio::ip::tcp::socket and asio::ssl::stream.  
- <a href="structcrow_1_1_socket_adaptor.html#details">More...</a></p>
-
-<p><code>#include &lt;<a class="el" href="socket__adaptors_8h_source.html">socket_adaptors.h</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
 Public Types</h2></td></tr>
-<tr class="memitem:aca8c861d9a672785e17e127042d2f721"><td class="memItemLeft" align="right" valign="top"><a id="aca8c861d9a672785e17e127042d2f721"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>context</b> = void</td></tr>
-<tr class="separator:aca8c861d9a672785e17e127042d2f721"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afd83496cddf8a39567a0c7735fbc6f35"><td class="memItemLeft" align="right" valign="top"><a id="afd83496cddf8a39567a0c7735fbc6f35"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>context</b> = boost::asio::ssl::context</td></tr>
+<tr class="separator:afd83496cddf8a39567a0c7735fbc6f35"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aff7f5d48919c3bdc5bd6a6d597313fe8"><td class="memItemLeft" align="right" valign="top"><a id="aff7f5d48919c3bdc5bd6a6d597313fe8"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>ssl_socket_t</b> = boost::asio::ssl::stream&lt; tcp::socket &gt;</td></tr>
+<tr class="separator:aff7f5d48919c3bdc5bd6a6d597313fe8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:ae86b04665391cb1fb36ec15e49787348"><td class="memItemLeft" align="right" valign="top"><a id="ae86b04665391cb1fb36ec15e49787348"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>SocketAdaptor</b> (boost::asio::io_service &amp;io_service, context *)</td></tr>
-<tr class="separator:ae86b04665391cb1fb36ec15e49787348"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0510de3c3c993cfd8a36950b69a6700e"><td class="memItemLeft" align="right" valign="top"><a id="a0510de3c3c993cfd8a36950b69a6700e"></a>
-boost::asio::io_service &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>get_io_service</b> ()</td></tr>
-<tr class="separator:a0510de3c3c993cfd8a36950b69a6700e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6c1efabfc9bf922308027f3d35c1f2c7"><td class="memItemLeft" align="right" valign="top"><a id="a6c1efabfc9bf922308027f3d35c1f2c7"></a>
-tcp::socket &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structcrow_1_1_socket_adaptor.html#a6c1efabfc9bf922308027f3d35c1f2c7">raw_socket</a> ()</td></tr>
-<tr class="memdesc:a6c1efabfc9bf922308027f3d35c1f2c7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the TCP socket handling data trasfers, regardless of what layer is handling transfers on top of the socket. <br /></td></tr>
-<tr class="separator:a6c1efabfc9bf922308027f3d35c1f2c7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a70c413ce6d8f9e2fe1e4852fc07f0928"><td class="memItemLeft" align="right" valign="top"><a id="a70c413ce6d8f9e2fe1e4852fc07f0928"></a>
-tcp::socket &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structcrow_1_1_socket_adaptor.html#a70c413ce6d8f9e2fe1e4852fc07f0928">socket</a> ()</td></tr>
-<tr class="memdesc:a70c413ce6d8f9e2fe1e4852fc07f0928"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the object handling data transfers, this can be either a TCP socket or an SSL stream (if SSL is enabled). <br /></td></tr>
-<tr class="separator:a70c413ce6d8f9e2fe1e4852fc07f0928"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a23fb23ae334da14488199fe04d5ea066"><td class="memItemLeft" align="right" valign="top"><a id="a23fb23ae334da14488199fe04d5ea066"></a>
+<tr class="memitem:ae8a12a67d8585e7a3cc6060945451d49"><td class="memItemLeft" align="right" valign="top"><a id="ae8a12a67d8585e7a3cc6060945451d49"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>SSLAdaptor</b> (boost::asio::io_service &amp;io_service, context *ctx)</td></tr>
+<tr class="separator:ae8a12a67d8585e7a3cc6060945451d49"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab56de6556b1e333039617dde76a930da"><td class="memItemLeft" align="right" valign="top"><a id="ab56de6556b1e333039617dde76a930da"></a>
+boost::asio::ssl::stream&lt; tcp::socket &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>socket</b> ()</td></tr>
+<tr class="separator:ab56de6556b1e333039617dde76a930da"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af9c3d9a72f56ea61359aaa506571a723"><td class="memItemLeft" align="right" valign="top"><a id="af9c3d9a72f56ea61359aaa506571a723"></a>
+tcp::socket::lowest_layer_type &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>raw_socket</b> ()</td></tr>
+<tr class="separator:af9c3d9a72f56ea61359aaa506571a723"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a495b69cfcb4a0c29daf81557d5c46cf7"><td class="memItemLeft" align="right" valign="top"><a id="a495b69cfcb4a0c29daf81557d5c46cf7"></a>
 tcp::endpoint&#160;</td><td class="memItemRight" valign="bottom"><b>remote_endpoint</b> ()</td></tr>
-<tr class="separator:a23fb23ae334da14488199fe04d5ea066"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2630c4db0c3065e7c7b396515571941a"><td class="memItemLeft" align="right" valign="top"><a id="a2630c4db0c3065e7c7b396515571941a"></a>
+<tr class="separator:a495b69cfcb4a0c29daf81557d5c46cf7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab8f3decb4671284242e55d8cc799a7e2"><td class="memItemLeft" align="right" valign="top"><a id="ab8f3decb4671284242e55d8cc799a7e2"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><b>is_open</b> ()</td></tr>
-<tr class="separator:a2630c4db0c3065e7c7b396515571941a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af925b4f600663b2293741947297d730e"><td class="memItemLeft" align="right" valign="top"><a id="af925b4f600663b2293741947297d730e"></a>
+<tr class="separator:ab8f3decb4671284242e55d8cc799a7e2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa6e8619be8b535936c014f79cb662fce"><td class="memItemLeft" align="right" valign="top"><a id="aa6e8619be8b535936c014f79cb662fce"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>close</b> ()</td></tr>
-<tr class="separator:af925b4f600663b2293741947297d730e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7f779ee234e09a19d1e3aa42734656a2"><td class="memItemLeft" align="right" valign="top"><a id="a7f779ee234e09a19d1e3aa42734656a2"></a>
+<tr class="separator:aa6e8619be8b535936c014f79cb662fce"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aff3a31c4bc192cfd39918820af32ed56"><td class="memItemLeft" align="right" valign="top"><a id="aff3a31c4bc192cfd39918820af32ed56"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>shutdown_readwrite</b> ()</td></tr>
-<tr class="separator:a7f779ee234e09a19d1e3aa42734656a2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6d533f036b670f67d98739f0b1a2e074"><td class="memItemLeft" align="right" valign="top"><a id="a6d533f036b670f67d98739f0b1a2e074"></a>
+<tr class="separator:aff3a31c4bc192cfd39918820af32ed56"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afab8ff8a2a83813f60382eb0227afce0"><td class="memItemLeft" align="right" valign="top"><a id="afab8ff8a2a83813f60382eb0227afce0"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>shutdown_write</b> ()</td></tr>
-<tr class="separator:a6d533f036b670f67d98739f0b1a2e074"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4aee4293c6aefd1eb682f2673f7ce1b2"><td class="memItemLeft" align="right" valign="top"><a id="a4aee4293c6aefd1eb682f2673f7ce1b2"></a>
+<tr class="separator:afab8ff8a2a83813f60382eb0227afce0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a91c648d2346541f53f359a218997bb20"><td class="memItemLeft" align="right" valign="top"><a id="a91c648d2346541f53f359a218997bb20"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>shutdown_read</b> ()</td></tr>
-<tr class="separator:a4aee4293c6aefd1eb682f2673f7ce1b2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a074e679e5abd86af6bcd3f505accfb4e"><td class="memTemplParams" colspan="2"><a id="a074e679e5abd86af6bcd3f505accfb4e"></a>
+<tr class="separator:a91c648d2346541f53f359a218997bb20"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4df983764fc569909ead9751618df75a"><td class="memItemLeft" align="right" valign="top"><a id="a4df983764fc569909ead9751618df75a"></a>
+boost::asio::io_service &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>get_io_service</b> ()</td></tr>
+<tr class="separator:a4df983764fc569909ead9751618df75a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3baa6abe7b37a3fab1ff944dea72c648"><td class="memTemplParams" colspan="2"><a id="a3baa6abe7b37a3fab1ff944dea72c648"></a>
 template&lt;typename F &gt; </td></tr>
-<tr class="memitem:a074e679e5abd86af6bcd3f505accfb4e"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><b>start</b> (F f)</td></tr>
-<tr class="separator:a074e679e5abd86af6bcd3f505accfb4e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3baa6abe7b37a3fab1ff944dea72c648"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><b>start</b> (F f)</td></tr>
+<tr class="separator:a3baa6abe7b37a3fab1ff944dea72c648"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
-<tr class="memitem:adfae304955845303cee26c31910b1f2c"><td class="memItemLeft" align="right" valign="top"><a id="adfae304955845303cee26c31910b1f2c"></a>
-tcp::socket&#160;</td><td class="memItemRight" valign="bottom"><b>socket_</b></td></tr>
-<tr class="separator:adfae304955845303cee26c31910b1f2c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa7110433849b1dbe4dc57086171c03b2"><td class="memItemLeft" align="right" valign="top"><a id="aa7110433849b1dbe4dc57086171c03b2"></a>
+std::unique_ptr&lt; boost::asio::ssl::stream&lt; tcp::socket &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>ssl_socket_</b></td></tr>
+<tr class="separator:aa7110433849b1dbe4dc57086171c03b2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>A wrapper for the asio::ip::tcp::socket and asio::ssl::stream. </p>
-</div><hr/>The documentation for this struct was generated from the following file:<ul>
+<hr/>The documentation for this struct was generated from the following file:<ul>
 <li>/drone/src/include/crow/<a class="el" href="socket__adaptors_8h_source.html">socket_adaptors.h</a></li>
 </ul>
 </div><!-- contents -->
@@ -171,7 +165,7 @@ tcp::socket&#160;</td><td class="memItemRight" valign="bottom"><b>socket_</b></t
 <!-- start footer part -->
 		<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
 			<ul>
-				<li class="navelem"><b>crow</b></li><li class="navelem"><a class="el" href="structcrow_1_1_socket_adaptor.html">SocketAdaptor</a></li>
+				<li class="navelem"><b>crow</b></li><li class="navelem"><a class="el" href="structcrow_1_1_s_s_l_adaptor.html">SSLAdaptor</a></li>
 				<li class="footer">
 					Generated on Thu Apr 28 2022 for Crow by <a href="http://www.doxygen.org/index.html">
 					<img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.17.

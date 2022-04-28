@@ -6,6 +6,7 @@ var classcrow_1_1_base_rule =
     [ "get_methods", "classcrow_1_1_base_rule.html#aba0284ef74a04b9c2401b3a5022f57a6", null ],
     [ "handle", "classcrow_1_1_base_rule.html#a0bdeac0dadf0aba8ae19b579e1e615ab", null ],
     [ "handle_upgrade", "classcrow_1_1_base_rule.html#acf37339742cfca68b60b9d872382a43d", null ],
+    [ "handle_upgrade", "classcrow_1_1_base_rule.html#aa26880971650d1333a67ddb6499a4083", null ],
     [ "rule", "classcrow_1_1_base_rule.html#ad0e992fd5d9ac9aaf33f7f5ac63c236c", null ],
     [ "upgrade", "classcrow_1_1_base_rule.html#a9f71a6cab50c4ff480785c4be86d596e", null ],
     [ "validate", "classcrow_1_1_base_rule.html#a895d85332340788206cee0b1555ac8c2", null ],
