@@ -279,7 +279,7 @@ namespace crow
 
 // clang-format off
 #ifndef CROW_MSVC_WORKAROUND
-constexpr crow::HTTPMethod operator"" _method(const char* str, size_t /*len*/)
+constexpr crow::HTTPMethod method_from_string(const char* str)
 {
     return crow::black_magic::is_equ_p(str, "GET", 3)    ? crow::HTTPMethod::Get :
            crow::black_magic::is_equ_p(str, "DELETE", 6) ? crow::HTTPMethod::Delete :
