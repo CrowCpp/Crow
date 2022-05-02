@@ -51,24 +51,26 @@ namespace crow
             }
 
             // format cookie to HTTP header format
-            std::string format() const
+            std::string dump() const
             {
-                const static std::string DIVIDER = "; ";
                 const static char* HTTP_DATE_FORMAT = "%a, %d %b %Y %H:%M:%S GMT";
 
                 std::stringstream ss;
                 ss << key_ << '=';
                 ss << (value_.empty() ? "\"\"" : value_);
+                dumpString(ss, !domain_.empty(), "Domain=", {domain_});
+                dumpString(ss, !path_.empty(), "Path=", {path_});
+                dumpString(ss, secure_, "Secure");
+                dumpString(ss, httponly_, "HttpOnly");
                 if (expires_at_)
                 {
-                    ss << DIVIDER << "Expires=";
-                    ss << std::put_time(expires_at_.get_ptr(), HTTP_DATE_FORMAT);
+                    ss << DIVIDER << "Expires="
+                       << std::put_time(expires_at_.get_ptr(), HTTP_DATE_FORMAT);
                 }
-                if (max_age_) ss << DIVIDER << "Max-Age=" << *max_age_;
-                if (!domain_.empty()) ss << DIVIDER << "Domain=" << domain_;
-                if (!path_.empty()) ss << DIVIDER << "Path=" << path_;
-                if (secure_) ss << DIVIDER << "Secure";
-                if (httponly_) ss << DIVIDER << "HttpOnly";
+                if (max_age_)
+                {
+                    ss << DIVIDER << "Max-Age=" << *max_age_;
+                }
                 if (same_site_)
                 {
                     ss << DIVIDER << "SameSite=";
@@ -140,6 +142,16 @@ namespace crow
         private:
             Cookie() = default;
 
+            static void dumpString(std::stringstream& ss, bool cond, const char* prefix,
+                                   boost::optional<const std::string&> value = boost::none)
+            {
+                if (cond)
+                {
+                    ss << DIVIDER << prefix;
+                    if (value) ss << *value;
+                };
+            }
+
         private:
             std::string key_;
             std::string value_;
@@ -150,6 +162,8 @@ namespace crow
             bool httponly_ = false;
             boost::optional<std::tm> expires_at_{};
             boost::optional<SameSitePolicy> same_site_{};
+
+            static constexpr const char* DIVIDER = "; ";
         };
 
 
@@ -176,7 +190,7 @@ namespace crow
 
         void before_handle(request& req, response& res, context& ctx)
         {
-            // TODO: remove copies, use string_view with c++17
+            // TODO(dranikpg): remove copies, use string_view with c++17
             int count = req.headers.count("Cookie");
             if (!count)
                 return;
@@ -225,7 +239,7 @@ namespace crow
         {
             for (const auto& cookie : ctx.cookies_to_add)
             {
-                res.add_header("Set-Cookie", cookie.format());
+                res.add_header("Set-Cookie", cookie.dump());
             }
         }
     };

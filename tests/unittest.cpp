@@ -1513,7 +1513,7 @@ TEST_CASE("middleware_cookieparser_format")
     // basic
     {
         auto c = Cookie("key", "value");
-        auto s = c.format();
+        auto s = c.dump();
         CHECK(valid(s, 1));
         CHECK(s == "key=value");
     }
@@ -1522,7 +1522,7 @@ TEST_CASE("middleware_cookieparser_format")
         auto c = Cookie("key", "value")
                    .max_age(123)
                    .domain("example.com");
-        auto s = c.format();
+        auto s = c.dump();
         CHECK(valid(s, 3));
         CHECK(s.find("key=value") != std::string::npos);
         CHECK(s.find("Max-Age=123") != std::string::npos);
@@ -1533,7 +1533,7 @@ TEST_CASE("middleware_cookieparser_format")
         auto c = Cookie("key", "value")
                    .secure()
                    .same_site(Cookie::SameSitePolicy::None);
-        auto s = c.format();
+        auto s = c.dump();
         CHECK(valid(s, 3));
         CHECK(s.find("Secure") != std::string::npos);
         CHECK(s.find("SameSite=None") != std::string::npos);
@@ -1543,7 +1543,7 @@ TEST_CASE("middleware_cookieparser_format")
         auto tp = boost::posix_time::time_from_string("2000-11-01 23:59:59.000");
         auto c = Cookie("key", "value")
                    .expires(boost::posix_time::to_tm(tp));
-        auto s = c.format();
+        auto s = c.dump();
         CHECK(valid(s, 2));
         CHECK(s.find("Expires=Wed, 01 Nov 2000 23:59:59 GMT") != std::string::npos);
     }
