@@ -2058,8 +2058,6 @@ TEST_CASE("stream_response")
     for (size_t i = 0; i < repetitions; i++)
         key_response += keyword_;
 
-    CROW_LOG_CRITICAL << "RES LENGTH: " << key_response.length();
-
     CROW_ROUTE(app, "/test")
     ([&key_response](const crow::request&, crow::response& res) {
         res.body = key_response;
