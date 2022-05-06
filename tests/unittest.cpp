@@ -2058,6 +2058,8 @@ TEST_CASE("stream_response")
     for (size_t i = 0; i < repetitions; i++)
         key_response += keyword_;
 
+    CROW_LOG_CRITICAL << "RES LENGTH: " << key_response.length();
+
     CROW_ROUTE(app, "/test")
     ([&key_response](const crow::request&, crow::response& res) {
         res.body = key_response;
@@ -2091,15 +2093,15 @@ TEST_CASE("stream_response")
             // magic number is 102 (it's the size of the headers, which is how much this line below needs to read)
             const size_t headers_bytes = 102;
             while (received_headers_bytes < headers_bytes)
-                received_headers_bytes += c.receive(asio::buffer(buf, 2048));
+                received_headers_bytes += c.receive(asio::buffer(buf, 102));
             received += received_headers_bytes - headers_bytes; //add any extra that might have been received to the proper received count
-
 
             while (received < key_response_size)
             {
                 asio::streambuf::mutable_buffers_type bufs = b.prepare(16384);
 
-                size_t n = c.receive(bufs);
+                size_t n(0);
+                n = c.receive(bufs);
                 b.commit(n);
                 received += n;
 
@@ -2108,8 +2110,6 @@ TEST_CASE("stream_response")
                 is >> s;
 
                 CHECK(key_response.substr(received - n, n) == s);
-
-                //std::this_thread::sleep_for(std::chrono::milliseconds(20));
             }
         }
         app.stop();
@@ -2125,10 +2125,10 @@ TEST_CASE("websocket")
 
     SimpleApp app;
 
-    CROW_ROUTE(app, "/ws").websocket().onopen([&](websocket::connection&) {
-                                          connected = true;
-                                          CROW_LOG_INFO << "Connected websocket and value is " << connected;
-                                      })
+    CROW_WEBSOCKET_ROUTE(app, "/ws").onopen([&](websocket::connection&) {
+                                        connected = true;
+                                        CROW_LOG_INFO << "Connected websocket and value is " << connected;
+                                    })
       .onmessage([&](websocket::connection& conn, const std::string& message, bool isbin) {
           CROW_LOG_INFO << "Message is \"" << message << '\"';
           if (!isbin && message == "PINGME")
