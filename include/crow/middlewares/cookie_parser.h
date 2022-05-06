@@ -58,8 +58,8 @@ namespace crow
                 std::stringstream ss;
                 ss << key_ << '=';
                 ss << (value_.empty() ? "\"\"" : value_);
-                dumpString(ss, !domain_.empty(), "Domain=", {domain_});
-                dumpString(ss, !path_.empty(), "Path=", {path_});
+                dumpString(ss, !domain_.empty(), "Domain=", domain_);
+                dumpString(ss, !path_.empty(), "Path=", path_);
                 dumpString(ss, secure_, "Secure");
                 dumpString(ss, httponly_, "HttpOnly");
                 if (expires_at_)
@@ -143,13 +143,12 @@ namespace crow
             Cookie() = default;
 
             static void dumpString(std::stringstream& ss, bool cond, const char* prefix,
-                                   boost::optional<const std::string&> value = boost::none)
+                                   const std::string& value = "")
             {
                 if (cond)
                 {
-                    ss << DIVIDER << prefix;
-                    if (value) ss << *value;
-                };
+                    ss << DIVIDER << prefix << value;
+                }
             }
 
         private:
