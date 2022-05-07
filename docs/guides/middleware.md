@@ -14,7 +14,9 @@ Any middleware requires the following 3 members:
 * A `before_handle` method, which is called before the handler.
 * A `after_handle` method, which is called after the handler.
 
-As soon as `response.end()` is called, no other handlers and middleware is run, except for after_handlers of already visited middleware.
+!!! warning 
+
+    As soon as `response.end()` is called, no other handlers and middleware is run, except for after_handlers of already visited middleware.
 
 
 ## Example
@@ -87,4 +89,7 @@ Blueprint bp("with_middleware");
 bp.CROW_MIDDLEWARES(app, FistLocalMiddleware, SecondLocalMiddleware);
 ```
 
-**Note**: local and global middleware are called separately. First all global middleware is run in the listed order, then all enabled local middleware is run in the order, listed in the Crow application.
+!!! warning
+    
+    Local and global middleware are called separately. First all global middleware is run, then all enabled local middleware for the current handler is run. In both cases middleware is called strongly
+    in the order listed in the Crow application.
