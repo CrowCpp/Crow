@@ -233,6 +233,8 @@ namespace crow
             template<template<typename... Args> class U>
             using rebind = U<T...>;
         };
+
+        // Check whether the template function can be called with specific arguments
         template<typename F, typename Set>
         struct CallHelper;
         template<typename F, typename... Args>
@@ -277,19 +279,6 @@ namespace crow
         struct tuple_index<T, std::tuple<U, Types...>>
         {
             static const int value = 1 + tuple_index<T, std::tuple<Types...>>::value;
-        };
-
-        // Check F is callable with Args
-        template<typename F, typename... Args>
-        struct is_callable
-        {
-            template<typename F2, typename... Args2>
-            static std::true_type __test(decltype(std::declval<F2>()(std::declval<Args2>()...))*);
-
-            template<typename F2, typename... Args2>
-            static std::false_type __test(...);
-
-            static constexpr bool value = decltype(__test<F, Args...>(nullptr))::value;
         };
 
         // Kind of fold expressions in C++11

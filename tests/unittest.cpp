@@ -1543,7 +1543,8 @@ TEST_CASE("middleware_blueprint")
     app.stop();
 } // middleware_blueprint
 
-TEST_CASE("middleware_cookieparser")
+
+TEST_CASE("middleware_cookieparser_parse")
 {
     static char buf[2048];
 
@@ -1590,8 +1591,55 @@ TEST_CASE("middleware_cookieparser")
         CHECK("val\"ue4" == value4);
     }
     app.stop();
-} // middleware_cookieparser
+} // middleware_cookieparser_parse
 
+
+TEST_CASE("middleware_cookieparser_format")
+{
+    using Cookie = CookieParser::Cookie;
+
+    auto valid = [](const std::string& s, int parts) {
+        return std::count(s.begin(), s.end(), ';') == parts - 1;
+    };
+
+    // basic
+    {
+        auto c = Cookie("key", "value");
+        auto s = c.dump();
+        CHECK(valid(s, 1));
+        CHECK(s == "key=value");
+    }
+    // max-age + domain
+    {
+        auto c = Cookie("key", "value")
+                   .max_age(123)
+                   .domain("example.com");
+        auto s = c.dump();
+        CHECK(valid(s, 3));
+        CHECK(s.find("key=value") != std::string::npos);
+        CHECK(s.find("Max-Age=123") != std::string::npos);
+        CHECK(s.find("Domain=example.com") != std::string::npos);
+    }
+    // samesite + secure
+    {
+        auto c = Cookie("key", "value")
+                   .secure()
+                   .same_site(Cookie::SameSitePolicy::None);
+        auto s = c.dump();
+        CHECK(valid(s, 3));
+        CHECK(s.find("Secure") != std::string::npos);
+        CHECK(s.find("SameSite=None") != std::string::npos);
+    }
+    // expires
+    {
+        auto tp = boost::posix_time::time_from_string("2000-11-01 23:59:59.000");
+        auto c = Cookie("key", "value")
+                   .expires(boost::posix_time::to_tm(tp));
+        auto s = c.dump();
+        CHECK(valid(s, 2));
+        CHECK(s.find("Expires=Wed, 01 Nov 2000 23:59:59 GMT") != std::string::npos);
+    }
+} // middleware_cookieparser_format
 
 TEST_CASE("middleware_cors")
 {
@@ -2017,8 +2065,10 @@ TEST_CASE("multipart")
 TEST_CASE("send_file")
 {
 
-    struct stat statbuf;
-    stat("tests/img/cat.jpg", &statbuf);
+    struct stat statbuf_cat;
+    stat("tests/img/cat.jpg", &statbuf_cat);
+    struct stat statbuf_badext;
+    stat("tests/img/filewith.badext", &statbuf_badext);
 
     SimpleApp app;
 
@@ -2032,6 +2082,12 @@ TEST_CASE("send_file")
     ([](const crow::request&, crow::response& res) {
         res.set_static_file_info(
           "tests/img/cat2.jpg"); // This file is nonexistent on purpose
+        res.end();
+    });
+
+    CROW_ROUTE(app, "/filewith.badext")
+    ([](const crow::request&, crow::response& res) {
+        res.set_static_file_info("tests/img/filewith.badext");
         res.end();
     });
 
@@ -2062,7 +2118,21 @@ TEST_CASE("send_file")
 
         CHECK(200 == res.code);
         CHECK("image/jpeg" == res.headers.find("Content-Type")->second);
-        CHECK(to_string(statbuf.st_size) == res.headers.find("Content-Length")->second);
+        CHECK(to_string(statbuf_cat.st_size) == res.headers.find("Content-Length")->second);
+    }
+
+    //Unknown extension check
+    {
+        request req;
+        response res;
+
+        req.url = "/filewith.badext";
+        req.http_ver_major = 1;
+
+        CHECK_NOTHROW(app.handle(req, res));
+        CHECK(200 == res.code);
+        CHECK("text/plain" == res.headers.find("Content-Type")->second);
+        CHECK(to_string(statbuf_badext.st_size) == res.headers.find("Content-Length")->second);
     }
 } // send_file
 

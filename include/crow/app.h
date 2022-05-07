@@ -61,7 +61,7 @@ namespace crow
         /// Process an Upgrade request
 
         ///
-        /// Currently used to upgrrade an HTTP connection to a WebSocket connection
+        /// Currently used to upgrade an HTTP connection to a WebSocket connection
         template<typename Adaptor>
         void handle_upgrade(const request& req, response& res, Adaptor&& adaptor)
         {
@@ -239,7 +239,8 @@ namespace crow
 
 #ifndef CROW_DISABLE_STATIC_DIR
                 route<crow::black_magic::get_parameter_tag(CROW_STATIC_ENDPOINT)>(CROW_STATIC_ENDPOINT)([](crow::response& res, std::string file_path_partial) {
-                    res.set_static_file_info(CROW_STATIC_DIRECTORY + file_path_partial);
+                    utility::sanitize_filename(file_path_partial);
+                    res.set_static_file_info_unsafe(CROW_STATIC_DIRECTORY + file_path_partial);
                     res.end();
                 });
 
@@ -252,7 +253,8 @@ namespace crow
                         if (!bp->static_dir().empty())
                         {
                             bp->new_rule_tagged<crow::black_magic::get_parameter_tag(CROW_STATIC_ENDPOINT)>(CROW_STATIC_ENDPOINT)([bp](crow::response& res, std::string file_path_partial) {
-                                res.set_static_file_info(bp->static_dir() + '/' + file_path_partial);
+                                utility::sanitize_filename(file_path_partial);
+                                res.set_static_file_info_unsafe(bp->static_dir() + '/' + file_path_partial);
                                 res.end();
                             });
                         }
@@ -340,7 +342,7 @@ namespace crow
 
 #ifdef CROW_ENABLE_SSL
 
-        /// use certificate and key files for SSL
+        /// Use certificate and key files for SSL
         self_t& ssl_file(const std::string& crt_filename, const std::string& key_filename)
         {
             ssl_used_ = true;
@@ -353,13 +355,26 @@ namespace crow
             return *this;
         }
 
-        /// use .pem file for SSL
+        /// Use .pem file for SSL
         self_t& ssl_file(const std::string& pem_filename)
         {
             ssl_used_ = true;
             ssl_context_.set_verify_mode(boost::asio::ssl::verify_peer);
             ssl_context_.set_verify_mode(boost::asio::ssl::verify_client_once);
             ssl_context_.load_verify_file(pem_filename);
+            ssl_context_.set_options(
+              boost::asio::ssl::context::default_workarounds | boost::asio::ssl::context::no_sslv2 | boost::asio::ssl::context::no_sslv3);
+            return *this;
+        }
+
+        /// Use certificate chain and key files for SSL
+        self_t& ssl_chainfile(const std::string& crt_filename, const std::string& key_filename)
+        {
+            ssl_used_ = true;
+            ssl_context_.set_verify_mode(boost::asio::ssl::verify_peer);
+            ssl_context_.set_verify_mode(boost::asio::ssl::verify_client_once);
+            ssl_context_.use_certificate_chain_file(crt_filename);
+            ssl_context_.use_private_key_file(key_filename, ssl_context_t::pem);
             ssl_context_.set_options(
               boost::asio::ssl::context::default_workarounds | boost::asio::ssl::context::no_sslv2 | boost::asio::ssl::context::no_sslv3);
             return *this;
@@ -379,6 +394,17 @@ namespace crow
 #else
         template<typename T, typename... Remain>
         self_t& ssl_file(T&&, Remain&&...)
+        {
+            // We can't call .ssl() member function unless CROW_ENABLE_SSL is defined.
+            static_assert(
+              // make static_assert dependent to T; always false
+              std::is_base_of<T, void>::value,
+              "Define CROW_ENABLE_SSL to enable ssl support.");
+            return *this;
+        }
+
+        template<typename T, typename... Remain>
+        self_t& ssl_chainfile(T&&, Remain&&...)
         {
             // We can't call .ssl() member function unless CROW_ENABLE_SSL is defined.
             static_assert(
