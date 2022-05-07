@@ -37,6 +37,7 @@ var hierarchy =
     [ "crow::CookieParser::context", "structcrow_1_1_cookie_parser_1_1context.html", null ],
     [ "crow::CORSHandler::context", "structcrow_1_1_c_o_r_s_handler_1_1context.html", null ],
     [ "crow::UTF8::context", "structcrow_1_1_u_t_f8_1_1context.html", null ],
+    [ "crow::CookieParser::Cookie", "structcrow_1_1_cookie_parser_1_1_cookie.html", null ],
     [ "crow::CookieParser", "structcrow_1_1_cookie_parser.html", null ],
     [ "crow::CORSHandler", "structcrow_1_1_c_o_r_s_handler.html", null ],
     [ "crow::CORSRules", "structcrow_1_1_c_o_r_s_rules.html", null ],

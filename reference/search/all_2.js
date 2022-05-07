@@ -29,9 +29,10 @@ var searchData=
   ['connection_36',['connection',['../structcrow_1_1websocket_1_1connection.html',1,'crow::websocket::connection'],['../classcrow_1_1websocket_1_1_connection.html',1,'crow::websocket::Connection&lt; Adaptor &gt;'],['../classcrow_1_1_connection.html',1,'crow::Connection&lt; Adaptor, Handler, Middlewares &gt;'],['../classcrow_1_1websocket_1_1_connection.html#a8c86760ae4680c1b48fb402beee51584',1,'crow::websocket::Connection::Connection()']]],
   ['context_37',['context',['../structcrow_1_1detail_1_1context.html',1,'crow::detail::context&lt; Middlewares &gt;'],['../structcrow_1_1_cookie_parser_1_1context.html',1,'crow::CookieParser::context'],['../structcrow_1_1_c_o_r_s_handler_1_1context.html',1,'crow::CORSHandler::context'],['../structcrow_1_1_u_t_f8_1_1context.html',1,'crow::UTF8::context']]],
   ['context_3c_20middlewares_2e_2e_2e_20_3e_38',['context&lt; Middlewares... &gt;',['../structcrow_1_1detail_1_1context.html',1,'crow::detail']]],
-  ['cookieparser_39',['CookieParser',['../structcrow_1_1_cookie_parser.html',1,'crow']]],
-  ['corshandler_40',['CORSHandler',['../structcrow_1_1_c_o_r_s_handler.html',1,'crow']]],
-  ['corsrules_41',['CORSRules',['../structcrow_1_1_c_o_r_s_rules.html',1,'crow']]],
-  ['crow_42',['Crow',['../classcrow_1_1_crow.html',1,'crow']]],
-  ['multipart_43',['multipart',['../namespacecrow_1_1multipart.html',1,'crow']]]
+  ['cookie_39',['Cookie',['../structcrow_1_1_cookie_parser_1_1_cookie.html',1,'crow::CookieParser']]],
+  ['cookieparser_40',['CookieParser',['../structcrow_1_1_cookie_parser.html',1,'crow']]],
+  ['corshandler_41',['CORSHandler',['../structcrow_1_1_c_o_r_s_handler.html',1,'crow']]],
+  ['corsrules_42',['CORSRules',['../structcrow_1_1_c_o_r_s_rules.html',1,'crow']]],
+  ['crow_43',['Crow',['../classcrow_1_1_crow.html',1,'crow']]],
+  ['multipart_44',['multipart',['../namespacecrow_1_1multipart.html',1,'crow']]]
 ];

@@ -48,7 +48,7 @@ var NAVTREEINDEX =
 [
 ".html",
 "classcrow_1_1json_1_1wvalue.html#a831735838c1dd18fbcb208d8e31841f3",
-"structcrow_1_1detail_1_1routing__handler__call__helper_1_1_wrapped_1_1handler__type__helper.html"
+"structcrow_1_1detail_1_1is__before__handle__arity__3__impl.html"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';
