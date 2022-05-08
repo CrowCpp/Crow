@@ -11,7 +11,7 @@ Using `/hello` means the client will need to access `http://example.com/hello` i
 A path can have parameters, for example `/hello/<int>` will allow a client to input an int into the url which will be in the handler (something like `http://example.com/hello/42`).<br>
 Parameters can be `<int>`, `<uint>`, `<double>`, `<string>`, or `<path>`.<br>
 It's worth noting that the parameters also need to be defined in the handler, an example of using parameters would be to add 2 numbers based on input:
-```cpp 
+```cpp
 CROW_ROUTE(app, "/add/<int>/<int>")
 ([](int a, int b)
 {
@@ -45,7 +45,10 @@ Please note that in order to return a response defined as a parameter you'll nee
 Alternatively, you can define the response in the body and return it (`#!cpp ([](){return crow::response()})`).<br>
 
 For more information on `crow::response` go [here](../../reference/structcrow_1_1response.html).<br><br>
+!!! note
 
+    When your status code is not well-known e.g. crow::response(123) it will get converted into 500.
+    
 ### Return statement
 A `crow::response` is very strictly tied to a route. If you can have something in a response constructor, you can return it in a handler.<br><br>
 The main return type is `std::string`, although you could also return a `crow::json::wvalue` or `crow::multipart::message` directly.<br><br>
@@ -60,14 +63,14 @@ to use the returnable class, you only need your class to publicly extend `crow::
 
 Your class should look like the following:
 ```cpp
-class a : public crow::returnable 
+class a : public crow::returnable
 {
     a() : returnable("text/plain"){};
-    
+
     ...
     ...
     ...
-    
+
     std::string dump() override
     {
         return this.as_string();

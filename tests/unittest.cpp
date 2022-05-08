@@ -571,6 +571,61 @@ TEST_CASE("multi_server")
     app2.stop();
 } // multi_server
 
+
+TEST_CASE("undefined_status_code")
+{
+    SimpleApp app;
+    CROW_ROUTE(app, "/get123")
+    ([] {
+        //this status does not exists statusCodes map defined in include/crow/http_connection.h
+        const int undefinedStatusCode = 123;
+        return response(undefinedStatusCode, "this should return 500");
+    });
+
+    CROW_ROUTE(app, "/get200")
+    ([] {
+        return response(200, "ok");
+    });
+
+    auto _ = app.bindaddr(LOCALHOST_ADDRESS).port(0).run_async();
+    app.wait_for_server_start();
+
+    asio::io_service is;
+    auto sendRequestAndGetStatusCode = [&](const std::string& route) -> unsigned {
+        asio::ip::tcp::socket socket(is);
+        socket.connect(asio::ip::tcp::endpoint(asio::ip::address::from_string(LOCALHOST_ADDRESS), app.port()));
+
+        boost::asio::streambuf request;
+        std::ostream request_stream(&request);
+        request_stream << "GET " << route << " HTTP/1.0\r\n";
+        request_stream << "Host: " << LOCALHOST_ADDRESS << "\r\n";
+        request_stream << "Accept: */*\r\n";
+        request_stream << "Connection: close\r\n\r\n";
+
+        // Send the request.
+        boost::asio::write(socket, request);
+
+        boost::asio::streambuf response;
+        boost::asio::read_until(socket, response, "\r\n");
+
+        std::istream response_stream(&response);
+        std::string http_version;
+        response_stream >> http_version;
+        unsigned status_code = 0;
+        response_stream >> status_code;
+
+        return status_code;
+    };
+
+    unsigned statusCode = sendRequestAndGetStatusCode("/get200");
+    CHECK(statusCode == 200);
+
+    statusCode = sendRequestAndGetStatusCode("/get123");
+    CHECK(statusCode == 500);
+
+    app.stop();
+} // undefined_status_code
+
 TEST_CASE("json_read")
 {
     {
@@ -2025,7 +2080,11 @@ TEST_CASE("send_file")
         app.handle(req, res);
 
         CHECK(200 == res.code);
+
+        REQUIRE(res.headers.count("Content-Type"));
         CHECK("image/jpeg" == res.headers.find("Content-Type")->second);
+
+        REQUIRE(res.headers.count("Content-Length"));
         CHECK(to_string(statbuf_cat.st_size) == res.headers.find("Content-Length")->second);
     }
 
@@ -2039,7 +2098,10 @@ TEST_CASE("send_file")
 
         CHECK_NOTHROW(app.handle(req, res));
         CHECK(200 == res.code);
+        REQUIRE(res.headers.count("Content-Type"));
         CHECK("text/plain" == res.headers.find("Content-Type")->second);
+
+        REQUIRE(res.headers.count("Content-Length"));
         CHECK(to_string(statbuf_badext.st_size) == res.headers.find("Content-Length")->second);
     }
 } // send_file
