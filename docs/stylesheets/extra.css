@@ -6,3 +6,20 @@
 .code {
     border-radius: 5px;
 }
+
+[data-md-color-scheme="crow-dark"] img[src$="#only-dark"]
+{
+	display: block;
+}
+[data-md-color-scheme="crow-light"] img[src$="#only-light"]
+{
+	display: block;
+}
+[data-md-color-scheme="crow-light"] img[src$="#only-dark"]
+{
+	display: none;
+}
+[data-md-color-scheme="crow-dark"] img[src$="#only-light"]
+{
+	display: none;
+}

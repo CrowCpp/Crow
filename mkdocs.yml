@@ -18,9 +18,22 @@ theme:
         repo: fontawesome/brands/github-square
     static_templates:
         - privacy_policy.html
+    palette:
+      - media: "(prefers-color-scheme: light)"
+        scheme: crow-light
+        toggle:
+          icon: fontawesome/solid/sun
+          name: Using Light Theme
+      - media: "(prefers-color-scheme: dark)"
+        scheme: crow-dark
+        toggle:
+          icon: fontawesome/solid/moon
+          name: Using Dark Theme
     custom_dir: docs/overrides
 
 markdown_extensions:
+    - toc:
+        permalink: true
     - admonition
     - pymdownx.highlight
     - pymdownx.tabbed
@@ -78,6 +91,7 @@ plugins:
         redirect_maps:
             'getting_started/setup/': 'getting_started/setup/linux.md'
     - meta-descriptions
+    - search
 
 extra_css:
     - 'stylesheets/colors.css'
