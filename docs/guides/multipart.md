@@ -1,4 +1,5 @@
-**Introduced in: `v0.2`**<br><br>
+<span class="tag">[:octicons-feed-tag-16: v0.2](https://github.com/CrowCpp/Crow/releases/0.2)</span>
+
 
 Multipart is a way of forming HTTP requests or responses to contain multiple distinct parts.<br>
 
@@ -21,7 +22,8 @@ A message can be created either by defining the headers, boundary, and individua
 
 Once a multipart message has been made, the individual parts can be accessed throughout `msg.parts`, `parts` is an `std::vector`.<br><br>
 
-**Introduced in: `v1.0`**<br><br>
+<span class="tag">[:octicons-feed-tag-16: v1.0](https://github.com/CrowCpp/Crow/releases/v1.0)</span>
+
 
 Part headers are organized in a similar way to request and response headers, and can be retrieved via `crow::multipart::get_header_object("header-key")`. This function returns a `crow::multipart::header` object.<br><br>
 
