@@ -2,14 +2,14 @@
 ################################################################################
 # Title         : generateDocumentationAndDeploy.sh
 # Date created  : 2016/02/22
-# Notes         : This script was modified to suit Crow and work with mkdocs and Drone.io CI.
+# Notes         : This script was modified to suit Crow and work with mkdocs (multiple versions) and Drone.io CI.
 __AUTHOR__="Jeroen de Bruijn"
 # Preconditions:
 # - Packages doxygen doxygen-doc doxygen-latex doxygen-gui graphviz
 #   must be installed.
 # - Doxygen configuration file must have the destination directory empty and
 #   source code directory with a $(TRAVIS_BUILD_DIR) prefix.
-# - An gh-pages branch should already exist. See below for mor info on hoe to
+# - A gh-pages branch should already exist. See below for more info on how to
 #   create a gh-pages branch.
 #
 # Required global variables:
@@ -19,6 +19,7 @@ __AUTHOR__="Jeroen de Bruijn"
 # - GH_REPO_NAME                             : The name of the repository.
 # - GH_REPO_REF                              : The GitHub reference to the repository.
 # - GH_REPO_TOKEN                            : Secure token to the github repository.
+# - DOCS_VERSION                             : Used for custom version documentation (defaults to master).
 #
 # For information on how to encrypt variables for Travis CI please go to
 # https://docs.travis-ci.com/user/environment-variables/#Encrypted-Variables
@@ -30,14 +31,24 @@ __AUTHOR__="Jeroen de Bruijn"
 # the gh-pages branch of a repository specified by GH_REPO_REF.
 # Before this script is used there should already be a gh-pages branch in the
 # repository.
+#
+# The branch should be empty except for an empty '.nojekyll' file and an
+# 'index.html' file that redirects to master/index.html. Optionally you would
+# also need a 'CNAME' file containing your custom domain (without http or www).
 # 
 ################################################################################
+################################################################################
+
 
 ################################################################################
-##### Setup this script and get the current gh-pages branch.               #####
+#####        Setup this script and get the current gh-pages branch.        #####
+
 echo 'Setting up the script...'
 # Exit with nonzero exit code if anything fails
 set -e
+
+DOCS_VERSION=${DOCS_VERSION:-"master"}
+echo "Using $DOCS_VERSION as version."
 
 # Create a clean working directory for this script.
 mkdir code_docs
@@ -55,29 +66,38 @@ git config --global push.default simple
 git config user.name "Drone CI"
 git config user.email "drone@drone.io"
 
-# Remove everything currently in the gh-pages branch.
+# Create a new directory for this version of the docs if one doesn't exist.
+# Then navigate to that directory.
+mkdir -p $DOCS_VERSION
+cd $DOCS_VERSION
+
+################################################################################
+#####      Generate the MkDocs documentation to replace the old docs.      #####
+
+echo 'Removing old documentation...'
+# Remove everything currently in the version directory.
 # GitHub is smart enough to know which files have changed and which files have
 # stayed the same and will only update the changed files. So the gh-pages branch
 # can be safely cleaned, and it is sure that everything pushed later is the new
 # documentation.
-cp CNAME ..
 rm -rf *
-mv ../CNAME .
 
-# Copy the mkdocs documentation to the work directory and generate the mkdocs 
+echo 'Generating MkDocs documentation...'
+# Copy the mkdocs documentation to the work directory and generate the mkdocs' 
 # 'site' directory
-cp ../../mkdocs.yml .
-cp -r ../../docs .
+cp ../../../mkdocs.yml .
+cp -r ../../../docs .
 mkdocs build -v
 
 # Need to create a .nojekyll file to allow filenames starting with an underscore
 # to be seen on the gh-pages site. Therefore creating an empty .nojekyll file.
 # Presumably this is only needed when the SHORT_NAMES option in Doxygen is set
 # to NO, which it is by default. So creating the file just in case.
-echo "" > .nojekyll
+#echo "" > .nojekyll
 
 ################################################################################
-##### Generate the Doxygen code documentation and log the output.          #####
+#####     Generate the Doxygen code documentation and log the output.      #####
+
 echo 'Generating Doxygen code documentation...'
 # Redirect both stderr and stdout to the log file AND the console.
 doxygen $DOXYFILE 2>&1 | tee doxygen.log
@@ -89,9 +109,10 @@ mv  site/* .
 rm -r site
 rm mkdocs.yml
 rm -r docs
+mv versions.json ../
 
 ################################################################################
-##### Upload the documentation to the gh-pages branch of the repository.   #####
+#####  Upload the documentation to the gh-pages branch of the repository.  #####
 # Only upload if Doxygen successfully created the documentation.
 # Check this by verifying that the reference directory (for doxygen) and 
 # the file index.html (for mkdocs) both exist. 
