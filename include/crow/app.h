@@ -69,7 +69,7 @@ namespace crow
         template<typename Adaptor>
         void handle_upgrade(const request& req, response& res, Adaptor&& adaptor)
         {
-            router_.handle_upgrade(req, res, adaptor, websocket_count);
+            router_.handle_upgrade(req, res, adaptor);
         }
 
         /// Process the request and generate a response for it
@@ -116,6 +116,11 @@ namespace crow
         {
             signals_.push_back(signal_number);
             return *this;
+        }
+
+        std::vector<int> signals()
+        {
+            return signals_;
         }
 
         /// Set the port that Crow will handle requests on
