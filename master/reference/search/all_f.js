@@ -1,22 +1,4 @@
 var searchData=
 [
-  ['r_5fstring_0',['r_string',['../structcrow_1_1json_1_1detail_1_1r__string.html',1,'crow::json::detail']]],
-  ['raw_5fsocket_1',['raw_socket',['../structcrow_1_1_socket_adaptor.html#ad5e6308293d17c4763a310e3c5cdc894',1,'crow::SocketAdaptor']]],
-  ['raw_5furl_2',['raw_url',['../structcrow_1_1request.html#a72f5504a56f9ba70d7d33f86aaf9bc8a',1,'crow::request']]],
-  ['redirect_3',['redirect',['../structcrow_1_1response.html#ac04bbe2d4f54fd717cdffdb26af3e46f',1,'crow::response']]],
-  ['redirect_5fperm_4',['redirect_perm',['../structcrow_1_1response.html#a9e87a17c3cf8b434fd2a64a9b3d4b675',1,'crow::response']]],
-  ['remoteipaddress_5',['remoteIpAddress',['../structcrow_1_1request.html#ac43969a0c47f6477f88f4b49bcab423b',1,'crow::request']]],
-  ['req_5fhandler_5fwrapper_6',['req_handler_wrapper',['../structcrow_1_1detail_1_1routing__handler__call__helper_1_1_wrapped_1_1req__handler__wrapper.html',1,'crow::detail::routing_handler_call_helper::Wrapped']]],
-  ['request_7',['request',['../structcrow_1_1request.html',1,'crow::request'],['../structcrow_1_1request.html#a838c9a8c9a5eb2283d57e66f3630b5a6',1,'crow::request::request()'],['../structcrow_1_1request.html#a59648d32ef18fa5ef59509a6def80ddc',1,'crow::request::request(HTTPMethod method, std::string raw_url, std::string url, query_string url_params, ci_map headers, std::string body)']]],
-  ['response_8',['response',['../structcrow_1_1response.html',1,'crow']]],
-  ['returnable_9',['returnable',['../structcrow_1_1returnable.html',1,'crow']]],
-  ['route_10',['route',['../classcrow_1_1_crow.html#af221cb25926e5dabc2da21a7a1c9713c',1,'crow::Crow']]],
-  ['route_5fdynamic_11',['route_dynamic',['../classcrow_1_1_crow.html#a9438785f765882ced9b5273547803532',1,'crow::Crow']]],
-  ['router_12',['Router',['../classcrow_1_1_router.html',1,'crow']]],
-  ['routing_5fparams_13',['routing_params',['../structcrow_1_1routing__params.html',1,'crow']]],
-  ['ruleparametertraits_14',['RuleParameterTraits',['../structcrow_1_1_rule_parameter_traits.html',1,'crow']]],
-  ['ruleparametertraits_3c_20dynamicrule_20_3e_15',['RuleParameterTraits&lt; DynamicRule &gt;',['../structcrow_1_1_rule_parameter_traits.html',1,'crow']]],
-  ['ruleparametertraits_3c_20taggedrule_3c_20args_2e_2e_2e_20_3e_20_3e_16',['RuleParameterTraits&lt; TaggedRule&lt; Args... &gt; &gt;',['../structcrow_1_1_rule_parameter_traits.html',1,'crow']]],
-  ['run_17',['run',['../classcrow_1_1_crow.html#a193d8b03f717234a841cd92f72c6b4b5',1,'crow::Crow']]],
-  ['rvalue_18',['rvalue',['../classcrow_1_1json_1_1rvalue.html',1,'crow::json']]]
+  ['query_5fstring_126',['query_string',['../classcrow_1_1query__string.html',1,'crow']]]
 ];

@@ -1,0 +1,4 @@
+var structcrow_1_1detail_1_1routing__handler__call__helper_1_1call_3_01_f_00_01_n_int_00_01_n_uint_019b104fb9907823e3e218e8e95ffa9c8 =
+[
+    [ "operator()", "structcrow_1_1detail_1_1routing__handler__call__helper_1_1call_3_01_f_00_01_n_int_00_01_n_uint_019b104fb9907823e3e218e8e95ffa9c8.html#aee7a6bfbe87eb8ebf9667a5e83f55e5c", null ]
+];

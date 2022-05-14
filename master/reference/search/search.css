@@ -8,10 +8,10 @@
     white-space : nowrap;
     float: none;
     margin-top: 0px;
-    width: 161px;
+    right: 0px;
+    width: 170px;
     height: 24px;
     z-index: 102;
-    right: 10px;
     display: inline;
     position: absolute;
 }
@@ -64,7 +64,8 @@
 #MSearchBox .right {
     display:block;
     position:absolute;
-    left:141px;
+    right:10px;
+    top:0px;
     width:20px;
     height:19px;
     background:url('search_r.png') no-repeat;
@@ -155,7 +156,7 @@ a.SelectItem:hover {
 /*---------------- Search results window */
 
 iframe#MSearchResults {
-    /*width: 60ex;*/
+    width: 60ex;
     height: 15em;
 }
 
@@ -221,21 +222,19 @@ a.SRScope:focus, a.SRScope:active {
 
 span.SRScope {
     padding-left: 4px;
-    font-family: Arial, Verdana, sans-serif;
 }
 
 .SRPage .SRStatus {
     padding: 2px 5px;
     font-size: 8pt;
     font-style: italic;
-    font-family: Arial, Verdana, sans-serif;
 }
 
 .SRResult {
     display: none;
 }
 
-div.searchresults {
+DIV.searchresults {
     margin-left: 10px;
     margin-right: 10px;
 }

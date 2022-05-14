@@ -13,7 +13,7 @@
         <link rel="canonical" href="https://crowcpp.org/getting_started/setup/linux/">
       
       <link rel="icon" href="../../../assets/favicon.svg">
-      <meta name="generator" content="mkdocs-1.2.3, mkdocs-material-8.2.14">
+      <meta name="generator" content="mkdocs-1.3.0, mkdocs-material-8.2.14">
     
     
       
@@ -80,12 +80,16 @@
   
     
     
+      
     
     
     
-    <body dir="ltr" data-md-color-scheme="" data-md-color-primary="none" data-md-color-accent="none">
+    
+    <body dir="ltr" data-md-color-scheme="crow-light" data-md-color-primary="" data-md-color-accent="">
   
     
+    
+      <script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
     
     <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
     <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
@@ -101,6 +105,12 @@
     <div data-md-component="announce">
       
     </div>
+    
+      <div data-md-component="outdated" hidden>
+        <aside class="md-banner md-banner--warning">
+          
+        </aside>
+      </div>
     
     
       <!--
@@ -167,11 +177,102 @@
 
     <!-- Color palette -->
     
+      <form class="md-header__option" data-md-component="palette">
+        
+          
+          
+          <input
+            class="md-option"
+            data-md-color-media="(prefers-color-scheme: light)"
+            data-md-color-scheme="crow-light"
+            data-md-color-primary=""
+            data-md-color-accent=""
+            
+              aria-label="Using Light Theme"
+            
+            type="radio"
+            name="__palette"
+            id="__palette_1"
+          />
+          
+            <label
+              class="md-header__button md-icon"
+              title="Using Light Theme"
+              for="__palette_2"
+              hidden
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.1.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M256 159.1c-53.02 0-95.1 42.98-95.1 95.1s41.2 96.9 95.1 96.9 95.1-42.98 95.1-95.1-42.1-96.9-95.1-96.9zM509.3 347l-63.2-91.9 63.15-91.01c6.332-9.125 1.104-21.74-9.826-23.72l-109-19.7-19.7-109c-1.975-10.93-14.59-16.16-23.72-9.824L256 65.89 164.1 2.736c-9.125-6.332-21.74-1.107-23.72 9.824L121.6 121.6 12.56 141.3c-10.927 1.9-16.156 14.6-9.824 22.8L65.89 256 2.74 347.01c-6.332 9.125-1.105 21.74 9.824 23.72l109 19.7 19.7 109c1.975 10.93 14.59 16.16 23.72 9.824L256 446.1l91.01 63.15c9.127 6.334 21.75 1.107 23.72-9.822l19.7-109 109-19.7C510.4 368.8 515.6 356.1 509.3 347zM256 383.1c-70.69 0-127.1-57.31-127.1-127.1 0-70.69 57.31-127.1 127.1-127.1S383.1 186.2 383.1 256c0 70.7-56.4 127.1-127.1 127.1z"/></svg>
+            </label>
+          
+        
+          
+          
+          <input
+            class="md-option"
+            data-md-color-media="(prefers-color-scheme: dark)"
+            data-md-color-scheme="crow-dark"
+            data-md-color-primary=""
+            data-md-color-accent=""
+            
+              aria-label="Using Dark Theme"
+            
+            type="radio"
+            name="__palette"
+            id="__palette_2"
+          />
+          
+            <label
+              class="md-header__button md-icon"
+              title="Using Dark Theme"
+              for="__palette_1"
+              hidden
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.1.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M32 256C32 132.2 132.3 32 255.8 32c11.36 0 29.7 1.668 40.9 3.746 9.616 1.777 11.75 14.63 3.279 19.44C245 86.5 211.2 144.6 211.2 207.8c0 109.7 99.71 193 208.3 172.3 9.561-1.805 16.28 9.324 10.11 16.95C387.9 448.6 324.8 480 255.8 480 132.1 480 32 379.6 32 256z"/></svg>
+            </label>
+          
+        
+      </form>
+    
 
     <!-- Site language selector -->
     
 
     <!-- Button to open search modal -->
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+
+      <!-- Search interface -->
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" aria-label="Clear" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
     
     
     <div class="md-header__source">
@@ -1201,8 +1302,8 @@
   <h1>Linux</h1>
 
 <p>Here's how you can install Crow on your favorite GNU/Linux distro.</p>
-<h2 id="getting-crow">Getting Crow</h2>
-<h3 id="requirements">Requirements</h3>
+<h2 id="getting-crow">Getting Crow<a class="headerlink" href="#getting-crow" title="Permanent link">&para;</a></h2>
+<h3 id="requirements">Requirements<a class="headerlink" href="#requirements" title="Permanent link">&para;</a></h3>
 <ul>
 <li>C++ compiler with at least C++11 support.</li>
 <li>boost library &amp; development headers (1.64 or later).</li>
@@ -1216,7 +1317,7 @@
 <p>Crow's CI uses <code>g++-9.4</code> and <code>clang-10.0</code> running on AMD64 (x86_64) and ARM64v8 architectures.</p>
 </div>
 <p><br><br></p>
-<h3 id="using-a-package-manager">Using a package Manager</h3>
+<h3 id="using-a-package-manager">Using a package Manager<a class="headerlink" href="#using-a-package-manager" title="Permanent link">&para;</a></h3>
 <p>You can install Crow on GNU/Linux as a pre-made package</p>
 <div class="tabbed-set" data-tabs="1:2"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><label for="__tabbed_1_1">Debian/Ubuntu</label><div class="tabbed-content">
 <p>Simply download Crow's <code>.deb</code> file from the <a href="https://github.com/CrowCpp/Crow/releases/latest">release section</a> and Install it.</p>
@@ -1226,12 +1327,12 @@
 </div>
 </div>
 <p><br><br></p>
-<h3 id="release-package">Release package</h3>
+<h3 id="release-package">Release package<a class="headerlink" href="#release-package" title="Permanent link">&para;</a></h3>
 <p>Crow provides an archive containing the framework and CMake files, just copy the <code>include</code> folder to <code>/usr/local/include</code> and <code>lib</code> folder to <code>/usr/local/lib</code>.<br><br>
 You can also download the <code>crow_all.h</code> file and simply include that into your project.
 <br><br></p>
-<h3 id="installing-from-source">Installing from source</h3>
-<h4 id="using-cmake">Using CMake</h4>
+<h3 id="installing-from-source">Installing from source<a class="headerlink" href="#installing-from-source" title="Permanent link">&para;</a></h3>
+<h4 id="using-cmake">Using CMake<a class="headerlink" href="#using-cmake" title="Permanent link">&para;</a></h4>
 <ol>
 <li>Download Crow's source code (Either through Github's UI or by using<br> <code>git clone https://github.com/CrowCpp/Crow.git</code>).</li>
 <li>Run <code>mkdir build</code> inside of crow's source directory.</li>
@@ -1252,9 +1353,9 @@ You can also download the <code>crow_all.h</code> file and simply include that i
 <p>You can uninstall Crow at a later time using <code>make uninstall</code>.</p>
 </div>
 <p><br></p>
-<h4 id="manually">Manually</h4>
+<h4 id="manually">Manually<a class="headerlink" href="#manually" title="Permanent link">&para;</a></h4>
 <p>Crow can be installed manually on your Linux computer.</p>
-<h5 id="multiple-header-files">Multiple header files</h5>
+<h5 id="multiple-header-files">Multiple header files<a class="headerlink" href="#multiple-header-files" title="Permanent link">&para;</a></h5>
 <div class="tabbed-set" data-tabs="2:2"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><label for="__tabbed_2_1">Project Only</label><div class="tabbed-content">
 <p>Copy Crow's <code>include</code> directory to your project's <code>include</code> directory.</p>
 </div>
@@ -1262,7 +1363,7 @@ You can also download the <code>crow_all.h</code> file and simply include that i
 <p>Copy Crow's <code>include</code> directory to the <code>/usr/local/include</code> directory.</p>
 </div>
 </div>
-<h5 id="single-header-crow_allh">Single header (crow_all.h)</h5>
+<h5 id="single-header-crow_allh">Single header (crow_all.h)<a class="headerlink" href="#single-header-crow_allh" title="Permanent link">&para;</a></h5>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
 <p><code>crow_all.h</code> is recommended only for small, possibly single source file projects, and ideally should not be installed on your system.</p>
@@ -1272,8 +1373,8 @@ You can also download the <code>crow_all.h</code> file and simply include that i
 <p class="admonition-title">Note</p>
 <p>You can also include or exclude middlewares from your <code>crow_all.h</code> by using <code>-i</code> or <code>-e</code> followed by the middleware header file names separated by a comma (e.g. <code>merge_all.py ../include crow_all.h -e cookie_parser</code> to exclude the cookie parser middleware).</p>
 </div>
-<h2 id="compiling-your-project">Compiling your project</h2>
-<h3 id="using-cmake_1">Using CMake</h3>
+<h2 id="compiling-your-project">Compiling your project<a class="headerlink" href="#compiling-your-project" title="Permanent link">&para;</a></h2>
+<h3 id="using-cmake_1">Using CMake<a class="headerlink" href="#using-cmake_1" title="Permanent link">&para;</a></h3>
 <p>In order to get your CMake project to work with Crow, all you need are the following lines in your CMakeLists.txt:
 <div class="highlight"><pre><span></span><code>find_package(Crow)
 target_link_libraries(your_project PUBLIC Crow::Crow)
@@ -1283,7 +1384,7 @@ From there CMake should handle compiling and linking your project.</p>
 <p class="admonition-title">Note</p>
 <p>For optional features like HTTP Compression or HTTPS you can set the <code>CROW_FEATURES</code> variable using lines such as <code>set(CROW_FEATURES "ssl;compression")</code>, <code>set(CROW_FEATURES ssl compression)</code>, or <code>set(CROW_FEATURES ssl)</code>.</p>
 </div>
-<h3 id="directly-using-a-compiler">Directly using a compiler</h3>
+<h3 id="directly-using-a-compiler">Directly using a compiler<a class="headerlink" href="#directly-using-a-compiler" title="Permanent link">&para;</a></h3>
 <p>All you need to do is run the following command:
 <div class="highlight"><pre><span></span><code>g++ main.cpp -lpthread
 </code></pre></div>
@@ -1408,14 +1509,39 @@ You can use arguments like <code>-DCROW_ENABLE_DEBUG</code>, <code>-DCROW_ENABLE
       <a style="margin: auto .6rem; font-size: .64rem;" href="/privacy_policy.html">Privacy Policy</a>
 
       <!-- Social links -->
-      <div class="md-social">
+      <!--
+  Copyright (c) 2016-2022 Martin Donath <martin.donath@squidfunk.com>
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- Social links -->
+<div class="md-social" style="flex: 1;display: flex;justify-content: right;">
   
     
     
       
       
     
-    <a href="https://github.com/crowcpp/crow" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+    <a
+      href="https://github.com/crowcpp/crow"
+      target="_blank" rel="noopener"
+      title="github.com"
+      class="md-social__link"
+    >
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.1.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
     </a>
   
@@ -1424,7 +1550,12 @@ You can use arguments like <code>-DCROW_ENABLE_DEBUG</code>, <code>-DCROW_ENABLE
       
       
     
-    <a href="https://gitter.im/crowfork/community" target="_blank" rel="noopener" title="gitter.im" class="md-social__link">
+    <a
+      href="https://gitter.im/crowfork/community"
+      target="_blank" rel="noopener"
+      title="gitter.im"
+      class="md-social__link"
+    >
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.1.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M66.4 322.5H16V0h50.4v322.5zM166.9 76.1h-50.4V512h50.4V76.1zm100.6 0h-50.4V512h50.4V76.1zM368 76h-50.4v247H368V76z"/></svg>
     </a>
   
@@ -1437,7 +1568,7 @@ You can use arguments like <code>-DCROW_ENABLE_DEBUG</code>, <code>-DCROW_ENABLE
     <div class="md-dialog" data-md-component="dialog">
       <div class="md-dialog__inner md-typeset"></div>
     </div>
-    <script id="__config" type="application/json">{"base": "../../..", "features": "navigation.tabs", "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../../../assets/javascripts/workers/search.2a1c317c.min.js"}</script>
+    <script id="__config" type="application/json">{"base": "../../..", "features": "navigation.tabs", "search": "../../../assets/javascripts/workers/search.2a1c317c.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "version": {"default": "latest", "provider": "mike"}}</script>
     
     
       <script src="../../../assets/javascripts/bundle.c2e1ee47.min.js"></script>

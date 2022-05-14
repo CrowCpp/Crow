@@ -1,13 +1,7 @@
 var searchData=
 [
-  ['parameter_5ftag_0',['parameter_tag',['../structcrow_1_1black__magic_1_1parameter__tag.html',1,'crow::black_magic']]],
-  ['part_1',['part',['../structcrow_1_1multipart_1_1part.html',1,'crow::multipart']]],
-  ['partial_5fcontext_2',['partial_context',['../structcrow_1_1detail_1_1partial__context.html',1,'crow::detail']]],
-  ['partial_5fcontext_3c_20middlewares_2e_2e_2e_20_3e_3',['partial_context&lt; Middlewares... &gt;',['../structcrow_1_1detail_1_1partial__context.html',1,'crow::detail']]],
-  ['partial_5fcontext_3c_3e_4',['partial_context&lt;&gt;',['../structcrow_1_1detail_1_1partial__context_3_4.html',1,'crow::detail']]],
-  ['pop_5fback_5',['pop_back',['../structcrow_1_1black__magic_1_1pop__back.html',1,'crow::black_magic']]],
-  ['pop_5fback_3c_3e_6',['pop_back&lt;&gt;',['../structcrow_1_1black__magic_1_1pop__back_3_4.html',1,'crow::black_magic']]],
-  ['pop_5fback_5fhelper_7',['pop_back_helper',['../structcrow_1_1black__magic_1_1pop__back__helper.html',1,'crow::black_magic']]],
-  ['pop_5fback_5fhelper_3c_20seq_3c_20n_2e_2e_2e_20_3e_2c_20tuple_20_3e_8',['pop_back_helper&lt; seq&lt; N... &gt;, Tuple &gt;',['../structcrow_1_1black__magic_1_1pop__back__helper_3_01seq_3_01_n_8_8_8_01_4_00_01_tuple_01_4.html',1,'crow::black_magic']]],
-  ['promote_9',['promote',['../structcrow_1_1black__magic_1_1promote.html',1,'crow::black_magic']]]
+  ['server_260',['Server',['../classcrow_1_1_server.html',1,'crow']]],
+  ['socketadaptor_261',['SocketAdaptor',['../structcrow_1_1_socket_adaptor.html',1,'crow']]],
+  ['ssladaptor_262',['SSLAdaptor',['../structcrow_1_1_s_s_l_adaptor.html',1,'crow']]],
+  ['static_5ffile_5finfo_263',['static_file_info',['../structcrow_1_1response_1_1static__file__info.html',1,'crow::response']]]
 ];

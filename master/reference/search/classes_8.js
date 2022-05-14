@@ -1,7 +1,6 @@
 var searchData=
 [
-  ['iloghandler_0',['ILogHandler',['../classcrow_1_1_i_log_handler.html',1,'crow']]],
-  ['invalid_5ftemplate_5fexception_1',['invalid_template_exception',['../classcrow_1_1mustache_1_1invalid__template__exception.html',1,'crow::mustache']]],
-  ['is_5fafter_5fhandle_5farity_5f3_5fimpl_2',['is_after_handle_arity_3_impl',['../structcrow_1_1detail_1_1is__after__handle__arity__3__impl.html',1,'crow::detail']]],
-  ['is_5fbefore_5fhandle_5farity_5f3_5fimpl_3',['is_before_handle_arity_3_impl',['../structcrow_1_1detail_1_1is__before__handle__arity__3__impl.html',1,'crow::detail']]]
+  ['message_240',['message',['../structcrow_1_1multipart_1_1message.html',1,'crow::multipart']]],
+  ['middleware_5fcall_5fcriteria_241',['middleware_call_criteria',['../structcrow_1_1detail_1_1handler__middleware__wrapper_1_1middleware__call__criteria.html',1,'crow::detail::handler_middleware_wrapper']]],
+  ['middleware_5fcall_5fcriteria_5fonly_5fglobal_242',['middleware_call_criteria_only_global',['../structcrow_1_1detail_1_1middleware__call__criteria__only__global.html',1,'crow::detail']]]
 ];
