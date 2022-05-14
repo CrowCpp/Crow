@@ -85,7 +85,6 @@ for x in edges:
     for y in edges[x]:
         assert order.index(x) < order.index(y), 'cyclic include detected'
 
-pragma_caught = False
 print(order)
 build = [lsc, '#pragma once']
 for header in order:
