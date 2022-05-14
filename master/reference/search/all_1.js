@@ -6,5 +6,5 @@ var searchData=
   ['blueprint_6',['Blueprint',['../classcrow_1_1_blueprint.html',1,'crow::Blueprint'],['../structcrow_1_1_c_o_r_s_rules.html#ac26c50868a334cdd3601c7cd2f2a5248',1,'crow::CORSRules::blueprint()'],['../structcrow_1_1_c_o_r_s_handler.html#a218d078e061f8d2ad4c16e7db6022cad',1,'crow::CORSHandler::blueprint()']]],
   ['body_7',['body',['../structcrow_1_1response.html#ae9f3cc153eac05954f1f4e599527892d',1,'crow::response::body()'],['../structcrow_1_1multipart_1_1part.html#acbfa0a181e86a89dccdf70d985365695',1,'crow::multipart::part::body()']]],
   ['boundary_8',['boundary',['../structcrow_1_1multipart_1_1message.html#a56eb4bbf64d4930663ac4d5dd7b77d34',1,'crow::multipart::message']]],
-  ['build_5fheader_9',['build_header',['../classcrow_1_1websocket_1_1_connection.html#acb61dbbdd467860fcb3b3026374dc85a',1,'crow::websocket::Connection']]]
+  ['build_5fheader_9',['build_header',['../classcrow_1_1websocket_1_1_connection.html#a2fc995281b9452b56f743294baa7ed17',1,'crow::websocket::Connection']]]
 ];

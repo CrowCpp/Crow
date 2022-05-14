@@ -4,7 +4,7 @@ var hierarchy =
     [ "crow::BaseRule", "classcrow_1_1_base_rule.html", [
       [ "crow::DynamicRule", "classcrow_1_1_dynamic_rule.html", null ],
       [ "crow::TaggedRule< Args >", "classcrow_1_1_tagged_rule.html", null ],
-      [ "crow::WebSocketRule", "classcrow_1_1_web_socket_rule.html", null ]
+      [ "crow::WebSocketRule< App >", "classcrow_1_1_web_socket_rule.html", null ]
     ] ],
     [ "crow::Blueprint", "classcrow_1_1_blueprint.html", null ],
     [ "crow::detail::routing_handler_call_helper::call< F, NInt, NUint, NDouble, NString, S1, S2 >", "structcrow_1_1detail_1_1routing__handler__call__helper_1_1call.html", null ],
@@ -24,7 +24,7 @@ var hierarchy =
     [ "crow::ci_hash", "structcrow_1_1ci__hash.html", null ],
     [ "crow::ci_key_eq", "structcrow_1_1ci__key__eq.html", null ],
     [ "crow::websocket::connection", "structcrow_1_1websocket_1_1connection.html", [
-      [ "crow::websocket::Connection< Adaptor >", "classcrow_1_1websocket_1_1_connection.html", null ]
+      [ "crow::websocket::Connection< Adaptor, Handler >", "classcrow_1_1websocket_1_1_connection.html", null ]
     ] ],
     [ "crow::Connection< Adaptor, Handler, Middlewares >", "classcrow_1_1_connection.html", null ],
     [ "context", null, [
