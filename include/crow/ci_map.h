@@ -14,7 +14,7 @@ namespace crow
             std::size_t seed = 0;
             std::locale locale;
 
-            for(auto c : key)
+            for (auto c : key)
             {
                 boost::hash_combine(seed, std::toupper(c, locale));
             }
@@ -33,4 +33,4 @@ namespace crow
     };
 
     using ci_map = std::unordered_multimap<std::string, std::string, ci_hash, ci_key_eq>;
-}
+} // namespace crow

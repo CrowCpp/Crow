@@ -363,6 +363,7 @@ namespace crow
         }
 
         /// Get a value from a name, used for `?name=value`.
+
         ///
         /// Note: this method returns the value of the first occurrence of the key only, to return all occurrences, see \ref get_list().
         char* get (const std::string& name) const
@@ -391,6 +392,7 @@ namespace crow
         }
 
         /// Returns a list of values, passed as `?name[]=value1&name[]=value2&...name[]=valuen` with n being the size of the list.
+
         ///
         /// Note: Square brackets in the above example are controlled by `use_brackets` boolean (true by default). If set to false, the example becomes `?name=value1,name=value2...name=valuen`
         std::vector<char*> get_list (const std::string& name, bool use_brackets = true) const
@@ -429,6 +431,7 @@ namespace crow
         }
 
         /// Works similar to \ref get_list() except the brackets are mandatory must not be empty.
+
         ///
         /// For example calling `get_dict(yourname)` on `?yourname[sub1]=42&yourname[sub2]=84` would give a map containing `{sub1 : 42, sub2 : 84}`.
         ///

@@ -8,7 +8,7 @@ add_warnings_optimizations(helloworld)
 target_link_libraries(helloworld PUBLIC Crow::Crow)
 
 # If compression is enabled, the example will be built
-if(CROW_ENABLE_COMPRESSION)
+if("compression" IN_LIST CROW_FEATURES)
   add_executable(example_compression example_compression.cpp)
   add_warnings_optimizations(example_compression)
   target_link_libraries(example_compression Crow::Crow)
@@ -17,7 +17,7 @@ else()
 endif()
 
 # If SSL is enabled, the example will be built
-if(CROW_ENABLE_SSL)
+if("ssl" IN_LIST CROW_FEATURES)
   add_executable(example_ssl ssl/example_ssl.cpp)
   add_warnings_optimizations(example_ssl)
   target_link_libraries(example_ssl PUBLIC Crow::Crow)
@@ -78,6 +78,18 @@ target_link_libraries(example_json_map PUBLIC Crow::Crow)
 add_executable(example_blueprint example_blueprint.cpp)
 add_warnings_optimizations(example_blueprint)
 target_link_libraries(example_blueprint PUBLIC Crow::Crow)
+
+add_executable(example_middleware example_middleware.cpp)
+add_warnings_optimizations(example_middleware)
+target_link_libraries(example_middleware PUBLIC Crow::Crow)
+
+add_executable(example_cors middlewares/example_cors.cpp)
+add_warnings_optimizations(example_cors)
+target_link_libraries(example_cors PUBLIC Crow::Crow)
+
+add_executable(example_cookies middlewares/example_cookies.cpp)
+add_warnings_optimizations(example_cookies)
+target_link_libraries(example_cookies PUBLIC Crow::Crow)
 
 if(MSVC)
   add_executable(example_vs example_vs.cpp)

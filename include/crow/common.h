@@ -8,6 +8,10 @@
 
 namespace crow
 {
+    const char cr = '\r';
+    const char lf = '\n';
+    const std::string crlf("\r\n");
+
     enum class HTTPMethod : char
     {
 #ifndef DELETE
@@ -16,11 +20,43 @@ namespace crow
         HEAD,
         POST,
         PUT,
+
         CONNECT,
         OPTIONS,
         TRACE,
+
         PATCH,
         PURGE,
+
+        COPY,
+        LOCK,
+        MKCOL,
+        MOVE,
+        PROPFIND,
+        PROPPATCH,
+        SEARCH,
+        UNLOCK,
+        BIND,
+        REBIND,
+        UNBIND,
+        ACL,
+
+        REPORT,
+        MKACTIVITY,
+        CHECKOUT,
+        MERGE,
+
+        MSEARCH,
+        NOTIFY,
+        SUBSCRIBE,
+        UNSUBSCRIBE,
+
+        MKCALENDAR,
+
+        LINK,
+        UNLINK,
+
+        SOURCE,
 #endif
 
         Delete = 0,
@@ -28,16 +64,105 @@ namespace crow
         Head,
         Post,
         Put,
+
         Connect,
         Options,
         Trace,
+
         Patch,
         Purge,
+
+        Copy,
+        Lock,
+        MkCol,
+        Move,
+        Propfind,
+        Proppatch,
+        Search,
+        Unlock,
+        Bind,
+        Rebind,
+        Unbind,
+        Acl,
+
+        Report,
+        MkActivity,
+        Checkout,
+        Merge,
+
+        MSearch,
+        Notify,
+        Subscribe,
+        Unsubscribe,
+
+        MkCalendar,
+
+        Link,
+        Unlink,
+
+        Source,
 
 
         InternalMethodCount,
         // should not add an item below this line: used for array count
     };
+
+    constexpr const char* method_strings[] =
+      {
+        "DELETE",
+        "GET",
+        "HEAD",
+        "POST",
+        "PUT",
+
+        "CONNECT",
+        "OPTIONS",
+        "TRACE",
+
+        "PATCH",
+        "PURGE",
+
+        "COPY",
+        "LOCK",
+        "MKCOL",
+        "MOVE",
+        "PROPFIND",
+        "PROPPATCH",
+        "SEARCH",
+        "UNLOCK",
+        "BIND",
+        "REBIND",
+        "UNBIND",
+        "ACL",
+
+        "REPORT",
+        "MKACTIVITY",
+        "CHECKOUT",
+        "MERGE",
+
+        "M-SEARCH",
+        "NOTIFY",
+        "SUBSCRIBE",
+        "UNSUBSCRIBE",
+
+        "MKCALENDAR",
+
+        "LINK",
+        "UNLINK",
+
+        "SOURCE"};
+
+
+    inline std::string method_name(HTTPMethod method)
+    {
+        if (CROW_LIKELY(method < HTTPMethod::InternalMethodCount))
+        {
+            return method_strings[(unsigned char)method];
+        }
+        return "invalid";
+    }
+
+    // clang-format off
 
     enum status
     {
@@ -80,38 +205,11 @@ namespace crow
         NOT_IMPLEMENTED               = 501,
         BAD_GATEWAY                   = 502,
         SERVICE_UNAVAILABLE           = 503,
+        GATEWAY_TIMEOUT               = 504,
         VARIANT_ALSO_NEGOTIATES       = 506
     };
 
-    inline std::string method_name(HTTPMethod method)
-    {
-        switch(method)
-        {
-            case HTTPMethod::Delete:
-                return "DELETE";
-            case HTTPMethod::Get:
-                return "GET";
-            case HTTPMethod::Head:
-                return "HEAD";
-            case HTTPMethod::Post:
-                return "POST";
-            case HTTPMethod::Put:
-                return "PUT";
-            case HTTPMethod::Connect:
-                return "CONNECT";
-            case HTTPMethod::Options:
-                return "OPTIONS";
-            case HTTPMethod::Trace:
-                return "TRACE";
-            case HTTPMethod::Patch:
-                return "PATCH";
-            case HTTPMethod::Purge:
-                return "PURGE";
-            default:
-                return "invalid";
-        }
-        return "invalid";
-    }
+    // clang-format on
 
     enum class ParamType : char
     {
@@ -124,6 +222,7 @@ namespace crow
         MAX
     };
 
+    /// @cond SKIP
     struct routing_params
     {
         std::vector<int64_t> int_params;
@@ -134,23 +233,22 @@ namespace crow
         void debug_print() const
         {
             std::cerr << "routing_params" << std::endl;
-            for(auto i:int_params)
-                std::cerr<<i <<", " ;
-            std::cerr<<std::endl;
-            for(auto i:uint_params)
-                std::cerr<<i <<", " ;
-            std::cerr<<std::endl;
-            for(auto i:double_params)
-                std::cerr<<i <<", " ;
-            std::cerr<<std::endl;
-            for(auto& i:string_params)
-                std::cerr<<i <<", " ;
-            std::cerr<<std::endl;
+            for (auto i : int_params)
+                std::cerr << i << ", ";
+            std::cerr << std::endl;
+            for (auto i : uint_params)
+                std::cerr << i << ", ";
+            std::cerr << std::endl;
+            for (auto i : double_params)
+                std::cerr << i << ", ";
+            std::cerr << std::endl;
+            for (auto& i : string_params)
+                std::cerr << i << ", ";
+            std::cerr << std::endl;
         }
 
-        template <typename T>
+        template<typename T>
         T get(unsigned) const;
-
     };
 
     template<>
@@ -176,22 +274,60 @@ namespace crow
     {
         return string_params[index];
     }
+    /// @endcond
+} // namespace crow
+
+// clang-format off
+#ifndef CROW_MSVC_WORKAROUND
+constexpr crow::HTTPMethod method_from_string(const char* str)
+{
+    return crow::black_magic::is_equ_p(str, "GET", 3)    ? crow::HTTPMethod::Get :
+           crow::black_magic::is_equ_p(str, "DELETE", 6) ? crow::HTTPMethod::Delete :
+           crow::black_magic::is_equ_p(str, "HEAD", 4)   ? crow::HTTPMethod::Head :
+           crow::black_magic::is_equ_p(str, "POST", 4)   ? crow::HTTPMethod::Post :
+           crow::black_magic::is_equ_p(str, "PUT", 3)    ? crow::HTTPMethod::Put :
+
+           crow::black_magic::is_equ_p(str, "OPTIONS", 7) ? crow::HTTPMethod::Options :
+           crow::black_magic::is_equ_p(str, "CONNECT", 7) ? crow::HTTPMethod::Connect :
+           crow::black_magic::is_equ_p(str, "TRACE", 5)   ? crow::HTTPMethod::Trace :
+
+           crow::black_magic::is_equ_p(str, "PATCH", 5)     ? crow::HTTPMethod::Patch :
+           crow::black_magic::is_equ_p(str, "PURGE", 5)     ? crow::HTTPMethod::Purge :
+           crow::black_magic::is_equ_p(str, "COPY", 4)      ? crow::HTTPMethod::Copy :
+           crow::black_magic::is_equ_p(str, "LOCK", 4)      ? crow::HTTPMethod::Lock :
+           crow::black_magic::is_equ_p(str, "MKCOL", 5)     ? crow::HTTPMethod::MkCol :
+           crow::black_magic::is_equ_p(str, "MOVE", 4)      ? crow::HTTPMethod::Move :
+           crow::black_magic::is_equ_p(str, "PROPFIND", 8)  ? crow::HTTPMethod::Propfind :
+           crow::black_magic::is_equ_p(str, "PROPPATCH", 9) ? crow::HTTPMethod::Proppatch :
+           crow::black_magic::is_equ_p(str, "SEARCH", 6)    ? crow::HTTPMethod::Search :
+           crow::black_magic::is_equ_p(str, "UNLOCK", 6)    ? crow::HTTPMethod::Unlock :
+           crow::black_magic::is_equ_p(str, "BIND", 4)      ? crow::HTTPMethod::Bind :
+           crow::black_magic::is_equ_p(str, "REBIND", 6)    ? crow::HTTPMethod::Rebind :
+           crow::black_magic::is_equ_p(str, "UNBIND", 6)    ? crow::HTTPMethod::Unbind :
+           crow::black_magic::is_equ_p(str, "ACL", 3)       ? crow::HTTPMethod::Acl :
+
+           crow::black_magic::is_equ_p(str, "REPORT", 6)      ? crow::HTTPMethod::Report :
+           crow::black_magic::is_equ_p(str, "MKACTIVITY", 10) ? crow::HTTPMethod::MkActivity :
+           crow::black_magic::is_equ_p(str, "CHECKOUT", 8)    ? crow::HTTPMethod::Checkout :
+           crow::black_magic::is_equ_p(str, "MERGE", 5)       ? crow::HTTPMethod::Merge :
+
+           crow::black_magic::is_equ_p(str, "MSEARCH", 7)      ? crow::HTTPMethod::MSearch :
+           crow::black_magic::is_equ_p(str, "NOTIFY", 6)       ? crow::HTTPMethod::Notify :
+           crow::black_magic::is_equ_p(str, "SUBSCRIBE", 9)    ? crow::HTTPMethod::Subscribe :
+           crow::black_magic::is_equ_p(str, "UNSUBSCRIBE", 11) ? crow::HTTPMethod::Unsubscribe :
+
+           crow::black_magic::is_equ_p(str, "MKCALENDAR", 10) ? crow::HTTPMethod::MkCalendar :
+
+           crow::black_magic::is_equ_p(str, "LINK", 4)   ? crow::HTTPMethod::Link :
+           crow::black_magic::is_equ_p(str, "UNLINK", 6) ? crow::HTTPMethod::Unlink :
+
+           crow::black_magic::is_equ_p(str, "SOURCE", 6) ? crow::HTTPMethod::Source :
+                                                           throw std::runtime_error("invalid http method");
 }
 
-#ifndef CROW_MSVC_WORKAROUND
-constexpr crow::HTTPMethod operator "" _method(const char* str, size_t /*len*/)
+constexpr crow::HTTPMethod operator"" _method(const char* str, size_t /*len*/)
 {
-    return
-        crow::black_magic::is_equ_p(str, "GET", 3) ? crow::HTTPMethod::Get :
-        crow::black_magic::is_equ_p(str, "DELETE", 6) ? crow::HTTPMethod::Delete :
-        crow::black_magic::is_equ_p(str, "HEAD", 4) ? crow::HTTPMethod::Head :
-        crow::black_magic::is_equ_p(str, "POST", 4) ? crow::HTTPMethod::Post :
-        crow::black_magic::is_equ_p(str, "PUT", 3) ? crow::HTTPMethod::Put :
-        crow::black_magic::is_equ_p(str, "OPTIONS", 7) ? crow::HTTPMethod::Options :
-        crow::black_magic::is_equ_p(str, "CONNECT", 7) ? crow::HTTPMethod::Connect :
-        crow::black_magic::is_equ_p(str, "TRACE", 5) ? crow::HTTPMethod::Trace :
-        crow::black_magic::is_equ_p(str, "PATCH", 5) ? crow::HTTPMethod::Patch :
-        crow::black_magic::is_equ_p(str, "PURGE", 5) ? crow::HTTPMethod::Purge :
-        throw std::runtime_error("invalid http method");
+    return method_from_string( str );
 }
 #endif
+// clang-format on

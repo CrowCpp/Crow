@@ -1,6 +1,5 @@
 #define CATCH_CONFIG_MAIN
 #define CROW_LOG_LEVEL 0
-#define CROW_MAIN
 
 #include <thread>
 
@@ -11,7 +10,7 @@
 
 using namespace boost;
 
-//TODO SSL test with .pem file
+// TODO(EDev): SSL test with .pem file
 TEST_CASE("SSL")
 {
     static char buf[2048];
@@ -28,13 +27,15 @@ TEST_CASE("SSL")
     ([]() {
         return "Hello world, I'm keycrt.";
     });
-/*
+    /*
     CROW_ROUTE(app2, "/")
     ([]() {
         return "Hello world, I'm pem.";
     });
 */
-    auto _ = async(std::launch::async, [&] { app.bindaddr(LOCALHOST_ADDRESS).port(45460).ssl_file("test.crt", "test.key").run(); });
+    auto _ = async(std::launch::async, [&] {
+        app.bindaddr(LOCALHOST_ADDRESS).port(45460).ssl_file("test.crt", "test.key").run();
+    });
     //auto _1 = async(std::launch::async,[&] { app2.bindaddr(LOCALHOST_ADDRESS).port(45461).ssl_file("test.pem").run(); });
 
     app.wait_for_server_start();
@@ -46,22 +47,34 @@ TEST_CASE("SSL")
 
     asio::io_service is;
     {
-      asio::ssl::stream<asio::ip::tcp::socket> c(is, ctx);
-      c.lowest_layer().connect(asio::ip::tcp::endpoint(asio::ip::address::from_string(LOCALHOST_ADDRESS), 45460));
+        asio::ssl::stream<asio::ip::tcp::socket> c(is, ctx);
+        c.lowest_layer().connect(asio::ip::tcp::endpoint(asio::ip::address::from_string(LOCALHOST_ADDRESS), 45460));
 
-      c.handshake(asio::ssl::stream_base::client);
-      c.write_some(asio::buffer(sendmsg));
+        c.handshake(asio::ssl::stream_base::client);
+        c.write_some(asio::buffer(sendmsg));
 
-      size_t x = 0;
-      size_t y = 0;
+        size_t x = 0;
+        size_t y = 0;
+        long z = 0;
 
-      while(x < 121){
-        y = c.read_some(asio::buffer(buf, 2048));
-        x+=y;
-        buf[y]='\0';
-      }
+        while (x < 121)
+        {
+            y = c.read_some(asio::buffer(buf, 2048));
+            x += y;
+            buf[y] = '\0';
+        }
 
-      CHECK(std::string("Hello world, I'm keycrt.") == std::string(buf));
+        std::string to_test(buf);
+
+        if ((z = to_test.length() - 24) >= 0)
+        {
+
+            CHECK(std::string("Hello world, I'm keycrt.") == to_test.substr(z));
+        }
+        else
+        {
+            CHECK(std::string("Hello world, I'm keycrt.").substr((z * -1)) == to_test);
+        }
     }
 
     /*
