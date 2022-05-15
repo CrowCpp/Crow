@@ -103,6 +103,18 @@ namespace crow
             return router_.catchall_rule();
         }
 
+        /// Set the default max payload size for websockets
+        self_t& websocket_max_payload(uint64_t max_payload)
+        {
+            max_payload_ = max_payload;
+        }
+
+        /// Get the port that Crow will handle requests on
+        uint64_t websocket_max_payload()
+        {
+            return max_payload_;
+        }
+
         self_t& signal_clear()
         {
             signals_.clear();
@@ -462,6 +474,7 @@ namespace crow
         std::uint8_t timeout_{5};
         uint16_t port_ = 80;
         uint16_t concurrency_ = 2;
+		uint64_t max_payload_{ UINT64_MAX };
         bool validated_ = false;
         std::string server_name_ = std::string("Crow/") + VERSION;
         std::string bindaddr_ = "0.0.0.0";

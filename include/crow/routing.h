@@ -377,6 +377,7 @@ namespace crow
         WebSocketRule(std::string rule, App* app):
           BaseRule(std::move(rule)),
           app_(app)
+          max_payload_{app_.websocket_max_payload()}
         {}
 
         void validate() override
@@ -390,7 +391,8 @@ namespace crow
 
         void handle_upgrade(const request& req, response&, SocketAdaptor&& adaptor) override
         {
-            new crow::websocket::Connection<SocketAdaptor, App>(req, std::move(adaptor), app_, open_handler_, message_handler_, close_handler_, error_handler_, accept_handler_);
+            auto* conn = new crow::websocket::Connection<SocketAdaptor, App>(req, std::move(adaptor), app_, open_handler_, message_handler_, close_handler_, error_handler_, accept_handler_);
+			conn->set_max_payload_size(max_payload_);
         }
 #ifdef CROW_ENABLE_SSL
         void handle_upgrade(const request& req, response&, SSLAdaptor&& adaptor) override
@@ -398,6 +400,11 @@ namespace crow
             new crow::websocket::Connection<SSLAdaptor, App>(req, std::move(adaptor), app_, open_handler_, message_handler_, close_handler_, error_handler_, accept_handler_);
         }
 #endif
+
+        self_t& maxpayload(uint64_t payload)
+        {
+            max_payload_ = payload;
+        }
 
         template<typename Func>
         self_t& onopen(Func f)
@@ -441,6 +448,7 @@ namespace crow
         std::function<void(crow::websocket::connection&, const std::string&)> close_handler_;
         std::function<void(crow::websocket::connection&)> error_handler_;
         std::function<bool(const crow::request&)> accept_handler_;
+        uint64_t max_payload_;
     };
 
     /// Allows the user to assign parameters using functions.

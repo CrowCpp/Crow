@@ -82,6 +82,7 @@ namespace crow
               close_handler_(std::move(close_handler)),
               error_handler_(std::move(error_handler)),
               accept_handler_(std::move(accept_handler))
+              max_payload_bytes_{handler.websocket_max_payload()}
             {
                 if (!boost::iequals(req.get_header_value("upgrade"), "websocket"))
                 {
@@ -198,6 +199,11 @@ namespace crow
             std::string get_remote_ip() override
             {
                 return adaptor_.remote_endpoint().address().to_string();
+            }
+
+            void set_max_payload_size(uint64_t payload)
+            {
+                max_payload_bytes_ = payload;
             }
 
         protected:
