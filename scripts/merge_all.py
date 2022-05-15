@@ -44,7 +44,8 @@ else:
     middlewares_actual = middlewares
 print("Middlewares: " + str(middlewares_actual))
 
-re_depends = re.compile('^#include "(.*)"', re.MULTILINE)
+re_depends = re.compile('^#include \"(.*)\"\n', re.MULTILINE)
+re_pragma = re.compile('^(.*)#pragma once(.*)\n', re.MULTILINE)
 headers = [x.rsplit(sep, 1)[-1] for x in glob(pt.join(header_path, '*.h*'))]
 headers += ['crow'+sep + x.rsplit(sep, 1)[-1] for x in glob(pt.join(header_path, 'crow'+sep+'*.h*'))]
 headers += [('crow'+sep+'middlewares'+sep + x + '.h') for x in middlewares_actual]
@@ -85,10 +86,12 @@ for x in edges:
         assert order.index(x) < order.index(y), 'cyclic include detected'
 
 print(order)
-build = [lsc]
+build = [lsc, '#pragma once']
 for header in order:
     d = open(pt.join(header_path, header)).read()
-    build.append(re_depends.sub(lambda x: '\n', d))
-    build.append('\n')
+    d_no_depend = re_depends.sub(lambda x: '', d)
+    d_no_pragma = re_pragma.sub(lambda x: '', d_no_depend)
+    build.append(d_no_pragma)
+    #build.append('\n')
 
 open(output_path, 'w').write('\n'.join(build))
