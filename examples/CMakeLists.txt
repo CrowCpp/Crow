@@ -87,6 +87,10 @@ add_executable(example_cors middlewares/example_cors.cpp)
 add_warnings_optimizations(example_cors)
 target_link_libraries(example_cors PUBLIC Crow::Crow)
 
+add_executable(example_cookies middlewares/example_cookies.cpp)
+add_warnings_optimizations(example_cookies)
+target_link_libraries(example_cookies PUBLIC Crow::Crow)
+
 if(MSVC)
   add_executable(example_vs example_vs.cpp)
   add_warnings_optimizations(example_vs)

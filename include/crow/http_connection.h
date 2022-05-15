@@ -417,6 +417,7 @@ namespace crow
             {
                 is_writing = true;
                 boost::asio::write(adaptor_.socket(), buffers_); // Write the response start / headers
+                cancel_deadline_timer();
                 if (res.body.length() > 0)
                 {
                     std::string buf;

@@ -1452,7 +1452,7 @@ TEST_CASE("local_middleware")
     app.stop();
 } // local_middleware
 
-TEST_CASE("middleware_cookieparser")
+TEST_CASE("middleware_cookieparser_parse")
 {
     static char buf[2048];
 
@@ -1499,8 +1499,55 @@ TEST_CASE("middleware_cookieparser")
         CHECK("val\"ue4" == value4);
     }
     app.stop();
-} // middleware_cookieparser
+} // middleware_cookieparser_parse
 
+
+TEST_CASE("middleware_cookieparser_format")
+{
+    using Cookie = CookieParser::Cookie;
+
+    auto valid = [](const std::string& s, int parts) {
+        return std::count(s.begin(), s.end(), ';') == parts - 1;
+    };
+
+    // basic
+    {
+        auto c = Cookie("key", "value");
+        auto s = c.dump();
+        CHECK(valid(s, 1));
+        CHECK(s == "key=value");
+    }
+    // max-age + domain
+    {
+        auto c = Cookie("key", "value")
+                   .max_age(123)
+                   .domain("example.com");
+        auto s = c.dump();
+        CHECK(valid(s, 3));
+        CHECK(s.find("key=value") != std::string::npos);
+        CHECK(s.find("Max-Age=123") != std::string::npos);
+        CHECK(s.find("Domain=example.com") != std::string::npos);
+    }
+    // samesite + secure
+    {
+        auto c = Cookie("key", "value")
+                   .secure()
+                   .same_site(Cookie::SameSitePolicy::None);
+        auto s = c.dump();
+        CHECK(valid(s, 3));
+        CHECK(s.find("Secure") != std::string::npos);
+        CHECK(s.find("SameSite=None") != std::string::npos);
+    }
+    // expires
+    {
+        auto tp = boost::posix_time::time_from_string("2000-11-01 23:59:59.000");
+        auto c = Cookie("key", "value")
+                   .expires(boost::posix_time::to_tm(tp));
+        auto s = c.dump();
+        CHECK(valid(s, 2));
+        CHECK(s.find("Expires=Wed, 01 Nov 2000 23:59:59 GMT") != std::string::npos);
+    }
+} // middleware_cookieparser_format
 
 TEST_CASE("middleware_cors")
 {
@@ -2044,15 +2091,15 @@ TEST_CASE("stream_response")
             // magic number is 102 (it's the size of the headers, which is how much this line below needs to read)
             const size_t headers_bytes = 102;
             while (received_headers_bytes < headers_bytes)
-                received_headers_bytes += c.receive(asio::buffer(buf, 2048));
+                received_headers_bytes += c.receive(asio::buffer(buf, 102));
             received += received_headers_bytes - headers_bytes; //add any extra that might have been received to the proper received count
-
 
             while (received < key_response_size)
             {
                 asio::streambuf::mutable_buffers_type bufs = b.prepare(16384);
 
-                size_t n = c.receive(bufs);
+                size_t n(0);
+                n = c.receive(bufs);
                 b.commit(n);
                 received += n;
 
@@ -2061,8 +2108,6 @@ TEST_CASE("stream_response")
                 is >> s;
 
                 CHECK(key_response.substr(received - n, n) == s);
-
-                //std::this_thread::sleep_for(std::chrono::milliseconds(20));
             }
         }
         app.stop();
@@ -2078,10 +2123,10 @@ TEST_CASE("websocket")
 
     SimpleApp app;
 
-    CROW_ROUTE(app, "/ws").websocket().onopen([&](websocket::connection&) {
-                                          connected = true;
-                                          CROW_LOG_INFO << "Connected websocket and value is " << connected;
-                                      })
+    CROW_WEBSOCKET_ROUTE(app, "/ws").onopen([&](websocket::connection&) {
+                                        connected = true;
+                                        CROW_LOG_INFO << "Connected websocket and value is " << connected;
+                                    })
       .onmessage([&](websocket::connection& conn, const std::string& message, bool isbin) {
           CROW_LOG_INFO << "Message is \"" << message << '\"';
           if (!isbin && message == "PINGME")

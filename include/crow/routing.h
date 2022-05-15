@@ -368,13 +368,15 @@ namespace crow
 
     ///
     /// Provides the interface for the user to put in the necessary handlers for a websocket to work.
+    template<typename App>
     class WebSocketRule : public BaseRule
     {
         using self_t = WebSocketRule;
 
     public:
-        WebSocketRule(std::string rule):
-          BaseRule(std::move(rule))
+        WebSocketRule(std::string rule, App* app):
+          BaseRule(std::move(rule)),
+          app_(app)
         {}
 
         void validate() override
@@ -388,12 +390,12 @@ namespace crow
 
         void handle_upgrade(const request& req, response&, SocketAdaptor&& adaptor) override
         {
-            new crow::websocket::Connection<SocketAdaptor>(req, std::move(adaptor), open_handler_, message_handler_, close_handler_, error_handler_, accept_handler_);
+            new crow::websocket::Connection<SocketAdaptor, App>(req, std::move(adaptor), app_, open_handler_, message_handler_, close_handler_, error_handler_, accept_handler_);
         }
 #ifdef CROW_ENABLE_SSL
         void handle_upgrade(const request& req, response&, SSLAdaptor&& adaptor) override
         {
-            new crow::websocket::Connection<SSLAdaptor>(req, std::move(adaptor), open_handler_, message_handler_, close_handler_, error_handler_, accept_handler_);
+            new crow::websocket::Connection<SSLAdaptor, App>(req, std::move(adaptor), app_, open_handler_, message_handler_, close_handler_, error_handler_, accept_handler_);
         }
 #endif
 
@@ -433,6 +435,7 @@ namespace crow
         }
 
     protected:
+        App* app_;
         std::function<void(crow::websocket::connection&)> open_handler_;
         std::function<void(crow::websocket::connection&, const std::string&, bool)> message_handler_;
         std::function<void(crow::websocket::connection&, const std::string&)> close_handler_;
@@ -448,9 +451,11 @@ namespace crow
     struct RuleParameterTraits
     {
         using self_t = T;
-        WebSocketRule& websocket()
+
+        template<typename App>
+        WebSocketRule<App>& websocket(App* app)
         {
-            auto p = new WebSocketRule(static_cast<self_t*>(this)->rule_);
+            auto p = new WebSocketRule<App>(static_cast<self_t*>(this)->rule_, app);
             static_cast<self_t*>(this)->rule_to_upgrade_.reset(p);
             return *p;
         }
@@ -1468,7 +1473,6 @@ namespace crow
                     allow = allow.substr(0, allow.size() - 2);
                     res = response(204);
                     res.set_header("Allow", allow);
-                    res.manual_length_header = true;
                     res.end();
                     return;
                 }
@@ -1486,7 +1490,6 @@ namespace crow
                         allow = allow.substr(0, allow.size() - 2);
                         res = response(204);
                         res.set_header("Allow", allow);
-                        res.manual_length_header = true;
                         res.end();
                         return;
                     }
