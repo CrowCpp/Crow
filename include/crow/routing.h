@@ -376,7 +376,7 @@ namespace crow
     public:
         WebSocketRule(std::string rule, App* app):
           BaseRule(std::move(rule)),
-          app_(app)
+          app_(app),
           max_payload_(app_.websocket_max_payload())
         {}
 
