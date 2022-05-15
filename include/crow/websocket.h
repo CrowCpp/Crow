@@ -82,7 +82,7 @@ namespace crow
               close_handler_(std::move(close_handler)),
               error_handler_(std::move(error_handler)),
               accept_handler_(std::move(accept_handler))
-              max_payload_bytes_{handler.websocket_max_payload()}
+              max_payload_bytes_(handler.websocket_max_payload())
             {
                 if (!boost::iequals(req.get_header_value("upgrade"), "websocket"))
                 {
