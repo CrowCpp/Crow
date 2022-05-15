@@ -109,7 +109,7 @@ namespace crow
             max_payload_ = max_payload;
         }
 
-        /// Get the port that Crow will handle requests on
+        /// Get the default max payload size for websockets
         uint64_t websocket_max_payload()
         {
             return max_payload_;
