@@ -7,7 +7,7 @@
 #include <sstream>
 #include <vector>
 #include <thread>
-#include <chrono>
+#include <chrono>`
 
 #include "catch.hpp"
 #include "crow.h"
@@ -2283,9 +2283,9 @@ TEST_CASE("websocket_max_payload")
 
     CROW_WEBSOCKET_ROUTE(app, "/ws")
       .onopen([&](websocket::connection&) {
-                                        connected = true;
-                                        CROW_LOG_INFO << "Connected websocket and value is " << connected;
-                                    })
+          connected = true;
+          CROW_LOG_INFO << "Connected websocket and value is " << connected;
+      })
       .onmessage([&](websocket::connection& conn, const std::string& message, bool isbin) {
           CROW_LOG_INFO << "Message is \"" << message << '\"';
           if (!isbin && message == "PINGME")
