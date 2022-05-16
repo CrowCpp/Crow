@@ -107,6 +107,7 @@ namespace crow
         self_t& websocket_max_payload(uint64_t max_payload)
         {
             max_payload_ = max_payload;
+            return *this;
         }
 
         /// Get the default max payload size for websockets
