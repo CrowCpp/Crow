@@ -1,4 +1,6 @@
-**Introduced in: `v0.2`**<br><br>
+<span class="tag">[:octicons-feed-tag-16: v0.2](https://github.com/CrowCpp/Crow/releases/0.2)</span>
+
+
 A static file is any file that resides in the server's storage.
 
 Crow supports returning Static files as responses in 2 ways.

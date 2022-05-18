@@ -52,7 +52,9 @@ The main return type is `std::string`, although you could also return a `crow::j
 For more information on the specific constructors for a `crow::response` go [here](../../reference/structcrow_1_1response.html).
 
 ## Returning custom classes
-**Introduced in: `v0.3`**<br><br>
+<span class="tag">[:octicons-feed-tag-16: v0.3](https://github.com/CrowCpp/Crow/releases/v0.3)</span>
+
+
 If you have your own class you want to return (without converting it to string and returning that), you can use the `crow::returnable` class.<br>
 to use the returnable class, you only need your class to publicly extend `crow::returnable`, add a `dump()` method that returns your class as an `std::string`, and add a constructor that has a `Content-Type` header as a string argument.<br><br>
 
@@ -75,12 +77,15 @@ class a : public crow::returnable
 <br><br>
 
 ## Response codes
-**Introduced in: `v1.0`**<br><br>
+<span class="tag">[:octicons-feed-tag-16: v1.0](https://github.com/CrowCpp/Crow/releases/v1.0)</span>
+
 
 Instead of assigning a response code, you can use the `crow::status` enum, for example you can replace `crow::response(200)` with `crow::response(crow::status::OK)`
 
 ## Catchall routes
-**Introduced in: `v0.3`**<br><br>
+<span class="tag">[:octicons-feed-tag-16: v0.3](https://github.com/CrowCpp/Crow/releases/v0.3)</span>
+
+
 By default, any request that Crow can't find a route for will return a simple 404 response. You can change that to return a default route using the `CROW_CATCHALL_ROUTE(app)` macro. Defining it is identical to a normal route, even when it comes to the `const crow::request&` and `crow::response&` parameters being optional.
 !!! note
 

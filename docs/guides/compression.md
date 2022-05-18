@@ -1,4 +1,6 @@
-**Introduced in: `v0.3`**<br><br>
+<span class="tag">[:octicons-feed-tag-16: v0.3](https://github.com/CrowCpp/Crow/releases/v0.3)</span>
+
+
 Crow supports Zlib compression using Gzip or Deflate algorithms.
 
 ## HTTP Compression
