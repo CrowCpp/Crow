@@ -161,7 +161,7 @@ namespace crow
 
         void stop()
         {
-            should_close_ = false;                                                 //Prevent the acceptor from taking new connections
+            should_close_ = true;                                                  //Prevent the acceptor from taking new connections
             while (handler_->websocket_count.load(std::memory_order_release) != 0) //Wait for the websockets to close properly
             {
             }
@@ -207,33 +207,36 @@ namespace crow
 
         void do_accept()
         {
-            uint16_t service_idx = pick_io_service_idx();
-            asio::io_service& is = *io_service_pool_[service_idx];
-            task_queue_length_pool_[service_idx]++;
-            CROW_LOG_DEBUG << &is << " {" << service_idx << "} queue length: " << task_queue_length_pool_[service_idx];
+            if (!should_close_)
+            {
+                uint16_t service_idx = pick_io_service_idx();
+                asio::io_service& is = *io_service_pool_[service_idx];
+                task_queue_length_pool_[service_idx]++;
+                CROW_LOG_DEBUG << &is << " {" << service_idx << "} queue length: " << task_queue_length_pool_[service_idx];
 
-            auto p = new Connection<Adaptor, Handler, Middlewares...>(
-              is, handler_, server_name_, middlewares_,
-              get_cached_date_str_pool_[service_idx], *task_timer_pool_[service_idx], adaptor_ctx_, task_queue_length_pool_[service_idx]);
+                auto p = new Connection<Adaptor, Handler, Middlewares...>(
+                  is, handler_, server_name_, middlewares_,
+                  get_cached_date_str_pool_[service_idx], *task_timer_pool_[service_idx], adaptor_ctx_, task_queue_length_pool_[service_idx]);
 
-            acceptor_.async_accept(
-              p->socket(),
-              [this, p, &is, service_idx](boost::system::error_code ec) {
-                  if (!ec)
-                  {
-                      is.post(
-                        [p] {
-                            p->start();
-                        });
-                  }
-                  else
-                  {
-                      task_queue_length_pool_[service_idx]--;
-                      CROW_LOG_DEBUG << &is << " {" << service_idx << "} queue length: " << task_queue_length_pool_[service_idx];
-                      delete p;
-                  }
-                  do_accept();
-              });
+                acceptor_.async_accept(
+                  p->socket(),
+                  [this, p, &is, service_idx](boost::system::error_code ec) {
+                      if (!ec)
+                      {
+                          is.post(
+                            [p] {
+                                p->start();
+                            });
+                      }
+                      else
+                      {
+                          task_queue_length_pool_[service_idx]--;
+                          CROW_LOG_DEBUG << &is << " {" << service_idx << "} queue length: " << task_queue_length_pool_[service_idx];
+                          delete p;
+                      }
+                      do_accept();
+                  });
+            }
         }
 
     private:
