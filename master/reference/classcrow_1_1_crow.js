@@ -29,6 +29,7 @@ var classcrow_1_1_crow =
     [ "server_name", "classcrow_1_1_crow.html#ae0e400a1757bd68f716b82753a5a1a73", null ],
     [ "signal_add", "classcrow_1_1_crow.html#acf706e62049ea737aec5a79e61e1fe3f", null ],
     [ "signal_clear", "classcrow_1_1_crow.html#a11832be23c0a0296b5ed2023361f6205", null ],
+    [ "signals", "classcrow_1_1_crow.html#a41804939e4051bee424689fe4fb80baa", null ],
     [ "ssl", "classcrow_1_1_crow.html#aae3fee9d9c2c6d9ba9400abc063b680b", null ],
     [ "ssl_chainfile", "classcrow_1_1_crow.html#ade6bf7e56805c1112532807581293448", null ],
     [ "ssl_file", "classcrow_1_1_crow.html#a987e909347f0563f7b3dd97bbe271cea", null ],
@@ -41,5 +42,6 @@ var classcrow_1_1_crow =
     [ "timeout", "classcrow_1_1_crow.html#a47ed9a118820f6e6ba0b2bc37f0997fb", null ],
     [ "use_compression", "classcrow_1_1_crow.html#ae53a1544edf04f08eeb2e35f01dc25d3", null ],
     [ "validate", "classcrow_1_1_crow.html#ab9a22c981e0afec0d55ee234683a6d38", null ],
-    [ "wait_for_server_start", "classcrow_1_1_crow.html#a5e39821ccc9cbf8c6400fd86fc406c21", null ]
+    [ "wait_for_server_start", "classcrow_1_1_crow.html#a5e39821ccc9cbf8c6400fd86fc406c21", null ],
+    [ "websocket_count", "classcrow_1_1_crow.html#abb92249697748f8c357477fbcdc7ac15", null ]
 ];

@@ -1,5 +1,7 @@
 var NAVTREEINDEX2 =
 {
+"structcrow_1_1detail_1_1handler__middleware__wrapper.html#ae94b79d97e73eaecf437723855d4348b":[1,0,0,0,8,1],
+"structcrow_1_1detail_1_1handler__middleware__wrapper_1_1middleware__call__criteria.html":[1,0,0,0,8,0],
 "structcrow_1_1detail_1_1is__after__handle__arity__3__impl.html":[1,0,0,0,9],
 "structcrow_1_1detail_1_1is__before__handle__arity__3__impl.html":[1,0,0,0,10],
 "structcrow_1_1detail_1_1middleware__call__criteria__only__global.html":[1,0,0,0,11],

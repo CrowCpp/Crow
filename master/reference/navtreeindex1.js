@@ -1,5 +1,7 @@
 var NAVTREEINDEX1 =
 {
+"classcrow_1_1json_1_1wvalue.html#a780a992b87a23470b99ef4b594ffd1ba":[1,0,0,1,2,25],
+"classcrow_1_1json_1_1wvalue.html#a7b27cf8c76058972391014f0f9fa3c4b":[1,0,0,1,2,18],
 "classcrow_1_1json_1_1wvalue.html#a80b6297e11ab7dfa3ca9819281cd337d":[1,0,0,1,2,39],
 "classcrow_1_1json_1_1wvalue.html#a831735838c1dd18fbcb208d8e31841f3":[1,0,0,1,2,5],
 "classcrow_1_1json_1_1wvalue.html#a83d2b3dfd8f9349e902e02faf15fd0c2":[1,0,0,1,2,45],
@@ -247,7 +249,5 @@ var NAVTREEINDEX1 =
 "structcrow_1_1detail_1_1handler__call__bridge.html#a6793eca7aa0413fa95f29a3ff6947eff":[1,0,0,0,7,2],
 "structcrow_1_1detail_1_1handler__call__bridge.html#abcf9ec0991e5bf5dcf1b8fdc099c2cf9":[1,0,0,0,7,1],
 "structcrow_1_1detail_1_1handler__middleware__wrapper.html":[1,0,0,0,8],
-"structcrow_1_1detail_1_1handler__middleware__wrapper.html#a446616d0ca8932941238974ae0049519":[1,0,0,0,8,2],
-"structcrow_1_1detail_1_1handler__middleware__wrapper.html#ae94b79d97e73eaecf437723855d4348b":[1,0,0,0,8,1],
-"structcrow_1_1detail_1_1handler__middleware__wrapper_1_1middleware__call__criteria.html":[1,0,0,0,8,0]
+"structcrow_1_1detail_1_1handler__middleware__wrapper.html#a446616d0ca8932941238974ae0049519":[1,0,0,0,8,2]
 };
