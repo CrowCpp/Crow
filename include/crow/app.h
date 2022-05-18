@@ -59,6 +59,9 @@ namespace crow
         Crow()
         {}
 
+
+        std::atomic<int> websocket_count{0};
+
         /// Process an Upgrade request
 
         ///
@@ -126,6 +129,11 @@ namespace crow
         {
             signals_.push_back(signal_number);
             return *this;
+        }
+
+        std::vector<int> signals()
+        {
+            return signals_;
         }
 
         /// Set the port that Crow will handle requests on
@@ -313,7 +321,6 @@ namespace crow
             {
                 server_ = std::move(std::unique_ptr<server_t>(new server_t(this, bindaddr_, port_, server_name_, &middlewares_, concurrency_, timeout_, nullptr)));
                 server_->set_tick_function(tick_interval_, tick_function_);
-                server_->signal_clear();
                 for (auto snum : signals_)
                 {
                     server_->signal_add(snum);
