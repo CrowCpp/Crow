@@ -161,7 +161,7 @@ namespace crow
 
         void stop()
         {
-            should_close_ = true;                                                  //Prevent the acceptor from taking new connections
+            shutting_down_ = true;                                                 //Prevent the acceptor from taking new connections
             while (handler_->websocket_count.load(std::memory_order_release) != 0) //Wait for the websockets to close properly
             {
             }
@@ -207,7 +207,7 @@ namespace crow
 
         void do_accept()
         {
-            if (!should_close_)
+            if (!shutting_down_)
             {
                 uint16_t service_idx = pick_io_service_idx();
                 asio::io_service& is = *io_service_pool_[service_idx];
@@ -245,7 +245,7 @@ namespace crow
         std::vector<detail::task_timer*> task_timer_pool_;
         std::vector<std::function<std::string()>> get_cached_date_str_pool_;
         tcp::acceptor acceptor_;
-        bool should_close_ = false;
+        bool shutting_down_ = false;
         boost::asio::signal_set signals_;
         boost::asio::deadline_timer tick_timer_;
 
