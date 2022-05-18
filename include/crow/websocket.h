@@ -120,9 +120,8 @@ namespace crow
                 signals_.async_wait(
                     [&](const boost::system::error_code& e, int /*signal_number*/){
                         if (!e){
-                        CROW_LOG_INFO << "quitting " << this;
-                        do_not_destroy_ = true;
-                        close("Quitter");
+                        CROW_LOG_INFO << "Quitting Websocket: " << this;
+                        close("Server Application Terminated");
                         }
                     });
                 start(crow::utility::base64encode((unsigned char*)digest, 20));
@@ -308,6 +307,7 @@ namespace crow
                                       has_mask_ = false;
 #else
                                       close_connection_ = true;
+                                      adaptor_.shutdown_readwrite();
                                       adaptor_.close();
                                       if (error_handler_)
                                           error_handler_(*this);
@@ -333,6 +333,7 @@ namespace crow
                               else
                               {
                                   close_connection_ = true;
+                                  adaptor_.shutdown_readwrite();
                                   adaptor_.close();
                                   if (error_handler_)
                                       error_handler_(*this);
@@ -370,6 +371,7 @@ namespace crow
                               else
                               {
                                   close_connection_ = true;
+                                  adaptor_.shutdown_readwrite();
                                   adaptor_.close();
                                   if (error_handler_)
                                       error_handler_(*this);
@@ -404,6 +406,7 @@ namespace crow
                               else
                               {
                                   close_connection_ = true;
+                                  adaptor_.shutdown_readwrite();
                                   adaptor_.close();
                                   if (error_handler_)
                                       error_handler_(*this);
@@ -440,6 +443,7 @@ namespace crow
                                       close_connection_ = true;
                                       if (error_handler_)
                                           error_handler_(*this);
+                                      adaptor_.shutdown_readwrite();
                                       adaptor_.close();
                                   }
                               });
@@ -478,6 +482,7 @@ namespace crow
                                   close_connection_ = true;
                                   if (error_handler_)
                                       error_handler_(*this);
+                                  adaptor_.shutdown_readwrite();
                                   adaptor_.close();
                               }
                           });
@@ -557,6 +562,7 @@ namespace crow
                         }
                         else
                         {
+                            adaptor_.shutdown_readwrite();
                             adaptor_.close();
                             close_connection_ = true;
                             if (!is_close_handler_called_)
@@ -655,16 +661,7 @@ namespace crow
             bool error_occured_{false};
             bool pong_received_{false};
             bool is_close_handler_called_{false};
-
-
-                // **WARNING**
-                // SETTING THIS PREVENTS THE OBJECT FROM BEING DELETED,
-                // AND WILL ABSOLUTELY CAUSE A MEMORY LEAK!!
-                // ONLY USE IF THE APPLICATION IS BEING TERMINATED!!
-                bool do_not_destroy_{false};
-                // **WARNING**
-
-                std::atomic<int>& websocket_count_;
+            std::atomic<int>& websocket_count_;
 
             std::function<void(crow::websocket::connection&)> open_handler_;
             std::function<void(crow::websocket::connection&, const std::string&, bool)> message_handler_;

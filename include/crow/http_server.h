@@ -161,16 +161,16 @@ namespace crow
 
         void stop()
         {
-            should_close_ = false; //Prevent the acceptor from taking new connections
+            should_close_ = false;                                                 //Prevent the acceptor from taking new connections
             while (handler_->websocket_count.load(std::memory_order_release) != 0) //Wait for the websockets to close properly
             {
             }
-            for(auto& io_service : io_service_pool_)
+            for (auto& io_service : io_service_pool_)
             {
                 if (io_service != nullptr)
                 {
-                CROW_LOG_INFO << "Closing IO service " << &io_service;
-                io_service->stop(); //Close all io_services (and HTTP connections)
+                    CROW_LOG_INFO << "Closing IO service " << &io_service;
+                    io_service->stop(); //Close all io_services (and HTTP connections)
                 }
             }
 
