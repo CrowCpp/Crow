@@ -27,6 +27,52 @@ You can change the HTTP methods the route uses from just the default `GET` by us
 
     Crow handles `HEAD` and `OPTIONS` methods automatically. So adding those to your handler has no effect.
 
+Crow defines the following methods:
+```
+DELETE
+GET
+HEAD
+POST
+PUT
+
+CONNECT
+OPTIONS
+TRACE
+
+PATCH
+PURGE
+
+COPY
+LOCK
+MKCOL
+MOVE
+PROPFIND
+PROPPATCH
+SEARCH
+UNLOCK
+BIND
+REBIND
+UNBIND
+ACL
+
+REPORT
+MKACTIVITY
+CHECKOUT
+MERGE
+
+SEARCH
+NOTIFY
+SUBSCRIBE
+UNSUBSCRIBE
+
+MKCALENDAR
+
+LINK
+UNLINK
+
+SOURCE
+```
+
 ## Handler
 Basically a piece of code that gets executed whenever the client calls the associated route, usually in the form of a [lambda expression](https://en.cppreference.com/w/cpp/language/lambda). It can be as simple as `#!cpp ([](){return "Hello World"})`.<br><br>
 
@@ -45,10 +91,57 @@ Please note that in order to return a response defined as a parameter you'll nee
 Alternatively, you can define the response in the body and return it (`#!cpp ([](){return crow::response()})`).<br>
 
 For more information on `crow::response` go [here](../../reference/structcrow_1_1response.html).<br><br>
+    
+Crow defines the following status codes:
+```
+100 Continue
+101 Switching Protocols
+
+200 OK
+201 Created
+202 Accepted
+203 Non-Authoritative Information
+204 No Content
+205 Reset Content
+206 Partial Content
+
+300 Multiple Choices
+301 Moved Permanently
+302 Found
+303 See Other
+304 Not Modified
+307 Temporary Redirect
+308 Permanent Redirect
+
+400 Bad Request
+401 Unauthorized
+403 Forbidden
+404 Not Found
+405 Method Not Allowed
+407 Proxy Authentication Required
+409 Conflict
+410 Gone
+413 Payload Too Large
+415 Unsupported Media Type
+416 Range Not Satisfiable
+417 Expectation Failed
+428 Precondition Required
+429 Too Many Requests
+451 Unavailable For Legal Reasons
+
+500 Internal Server Error
+501 Not Implemented
+502 Bad Gateway
+503 Service Unavailable
+504 Gateway Timeout
+506 Variant Also Negotiates
+```
+
 !!! note
 
-    When your status code is not well-known e.g. crow::response(123) it will get converted into 500.
-    
+    If your status code is not defined in the list above (e.g. `crow::response(123)`) Crow will return `500 Internal Server Error` instead.
+
+
 ### Return statement
 A `crow::response` is very strictly tied to a route. If you can have something in a response constructor, you can return it in a handler.<br><br>
 The main return type is `std::string`, although you could also return a `crow::json::wvalue` or `crow::multipart::message` directly.<br><br>

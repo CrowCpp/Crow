@@ -587,7 +587,7 @@ TEST_CASE("undefined_status_code")
         return response(200, "ok");
     });
 
-    auto _ = app.bindaddr(LOCALHOST_ADDRESS).port(0).run_async();
+    auto _ = app.bindaddr(LOCALHOST_ADDRESS).port(45471).run_async();
     app.wait_for_server_start();
 
     asio::io_service is;
@@ -2081,11 +2081,13 @@ TEST_CASE("send_file")
 
         CHECK(200 == res.code);
 
-        REQUIRE(res.headers.count("Content-Type"));
-        CHECK("image/jpeg" == res.headers.find("Content-Type")->second);
+        CHECK(res.headers.count("Content-Type"));
+        if (res.headers.count("Content-Type"))
+            CHECK("image/jpeg" == res.headers.find("Content-Type")->second);
 
-        REQUIRE(res.headers.count("Content-Length"));
-        CHECK(to_string(statbuf_cat.st_size) == res.headers.find("Content-Length")->second);
+        CHECK(res.headers.count("Content-Length"));
+        if (res.headers.count("Content-Length"))
+            CHECK(to_string(statbuf_cat.st_size) == res.headers.find("Content-Length")->second);
     }
 
     //Unknown extension check
@@ -2098,11 +2100,13 @@ TEST_CASE("send_file")
 
         CHECK_NOTHROW(app.handle(req, res));
         CHECK(200 == res.code);
-        REQUIRE(res.headers.count("Content-Type"));
-        CHECK("text/plain" == res.headers.find("Content-Type")->second);
+        CHECK(res.headers.count("Content-Type"));
+        if (res.headers.count("Content-Type"))
+            CHECK("text/plain" == res.headers.find("Content-Type")->second);
 
-        REQUIRE(res.headers.count("Content-Length"));
-        CHECK(to_string(statbuf_badext.st_size) == res.headers.find("Content-Length")->second);
+        CHECK(res.headers.count("Content-Length"));
+        if (res.headers.count("Content-Length"))
+            CHECK(to_string(statbuf_badext.st_size) == res.headers.find("Content-Length")->second);
     }
 } // send_file
 
