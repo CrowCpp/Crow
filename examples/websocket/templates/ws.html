@@ -19,8 +19,8 @@ sock.onopen = ()=>{
 sock.onerror = (e)=>{
     console.log('error',e)
 }
-sock.onclose = ()=>{
-    console.log('close')
+sock.onclose = (e)=>{
+    console.log('close', e)
 }
 sock.onmessage = (e)=>{
     $("#log").val(
