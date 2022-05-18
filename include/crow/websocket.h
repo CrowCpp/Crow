@@ -106,7 +106,7 @@ namespace crow
 
 
                 signals_.clear();
-                for (auto snum: handler_->signals())
+                for (auto snum : handler_->signals())
                     signals_.add(snum);
 
                 // Sec-WebSocket-Key: dGhlIHNhbXBsZSBub25jZQ==
@@ -118,12 +118,13 @@ namespace crow
                 s.getDigestBytes(digest);
 
                 signals_.async_wait(
-                    [&](const boost::system::error_code& e, int /*signal_number*/){
-                        if (!e){
-                        CROW_LOG_INFO << "Quitting Websocket: " << this;
-                        close("Server Application Terminated");
-                        }
-                    });
+                  [&](const boost::system::error_code& e, int /*signal_number*/) {
+                      if (!e)
+                      {
+                          CROW_LOG_INFO << "Quitting Websocket: " << this;
+                          close("Server Application Terminated");
+                      }
+                  });
                 start(crow::utility::base64encode((unsigned char*)digest, 20));
             }
 
