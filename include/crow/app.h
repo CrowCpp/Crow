@@ -19,6 +19,7 @@
 #include "crow/http_request.h"
 #include "crow/http_server.h"
 #include "crow/task_timer.h"
+#include "crow/websocket.h"
 #ifdef CROW_ENABLE_COMPRESSION
 #include "crow/compression.h"
 #endif
@@ -58,9 +59,6 @@ namespace crow
 #endif
         Crow()
         {}
-
-
-        std::atomic<int> websocket_count{0};
 
         /// Process an Upgrade request
 
@@ -349,8 +347,24 @@ namespace crow
             else
 #endif
             {
+                std::vector<crow::websocket::connection*> websockets_to_close = websockets_;
+                for (auto websocket : websockets_to_close)
+                {
+                    CROW_LOG_INFO << "Quitting Websocket: " << websocket;
+                    websocket->close("Server Application Terminated");
+                }
                 if (server_) { server_->stop(); }
             }
+        }
+
+        void add_websocket(crow::websocket::connection* conn)
+        {
+            websockets_.push_back(conn);
+        }
+
+        void remove_websocket(crow::websocket::connection* conn)
+        {
+            std::remove(websockets_.begin(), websockets_.end(), conn);
         }
 
         /// Print the routing paths defined for each HTTP method
@@ -512,6 +526,7 @@ namespace crow
         bool server_started_{false};
         std::condition_variable cv_started_;
         std::mutex start_mutex_;
+        std::vector<crow::websocket::connection*> websockets_;
     };
     template<typename... Middlewares>
     using App = Crow<Middlewares...>;

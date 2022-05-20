@@ -7,7 +7,7 @@
 #include <sstream>
 #include <vector>
 #include <thread>
-#include <chrono>`
+#include <chrono>
 
 #include "catch.hpp"
 #include "crow.h"
@@ -2401,9 +2401,12 @@ TEST_CASE("websocket_max_payload")
         }
         catch (std::exception& e)
         {
-            CROW_LOG_DEBUG << e.what();
+            CROW_LOG_DEBUG << "websocket_max_payload test passed due to the exception: " << e.what();
         }
     }
+
+    boost::system::error_code ec;
+    c.lowest_layer().shutdown(boost::asio::socket_base::shutdown_type::shutdown_both, ec);
 
     app.stop();
 } // websocket_max_payload
