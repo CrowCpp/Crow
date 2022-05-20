@@ -1,6 +1,6 @@
 var classcrow_1_1websocket_1_1_connection =
 [
-    [ "Connection", "classcrow_1_1websocket_1_1_connection.html#ac695374d3d21ca4b5383e41fcda4844b", null ],
+    [ "Connection", "classcrow_1_1websocket_1_1_connection.html#a179e3068ea890b7fa982950242f61dd5", null ],
     [ "build_header", "classcrow_1_1websocket_1_1_connection.html#a2fc995281b9452b56f743294baa7ed17", null ],
     [ "check_destroy", "classcrow_1_1websocket_1_1_connection.html#a8030e7ca3e9ee5d07ccf7f8cb43fa317", null ],
     [ "close", "classcrow_1_1websocket_1_1_connection.html#a0be6d809da4a96c75865748d3b14d22f", null ],
@@ -16,5 +16,6 @@ var classcrow_1_1websocket_1_1_connection =
     [ "send_ping", "classcrow_1_1websocket_1_1_connection.html#a672bda5d8c95cd66b7f73f9066e968d9", null ],
     [ "send_pong", "classcrow_1_1websocket_1_1_connection.html#aec915e6ef0e542d855a784e11013021c", null ],
     [ "send_text", "classcrow_1_1websocket_1_1_connection.html#af9839749b1616dc7f8a70c9c3e571832", null ],
+    [ "set_max_payload_size", "classcrow_1_1websocket_1_1_connection.html#a74ca3df127a5c009920b3c5bb1ec3c81", null ],
     [ "start", "classcrow_1_1websocket_1_1_connection.html#a928134640aa98a86f56a71735a41147a", null ]
 ];

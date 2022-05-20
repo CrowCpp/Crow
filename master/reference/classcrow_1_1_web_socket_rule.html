@@ -135,6 +135,10 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>handle_upgrade</b> (c
 <tr class="memitem:aba2c2bc84f24c46b15cff19a2990ea9b"><td class="memItemLeft" align="right" valign="top"><a id="aba2c2bc84f24c46b15cff19a2990ea9b"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>handle_upgrade</b> (const <a class="el" href="structcrow_1_1request.html">request</a> &amp;req, <a class="el" href="structcrow_1_1response.html">response</a> &amp;, <a class="el" href="structcrow_1_1_s_s_l_adaptor.html">SSLAdaptor</a> &amp;&amp;adaptor) override</td></tr>
 <tr class="separator:aba2c2bc84f24c46b15cff19a2990ea9b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad4d8b25025e767fbe9af7f7c4263c2cb"><td class="memItemLeft" align="right" valign="top"><a id="ad4d8b25025e767fbe9af7f7c4263c2cb"></a>
+<a class="el" href="classcrow_1_1_web_socket_rule.html">self_t</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcrow_1_1_web_socket_rule.html#ad4d8b25025e767fbe9af7f7c4263c2cb">max_payload</a> (uint64_t max_payload)</td></tr>
+<tr class="memdesc:ad4d8b25025e767fbe9af7f7c4263c2cb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Override the global payload limit for this single WebSocket rule. <br /></td></tr>
+<tr class="separator:ad4d8b25025e767fbe9af7f7c4263c2cb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab6e22fe1928da26bbc469cf1ea8c6d9d"><td class="memTemplParams" colspan="2"><a id="ab6e22fe1928da26bbc469cf1ea8c6d9d"></a>
 template&lt;typename Func &gt; </td></tr>
 <tr class="memitem:ab6e22fe1928da26bbc469cf1ea8c6d9d"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classcrow_1_1_web_socket_rule.html">self_t</a> &amp;&#160;</td><td class="memTemplItemRight" valign="bottom"><b>onopen</b> (Func f)</td></tr>
@@ -193,6 +197,12 @@ std::function&lt; void(<a class="el" href="structcrow_1_1websocket_1_1connection
 <tr class="memitem:adc64fcece9125c67b872ff7bb71902ae"><td class="memItemLeft" align="right" valign="top"><a id="adc64fcece9125c67b872ff7bb71902ae"></a>
 std::function&lt; bool(const <a class="el" href="structcrow_1_1request.html">crow::request</a> &amp;)&gt;&#160;</td><td class="memItemRight" valign="bottom"><b>accept_handler_</b></td></tr>
 <tr class="separator:adc64fcece9125c67b872ff7bb71902ae"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9ee993bdbed14eccd5232ba8cc472d52"><td class="memItemLeft" align="right" valign="top"><a id="a9ee993bdbed14eccd5232ba8cc472d52"></a>
+uint64_t&#160;</td><td class="memItemRight" valign="bottom"><b>max_payload_</b></td></tr>
+<tr class="separator:a9ee993bdbed14eccd5232ba8cc472d52"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4f169c0aedfa2161fb2cdd8e456fb5c0"><td class="memItemLeft" align="right" valign="top"><a id="a4f169c0aedfa2161fb2cdd8e456fb5c0"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>max_payload_override_</b> = false</td></tr>
+<tr class="separator:a4f169c0aedfa2161fb2cdd8e456fb5c0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pro_attribs_classcrow_1_1_base_rule"><td colspan="2" onclick="javascript:toggleInherit('pro_attribs_classcrow_1_1_base_rule')"><img src="closed.png" alt="-"/>&#160;Protected Attributes inherited from <a class="el" href="classcrow_1_1_base_rule.html">crow::BaseRule</a></td></tr>
 <tr class="memitem:a997e9942d597fe133df84c94558c1e13 inherit pro_attribs_classcrow_1_1_base_rule"><td class="memItemLeft" align="right" valign="top"><a id="a997e9942d597fe133df84c94558c1e13"></a>
 uint32_t&#160;</td><td class="memItemRight" valign="bottom"><b>methods_</b> {1 &lt;&lt; static_cast&lt;int&gt;(HTTPMethod::Get)}</td></tr>
@@ -230,7 +240,7 @@ class crow::WebSocketRule&lt; App &gt;</h3>
 			<ul>
 				<li class="navelem"><b>crow</b></li><li class="navelem"><a class="el" href="classcrow_1_1_web_socket_rule.html">WebSocketRule</a></li>
 				<li class="footer">
-					Generated on Wed May 18 2022 for Crow by <a href="http://www.doxygen.org/index.html">
+					Generated on Fri May 20 2022 for Crow by <a href="http://www.doxygen.org/index.html">
 					<img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.17.
 					Dark theme by <a href="http://majerle.eu" target="_new">Tilen Majerle</a>. Edited by <a href="https://github.com/The-EDev" target="_new">Farook Al-Sammarraie</a>. All rights reserved.
 				</li>

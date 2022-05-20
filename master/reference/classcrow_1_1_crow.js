@@ -6,6 +6,7 @@ var classcrow_1_1_crow =
     [ "server_t", "classcrow_1_1_crow.html#a5df810d2619e31c2f024cc4e45898997", null ],
     [ "ssl_server_t", "classcrow_1_1_crow.html#aac04f81d0bc897267d092bb8af1513d4", null ],
     [ "Crow", "classcrow_1_1_crow.html#a7a6ce30b00d6d2beb901ffbb3160c137", null ],
+    [ "add_websocket", "classcrow_1_1_crow.html#ad38f39dc7ba97b9f298390565a88125a", null ],
     [ "bindaddr", "classcrow_1_1_crow.html#a75777f82b6519c86d71446eb9285d774", null ],
     [ "catchall_route", "classcrow_1_1_crow.html#ab1beefb0c6fc3c534160ba3bbc615069", null ],
     [ "compression_algorithm", "classcrow_1_1_crow.html#a261b73d1f1f463856cceee2c589cbbf4", null ],
@@ -22,6 +23,7 @@ var classcrow_1_1_crow =
     [ "port", "classcrow_1_1_crow.html#a87d0e10ed791c6847d8b7dfff2369aae", null ],
     [ "port", "classcrow_1_1_crow.html#a365f9c95fc2bd8bb583967f499c1f4a1", null ],
     [ "register_blueprint", "classcrow_1_1_crow.html#a7d16da8824a6d6c376395f4bfa73430e", null ],
+    [ "remove_websocket", "classcrow_1_1_crow.html#a5305aba0aea70aa0e283c4ff8d78bbbf", null ],
     [ "route", "classcrow_1_1_crow.html#af221cb25926e5dabc2da21a7a1c9713c", null ],
     [ "route_dynamic", "classcrow_1_1_crow.html#a0f408e47d261ad55ccfd8eb5f351c22e", null ],
     [ "run", "classcrow_1_1_crow.html#a193d8b03f717234a841cd92f72c6b4b5", null ],
@@ -43,5 +45,6 @@ var classcrow_1_1_crow =
     [ "use_compression", "classcrow_1_1_crow.html#ae53a1544edf04f08eeb2e35f01dc25d3", null ],
     [ "validate", "classcrow_1_1_crow.html#ab9a22c981e0afec0d55ee234683a6d38", null ],
     [ "wait_for_server_start", "classcrow_1_1_crow.html#a5e39821ccc9cbf8c6400fd86fc406c21", null ],
-    [ "websocket_count", "classcrow_1_1_crow.html#abb92249697748f8c357477fbcdc7ac15", null ]
+    [ "websocket_max_payload", "classcrow_1_1_crow.html#a391a488c01ce53c0ccfd502c7ad15640", null ],
+    [ "websocket_max_payload", "classcrow_1_1_crow.html#a30d9cbcaa6aa3c3e44a8a3c4479fd7cf", null ]
 ];

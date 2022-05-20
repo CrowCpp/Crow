@@ -96,6 +96,11 @@
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
       
+        
+        <a href="#routes" class="md-skip">
+          Skip to content
+        </a>
+      
     </div>
     <div data-md-component="announce">
       
@@ -798,9 +803,45 @@
       
       
       
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Websockets
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
       <a href="./" class="md-nav__link md-nav__link--active">
         Websockets
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#routes" class="md-nav__link">
+    Routes
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#maximum-payload-size" class="md-nav__link">
+    Maximum payload size
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
       
     </li>
   
@@ -1036,6 +1077,28 @@
   
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#routes" class="md-nav__link">
+    Routes
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#maximum-payload-size" class="md-nav__link">
+    Maximum payload size
+  </a>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -1051,20 +1114,20 @@
   <h1>Websockets</h1>
 
 <p>Websockets are a way of connecting a client and a server without the request response nature of HTTP.<br><br></p>
+<h2 id="routes">Routes<a class="headerlink" href="#routes" title="Permanent link">&para;</a></h2>
 <p>To create a websocket in Crow, you need a websocket route.<br>
-A websocket route differs from a normal route quite a bit. While it uses the same <code>CROW_ROUTE(app, "/url")</code> macro, that's about where the similarities end.<br>
-A websocket route follows the macro with <code>.websocket()</code> which is then followed by a series of methods (with handlers inside) for each event. These are (sorted by order of execution):</p>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>By default, Crow allows Clients to send unmasked websocket messages, which is useful for debugging but goes against the protocol specification. Production Crow applications should enforce the protocol by adding <code class="highlight"><span class="cp">#define CROW_ENFORCE_WS_SPEC</span></code> to their source code.</p>
-</div>
+A websocket route differs from a normal route quite a bit. It uses A slightly altered <code>CROW_WEBSOCKET_ROUTE(app, "/url")</code> macro, which is then followed by a series of methods (with handlers inside) for each event. These are (sorted by order of execution):</p>
 <ul>
 <li><code class="highlight"><span class="n">onaccept</span><span class="p">([</span><span class="o">&amp;</span><span class="p">](</span><span class="k">const</span><span class="w"> </span><span class="n">crow</span><span class="o">::</span><span class="n">request</span><span class="o">&amp;</span><span class="p">){</span><span class="n">handler</span><span class="w"> </span><span class="n">code</span><span class="w"> </span><span class="n">goes</span><span class="w"> </span><span class="n">here</span><span class="p">})</span><span class="w"></span></code> (This handler has to return <code>bool</code>)</li>
 <li><code class="highlight"><span class="n">onopen</span><span class="p">([</span><span class="o">&amp;</span><span class="p">](</span><span class="n">crow</span><span class="o">::</span><span class="n">websocket</span><span class="o">::</span><span class="n">connection</span><span class="o">&amp;</span><span class="w"> </span><span class="n">conn</span><span class="p">){</span><span class="n">handler</span><span class="w"> </span><span class="n">code</span><span class="w"> </span><span class="n">goes</span><span class="w"> </span><span class="n">here</span><span class="p">})</span><span class="w"></span></code></li>
 <li><code class="highlight"><span class="n">onmessage</span><span class="p">([</span><span class="o">&amp;</span><span class="p">](</span><span class="n">crow</span><span class="o">::</span><span class="n">websocket</span><span class="o">::</span><span class="n">connection</span><span class="o">&amp;</span><span class="w"> </span><span class="n">conn</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">message</span><span class="p">,</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">is_binary</span><span class="p">){</span><span class="n">handler</span><span class="w"> </span><span class="n">code</span><span class="w"> </span><span class="n">goes</span><span class="w"> </span><span class="n">here</span><span class="p">})</span><span class="w"></span></code></li>
 <li><code class="highlight"><span class="n">onerror</span><span class="p">([</span><span class="o">&amp;</span><span class="p">](</span><span class="n">crow</span><span class="o">::</span><span class="n">websocket</span><span class="o">::</span><span class="n">connection</span><span class="o">&amp;</span><span class="w"> </span><span class="n">conn</span><span class="p">){</span><span class="n">handler</span><span class="w"> </span><span class="n">code</span><span class="w"> </span><span class="n">goes</span><span class="w"> </span><span class="n">here</span><span class="p">})</span><span class="w"></span></code></li>
-<li><code class="highlight"><span class="n">onclose</span><span class="p">([</span><span class="o">&amp;</span><span class="p">](</span><span class="n">crow</span><span class="o">::</span><span class="n">websocket</span><span class="o">::</span><span class="n">connection</span><span class="o">&amp;</span><span class="w"> </span><span class="n">conn</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">reason</span><span class="p">){</span><span class="n">handler</span><span class="w"> </span><span class="n">code</span><span class="w"> </span><span class="n">goes</span><span class="w"> </span><span class="n">here</span><span class="p">})</span><span class="w"></span></code><br><br></li>
+<li><code class="highlight"><span class="n">onclose</span><span class="p">([</span><span class="o">&amp;</span><span class="p">](</span><span class="n">crow</span><span class="o">::</span><span class="n">websocket</span><span class="o">::</span><span class="n">connection</span><span class="o">&amp;</span><span class="w"> </span><span class="n">conn</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">reason</span><span class="p">){</span><span class="n">handler</span><span class="w"> </span><span class="n">code</span><span class="w"> </span><span class="n">goes</span><span class="w"> </span><span class="n">here</span><span class="p">})</span><span class="w"></span></code></li>
 </ul>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>By default, Crow allows Clients to send unmasked websocket messages, which is useful for debugging but goes against the protocol specification. Production Crow applications should enforce the protocol by adding <code class="highlight"><span class="cp">#define CROW_ENFORCE_WS_SPEC</span></code> to their source code.</p>
+</div>
 <p>These event methods and their handlers can be chained. The full Route should look similar to this:
 <div class="highlight"><pre><span></span><code><span class="n">CROW_ROUTE</span><span class="p">(</span><span class="n">app</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;/ws&quot;</span><span class="p">)</span><span class="w"></span>
 <span class="w">    </span><span class="p">.</span><span class="n">websocket</span><span class="p">()</span><span class="w"></span>
@@ -1080,9 +1143,16 @@ A websocket route follows the macro with <code>.websocket()</code> which is then
 <span class="w">                </span><span class="k">else</span><span class="w"></span>
 <span class="w">                    </span><span class="n">do_something_else</span><span class="p">(</span><span class="n">data</span><span class="p">);</span><span class="w"></span>
 <span class="w">            </span><span class="p">});</span><span class="w"></span>
-</code></pre></div>
-<br><br>
-For more info go <a href="../../reference/classcrow_1_1_web_socket_rule.html">here</a>.</p>
+</code></pre></div></p>
+<h2 id="maximum-payload-size">Maximum payload size<a class="headerlink" href="#maximum-payload-size" title="Permanent link">&para;</a></h2>
+<p><span class="tag"><a href="https://github.com/CrowCpp/Crow"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M7.22 6.5a.72.72 0 1 1-1.44 0 .72.72 0 0 1 1.44 0z"/><path fill-rule="evenodd" d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zM4 8.379V5a1 1 0 0 1 1-1h3.379a1.5 1.5 0 0 1 1.06.44l3.213 3.211a1.2 1.2 0 0 1 0 1.698l-3.303 3.303a1.2 1.2 0 0 1-1.698 0L4.44 9.439A1.5 1.5 0 0 1 4 8.38z"/></svg></span> master</a></span></p>
+<p>The maximum payload size that a connection accepts can be adjusted either globally by using <code class="highlight"><span class="n">app</span><span class="p">.</span><span class="n">websocket_max_payload</span><span class="p">(</span><span class="o">&lt;</span><span class="n">value</span><span class="w"> </span><span class="n">in</span><span class="w"> </span><span class="n">bytes</span><span class="o">&gt;</span><span class="p">)</span><span class="w"></span></code> or per route by using <code class="highlight"><span class="n">CROW_WEBSOCKET_ROUTE</span><span class="p">(</span><span class="n">app</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;/url&quot;</span><span class="p">).</span><span class="n">max_payload</span><span class="p">(</span><span class="o">&lt;</span><span class="n">value</span><span class="w"> </span><span class="n">in</span><span class="w"> </span><span class="n">bytes</span><span class="o">&gt;</span><span class="p">)</span><span class="w"></span></code>. In case a message was sent that exceeded the limit. The connection would be shut down and <code>onerror</code> would be triggered.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>By default, This limit is disabled. To disable the global setting in specific routes, you only need to call <code class="highlight"><span class="n">CROW_WEBSOCKET_ROUTE</span><span class="p">(</span><span class="n">app</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;/url&quot;</span><span class="p">).</span><span class="n">max_payload</span><span class="p">(</span><span class="n">UINT64_MAX</span><span class="p">)</span><span class="w"></span></code>.</p>
+</div>
+<p>For more info about websocket routes go <a href="../../reference/classcrow_1_1_web_socket_rule.html">here</a>.</p>
+<p>For more info about websocket connections go <a href="../../reference/classcrow_1_1websocket_1_1_connection.html">here</a>.</p>
 
               
             </article>
