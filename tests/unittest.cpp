@@ -2339,6 +2339,78 @@ TEST_CASE("websocket")
     app.stop();
 } // websocket
 
+TEST_CASE("websocket_max_payload")
+{
+    static std::string http_message = "GET /ws HTTP/1.1\r\nConnection: keep-alive, Upgrade\r\nupgrade: websocket\r\nSec-WebSocket-Key: dGhlIHNhbXBsZSBub25jZQ==\r\nSec-WebSocket-Version: 13\r\n\r\n";
+
+    static bool connected{false};
+
+    SimpleApp app;
+
+    CROW_WEBSOCKET_ROUTE(app, "/ws")
+      .onopen([&](websocket::connection&) {
+          connected = true;
+          CROW_LOG_INFO << "Connected websocket and value is " << connected;
+      })
+      .onmessage([&](websocket::connection& conn, const std::string& message, bool isbin) {
+          CROW_LOG_INFO << "Message is \"" << message << '\"';
+          if (!isbin && message == "PINGME")
+              conn.send_ping("");
+          else if (!isbin && message == "Hello")
+              conn.send_text("Hello back");
+          else if (isbin && message == "Hello bin")
+              conn.send_binary("Hello back bin");
+      })
+      .onclose([&](websocket::connection&, const std::string&) {
+          CROW_LOG_INFO << "Closing websocket";
+      });
+
+    app.validate();
+
+    auto _ = app.websocket_max_payload(3).bindaddr(LOCALHOST_ADDRESS).port(45461).run_async();
+    app.wait_for_server_start();
+    asio::io_service is;
+
+    asio::ip::tcp::socket c(is);
+    c.connect(asio::ip::tcp::endpoint(
+      asio::ip::address::from_string(LOCALHOST_ADDRESS), 45461));
+
+
+    char buf[2048];
+
+    //----------Handshake----------
+    {
+        std::fill_n(buf, 2048, 0);
+        c.send(asio::buffer(http_message));
+
+        c.receive(asio::buffer(buf, 2048));
+        std::this_thread::sleep_for(std::chrono::milliseconds(5));
+        CHECK(connected);
+    }
+    //----------Text----------
+    {
+        std::fill_n(buf, 2048, 0);
+        char text_message[2 + 5 + 1]("\x81\x05"
+                                     "Hello");
+
+        c.send(asio::buffer(text_message, 7));
+        try
+        {
+            c.receive(asio::buffer(buf, 2048));
+            FAIL_CHECK();
+        }
+        catch (std::exception& e)
+        {
+            CROW_LOG_DEBUG << "websocket_max_payload test passed due to the exception: " << e.what();
+        }
+    }
+
+    boost::system::error_code ec;
+    c.lowest_layer().shutdown(boost::asio::socket_base::shutdown_type::shutdown_both, ec);
+
+    app.stop();
+} // websocket_max_payload
+
 #ifdef CROW_ENABLE_COMPRESSION
 TEST_CASE("zlib_compression")
 {
