@@ -8,8 +8,11 @@
 #include <iostream>
 #include <boost/optional.hpp>
 
+#include "crow/http_request.h"
+
 namespace crow
 {
+
 // ----------------------------------------------------------------------------
 // qs_parse (modified)
 // https://github.com/bartgrantham/qs_parse
@@ -22,7 +25,7 @@ int qs_strncmp(const char * s, const char * qs, size_t n);
  *  Also decodes the value portion of the k/v pair *in-place*.  In a future
  *  enhancement it will also have a compile-time option of sorting qs_kv
  *  alphabetically by key.  */
-int qs_parse(char * qs, char * qs_kv[], int qs_kv_size);
+int qs_parse(char * qs, char * qs_kv[], int qs_kv_size, bool parse_url);
 
 
 /*  Used by qs_parse to decode the value portion of a k/v pair  */
@@ -96,7 +99,7 @@ inline int qs_strncmp(const char * s, const char * qs, size_t n)
 }
 
 
-inline int qs_parse(char * qs, char * qs_kv[], int qs_kv_size)
+inline int qs_parse(char * qs, char * qs_kv[], int qs_kv_size, bool parse_url = true)
 {
     int i, j;
     char * substr_ptr;
@@ -104,7 +107,7 @@ inline int qs_parse(char * qs, char * qs_kv[], int qs_kv_size)
     for(i=0; i<qs_kv_size; i++)  qs_kv[i] = NULL;
 
     // find the beginning of the k/v substrings or the fragment
-    substr_ptr = qs + strcspn(qs, "?#");
+    substr_ptr = parse_url ? qs + strcspn(qs, "?#") : qs;
     if (substr_ptr[0] != '\0')
         substr_ptr++;
     else
@@ -340,6 +343,18 @@ namespace crow
             key_value_pairs_.resize(MAX_KEY_VALUE_PAIRS_COUNT);
 
             int count = qs_parse(&url_[0], &key_value_pairs_[0], MAX_KEY_VALUE_PAIRS_COUNT);
+            key_value_pairs_.resize(count);
+        }
+
+        query_string(request req)
+          : url_(req.body)
+        {
+            if (url_.empty())
+                return;
+
+            key_value_pairs_.resize(MAX_KEY_VALUE_PAIRS_COUNT);
+
+            int count = qs_parse(&url_[0], &key_value_pairs_[0], MAX_KEY_VALUE_PAIRS_COUNT, false);
             key_value_pairs_.resize(count);
         }
 
