@@ -3,10 +3,6 @@ A query string is the part of the URL that comes after a `?` character, it is us
 
 Crow supports query strings through `crow::request::url_params`. The object is of type `crow::query_string` and can has the following functions:<br>
 
-!!! note "Note &nbsp;&nbsp;&nbsp;&nbsp; <span class="tag">[:octicons-feed-tag-16: master](https://github.com/CrowCpp/Crow)</span>"
-
-    A query string can be created from a Crow request or a url string. using the request will use the request body, which is useful for requests of type `application/x-www-form-urlencoded`.
-
 ## get(name)
 Returns the value (as char*) based on the given key (or name). Returns `nullptr` if the key is not found.
 ## pop(name)
