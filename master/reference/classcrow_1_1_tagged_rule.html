@@ -148,11 +148,6 @@ template&lt;typename Func &gt; </td></tr>
 <tr class="memitem:adcbf056e4db8f2673bc7c9bcb1608588"><td class="memItemLeft" align="right" valign="top"><a id="adcbf056e4db8f2673bc7c9bcb1608588"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>handle</b> (<a class="el" href="structcrow_1_1request.html">request</a> &amp;req, <a class="el" href="structcrow_1_1response.html">response</a> &amp;res, const routing_params &amp;params) override</td></tr>
 <tr class="separator:adcbf056e4db8f2673bc7c9bcb1608588"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ada7598b85158f3008e6679f3dbab075f"><td class="memTemplParams" colspan="2"><a id="ada7598b85158f3008e6679f3dbab075f"></a>
-template&lt;typename App , typename... Middlewares&gt; </td></tr>
-<tr class="memitem:ada7598b85158f3008e6679f3dbab075f"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="structcrow_1_1detail_1_1handler__call__bridge.html">crow::detail::handler_call_bridge</a>&lt; <a class="el" href="classcrow_1_1_tagged_rule.html">TaggedRule</a>&lt; Args... &gt;, <a class="el" href="classcrow_1_1_crow.html">App</a>, Middlewares... &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classcrow_1_1_tagged_rule.html#ada7598b85158f3008e6679f3dbab075f">middlewares</a> ()</td></tr>
-<tr class="memdesc:ada7598b85158f3008e6679f3dbab075f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Enable local middleware for this handler. <br /></td></tr>
-<tr class="separator:ada7598b85158f3008e6679f3dbab075f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_classcrow_1_1_base_rule"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classcrow_1_1_base_rule')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classcrow_1_1_base_rule.html">crow::BaseRule</a></td></tr>
 <tr class="memitem:ada4c61f94eb32ebbb5d553cacbc83013 inherit pub_methods_classcrow_1_1_base_rule"><td class="memItemLeft" align="right" valign="top"><a id="ada4c61f94eb32ebbb5d553cacbc83013"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><b>BaseRule</b> (std::string rule)</td></tr>
@@ -189,6 +184,10 @@ const std::string &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>ru
 <tr class="memitem:a3a302822f35e749cdefe4386e4a612c5 inherit pub_methods_structcrow_1_1_rule_parameter_traits"><td class="memItemLeft" align="right" valign="top"><a id="a3a302822f35e749cdefe4386e4a612c5"></a>
 <a class="el" href="classcrow_1_1_tagged_rule.html">self_t</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>methods</b> (HTTPMethod method, MethodArgs... args_method)</td></tr>
 <tr class="separator:a3a302822f35e749cdefe4386e4a612c5 inherit pub_methods_structcrow_1_1_rule_parameter_traits"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a137eb67383f095ce7ae5ef4da19656ab inherit pub_methods_structcrow_1_1_rule_parameter_traits"><td class="memItemLeft" align="right" valign="top"><a id="a137eb67383f095ce7ae5ef4da19656ab"></a>
+<a class="el" href="classcrow_1_1_tagged_rule.html">self_t</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structcrow_1_1_rule_parameter_traits.html#a137eb67383f095ce7ae5ef4da19656ab">middlewares</a> ()</td></tr>
+<tr class="memdesc:a137eb67383f095ce7ae5ef4da19656ab inherit pub_methods_structcrow_1_1_rule_parameter_traits"><td class="mdescLeft">&#160;</td><td class="mdescRight">Enable local middleware for this handler. <br /></td></tr>
+<tr class="separator:a137eb67383f095ce7ae5ef4da19656ab inherit pub_methods_structcrow_1_1_rule_parameter_traits"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="inherited"></a>
 Additional Inherited Members</h2></td></tr>
@@ -209,6 +208,9 @@ std::string&#160;</td><td class="memItemRight" valign="bottom"><b>name_</b></td>
 <tr class="memitem:aa08be2b793fe80d462f71c064a9949b8 inherit pro_attribs_classcrow_1_1_base_rule"><td class="memItemLeft" align="right" valign="top"><a id="aa08be2b793fe80d462f71c064a9949b8"></a>
 std::unique_ptr&lt; <a class="el" href="classcrow_1_1_base_rule.html">BaseRule</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>rule_to_upgrade_</b></td></tr>
 <tr class="separator:aa08be2b793fe80d462f71c064a9949b8 inherit pro_attribs_classcrow_1_1_base_rule"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acd5207b9a30813fcb344ae97bdcdeb72 inherit pro_attribs_classcrow_1_1_base_rule"><td class="memItemLeft" align="right" valign="top"><a id="acd5207b9a30813fcb344ae97bdcdeb72"></a>
+<a class="el" href="structcrow_1_1detail_1_1middleware__indices.html">detail::middleware_indices</a>&#160;</td><td class="memItemRight" valign="bottom"><b>mw_indices_</b></td></tr>
+<tr class="separator:acd5207b9a30813fcb344ae97bdcdeb72 inherit pro_attribs_classcrow_1_1_base_rule"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><h3>template&lt;typename... Args&gt;<br />

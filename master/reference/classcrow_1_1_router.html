@@ -130,9 +130,9 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>register_blueprint</b
 <tr class="memitem:a6438f06d942775e79cc4c12cb954b658"><td class="memItemLeft" align="right" valign="top"><a id="a6438f06d942775e79cc4c12cb954b658"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>get_recursive_child_methods</b> (<a class="el" href="classcrow_1_1_blueprint.html">Blueprint</a> *blueprint, std::vector&lt; HTTPMethod &gt; &amp;methods)</td></tr>
 <tr class="separator:a6438f06d942775e79cc4c12cb954b658"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5047652f0713d9853ef81b670c8c0012"><td class="memItemLeft" align="right" valign="top"><a id="a5047652f0713d9853ef81b670c8c0012"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>validate_bp</b> (std::vector&lt; <a class="el" href="classcrow_1_1_blueprint.html">Blueprint</a> * &gt; blueprints)</td></tr>
-<tr class="separator:a5047652f0713d9853ef81b670c8c0012"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aac8617b861a3f936334a1d502425e759"><td class="memItemLeft" align="right" valign="top"><a id="aac8617b861a3f936334a1d502425e759"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>validate_bp</b> (std::vector&lt; <a class="el" href="classcrow_1_1_blueprint.html">Blueprint</a> * &gt; blueprints, <a class="el" href="structcrow_1_1detail_1_1middleware__indices.html">detail::middleware_indices</a> &amp;current_mw)</td></tr>
+<tr class="separator:aac8617b861a3f936334a1d502425e759"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7916aa9620d6c6af2389af0d877ea9d9"><td class="memItemLeft" align="right" valign="top"><a id="a7916aa9620d6c6af2389af0d877ea9d9"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>validate</b> ()</td></tr>
 <tr class="separator:a7916aa9620d6c6af2389af0d877ea9d9"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -147,9 +147,18 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>get_found_bp</b> (std
 std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcrow_1_1_router.html#a68b3861332db76b182ae0ff07262c55a">get_error</a> (unsigned short code, std::tuple&lt; uint16_t, std::vector&lt; uint16_t &gt;, routing_params &gt; &amp;found, const <a class="el" href="structcrow_1_1request.html">request</a> &amp;req, <a class="el" href="structcrow_1_1response.html">response</a> &amp;res)</td></tr>
 <tr class="memdesc:a68b3861332db76b182ae0ff07262c55a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Is used to handle errors, you insert the error code, found route, request, and response. and it'll either call the appropriate catchall route (considering the blueprint system) and send you a status string (which is mainly used for debug messages), or just set the response code to the proper error code. <br /></td></tr>
 <tr class="separator:a68b3861332db76b182ae0ff07262c55a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abb676a8adf587ffa6cb0737c19c21de7"><td class="memItemLeft" align="right" valign="top"><a id="abb676a8adf587ffa6cb0737c19c21de7"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>handle</b> (<a class="el" href="structcrow_1_1request.html">request</a> &amp;req, <a class="el" href="structcrow_1_1response.html">response</a> &amp;res)</td></tr>
-<tr class="separator:abb676a8adf587ffa6cb0737c19c21de7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9786244bf614786ec1839dec9d071aec"><td class="memTemplParams" colspan="2"><a id="a9786244bf614786ec1839dec9d071aec"></a>
+template&lt;typename App &gt; </td></tr>
+<tr class="memitem:a9786244bf614786ec1839dec9d071aec"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><b>handle</b> (<a class="el" href="structcrow_1_1request.html">request</a> &amp;req, <a class="el" href="structcrow_1_1response.html">response</a> &amp;res)</td></tr>
+<tr class="separator:a9786244bf614786ec1839dec9d071aec"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aafb79b1b02c1f2739a74240e89bacf92"><td class="memTemplParams" colspan="2"><a id="aafb79b1b02c1f2739a74240e89bacf92"></a>
+template&lt;typename App &gt; </td></tr>
+<tr class="memitem:aafb79b1b02c1f2739a74240e89bacf92"><td class="memTemplItemLeft" align="right" valign="top">std::enable_if&lt; std::tuple_size&lt; typename App::mw_container_t &gt;::value !=0, void &gt;::type&#160;</td><td class="memTemplItemRight" valign="bottom"><b>handle_rule</b> (<a class="el" href="classcrow_1_1_base_rule.html">BaseRule</a> *rule, <a class="el" href="structcrow_1_1request.html">crow::request</a> &amp;req, <a class="el" href="structcrow_1_1response.html">crow::response</a> &amp;res, const crow::routing_params &amp;rp)</td></tr>
+<tr class="separator:aafb79b1b02c1f2739a74240e89bacf92"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1d965ad074d377e6fc87afdcdad20595"><td class="memTemplParams" colspan="2"><a id="a1d965ad074d377e6fc87afdcdad20595"></a>
+template&lt;typename App &gt; </td></tr>
+<tr class="memitem:a1d965ad074d377e6fc87afdcdad20595"><td class="memTemplItemLeft" align="right" valign="top">std::enable_if&lt; std::tuple_size&lt; typename App::mw_container_t &gt;::value==0, void &gt;::type&#160;</td><td class="memTemplItemRight" valign="bottom"><b>handle_rule</b> (<a class="el" href="classcrow_1_1_base_rule.html">BaseRule</a> *rule, <a class="el" href="structcrow_1_1request.html">crow::request</a> &amp;req, <a class="el" href="structcrow_1_1response.html">crow::response</a> &amp;res, const crow::routing_params &amp;rp)</td></tr>
+<tr class="separator:a1d965ad074d377e6fc87afdcdad20595"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a61157adad80f901413a4023d8fb0fd9d"><td class="memItemLeft" align="right" valign="top"><a id="a61157adad80f901413a4023d8fb0fd9d"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>debug_print</b> ()</td></tr>
 <tr class="separator:a61157adad80f901413a4023d8fb0fd9d"><td class="memSeparator" colspan="2">&#160;</td></tr>

@@ -1,7 +1,5 @@
 var searchData=
 [
-  ['handler_5fcall_5fbridge_228',['handler_call_bridge',['../structcrow_1_1detail_1_1handler__call__bridge.html',1,'crow::detail']]],
-  ['handler_5fmiddleware_5fwrapper_229',['handler_middleware_wrapper',['../structcrow_1_1detail_1_1handler__middleware__wrapper.html',1,'crow::detail']]],
   ['handler_5ftype_5fhelper_230',['handler_type_helper',['../structcrow_1_1detail_1_1routing__handler__call__helper_1_1_wrapped_1_1handler__type__helper.html',1,'crow::detail::routing_handler_call_helper::Wrapped']]],
   ['handler_5ftype_5fhelper_3c_20argswrapped_2e_2e_2e_20_3e_231',['handler_type_helper&lt; ArgsWrapped... &gt;',['../structcrow_1_1detail_1_1routing__handler__call__helper_1_1_wrapped_1_1handler__type__helper.html',1,'crow::detail::routing_handler_call_helper::Wrapped']]],
   ['handler_5ftype_5fhelper_3c_20const_20request_20_26_2c_20args_2e_2e_2e_20_3e_232',['handler_type_helper&lt; const request &amp;, Args... &gt;',['../structcrow_1_1detail_1_1routing__handler__call__helper_1_1_wrapped_1_1handler__type__helper_3_012f01fc0d25e96ed100e3017a66fd4b36.html',1,'crow::detail::routing_handler_call_helper::Wrapped']]],

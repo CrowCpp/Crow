@@ -5,6 +5,7 @@ var classcrow_1_1_blueprint =
     [ "Blueprint", "classcrow_1_1_blueprint.html#a1eddf3e4a0330754e43e06ec8ac99467", null ],
     [ "Blueprint", "classcrow_1_1_blueprint.html#a0af074f28f07310e64b2b3561162870e", null ],
     [ "catchall_rule", "classcrow_1_1_blueprint.html#a51c3bddee7c7065165fdc80141dbce3d", null ],
+    [ "middlewares", "classcrow_1_1_blueprint.html#a3c3880497e8d6d8fbac6719aea1525d5", null ],
     [ "new_rule_dynamic", "classcrow_1_1_blueprint.html#a1f04baebe6c34997504c94cd9ed20d37", null ],
     [ "new_rule_tagged", "classcrow_1_1_blueprint.html#ab6385c954e7fd97668e89014a4e277b0", null ],
     [ "operator!=", "classcrow_1_1_blueprint.html#a2c64b156ddd9feb9bc50ec796054c0ff", null ],

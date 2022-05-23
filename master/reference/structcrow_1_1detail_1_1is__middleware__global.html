@@ -5,7 +5,7 @@
 		<meta http-equiv="X-UA-Compatible" content="IE=9"/>
 		<meta name="generator" content="Doxygen 1.8.17"/>
 		<meta name="viewport" content="width=device-width, initial-scale=1"/>
-		<title>Crow: crow::detail::handler_call_bridge&lt; Route, App, Middlewares &gt; Struct Template Reference</title>
+		<title>Crow: crow::detail::is_middleware_global&lt; MW &gt; Struct Template Reference</title>
 		<link href="tabs.css" rel="stylesheet" type="text/css"/>
 		<script type="text/javascript" src="jquery.js"></script>
 		<script type="text/javascript" src="dynsections.js"></script>
@@ -76,7 +76,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </div>
 <script type="text/javascript">
 /* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
-$(document).ready(function(){initNavTree('structcrow_1_1detail_1_1handler__call__bridge.html',''); initResizable(); });
+$(document).ready(function(){initNavTree('structcrow_1_1detail_1_1is__middleware__global.html',''); initResizable(); });
 /* @license-end */
 </script>
 <div id="doc-content">
@@ -96,34 +96,30 @@ $(document).ready(function(){initNavTree('structcrow_1_1detail_1_1handler__call_
 
 <div class="header">
   <div class="summary">
-<a href="#pub-types">Public Types</a> &#124;
-<a href="#pub-methods">Public Member Functions</a> &#124;
-<a href="#pub-attribs">Public Attributes</a> &#124;
-<a href="structcrow_1_1detail_1_1handler__call__bridge-members.html">List of all members</a>  </div>
+<a href="#pub-static-methods">Static Public Member Functions</a> &#124;
+<a href="#pub-static-attribs">Static Public Attributes</a> &#124;
+<a href="structcrow_1_1detail_1_1is__middleware__global-members.html">List of all members</a>  </div>
   <div class="headertitle">
-<div class="title">crow::detail::handler_call_bridge&lt; Route, App, Middlewares &gt; Struct Template Reference</div>  </div>
+<div class="title">crow::detail::is_middleware_global&lt; MW &gt; Struct Template Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
 <table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
-Public Types</h2></td></tr>
-<tr class="memitem:a2aad586ad7d449534588af3177e19a23"><td class="memTemplParams" colspan="2"><a id="a2aad586ad7d449534588af3177e19a23"></a>
-template&lt;typename MW &gt; </td></tr>
-<tr class="memitem:a2aad586ad7d449534588af3177e19a23"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><b>check_app_contains</b> = typename black_magic::has_type&lt; MW, typename App::mw_container_t &gt;</td></tr>
-<tr class="separator:a2aad586ad7d449534588af3177e19a23"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
+Static Public Member Functions</h2></td></tr>
+<tr class="memitem:a0109bb37bc8e29066eb3092d2ad64823"><td class="memTemplParams" colspan="2"><a id="a0109bb37bc8e29066eb3092d2ad64823"></a>
+template&lt;typename C &gt; </td></tr>
+<tr class="memitem:a0109bb37bc8e29066eb3092d2ad64823"><td class="memTemplItemLeft" align="right" valign="top">static std::false_type&#160;</td><td class="memTemplItemRight" valign="bottom"><b>f</b> (typename <a class="el" href="structcrow_1_1detail_1_1check__global__call__false.html">check_global_call_false</a>&lt; MW &gt;::template get&lt; C &gt; *)</td></tr>
+<tr class="separator:a0109bb37bc8e29066eb3092d2ad64823"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2fd2aee3fbe78f5d927a1e2d19e6274f"><td class="memTemplParams" colspan="2"><a id="a2fd2aee3fbe78f5d927a1e2d19e6274f"></a>
+template&lt;typename C &gt; </td></tr>
+<tr class="memitem:a2fd2aee3fbe78f5d927a1e2d19e6274f"><td class="memTemplItemLeft" align="right" valign="top">static std::true_type&#160;</td><td class="memTemplItemRight" valign="bottom"><b>f</b> (...)</td></tr>
+<tr class="separator:a2fd2aee3fbe78f5d927a1e2d19e6274f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
-Public Member Functions</h2></td></tr>
-<tr class="memitem:abcf9ec0991e5bf5dcf1b8fdc099c2cf9"><td class="memTemplParams" colspan="2"><a id="abcf9ec0991e5bf5dcf1b8fdc099c2cf9"></a>
-template&lt;typename F &gt; </td></tr>
-<tr class="memitem:abcf9ec0991e5bf5dcf1b8fdc099c2cf9"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><b>operator()</b> (F &amp;&amp;f) const</td></tr>
-<tr class="separator:abcf9ec0991e5bf5dcf1b8fdc099c2cf9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
-Public Attributes</h2></td></tr>
-<tr class="memitem:a6793eca7aa0413fa95f29a3ff6947eff"><td class="memItemLeft" align="right" valign="top"><a id="a6793eca7aa0413fa95f29a3ff6947eff"></a>
-Route *&#160;</td><td class="memItemRight" valign="bottom"><b>tptr</b></td></tr>
-<tr class="separator:a6793eca7aa0413fa95f29a3ff6947eff"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-attribs"></a>
+Static Public Attributes</h2></td></tr>
+<tr class="memitem:abcff454b0d282801758fad6648f3649d"><td class="memItemLeft" align="right" valign="top"><a id="abcff454b0d282801758fad6648f3649d"></a>
+static const bool&#160;</td><td class="memItemRight" valign="bottom"><b>value</b> = decltype(f&lt;MW&gt;(nullptr))::value</td></tr>
+<tr class="separator:abcff454b0d282801758fad6648f3649d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <hr/>The documentation for this struct was generated from the following file:<ul>
 <li>/drone/src/include/crow/<a class="el" href="middleware_8h_source.html">middleware.h</a></li>
@@ -133,7 +129,7 @@ Route *&#160;</td><td class="memItemRight" valign="bottom"><b>tptr</b></td></tr>
 <!-- start footer part -->
 		<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
 			<ul>
-				<li class="navelem"><b>crow</b></li><li class="navelem"><b>detail</b></li><li class="navelem"><a class="el" href="structcrow_1_1detail_1_1handler__call__bridge.html">handler_call_bridge</a></li>
+				<li class="navelem"><b>crow</b></li><li class="navelem"><b>detail</b></li><li class="navelem"><a class="el" href="structcrow_1_1detail_1_1is__middleware__global.html">is_middleware_global</a></li>
 				<li class="footer">
 					Generated on Mon May 23 2022 for Crow by <a href="http://www.doxygen.org/index.html">
 					<img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.17.

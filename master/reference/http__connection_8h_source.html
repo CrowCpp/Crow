@@ -262,7 +262,7 @@ $(document).ready(function(){initNavTree('http__connection_8h_source.html',''); 
 <div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;                req.io_service = &amp;adaptor_.get_io_service();</div>
 <div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160; </div>
 <div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;                detail::middleware_call_helper&lt;detail::middleware_call_criteria_only_global,</div>
-<div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;                                               0, decltype(ctx_), decltype(*middlewares_)&gt;(*middlewares_, req, res, ctx_);</div>
+<div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;                                               0, decltype(ctx_), decltype(*middlewares_)&gt;({}, *middlewares_, req, res, ctx_);</div>
 <div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160; </div>
 <div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160;                <span class="keywordflow">if</span> (!res.completed_)</div>
 <div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;                {</div>
@@ -299,7 +299,7 @@ $(document).ready(function(){initNavTree('http__connection_8h_source.html',''); 
 <div class="line"><a name="l00198"></a><span class="lineno">  198</span>&#160;                  <a class="code" href="structcrow_1_1detail_1_1middleware__call__criteria__only__global.html">detail::middleware_call_criteria_only_global</a>,</div>
 <div class="line"><a name="l00199"></a><span class="lineno">  199</span>&#160;                  (<span class="keyword">static_cast&lt;</span><span class="keywordtype">int</span><span class="keyword">&gt;</span>(<span class="keyword">sizeof</span>...(Middlewares)) - 1),</div>
 <div class="line"><a name="l00200"></a><span class="lineno">  200</span>&#160;                  decltype(ctx_),</div>
-<div class="line"><a name="l00201"></a><span class="lineno">  201</span>&#160;                  decltype(*middlewares_)&gt;(*middlewares_, ctx_, req_, res);</div>
+<div class="line"><a name="l00201"></a><span class="lineno">  201</span>&#160;                  decltype(*middlewares_)&gt;({}, *middlewares_, ctx_, req_, res);</div>
 <div class="line"><a name="l00202"></a><span class="lineno">  202</span>&#160;            }</div>
 <div class="line"><a name="l00203"></a><span class="lineno">  203</span>&#160;<span class="preprocessor">#ifdef CROW_ENABLE_COMPRESSION</span></div>
 <div class="line"><a name="l00204"></a><span class="lineno">  204</span>&#160;            <span class="keywordflow">if</span> (handler_-&gt;compression_used())</div>
@@ -730,10 +730,10 @@ $(document).ready(function(){initNavTree('http__connection_8h_source.html',''); 
 </div><!-- doc-content -->
 <div class="ttc" id="aclasscrow_1_1_connection_html"><div class="ttname"><a href="classcrow_1_1_connection.html">crow::Connection</a></div><div class="ttdoc">An HTTP connection.</div><div class="ttdef"><b>Definition:</b> http_connection.h:34</div></div>
 <div class="ttc" id="aclasscrow_1_1_connection_html_aa40019a3731cc55174401e3b31602524"><div class="ttname"><a href="classcrow_1_1_connection.html#aa40019a3731cc55174401e3b31602524">crow::Connection::complete_request</a></div><div class="ttdeci">void complete_request()</div><div class="ttdoc">Call the after handle middleware and send the write the response to the connection.</div><div class="ttdef"><b>Definition:</b> http_connection.h:188</div></div>
-<div class="ttc" id="astructcrow_1_1response_html"><div class="ttname"><a href="structcrow_1_1response.html">crow::response</a></div><div class="ttdoc">HTTP response.</div><div class="ttdef"><b>Definition:</b> http_response.h:29</div></div>
+<div class="ttc" id="astructcrow_1_1response_html"><div class="ttname"><a href="structcrow_1_1response.html">crow::response</a></div><div class="ttdoc">HTTP response.</div><div class="ttdef"><b>Definition:</b> http_response.h:25</div></div>
 <div class="ttc" id="aclasscrow_1_1_connection_html_adb5878dd700c30dae10f3fa8d06ecbab"><div class="ttname"><a href="classcrow_1_1_connection.html#adb5878dd700c30dae10f3fa8d06ecbab">crow::Connection::socket</a></div><div class="ttdeci">decltype(std::declval&lt; Adaptor &gt;().raw_socket()) &amp; socket()</div><div class="ttdoc">The TCP socket on top of which the connection is established.</div><div class="ttdef"><b>Definition:</b> http_connection.h:75</div></div>
 <div class="ttc" id="aclasscrow_1_1detail_1_1task__timer_html"><div class="ttname"><a href="classcrow_1_1detail_1_1task__timer.html">crow::detail::task_timer</a></div><div class="ttdoc">A class for scheduling functions to be called after a specific amount of ticks. A tick is equal to 1 ...</div><div class="ttdef"><b>Definition:</b> task_timer.h:17</div></div>
-<div class="ttc" id="astructcrow_1_1detail_1_1middleware__call__criteria__only__global_html"><div class="ttname"><a href="structcrow_1_1detail_1_1middleware__call__criteria__only__global.html">crow::detail::middleware_call_criteria_only_global</a></div><div class="ttdef"><b>Definition:</b> middleware.h:192</div></div>
+<div class="ttc" id="astructcrow_1_1detail_1_1middleware__call__criteria__only__global_html"><div class="ttname"><a href="structcrow_1_1detail_1_1middleware__call__criteria__only__global.html">crow::detail::middleware_call_criteria_only_global</a></div><div class="ttdef"><b>Definition:</b> middleware.h:203</div></div>
 <!-- start footer part -->
 		<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
 			<ul>

@@ -29,11 +29,14 @@ var annotated_dup =
           [ "get", "structcrow_1_1detail_1_1check__global__call__false_1_1get.html", null ]
         ] ],
         [ "context", "structcrow_1_1detail_1_1context.html", "structcrow_1_1detail_1_1context" ],
-        [ "handler_call_bridge", "structcrow_1_1detail_1_1handler__call__bridge.html", "structcrow_1_1detail_1_1handler__call__bridge" ],
-        [ "handler_middleware_wrapper", "structcrow_1_1detail_1_1handler__middleware__wrapper.html", "structcrow_1_1detail_1_1handler__middleware__wrapper" ],
         [ "is_after_handle_arity_3_impl", "structcrow_1_1detail_1_1is__after__handle__arity__3__impl.html", null ],
         [ "is_before_handle_arity_3_impl", "structcrow_1_1detail_1_1is__before__handle__arity__3__impl.html", null ],
-        [ "middleware_call_criteria_only_global", "structcrow_1_1detail_1_1middleware__call__criteria__only__global.html", null ],
+        [ "is_middleware_global", "structcrow_1_1detail_1_1is__middleware__global.html", null ],
+        [ "middleware_call_criteria_dynamic", "structcrow_1_1detail_1_1middleware__call__criteria__dynamic.html", null ],
+        [ "middleware_call_criteria_dynamic< false >", "structcrow_1_1detail_1_1middleware__call__criteria__dynamic_3_01false_01_4.html", "structcrow_1_1detail_1_1middleware__call__criteria__dynamic_3_01false_01_4" ],
+        [ "middleware_call_criteria_dynamic< true >", "structcrow_1_1detail_1_1middleware__call__criteria__dynamic_3_01true_01_4.html", "structcrow_1_1detail_1_1middleware__call__criteria__dynamic_3_01true_01_4" ],
+        [ "middleware_call_criteria_only_global", "structcrow_1_1detail_1_1middleware__call__criteria__only__global.html", "structcrow_1_1detail_1_1middleware__call__criteria__only__global" ],
+        [ "middleware_indices", "structcrow_1_1detail_1_1middleware__indices.html", "structcrow_1_1detail_1_1middleware__indices" ],
         [ "partial_context", "structcrow_1_1detail_1_1partial__context.html", "structcrow_1_1detail_1_1partial__context" ],
         [ "partial_context<>", "structcrow_1_1detail_1_1partial__context_3_4.html", "structcrow_1_1detail_1_1partial__context_3_4" ],
         [ "task_timer", "classcrow_1_1detail_1_1task__timer.html", "classcrow_1_1detail_1_1task__timer" ]

@@ -15,6 +15,7 @@ var classcrow_1_1_base_rule =
     [ "RuleParameterTraits", "classcrow_1_1_base_rule.html#ae4e239e90000a93c0a1e16dc4cbf8b41", null ],
     [ "custom_templates_base", "classcrow_1_1_base_rule.html#a864205b350008d9c4d8092797acbe4e5", null ],
     [ "methods_", "classcrow_1_1_base_rule.html#a997e9942d597fe133df84c94558c1e13", null ],
+    [ "mw_indices_", "classcrow_1_1_base_rule.html#acd5207b9a30813fcb344ae97bdcdeb72", null ],
     [ "name_", "classcrow_1_1_base_rule.html#a34d579887fac170e179e9e69eac3d771", null ],
     [ "rule_", "classcrow_1_1_base_rule.html#a39f73fef34a8ff67907d96ef9c92b35a", null ],
     [ "rule_to_upgrade_", "classcrow_1_1_base_rule.html#aa08be2b793fe80d462f71c064a9949b8", null ]

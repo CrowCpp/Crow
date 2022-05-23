@@ -30,7 +30,7 @@ var structcrow_1_1response =
     [ "set_static_file_info_unsafe", "structcrow_1_1response.html#adaaa1a62451d41e6f3831463296b4c08", null ],
     [ "write", "structcrow_1_1response.html#a82bba7eaacfee514c55630a13a85410e", null ],
     [ "crow::Connection", "structcrow_1_1response.html#a13cd54cff7b7cea484654c3e9ace415d", null ],
-    [ "crow::detail::handler_middleware_wrapper", "structcrow_1_1response.html#a6396075bc1b5a8a8689782ad19d3996b", null ],
+    [ "Router", "structcrow_1_1response.html#ad1fd3424328f664cd049fe429e0e3dc6", null ],
     [ "body", "structcrow_1_1response.html#ae9f3cc153eac05954f1f4e599527892d", null ],
     [ "code", "structcrow_1_1response.html#aabc1f9b3264b8c5a2d05dcb409e8ff3f", null ],
     [ "compressed", "structcrow_1_1response.html#af87163fd1c7e18650c7691e07f58c7de", null ],

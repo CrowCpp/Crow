@@ -5,7 +5,7 @@
 		<meta http-equiv="X-UA-Compatible" content="IE=9"/>
 		<meta name="generator" content="Doxygen 1.8.17"/>
 		<meta name="viewport" content="width=device-width, initial-scale=1"/>
-		<title>Crow: crow::detail::middleware_call_criteria_only_global Struct Reference</title>
+		<title>Crow: crow::detail::middleware_indices Struct Reference</title>
 		<link href="tabs.css" rel="stylesheet" type="text/css"/>
 		<script type="text/javascript" src="jquery.js"></script>
 		<script type="text/javascript" src="dynsections.js"></script>
@@ -76,7 +76,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </div>
 <script type="text/javascript">
 /* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
-$(document).ready(function(){initNavTree('structcrow_1_1detail_1_1middleware__call__criteria__only__global.html',''); initResizable(); });
+$(document).ready(function(){initNavTree('structcrow_1_1detail_1_1middleware__indices.html',''); initResizable(); });
 /* @license-end */
 </script>
 <div id="doc-content">
@@ -97,28 +97,57 @@ $(document).ready(function(){initNavTree('structcrow_1_1detail_1_1middleware__ca
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
-<a href="structcrow_1_1detail_1_1middleware__call__criteria__only__global-members.html">List of all members</a>  </div>
+<a href="structcrow_1_1detail_1_1middleware__indices-members.html">List of all members</a>  </div>
   <div class="headertitle">
-<div class="title">crow::detail::middleware_call_criteria_only_global Struct Reference</div>  </div>
+<div class="title">crow::detail::middleware_indices Struct Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p>Typesafe wrapper for storing lists of middleware as their indices in the App.  
+ <a href="structcrow_1_1detail_1_1middleware__indices.html#details">More...</a></p>
+
+<p><code>#include &lt;<a class="el" href="routing_8h_source.html">routing.h</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a9f2185f986461f1c1cdc0e808107a0fe"><td class="memTemplParams" colspan="2"><a id="a9f2185f986461f1c1cdc0e808107a0fe"></a>
-template&lt;typename MW &gt; </td></tr>
-<tr class="memitem:a9f2185f986461f1c1cdc0e808107a0fe"><td class="memTemplItemLeft" align="right" valign="top">constexpr bool&#160;</td><td class="memTemplItemRight" valign="bottom"><b>enabled</b> (int) const</td></tr>
-<tr class="separator:a9f2185f986461f1c1cdc0e808107a0fe"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a539f94cc6a5bc5a34e1b04bca251b06e"><td class="memTemplParams" colspan="2"><a id="a539f94cc6a5bc5a34e1b04bca251b06e"></a>
+template&lt;typename App &gt; </td></tr>
+<tr class="memitem:a539f94cc6a5bc5a34e1b04bca251b06e"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><b>push</b> ()</td></tr>
+<tr class="separator:a539f94cc6a5bc5a34e1b04bca251b06e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a736f04d2df37ccbee5650f58fb36d4fc"><td class="memTemplParams" colspan="2"><a id="a736f04d2df37ccbee5650f58fb36d4fc"></a>
+template&lt;typename App , typename MW , typename... Middlewares&gt; </td></tr>
+<tr class="memitem:a736f04d2df37ccbee5650f58fb36d4fc"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><b>push</b> ()</td></tr>
+<tr class="separator:a736f04d2df37ccbee5650f58fb36d4fc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad18f7bb499a4f6f7164a9c606e6139eb"><td class="memItemLeft" align="right" valign="top"><a id="ad18f7bb499a4f6f7164a9c606e6139eb"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>merge_front</b> (const <a class="el" href="structcrow_1_1detail_1_1middleware__indices.html">detail::middleware_indices</a> &amp;other)</td></tr>
+<tr class="separator:ad18f7bb499a4f6f7164a9c606e6139eb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3c23c2fd745612f1f126b63fbec1a547"><td class="memItemLeft" align="right" valign="top"><a id="a3c23c2fd745612f1f126b63fbec1a547"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>merge_back</b> (const <a class="el" href="structcrow_1_1detail_1_1middleware__indices.html">detail::middleware_indices</a> &amp;other)</td></tr>
+<tr class="separator:a3c23c2fd745612f1f126b63fbec1a547"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acb908d4e9aa55225ff3e9f7de9463977"><td class="memItemLeft" align="right" valign="top"><a id="acb908d4e9aa55225ff3e9f7de9463977"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>pop_back</b> (const <a class="el" href="structcrow_1_1detail_1_1middleware__indices.html">detail::middleware_indices</a> &amp;other)</td></tr>
+<tr class="separator:acb908d4e9aa55225ff3e9f7de9463977"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aad27a0ce958bb8e27745074c981343bf"><td class="memItemLeft" align="right" valign="top"><a id="aad27a0ce958bb8e27745074c981343bf"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>empty</b> () const</td></tr>
+<tr class="separator:aad27a0ce958bb8e27745074c981343bf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a651af159fea3392c2df7e7146079ad8e"><td class="memItemLeft" align="right" valign="top"><a id="a651af159fea3392c2df7e7146079ad8e"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>pack</b> ()</td></tr>
+<tr class="separator:a651af159fea3392c2df7e7146079ad8e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af39a30d7ee959d091ff54ffe7cb0c953"><td class="memItemLeft" align="right" valign="top"><a id="af39a30d7ee959d091ff54ffe7cb0c953"></a>
+const std::vector&lt; int &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>indices</b> ()</td></tr>
+<tr class="separator:af39a30d7ee959d091ff54ffe7cb0c953"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<hr/>The documentation for this struct was generated from the following file:<ul>
-<li>/drone/src/include/crow/<a class="el" href="middleware_8h_source.html">middleware.h</a></li>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>Typesafe wrapper for storing lists of middleware as their indices in the App. </p>
+</div><hr/>The documentation for this struct was generated from the following file:<ul>
+<li>/drone/src/include/crow/<a class="el" href="routing_8h_source.html">routing.h</a></li>
 </ul>
 </div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 		<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
 			<ul>
-				<li class="navelem"><b>crow</b></li><li class="navelem"><b>detail</b></li><li class="navelem"><a class="el" href="structcrow_1_1detail_1_1middleware__call__criteria__only__global.html">middleware_call_criteria_only_global</a></li>
+				<li class="navelem"><b>crow</b></li><li class="navelem"><b>detail</b></li><li class="navelem"><a class="el" href="structcrow_1_1detail_1_1middleware__indices.html">middleware_indices</a></li>
 				<li class="footer">
 					Generated on Mon May 23 2022 for Crow by <a href="http://www.doxygen.org/index.html">
 					<img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.17.
