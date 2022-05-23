@@ -281,6 +281,30 @@ namespace crow
             static const int value = 1 + tuple_index<T, std::tuple<Types...>>::value;
         };
 
+        // Extract element from forward tuple or get default
+#ifdef CROW_CAN_USE_CPP14
+        template<typename T, typename Tup>
+        typename std::enable_if<has_type<T&, Tup>::value, typename std::decay<T>::type&&>::type
+          tuple_extract(Tup& tup)
+        {
+            return std::move(std::get<T&>(tup));
+        }
+#else
+        template<typename T, typename Tup>
+        typename std::enable_if<has_type<T&, Tup>::value, T&&>::type
+          tuple_extract(Tup& tup)
+        {
+            return std::move(std::get<tuple_index<T&, Tup>::value>(tup));
+        }
+#endif
+
+        template<typename T, typename Tup>
+        typename std::enable_if<!has_type<T&, Tup>::value, T>::type
+          tuple_extract(Tup&)
+        {
+            return T{};
+        }
+
         // Kind of fold expressions in C++11
         template<bool...>
         struct bool_pack;

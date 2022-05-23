@@ -1514,6 +1514,21 @@ TEST_CASE("local_middleware")
     app.stop();
 } // local_middleware
 
+struct OnlyMoveConstructor
+{
+    OnlyMoveConstructor(int) {}
+    OnlyMoveConstructor(const OnlyMoveConstructor&) = delete;
+    OnlyMoveConstructor(OnlyMoveConstructor&&) = default;
+};
+
+TEST_CASE("app_constructor")
+{
+    App<NullMiddleware, OnlyMoveConstructor, FirstMW<false>, SecondMW<false>>
+      app1(OnlyMoveConstructor(1), SecondMW<false>{});
+    App<NullMiddleware, OnlyMoveConstructor, FirstMW<false>, SecondMW<false>>
+      app2(FirstMW<false>{}, OnlyMoveConstructor(1));
+} // app_constructor
+
 TEST_CASE("middleware_blueprint")
 {
     // Same logic as middleware_context, but middleware is added with blueprints
