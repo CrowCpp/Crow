@@ -8,6 +8,7 @@
 #include <vector>
 #include <thread>
 #include <chrono>
+#include <type_traits>
 
 #include "catch.hpp"
 #include "crow.h"
@@ -1308,7 +1309,11 @@ struct IntSettingMiddleware
 
 std::vector<std::string> test_middleware_context_vector;
 
-struct FirstMW
+struct empty_type
+{};
+
+template<bool Local>
+struct FirstMW : public std::conditional<Local, crow::ILocalMiddleware, empty_type>::type
 {
     struct context
     {
@@ -1327,38 +1332,40 @@ struct FirstMW
     }
 };
 
-struct SecondMW
+template<bool Local>
+struct SecondMW : public std::conditional<Local, crow::ILocalMiddleware, empty_type>::type
 {
     struct context
     {};
     template<typename AllContext>
     void before_handle(request& req, response& res, context&, AllContext& all_ctx)
     {
-        all_ctx.template get<FirstMW>().v.push_back("2 before");
-        if (req.url == "/break") res.end();
+        all_ctx.template get<FirstMW<Local>>().v.push_back("2 before");
+        if (req.url.find("/break") != std::string::npos) res.end();
     }
 
     template<typename AllContext>
     void after_handle(request&, response&, context&, AllContext& all_ctx)
     {
-        all_ctx.template get<FirstMW>().v.push_back("2 after");
+        all_ctx.template get<FirstMW<Local>>().v.push_back("2 after");
     }
 };
 
-struct ThirdMW
+template<bool Local>
+struct ThirdMW : public std::conditional<Local, crow::ILocalMiddleware, empty_type>::type
 {
     struct context
     {};
     template<typename AllContext>
     void before_handle(request&, response&, context&, AllContext& all_ctx)
     {
-        all_ctx.template get<FirstMW>().v.push_back("3 before");
+        all_ctx.template get<FirstMW<Local>>().v.push_back("3 before");
     }
 
     template<typename AllContext>
     void after_handle(request&, response&, context&, AllContext& all_ctx)
     {
-        all_ctx.template get<FirstMW>().v.push_back("3 after");
+        all_ctx.template get<FirstMW<Local>>().v.push_back("3 after");
     }
 };
 
@@ -1371,7 +1378,7 @@ TEST_CASE("middleware_context")
     // or change the order of FirstMW and SecondMW
     // App<IntSettingMiddleware, SecondMW, FirstMW> app;
 
-    App<IntSettingMiddleware, FirstMW, SecondMW, ThirdMW> app;
+    App<IntSettingMiddleware, FirstMW<false>, SecondMW<false>, ThirdMW<false>> app;
 
     int x{};
     CROW_ROUTE(app, "/")
@@ -1381,7 +1388,7 @@ TEST_CASE("middleware_context")
             x = ctx.val;
         }
         {
-            auto& ctx = app.get_context<FirstMW>(req);
+            auto& ctx = app.get_context<FirstMW<false>>(req);
             ctx.v.push_back("handle");
         }
 
@@ -1390,7 +1397,7 @@ TEST_CASE("middleware_context")
     CROW_ROUTE(app, "/break")
     ([&](const request& req) {
         {
-            auto& ctx = app.get_context<FirstMW>(req);
+            auto& ctx = app.get_context<FirstMW<false>>(req);
             ctx.v.push_back("handle");
         }
 
@@ -1506,6 +1513,91 @@ TEST_CASE("local_middleware")
 
     app.stop();
 } // local_middleware
+
+TEST_CASE("middleware_blueprint")
+{
+    // Same logic as middleware_context, but middleware is added with blueprints
+    static char buf[2048];
+
+    App<FirstMW<true>, SecondMW<true>, ThirdMW<true>> app;
+
+    Blueprint bp1("a", "c1", "c1");
+    bp1.CROW_MIDDLEWARES(app, FirstMW<true>);
+
+    Blueprint bp2("b", "c2", "c2");
+    bp2.CROW_MIDDLEWARES(app, SecondMW<true>);
+
+    Blueprint bp3("c", "c3", "c3");
+
+    CROW_BP_ROUTE(bp2, "/")
+      .CROW_MIDDLEWARES(app, ThirdMW<true>)([&app](const crow::request& req) {
+          {
+              auto& ctx = app.get_context<FirstMW<true>>(req);
+              ctx.v.push_back("handle");
+          }
+          return "";
+      });
+
+    CROW_BP_ROUTE(bp3, "/break")
+      .CROW_MIDDLEWARES(app, SecondMW<true>, ThirdMW<true>)([&app](const crow::request& req) {
+          {
+              auto& ctx = app.get_context<FirstMW<true>>(req);
+              ctx.v.push_back("handle");
+          }
+          return "";
+      });
+
+    bp1.register_blueprint(bp3);
+    bp1.register_blueprint(bp2);
+    app.register_blueprint(bp1);
+
+    auto _ = app.bindaddr(LOCALHOST_ADDRESS).port(45451).run_async();
+    app.wait_for_server_start();
+
+    asio::io_service is;
+    {
+        asio::ip::tcp::socket c(is);
+        c.connect(asio::ip::tcp::endpoint(
+          asio::ip::address::from_string(LOCALHOST_ADDRESS), 45451));
+
+        c.send(asio::buffer("GET /a/b/\r\n\r\n"));
+
+        c.receive(asio::buffer(buf, 2048));
+        c.close();
+    }
+    {
+        auto& out = test_middleware_context_vector;
+        CHECK(7 == out.size());
+        CHECK("1 before" == out[0]);
+        CHECK("2 before" == out[1]);
+        CHECK("3 before" == out[2]);
+        CHECK("handle" == out[3]);
+        CHECK("3 after" == out[4]);
+        CHECK("2 after" == out[5]);
+        CHECK("1 after" == out[6]);
+    }
+    {
+        asio::ip::tcp::socket c(is);
+        c.connect(asio::ip::tcp::endpoint(
+          asio::ip::address::from_string(LOCALHOST_ADDRESS), 45451));
+
+        c.send(asio::buffer("GET /a/c/break\r\n\r\n"));
+
+        c.receive(asio::buffer(buf, 2048));
+        c.close();
+    }
+    {
+        auto& out = test_middleware_context_vector;
+        CHECK(4 == out.size());
+        CHECK("1 before" == out[0]);
+        CHECK("2 before" == out[1]);
+        CHECK("2 after" == out[2]);
+        CHECK("1 after" == out[3]);
+    }
+
+    app.stop();
+} // middleware_blueprint
+
 
 TEST_CASE("middleware_cookieparser_parse")
 {

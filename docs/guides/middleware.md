@@ -1,13 +1,51 @@
-Middleware is used for altering and inspecting requests before and after the handler call.
+Middleware is used for altering and inspecting requests before and after calling the handler. In Crow it's very similar to middleware in other web frameworks.
+
+All middleware is registered in the Crow application
+
+```cpp
+crow::App<FirstMW, SecondMW, ThirdMW> app;
+```
+
+and is called in this specified order.
 
 Any middleware requires the following 3 members:
 
-* A context struct for storing the middleware data.
-* A `before_handle` method, which is called before the handler. If `res.end()` is called, the operation is halted.
+* A context struct for storing request local data.
+* A `before_handle` method, which is called before the handler.
 * A `after_handle` method, which is called after the handler.
 
-## before_handle
-There are two possible signatures for before_handle
+!!! warning 
+
+    As soon as `response.end()` is called, no other handlers and middleware is run, except for after_handlers of already visited middleware.
+
+
+## Example
+
+A middleware that can be used to guard admin handlers
+
+```cpp
+struct AdminAreaGuard
+{
+    struct context
+    {};
+
+    void before_handle(crow::request& req, crow::response& res, context& ctx)
+    {
+        if (req.remote_ip_address != ADMIN_IP)
+        {
+            res.code = 403;
+            res.end();
+        }
+    }
+
+    void after_handle(crow::request& req, crow::response& res, context& ctx)
+    {}
+};
+```
+
+
+### before_handle and after_handle
+There are two possible signatures for before_handle and after_handle
 
 1. if you only need to access this middleware's context.
 
@@ -25,43 +63,16 @@ There are two possible signatures for before_handle
     }
     ```
 
+## Local middleware
 
-## after_handle
-There are two possible signatures for after_handle
-
-1. if you only need to access this middleware's context.
-
-    ```cpp
-    void after_handle(request& req, response& res, context& ctx)
-    ```
-
-2. To get access to other middlewares context
-
-    ``` cpp
-    template <typename AllContext>
-    void after_handle(request& req, response& res, context& ctx, AllContext& all_ctx) 
-    {
-        auto other_ctx = all_ctx.template get<OtherMiddleware>();
-    }
-    ```
-
-## Using middleware
-
-All middleware has to be registered in the Crow application and is enabled globally by default.
-
-```cpp
-crow::App<FirstMiddleware, SecondMiddleware> app;
-```
-
-if you want to enable some middleware only for specific handlers, you have to extend it from `crow::ILocalMiddleware`.
+By default, every middleware is called for each request. If you want to enable middleware for specific handlers or blueprints, you have to extend it from `crow::ILocalMiddleware`
 
 ```cpp
 struct LocalMiddleware : crow::ILocalMiddleware 
 {
-... 
 ```
 
-After this, you can enable it for specific handlers.
+After this, you can enable it for specific handlers
 
 ```cpp
 CROW_ROUTE(app, "/with_middleware")
@@ -71,26 +82,14 @@ CROW_ROUTE(app, "/with_middleware")
 });
 ```
 
-## Examples
-
-A local middleware that can be used to guard admin handlers
+or blueprints
 
 ```cpp
-struct AdminAreaGuard : crow::ILocalMiddleware
-{
-    struct context
-    {};
-
-    void before_handle(crow::request& req, crow::response& res, context& ctx)
-    {
-        if (req.remote_ip_address != ADMIN_IP) 
-        {
-            res.code = 403;
-            res.end();
-        }
-    }
-
-    void after_handle(crow::request& req, crow::response& res, context& ctx)
-    {} 
-};
+Blueprint bp("with_middleware");
+bp.CROW_MIDDLEWARES(app, FistLocalMiddleware, SecondLocalMiddleware);
 ```
+
+!!! warning
+    
+    Local and global middleware are called separately. First all global middleware is run, then all enabled local middleware for the current handler is run. In both cases middleware is called strongly
+    in the order listed in the Crow application.
