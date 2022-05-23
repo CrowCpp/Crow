@@ -33,6 +33,6 @@ var searchData=
   ['cookieparser_40',['CookieParser',['../structcrow_1_1_cookie_parser.html',1,'crow']]],
   ['corshandler_41',['CORSHandler',['../structcrow_1_1_c_o_r_s_handler.html',1,'crow']]],
   ['corsrules_42',['CORSRules',['../structcrow_1_1_c_o_r_s_rules.html',1,'crow']]],
-  ['crow_43',['Crow',['../classcrow_1_1_crow.html',1,'crow']]],
+  ['crow_43',['Crow',['../classcrow_1_1_crow.html',1,'crow::Crow&lt; Middlewares &gt;'],['../classcrow_1_1_crow.html#abb69a7bf5d4a791a398c838d37086d94',1,'crow::Crow::Crow()']]],
   ['multipart_44',['multipart',['../namespacecrow_1_1multipart.html',1,'crow']]]
 ];

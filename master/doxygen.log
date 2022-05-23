@@ -177,21 +177,21 @@ Searching f/drone/src/include/crow/socket_adaptors.h:87: warning: Compound crow:
 /drone/src/include/crow/middlewares/cookie_parser.h:136: warning: Member same_site(SameSitePolicy ssp) (function) of class crow::CookieParser::Cookie is not documented.
 /drone/src/include/crow/middlewares/cors.h:137: warning: Member before_handle(crow::request &, crow::response &, context &) (function) of class crow::CORSHandler is not documented.
 /drone/src/include/crow/middlewares/cors.h:140: warning: Member after_handle(crow::request &req, crow::response &res, context &) (function) of class crow::CORSHandler is not documented.
-/drone/src/include/crow/app.h:470: warning: Member context_t (typedef) of class crow::Crow is not documented.
-/drone/src/include/crow/app.h:471: warning: Member mw_container_t (typedef) of class crow::Crow is not documented.
-/drone/src/include/crow/app.h:120: warning: Member signal_clear() (function) of class crow::Crow is not documented.
-/drone/src/include/crow/app.h:126: warning: Member signal_add(int signal_number) (function) of class crow::Crow is not documented.
-/drone/src/include/crow/app.h:132: warning: Member signals() (function) of class crow::Crow is not documented.
-/drone/src/include/crow/app.h:218: warning: Member register_blueprint(Blueprint &blueprint) (function) of class crow::Crow is not documented.
-/drone/src/include/crow/app.h:234: warning: Member use_compression(compression::algorithm algorithm) (function) of class crow::Crow is not documented.
-/drone/src/include/crow/app.h:241: warning: Member compression_algorithm() (function) of class crow::Crow is not documented.
-/drone/src/include/crow/app.h:246: warning: Member compression_used() const (function) of class crow::Crow is not documented.
-/drone/src/include/crow/app.h:360: warning: Member add_websocket(crow::websocket::connection *conn) (function) of class crow::Crow is not documented.
-/drone/src/include/crow/app.h:365: warning: Member remove_websocket(crow::websocket::connection *conn) (function) of class crow::Crow is not documented.
-/drone/src/include/crow/app.h:418: warning: Member ssl(boost::asio::ssl::context &&ctx) (function) of class crow::Crow is not documented.
-/drone/src/include/crow/app.h:425: warning: Member ssl_used() const (function) of class crow::Crow is not documented.
-/drone/src/include/crow/app.h:473: warning: Member get_context(const request &req) (function) of class crow::Crow is not documented.
-/drone/src/include/crow/app.h:481: warning: Member get_middleware() (function) of class crow::Crow is not documented.
+/drone/src/include/crow/app.h:476: warning: Member context_t (typedef) of class crow::Crow is not documented.
+/drone/src/include/crow/app.h:477: warning: Member mw_container_t (typedef) of class crow::Crow is not documented.
+/drone/src/include/crow/app.h:126: warning: Member signal_clear() (function) of class crow::Crow is not documented.
+/drone/src/include/crow/app.h:132: warning: Member signal_add(int signal_number) (function) of class crow::Crow is not documented.
+/drone/src/include/crow/app.h:138: warning: Member signals() (function) of class crow::Crow is not documented.
+/drone/src/include/crow/app.h:224: warning: Member register_blueprint(Blueprint &blueprint) (function) of class crow::Crow is not documented.
+/drone/src/include/crow/app.h:240: warning: Member use_compression(compression::algorithm algorithm) (function) of class crow::Crow is not documented.
+/drone/src/include/crow/app.h:247: warning: Member compression_algorithm() (function) of class crow::Crow is not documented.
+/drone/src/include/crow/app.h:252: warning: Member compression_used() const (function) of class crow::Crow is not documented.
+/drone/src/include/crow/app.h:366: warning: Member add_websocket(crow::websocket::connection *conn) (function) of class crow::Crow is not documented.
+/drone/src/include/crow/app.h:371: warning: Member remove_websocket(crow::websocket::connection *conn) (function) of class crow::Crow is not documented.
+/drone/src/include/crow/app.h:424: warning: Member ssl(boost::asio::ssl::context &&ctx) (function) of class crow::Crow is not documented.
+/drone/src/include/crow/app.h:431: warning: Member ssl_used() const (function) of class crow::Crow is not documented.
+/drone/src/include/crow/app.h:479: warning: Member get_context(const request &req) (function) of class crow::Crow is not documented.
+/drone/src/include/crow/app.h:487: warning: Member get_middleware() (function) of class crow::Crow is not documented.
 /drone/src/include/crow/routing.h:568: warning: Member DynamicRule(std::string rule) (function) of class crow::DynamicRule is not documented.
 /drone/src/include/crow/routing.h:572: warning: Member validate() override (function) of class crow::DynamicRule is not documented.
 /drone/src/include/crow/routing.h:580: warning: Member handle(request &req, response &res, const routing_params &params) override (function) of class crow::DynamicRule is not documented.
@@ -762,5 +762,5 @@ Generating example index...
 finalizing index lists...
 writing tag file...
 Running plantuml with JAVA...
-lookup cache used 2951/65536 hits=25692 misses=3322
+lookup cache used 2957/65536 hits=25716 misses=3328
 finished...
