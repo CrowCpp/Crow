@@ -12,7 +12,7 @@
 
 ## Description
 
-Crow is a C++ microframework for running web services. It uses routing similar to Python's Flask which makes it easy to use. It is also extremely fast, beating multiple existing C++ frameworks as well as non C++ frameworks.
+Crow is a C++ framework for creating HTTP or Websocket web services. It uses routing similar to Python's Flask which makes it easy to use. It is also extremely fast, beating multiple existing C++ frameworks as well as non C++ frameworks.
 
 ### Features
  - Easy Routing (similar to flask).
@@ -27,6 +27,7 @@ Crow is a C++ microframework for running web services. It uses routing similar t
  - Uses modern C++ (11/14)
 
 ### Still in development
+ - [Async support](https://github.com/CrowCpp/Crow/issues/258)
  - [HTTP/2 support](https://github.com/crowcpp/crow/issues/8)
 
 ## Documentation
