@@ -5,6 +5,7 @@ var structcrow_1_1request =
     [ "add_header", "structcrow_1_1request.html#a98b85749921fc63e57d6ea891fe17391", null ],
     [ "check_version", "structcrow_1_1request.html#ac369309c6be61c011b93a5b8cf14515a", null ],
     [ "dispatch", "structcrow_1_1request.html#ac3e72e3fe415c68618dee999e3984160", null ],
+    [ "get_body_params", "structcrow_1_1request.html#a0f2f7ed7bf754d09ce2fa663417be74c", null ],
     [ "get_header_value", "structcrow_1_1request.html#a81e389dddb3f59bdb667097371573356", null ],
     [ "post", "structcrow_1_1request.html#a33aa146a3914864ce82ef22136451601", null ],
     [ "body", "structcrow_1_1request.html#afff683ed63a9e4067683786c3c6218c2", null ],
