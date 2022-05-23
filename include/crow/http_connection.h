@@ -317,11 +317,15 @@ namespace crow
             buffers_.reserve(4 * (res.headers.size() + 5) + 3);
 
             if (!statusCodes.count(res.code))
-                res.code = 500;
             {
-                auto& status = statusCodes.find(res.code)->second;
-                buffers_.emplace_back(status.data(), status.size());
+                CROW_LOG_WARNING << this << " status code "
+                                 << "(" << res.code << ")"
+                                 << " not defined, returning 500 instead";
+                res.code = 500;
             }
+
+            auto& status = statusCodes.find(res.code)->second;
+            buffers_.emplace_back(status.data(), status.size());
 
             if (res.code >= 400 && res.body.empty())
                 res.body = statusCodes[res.code].substr(9);

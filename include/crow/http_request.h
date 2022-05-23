@@ -62,6 +62,15 @@ namespace crow
             return http_ver_major == major && http_ver_minor == minor;
         }
 
+        /// Get the body as parameters in QS format.
+
+        ///
+        /// This is meant to be used with requests of type "application/x-www-form-urlencoded"
+        const query_string get_body_params()
+        {
+            return query_string(body, false);
+        }
+
         /// Send data to whoever made this request with a completion handler and return immediately.
         template<typename CompletionHandler>
         void post(CompletionHandler handler)

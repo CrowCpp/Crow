@@ -572,6 +572,61 @@ TEST_CASE("multi_server")
     app2.stop();
 } // multi_server
 
+
+TEST_CASE("undefined_status_code")
+{
+    SimpleApp app;
+    CROW_ROUTE(app, "/get123")
+    ([] {
+        //this status does not exists statusCodes map defined in include/crow/http_connection.h
+        const int undefinedStatusCode = 123;
+        return response(undefinedStatusCode, "this should return 500");
+    });
+
+    CROW_ROUTE(app, "/get200")
+    ([] {
+        return response(200, "ok");
+    });
+
+    auto _ = app.bindaddr(LOCALHOST_ADDRESS).port(45471).run_async();
+    app.wait_for_server_start();
+
+    asio::io_service is;
+    auto sendRequestAndGetStatusCode = [&](const std::string& route) -> unsigned {
+        asio::ip::tcp::socket socket(is);
+        socket.connect(asio::ip::tcp::endpoint(asio::ip::address::from_string(LOCALHOST_ADDRESS), app.port()));
+
+        boost::asio::streambuf request;
+        std::ostream request_stream(&request);
+        request_stream << "GET " << route << " HTTP/1.0\r\n";
+        request_stream << "Host: " << LOCALHOST_ADDRESS << "\r\n";
+        request_stream << "Accept: */*\r\n";
+        request_stream << "Connection: close\r\n\r\n";
+
+        // Send the request.
+        boost::asio::write(socket, request);
+
+        boost::asio::streambuf response;
+        boost::asio::read_until(socket, response, "\r\n");
+
+        std::istream response_stream(&response);
+        std::string http_version;
+        response_stream >> http_version;
+        unsigned status_code = 0;
+        response_stream >> status_code;
+
+        return status_code;
+    };
+
+    unsigned statusCode = sendRequestAndGetStatusCode("/get200");
+    CHECK(statusCode == 200);
+
+    statusCode = sendRequestAndGetStatusCode("/get123");
+    CHECK(statusCode == 500);
+
+    app.stop();
+} // undefined_status_code
+
 TEST_CASE("json_read")
 {
     {
@@ -2117,8 +2172,14 @@ TEST_CASE("send_file")
         app.handle(req, res);
 
         CHECK(200 == res.code);
-        CHECK("image/jpeg" == res.headers.find("Content-Type")->second);
-        CHECK(to_string(statbuf_cat.st_size) == res.headers.find("Content-Length")->second);
+
+        CHECK(res.headers.count("Content-Type"));
+        if (res.headers.count("Content-Type"))
+            CHECK("image/jpeg" == res.headers.find("Content-Type")->second);
+
+        CHECK(res.headers.count("Content-Length"));
+        if (res.headers.count("Content-Length"))
+            CHECK(to_string(statbuf_cat.st_size) == res.headers.find("Content-Length")->second);
     }
 
     //Unknown extension check
@@ -2131,8 +2192,13 @@ TEST_CASE("send_file")
 
         CHECK_NOTHROW(app.handle(req, res));
         CHECK(200 == res.code);
-        CHECK("text/plain" == res.headers.find("Content-Type")->second);
-        CHECK(to_string(statbuf_badext.st_size) == res.headers.find("Content-Length")->second);
+        CHECK(res.headers.count("Content-Type"));
+        if (res.headers.count("Content-Type"))
+            CHECK("text/plain" == res.headers.find("Content-Type")->second);
+
+        CHECK(res.headers.count("Content-Length"));
+        if (res.headers.count("Content-Length"))
+            CHECK(to_string(statbuf_badext.st_size) == res.headers.find("Content-Length")->second);
     }
 } // send_file
 
@@ -2364,6 +2430,78 @@ TEST_CASE("websocket")
 
     app.stop();
 } // websocket
+
+TEST_CASE("websocket_max_payload")
+{
+    static std::string http_message = "GET /ws HTTP/1.1\r\nConnection: keep-alive, Upgrade\r\nupgrade: websocket\r\nSec-WebSocket-Key: dGhlIHNhbXBsZSBub25jZQ==\r\nSec-WebSocket-Version: 13\r\n\r\n";
+
+    static bool connected{false};
+
+    SimpleApp app;
+
+    CROW_WEBSOCKET_ROUTE(app, "/ws")
+      .onopen([&](websocket::connection&) {
+          connected = true;
+          CROW_LOG_INFO << "Connected websocket and value is " << connected;
+      })
+      .onmessage([&](websocket::connection& conn, const std::string& message, bool isbin) {
+          CROW_LOG_INFO << "Message is \"" << message << '\"';
+          if (!isbin && message == "PINGME")
+              conn.send_ping("");
+          else if (!isbin && message == "Hello")
+              conn.send_text("Hello back");
+          else if (isbin && message == "Hello bin")
+              conn.send_binary("Hello back bin");
+      })
+      .onclose([&](websocket::connection&, const std::string&) {
+          CROW_LOG_INFO << "Closing websocket";
+      });
+
+    app.validate();
+
+    auto _ = app.websocket_max_payload(3).bindaddr(LOCALHOST_ADDRESS).port(45461).run_async();
+    app.wait_for_server_start();
+    asio::io_service is;
+
+    asio::ip::tcp::socket c(is);
+    c.connect(asio::ip::tcp::endpoint(
+      asio::ip::address::from_string(LOCALHOST_ADDRESS), 45461));
+
+
+    char buf[2048];
+
+    //----------Handshake----------
+    {
+        std::fill_n(buf, 2048, 0);
+        c.send(asio::buffer(http_message));
+
+        c.receive(asio::buffer(buf, 2048));
+        std::this_thread::sleep_for(std::chrono::milliseconds(5));
+        CHECK(connected);
+    }
+    //----------Text----------
+    {
+        std::fill_n(buf, 2048, 0);
+        char text_message[2 + 5 + 1]("\x81\x05"
+                                     "Hello");
+
+        c.send(asio::buffer(text_message, 7));
+        try
+        {
+            c.receive(asio::buffer(buf, 2048));
+            FAIL_CHECK();
+        }
+        catch (std::exception& e)
+        {
+            CROW_LOG_DEBUG << "websocket_max_payload test passed due to the exception: " << e.what();
+        }
+    }
+
+    boost::system::error_code ec;
+    c.lowest_layer().shutdown(boost::asio::socket_base::shutdown_type::shutdown_both, ec);
+
+    app.stop();
+} // websocket_max_payload
 
 #ifdef CROW_ENABLE_COMPRESSION
 TEST_CASE("zlib_compression")
