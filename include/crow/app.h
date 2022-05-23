@@ -19,6 +19,7 @@
 #include "crow/http_request.h"
 #include "crow/http_server.h"
 #include "crow/task_timer.h"
+#include "crow/websocket.h"
 #ifdef CROW_ENABLE_COMPRESSION
 #include "crow/compression.h"
 #endif
@@ -29,7 +30,8 @@
 #else
 #define CROW_ROUTE(app, url) app.route<crow::black_magic::get_parameter_tag(url)>(url)
 #define CROW_BP_ROUTE(blueprint, url) blueprint.new_rule_tagged<crow::black_magic::get_parameter_tag(url)>(url)
-#define CROW_MIDDLEWARES(app, ...) middlewares<decltype(app), __VA_ARGS__>()
+#define CROW_WEBSOCKET_ROUTE(app, url) app.route<crow::black_magic::get_parameter_tag(url)>(url).websocket<decltype(app)>(&app)
+#define CROW_MIDDLEWARES(app, ...) middlewares<std::remove_reference<decltype(app)>::type, __VA_ARGS__>()
 #endif
 #define CROW_CATCHALL_ROUTE(app) app.catchall_route()
 #define CROW_BP_CATCHALL_ROUTE(blueprint) blueprint.catchall_rule()
@@ -67,7 +69,7 @@ namespace crow
         /// Process an Upgrade request
 
         ///
-        /// Currently used to upgrrade an HTTP connection to a WebSocket connection
+        /// Currently used to upgrade an HTTP connection to a WebSocket connection
         template<typename Adaptor>
         void handle_upgrade(const request& req, response& res, Adaptor&& adaptor)
         {
@@ -77,7 +79,7 @@ namespace crow
         /// Process the request and generate a response for it
         void handle(request& req, response& res)
         {
-            router_.handle(req, res);
+            router_.handle<self_t>(req, res);
         }
 
         /// Create a dynamic route using a rule (**Use CROW_ROUTE instead**)
@@ -108,6 +110,19 @@ namespace crow
             return router_.catchall_rule();
         }
 
+        /// Set the default max payload size for websockets
+        self_t& websocket_max_payload(uint64_t max_payload)
+        {
+            max_payload_ = max_payload;
+            return *this;
+        }
+
+        /// Get the default max payload size for websockets
+        uint64_t websocket_max_payload()
+        {
+            return max_payload_;
+        }
+
         self_t& signal_clear()
         {
             signals_.clear();
@@ -118,6 +133,11 @@ namespace crow
         {
             signals_.push_back(signal_number);
             return *this;
+        }
+
+        std::vector<int> signals()
+        {
+            return signals_;
         }
 
         /// Set the port that Crow will handle requests on
@@ -245,7 +265,8 @@ namespace crow
 
 #ifndef CROW_DISABLE_STATIC_DIR
                 route<crow::black_magic::get_parameter_tag(CROW_STATIC_ENDPOINT)>(CROW_STATIC_ENDPOINT)([](crow::response& res, std::string file_path_partial) {
-                    res.set_static_file_info(CROW_STATIC_DIRECTORY + file_path_partial);
+                    utility::sanitize_filename(file_path_partial);
+                    res.set_static_file_info_unsafe(CROW_STATIC_DIRECTORY + file_path_partial);
                     res.end();
                 });
 
@@ -258,7 +279,8 @@ namespace crow
                         if (!bp->static_dir().empty())
                         {
                             bp->new_rule_tagged<crow::black_magic::get_parameter_tag(CROW_STATIC_ENDPOINT)>(CROW_STATIC_ENDPOINT)([bp](crow::response& res, std::string file_path_partial) {
-                                res.set_static_file_info(bp->static_dir() + '/' + file_path_partial);
+                                utility::sanitize_filename(file_path_partial);
+                                res.set_static_file_info_unsafe(bp->static_dir() + '/' + file_path_partial);
                                 res.end();
                             });
                         }
@@ -303,7 +325,6 @@ namespace crow
             {
                 server_ = std::move(std::unique_ptr<server_t>(new server_t(this, bindaddr_, port_, server_name_, &middlewares_, concurrency_, timeout_, nullptr)));
                 server_->set_tick_function(tick_interval_, tick_function_);
-                server_->signal_clear();
                 for (auto snum : signals_)
                 {
                     server_->signal_add(snum);
@@ -332,8 +353,24 @@ namespace crow
             else
 #endif
             {
+                std::vector<crow::websocket::connection*> websockets_to_close = websockets_;
+                for (auto websocket : websockets_to_close)
+                {
+                    CROW_LOG_INFO << "Quitting Websocket: " << websocket;
+                    websocket->close("Server Application Terminated");
+                }
                 if (server_) { server_->stop(); }
             }
+        }
+
+        void add_websocket(crow::websocket::connection* conn)
+        {
+            websockets_.push_back(conn);
+        }
+
+        void remove_websocket(crow::websocket::connection* conn)
+        {
+            std::remove(websockets_.begin(), websockets_.end(), conn);
         }
 
         /// Print the routing paths defined for each HTTP method
@@ -346,7 +383,7 @@ namespace crow
 
 #ifdef CROW_ENABLE_SSL
 
-        /// use certificate and key files for SSL
+        /// Use certificate and key files for SSL
         self_t& ssl_file(const std::string& crt_filename, const std::string& key_filename)
         {
             ssl_used_ = true;
@@ -359,13 +396,26 @@ namespace crow
             return *this;
         }
 
-        /// use .pem file for SSL
+        /// Use .pem file for SSL
         self_t& ssl_file(const std::string& pem_filename)
         {
             ssl_used_ = true;
             ssl_context_.set_verify_mode(boost::asio::ssl::verify_peer);
             ssl_context_.set_verify_mode(boost::asio::ssl::verify_client_once);
             ssl_context_.load_verify_file(pem_filename);
+            ssl_context_.set_options(
+              boost::asio::ssl::context::default_workarounds | boost::asio::ssl::context::no_sslv2 | boost::asio::ssl::context::no_sslv3);
+            return *this;
+        }
+
+        /// Use certificate chain and key files for SSL
+        self_t& ssl_chainfile(const std::string& crt_filename, const std::string& key_filename)
+        {
+            ssl_used_ = true;
+            ssl_context_.set_verify_mode(boost::asio::ssl::verify_peer);
+            ssl_context_.set_verify_mode(boost::asio::ssl::verify_client_once);
+            ssl_context_.use_certificate_chain_file(crt_filename);
+            ssl_context_.use_private_key_file(key_filename, ssl_context_t::pem);
             ssl_context_.set_options(
               boost::asio::ssl::context::default_workarounds | boost::asio::ssl::context::no_sslv2 | boost::asio::ssl::context::no_sslv3);
             return *this;
@@ -385,6 +435,17 @@ namespace crow
 #else
         template<typename T, typename... Remain>
         self_t& ssl_file(T&&, Remain&&...)
+        {
+            // We can't call .ssl() member function unless CROW_ENABLE_SSL is defined.
+            static_assert(
+              // make static_assert dependent to T; always false
+              std::is_base_of<T, void>::value,
+              "Define CROW_ENABLE_SSL to enable ssl support.");
+            return *this;
+        }
+
+        template<typename T, typename... Remain>
+        self_t& ssl_chainfile(T&&, Remain&&...)
         {
             // We can't call .ssl() member function unless CROW_ENABLE_SSL is defined.
             static_assert(
@@ -452,6 +513,7 @@ namespace crow
         std::uint8_t timeout_{5};
         uint16_t port_ = 80;
         uint16_t concurrency_ = 2;
+        uint64_t max_payload_{UINT64_MAX};
         bool validated_ = false;
         std::string server_name_ = std::string("Crow/") + VERSION;
         std::string bindaddr_ = "0.0.0.0";
@@ -481,6 +543,7 @@ namespace crow
         bool server_started_{false};
         std::condition_variable cv_started_;
         std::mutex start_mutex_;
+        std::vector<crow::websocket::connection*> websockets_;
     };
     template<typename... Middlewares>
     using App = Crow<Middlewares...>;

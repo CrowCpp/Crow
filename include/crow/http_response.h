@@ -19,11 +19,7 @@ namespace crow
     template<typename Adaptor, typename Handler, typename... Middlewares>
     class Connection;
 
-    namespace detail
-    {
-        template<typename F, typename App, typename... Middlewares>
-        struct handler_middleware_wrapper;
-    } // namespace detail
+    class Router;
 
     /// HTTP response
     struct response
@@ -31,8 +27,7 @@ namespace crow
         template<typename Adaptor, typename Handler, typename... Middlewares>
         friend class crow::Connection;
 
-        template<typename F, typename App, typename... Middlewares>
-        friend struct crow::detail::handler_middleware_wrapper;
+        friend class Router;
 
         int code{200};    ///< The Status code for the response.
         std::string body; ///< The actual payload containing the response data.
@@ -242,17 +237,20 @@ namespace crow
             {
                 std::size_t last_dot = path.find_last_of(".");
                 std::string extension = path.substr(last_dot + 1);
-                std::string mimeType = "";
                 code = 200;
-                this->add_header("Content-length", std::to_string(file_info.statbuf.st_size));
+                this->add_header("Content-Length", std::to_string(file_info.statbuf.st_size));
 
-                if (extension != "")
+                if (!extension.empty())
                 {
-                    mimeType = mime_types.at(extension);
-                    if (mimeType != "")
-                        this->add_header("Content-Type", mimeType);
+                    const auto mimeType = mime_types.find(extension);
+                    if (mimeType != mime_types.end())
+                    {
+                        this->add_header("Content-Type", mimeType->second);
+                    }
                     else
-                        this->add_header("content-Type", "text/plain");
+                    {
+                        this->add_header("Content-Type", "text/plain");
+                    }
                 }
             }
             else

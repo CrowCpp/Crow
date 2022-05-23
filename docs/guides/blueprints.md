@@ -1,5 +1,6 @@
-**Introduced in: `v1.0`**<br><br>
-    
+<span class="tag">[:octicons-feed-tag-16: v1.0](https://github.com/CrowCpp/Crow/releases/v1.0)</span>
+
+
 Crow supports flask style blueprints.<br>
 A blueprint is a limited app. It cannot handle networking. But it can handle routes.<br>
 Blueprints allow developers to compartmentalize their Crow applications, making them a lot more modular.<br><br>

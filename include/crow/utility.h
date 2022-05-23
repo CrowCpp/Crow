@@ -233,6 +233,8 @@ namespace crow
             template<template<typename... Args> class U>
             using rebind = U<T...>;
         };
+
+        // Check whether the template function can be called with specific arguments
         template<typename F, typename Set>
         struct CallHelper;
         template<typename F, typename... Args>
@@ -263,22 +265,6 @@ namespace crow
         struct has_type<T, std::tuple<T, Ts...>> : std::true_type
         {};
 
-        // Find index of type in tuple
-        template<class T, class Tuple>
-        struct tuple_index;
-
-        template<class T, class... Types>
-        struct tuple_index<T, std::tuple<T, Types...>>
-        {
-            static const int value = 0;
-        };
-
-        template<class T, class U, class... Types>
-        struct tuple_index<T, std::tuple<U, Types...>>
-        {
-            static const int value = 1 + tuple_index<T, std::tuple<Types...>>::value;
-        };
-
         // Extract element from forward tuple or get default
 #ifdef CROW_CAN_USE_CPP14
         template<typename T, typename Tup>
@@ -302,18 +288,21 @@ namespace crow
         {
             return T{};
         }
+      
+        // Find index of type in tuple
+        template<class T, class Tuple>
+        struct tuple_index;
 
-        // Check F is callable with Args
-        template<typename F, typename... Args>
-        struct is_callable
+        template<class T, class... Types>
+        struct tuple_index<T, std::tuple<T, Types...>>
         {
-            template<typename F2, typename... Args2>
-            static std::true_type __test(decltype(std::declval<F2>()(std::declval<Args2>()...))*);
+            static const int value = 0;
+        };
 
-            template<typename F2, typename... Args2>
-            static std::false_type __test(...);
-
-            static constexpr bool value = decltype(__test<F, Args...>(nullptr))::value;
+        template<class T, class U, class... Types>
+        struct tuple_index<T, std::tuple<U, Types...>>
+        {
+            static const int value = 1 + tuple_index<T, std::tuple<Types...>>::value;
         };
 
         // Kind of fold expressions in C++11

@@ -1,19 +1,19 @@
 Websockets are a way of connecting a client and a server without the request response nature of HTTP.<br><br>
 
+## Routes
 To create a websocket in Crow, you need a websocket route.<br>
-A websocket route differs from a normal route quite a bit. While it uses the same `CROW_ROUTE(app, "/url")` macro, that's about where the similarities end.<br>
-A websocket route follows the macro with `.websocket()` which is then followed by a series of methods (with handlers inside) for each event. These are (sorted by order of execution):
-
-!!! Warning
-
-    By default, Crow allows Clients to send unmasked websocket messages, which is useful for debugging but goes against the protocol specification. Production Crow applications should enforce the protocol by adding `#!cpp #define CROW_ENFORCE_WS_SPEC` to their source code.
+A websocket route differs from a normal route quite a bit. It uses A slightly altered `CROW_WEBSOCKET_ROUTE(app, "/url")` macro, which is then followed by a series of methods (with handlers inside) for each event. These are (sorted by order of execution):
 
 
 - `#!cpp onaccept([&](const crow::request&){handler code goes here})` (This handler has to return `bool`)
 - `#!cpp onopen([&](crow::websocket::connection& conn){handler code goes here})`
 - `#!cpp onmessage([&](crow::websocket::connection& conn, const std::string message, bool is_binary){handler code goes here})`
 - `#!cpp onerror([&](crow::websocket::connection& conn){handler code goes here})`
-- `#!cpp onclose([&](crow::websocket::connection& conn, const std::string reason){handler code goes here})`<br><br>
+- `#!cpp onclose([&](crow::websocket::connection& conn, const std::string reason){handler code goes here})`
+
+!!! Warning
+
+    By default, Crow allows Clients to send unmasked websocket messages, which is useful for debugging but goes against the protocol specification. Production Crow applications should enforce the protocol by adding `#!cpp #define CROW_ENFORCE_WS_SPEC` to their source code.
 
 These event methods and their handlers can be chained. The full Route should look similar to this:
 ```cpp
@@ -32,5 +32,17 @@ CROW_ROUTE(app, "/ws")
                     do_something_else(data);
             });
 ```
-<br><br>
-For more info go [here](../../reference/classcrow_1_1_web_socket_rule.html).
+
+## Maximum payload size
+<span class="tag">[:octicons-feed-tag-16: master](https://github.com/CrowCpp/Crow)</span>
+
+The maximum payload size that a connection accepts can be adjusted either globally by using `#!cpp app.websocket_max_payload(<value in bytes>)` or per route by using `#!cpp CROW_WEBSOCKET_ROUTE(app, "/url").max_payload(<value in bytes>)`. In case a message was sent that exceeded the limit. The connection would be shut down and `onerror` would be triggered.
+
+!!! note
+
+    By default, This limit is disabled. To disable the global setting in specific routes, you only need to call `#!cpp CROW_WEBSOCKET_ROUTE(app, "/url").max_payload(UINT64_MAX)`.
+
+
+For more info about websocket routes go [here](../../reference/classcrow_1_1_web_socket_rule.html).
+
+For more info about websocket connections go [here](../../reference/classcrow_1_1websocket_1_1_connection.html).

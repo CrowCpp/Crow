@@ -42,7 +42,7 @@ namespace crow
             return empty;
         }
 
-        /// Same as \ref get_header_value_Object() but for \ref multipart.header
+        /// Same as \ref get_header_value_object() but for \ref multipart.header
         template<typename T>
         inline const header& get_header_object(const T& headers, const std::string& key)
         {

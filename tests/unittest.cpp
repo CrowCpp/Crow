@@ -8,6 +8,7 @@
 #include <vector>
 #include <thread>
 #include <chrono>
+#include <type_traits>
 
 #include "catch.hpp"
 #include "crow.h"
@@ -570,6 +571,61 @@ TEST_CASE("multi_server")
     app1.stop();
     app2.stop();
 } // multi_server
+
+
+TEST_CASE("undefined_status_code")
+{
+    SimpleApp app;
+    CROW_ROUTE(app, "/get123")
+    ([] {
+        //this status does not exists statusCodes map defined in include/crow/http_connection.h
+        const int undefinedStatusCode = 123;
+        return response(undefinedStatusCode, "this should return 500");
+    });
+
+    CROW_ROUTE(app, "/get200")
+    ([] {
+        return response(200, "ok");
+    });
+
+    auto _ = app.bindaddr(LOCALHOST_ADDRESS).port(45471).run_async();
+    app.wait_for_server_start();
+
+    asio::io_service is;
+    auto sendRequestAndGetStatusCode = [&](const std::string& route) -> unsigned {
+        asio::ip::tcp::socket socket(is);
+        socket.connect(asio::ip::tcp::endpoint(asio::ip::address::from_string(LOCALHOST_ADDRESS), app.port()));
+
+        boost::asio::streambuf request;
+        std::ostream request_stream(&request);
+        request_stream << "GET " << route << " HTTP/1.0\r\n";
+        request_stream << "Host: " << LOCALHOST_ADDRESS << "\r\n";
+        request_stream << "Accept: */*\r\n";
+        request_stream << "Connection: close\r\n\r\n";
+
+        // Send the request.
+        boost::asio::write(socket, request);
+
+        boost::asio::streambuf response;
+        boost::asio::read_until(socket, response, "\r\n");
+
+        std::istream response_stream(&response);
+        std::string http_version;
+        response_stream >> http_version;
+        unsigned status_code = 0;
+        response_stream >> status_code;
+
+        return status_code;
+    };
+
+    unsigned statusCode = sendRequestAndGetStatusCode("/get200");
+    CHECK(statusCode == 200);
+
+    statusCode = sendRequestAndGetStatusCode("/get123");
+    CHECK(statusCode == 500);
+
+    app.stop();
+} // undefined_status_code
 
 TEST_CASE("json_read")
 {
@@ -1253,7 +1309,11 @@ struct IntSettingMiddleware
 
 std::vector<std::string> test_middleware_context_vector;
 
-struct FirstMW
+struct empty_type
+{};
+
+template<bool Local>
+struct FirstMW : public std::conditional<Local, crow::ILocalMiddleware, empty_type>::type
 {
     struct context
     {
@@ -1272,38 +1332,40 @@ struct FirstMW
     }
 };
 
-struct SecondMW
+template<bool Local>
+struct SecondMW : public std::conditional<Local, crow::ILocalMiddleware, empty_type>::type
 {
     struct context
     {};
     template<typename AllContext>
     void before_handle(request& req, response& res, context&, AllContext& all_ctx)
     {
-        all_ctx.template get<FirstMW>().v.push_back("2 before");
-        if (req.url == "/break") res.end();
+        all_ctx.template get<FirstMW<Local>>().v.push_back("2 before");
+        if (req.url.find("/break") != std::string::npos) res.end();
     }
 
     template<typename AllContext>
     void after_handle(request&, response&, context&, AllContext& all_ctx)
     {
-        all_ctx.template get<FirstMW>().v.push_back("2 after");
+        all_ctx.template get<FirstMW<Local>>().v.push_back("2 after");
     }
 };
 
-struct ThirdMW
+template<bool Local>
+struct ThirdMW : public std::conditional<Local, crow::ILocalMiddleware, empty_type>::type
 {
     struct context
     {};
     template<typename AllContext>
     void before_handle(request&, response&, context&, AllContext& all_ctx)
     {
-        all_ctx.template get<FirstMW>().v.push_back("3 before");
+        all_ctx.template get<FirstMW<Local>>().v.push_back("3 before");
     }
 
     template<typename AllContext>
     void after_handle(request&, response&, context&, AllContext& all_ctx)
     {
-        all_ctx.template get<FirstMW>().v.push_back("3 after");
+        all_ctx.template get<FirstMW<Local>>().v.push_back("3 after");
     }
 };
 
@@ -1316,7 +1378,7 @@ TEST_CASE("middleware_context")
     // or change the order of FirstMW and SecondMW
     // App<IntSettingMiddleware, SecondMW, FirstMW> app;
 
-    App<IntSettingMiddleware, FirstMW, SecondMW, ThirdMW> app;
+    App<IntSettingMiddleware, FirstMW<false>, SecondMW<false>, ThirdMW<false>> app;
 
     int x{};
     CROW_ROUTE(app, "/")
@@ -1326,7 +1388,7 @@ TEST_CASE("middleware_context")
             x = ctx.val;
         }
         {
-            auto& ctx = app.get_context<FirstMW>(req);
+            auto& ctx = app.get_context<FirstMW<false>>(req);
             ctx.v.push_back("handle");
         }
 
@@ -1335,7 +1397,7 @@ TEST_CASE("middleware_context")
     CROW_ROUTE(app, "/break")
     ([&](const request& req) {
         {
-            auto& ctx = app.get_context<FirstMW>(req);
+            auto& ctx = app.get_context<FirstMW<false>>(req);
             ctx.v.push_back("handle");
         }
 
@@ -1465,7 +1527,92 @@ TEST_CASE("app_constructor")
       app(OnlyMoveConstructor(1), SecondMW{});
 } // app_constructor
 
-TEST_CASE("middleware_cookieparser")
+TEST_CASE("middleware_blueprint")
+{
+    // Same logic as middleware_context, but middleware is added with blueprints
+    static char buf[2048];
+
+    App<FirstMW<true>, SecondMW<true>, ThirdMW<true>> app;
+
+    Blueprint bp1("a", "c1", "c1");
+    bp1.CROW_MIDDLEWARES(app, FirstMW<true>);
+
+    Blueprint bp2("b", "c2", "c2");
+    bp2.CROW_MIDDLEWARES(app, SecondMW<true>);
+
+    Blueprint bp3("c", "c3", "c3");
+
+    CROW_BP_ROUTE(bp2, "/")
+      .CROW_MIDDLEWARES(app, ThirdMW<true>)([&app](const crow::request& req) {
+          {
+              auto& ctx = app.get_context<FirstMW<true>>(req);
+              ctx.v.push_back("handle");
+          }
+          return "";
+      });
+
+    CROW_BP_ROUTE(bp3, "/break")
+      .CROW_MIDDLEWARES(app, SecondMW<true>, ThirdMW<true>)([&app](const crow::request& req) {
+          {
+              auto& ctx = app.get_context<FirstMW<true>>(req);
+              ctx.v.push_back("handle");
+          }
+          return "";
+      });
+
+    bp1.register_blueprint(bp3);
+    bp1.register_blueprint(bp2);
+    app.register_blueprint(bp1);
+
+    auto _ = app.bindaddr(LOCALHOST_ADDRESS).port(45451).run_async();
+    app.wait_for_server_start();
+
+    asio::io_service is;
+    {
+        asio::ip::tcp::socket c(is);
+        c.connect(asio::ip::tcp::endpoint(
+          asio::ip::address::from_string(LOCALHOST_ADDRESS), 45451));
+
+        c.send(asio::buffer("GET /a/b/\r\n\r\n"));
+
+        c.receive(asio::buffer(buf, 2048));
+        c.close();
+    }
+    {
+        auto& out = test_middleware_context_vector;
+        CHECK(7 == out.size());
+        CHECK("1 before" == out[0]);
+        CHECK("2 before" == out[1]);
+        CHECK("3 before" == out[2]);
+        CHECK("handle" == out[3]);
+        CHECK("3 after" == out[4]);
+        CHECK("2 after" == out[5]);
+        CHECK("1 after" == out[6]);
+    }
+    {
+        asio::ip::tcp::socket c(is);
+        c.connect(asio::ip::tcp::endpoint(
+          asio::ip::address::from_string(LOCALHOST_ADDRESS), 45451));
+
+        c.send(asio::buffer("GET /a/c/break\r\n\r\n"));
+
+        c.receive(asio::buffer(buf, 2048));
+        c.close();
+    }
+    {
+        auto& out = test_middleware_context_vector;
+        CHECK(4 == out.size());
+        CHECK("1 before" == out[0]);
+        CHECK("2 before" == out[1]);
+        CHECK("2 after" == out[2]);
+        CHECK("1 after" == out[3]);
+    }
+
+    app.stop();
+} // middleware_blueprint
+
+
+TEST_CASE("middleware_cookieparser_parse")
 {
     static char buf[2048];
 
@@ -1512,8 +1659,55 @@ TEST_CASE("middleware_cookieparser")
         CHECK("val\"ue4" == value4);
     }
     app.stop();
-} // middleware_cookieparser
+} // middleware_cookieparser_parse
 
+
+TEST_CASE("middleware_cookieparser_format")
+{
+    using Cookie = CookieParser::Cookie;
+
+    auto valid = [](const std::string& s, int parts) {
+        return std::count(s.begin(), s.end(), ';') == parts - 1;
+    };
+
+    // basic
+    {
+        auto c = Cookie("key", "value");
+        auto s = c.dump();
+        CHECK(valid(s, 1));
+        CHECK(s == "key=value");
+    }
+    // max-age + domain
+    {
+        auto c = Cookie("key", "value")
+                   .max_age(123)
+                   .domain("example.com");
+        auto s = c.dump();
+        CHECK(valid(s, 3));
+        CHECK(s.find("key=value") != std::string::npos);
+        CHECK(s.find("Max-Age=123") != std::string::npos);
+        CHECK(s.find("Domain=example.com") != std::string::npos);
+    }
+    // samesite + secure
+    {
+        auto c = Cookie("key", "value")
+                   .secure()
+                   .same_site(Cookie::SameSitePolicy::None);
+        auto s = c.dump();
+        CHECK(valid(s, 3));
+        CHECK(s.find("Secure") != std::string::npos);
+        CHECK(s.find("SameSite=None") != std::string::npos);
+    }
+    // expires
+    {
+        auto tp = boost::posix_time::time_from_string("2000-11-01 23:59:59.000");
+        auto c = Cookie("key", "value")
+                   .expires(boost::posix_time::to_tm(tp));
+        auto s = c.dump();
+        CHECK(valid(s, 2));
+        CHECK(s.find("Expires=Wed, 01 Nov 2000 23:59:59 GMT") != std::string::npos);
+    }
+} // middleware_cookieparser_format
 
 TEST_CASE("middleware_cors")
 {
@@ -1939,8 +2133,10 @@ TEST_CASE("multipart")
 TEST_CASE("send_file")
 {
 
-    struct stat statbuf;
-    stat("tests/img/cat.jpg", &statbuf);
+    struct stat statbuf_cat;
+    stat("tests/img/cat.jpg", &statbuf_cat);
+    struct stat statbuf_badext;
+    stat("tests/img/filewith.badext", &statbuf_badext);
 
     SimpleApp app;
 
@@ -1954,6 +2150,12 @@ TEST_CASE("send_file")
     ([](const crow::request&, crow::response& res) {
         res.set_static_file_info(
           "tests/img/cat2.jpg"); // This file is nonexistent on purpose
+        res.end();
+    });
+
+    CROW_ROUTE(app, "/filewith.badext")
+    ([](const crow::request&, crow::response& res) {
+        res.set_static_file_info("tests/img/filewith.badext");
         res.end();
     });
 
@@ -1983,8 +2185,33 @@ TEST_CASE("send_file")
         app.handle(req, res);
 
         CHECK(200 == res.code);
-        CHECK("image/jpeg" == res.headers.find("Content-Type")->second);
-        CHECK(to_string(statbuf.st_size) == res.headers.find("Content-Length")->second);
+
+        CHECK(res.headers.count("Content-Type"));
+        if (res.headers.count("Content-Type"))
+            CHECK("image/jpeg" == res.headers.find("Content-Type")->second);
+
+        CHECK(res.headers.count("Content-Length"));
+        if (res.headers.count("Content-Length"))
+            CHECK(to_string(statbuf_cat.st_size) == res.headers.find("Content-Length")->second);
+    }
+
+    //Unknown extension check
+    {
+        request req;
+        response res;
+
+        req.url = "/filewith.badext";
+        req.http_ver_major = 1;
+
+        CHECK_NOTHROW(app.handle(req, res));
+        CHECK(200 == res.code);
+        CHECK(res.headers.count("Content-Type"));
+        if (res.headers.count("Content-Type"))
+            CHECK("text/plain" == res.headers.find("Content-Type")->second);
+
+        CHECK(res.headers.count("Content-Length"));
+        if (res.headers.count("Content-Length"))
+            CHECK(to_string(statbuf_badext.st_size) == res.headers.find("Content-Length")->second);
     }
 } // send_file
 
@@ -2035,15 +2262,15 @@ TEST_CASE("stream_response")
             // magic number is 102 (it's the size of the headers, which is how much this line below needs to read)
             const size_t headers_bytes = 102;
             while (received_headers_bytes < headers_bytes)
-                received_headers_bytes += c.receive(asio::buffer(buf, 2048));
+                received_headers_bytes += c.receive(asio::buffer(buf, 102));
             received += received_headers_bytes - headers_bytes; //add any extra that might have been received to the proper received count
-
 
             while (received < key_response_size)
             {
                 asio::streambuf::mutable_buffers_type bufs = b.prepare(16384);
 
-                size_t n = c.receive(bufs);
+                size_t n(0);
+                n = c.receive(bufs);
                 b.commit(n);
                 received += n;
 
@@ -2052,8 +2279,6 @@ TEST_CASE("stream_response")
                 is >> s;
 
                 CHECK(key_response.substr(received - n, n) == s);
-
-                //std::this_thread::sleep_for(std::chrono::milliseconds(20));
             }
         }
         app.stop();
@@ -2069,10 +2294,10 @@ TEST_CASE("websocket")
 
     SimpleApp app;
 
-    CROW_ROUTE(app, "/ws").websocket().onopen([&](websocket::connection&) {
-                                          connected = true;
-                                          CROW_LOG_INFO << "Connected websocket and value is " << connected;
-                                      })
+    CROW_WEBSOCKET_ROUTE(app, "/ws").onopen([&](websocket::connection&) {
+                                        connected = true;
+                                        CROW_LOG_INFO << "Connected websocket and value is " << connected;
+                                    })
       .onmessage([&](websocket::connection& conn, const std::string& message, bool isbin) {
           CROW_LOG_INFO << "Message is \"" << message << '\"';
           if (!isbin && message == "PINGME")
@@ -2218,6 +2443,78 @@ TEST_CASE("websocket")
 
     app.stop();
 } // websocket
+
+TEST_CASE("websocket_max_payload")
+{
+    static std::string http_message = "GET /ws HTTP/1.1\r\nConnection: keep-alive, Upgrade\r\nupgrade: websocket\r\nSec-WebSocket-Key: dGhlIHNhbXBsZSBub25jZQ==\r\nSec-WebSocket-Version: 13\r\n\r\n";
+
+    static bool connected{false};
+
+    SimpleApp app;
+
+    CROW_WEBSOCKET_ROUTE(app, "/ws")
+      .onopen([&](websocket::connection&) {
+          connected = true;
+          CROW_LOG_INFO << "Connected websocket and value is " << connected;
+      })
+      .onmessage([&](websocket::connection& conn, const std::string& message, bool isbin) {
+          CROW_LOG_INFO << "Message is \"" << message << '\"';
+          if (!isbin && message == "PINGME")
+              conn.send_ping("");
+          else if (!isbin && message == "Hello")
+              conn.send_text("Hello back");
+          else if (isbin && message == "Hello bin")
+              conn.send_binary("Hello back bin");
+      })
+      .onclose([&](websocket::connection&, const std::string&) {
+          CROW_LOG_INFO << "Closing websocket";
+      });
+
+    app.validate();
+
+    auto _ = app.websocket_max_payload(3).bindaddr(LOCALHOST_ADDRESS).port(45461).run_async();
+    app.wait_for_server_start();
+    asio::io_service is;
+
+    asio::ip::tcp::socket c(is);
+    c.connect(asio::ip::tcp::endpoint(
+      asio::ip::address::from_string(LOCALHOST_ADDRESS), 45461));
+
+
+    char buf[2048];
+
+    //----------Handshake----------
+    {
+        std::fill_n(buf, 2048, 0);
+        c.send(asio::buffer(http_message));
+
+        c.receive(asio::buffer(buf, 2048));
+        std::this_thread::sleep_for(std::chrono::milliseconds(5));
+        CHECK(connected);
+    }
+    //----------Text----------
+    {
+        std::fill_n(buf, 2048, 0);
+        char text_message[2 + 5 + 1]("\x81\x05"
+                                     "Hello");
+
+        c.send(asio::buffer(text_message, 7));
+        try
+        {
+            c.receive(asio::buffer(buf, 2048));
+            FAIL_CHECK();
+        }
+        catch (std::exception& e)
+        {
+            CROW_LOG_DEBUG << "websocket_max_payload test passed due to the exception: " << e.what();
+        }
+    }
+
+    boost::system::error_code ec;
+    c.lowest_layer().shutdown(boost::asio::socket_base::shutdown_type::shutdown_both, ec);
+
+    app.stop();
+} // websocket_max_payload
 
 #ifdef CROW_ENABLE_COMPRESSION
 TEST_CASE("zlib_compression")

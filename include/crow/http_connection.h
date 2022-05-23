@@ -129,27 +129,12 @@ namespace crow
                 }
                 if (req.upgrade)
                 {
-#ifdef CROW_ENABLE_SSL
-                    if (handler_->ssl_used())
-                    {
-                        if (req.get_header_value("upgrade") == "h2")
-                        {
-                            // TODO(ipkn): HTTP/2
-                            // currently, ignore upgrade header
-                        }
-                    }
-                    else if (req.get_header_value("upgrade") == "h2c")
+                    // h2 or h2c headers
+                    if (req.get_header_value("upgrade").substr(0, 2) == "h2")
                     {
                         // TODO(ipkn): HTTP/2
                         // currently, ignore upgrade header
                     }
-#else
-                    if (req.get_header_value("upgrade") == "h2c")
-                    {
-                        // TODO(ipkn): HTTP/2
-                        // currently, ignore upgrade header
-                    }
-#endif
                     else
                     {
                         close_connection_ = true;
@@ -176,7 +161,7 @@ namespace crow
                 req.io_service = &adaptor_.get_io_service();
 
                 detail::middleware_call_helper<detail::middleware_call_criteria_only_global,
-                                               0, decltype(ctx_), decltype(*middlewares_)>(*middlewares_, req, res, ctx_);
+                                               0, decltype(ctx_), decltype(*middlewares_)>({}, *middlewares_, req, res, ctx_);
 
                 if (!res.completed_)
                 {
@@ -213,7 +198,7 @@ namespace crow
                   detail::middleware_call_criteria_only_global,
                   (static_cast<int>(sizeof...(Middlewares)) - 1),
                   decltype(ctx_),
-                  decltype(*middlewares_)>(*middlewares_, ctx_, req_, res);
+                  decltype(*middlewares_)>({}, *middlewares_, ctx_, req_, res);
             }
 #ifdef CROW_ENABLE_COMPRESSION
             if (handler_->compression_used())
@@ -332,11 +317,15 @@ namespace crow
             buffers_.reserve(4 * (res.headers.size() + 5) + 3);
 
             if (!statusCodes.count(res.code))
-                res.code = 500;
             {
-                auto& status = statusCodes.find(res.code)->second;
-                buffers_.emplace_back(status.data(), status.size());
+                CROW_LOG_WARNING << this << " status code "
+                                 << "(" << res.code << ")"
+                                 << " not defined, returning 500 instead";
+                res.code = 500;
             }
+
+            auto& status = statusCodes.find(res.code)->second;
+            buffers_.emplace_back(status.data(), status.size());
 
             if (res.code >= 400 && res.body.empty())
                 res.body = statusCodes[res.code].substr(9);
@@ -432,6 +421,7 @@ namespace crow
             {
                 is_writing = true;
                 boost::asio::write(adaptor_.socket(), buffers_); // Write the response start / headers
+                cancel_deadline_timer();
                 if (res.body.length() > 0)
                 {
                     std::string buf;

@@ -161,9 +161,18 @@ namespace crow
 
         void stop()
         {
-            io_service_.stop();
+            shutting_down_ = true; // Prevent the acceptor from taking new connections
             for (auto& io_service : io_service_pool_)
-                io_service->stop();
+            {
+                if (io_service != nullptr)
+                {
+                    CROW_LOG_INFO << "Closing IO service " << &io_service;
+                    io_service->stop(); // Close all io_services (and HTTP connections)
+                }
+            }
+
+            CROW_LOG_INFO << "Closing main IO service (" << &io_service_ << ')';
+            io_service_.stop(); // Close main io_service
         }
 
         void signal_clear()
@@ -182,7 +191,9 @@ namespace crow
             uint16_t min_queue_idx = 0;
 
             // TODO improve load balancing
-            for (uint16_t i = 1; i < task_queue_length_pool_.size() && task_queue_length_pool_[min_queue_idx] > 0; i++)
+            // size_t is used here to avoid the security issue https://codeql.github.com/codeql-query-help/cpp/cpp-comparison-with-wider-type/
+            // even though the max value of this can be only uint16_t as concurrency is uint16_t.
+            for (size_t i = 1; i < task_queue_length_pool_.size() && task_queue_length_pool_[min_queue_idx] > 0; i++)
             // No need to check other io_services if the current one has no tasks
             {
                 if (task_queue_length_pool_[i] < task_queue_length_pool_[min_queue_idx])
@@ -193,33 +204,36 @@ namespace crow
 
         void do_accept()
         {
-            uint16_t service_idx = pick_io_service_idx();
-            asio::io_service& is = *io_service_pool_[service_idx];
-            task_queue_length_pool_[service_idx]++;
-            CROW_LOG_DEBUG << &is << " {" << service_idx << "} queue length: " << task_queue_length_pool_[service_idx];
+            if (!shutting_down_)
+            {
+                uint16_t service_idx = pick_io_service_idx();
+                asio::io_service& is = *io_service_pool_[service_idx];
+                task_queue_length_pool_[service_idx]++;
+                CROW_LOG_DEBUG << &is << " {" << service_idx << "} queue length: " << task_queue_length_pool_[service_idx];
 
-            auto p = new Connection<Adaptor, Handler, Middlewares...>(
-              is, handler_, server_name_, middlewares_,
-              get_cached_date_str_pool_[service_idx], *task_timer_pool_[service_idx], adaptor_ctx_, task_queue_length_pool_[service_idx]);
+                auto p = new Connection<Adaptor, Handler, Middlewares...>(
+                  is, handler_, server_name_, middlewares_,
+                  get_cached_date_str_pool_[service_idx], *task_timer_pool_[service_idx], adaptor_ctx_, task_queue_length_pool_[service_idx]);
 
-            acceptor_.async_accept(
-              p->socket(),
-              [this, p, &is, service_idx](boost::system::error_code ec) {
-                  if (!ec)
-                  {
-                      is.post(
-                        [p] {
-                            p->start();
-                        });
-                  }
-                  else
-                  {
-                      task_queue_length_pool_[service_idx]--;
-                      CROW_LOG_DEBUG << &is << " {" << service_idx << "} queue length: " << task_queue_length_pool_[service_idx];
-                      delete p;
-                  }
-                  do_accept();
-              });
+                acceptor_.async_accept(
+                  p->socket(),
+                  [this, p, &is, service_idx](boost::system::error_code ec) {
+                      if (!ec)
+                      {
+                          is.post(
+                            [p] {
+                                p->start();
+                            });
+                      }
+                      else
+                      {
+                          task_queue_length_pool_[service_idx]--;
+                          CROW_LOG_DEBUG << &is << " {" << service_idx << "} queue length: " << task_queue_length_pool_[service_idx];
+                          delete p;
+                      }
+                      do_accept();
+                  });
+            }
         }
 
     private:
@@ -228,6 +242,7 @@ namespace crow
         std::vector<detail::task_timer*> task_timer_pool_;
         std::vector<std::function<std::string()>> get_cached_date_str_pool_;
         tcp::acceptor acceptor_;
+        bool shutting_down_ = false;
         boost::asio::signal_set signals_;
         boost::asio::deadline_timer tick_timer_;
 
