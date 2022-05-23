@@ -1523,8 +1523,10 @@ struct OnlyMoveConstructor
 
 TEST_CASE("app_constructor")
 {
-    App<NullMiddleware, OnlyMoveConstructor, FirstMW, SecondMW>
-      app(OnlyMoveConstructor(1), SecondMW{});
+    App<NullMiddleware, OnlyMoveConstructor, FirstMW<false>, SecondMW<false>>
+      app1(OnlyMoveConstructor(1), SecondMW<false>{});
+    App<NullMiddleware, OnlyMoveConstructor, FirstMW<false>, SecondMW<false>>
+      app2(FirstMW<false>{}, OnlyMoveConstructor(1));
 } // app_constructor
 
 TEST_CASE("middleware_blueprint")

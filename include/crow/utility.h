@@ -265,6 +265,22 @@ namespace crow
         struct has_type<T, std::tuple<T, Ts...>> : std::true_type
         {};
 
+        // Find index of type in tuple
+        template<class T, class Tuple>
+        struct tuple_index;
+
+        template<class T, class... Types>
+        struct tuple_index<T, std::tuple<T, Types...>>
+        {
+            static const int value = 0;
+        };
+
+        template<class T, class U, class... Types>
+        struct tuple_index<T, std::tuple<U, Types...>>
+        {
+            static const int value = 1 + tuple_index<T, std::tuple<Types...>>::value;
+        };
+
         // Extract element from forward tuple or get default
 #ifdef CROW_CAN_USE_CPP14
         template<typename T, typename Tup>
@@ -288,22 +304,6 @@ namespace crow
         {
             return T{};
         }
-      
-        // Find index of type in tuple
-        template<class T, class Tuple>
-        struct tuple_index;
-
-        template<class T, class... Types>
-        struct tuple_index<T, std::tuple<T, Types...>>
-        {
-            static const int value = 0;
-        };
-
-        template<class T, class U, class... Types>
-        struct tuple_index<T, std::tuple<U, Types...>>
-        {
-            static const int value = 1 + tuple_index<T, std::tuple<Types...>>::value;
-        };
 
         // Kind of fold expressions in C++11
         template<bool...>
