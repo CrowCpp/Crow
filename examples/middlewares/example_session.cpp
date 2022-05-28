@@ -64,6 +64,7 @@ int main()
     });
 
     // Set a key
+    // A session is stored as soon as it becomes non empty
     CROW_ROUTE(app, "/set")
     ([&](const crow::request& req) {
         auto& session = app.get_context<Session>(req);
