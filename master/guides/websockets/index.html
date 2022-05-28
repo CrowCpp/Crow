@@ -13,7 +13,7 @@
         <link rel="canonical" href="https://crowcpp.org/guides/websockets/">
       
       <link rel="icon" href="../../assets/favicon.svg">
-      <meta name="generator" content="mkdocs-1.3.0, mkdocs-material-8.2.15">
+      <meta name="generator" content="mkdocs-1.3.0, mkdocs-material-8.2.16">
     
     
       
@@ -21,7 +21,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.c382b1dc.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.1c3799f8.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.cc9b2e1e.min.css">
@@ -1118,12 +1118,16 @@
 <p>To create a websocket in Crow, you need a websocket route.<br>
 A websocket route differs from a normal route quite a bit. It uses A slightly altered <code>CROW_WEBSOCKET_ROUTE(app, "/url")</code> macro, which is then followed by a series of methods (with handlers inside) for each event. These are (sorted by order of execution):</p>
 <ul>
-<li><code class="highlight"><span class="n">onaccept</span><span class="p">([</span><span class="o">&amp;</span><span class="p">](</span><span class="k">const</span><span class="w"> </span><span class="n">crow</span><span class="o">::</span><span class="n">request</span><span class="o">&amp;</span><span class="p">){</span><span class="n">handler</span><span class="w"> </span><span class="n">code</span><span class="w"> </span><span class="n">goes</span><span class="w"> </span><span class="n">here</span><span class="p">})</span><span class="w"></span></code> (This handler has to return <code>bool</code>)</li>
+<li><code class="highlight"><span class="n">onaccept</span><span class="p">([</span><span class="o">&amp;</span><span class="p">](</span><span class="k">const</span><span class="w"> </span><span class="n">crow</span><span class="o">::</span><span class="n">request</span><span class="o">&amp;</span><span class="w"> </span><span class="n">req</span><span class="p">,</span><span class="w"> </span><span class="kt">void</span><span class="o">**</span><span class="w"> </span><span class="n">userdata</span><span class="p">){</span><span class="n">handler</span><span class="w"> </span><span class="n">code</span><span class="w"> </span><span class="n">goes</span><span class="w"> </span><span class="n">here</span><span class="p">})</span><span class="w"></span></code></li>
 <li><code class="highlight"><span class="n">onopen</span><span class="p">([</span><span class="o">&amp;</span><span class="p">](</span><span class="n">crow</span><span class="o">::</span><span class="n">websocket</span><span class="o">::</span><span class="n">connection</span><span class="o">&amp;</span><span class="w"> </span><span class="n">conn</span><span class="p">){</span><span class="n">handler</span><span class="w"> </span><span class="n">code</span><span class="w"> </span><span class="n">goes</span><span class="w"> </span><span class="n">here</span><span class="p">})</span><span class="w"></span></code></li>
 <li><code class="highlight"><span class="n">onmessage</span><span class="p">([</span><span class="o">&amp;</span><span class="p">](</span><span class="n">crow</span><span class="o">::</span><span class="n">websocket</span><span class="o">::</span><span class="n">connection</span><span class="o">&amp;</span><span class="w"> </span><span class="n">conn</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">message</span><span class="p">,</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">is_binary</span><span class="p">){</span><span class="n">handler</span><span class="w"> </span><span class="n">code</span><span class="w"> </span><span class="n">goes</span><span class="w"> </span><span class="n">here</span><span class="p">})</span><span class="w"></span></code></li>
 <li><code class="highlight"><span class="n">onerror</span><span class="p">([</span><span class="o">&amp;</span><span class="p">](</span><span class="n">crow</span><span class="o">::</span><span class="n">websocket</span><span class="o">::</span><span class="n">connection</span><span class="o">&amp;</span><span class="w"> </span><span class="n">conn</span><span class="p">){</span><span class="n">handler</span><span class="w"> </span><span class="n">code</span><span class="w"> </span><span class="n">goes</span><span class="w"> </span><span class="n">here</span><span class="p">})</span><span class="w"></span></code></li>
 <li><code class="highlight"><span class="n">onclose</span><span class="p">([</span><span class="o">&amp;</span><span class="p">](</span><span class="n">crow</span><span class="o">::</span><span class="n">websocket</span><span class="o">::</span><span class="n">connection</span><span class="o">&amp;</span><span class="w"> </span><span class="n">conn</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">reason</span><span class="p">){</span><span class="n">handler</span><span class="w"> </span><span class="n">code</span><span class="w"> </span><span class="n">goes</span><span class="w"> </span><span class="n">here</span><span class="p">})</span><span class="w"></span></code></li>
 </ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><code>onaccept</code> must return a boolean. In case <code>false</code> is returned, the connection is shut down, deleted, and no further communication is done.</p>
+</div>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
 <p>By default, Crow allows Clients to send unmasked websocket messages, which is useful for debugging but goes against the protocol specification. Production Crow applications should enforce the protocol by adding <code class="highlight"><span class="cp">#define CROW_ENFORCE_WS_SPEC</span></code> to their source code.</p>
@@ -1331,7 +1335,7 @@ A websocket route differs from a normal route quite a bit. It uses A slightly al
     <script id="__config" type="application/json">{"base": "../..", "features": "navigation.tabs", "search": "../../assets/javascripts/workers/search.2a1c317c.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "version": {"default": "latest", "provider": "mike"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.a6c66575.min.js"></script>
+      <script src="../../assets/javascripts/bundle.3a4b43e5.min.js"></script>
       
     
   </body>

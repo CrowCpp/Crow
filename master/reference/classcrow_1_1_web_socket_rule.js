@@ -11,7 +11,7 @@ var classcrow_1_1_web_socket_rule =
     [ "onmessage", "classcrow_1_1_web_socket_rule.html#acbc2415278899fddbba3de7888de2a6a", null ],
     [ "onopen", "classcrow_1_1_web_socket_rule.html#ab6e22fe1928da26bbc469cf1ea8c6d9d", null ],
     [ "validate", "classcrow_1_1_web_socket_rule.html#abe8e71a9a3845698f432307f282be0cc", null ],
-    [ "accept_handler_", "classcrow_1_1_web_socket_rule.html#adc64fcece9125c67b872ff7bb71902ae", null ],
+    [ "accept_handler_", "classcrow_1_1_web_socket_rule.html#a08de36976f908322a8ee86edb4a8ba23", null ],
     [ "app_", "classcrow_1_1_web_socket_rule.html#aab0e3390b3306fdc048f9fadaed50195", null ],
     [ "close_handler_", "classcrow_1_1_web_socket_rule.html#a68d2f5f5d6a6185bbb1b0faf8d8bbb12", null ],
     [ "error_handler_", "classcrow_1_1_web_socket_rule.html#acc9f408edf7afd4c5d75799729c46b09", null ],
