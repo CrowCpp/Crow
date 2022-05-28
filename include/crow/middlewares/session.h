@@ -32,7 +32,7 @@ namespace crow
 
     namespace detail
     {
-        using multi_value_types = black_magic::S<bool, int64_t, int32_t, std::string>;
+        using multi_value_types = black_magic::S<bool, int32_t, int64_t, uint64_t, double, std::string>;
 
         /// A multi_value is a safe variant wrapper with json support
 #ifdef CROW_CAN_USE_CPP17
@@ -40,12 +40,11 @@ namespace crow
         {
             json::wvalue json() const
             {
-                //clang-format off
+                // clang-format off
                 return std::visit([](auto arg) {
                     return json::wvalue(arg);
-                },
-                                  v_);
-                //clang-format on
+                }, v_);
+                // clang-format on
             }
 
             static multi_value from_json(const json::rvalue&);
@@ -117,7 +116,7 @@ namespace crow
 
                 template<typename U>
                 typename std::enable_if<!std::is_same<T, U>::value, T>::type
-                  operator()(const U& t) const
+                  operator()(const U&) const
                 {
                     return fallback;
                 }
@@ -153,12 +152,18 @@ namespace crow
             using namespace json;
             switch (rv.t())
             {
-                case type::Number: return multi_value{rv.operator int()};
+                case type::Number:
+                {
+                    if (rv.nt() == num_type::Floating_point)
+                        return multi_value{rv.d()};
+                    else
+                        return multi_value{rv.i()};
+                }
                 case type::False: return multi_value{false};
                 case type::True: return multi_value{true};
-                case type::String: return multi_value{rv.operator std::string()};
+                case type::String: return multi_value{std::string(rv)};
+                default: return multi_value{false};
             }
-            return {false};
         }
 
         /// CachedSessions are shared across requests
@@ -284,8 +289,8 @@ namespace crow
 
         template<typename... Ts>
         SessionMiddleware(const std::string& secret_key, CookieParser::Cookie cookie, int id_length, Ts... ts):
-          secret_key_(secret_key), cookie_(cookie), store_(std::forward<Ts>(ts)...),
-          mutex_(new std::mutex{}), id_length_(id_length)
+          secret_key_(secret_key), id_length_(id_length), cookie_(cookie), store_(std::forward<Ts>(ts)...),
+          mutex_(new std::mutex{})
         {}
 
         template<typename... Ts>
@@ -296,7 +301,7 @@ namespace crow
         {}
 
         template<typename AllContext>
-        void before_handle(request& req, response& rsp, context& ctx, AllContext& all_ctx)
+        void before_handle(request& /*req*/, response& /*rsp*/, context& ctx, AllContext& all_ctx)
         {
             lock l(*mutex_);
 
@@ -335,7 +340,7 @@ namespace crow
         }
 
         template<typename AllContext>
-        void after_handle(request& req, response& rsp, context& ctx, AllContext& all_ctx)
+        void after_handle(request& /*req*/, response& /*rsp*/, context& ctx, AllContext& all_ctx)
         {
             lock l(*mutex_);
             if (!ctx.node || --ctx.node->referrers > 0) return;
@@ -405,8 +410,8 @@ namespace crow
         }
 
     private:
-        int id_length_;
         std::string secret_key_;
+        int id_length_;
 
         // prototype for cookie
         CookieParser::Cookie cookie_;

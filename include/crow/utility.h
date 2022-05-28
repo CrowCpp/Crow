@@ -781,14 +781,14 @@ namespace crow
             }
         }
     
-        std::string random_alphanum(std::size_t size) {
+        inline std::string random_alphanum(std::size_t size) {
             static const char alphabet[] = "0123456789abcdefghijklmnopqrstuvwxyz";
             std::random_device dev;
             std::mt19937 rng(dev());
             std::uniform_int_distribution<std::mt19937::result_type> dist(0, sizeof(alphabet)-2);
             std::string out;
             out.reserve(size);
-            for (int i = 0; i < size; i++) out.push_back(alphabet[dist(rng)]);
+            for (std::size_t i = 0; i < size; i++) out.push_back(alphabet[dist(rng)]);
             return out;
         }
 

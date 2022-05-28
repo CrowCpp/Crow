@@ -55,9 +55,11 @@ int main()
 
         // cast value to string
         auto string_v = session.get<std::string>(key, "_NOT_FOUND_");
+        (void)string_v;
 
         // cast value to int
         int int_v = session.get<int>(key, -1);
+        (void)int_v;
 
         // get string representation
         return session.string(key);
