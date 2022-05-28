@@ -5,11 +5,15 @@ To create a websocket in Crow, you need a websocket route.<br>
 A websocket route differs from a normal route quite a bit. It uses A slightly altered `CROW_WEBSOCKET_ROUTE(app, "/url")` macro, which is then followed by a series of methods (with handlers inside) for each event. These are (sorted by order of execution):
 
 
-- `#!cpp onaccept([&](const crow::request&){handler code goes here})` (This handler has to return `bool`)
+- `#!cpp onaccept([&](const crow::request& req, void** userdata){handler code goes here})`
 - `#!cpp onopen([&](crow::websocket::connection& conn){handler code goes here})`
 - `#!cpp onmessage([&](crow::websocket::connection& conn, const std::string message, bool is_binary){handler code goes here})`
 - `#!cpp onerror([&](crow::websocket::connection& conn){handler code goes here})`
 - `#!cpp onclose([&](crow::websocket::connection& conn, const std::string reason){handler code goes here})`
+
+!!! note
+
+    `onaccept` must return a boolean. In case `false` is returned, the connection is shut down, deleted, and no further communication is done.
 
 !!! Warning
 
