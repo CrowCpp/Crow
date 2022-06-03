@@ -370,7 +370,7 @@ namespace crow
 
         void remove_websocket(crow::websocket::connection* conn)
         {
-            std::remove(websockets_.begin(), websockets_.end(), conn);
+            websockets_.erase(std::remove(websockets_.begin(), websockets_.end(), conn), websockets_.end());
         }
 
         /// Print the routing paths defined for each HTTP method
