@@ -267,6 +267,15 @@ namespace crow
             /// Reading the actual payload.<br>
             void do_read()
             {
+                if (has_sent_close_ && has_recv_close_)
+                {
+                    close_connection_ = true;
+                    adaptor_.shutdown_readwrite();
+                    adaptor_.close();
+                    check_destroy();
+                    return;
+                }
+
                 is_reading = true;
                 switch (state_)
                 {
@@ -475,9 +484,11 @@ namespace crow
                                   remaining_length_ -= bytes_transferred;
                                   if (remaining_length_ == 0)
                                   {
-                                      handle_fragment();
-                                      state_ = WebSocketReadState::MiniHeader;
-                                      do_read();
+                                      if (handle_fragment())
+                                      {
+                                          state_ = WebSocketReadState::MiniHeader;
+                                          do_read();
+                                      }
                                   }
                                   else
                                       do_read();
@@ -513,7 +524,7 @@ namespace crow
 
             ///
             /// Unmasks the fragment, checks the opcode, merges fragments into 1 message body, and calls the appropriate handler.
-            void handle_fragment()
+            bool handle_fragment()
             {
                 if (has_mask_)
                 {
@@ -578,6 +589,7 @@ namespace crow
                                 is_close_handler_called_ = true;
                             }
                             check_destroy();
+                            return false;
                         }
                     }
                     break;
@@ -594,6 +606,7 @@ namespace crow
                 }
 
                 fragment_.clear();
+                return true;
             }
 
             /// Send the buffers' data through the socket.
