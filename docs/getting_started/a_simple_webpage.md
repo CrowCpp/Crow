@@ -1,7 +1,7 @@
 Hello World is a good start, but what if you want something a bit more fancy.. Something like an HTML document saying "Hello World". If that's what you want, follow along:
 
 ## Basic Webpage
-Let's start our webpage with.. well.. a webpage. but before we create a webpage we need to place it somewhere Crow recognizes, this directory (for now) is going to be called `templates`.
+Let's start our webpage with.. well.. a webpage. But before we create a webpage we need to place it somewhere Crow recognizes, this directory (for now) is going to be called `templates`.
 
 Once our `templates` folder is created, we can create our HTML document inside it, let's call it `fancypage.html`.
 
