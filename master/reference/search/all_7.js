@@ -1,7 +1,7 @@
 var searchData=
 [
   ['handle_65',['handle',['../classcrow_1_1_crow.html#a39304d67bfac6bde2a2940b3cc6438b1',1,'crow::Crow']]],
-  ['handle_5ffragment_66',['handle_fragment',['../classcrow_1_1websocket_1_1_connection.html#ab26c5d8026e12969417cb83f99e0dc08',1,'crow::websocket::Connection']]],
+  ['handle_5ffragment_66',['handle_fragment',['../classcrow_1_1websocket_1_1_connection.html#a292002f44552e5eabd8dd65f476a4c28',1,'crow::websocket::Connection']]],
   ['handle_5fupgrade_67',['handle_upgrade',['../classcrow_1_1_crow.html#a6e435bf5275735effd32647772bdbd04',1,'crow::Crow']]],
   ['handler_5f_68',['handler_',['../structcrow_1_1_h_t_t_p_parser.html#a8c9ef70473ed6548872bcb217965203e',1,'crow::HTTPParser']]],
   ['handler_5ftype_5fhelper_69',['handler_type_helper',['../structcrow_1_1detail_1_1routing__handler__call__helper_1_1_wrapped_1_1handler__type__helper.html',1,'crow::detail::routing_handler_call_helper::Wrapped']]],
