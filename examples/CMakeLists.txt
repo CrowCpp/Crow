@@ -38,12 +38,6 @@ add_custom_target(example_ws_copy ALL DEPENDS ws.html)
 add_executable(basic_example example.cpp)
 add_warnings_optimizations(basic_example)
 target_link_libraries(basic_example PUBLIC Crow::Crow)
-add_custom_command(OUTPUT example_test.py
-  COMMAND ${CMAKE_COMMAND} -E
-  copy ${PROJECT_SOURCE_DIR}/example_test.py ${CMAKE_CURRENT_BINARY_DIR}/example_test.py
-  DEPENDS ${PROJECT_SOURCE_DIR}/example_test.py
-)
-add_custom_target(example_copy ALL DEPENDS example_test.py)
 
 if(CROW_AMALGAMATE)
   add_executable(example_with_all example_with_all.cpp)
