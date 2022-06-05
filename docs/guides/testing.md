@@ -41,14 +41,14 @@ This method involves creating a simple [ASIO](https://think-async.com/Asio/) cli
   app.wait_for_server_start();
 
   std::string sendmsg = "GET /\r\nContent-Length:3\r\nX-HeaderTest: 123\r\n\r\nA=B\r\n";
-  asio::io_service is;
+  boost::asio::io_service is;
   {
-    asio::ip::tcp::socket c(is);
-    c.connect(asio::ip::tcp::endpoint(asio::ip::address::from_string("127.0.0.1"), 45451));
+    boost::asio::ip::tcp::socket c(is);
+    c.connect(boost::asio::ip::tcp::endpoint(boost::asio::ip::address::from_string("127.0.0.1"), 45451));
 
-    c.send(asio::buffer(sendmsg));
+    c.send(boost::asio::buffer(sendmsg));
 
-    size_t recved = c.receive(asio::buffer(buf, 2048));
+    size_t recved = c.receive(boost::asio::buffer(buf, 2048));
     CHECK('A' == buf[recved - 1]); //This is specific to catch2 testing library, but it should give a general idea of how to read the response.
   }
 

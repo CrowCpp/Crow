@@ -19,8 +19,7 @@
 
 namespace crow
 {
-    using namespace boost;
-    using tcp = asio::ip::tcp;
+    using tcp = boost::asio::ip::tcp;
 
     template<typename Handler, typename Adaptor = SocketAdaptor, typename... Middlewares>
     class Server
@@ -216,7 +215,7 @@ namespace crow
             if (!shutting_down_)
             {
                 uint16_t service_idx = pick_io_service_idx();
-                asio::io_service& is = *io_service_pool_[service_idx];
+                boost::asio::io_service& is = *io_service_pool_[service_idx];
                 task_queue_length_pool_[service_idx]++;
                 CROW_LOG_DEBUG << &is << " {" << service_idx << "} queue length: " << task_queue_length_pool_[service_idx];
 
@@ -254,8 +253,8 @@ namespace crow
         }
 
     private:
-        asio::io_service io_service_;
-        std::vector<std::unique_ptr<asio::io_service>> io_service_pool_;
+        boost::asio::io_service io_service_;
+        std::vector<std::unique_ptr<boost::asio::io_service>> io_service_pool_;
         std::vector<detail::task_timer*> task_timer_pool_;
         std::vector<std::function<std::string()>> get_cached_date_str_pool_;
         tcp::acceptor acceptor_;

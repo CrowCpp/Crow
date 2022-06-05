@@ -21,8 +21,7 @@
 
 namespace crow
 {
-    using namespace boost;
-    using tcp = asio::ip::tcp;
+    using tcp = boost::asio::ip::tcp;
 
 
 #ifdef CROW_ENABLE_DEBUG
@@ -382,7 +381,7 @@ namespace crow
                 char buf[16384];
                 while (is.read(buf, sizeof(buf)).gcount() > 0)
                 {
-                    std::vector<asio::const_buffer> buffers;
+                    std::vector<boost::asio::const_buffer> buffers;
                     buffers.push_back(boost::asio::buffer(buf));
                     do_write_sync(buffers);
                 }
@@ -425,7 +424,7 @@ namespace crow
                 if (res.body.length() > 0)
                 {
                     std::string buf;
-                    std::vector<asio::const_buffer> buffers;
+                    std::vector<boost::asio::const_buffer> buffers;
 
                     while (res.body.length() > 16384)
                     {
@@ -536,7 +535,7 @@ namespace crow
               });
         }
 
-        inline void do_write_sync(std::vector<asio::const_buffer>& buffers)
+        inline void do_write_sync(std::vector<boost::asio::const_buffer>& buffers)
         {
 
             boost::asio::write(adaptor_.socket(), buffers, [&](std::error_code ec, std::size_t) {
