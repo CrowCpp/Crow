@@ -3112,3 +3112,15 @@ TEST_CASE("task_timer")
     io_service.stop();
     io_thread.join();
 } // task_timer
+
+
+TEST_CASE("trim")
+{
+    CHECK(utility::trim("") == "");
+    CHECK(utility::trim("0") == "0");
+    CHECK(utility::trim(" a") == "a");
+    CHECK(utility::trim("b ") == "b");
+    CHECK(utility::trim(" c ") == "c");
+    CHECK(utility::trim(" a b ") == "a b");
+    CHECK(utility::trim("   ") == "");
+}

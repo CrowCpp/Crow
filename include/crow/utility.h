@@ -827,5 +827,37 @@ namespace crow
 
             return res;
         }
+
+        std::string trim(const std::string& v)
+        {
+            if (v.empty())
+                return "";
+
+            size_t begin = 0, end = v.length();
+
+            size_t i;
+            for (i = 0; i < v.length(); i++)
+            {
+                if (!std::isspace(v[i]))
+                {
+                    begin = i;
+                    break;
+                }
+            }
+
+            if (i == v.length())
+                return "";
+
+            for (i = v.length(); i > 0; i--)
+            {
+                if (!std::isspace(v[i - 1]))
+                {
+                    end = i;
+                    break;
+                }
+            }
+
+            return v.substr(begin, end - begin);
+        }
     } // namespace utility
 } // namespace crow
