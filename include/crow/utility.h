@@ -5,6 +5,7 @@
 #include <tuple>
 #include <type_traits>
 #include <cstring>
+#include <cctype>
 #include <functional>
 #include <string>
 #include <unordered_map>
@@ -780,5 +781,27 @@ namespace crow
             }
         }
 
+        /**
+         * @brief Checks two string for equality.
+         * Always returns false if strings differ in size.
+         * Defaults to case-insensitive comparison.
+         */
+        inline static bool string_equals(const std::string& l, const std::string& r, bool case_sensitive = false)
+        {
+            bool equal = true;
+
+            if (l.length() != r.length())
+                return false;
+
+            for (size_t i = 0; i < l.length(); i++)
+            {
+                if (case_sensitive)
+                    equal &= (l[i] == r[i]);
+                else
+                    equal &= (std::toupper(l[i]) == std::toupper(r[i]));
+            }
+
+            return equal;
+        }
     } // namespace utility
 } // namespace crow
