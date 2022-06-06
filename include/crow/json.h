@@ -12,8 +12,6 @@
 #include <iostream>
 #include <algorithm>
 #include <memory>
-#include <boost/algorithm/string/predicate.hpp>
-#include <boost/operators.hpp>
 #include <vector>
 #include <cmath>
 
@@ -116,7 +114,7 @@ namespace crow
         namespace detail
         {
             /// A read string implementation with comparison functionality.
-            struct r_string : boost::less_than_comparable<r_string>, boost::less_than_comparable<r_string, std::string>, boost::equality_comparable<r_string>, boost::equality_comparable<r_string, std::string>
+            struct r_string
             {
                 r_string(){};
                 r_string(char* s, char* e):
@@ -189,27 +187,57 @@ namespace crow
 
             inline bool operator<(const r_string& l, const r_string& r)
             {
-                return boost::lexicographical_compare(l, r);
+                return std::lexicographical_compare(l.begin(), l.end(), r.begin(), r.end());
             }
 
             inline bool operator<(const r_string& l, const std::string& r)
             {
-                return boost::lexicographical_compare(l, r);
+                return std::lexicographical_compare(l.begin(), l.end(), r.begin(), r.end());
+            }
+
+            inline bool operator<(const std::string& l, const r_string& r)
+            {
+                return std::lexicographical_compare(l.begin(), l.end(), r.begin(), r.end());
             }
 
             inline bool operator>(const r_string& l, const std::string& r)
             {
-                return boost::lexicographical_compare(r, l);
+                return std::lexicographical_compare(l.begin(), l.end(), r.begin(), r.end());
+            }
+
+            inline bool operator>(const std::string& l, const r_string& r)
+            {
+                return std::lexicographical_compare(l.begin(), l.end(), r.begin(), r.end());
             }
 
             inline bool operator==(const r_string& l, const r_string& r)
             {
-                return boost::equals(l, r);
+                return std::equal(l.begin(), l.end(), r.begin(), r.end());
             }
 
             inline bool operator==(const r_string& l, const std::string& r)
             {
-                return boost::equals(l, r);
+                return std::equal(l.begin(), l.end(), r.begin(), r.end());
+            }
+
+            inline bool operator==(const std::string& l, const r_string& r)
+            {
+                return std::equal(l.begin(), l.end(), r.begin(), r.end());
+            }
+
+            inline bool operator!=(const r_string& l, const r_string& r)
+            {
+                return !(l == r);
+            }
+
+            inline bool operator!=(const r_string& l, const std::string& r)
+            {
+                return !(l == r);
+            }
+
+            inline bool operator!=(const std::string& l, const r_string& r)
+            {
+                return !(l == r);
             }
         } // namespace detail
 
