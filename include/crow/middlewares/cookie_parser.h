@@ -1,6 +1,5 @@
 #pragma once
 #include <iomanip>
-#include <boost/optional.hpp>
 #include <boost/algorithm/string/trim.hpp>
 #include "crow/http_request.h"
 #include "crow/http_response.h"
@@ -65,7 +64,7 @@ namespace crow
                 if (expires_at_)
                 {
                     ss << DIVIDER << "Expires="
-                       << std::put_time(expires_at_.get_ptr(), HTTP_DATE_FORMAT);
+                       << std::put_time(expires_at_, HTTP_DATE_FORMAT);
                 }
                 if (max_age_)
                 {
@@ -93,14 +92,16 @@ namespace crow
             // Expires attribute
             Cookie& expires(const std::tm& time)
             {
-                expires_at_ = time;
+                delete expires_at_;
+                expires_at_ = new std::tm(time);
                 return *this;
             }
 
             // Max-Age attribute
             Cookie& max_age(long long seconds)
             {
-                max_age_ = seconds;
+                delete max_age_;
+                max_age_ = new long long(seconds);
                 return *this;
             }
 
@@ -135,8 +136,34 @@ namespace crow
             // SameSite attribute
             Cookie& same_site(SameSitePolicy ssp)
             {
-                same_site_ = ssp;
+                delete same_site_;
+                same_site_ = new SameSitePolicy(ssp);
                 return *this;
+            }
+
+            ~Cookie()
+            {
+                delete max_age_;
+                delete expires_at_;
+                delete same_site_;
+            }
+
+            Cookie(const Cookie& c):
+              key_(c.key_),
+              value_(c.value_),
+              domain_(c.domain_),
+              path_(c.path_),
+              secure_(c.secure_),
+              httponly_(c.httponly_)
+            {
+                if (c.max_age_)
+                    max_age_ = new long long(*c.max_age_);
+
+                if (c.expires_at_)
+                    expires_at_ = new std::tm(*c.expires_at_);
+
+                if (c.same_site_)
+                    same_site_ = new SameSitePolicy(*c.same_site_);
             }
 
         private:
@@ -154,13 +181,13 @@ namespace crow
         private:
             std::string key_;
             std::string value_;
-            boost::optional<long long> max_age_{};
+            long long* max_age_{nullptr};
             std::string domain_ = "";
             std::string path_ = "";
             bool secure_ = false;
             bool httponly_ = false;
-            boost::optional<std::tm> expires_at_{};
-            boost::optional<SameSitePolicy> same_site_{};
+            std::tm* expires_at_{nullptr};
+            SameSitePolicy* same_site_{nullptr};
 
             static constexpr const char* DIVIDER = "; ";
         };
@@ -258,7 +285,7 @@ namespace crow
     C::handle
         context.aaa
 
-    App::context : private CookieParser::contetx, ... 
+    App::context : private CookieParser::contetx, ...
     {
         jar
 

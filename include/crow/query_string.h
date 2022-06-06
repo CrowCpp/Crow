@@ -6,7 +6,6 @@
 #include <vector>
 #include <unordered_map>
 #include <iostream>
-#include <boost/optional.hpp>
 
 namespace crow
 {
@@ -194,7 +193,7 @@ inline char * qs_k2v(const char * key, char * const * qs_kv, int qs_kv_size, int
             // return (zero-char value) ? ptr to trailing '\0' : ptr to value
             if(nth == 0)
                 return qs_kv[i] + skip;
-            else 
+            else
                 --nth;
         }
     }
@@ -203,7 +202,7 @@ inline char * qs_k2v(const char * key, char * const * qs_kv, int qs_kv_size, int
     return nullptr;
 }
 
-inline boost::optional<std::pair<std::string, std::string>> qs_dict_name2kv(const char * dict_name, char * const * qs_kv, int qs_kv_size, int nth = 0)
+inline std::pair<std::string, std::string>* qs_dict_name2kv(const char * dict_name, char * const * qs_kv, int qs_kv_size, int nth = 0)
 {
     int i;
     size_t name_len, skip_to_eq, skip_to_brace_open, skip_to_brace_close;
@@ -232,7 +231,7 @@ inline boost::optional<std::pair<std::string, std::string>> qs_dict_name2kv(cons
             {
                 auto key = std::string(qs_kv[i] + skip_to_brace_open, skip_to_brace_close - skip_to_brace_open);
                 auto value = std::string(qs_kv[i] + skip_to_eq);
-                return boost::make_optional(std::make_pair(key, value));
+                return new std::pair<std::string, std::string>(key, value);
             }
             else
             {
@@ -242,7 +241,7 @@ inline boost::optional<std::pair<std::string, std::string>> qs_dict_name2kv(cons
     }
 #endif  // _qsSORTING
 
-    return boost::none;
+    return nullptr;
 }
 
 
@@ -447,10 +446,14 @@ namespace crow
             int count = 0;
             while (1)
             {
-                if (auto element = qs_dict_name2kv(name.c_str(), key_value_pairs_.data(), key_value_pairs_.size(), count++))
+                auto element = qs_dict_name2kv(name.c_str(), key_value_pairs_.data(), key_value_pairs_.size(), count++);
+
+                if (element)
                     ret.insert(*element);
                 else
                     break;
+
+                delete element;
             }
             return ret;
         }
