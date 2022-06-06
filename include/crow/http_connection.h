@@ -1,8 +1,6 @@
 #pragma once
 #define ASIO_STANDALONE
 #include <asio.hpp>
-#include <boost/algorithm/string/predicate.hpp>
-#include <boost/array.hpp>
 #include <atomic>
 #include <chrono>
 #include <vector>
@@ -590,7 +588,7 @@ namespace crow
         Adaptor adaptor_;
         Handler* handler_;
 
-        boost::array<char, 4096> buffer_;
+        std::array<char, 4096> buffer_;
 
         HTTPParser<Connection> parser_;
         request req_;

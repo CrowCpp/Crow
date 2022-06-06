@@ -5,7 +5,6 @@
 #include <tuple>
 #include <unordered_map>
 #include <memory>
-#include <boost/lexical_cast.hpp>
 #include <vector>
 #include <algorithm>
 #include <type_traits>

@@ -1,6 +1,5 @@
 #pragma once
-#include <boost/algorithm/string/predicate.hpp>
-#include <boost/array.hpp>
+#include <array>
 #include "crow/logging.h"
 #include "crow/socket_adaptors.h"
 #include "crow/http_request.h"
@@ -664,7 +663,7 @@ namespace crow
             std::vector<std::string> sending_buffers_;
             std::vector<std::string> write_buffers_;
 
-            boost::array<char, 4096> buffer_;
+            std::array<char, 4096> buffer_;
             bool is_binary_;
             std::string message_;
             std::string fragment_;

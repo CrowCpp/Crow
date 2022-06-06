@@ -5,7 +5,8 @@
 #include <asio/ssl.hpp>
 #endif
 #include "crow/settings.h"
-#if BOOST_VERSION >= 107000
+#include <asio/version.hpp>
+#if ASIO_VERSION >= 101300 // 1.13.0
 #define GET_IO_SERVICE(s) ((asio::io_context&)(s).get_executor().context())
 #else
 #define GET_IO_SERVICE(s) ((s).get_io_service())
