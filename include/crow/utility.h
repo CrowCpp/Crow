@@ -805,7 +805,7 @@ namespace crow
         }
 
         template<typename T, typename U>
-        T lexical_cast(const U& v)
+        inline static T lexical_cast(const U& v)
         {
             std::stringstream stream;
             T res;
@@ -817,7 +817,7 @@ namespace crow
         }
 
         template<typename T>
-        T lexical_cast(const char* v, size_t count)
+        inline static T lexical_cast(const char* v, size_t count)
         {
             std::stringstream stream;
             T res;
@@ -828,7 +828,7 @@ namespace crow
             return res;
         }
 
-        std::string trim(const std::string& v)
+        inline static std::string trim(const std::string& v)
         {
             if (v.empty())
                 return "";
