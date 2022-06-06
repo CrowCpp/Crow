@@ -49,8 +49,8 @@ namespace crow
         void on_tick()
         {
             tick_function_();
-            tick_timer_.expires_from_now(boost::posix_time::milliseconds(tick_interval_.count()));
-            tick_timer_.async_wait([this](const boost::system::error_code& ec) {
+            tick_timer_.expires_after(std::chrono::milliseconds(tick_interval_.count()));
+            tick_timer_.async_wait([this](const std::error_code& ec) {
                 if (ec)
                     return;
                 on_tick();
@@ -124,9 +124,9 @@ namespace crow
 
             if (tick_function_ && tick_interval_.count() > 0)
             {
-                tick_timer_.expires_from_now(boost::posix_time::milliseconds(tick_interval_.count()));
+                tick_timer_.expires_after(std::chrono::milliseconds(tick_interval_.count()));
                 tick_timer_.async_wait(
-                  [this](const boost::system::error_code& ec) {
+                  [this](const std::error_code& ec) {
                       if (ec)
                           return;
                       on_tick();
@@ -263,7 +263,8 @@ namespace crow
         std::condition_variable cv_started_;
         std::mutex start_mutex_;
         boost::asio::signal_set signals_;
-        boost::asio::deadline_timer tick_timer_;
+
+        boost::asio::basic_waitable_timer<std::chrono::high_resolution_clock> tick_timer_;
 
         Handler* handler_;
         uint16_t concurrency_{2};
