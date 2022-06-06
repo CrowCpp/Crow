@@ -1,7 +1,6 @@
 #pragma once
 
-#include <boost/algorithm/string/predicate.hpp>
-#include <boost/functional/hash.hpp>
+#include <locale>
 #include <unordered_map>
 #include "crow/utility.h"
 
@@ -16,11 +15,16 @@ namespace crow
             std::locale locale;
 
             for (auto c : key)
-            {
-                boost::hash_combine(seed, std::toupper(c, locale));
-            }
+                hash_combine(seed, std::toupper(c, locale));
 
             return seed;
+        }
+
+    private:
+        static inline void hash_combine(std::size_t& seed, char v)
+        {
+            std::hash<char> hasher;
+            seed ^= hasher(v) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
         }
     };
 
