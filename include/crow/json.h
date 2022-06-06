@@ -212,17 +212,44 @@ namespace crow
 
             inline bool operator==(const r_string& l, const r_string& r)
             {
-                return std::equal(l.begin(), l.end(), r.begin(), r.end());
+                if (l.size() != r.size())
+                    return false;
+
+                for (size_t i = 0; i < l.size(); i++)
+                {
+                    if (*(l.begin() + i) != *(r.begin() + i))
+                        return false;
+                }
+
+                return true;
             }
 
             inline bool operator==(const r_string& l, const std::string& r)
             {
-                return std::equal(l.begin(), l.end(), r.begin(), r.end());
+                if (l.size() != r.size())
+                    return false;
+
+                for (size_t i = 0; i < l.size(); i++)
+                {
+                    if (*(l.begin() + i) != *(r.begin() + i))
+                        return false;
+                }
+
+                return true;
             }
 
             inline bool operator==(const std::string& l, const r_string& r)
             {
-                return std::equal(l.begin(), l.end(), r.begin(), r.end());
+                if (l.size() != r.size())
+                    return false;
+
+                for (size_t i = 0; i < l.size(); i++)
+                {
+                    if (*(l.begin() + i) != *(r.begin() + i))
+                        return false;
+                }
+
+                return true;
             }
 
             inline bool operator!=(const r_string& l, const r_string& r)
