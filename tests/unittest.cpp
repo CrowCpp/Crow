@@ -759,7 +759,7 @@ TEST_CASE("json_read_real")
     for (auto x : v)
     {
         CROW_LOG_DEBUG << x;
-        CHECK(json::load(x).d() == boost::lexical_cast<double>(x));
+        CHECK(json::load(x).d() == utility::lexical_cast<double>(x));
     }
 
     auto ret = json::load(
@@ -1936,10 +1936,10 @@ TEST_CASE("simple_url_params")
         c.receive(asio::buffer(buf, 2048));
         c.close();
 
-        CHECK(boost::lexical_cast<int>(last_url_params.get("int")) == 100);
-        CHECK(boost::lexical_cast<double>(last_url_params.get("double")) ==
+        CHECK(utility::lexical_cast<int>(last_url_params.get("int")) == 100);
+        CHECK(utility::lexical_cast<double>(last_url_params.get("double")) ==
               123.45);
-        CHECK(boost::lexical_cast<bool>(last_url_params.get("boolean")));
+        CHECK(utility::lexical_cast<bool>(last_url_params.get("boolean")));
     }
     // check single array value
     sendmsg = "GET /params?tmnt[]=leonardo\r\n\r\n";

@@ -8,6 +8,7 @@
 #include <cctype>
 #include <functional>
 #include <string>
+#include <sstream>
 #include <unordered_map>
 
 #include "crow/settings.h"
@@ -501,7 +502,6 @@ namespace crow
         {
             static constexpr auto value = get_index_of_element_from_tuple_by_type_impl<T, N + 1, Args...>::value;
         };
-
     } // namespace detail
 
     namespace utility
@@ -802,6 +802,30 @@ namespace crow
             }
 
             return equal;
+        }
+
+        template<typename T, typename U>
+        T lexical_cast(const U& v)
+        {
+            std::stringstream stream;
+            T res;
+
+            stream << v;
+            stream >> res;
+
+            return res;
+        }
+
+        template<typename T>
+        T lexical_cast(const char* v, size_t count)
+        {
+            std::stringstream stream;
+            T res;
+
+            stream.write(v, count);
+            stream >> res;
+
+            return res;
         }
     } // namespace utility
 } // namespace crow

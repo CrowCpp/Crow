@@ -12,7 +12,6 @@
 #include <iostream>
 #include <algorithm>
 #include <memory>
-#include <boost/lexical_cast.hpp>
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/operators.hpp>
 #include <vector>
@@ -349,13 +348,13 @@ namespace crow
                 {
                     case type::Number:
                     case type::String:
-                        return boost::lexical_cast<int64_t>(start_, end_ - start_);
+                        return utility::lexical_cast<int64_t>(start_, end_ - start_);
                     default:
                         const std::string msg = "expected number, got: " + std::string(get_type_str(t()));
                         throw std::runtime_error(msg);
                 }
 #endif
-                return boost::lexical_cast<int64_t>(start_, end_ - start_);
+                return utility::lexical_cast<int64_t>(start_, end_ - start_);
             }
 
             /// The unsigned integer value.
@@ -366,12 +365,12 @@ namespace crow
                 {
                     case type::Number:
                     case type::String:
-                        return boost::lexical_cast<uint64_t>(start_, end_ - start_);
+                        return utility::lexical_cast<uint64_t>(start_, end_ - start_);
                     default:
                         throw std::runtime_error(std::string("expected number, got: ") + get_type_str(t()));
                 }
 #endif
-                return boost::lexical_cast<uint64_t>(start_, end_ - start_);
+                return utility::lexical_cast<uint64_t>(start_, end_ - start_);
             }
 
             /// The double precision floating-point number value.
@@ -381,7 +380,7 @@ namespace crow
                 if (t() != type::Number)
                     throw std::runtime_error("value is not number");
 #endif
-                return boost::lexical_cast<double>(start_, end_ - start_);
+                return utility::lexical_cast<double>(start_, end_ - start_);
             }
 
             /// The boolean value.

@@ -2,7 +2,6 @@
 #define ASIO_STANDALONE
 #include <asio.hpp>
 #include <boost/algorithm/string/predicate.hpp>
-#include <boost/lexical_cast.hpp>
 #include <boost/array.hpp>
 #include <atomic>
 #include <chrono>
@@ -19,6 +18,7 @@
 #include "crow/middleware.h"
 #include "crow/socket_adaptors.h"
 #include "crow/compression.h"
+#include "crow/utility.h"
 
 namespace crow
 {
@@ -144,7 +144,7 @@ namespace crow
                 }
             }
 
-            CROW_LOG_INFO << "Request: " << boost::lexical_cast<std::string>(adaptor_.remote_endpoint()) << " " << this << " HTTP/" << (char)(req.http_ver_major + '0') << "." << (char)(req.http_ver_minor + '0') << ' ' << method_name(req.method) << " " << req.url;
+            CROW_LOG_INFO << "Request: " << utility::lexical_cast<std::string>(adaptor_.remote_endpoint()) << " " << this << " HTTP/" << (char)(req.http_ver_major + '0') << "." << (char)(req.http_ver_minor + '0') << ' ' << method_name(req.method) << " " << req.url;
 
 
             need_to_call_after_handlers_ = false;
