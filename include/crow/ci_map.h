@@ -3,6 +3,7 @@
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/functional/hash.hpp>
 #include <unordered_map>
+#include "crow/utility.h"
 
 namespace crow
 {
@@ -28,7 +29,7 @@ namespace crow
     {
         bool operator()(const std::string& l, const std::string& r) const
         {
-            return boost::iequals(l, r);
+            return utility::string_equals(l, r);
         }
     };
 

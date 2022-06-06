@@ -5,6 +5,7 @@
 #include "crow/socket_adaptors.h"
 #include "crow/http_request.h"
 #include "crow/TinySHA1.hpp"
+#include "crow/utility.h"
 
 namespace crow
 {
@@ -86,7 +87,7 @@ namespace crow
               error_handler_(std::move(error_handler)),
               accept_handler_(std::move(accept_handler))
             {
-                if (!boost::iequals(req.get_header_value("upgrade"), "websocket"))
+                if (!utility::string_equals(req.get_header_value("upgrade"), "websocket"))
                 {
                     adaptor.close();
                     handler_->remove_websocket(this);
