@@ -52,13 +52,11 @@ target_include_directories(Crow
 		$<INSTALL_INTERFACE:include>
 )
 
-find_package(Boost 1.64 COMPONENTS system date_time REQUIRED)
 find_package(asio REQUIRED)
 find_package(Threads REQUIRED)
 
 target_link_libraries(Crow
 	INTERFACE
-		Boost::boost Boost::system Boost::date_time
 		asio::asio
 		Threads::Threads
 )

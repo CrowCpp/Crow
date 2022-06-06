@@ -1,7 +1,7 @@
 @PACKAGE_INIT@
 
 include(CMakeFindDependencyMacro)
-find_dependency(Boost 1.64 COMPONENTS system date_time)
+find_dependency(asio)
 find_dependency(Threads)
 
 set(CROW_INSTALLED_FEATURES "@CROW_FEATURES@")

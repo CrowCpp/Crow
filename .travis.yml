@@ -28,7 +28,7 @@ env:
 addons:
   apt:
     packages:
-      - libboost-all-dev
+      - libasio-dev
       - doxygen
       - mkdocs
       - graphviz
