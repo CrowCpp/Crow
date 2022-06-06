@@ -1,6 +1,6 @@
 #pragma once
 #include <iomanip>
-#include <boost/algorithm/string/trim.hpp>
+#include "crow/utility.h"
 #include "crow/http_request.h"
 #include "crow/http_response.h"
 
@@ -234,7 +234,7 @@ namespace crow
                 if (pos_equal == cookies.npos)
                     break;
                 std::string name = cookies.substr(pos, pos_equal - pos);
-                boost::trim(name);
+                utility::trim(name);
                 pos = pos_equal + 1;
                 while (pos < cookies.size() && cookies[pos] == ' ')
                     pos++;
@@ -244,7 +244,7 @@ namespace crow
                 size_t pos_semicolon = cookies.find(';', pos);
                 std::string value = cookies.substr(pos, pos_semicolon - pos);
 
-                boost::trim(value);
+                utility::trim(value);
                 if (value[0] == '"' && value[value.size() - 1] == '"')
                 {
                     value = value.substr(1, value.size() - 2);
