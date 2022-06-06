@@ -1,7 +1,7 @@
 @PACKAGE_INIT@
 
 include(CMakeFindDependencyMacro)
-find_dependency(asio)
+find_path(ASIO_INCLUDE_DIR asio.hpp REQUIRED)
 find_dependency(Threads)
 
 set(CROW_INSTALLED_FEATURES "@CROW_FEATURES@")
@@ -40,4 +40,9 @@ endif()
 set_target_properties(Crow::Crow PROPERTIES
   INTERFACE_COMPILE_DEFINITIONS "${_CROW_ICD}"
   INTERFACE_LINK_LIBRARIES "${_CROW_ILL}"
+)
+
+target_include_directories(Crow::Crow
+  INTERFACE
+    ${ASIO_INCLUDE_DIR}
 )

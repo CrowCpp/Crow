@@ -52,13 +52,16 @@ target_include_directories(Crow
 		$<INSTALL_INTERFACE:include>
 )
 
-find_package(asio REQUIRED)
+find_path(ASIO_INCLUDE_DIR asio.hpp REQUIRED)
 find_package(Threads REQUIRED)
 
 target_link_libraries(Crow
 	INTERFACE
-		asio::asio
 		Threads::Threads
+)
+target_include_directories(Crow
+	INTERFACE
+		${ASIO_INCLUDE_DIR}
 )
 
 if("compression" IN_LIST CROW_FEATURES)
