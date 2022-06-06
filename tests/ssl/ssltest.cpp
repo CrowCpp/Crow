@@ -41,15 +41,15 @@ TEST_CASE("SSL")
 
     std::string sendmsg = "GET /\r\n\r\n";
 
-    boost::asio::ssl::context ctx(boost::asio::ssl::context::sslv23);
+    asio::ssl::context ctx(asio::ssl::context::sslv23);
 
-    boost::asio::io_service is;
+    asio::io_service is;
     {
-        boost::asio::ssl::stream<boost::asio::ip::tcp::socket> c(is, ctx);
-        c.lowest_layer().connect(boost::asio::ip::tcp::endpoint(boost::asio::ip::address::from_string(LOCALHOST_ADDRESS), 45460));
+        asio::ssl::stream<asio::ip::tcp::socket> c(is, ctx);
+        c.lowest_layer().connect(asio::ip::tcp::endpoint(asio::ip::address::from_string(LOCALHOST_ADDRESS), 45460));
 
-        c.handshake(boost::asio::ssl::stream_base::client);
-        c.write_some(boost::asio::buffer(sendmsg));
+        c.handshake(asio::ssl::stream_base::client);
+        c.write_some(asio::buffer(sendmsg));
 
         size_t x = 0;
         size_t y = 0;
@@ -57,7 +57,7 @@ TEST_CASE("SSL")
 
         while (x < 121)
         {
-            y = c.read_some(boost::asio::buffer(buf, 2048));
+            y = c.read_some(asio::buffer(buf, 2048));
             x += y;
             buf[y] = '\0';
         }
@@ -74,24 +74,24 @@ TEST_CASE("SSL")
             CHECK(std::string("Hello world, I'm keycrt.").substr((z * -1)) == to_test);
         }
 
-        boost::system::error_code ec;
-        c.lowest_layer().shutdown(boost::asio::socket_base::shutdown_type::shutdown_both, ec);
+        std::error_code ec;
+        c.lowest_layer().shutdown(asio::socket_base::shutdown_type::shutdown_both, ec);
     }
 
     /*
-    boost::asio::io_service is2;
+    asio::io_service is2;
     {
         std::cout << "started second one" << std::endl;
 
-      boost::asio::ssl::stream<boost::asio::ip::tcp::socket> c(is2, ctx);
-      c.lowest_layer().connect(boost::asio::ip::tcp::endpoint(
-          boost::asio::ip::address::from_string(LOCALHOST_ADDRESS), 45461));
+      asio::ssl::stream<asio::ip::tcp::socket> c(is2, ctx);
+      c.lowest_layer().connect(asio::ip::tcp::endpoint(
+          asio::ip::address::from_string(LOCALHOST_ADDRESS), 45461));
 
-      c.handshake(boost::asio::ssl::stream_base::client);
+      c.handshake(asio::ssl::stream_base::client);
 
-      c.write_some(boost::asio::buffer(sendmsg));
+      c.write_some(asio::buffer(sendmsg));
 
-      size_t sz = c.read_some(boost::asio::buffer(buf2, 2048));
+      size_t sz = c.read_some(asio::buffer(buf2, 2048));
       CHECK("Hello world, I'm pem." == std::string(buf2).substr((sz - 21)));
     }
 */
