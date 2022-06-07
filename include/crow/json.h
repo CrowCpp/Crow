@@ -200,6 +200,11 @@ namespace crow
                 return std::lexicographical_compare(l.begin(), l.end(), r.begin(), r.end());
             }
 
+            inline bool operator>(const r_string& l, const r_string& r)
+            {
+                return std::lexicographical_compare(l.begin(), l.end(), r.begin(), r.end());
+            }
+
             inline bool operator>(const r_string& l, const std::string& r)
             {
                 return std::lexicographical_compare(l.begin(), l.end(), r.begin(), r.end());
