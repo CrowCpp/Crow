@@ -3124,3 +3124,27 @@ TEST_CASE("trim")
     CHECK(utility::trim(" a b ") == "a b");
     CHECK(utility::trim("   ") == "");
 }
+
+TEST_CASE("string_equals")
+{
+    CHECK(utility::string_equals("a", "aa") == false);
+    CHECK(utility::string_equals("a", "b") == false);
+    CHECK(utility::string_equals("", "") == true);
+    CHECK(utility::string_equals("abc", "abc") == true);
+    CHECK(utility::string_equals("ABC", "abc") == true);
+
+    CHECK(utility::string_equals("a", "aa", true) == false);
+    CHECK(utility::string_equals("a", "b", true) == false);
+    CHECK(utility::string_equals("", "", true) == true);
+    CHECK(utility::string_equals("abc", "abc", true) == true);
+    CHECK(utility::string_equals("ABC", "abc", true) == false);
+}
+
+TEST_CASE("lexical_cast")
+{
+    CHECK(utility::lexical_cast<int>(4) == 4);
+    CHECK(utility::lexical_cast<double>(4) == 4.0);
+    CHECK(utility::lexical_cast<int>("5") == 5);
+    CHECK(utility::lexical_cast<string>(4) == "4");
+    CHECK(utility::lexical_cast<float>("10", 2) == 10.0f);
+}
