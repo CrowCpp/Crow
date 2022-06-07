@@ -788,20 +788,24 @@ namespace crow
          */
         inline static bool string_equals(const std::string& l, const std::string& r, bool case_sensitive = false)
         {
-            bool equal = true;
-
             if (l.length() != r.length())
                 return false;
 
             for (size_t i = 0; i < l.length(); i++)
             {
                 if (case_sensitive)
-                    equal &= (l[i] == r[i]);
+                {
+                    if (l[i] != r[i])
+                        return false;
+                }
                 else
-                    equal &= (std::toupper(l[i]) == std::toupper(r[i]));
+                {
+                    if (std::toupper(l[i]) != std::toupper(r[i]))
+                        return false;
+                }
             }
 
-            return equal;
+            return true;
         }
 
         template<typename T, typename U>
