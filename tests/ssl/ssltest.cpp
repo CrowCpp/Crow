@@ -74,7 +74,7 @@ TEST_CASE("SSL")
             CHECK(std::string("Hello world, I'm keycrt.").substr((z * -1)) == to_test);
         }
 
-        std::error_code ec;
+        asio::error_code ec;
         c.lowest_layer().shutdown(asio::socket_base::shutdown_type::shutdown_both, ec);
     }
 

@@ -2524,7 +2524,7 @@ TEST_CASE("websocket_max_payload")
         }
     }
 
-    std::error_code ec;
+    asio::error_code ec;
     c.lowest_layer().shutdown(asio::socket_base::shutdown_type::shutdown_both, ec);
 
     app.stop();
@@ -3029,7 +3029,7 @@ TEST_CASE("timeout")
               asio::ip::address::from_string(LOCALHOST_ADDRESS), 45451));
 
             auto receive_future = async(launch::async, [&]() {
-                std::error_code ec;
+                asio::error_code ec;
                 c.receive(asio::buffer(buf, 2048), 0, ec);
                 return ec;
             });
@@ -3049,7 +3049,7 @@ TEST_CASE("timeout")
 
             size_t received;
             auto receive_future = async(launch::async, [&]() {
-                std::error_code ec;
+                asio::error_code ec;
                 received = c.receive(asio::buffer(buf, 2048), 0, ec);
                 return ec;
             });

@@ -52,32 +52,32 @@ namespace crow
 
         void close()
         {
-            std::error_code ec;
+            asio::error_code ec;
             socket_.close(ec);
         }
 
         void shutdown_readwrite()
         {
-            std::error_code ec;
+            asio::error_code ec;
             socket_.shutdown(asio::socket_base::shutdown_type::shutdown_both, ec);
         }
 
         void shutdown_write()
         {
-            std::error_code ec;
+            asio::error_code ec;
             socket_.shutdown(asio::socket_base::shutdown_type::shutdown_send, ec);
         }
 
         void shutdown_read()
         {
-            std::error_code ec;
+            asio::error_code ec;
             socket_.shutdown(asio::socket_base::shutdown_type::shutdown_receive, ec);
         }
 
         template<typename F>
         void start(F f)
         {
-            f(std::error_code());
+            f(asio::error_code());
         }
 
         tcp::socket socket_;
@@ -117,7 +117,7 @@ namespace crow
         {
             if (is_open())
             {
-                std::error_code ec;
+                asio::error_code ec;
                 raw_socket().close(ec);
             }
         }
@@ -126,7 +126,7 @@ namespace crow
         {
             if (is_open())
             {
-                std::error_code ec;
+                asio::error_code ec;
                 raw_socket().shutdown(asio::socket_base::shutdown_type::shutdown_both, ec);
             }
         }
@@ -135,7 +135,7 @@ namespace crow
         {
             if (is_open())
             {
-                std::error_code ec;
+                asio::error_code ec;
                 raw_socket().shutdown(asio::socket_base::shutdown_type::shutdown_send, ec);
             }
         }
@@ -144,7 +144,7 @@ namespace crow
         {
             if (is_open())
             {
-                std::error_code ec;
+                asio::error_code ec;
                 raw_socket().shutdown(asio::socket_base::shutdown_type::shutdown_receive, ec);
             }
         }
@@ -158,7 +158,7 @@ namespace crow
         void start(F f)
         {
             ssl_socket_->async_handshake(asio::ssl::stream_base::server,
-                                         [f](const std::error_code& ec) {
+                                         [f](const asio::error_code& ec) {
                                              f(ec);
                                          });
         }

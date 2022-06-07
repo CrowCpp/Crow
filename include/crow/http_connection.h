@@ -77,7 +77,7 @@ namespace crow
 
         void start()
         {
-            adaptor_.start([this](const std::error_code& ec) {
+            adaptor_.start([this](const asio::error_code& ec) {
                 if (!ec)
                 {
                     start_deadline();
@@ -464,7 +464,7 @@ namespace crow
             is_reading = true;
             adaptor_.socket().async_read_some(
               asio::buffer(buffer_),
-              [this](const std::error_code& ec, std::size_t bytes_transferred) {
+              [this](const asio::error_code& ec, std::size_t bytes_transferred) {
                   bool error_while_reading = true;
                   if (!ec)
                   {
@@ -512,7 +512,7 @@ namespace crow
             is_writing = true;
             asio::async_write(
               adaptor_.socket(), buffers_,
-              [&](const std::error_code& ec, std::size_t /*bytes_transferred*/) {
+              [&](const asio::error_code& ec, std::size_t /*bytes_transferred*/) {
                   is_writing = false;
                   res.clear();
                   res_body_copy_.clear();
@@ -537,7 +537,7 @@ namespace crow
         inline void do_write_sync(std::vector<asio::const_buffer>& buffers)
         {
 
-            asio::write(adaptor_.socket(), buffers, [&](std::error_code ec, std::size_t) {
+            asio::write(adaptor_.socket(), buffers, [&](asio::error_code ec, std::size_t) {
                 if (!ec)
                 {
                     return false;
