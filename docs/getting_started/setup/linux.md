@@ -3,7 +3,7 @@ Here's how you can install Crow on your favorite GNU/Linux distro.
 
 ### Requirements
  - C++ compiler with at least C++11 support.
- - boost library & development headers (1.64 or later).
+ - Asio development headers.
  - **(optional)** ZLib for HTTP Compression.
  - **(optional)** OpenSSL for HTTPS support.
  - **(optional)** CMake for building tests, examples, and/or installing Crow.
@@ -91,6 +91,3 @@ All you need to do is run the following command:
 g++ main.cpp -lpthread
 ```
 You can use arguments like `-DCROW_ENABLE_DEBUG`, `-DCROW_ENABLE_COMPRESSION -lz` for HTTP Compression, or `-DCROW_ENABLE_SSL -lssl` for HTTPS support, or even replace g++ with clang++.
-!!! warning
-
-    If you're using a version of boost prior to 1.69, you'll need to add the argument `-lboost_system` in order for you Crow application to compile correctly.
