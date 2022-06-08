@@ -183,6 +183,25 @@ namespace crow
                     owned_ = 1;
                 }
                 friend rvalue crow::json::load(const char* data, size_t size);
+
+                friend bool operator==(const r_string& l, const r_string& r);
+                friend bool operator==(const std::string& l, const r_string& r);
+                friend bool operator==(const r_string& l, const std::string& r);
+
+                template<typename T, typename U>
+                inline static bool equals(const T& l, const U& r)
+                {
+                    if (l.size() != r.size())
+                        return false;
+
+                    for (size_t i = 0; i < l.size(); i++)
+                    {
+                        if (*(l.begin() + i) != *(r.begin() + i))
+                            return false;
+                    }
+
+                    return true;
+                }
             };
 
             inline bool operator<(const r_string& l, const r_string& r)
@@ -217,44 +236,17 @@ namespace crow
 
             inline bool operator==(const r_string& l, const r_string& r)
             {
-                if (l.size() != r.size())
-                    return false;
-
-                for (size_t i = 0; i < l.size(); i++)
-                {
-                    if (*(l.begin() + i) != *(r.begin() + i))
-                        return false;
-                }
-
-                return true;
+                return r_string::equals(l, r);
             }
 
             inline bool operator==(const r_string& l, const std::string& r)
             {
-                if (l.size() != r.size())
-                    return false;
-
-                for (size_t i = 0; i < l.size(); i++)
-                {
-                    if (*(l.begin() + i) != *(r.begin() + i))
-                        return false;
-                }
-
-                return true;
+                return r_string::equals(l, r);
             }
 
             inline bool operator==(const std::string& l, const r_string& r)
             {
-                if (l.size() != r.size())
-                    return false;
-
-                for (size_t i = 0; i < l.size(); i++)
-                {
-                    if (*(l.begin() + i) != *(r.begin() + i))
-                        return false;
-                }
-
-                return true;
+                return r_string::equals(l, r);
             }
 
             inline bool operator!=(const r_string& l, const r_string& r)
