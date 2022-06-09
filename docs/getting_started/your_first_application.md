@@ -56,6 +56,6 @@ int main()
 }
 ```
 
-For the sake of simplicity, we suggest using `crow_all.h` (by placing it in the same place as your `main.cpp`) and running the command `g++ main.cpp -lpthread -O2 -o first` (use `clang` instead of `g++` if you prefer clang, or Visual Studio if you're on windows).
+You then need to compile your code on your [Linux](../setup/linux#compiling-your-project), [MacOS](../setup/macos#compiling-using-a-compiler-directly), or [Windows](../setup/windows#getting-and-compiling-crow) machine
 
-After building and running your `.cpp` file, you should be able to access your endpoint at [http://localhost:18080](http://localhost:18080). Opening this URL in your browser will show a white screen with "Hello world" typed on it.
+After building your `.cpp` file and running the resulting executable, you should be able to access your endpoint at [http://localhost:18080](http://localhost:18080). Opening this URL in your browser will show a white screen with "Hello world" typed on it.

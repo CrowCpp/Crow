@@ -1,7 +1,7 @@
 Hello World is a good start, but what if you want something a bit more fancy.. Something like an HTML document saying "Hello World". If that's what you want, follow along:
 
 ## Basic Webpage
-Let's start our webpage with.. well.. a webpage. But before we create a webpage we need to place it somewhere Crow recognizes, this directory (for now) is going to be called `templates`.
+Let's start our webpage with.. well.. a webpage. But before we create a webpage we need to place it somewhere Crow recognizes, for now this directory is going to be called `templates`, but we can [change it later](../../guides/templating/#page).
 
 Once our `templates` folder is created, we can create our HTML document inside it, let's call it `fancypage.html`.
 
@@ -76,13 +76,17 @@ or
 ```
 
 
-And now whenever we call `http://localhost:18080/` we get our Hello World in an HTML document rather than just plain text.
+Once the code is done compiling, if we call `http://localhost:18080/` we get our Hello World in an HTML document rather than just plain text.
+
+!!! note
+
+    Compilation instructions are available for [Linux](../setup/linux#compiling-your-project), [MacOS](../setup/macos#compiling-using-a-compiler-directly), and [Windows](../setup/windows#getting-and-compiling-crow)
 
 
 ## Template Webpage with a variable
 But we can make things even more exciting, we can greet a user by their name instead!!
 
-Let's start with our webpage, and modify it with a little bit of mustache syntax:
+Let's start with our webpage, and modify it with a little bit of [mustache](../../guides/templating) syntax:
 ``` html title="templates/fancypage.html" hl_lines="4"
 <!DOCTYPE html>
 <html>
@@ -120,6 +124,6 @@ int main()
 3. We are creating a new [context](../../guides/templating/#context) containing the `person` variable from our template and the `name` we got from the URL.
 4. we are using `render(ctx)` to apply our context to the template.
 
-Now calling `http://localhost:18080/Bob` should return a webpage containing "Hello Bob!". We did it!
+Now (after compiling the code and running the executable a second time) calling `http://localhost:18080/Bob` should return a webpage containing "Hello Bob!". **We did it!**
 
 For more details on templates and HTML pages in Crow please go [here](../../guides/templating/)
