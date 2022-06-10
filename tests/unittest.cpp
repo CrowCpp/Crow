@@ -2020,7 +2020,7 @@ TEST_CASE("stream_response")
     app.validate();
 
     // running the test on a separate thread to allow the client to sleep
-    std::thread runTest([&app, &key_response, key_response_size]() {
+    std::thread runTest([&app, &key_response, key_response_size, keyword_]() {
         auto _ = app.bindaddr(LOCALHOST_ADDRESS).port(45451).run_async();
         app.wait_for_server_start();
         asio::io_service is;
@@ -2037,16 +2037,21 @@ TEST_CASE("stream_response")
               asio::ip::address::from_string(LOCALHOST_ADDRESS), 45451));
             c.send(asio::buffer(sendmsg));
 
-            //consuming the headers, since we don't need those for the test
+            // consuming the headers, since we don't need those for the test
             static char buf[2048];
             size_t received_headers_bytes = 0;
 
-            // magic number is 102 (it's the size of the headers, which is how much this line below needs to read)
-            const size_t headers_bytes = 102;
-            while (received_headers_bytes < headers_bytes)
-                received_headers_bytes += c.receive(asio::buffer(buf, 2048));
-            received += received_headers_bytes - headers_bytes; //add any extra that might have been received to the proper received count
+            // Magic number is 102. It's the size of the headers, which is at
+            // least how much we need to read. Since the header size may change
+            // and break the test, we read twice as much as the header and
+            // search in the received data for the first occurrence of keyword_.
+            const size_t headers_bytes_and_some = 102 * 2;
+            while (received_headers_bytes < headers_bytes_and_some)
+                received_headers_bytes += c.receive(asio::buffer(buf + received_headers_bytes,
+                                                                 sizeof(buf) / sizeof(buf[0]) - received_headers_bytes));
 
+            const std::string::size_type header_end_pos = std::string(buf, received_headers_bytes).find(keyword_);
+            received += received_headers_bytes - header_end_pos; // add any extra that might have been received to the proper received count
 
             while (received < key_response_size)
             {
