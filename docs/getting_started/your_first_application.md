@@ -38,7 +38,7 @@ Please note that the `port()` and `multithreaded()` methods aren't needed, Thoug
 
 Once you've followed all the steps above, your code should look similar to this
 
-``` cpp linenums="1"
+``` cpp title="main.cpp" linenums="1"
 #include "crow.h"
 //#include "crow_all.h"
 
@@ -55,4 +55,7 @@ int main()
     app.port(18080).multithreaded().run();
 }
 ```
-After building and running your .cpp file, you should be able to access your endpoint at [http://localhost:18080](http://localhost:18080). Opening this URL in your browser will show a white screen with "Hello world" typed on it.
+
+You then need to compile your code on your [Linux](../setup/linux#compiling-your-project), [MacOS](../setup/macos#compiling-using-a-compiler-directly), or [Windows](../setup/windows#getting-and-compiling-crow) machine
+
+After building your `.cpp` file and running the resulting executable, you should be able to access your endpoint at [http://localhost:18080](http://localhost:18080). Opening this URL in your browser will show a white screen with "Hello world" typed on it.
