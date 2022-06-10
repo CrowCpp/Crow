@@ -94,7 +94,7 @@
     <div class="md-footer-meta__inner md-grid">
 
       <!-- Copyright and theme information -->
-      <div class="md-footer-copyright">
+      <div class="md-footer-copyright" style="flex: 1;display: flex;justify-content: left;">
         {% if config.copyright %}
           <div class="md-footer-copyright__highlight">
             {{ config.copyright }}
@@ -103,7 +103,7 @@
         {{ extracopyright }}
       </div>
       
-      <a style="margin: auto .6rem; font-size: .64rem;" href="/privacy_policy.html">Privacy Policy</a>
+      <a style="margin: auto .6rem; font-size: .64rem;text-align: center;flex: 1;display: flex;justify-content: center;" href="/privacy_policy.html">Privacy Policy</a>
 
       <!-- Social links -->
       {% include "partials/social.html" %}

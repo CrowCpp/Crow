@@ -35,6 +35,8 @@
     --home-border-color: #ffffff20;
     --home-shadow-color: #00000040;
     --home-image-border: linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.3) 50%, rgba(255, 255, 255, 0) 100%);
+    --md-admonition-bg-color: #272a2b;
+    --md-code-hl-color: rgba(255, 255, 0, 0.18);
 
 }
 
