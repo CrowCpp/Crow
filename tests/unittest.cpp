@@ -2630,12 +2630,18 @@ TEST_CASE("blueprint")
 TEST_CASE("base64")
 {
     unsigned char sample_bin[] = {0x14, 0xfb, 0x9c, 0x03, 0xd9, 0x7e};
+    std::string sample_bin_str(reinterpret_cast<char const*>(sample_bin),
+                               sizeof(sample_bin) / sizeof(sample_bin[0]));
     std::string sample_bin_enc = "FPucA9l+";
     std::string sample_bin_enc_url = "FPucA9l-";
     unsigned char sample_bin1[] = {0x14, 0xfb, 0x9c, 0x03, 0xd9};
+    std::string sample_bin1_str(reinterpret_cast<char const*>(sample_bin1),
+                                sizeof(sample_bin1) / sizeof(sample_bin1[0]));
     std::string sample_bin1_enc = "FPucA9k=";
     std::string sample_bin1_enc_np = "FPucA9k";
     unsigned char sample_bin2[] = {0x14, 0xfb, 0x9c, 0x03};
+    std::string sample_bin2_str(reinterpret_cast<char const*>(sample_bin2),
+                                sizeof(sample_bin2) / sizeof(sample_bin2[0]));
     std::string sample_bin2_enc = "FPucAw==";
     std::string sample_bin2_enc_np = "FPucAw";
     std::string sample_text = "Crow Allows users to handle requests that may not come from the network. This is done by calling the handle(req, res) method and providing a request and response objects. Which causes crow to identify and run the appropriate handler, returning the resulting response.";
@@ -2643,20 +2649,19 @@ TEST_CASE("base64")
 
 
     CHECK(crow::utility::base64encode(sample_text, sample_text.length()) == sample_base64);
-    CHECK(crow::utility::base64encode((unsigned char*)sample_bin, 6) == sample_bin_enc);
-    CHECK(crow::utility::base64encode_urlsafe((unsigned char*)sample_bin, 6) == sample_bin_enc_url);
-    CHECK(crow::utility::base64encode((unsigned char*)sample_bin1, 5) == sample_bin1_enc);
-    CHECK(crow::utility::base64encode((unsigned char*)sample_bin2, 4) == sample_bin2_enc);
-
+    CHECK(crow::utility::base64encode(sample_bin, 6) == sample_bin_enc);
+    CHECK(crow::utility::base64encode_urlsafe(sample_bin, 6) == sample_bin_enc_url);
+    CHECK(crow::utility::base64encode(sample_bin1, 5) == sample_bin1_enc);
+    CHECK(crow::utility::base64encode(sample_bin2, 4) == sample_bin2_enc);
 
     CHECK(crow::utility::base64decode(sample_base64) == sample_text);
     CHECK(crow::utility::base64decode(sample_base64, sample_base64.length()) == sample_text);
-    CHECK(crow::utility::base64decode(sample_bin_enc, 8) == std::string(reinterpret_cast<char const*>(sample_bin)));
-    CHECK(crow::utility::base64decode(sample_bin_enc_url, 8) == std::string(reinterpret_cast<char const*>(sample_bin)));
-    CHECK(crow::utility::base64decode(sample_bin1_enc, 8) == std::string(reinterpret_cast<char const*>(sample_bin1)).substr(0, 5));
-    CHECK(crow::utility::base64decode(sample_bin1_enc_np, 7) == std::string(reinterpret_cast<char const*>(sample_bin1)).substr(0, 5));
-    CHECK(crow::utility::base64decode(sample_bin2_enc, 8) == std::string(reinterpret_cast<char const*>(sample_bin2)).substr(0, 4));
-    CHECK(crow::utility::base64decode(sample_bin2_enc_np, 6) == std::string(reinterpret_cast<char const*>(sample_bin2)).substr(0, 4));
+    CHECK(crow::utility::base64decode(sample_bin_enc, 8) == sample_bin_str);
+    CHECK(crow::utility::base64decode(sample_bin_enc_url, 8) == sample_bin_str);
+    CHECK(crow::utility::base64decode(sample_bin1_enc, 8) == sample_bin1_str);
+    CHECK(crow::utility::base64decode(sample_bin1_enc_np, 7) == sample_bin1_str);
+    CHECK(crow::utility::base64decode(sample_bin2_enc, 8) == sample_bin2_str);
+    CHECK(crow::utility::base64decode(sample_bin2_enc_np, 6) == sample_bin2_str);
 } // base64
 
 TEST_CASE("sanitize_filename")
