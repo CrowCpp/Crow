@@ -106,10 +106,13 @@ inline int qs_parse(char* qs, char* qs_kv[], int qs_kv_size, bool parse_url = tr
 
     // find the beginning of the k/v substrings or the fragment
     substr_ptr = parse_url ? qs + strcspn(qs, "?#") : qs;
-    if (substr_ptr[0] != '\0')
-        substr_ptr++;
-    else
-        return 0; // no query or fragment
+    if (parse_url)
+    {
+        if (substr_ptr[0] != '\0')
+            substr_ptr++;
+        else
+            return 0; // no query or fragment
+    }
 
     i=0;
     while(i<qs_kv_size)
