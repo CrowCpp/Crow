@@ -153,6 +153,7 @@ namespace crow
 
             std::thread(
               [this] {
+                  notify_start();
                   io_service_.run();
                   CROW_LOG_INFO << "Exiting.";
               })
@@ -173,6 +174,14 @@ namespace crow
 
             CROW_LOG_INFO << "Closing main IO service (" << &io_service_ << ')';
             io_service_.stop(); // Close main io_service
+        }
+
+        /// Wait until the server has properly started
+        void wait_for_start()
+        {
+            std::unique_lock<std::mutex> lock(start_mutex_);
+            if (!server_started_)
+                cv_started_.wait(lock);
         }
 
         void signal_clear()
@@ -236,6 +245,14 @@ namespace crow
             }
         }
 
+        /// Notify anything using `wait_for_start()` to proceed
+        void notify_start()
+        {
+            std::unique_lock<std::mutex> lock(start_mutex_);
+            server_started_ = true;
+            cv_started_.notify_all();
+        }
+
     private:
         asio::io_service io_service_;
         std::vector<std::unique_ptr<asio::io_service>> io_service_pool_;
@@ -243,6 +260,9 @@ namespace crow
         std::vector<std::function<std::string()>> get_cached_date_str_pool_;
         tcp::acceptor acceptor_;
         bool shutting_down_ = false;
+        bool server_started_{false};
+        std::condition_variable cv_started_;
+        std::mutex start_mutex_;
         boost::asio::signal_set signals_;
         boost::asio::deadline_timer tick_timer_;
 
