@@ -20,7 +20,6 @@ var classcrow_1_1_crow =
     [ "handle_upgrade", "classcrow_1_1_crow.html#a6e435bf5275735effd32647772bdbd04", null ],
     [ "loglevel", "classcrow_1_1_crow.html#a7b6c225d3bba772eeadad89ebde68d21", null ],
     [ "multithreaded", "classcrow_1_1_crow.html#a0149b20b7f6c0123292286f54638d456", null ],
-    [ "notify_server_start", "classcrow_1_1_crow.html#a6bbe76405fff487a1913c7b5fccbbb81", null ],
     [ "port", "classcrow_1_1_crow.html#a87d0e10ed791c6847d8b7dfff2369aae", null ],
     [ "port", "classcrow_1_1_crow.html#a365f9c95fc2bd8bb583967f499c1f4a1", null ],
     [ "register_blueprint", "classcrow_1_1_crow.html#a7d16da8824a6d6c376395f4bfa73430e", null ],
