@@ -293,14 +293,6 @@ namespace crow
             }
         }
 
-        /// Notify anything using `wait_for_server_start()` to proceed
-        void notify_server_start()
-        {
-            std::unique_lock<std::mutex> lock(start_mutex_);
-            server_started_ = true;
-            cv_started_.notify_all();
-        }
-
         /// Run the server
         void run()
         {
@@ -492,10 +484,17 @@ namespace crow
         /// Wait until the server has properly started
         void wait_for_server_start()
         {
-            std::unique_lock<std::mutex> lock(start_mutex_);
-            if (server_started_)
-                return;
-            cv_started_.wait(lock);
+            {
+                std::unique_lock<std::mutex> lock(start_mutex_);
+                if (!server_started_)
+                    cv_started_.wait(lock);
+            }
+            if (server_)
+                server_->wait_for_start();
+#ifdef CROW_ENABLE_SSL
+            else if (ssl_server_)
+                ssl_server_->wait_for_start();
+#endif
         }
 
     private:
@@ -506,6 +505,14 @@ namespace crow
             return std::make_tuple(
               std::forward<Middlewares>(
                 black_magic::tuple_extract<Middlewares, decltype(fwd)>(fwd))...);
+        }
+
+        /// Notify anything using `wait_for_server_start()` to proceed
+        void notify_server_start()
+        {
+            std::unique_lock<std::mutex> lock(start_mutex_);
+            server_started_ = true;
+            cv_started_.notify_all();
         }
 
 
