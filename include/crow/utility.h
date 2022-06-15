@@ -832,6 +832,9 @@ namespace crow
             return res;
         }
 
+
+        /// Return a copy of the given string with its
+        /// leading and trailing whitespaces removed.
         inline static std::string trim(const std::string& v)
         {
             if (v.empty())

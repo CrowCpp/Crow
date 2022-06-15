@@ -225,17 +225,15 @@ namespace crow
                 if (pos_equal == cookies.npos)
                     break;
                 std::string name = cookies.substr(pos, pos_equal - pos);
-                utility::trim(name);
+                name = utility::trim(name);
                 pos = pos_equal + 1;
-                while (pos < cookies.size() && cookies[pos] == ' ')
-                    pos++;
                 if (pos == cookies.size())
                     break;
 
                 size_t pos_semicolon = cookies.find(';', pos);
                 std::string value = cookies.substr(pos, pos_semicolon - pos);
 
-                utility::trim(value);
+                value = utility::trim(value);
                 if (value[0] == '"' && value[value.size() - 1] == '"')
                 {
                     value = value.substr(1, value.size() - 2);
@@ -247,8 +245,6 @@ namespace crow
                 if (pos == cookies.npos)
                     break;
                 pos++;
-                while (pos < cookies.size() && cookies[pos] == ' ')
-                    pos++;
             }
         }
 
