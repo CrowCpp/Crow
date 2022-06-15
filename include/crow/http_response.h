@@ -233,7 +233,7 @@ namespace crow
 #ifdef CROW_ENABLE_COMPRESSION
             compressed = false;
 #endif
-            if (file_info.statResult == 0)
+            if (file_info.statResult == 0 && S_ISREG(file_info.statbuf.st_mode))
             {
                 std::size_t last_dot = path.find_last_of(".");
                 std::string extension = path.substr(last_dot + 1);
@@ -257,7 +257,6 @@ namespace crow
             {
                 code = 404;
                 file_info.path.clear();
-                this->end();
             }
         }
 
