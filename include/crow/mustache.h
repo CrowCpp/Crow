@@ -258,7 +258,7 @@ namespace crow
                                 }
                                 break;
                                 default:
-                                    throw std::runtime_error("not implemented tag type" + boost::lexical_cast<std::string>(static_cast<int>(ctx.t())));
+                                    throw std::runtime_error("not implemented tag type" + utility::lexical_cast<std::string>(static_cast<int>(ctx.t())));
                             }
                         }
                         break;
@@ -324,7 +324,7 @@ namespace crow
                                     current = action.pos;
                                     break;
                                 default:
-                                    throw std::runtime_error("{{#: not implemented context type: " + boost::lexical_cast<std::string>(static_cast<int>(ctx.t())));
+                                    throw std::runtime_error("{{#: not implemented context type: " + utility::lexical_cast<std::string>(static_cast<int>(ctx.t())));
                                     break;
                             }
                             break;
@@ -333,7 +333,7 @@ namespace crow
                             stack.pop_back();
                             break;
                         default:
-                            throw std::runtime_error("not implemented " + boost::lexical_cast<std::string>(static_cast<int>(action.t)));
+                            throw std::runtime_error("not implemented " + utility::lexical_cast<std::string>(static_cast<int>(action.t)));
                     }
                     current++;
                 }

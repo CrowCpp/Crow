@@ -6,7 +6,7 @@ pkgdesc="A Fast and Easy to use C++ microframework for the web."
 arch=(any)
 url="https://crowcpp.org"
 license=('custom:BSD-3-Clause')
-depends=('boost>=1.64.0')
+depends=('asio')
 optdepends=('openssl: HTTPS support' 'zlib: HTTP compression support' 'cmake: Choose this if you plan on using CMake for your Crow project')
 conflicts=("$pkgname-git")
 changelog='changelog.md'
