@@ -1,6 +1,9 @@
 #pragma once
 
-#include <boost/asio.hpp>
+#define ASIO_STANDALONE
+#include <asio.hpp>
+#include <asio/basic_waitable_timer.hpp>
+
 #include <chrono>
 #include <functional>
 #include <map>
@@ -25,15 +28,15 @@ namespace crow
             using time_type = clock_type::time_point;
 
         public:
-            task_timer(boost::asio::io_service& io_service):
-              io_service_(io_service), deadline_timer_(io_service_)
+            task_timer(asio::io_service& io_service):
+              io_service_(io_service), timer_(io_service_)
             {
-                deadline_timer_.expires_from_now(boost::posix_time::seconds(1));
-                deadline_timer_.async_wait(
+                timer_.expires_after(std::chrono::seconds(1));
+                timer_.async_wait(
                   std::bind(&task_timer::tick_handler, this, std::placeholders::_1));
             }
 
-            ~task_timer() { deadline_timer_.cancel(); }
+            ~task_timer() { timer_.cancel(); }
 
             void cancel(identifier_type id)
             {
@@ -107,21 +110,21 @@ namespace crow
                 if (tasks_.empty()) highest_id_ = 0;
             }
 
-            void tick_handler(const boost::system::error_code& ec)
+            void tick_handler(const asio::error_code& ec)
             {
                 if (ec) return;
 
                 process_tasks();
 
-                deadline_timer_.expires_from_now(boost::posix_time::seconds(1));
-                deadline_timer_.async_wait(
+                timer_.expires_after(std::chrono::seconds(1));
+                timer_.async_wait(
                   std::bind(&task_timer::tick_handler, this, std::placeholders::_1));
             }
 
         private:
             std::uint8_t default_timeout_{5};
-            boost::asio::io_service& io_service_;
-            boost::asio::deadline_timer deadline_timer_;
+            asio::io_service& io_service_;
+            asio::basic_waitable_timer<clock_type> timer_;
             std::map<identifier_type, std::pair<time_type, task_type>> tasks_;
 
             // A continuosly increasing number to be issued to threads to identify them.

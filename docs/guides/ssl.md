@@ -10,8 +10,8 @@ To enable SSL, first your application needs to define either a `.crt` and `.key`
 
 You also need to define `CROW_ENABLE_SSL` in your compiler definitions (`g++ main.cpp -DCROW_ENABLE_SSL` for example) or `set(CROW_FEATURES ssl)` in `CMakeLists.txt`.
 
-You can also set your own SSL context (by using `boost::asio::ssl::context ctx`) and then applying it via the `#!cpp app.ssl(ctx)` method.<br><br>
+You can also set your own SSL context (by using `asio::ssl::context ctx`) and then applying it via the `#!cpp app.ssl(ctx)` method.<br><br>
 
 !!! warning
-    
+
     If you plan on using a proxy like Nginx or Apache2, **DO NOT** use SSL in crow, instead define it in your proxy and keep the connection between the proxy and Crow non-SSL.

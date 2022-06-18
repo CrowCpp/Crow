@@ -596,7 +596,7 @@ TEST_CASE("undefined_status_code")
         asio::ip::tcp::socket socket(is);
         socket.connect(asio::ip::tcp::endpoint(asio::ip::address::from_string(LOCALHOST_ADDRESS), app.port()));
 
-        boost::asio::streambuf request;
+        asio::streambuf request;
         std::ostream request_stream(&request);
         request_stream << "GET " << route << " HTTP/1.0\r\n";
         request_stream << "Host: " << LOCALHOST_ADDRESS << "\r\n";
@@ -604,10 +604,10 @@ TEST_CASE("undefined_status_code")
         request_stream << "Connection: close\r\n\r\n";
 
         // Send the request.
-        boost::asio::write(socket, request);
+        asio::write(socket, request);
 
-        boost::asio::streambuf response;
-        boost::asio::read_until(socket, response, "\r\n");
+        asio::streambuf response;
+        asio::read_until(socket, response, "\r\n");
 
         std::istream response_stream(&response);
         std::string http_version;
@@ -759,7 +759,7 @@ TEST_CASE("json_read_real")
     for (auto x : v)
     {
         CROW_LOG_DEBUG << x;
-        CHECK(json::load(x).d() == boost::lexical_cast<double>(x));
+        CHECK(json::load(x).d() == utility::lexical_cast<double>(x));
     }
 
     auto ret = json::load(
@@ -1702,9 +1702,15 @@ TEST_CASE("middleware_cookieparser_format")
     }
     // expires
     {
-        auto tp = boost::posix_time::time_from_string("2000-11-01 23:59:59.000");
+        std::time_t tp;
+        std::time(&tp);
+        std::tm* tm = std::gmtime(&tp);
+        std::istringstream ss("2000-11-01 23:59:59");
+        ss >> std::get_time(tm, "%Y-%m-%d %H:%M:%S");
+        std::mktime(tm);
+
         auto c = Cookie("key", "value")
-                   .expires(boost::posix_time::to_tm(tp));
+                   .expires(*tm);
         auto s = c.dump();
         CHECK(valid(s, 2));
         CHECK(s.find("Expires=Wed, 01 Nov 2000 23:59:59 GMT") != std::string::npos);
@@ -1936,10 +1942,10 @@ TEST_CASE("simple_url_params")
         c.receive(asio::buffer(buf, 2048));
         c.close();
 
-        CHECK(boost::lexical_cast<int>(last_url_params.get("int")) == 100);
-        CHECK(boost::lexical_cast<double>(last_url_params.get("double")) ==
+        CHECK(utility::lexical_cast<int>(last_url_params.get("int")) == 100);
+        CHECK(utility::lexical_cast<double>(last_url_params.get("double")) ==
               123.45);
-        CHECK(boost::lexical_cast<bool>(last_url_params.get("boolean")));
+        CHECK(utility::lexical_cast<bool>(last_url_params.get("boolean")));
     }
     // check single array value
     sendmsg = "GET /params?tmnt[]=leonardo\r\n\r\n";
@@ -2518,8 +2524,8 @@ TEST_CASE("websocket_max_payload")
         }
     }
 
-    boost::system::error_code ec;
-    c.lowest_layer().shutdown(boost::asio::socket_base::shutdown_type::shutdown_both, ec);
+    asio::error_code ec;
+    c.lowest_layer().shutdown(asio::socket_base::shutdown_type::shutdown_both, ec);
 
     app.stop();
 } // websocket_max_payload
@@ -3023,7 +3029,7 @@ TEST_CASE("timeout")
               asio::ip::address::from_string(LOCALHOST_ADDRESS), 45451));
 
             auto receive_future = async(launch::async, [&]() {
-                boost::system::error_code ec;
+                asio::error_code ec;
                 c.receive(asio::buffer(buf, 2048), 0, ec);
                 return ec;
             });
@@ -3043,7 +3049,7 @@ TEST_CASE("timeout")
 
             size_t received;
             auto receive_future = async(launch::async, [&]() {
-                boost::system::error_code ec;
+                asio::error_code ec;
                 received = c.receive(asio::buffer(buf, 2048), 0, ec);
                 return ec;
             });
@@ -3069,9 +3075,9 @@ TEST_CASE("timeout")
 
 TEST_CASE("task_timer")
 {
-    using work_guard_type = boost::asio::executor_work_guard<boost::asio::io_service::executor_type>;
+    using work_guard_type = asio::executor_work_guard<asio::io_service::executor_type>;
 
-    boost::asio::io_service io_service;
+    asio::io_service io_service;
     work_guard_type work_guard(io_service.get_executor());
     thread io_thread([&io_service]() {
         io_service.run();
@@ -3106,3 +3112,39 @@ TEST_CASE("task_timer")
     io_service.stop();
     io_thread.join();
 } // task_timer
+
+
+TEST_CASE("trim")
+{
+    CHECK(utility::trim("") == "");
+    CHECK(utility::trim("0") == "0");
+    CHECK(utility::trim(" a") == "a");
+    CHECK(utility::trim("b ") == "b");
+    CHECK(utility::trim(" c ") == "c");
+    CHECK(utility::trim(" a b ") == "a b");
+    CHECK(utility::trim("   ") == "");
+}
+
+TEST_CASE("string_equals")
+{
+    CHECK(utility::string_equals("a", "aa") == false);
+    CHECK(utility::string_equals("a", "b") == false);
+    CHECK(utility::string_equals("", "") == true);
+    CHECK(utility::string_equals("abc", "abc") == true);
+    CHECK(utility::string_equals("ABC", "abc") == true);
+
+    CHECK(utility::string_equals("a", "aa", true) == false);
+    CHECK(utility::string_equals("a", "b", true) == false);
+    CHECK(utility::string_equals("", "", true) == true);
+    CHECK(utility::string_equals("abc", "abc", true) == true);
+    CHECK(utility::string_equals("ABC", "abc", true) == false);
+}
+
+TEST_CASE("lexical_cast")
+{
+    CHECK(utility::lexical_cast<int>(4) == 4);
+    CHECK(utility::lexical_cast<double>(4) == 4.0);
+    CHECK(utility::lexical_cast<int>("5") == 5);
+    CHECK(utility::lexical_cast<string>(4) == "4");
+    CHECK(utility::lexical_cast<float>("10", 2) == 10.0f);
+}

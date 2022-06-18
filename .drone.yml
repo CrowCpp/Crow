@@ -25,7 +25,7 @@ steps:
   - export TRAVIS_JOB_ID=$DRONE_BUILD_NUMBER
   - export COVERALLS_PULL_REQUEST=$DRONE_PULL_REQUEST
   - apt-get -y update
-  - apt-get -y install libboost-all-dev doxygen mkdocs graphviz zlib1g-dev gcc clang clang-format make cmake python3 python3-pip git openssl libssl-dev jq wget curl
+  - apt-get -y install libasio-dev doxygen mkdocs graphviz zlib1g-dev gcc clang clang-format make cmake python3 python3-pip git openssl libssl-dev jq wget curl
   - git clone https://github.com/CrowCpp/cpp-coveralls.git
   - cd cpp-coveralls
   - pip3 install . --no-input
@@ -73,7 +73,7 @@ steps:
   commands:
   - export DEBIAN_FRONTEND=noninteractive
   - apt-get -y update
-  - apt-get -y install libboost-all-dev zlib1g-dev gcc clang make cmake python3 openssl libssl-dev
+  - apt-get -y install libasio-dev zlib1g-dev gcc clang make cmake python3 openssl libssl-dev
   - mkdir build
   - cd build
   - cmake --version
@@ -123,7 +123,7 @@ steps:
   - export TRAVIS_BRANCH=$DRONE_REPO_BRANCH
   - export TRAVIS_JOB_ID=$DRONE_BUILD_NUMBER
   - apt-get -y update
-  - apt-get -y install libboost-all-dev doxygen mkdocs graphviz zlib1g-dev gcc clang make cmake python3 python3-pip git openssl libssl-dev
+  - apt-get -y install libasio-dev doxygen mkdocs graphviz zlib1g-dev gcc clang make cmake python3 python3-pip git openssl libssl-dev
   - pip3 install mkdocs-material mkdocs-redirects pyyaml mkdocs-meta-descriptions-plugin --no-input
   - git clone https://github.com/CrowCpp/cpp-coveralls.git
   - cd cpp-coveralls
@@ -170,7 +170,7 @@ steps:
   commands:
   - export DEBIAN_FRONTEND=noninteractive
   - apt-get -y update
-  - apt-get -y install libboost-all-dev zlib1g-dev gcc clang make cmake python3 openssl libssl-dev
+  - apt-get -y install libasio-dev zlib1g-dev gcc clang make cmake python3 openssl libssl-dev
   - mkdir build
   - cd build
   - cmake --version
