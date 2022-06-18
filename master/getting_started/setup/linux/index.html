@@ -1321,7 +1321,7 @@
 <h3 id="requirements">Requirements<a class="headerlink" href="#requirements" title="Permanent link">&para;</a></h3>
 <ul>
 <li>C++ compiler with at least C++11 support.</li>
-<li>boost library &amp; development headers (1.64 or later).</li>
+<li>Asio development headers (1.10.9 or later).</li>
 <li><strong>(optional)</strong> ZLib for HTTP Compression.</li>
 <li><strong>(optional)</strong> OpenSSL for HTTPS support.</li>
 <li><strong>(optional)</strong> CMake for building tests, examples, and/or installing Crow.</li>
@@ -1404,10 +1404,6 @@ From there CMake should handle compiling and linking your project.</p>
 <div class="highlight"><pre><span></span><code>g++ main.cpp -lpthread
 </code></pre></div>
 You can use arguments like <code>-DCROW_ENABLE_DEBUG</code>, <code>-DCROW_ENABLE_COMPRESSION -lz</code> for HTTP Compression, or <code>-DCROW_ENABLE_SSL -lssl</code> for HTTPS support, or even replace g++ with clang++.</p>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>If you're using a version of boost prior to 1.69, you'll need to add the argument <code>-lboost_system</code> in order for you Crow application to compile correctly.</p>
-</div>
 
               
             </article>

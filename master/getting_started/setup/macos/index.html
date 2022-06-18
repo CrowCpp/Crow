@@ -1326,21 +1326,21 @@ This will generate a <code>crow_all.h</code> file which you can use in the follo
 <h3 id="using-xcode">Using XCode<a class="headerlink" href="#using-xcode" title="Permanent link">&para;</a></h3>
 <ol>
 <li>Download and install <a href="https://brew.sh">Homebrew</a>.</li>
-<li>Run <code>brew install boost</code> in your terminal.</li>
+<li>Run <code>brew install asio</code> in your terminal.</li>
 <li>Create a new XCode project (macOS -&gt; Command Line Tool).</li>
 <li>
 <p>Change the following project settings:</p>
 <div class="tabbed-set" data-tabs="1:2"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><label for="__tabbed_1_1">Multiple Headers</label><div class="tabbed-content">
 <ol>
-<li>Add header search paths for crow's include folder and boost's folder (<code>/usr/local/include</code>, <code>/usr/local/Cellar/boost/include</code>, and where you placed Crow's <code>include</code> folder)</li>
-<li>Add linker flags (<code>-lpthread</code> and <code>-lboost_system</code> if you're running an old version of boost)</li>
+<li>Add header search paths for crow's include folder and asio's folder (<code>/usr/local/include</code>, <code>/usr/local/Cellar/asio/include</code>, and where you placed Crow's <code>include</code> folder)</li>
+<li>Add linker flags (<code>-lpthread</code>)</li>
 </ol>
 </div>
 <input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><label for="__tabbed_1_2">Single Header</label><div class="tabbed-content">
 <ol>
 <li>Place <code>crow_all.h</code> inside your project folder and add it to the project in XCode (you need to use File -&gt; Add files to "project_name")</li>
-<li>Add header search paths for boost's folder (<code>/usr/local/include</code>, and <code>/usr/local/Cellar/boost/include</code>)</li>
-<li>Add linker flags (<code>-lpthread</code> and <code>-lboost_system</code> if you're running an old version of boost)</li>
+<li>Add header search paths for asio's folder (<code>/usr/local/include</code>, and <code>/usr/local/Cellar/asio/include</code>)</li>
+<li>Add linker flags (<code>-lpthread</code>)</li>
 </ol>
 </div>
 </div>
@@ -1357,7 +1357,7 @@ This will generate a <code>crow_all.h</code> file which you can use in the follo
 </div>
 <ol>
 <li>Download and install <a href="https://brew.sh">Homebrew</a>.</li>
-<li>Run <code>brew install cmake boost</code> in your terminal.</li>
+<li>Run <code>brew install cmake asio</code> in your terminal.</li>
 <li>Get Crow's source code (the entire source code).</li>
 <li>Run the following Commands:<ol>
 <li><code>mkdir build</code></li>
@@ -1380,10 +1380,6 @@ This will generate a <code>crow_all.h</code> file which you can use in the follo
 <p>You'll need to install GCC via <code>brew install gcc</code>. the Clang compiler should be part of XCode or XCode command line tools.</p>
 </div>
 <p>You can use arguments like <code>-DCROW_ENABLE_DEBUG</code>, <code>-DCROW_ENABLE_COMPRESSION -lz</code> for HTTP Compression, or <code>-DCROW_ENABLE_SSL -lssl</code> for HTTPS support, or even replace g++ with clang++.</p>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>If you're using a version of boost prior to 1.69, you'll need to add the argument <code>-lboost_system</code> in order for you Crow application to compile correctly.</p>
-</div>
 
               
             </article>

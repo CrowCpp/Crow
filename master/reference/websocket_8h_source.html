@@ -100,12 +100,12 @@ $(document).ready(function(){initNavTree('websocket_8h_source.html',''); initRes
 </div><!--header-->
 <div class="contents">
 <div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#pragma once</span></div>
-<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="preprocessor">#include &lt;boost/algorithm/string/predicate.hpp&gt;</span></div>
-<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="preprocessor">#include &lt;boost/array.hpp&gt;</span></div>
-<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="preprocessor">#include &quot;crow/logging.h&quot;</span></div>
-<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="preprocessor">#include &quot;crow/socket_adaptors.h&quot;</span></div>
-<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="preprocessor">#include &quot;crow/http_request.h&quot;</span></div>
-<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="preprocessor">#include &quot;crow/TinySHA1.hpp&quot;</span></div>
+<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="preprocessor">#include &lt;array&gt;</span></div>
+<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="preprocessor">#include &quot;crow/logging.h&quot;</span></div>
+<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="preprocessor">#include &quot;crow/socket_adaptors.h&quot;</span></div>
+<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="preprocessor">#include &quot;crow/http_request.h&quot;</span></div>
+<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="preprocessor">#include &quot;crow/TinySHA1.hpp&quot;</span></div>
+<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="preprocessor">#include &quot;crow/utility.h&quot;</span></div>
 <div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160; </div>
 <div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="keyword">namespace </span>crow</div>
 <div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;{</div>
@@ -187,7 +187,7 @@ $(document).ready(function(){initNavTree('websocket_8h_source.html',''); initRes
 <div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;              error_handler_(std::move(error_handler)),</div>
 <div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;              accept_handler_(std::move(accept_handler))</div>
 <div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;            {</div>
-<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;                <span class="keywordflow">if</span> (!boost::iequals(req.get_header_value(<span class="stringliteral">&quot;upgrade&quot;</span>), <span class="stringliteral">&quot;websocket&quot;</span>))</div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;                <span class="keywordflow">if</span> (!utility::string_equals(req.get_header_value(<span class="stringliteral">&quot;upgrade&quot;</span>), <span class="stringliteral">&quot;websocket&quot;</span>))</div>
 <div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;                {</div>
 <div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;                    adaptor.close();</div>
 <div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;                    handler_-&gt;remove_websocket(<span class="keyword">this</span>);</div>
@@ -383,12 +383,12 @@ $(document).ready(function(){initNavTree('websocket_8h_source.html',''); initRes
 <div class="line"><a name="l00282"></a><span class="lineno">  282</span>&#160;                    <span class="keywordflow">case</span> WebSocketReadState::MiniHeader:</div>
 <div class="line"><a name="l00283"></a><span class="lineno">  283</span>&#160;                    {</div>
 <div class="line"><a name="l00284"></a><span class="lineno">  284</span>&#160;                        mini_header_ = 0;</div>
-<div class="line"><a name="l00285"></a><span class="lineno">  285</span>&#160;                        <span class="comment">//boost::asio::async_read(adaptor_.socket(), boost::asio::buffer(&amp;mini_header_, 1),</span></div>
+<div class="line"><a name="l00285"></a><span class="lineno">  285</span>&#160;                        <span class="comment">//asio::async_read(adaptor_.socket(), asio::buffer(&amp;mini_header_, 1),</span></div>
 <div class="line"><a name="l00286"></a><span class="lineno">  286</span>&#160;                        adaptor_.socket().async_read_some(</div>
-<div class="line"><a name="l00287"></a><span class="lineno">  287</span>&#160;                          boost::asio::buffer(&amp;mini_header_, 2),</div>
-<div class="line"><a name="l00288"></a><span class="lineno">  288</span>&#160;                          [<span class="keyword">this</span>](<span class="keyword">const</span> boost::system::error_code&amp; ec, std::size_t</div>
+<div class="line"><a name="l00287"></a><span class="lineno">  287</span>&#160;                          asio::buffer(&amp;mini_header_, 2),</div>
+<div class="line"><a name="l00288"></a><span class="lineno">  288</span>&#160;                          [<span class="keyword">this</span>](<span class="keyword">const</span> asio::error_code&amp; ec, std::size_t</div>
 <div class="line"><a name="l00289"></a><span class="lineno">  289</span>&#160;#ifdef CROW_ENABLE_DEBUG</div>
-<div class="line"><a name="l00290"></a><span class="lineno">  290</span>&#160;                                                                        bytes_transferred</div>
+<div class="line"><a name="l00290"></a><span class="lineno">  290</span>&#160;                                                               bytes_transferred</div>
 <div class="line"><a name="l00291"></a><span class="lineno">  291</span>&#160;#endif</div>
 <div class="line"><a name="l00292"></a><span class="lineno">  292</span>&#160;                          )</div>
 <div class="line"><a name="l00293"></a><span class="lineno">  293</span>&#160; </div>
@@ -452,11 +452,11 @@ $(document).ready(function(){initNavTree('websocket_8h_source.html',''); initRes
 <div class="line"><a name="l00351"></a><span class="lineno">  351</span>&#160;                    {</div>
 <div class="line"><a name="l00352"></a><span class="lineno">  352</span>&#160;                        remaining_length_ = 0;</div>
 <div class="line"><a name="l00353"></a><span class="lineno">  353</span>&#160;                        remaining_length16_ = 0;</div>
-<div class="line"><a name="l00354"></a><span class="lineno">  354</span>&#160;                        boost::asio::async_read(</div>
-<div class="line"><a name="l00355"></a><span class="lineno">  355</span>&#160;                          adaptor_.socket(), boost::asio::buffer(&amp;remaining_length16_, 2),</div>
-<div class="line"><a name="l00356"></a><span class="lineno">  356</span>&#160;                          [<span class="keyword">this</span>](<span class="keyword">const</span> boost::system::error_code&amp; ec, std::size_t</div>
+<div class="line"><a name="l00354"></a><span class="lineno">  354</span>&#160;                        asio::async_read(</div>
+<div class="line"><a name="l00355"></a><span class="lineno">  355</span>&#160;                          adaptor_.socket(), asio::buffer(&amp;remaining_length16_, 2),</div>
+<div class="line"><a name="l00356"></a><span class="lineno">  356</span>&#160;                          [<span class="keyword">this</span>](<span class="keyword">const</span> asio::error_code&amp; ec, std::size_t</div>
 <div class="line"><a name="l00357"></a><span class="lineno">  357</span>&#160;#ifdef CROW_ENABLE_DEBUG</div>
-<div class="line"><a name="l00358"></a><span class="lineno">  358</span>&#160;                                                                        bytes_transferred</div>
+<div class="line"><a name="l00358"></a><span class="lineno">  358</span>&#160;                                                               bytes_transferred</div>
 <div class="line"><a name="l00359"></a><span class="lineno">  359</span>&#160;#endif</div>
 <div class="line"><a name="l00360"></a><span class="lineno">  360</span>&#160;                          ) {</div>
 <div class="line"><a name="l00361"></a><span class="lineno">  361</span>&#160;                              is_reading = false;</div>
@@ -488,11 +488,11 @@ $(document).ready(function(){initNavTree('websocket_8h_source.html',''); initRes
 <div class="line"><a name="l00387"></a><span class="lineno">  387</span>&#160;                    <span class="keywordflow">break</span>;</div>
 <div class="line"><a name="l00388"></a><span class="lineno">  388</span>&#160;                    <span class="keywordflow">case</span> WebSocketReadState::Len64:</div>
 <div class="line"><a name="l00389"></a><span class="lineno">  389</span>&#160;                    {</div>
-<div class="line"><a name="l00390"></a><span class="lineno">  390</span>&#160;                        boost::asio::async_read(</div>
-<div class="line"><a name="l00391"></a><span class="lineno">  391</span>&#160;                          adaptor_.socket(), boost::asio::buffer(&amp;remaining_length_, 8),</div>
-<div class="line"><a name="l00392"></a><span class="lineno">  392</span>&#160;                          [<span class="keyword">this</span>](<span class="keyword">const</span> boost::system::error_code&amp; ec, std::size_t</div>
+<div class="line"><a name="l00390"></a><span class="lineno">  390</span>&#160;                        asio::async_read(</div>
+<div class="line"><a name="l00391"></a><span class="lineno">  391</span>&#160;                          adaptor_.socket(), asio::buffer(&amp;remaining_length_, 8),</div>
+<div class="line"><a name="l00392"></a><span class="lineno">  392</span>&#160;                          [<span class="keyword">this</span>](<span class="keyword">const</span> asio::error_code&amp; ec, std::size_t</div>
 <div class="line"><a name="l00393"></a><span class="lineno">  393</span>&#160;#ifdef CROW_ENABLE_DEBUG</div>
-<div class="line"><a name="l00394"></a><span class="lineno">  394</span>&#160;                                                                        bytes_transferred</div>
+<div class="line"><a name="l00394"></a><span class="lineno">  394</span>&#160;                                                               bytes_transferred</div>
 <div class="line"><a name="l00395"></a><span class="lineno">  395</span>&#160;#endif</div>
 <div class="line"><a name="l00396"></a><span class="lineno">  396</span>&#160;                          ) {</div>
 <div class="line"><a name="l00397"></a><span class="lineno">  397</span>&#160;                              is_reading = false;</div>
@@ -532,11 +532,11 @@ $(document).ready(function(){initNavTree('websocket_8h_source.html',''); initRes
 <div class="line"><a name="l00431"></a><span class="lineno">  431</span>&#160;                        }</div>
 <div class="line"><a name="l00432"></a><span class="lineno">  432</span>&#160;                        <span class="keywordflow">else</span> <span class="keywordflow">if</span> (has_mask_)</div>
 <div class="line"><a name="l00433"></a><span class="lineno">  433</span>&#160;                        {</div>
-<div class="line"><a name="l00434"></a><span class="lineno">  434</span>&#160;                            boost::asio::async_read(</div>
-<div class="line"><a name="l00435"></a><span class="lineno">  435</span>&#160;                              adaptor_.socket(), boost::asio::buffer((<span class="keywordtype">char</span>*)&amp;mask_, 4),</div>
-<div class="line"><a name="l00436"></a><span class="lineno">  436</span>&#160;                              [<span class="keyword">this</span>](<span class="keyword">const</span> boost::system::error_code&amp; ec, std::size_t</div>
+<div class="line"><a name="l00434"></a><span class="lineno">  434</span>&#160;                            asio::async_read(</div>
+<div class="line"><a name="l00435"></a><span class="lineno">  435</span>&#160;                              adaptor_.socket(), asio::buffer((<span class="keywordtype">char</span>*)&amp;mask_, 4),</div>
+<div class="line"><a name="l00436"></a><span class="lineno">  436</span>&#160;                              [<span class="keyword">this</span>](<span class="keyword">const</span> asio::error_code&amp; ec, std::size_t</div>
 <div class="line"><a name="l00437"></a><span class="lineno">  437</span>&#160;#ifdef CROW_ENABLE_DEBUG</div>
-<div class="line"><a name="l00438"></a><span class="lineno">  438</span>&#160;                                                                            bytes_transferred</div>
+<div class="line"><a name="l00438"></a><span class="lineno">  438</span>&#160;                                                                   bytes_transferred</div>
 <div class="line"><a name="l00439"></a><span class="lineno">  439</span>&#160;#endif</div>
 <div class="line"><a name="l00440"></a><span class="lineno">  440</span>&#160;                              ) {</div>
 <div class="line"><a name="l00441"></a><span class="lineno">  441</span>&#160;                                  is_reading = false;</div>
@@ -575,8 +575,8 @@ $(document).ready(function(){initNavTree('websocket_8h_source.html',''); initRes
 <div class="line"><a name="l00474"></a><span class="lineno">  474</span>&#160;                        <span class="keywordflow">if</span> (remaining_length_ &lt; to_read)</div>
 <div class="line"><a name="l00475"></a><span class="lineno">  475</span>&#160;                            to_read = remaining_length_;</div>
 <div class="line"><a name="l00476"></a><span class="lineno">  476</span>&#160;                        adaptor_.socket().async_read_some(</div>
-<div class="line"><a name="l00477"></a><span class="lineno">  477</span>&#160;                          boost::asio::buffer(buffer_, <span class="keyword">static_cast&lt;</span>std::size_t<span class="keyword">&gt;</span>(to_read)),</div>
-<div class="line"><a name="l00478"></a><span class="lineno">  478</span>&#160;                          [<span class="keyword">this</span>](<span class="keyword">const</span> boost::system::error_code&amp; ec, std::size_t bytes_transferred) {</div>
+<div class="line"><a name="l00477"></a><span class="lineno">  477</span>&#160;                          asio::buffer(buffer_, <span class="keyword">static_cast&lt;</span>std::size_t<span class="keyword">&gt;</span>(to_read)),</div>
+<div class="line"><a name="l00478"></a><span class="lineno">  478</span>&#160;                          [<span class="keyword">this</span>](<span class="keyword">const</span> asio::error_code&amp; ec, std::size_t bytes_transferred) {</div>
 <div class="line"><a name="l00479"></a><span class="lineno">  479</span>&#160;                              is_reading = <span class="keyword">false</span>;</div>
 <div class="line"><a name="l00480"></a><span class="lineno">  480</span>&#160; </div>
 <div class="line"><a name="l00481"></a><span class="lineno">  481</span>&#160;                              <span class="keywordflow">if</span> (!ec)</div>
@@ -719,15 +719,15 @@ $(document).ready(function(){initNavTree('websocket_8h_source.html',''); initRes
 <div class="line"><a name="l00618"></a><span class="lineno">  618</span>&#160;                <span class="keywordflow">if</span> (sending_buffers_.empty())</div>
 <div class="line"><a name="l00619"></a><span class="lineno">  619</span>&#160;                {</div>
 <div class="line"><a name="l00620"></a><span class="lineno">  620</span>&#160;                    sending_buffers_.swap(write_buffers_);</div>
-<div class="line"><a name="l00621"></a><span class="lineno">  621</span>&#160;                    std::vector&lt;boost::asio::const_buffer&gt; buffers;</div>
+<div class="line"><a name="l00621"></a><span class="lineno">  621</span>&#160;                    std::vector&lt;asio::const_buffer&gt; buffers;</div>
 <div class="line"><a name="l00622"></a><span class="lineno">  622</span>&#160;                    buffers.reserve(sending_buffers_.size());</div>
 <div class="line"><a name="l00623"></a><span class="lineno">  623</span>&#160;                    <span class="keywordflow">for</span> (<span class="keyword">auto</span>&amp; s : sending_buffers_)</div>
 <div class="line"><a name="l00624"></a><span class="lineno">  624</span>&#160;                    {</div>
-<div class="line"><a name="l00625"></a><span class="lineno">  625</span>&#160;                        buffers.emplace_back(boost::asio::buffer(s));</div>
+<div class="line"><a name="l00625"></a><span class="lineno">  625</span>&#160;                        buffers.emplace_back(asio::buffer(s));</div>
 <div class="line"><a name="l00626"></a><span class="lineno">  626</span>&#160;                    }</div>
-<div class="line"><a name="l00627"></a><span class="lineno">  627</span>&#160;                    boost::asio::async_write(</div>
+<div class="line"><a name="l00627"></a><span class="lineno">  627</span>&#160;                    asio::async_write(</div>
 <div class="line"><a name="l00628"></a><span class="lineno">  628</span>&#160;                      adaptor_.socket(), buffers,</div>
-<div class="line"><a name="l00629"></a><span class="lineno">  629</span>&#160;                      [&amp;](<span class="keyword">const</span> boost::system::error_code&amp; ec, std::size_t <span class="comment">/*bytes_transferred*/</span>) {</div>
+<div class="line"><a name="l00629"></a><span class="lineno">  629</span>&#160;                      [&amp;](<span class="keyword">const</span> asio::error_code&amp; ec, std::size_t <span class="comment">/*bytes_transferred*/</span>) {</div>
 <div class="line"><a name="l00630"></a><span class="lineno">  630</span>&#160;                          sending_buffers_.clear();</div>
 <div class="line"><a name="l00631"></a><span class="lineno">  631</span>&#160;                          if (!ec &amp;&amp; !close_connection_)</div>
 <div class="line"><a name="l00632"></a><span class="lineno">  632</span>&#160;                          {</div>
@@ -764,7 +764,7 @@ $(document).ready(function(){initNavTree('websocket_8h_source.html',''); initRes
 <div class="line"><a name="l00663"></a><span class="lineno">  663</span>&#160;            std::vector&lt;std::string&gt; sending_buffers_;</div>
 <div class="line"><a name="l00664"></a><span class="lineno">  664</span>&#160;            std::vector&lt;std::string&gt; write_buffers_;</div>
 <div class="line"><a name="l00665"></a><span class="lineno">  665</span>&#160; </div>
-<div class="line"><a name="l00666"></a><span class="lineno">  666</span>&#160;            boost::array&lt;char, 4096&gt; buffer_;</div>
+<div class="line"><a name="l00666"></a><span class="lineno">  666</span>&#160;            std::array&lt;char, 4096&gt; buffer_;</div>
 <div class="line"><a name="l00667"></a><span class="lineno">  667</span>&#160;            <span class="keywordtype">bool</span> is_binary_;</div>
 <div class="line"><a name="l00668"></a><span class="lineno">  668</span>&#160;            std::string message_;</div>
 <div class="line"><a name="l00669"></a><span class="lineno">  669</span>&#160;            std::string fragment_;</div>
@@ -803,7 +803,7 @@ $(document).ready(function(){initNavTree('websocket_8h_source.html',''); initRes
 <div class="ttc" id="aclasscrow_1_1websocket_1_1_connection_html_a292002f44552e5eabd8dd65f476a4c28"><div class="ttname"><a href="classcrow_1_1websocket_1_1_connection.html#a292002f44552e5eabd8dd65f476a4c28">crow::websocket::Connection::handle_fragment</a></div><div class="ttdeci">bool handle_fragment()</div><div class="ttdoc">Process the payload fragment.</div><div class="ttdef"><b>Definition:</b> websocket.h:527</div></div>
 <div class="ttc" id="astructcrow_1_1websocket_1_1connection_html"><div class="ttname"><a href="structcrow_1_1websocket_1_1connection.html">crow::websocket::connection</a></div><div class="ttdoc">A base class for websocket connection.</div><div class="ttdef"><b>Definition:</b> websocket.h:23</div></div>
 <div class="ttc" id="aclasscrow_1_1websocket_1_1_connection_html_a98f4af4eac4b807f970667b0147869a4"><div class="ttname"><a href="classcrow_1_1websocket_1_1_connection.html#a98f4af4eac4b807f970667b0147869a4">crow::websocket::Connection::is_FIN</a></div><div class="ttdeci">bool is_FIN()</div><div class="ttdoc">Check if the FIN bit is set.</div><div class="ttdef"><b>Definition:</b> websocket.h:512</div></div>
-<div class="ttc" id="astructcrow_1_1request_html"><div class="ttname"><a href="structcrow_1_1request.html">crow::request</a></div><div class="ttdoc">An HTTP request.</div><div class="ttdef"><b>Definition:</b> http_request.h:24</div></div>
+<div class="ttc" id="astructcrow_1_1request_html"><div class="ttname"><a href="structcrow_1_1request.html">crow::request</a></div><div class="ttdoc">An HTTP request.</div><div class="ttdef"><b>Definition:</b> http_request.h:25</div></div>
 <div class="ttc" id="aclasscrow_1_1websocket_1_1_connection_html_a928134640aa98a86f56a71735a41147a"><div class="ttname"><a href="classcrow_1_1websocket_1_1_connection.html#a928134640aa98a86f56a71735a41147a">crow::websocket::Connection::start</a></div><div class="ttdeci">void start(std::string &amp;&amp;hello)</div><div class="ttdoc">Send the HTTP upgrade response.</div><div class="ttdef"><b>Definition:</b> websocket.h:245</div></div>
 <div class="ttc" id="aclasscrow_1_1websocket_1_1_connection_html_a8cfafe2c0c8f440b797110ab31662eb0"><div class="ttname"><a href="classcrow_1_1websocket_1_1_connection.html#a8cfafe2c0c8f440b797110ab31662eb0">crow::websocket::Connection::send_binary</a></div><div class="ttdeci">void send_binary(const std::string &amp;msg) override</div><div class="ttdoc">Send a binary encoded message.</div><div class="ttdef"><b>Definition:</b> websocket.h:164</div></div>
 <div class="ttc" id="aclasscrow_1_1websocket_1_1_connection_html_a1a3d226896c8773708715273cdb285d6"><div class="ttname"><a href="classcrow_1_1websocket_1_1_connection.html#a1a3d226896c8773708715273cdb285d6">crow::websocket::Connection::post</a></div><div class="ttdeci">void post(CompletionHandler handler)</div><div class="ttdoc">Send data through the socket and return immediately.</div><div class="ttdef"><b>Definition:</b> websocket.h:130</div></div>
@@ -817,7 +817,7 @@ $(document).ready(function(){initNavTree('websocket_8h_source.html',''); initRes
 			<ul>
 				<li class="navelem"><a class="el" href="dir_d44c64559bbebec7f509842c48db8b23.html">include</a></li><li class="navelem"><a class="el" href="dir_d22c1cb87b72f01e1a7f207eb3bfd1ca.html">crow</a></li><li class="navelem"><b>websocket.h</b></li>
 				<li class="footer">
-					Generated on Fri Jun 17 2022 for Crow by <a href="http://www.doxygen.org/index.html">
+					Generated on Sat Jun 18 2022 for Crow by <a href="http://www.doxygen.org/index.html">
 					<img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.17.
 					Dark theme by <a href="http://majerle.eu" target="_new">Tilen Majerle</a>. Edited by <a href="https://github.com/The-EDev" target="_new">Farook Al-Sammarraie</a>. All rights reserved.
 				</li>

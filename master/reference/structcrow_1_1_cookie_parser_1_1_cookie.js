@@ -6,6 +6,7 @@ var structcrow_1_1_cookie_parser_1_1_cookie =
       [ "None", "structcrow_1_1_cookie_parser_1_1_cookie.html#a60148a93277a6c5219fcea36b1c30ea0a6adf97f83acf6453d4a6a4b1070f3754", null ]
     ] ],
     [ "Cookie", "structcrow_1_1_cookie_parser_1_1_cookie.html#a7a7894fa9160191014647f558459e993", null ],
+    [ "Cookie", "structcrow_1_1_cookie_parser_1_1_cookie.html#a8dee0e3211bd6ec25a2aa3193ebe036f", null ],
     [ "domain", "structcrow_1_1_cookie_parser_1_1_cookie.html#a2fd4f77628e86426f564eaab9aa212c4", null ],
     [ "dump", "structcrow_1_1_cookie_parser_1_1_cookie.html#a2d291b28216f8f54e3274f359800ca59", null ],
     [ "expires", "structcrow_1_1_cookie_parser_1_1_cookie.html#a7cb6e8c8724de976724591cbec48fae2", null ],

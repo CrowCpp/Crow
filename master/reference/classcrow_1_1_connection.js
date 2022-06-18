@@ -1,6 +1,6 @@
 var classcrow_1_1_connection =
 [
-    [ "Connection", "classcrow_1_1_connection.html#a7412dc20bc9057590e21d13588a53b99", null ],
+    [ "Connection", "classcrow_1_1_connection.html#ad83a6948c16db75e51dcf7514f298983", null ],
     [ "~Connection", "classcrow_1_1_connection.html#a4800edf5f2600ecdefd7d792d237b945", null ],
     [ "complete_request", "classcrow_1_1_connection.html#aa40019a3731cc55174401e3b31602524", null ],
     [ "handle", "classcrow_1_1_connection.html#ac347b6e80cfbc071579781062c78e667", null ],

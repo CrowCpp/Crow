@@ -42,10 +42,6 @@ var hierarchy =
     [ "crow::CORSHandler", "structcrow_1_1_c_o_r_s_handler.html", null ],
     [ "crow::CORSRules", "structcrow_1_1_c_o_r_s_rules.html", null ],
     [ "crow::Crow< Middlewares >", "classcrow_1_1_crow.html", null ],
-    [ "equality_comparable", null, [
-      [ "crow::json::detail::r_string", "structcrow_1_1json_1_1detail_1_1r__string.html", null ],
-      [ "crow::json::detail::r_string", "structcrow_1_1json_1_1detail_1_1r__string.html", null ]
-    ] ],
     [ "std::exception", null, [
       [ "crow::mustache::invalid_template_exception", "classcrow_1_1mustache_1_1invalid__template__exception.html", null ]
     ] ],
@@ -70,10 +66,6 @@ var hierarchy =
     [ "crow::detail::is_after_handle_arity_3_impl< T >", "structcrow_1_1detail_1_1is__after__handle__arity__3__impl.html", null ],
     [ "crow::detail::is_before_handle_arity_3_impl< T >", "structcrow_1_1detail_1_1is__before__handle__arity__3__impl.html", null ],
     [ "crow::detail::is_middleware_global< MW >", "structcrow_1_1detail_1_1is__middleware__global.html", null ],
-    [ "less_than_comparable", null, [
-      [ "crow::json::detail::r_string", "structcrow_1_1json_1_1detail_1_1r__string.html", null ],
-      [ "crow::json::detail::r_string", "structcrow_1_1json_1_1detail_1_1r__string.html", null ]
-    ] ],
     [ "crow::logger", "classcrow_1_1logger.html", null ],
     [ "crow::detail::middleware_call_criteria_dynamic< Reversed >", "structcrow_1_1detail_1_1middleware__call__criteria__dynamic.html", null ],
     [ "crow::detail::middleware_call_criteria_dynamic< false >", "structcrow_1_1detail_1_1middleware__call__criteria__dynamic_3_01false_01_4.html", null ],
@@ -84,6 +76,7 @@ var hierarchy =
     [ "crow::multipart::part", "structcrow_1_1multipart_1_1part.html", null ],
     [ "crow::detail::partial_context<>", "structcrow_1_1detail_1_1partial__context_3_4.html", null ],
     [ "crow::query_string", "classcrow_1_1query__string.html", null ],
+    [ "crow::json::detail::r_string", "structcrow_1_1json_1_1detail_1_1r__string.html", null ],
     [ "crow::detail::routing_handler_call_helper::Wrapped< Func, ArgsWrapped >::req_handler_wrapper< Req, Args >", "structcrow_1_1detail_1_1routing__handler__call__helper_1_1_wrapped_1_1req__handler__wrapper.html", null ],
     [ "crow::request", "structcrow_1_1request.html", null ],
     [ "crow::response", "structcrow_1_1response.html", null ],
