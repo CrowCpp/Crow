@@ -1852,9 +1852,9 @@ namespace crow
                                     case start: // Loop and lookahead until a decimal point is found
                                         if (ch == '.')
                                         {
-                                            char fch  = *(p + 1);
+                                            char fch = *(p + 1);
                                             // if the first character is 0, leave it be (this is so that "1.00000" becomes "1.0" and not "1.")
-                                            if ( fch != '\0' && fch == '0') p++;
+                                            if (fch != '\0' && fch == '0') p++;
                                             f_state = decp;
                                         }
                                         p++;
