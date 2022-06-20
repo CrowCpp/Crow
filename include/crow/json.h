@@ -1836,12 +1836,12 @@ namespace crow
                             enum
                             {
                                 start,
-                                decp,
+                                decp, // Decimal point
                                 zero
                             } f_state;
                             char outbuf[128];
                             MSC_COMPATIBLE_SPRINTF(outbuf, "%f", v.num.d);
-                            char *p = &outbuf[0], *o = nullptr;
+                            char *p = &outbuf[0], *o = nullptr; // o is the position of the first trailing 0
                             f_state = start;
                             while (*p != '\0')
                             {
@@ -1849,15 +1849,17 @@ namespace crow
                                 char ch = *p;
                                 switch (f_state)
                                 {
-                                    case start:
+                                    case start: // Loop and lookahead until a decimal point is found
                                         if (ch == '.')
                                         {
-                                            if (p + 1 && *(p + 1) == '0') p++;
+                                            char fch  = *(p + 1);
+                                            // if the first character is 0, leave it be (this is so that "1.00000" becomes "1.0" and not "1.")
+                                            if ( fch != '\0' && fch == '0') p++;
                                             f_state = decp;
                                         }
                                         p++;
                                         break;
-                                    case decp:
+                                    case decp: // Loop until a 0 is found, if found, record its position
                                         if (ch == '0')
                                         {
                                             f_state = zero;
@@ -1865,7 +1867,7 @@ namespace crow
                                         }
                                         p++;
                                         break;
-                                    case zero:
+                                    case zero: // if a non 0 is found (e.g. 1.00004) remove the earlier recorded 0 position and look for more trailing 0s
                                         if (ch != '0')
                                         {
                                             o = nullptr;
@@ -1875,7 +1877,7 @@ namespace crow
                                         break;
                                 }
                             }
-                            if (o != nullptr)
+                            if (o != nullptr) // if any trailing 0s are found, terminate the string where they begin
                                 *o = '\0';
                             out += outbuf;
 #undef MSC_COMPATIBLE_SPRINTF
