@@ -681,7 +681,7 @@ namespace crow
                 return (option_ & error_bit) != 0;
             }
 
-            std::vector<std::string> keys()
+            std::vector<std::string> keys() const
             {
 #ifndef CROW_JSON_NO_ERROR_CHECK
                 if (t() != type::Object)
@@ -1473,6 +1473,7 @@ namespace crow
             wvalue& operator=(wvalue&& r)
             {
                 t_ = r.t_;
+                nt = r.nt;
                 num = r.num;
                 s = std::move(r.s);
                 l = std::move(r.l);
