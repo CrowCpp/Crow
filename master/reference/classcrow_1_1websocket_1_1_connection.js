@@ -1,6 +1,6 @@
 var classcrow_1_1websocket_1_1_connection =
 [
-    [ "Connection", "classcrow_1_1websocket_1_1_connection.html#afe5d29511594e015b7dc30db6909a80c", null ],
+    [ "Connection", "classcrow_1_1websocket_1_1_connection.html#ae13084d8ea772f54bf3397a9fab107d8", null ],
     [ "build_header", "classcrow_1_1websocket_1_1_connection.html#a2fc995281b9452b56f743294baa7ed17", null ],
     [ "check_destroy", "classcrow_1_1websocket_1_1_connection.html#a8030e7ca3e9ee5d07ccf7f8cb43fa317", null ],
     [ "close", "classcrow_1_1websocket_1_1_connection.html#a0be6d809da4a96c75865748d3b14d22f", null ],

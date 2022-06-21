@@ -1937,12 +1937,12 @@ $(document).ready(function(){initNavTree('json_8h_source.html',''); initResizabl
 <div class="line"><a name="l01836"></a><span class="lineno"> 1836</span>&#160;                            <span class="keyword">enum</span></div>
 <div class="line"><a name="l01837"></a><span class="lineno"> 1837</span>&#160;                            {</div>
 <div class="line"><a name="l01838"></a><span class="lineno"> 1838</span>&#160;                                start,</div>
-<div class="line"><a name="l01839"></a><span class="lineno"> 1839</span>&#160;                                decp,</div>
+<div class="line"><a name="l01839"></a><span class="lineno"> 1839</span>&#160;                                decp, <span class="comment">// Decimal point</span></div>
 <div class="line"><a name="l01840"></a><span class="lineno"> 1840</span>&#160;                                zero</div>
 <div class="line"><a name="l01841"></a><span class="lineno"> 1841</span>&#160;                            } f_state;</div>
 <div class="line"><a name="l01842"></a><span class="lineno"> 1842</span>&#160;                            <span class="keywordtype">char</span> outbuf[128];</div>
 <div class="line"><a name="l01843"></a><span class="lineno"> 1843</span>&#160;                            MSC_COMPATIBLE_SPRINTF(outbuf, <span class="stringliteral">&quot;%f&quot;</span>, v.num.d);</div>
-<div class="line"><a name="l01844"></a><span class="lineno"> 1844</span>&#160;                            <span class="keywordtype">char</span> *p = &amp;outbuf[0], *o = <span class="keyword">nullptr</span>;</div>
+<div class="line"><a name="l01844"></a><span class="lineno"> 1844</span>&#160;                            <span class="keywordtype">char</span> *p = &amp;outbuf[0], *o = <span class="keyword">nullptr</span>; <span class="comment">// o is the position of the first trailing 0</span></div>
 <div class="line"><a name="l01845"></a><span class="lineno"> 1845</span>&#160;                            f_state = start;</div>
 <div class="line"><a name="l01846"></a><span class="lineno"> 1846</span>&#160;                            <span class="keywordflow">while</span> (*p != <span class="charliteral">&#39;\0&#39;</span>)</div>
 <div class="line"><a name="l01847"></a><span class="lineno"> 1847</span>&#160;                            {</div>
@@ -1950,112 +1950,114 @@ $(document).ready(function(){initNavTree('json_8h_source.html',''); initResizabl
 <div class="line"><a name="l01849"></a><span class="lineno"> 1849</span>&#160;                                <span class="keywordtype">char</span> ch = *p;</div>
 <div class="line"><a name="l01850"></a><span class="lineno"> 1850</span>&#160;                                <span class="keywordflow">switch</span> (f_state)</div>
 <div class="line"><a name="l01851"></a><span class="lineno"> 1851</span>&#160;                                {</div>
-<div class="line"><a name="l01852"></a><span class="lineno"> 1852</span>&#160;                                    <span class="keywordflow">case</span> start:</div>
+<div class="line"><a name="l01852"></a><span class="lineno"> 1852</span>&#160;                                    <span class="keywordflow">case</span> start: <span class="comment">// Loop and lookahead until a decimal point is found</span></div>
 <div class="line"><a name="l01853"></a><span class="lineno"> 1853</span>&#160;                                        <span class="keywordflow">if</span> (ch == <span class="charliteral">&#39;.&#39;</span>)</div>
 <div class="line"><a name="l01854"></a><span class="lineno"> 1854</span>&#160;                                        {</div>
-<div class="line"><a name="l01855"></a><span class="lineno"> 1855</span>&#160;                                            <span class="keywordflow">if</span> (p + 1 &amp;&amp; *(p + 1) == <span class="charliteral">&#39;0&#39;</span>) p++;</div>
-<div class="line"><a name="l01856"></a><span class="lineno"> 1856</span>&#160;                                            f_state = decp;</div>
-<div class="line"><a name="l01857"></a><span class="lineno"> 1857</span>&#160;                                        }</div>
-<div class="line"><a name="l01858"></a><span class="lineno"> 1858</span>&#160;                                        p++;</div>
-<div class="line"><a name="l01859"></a><span class="lineno"> 1859</span>&#160;                                        <span class="keywordflow">break</span>;</div>
-<div class="line"><a name="l01860"></a><span class="lineno"> 1860</span>&#160;                                    <span class="keywordflow">case</span> decp:</div>
-<div class="line"><a name="l01861"></a><span class="lineno"> 1861</span>&#160;                                        <span class="keywordflow">if</span> (ch == <span class="charliteral">&#39;0&#39;</span>)</div>
-<div class="line"><a name="l01862"></a><span class="lineno"> 1862</span>&#160;                                        {</div>
-<div class="line"><a name="l01863"></a><span class="lineno"> 1863</span>&#160;                                            f_state = zero;</div>
-<div class="line"><a name="l01864"></a><span class="lineno"> 1864</span>&#160;                                            o = p;</div>
-<div class="line"><a name="l01865"></a><span class="lineno"> 1865</span>&#160;                                        }</div>
-<div class="line"><a name="l01866"></a><span class="lineno"> 1866</span>&#160;                                        p++;</div>
-<div class="line"><a name="l01867"></a><span class="lineno"> 1867</span>&#160;                                        <span class="keywordflow">break</span>;</div>
-<div class="line"><a name="l01868"></a><span class="lineno"> 1868</span>&#160;                                    <span class="keywordflow">case</span> zero:</div>
-<div class="line"><a name="l01869"></a><span class="lineno"> 1869</span>&#160;                                        <span class="keywordflow">if</span> (ch != <span class="charliteral">&#39;0&#39;</span>)</div>
-<div class="line"><a name="l01870"></a><span class="lineno"> 1870</span>&#160;                                        {</div>
-<div class="line"><a name="l01871"></a><span class="lineno"> 1871</span>&#160;                                            o = <span class="keyword">nullptr</span>;</div>
-<div class="line"><a name="l01872"></a><span class="lineno"> 1872</span>&#160;                                            f_state = decp;</div>
-<div class="line"><a name="l01873"></a><span class="lineno"> 1873</span>&#160;                                        }</div>
-<div class="line"><a name="l01874"></a><span class="lineno"> 1874</span>&#160;                                        p++;</div>
-<div class="line"><a name="l01875"></a><span class="lineno"> 1875</span>&#160;                                        <span class="keywordflow">break</span>;</div>
-<div class="line"><a name="l01876"></a><span class="lineno"> 1876</span>&#160;                                }</div>
-<div class="line"><a name="l01877"></a><span class="lineno"> 1877</span>&#160;                            }</div>
-<div class="line"><a name="l01878"></a><span class="lineno"> 1878</span>&#160;                            <span class="keywordflow">if</span> (o != <span class="keyword">nullptr</span>)</div>
-<div class="line"><a name="l01879"></a><span class="lineno"> 1879</span>&#160;                                *o = <span class="charliteral">&#39;\0&#39;</span>;</div>
-<div class="line"><a name="l01880"></a><span class="lineno"> 1880</span>&#160;                            out += outbuf;</div>
-<div class="line"><a name="l01881"></a><span class="lineno"> 1881</span>&#160;<span class="preprocessor">#undef MSC_COMPATIBLE_SPRINTF</span></div>
-<div class="line"><a name="l01882"></a><span class="lineno"> 1882</span>&#160;                        }</div>
-<div class="line"><a name="l01883"></a><span class="lineno"> 1883</span>&#160;                        <span class="keywordflow">else</span> <span class="keywordflow">if</span> (v.nt == num_type::Signed_integer)</div>
-<div class="line"><a name="l01884"></a><span class="lineno"> 1884</span>&#160;                        {</div>
-<div class="line"><a name="l01885"></a><span class="lineno"> 1885</span>&#160;                            out += std::to_string(v.num.si);</div>
-<div class="line"><a name="l01886"></a><span class="lineno"> 1886</span>&#160;                        }</div>
-<div class="line"><a name="l01887"></a><span class="lineno"> 1887</span>&#160;                        <span class="keywordflow">else</span></div>
-<div class="line"><a name="l01888"></a><span class="lineno"> 1888</span>&#160;                        {</div>
-<div class="line"><a name="l01889"></a><span class="lineno"> 1889</span>&#160;                            out += std::to_string(v.num.ui);</div>
-<div class="line"><a name="l01890"></a><span class="lineno"> 1890</span>&#160;                        }</div>
-<div class="line"><a name="l01891"></a><span class="lineno"> 1891</span>&#160;                    }</div>
-<div class="line"><a name="l01892"></a><span class="lineno"> 1892</span>&#160;                    <span class="keywordflow">break</span>;</div>
-<div class="line"><a name="l01893"></a><span class="lineno"> 1893</span>&#160;                    <span class="keywordflow">case</span> type::String: dump_string(v.s, out); <span class="keywordflow">break</span>;</div>
-<div class="line"><a name="l01894"></a><span class="lineno"> 1894</span>&#160;                    <span class="keywordflow">case</span> type::List:</div>
-<div class="line"><a name="l01895"></a><span class="lineno"> 1895</span>&#160;                    {</div>
-<div class="line"><a name="l01896"></a><span class="lineno"> 1896</span>&#160;                        out.push_back(<span class="charliteral">&#39;[&#39;</span>);</div>
-<div class="line"><a name="l01897"></a><span class="lineno"> 1897</span>&#160;                        <span class="keywordflow">if</span> (v.l)</div>
-<div class="line"><a name="l01898"></a><span class="lineno"> 1898</span>&#160;                        {</div>
-<div class="line"><a name="l01899"></a><span class="lineno"> 1899</span>&#160;                            <span class="keywordtype">bool</span> first = <span class="keyword">true</span>;</div>
-<div class="line"><a name="l01900"></a><span class="lineno"> 1900</span>&#160;                            <span class="keywordflow">for</span> (<span class="keyword">auto</span>&amp; x : *v.l)</div>
-<div class="line"><a name="l01901"></a><span class="lineno"> 1901</span>&#160;                            {</div>
-<div class="line"><a name="l01902"></a><span class="lineno"> 1902</span>&#160;                                <span class="keywordflow">if</span> (!first)</div>
-<div class="line"><a name="l01903"></a><span class="lineno"> 1903</span>&#160;                                {</div>
-<div class="line"><a name="l01904"></a><span class="lineno"> 1904</span>&#160;                                    out.push_back(<span class="charliteral">&#39;,&#39;</span>);</div>
-<div class="line"><a name="l01905"></a><span class="lineno"> 1905</span>&#160;                                }</div>
-<div class="line"><a name="l01906"></a><span class="lineno"> 1906</span>&#160;                                first = <span class="keyword">false</span>;</div>
-<div class="line"><a name="l01907"></a><span class="lineno"> 1907</span>&#160;                                dump_internal(x, out);</div>
-<div class="line"><a name="l01908"></a><span class="lineno"> 1908</span>&#160;                            }</div>
-<div class="line"><a name="l01909"></a><span class="lineno"> 1909</span>&#160;                        }</div>
-<div class="line"><a name="l01910"></a><span class="lineno"> 1910</span>&#160;                        out.push_back(<span class="charliteral">&#39;]&#39;</span>);</div>
-<div class="line"><a name="l01911"></a><span class="lineno"> 1911</span>&#160;                    }</div>
-<div class="line"><a name="l01912"></a><span class="lineno"> 1912</span>&#160;                    <span class="keywordflow">break</span>;</div>
-<div class="line"><a name="l01913"></a><span class="lineno"> 1913</span>&#160;                    <span class="keywordflow">case</span> type::Object:</div>
-<div class="line"><a name="l01914"></a><span class="lineno"> 1914</span>&#160;                    {</div>
-<div class="line"><a name="l01915"></a><span class="lineno"> 1915</span>&#160;                        out.push_back(<span class="charliteral">&#39;{&#39;</span>);</div>
-<div class="line"><a name="l01916"></a><span class="lineno"> 1916</span>&#160;                        <span class="keywordflow">if</span> (v.o)</div>
-<div class="line"><a name="l01917"></a><span class="lineno"> 1917</span>&#160;                        {</div>
-<div class="line"><a name="l01918"></a><span class="lineno"> 1918</span>&#160;                            <span class="keywordtype">bool</span> first = <span class="keyword">true</span>;</div>
-<div class="line"><a name="l01919"></a><span class="lineno"> 1919</span>&#160;                            <span class="keywordflow">for</span> (<span class="keyword">auto</span>&amp; kv : *v.o)</div>
-<div class="line"><a name="l01920"></a><span class="lineno"> 1920</span>&#160;                            {</div>
-<div class="line"><a name="l01921"></a><span class="lineno"> 1921</span>&#160;                                <span class="keywordflow">if</span> (!first)</div>
-<div class="line"><a name="l01922"></a><span class="lineno"> 1922</span>&#160;                                {</div>
-<div class="line"><a name="l01923"></a><span class="lineno"> 1923</span>&#160;                                    out.push_back(<span class="charliteral">&#39;,&#39;</span>);</div>
-<div class="line"><a name="l01924"></a><span class="lineno"> 1924</span>&#160;                                }</div>
-<div class="line"><a name="l01925"></a><span class="lineno"> 1925</span>&#160;                                first = <span class="keyword">false</span>;</div>
-<div class="line"><a name="l01926"></a><span class="lineno"> 1926</span>&#160;                                dump_string(kv.first, out);</div>
-<div class="line"><a name="l01927"></a><span class="lineno"> 1927</span>&#160;                                out.push_back(<span class="charliteral">&#39;:&#39;</span>);</div>
-<div class="line"><a name="l01928"></a><span class="lineno"> 1928</span>&#160;                                dump_internal(kv.second, out);</div>
-<div class="line"><a name="l01929"></a><span class="lineno"> 1929</span>&#160;                            }</div>
-<div class="line"><a name="l01930"></a><span class="lineno"> 1930</span>&#160;                        }</div>
-<div class="line"><a name="l01931"></a><span class="lineno"> 1931</span>&#160;                        out.push_back(<span class="charliteral">&#39;}&#39;</span>);</div>
-<div class="line"><a name="l01932"></a><span class="lineno"> 1932</span>&#160;                    }</div>
-<div class="line"><a name="l01933"></a><span class="lineno"> 1933</span>&#160;                    <span class="keywordflow">break</span>;</div>
-<div class="line"><a name="l01934"></a><span class="lineno"> 1934</span>&#160; </div>
-<div class="line"><a name="l01935"></a><span class="lineno"> 1935</span>&#160;                    <span class="keywordflow">case</span> type::Function:</div>
-<div class="line"><a name="l01936"></a><span class="lineno"> 1936</span>&#160;                        out += <span class="stringliteral">&quot;custom function&quot;</span>;</div>
-<div class="line"><a name="l01937"></a><span class="lineno"> 1937</span>&#160;                        <span class="keywordflow">break</span>;</div>
-<div class="line"><a name="l01938"></a><span class="lineno"> 1938</span>&#160;                }</div>
-<div class="line"><a name="l01939"></a><span class="lineno"> 1939</span>&#160;            }</div>
-<div class="line"><a name="l01940"></a><span class="lineno"> 1940</span>&#160; </div>
-<div class="line"><a name="l01941"></a><span class="lineno"> 1941</span>&#160;        <span class="keyword">public</span>:</div>
-<div class="line"><a name="l01942"></a><span class="lineno"> 1942</span>&#160;            std::string dump()<span class="keyword"> const</span></div>
-<div class="line"><a name="l01943"></a><span class="lineno"> 1943</span>&#160;<span class="keyword">            </span>{</div>
-<div class="line"><a name="l01944"></a><span class="lineno"> 1944</span>&#160;                std::string ret;</div>
-<div class="line"><a name="l01945"></a><span class="lineno"> 1945</span>&#160;                ret.reserve(<a class="code" href="classcrow_1_1json_1_1wvalue.html#a5af23d208ed3d066a0fb5339350978c6">estimate_length</a>());</div>
-<div class="line"><a name="l01946"></a><span class="lineno"> 1946</span>&#160;                dump_internal(*<span class="keyword">this</span>, ret);</div>
-<div class="line"><a name="l01947"></a><span class="lineno"> 1947</span>&#160;                <span class="keywordflow">return</span> ret;</div>
-<div class="line"><a name="l01948"></a><span class="lineno"> 1948</span>&#160;            }</div>
-<div class="line"><a name="l01949"></a><span class="lineno"> 1949</span>&#160;        };</div>
-<div class="line"><a name="l01950"></a><span class="lineno"> 1950</span>&#160; </div>
-<div class="line"><a name="l01951"></a><span class="lineno"> 1951</span>&#160; </div>
+<div class="line"><a name="l01855"></a><span class="lineno"> 1855</span>&#160;                                            <span class="keywordtype">char</span> fch = *(p + 1);</div>
+<div class="line"><a name="l01856"></a><span class="lineno"> 1856</span>&#160;                                            <span class="comment">// if the first character is 0, leave it be (this is so that &quot;1.00000&quot; becomes &quot;1.0&quot; and not &quot;1.&quot;)</span></div>
+<div class="line"><a name="l01857"></a><span class="lineno"> 1857</span>&#160;                                            <span class="keywordflow">if</span> (fch != <span class="charliteral">&#39;\0&#39;</span> &amp;&amp; fch == <span class="charliteral">&#39;0&#39;</span>) p++;</div>
+<div class="line"><a name="l01858"></a><span class="lineno"> 1858</span>&#160;                                            f_state = decp;</div>
+<div class="line"><a name="l01859"></a><span class="lineno"> 1859</span>&#160;                                        }</div>
+<div class="line"><a name="l01860"></a><span class="lineno"> 1860</span>&#160;                                        p++;</div>
+<div class="line"><a name="l01861"></a><span class="lineno"> 1861</span>&#160;                                        <span class="keywordflow">break</span>;</div>
+<div class="line"><a name="l01862"></a><span class="lineno"> 1862</span>&#160;                                    <span class="keywordflow">case</span> decp: <span class="comment">// Loop until a 0 is found, if found, record its position</span></div>
+<div class="line"><a name="l01863"></a><span class="lineno"> 1863</span>&#160;                                        <span class="keywordflow">if</span> (ch == <span class="charliteral">&#39;0&#39;</span>)</div>
+<div class="line"><a name="l01864"></a><span class="lineno"> 1864</span>&#160;                                        {</div>
+<div class="line"><a name="l01865"></a><span class="lineno"> 1865</span>&#160;                                            f_state = zero;</div>
+<div class="line"><a name="l01866"></a><span class="lineno"> 1866</span>&#160;                                            o = p;</div>
+<div class="line"><a name="l01867"></a><span class="lineno"> 1867</span>&#160;                                        }</div>
+<div class="line"><a name="l01868"></a><span class="lineno"> 1868</span>&#160;                                        p++;</div>
+<div class="line"><a name="l01869"></a><span class="lineno"> 1869</span>&#160;                                        <span class="keywordflow">break</span>;</div>
+<div class="line"><a name="l01870"></a><span class="lineno"> 1870</span>&#160;                                    <span class="keywordflow">case</span> zero: <span class="comment">// if a non 0 is found (e.g. 1.00004) remove the earlier recorded 0 position and look for more trailing 0s</span></div>
+<div class="line"><a name="l01871"></a><span class="lineno"> 1871</span>&#160;                                        <span class="keywordflow">if</span> (ch != <span class="charliteral">&#39;0&#39;</span>)</div>
+<div class="line"><a name="l01872"></a><span class="lineno"> 1872</span>&#160;                                        {</div>
+<div class="line"><a name="l01873"></a><span class="lineno"> 1873</span>&#160;                                            o = <span class="keyword">nullptr</span>;</div>
+<div class="line"><a name="l01874"></a><span class="lineno"> 1874</span>&#160;                                            f_state = decp;</div>
+<div class="line"><a name="l01875"></a><span class="lineno"> 1875</span>&#160;                                        }</div>
+<div class="line"><a name="l01876"></a><span class="lineno"> 1876</span>&#160;                                        p++;</div>
+<div class="line"><a name="l01877"></a><span class="lineno"> 1877</span>&#160;                                        <span class="keywordflow">break</span>;</div>
+<div class="line"><a name="l01878"></a><span class="lineno"> 1878</span>&#160;                                }</div>
+<div class="line"><a name="l01879"></a><span class="lineno"> 1879</span>&#160;                            }</div>
+<div class="line"><a name="l01880"></a><span class="lineno"> 1880</span>&#160;                            <span class="keywordflow">if</span> (o != <span class="keyword">nullptr</span>) <span class="comment">// if any trailing 0s are found, terminate the string where they begin</span></div>
+<div class="line"><a name="l01881"></a><span class="lineno"> 1881</span>&#160;                                *o = <span class="charliteral">&#39;\0&#39;</span>;</div>
+<div class="line"><a name="l01882"></a><span class="lineno"> 1882</span>&#160;                            out += outbuf;</div>
+<div class="line"><a name="l01883"></a><span class="lineno"> 1883</span>&#160;<span class="preprocessor">#undef MSC_COMPATIBLE_SPRINTF</span></div>
+<div class="line"><a name="l01884"></a><span class="lineno"> 1884</span>&#160;                        }</div>
+<div class="line"><a name="l01885"></a><span class="lineno"> 1885</span>&#160;                        <span class="keywordflow">else</span> <span class="keywordflow">if</span> (v.nt == num_type::Signed_integer)</div>
+<div class="line"><a name="l01886"></a><span class="lineno"> 1886</span>&#160;                        {</div>
+<div class="line"><a name="l01887"></a><span class="lineno"> 1887</span>&#160;                            out += std::to_string(v.num.si);</div>
+<div class="line"><a name="l01888"></a><span class="lineno"> 1888</span>&#160;                        }</div>
+<div class="line"><a name="l01889"></a><span class="lineno"> 1889</span>&#160;                        <span class="keywordflow">else</span></div>
+<div class="line"><a name="l01890"></a><span class="lineno"> 1890</span>&#160;                        {</div>
+<div class="line"><a name="l01891"></a><span class="lineno"> 1891</span>&#160;                            out += std::to_string(v.num.ui);</div>
+<div class="line"><a name="l01892"></a><span class="lineno"> 1892</span>&#160;                        }</div>
+<div class="line"><a name="l01893"></a><span class="lineno"> 1893</span>&#160;                    }</div>
+<div class="line"><a name="l01894"></a><span class="lineno"> 1894</span>&#160;                    <span class="keywordflow">break</span>;</div>
+<div class="line"><a name="l01895"></a><span class="lineno"> 1895</span>&#160;                    <span class="keywordflow">case</span> type::String: dump_string(v.s, out); <span class="keywordflow">break</span>;</div>
+<div class="line"><a name="l01896"></a><span class="lineno"> 1896</span>&#160;                    <span class="keywordflow">case</span> type::List:</div>
+<div class="line"><a name="l01897"></a><span class="lineno"> 1897</span>&#160;                    {</div>
+<div class="line"><a name="l01898"></a><span class="lineno"> 1898</span>&#160;                        out.push_back(<span class="charliteral">&#39;[&#39;</span>);</div>
+<div class="line"><a name="l01899"></a><span class="lineno"> 1899</span>&#160;                        <span class="keywordflow">if</span> (v.l)</div>
+<div class="line"><a name="l01900"></a><span class="lineno"> 1900</span>&#160;                        {</div>
+<div class="line"><a name="l01901"></a><span class="lineno"> 1901</span>&#160;                            <span class="keywordtype">bool</span> first = <span class="keyword">true</span>;</div>
+<div class="line"><a name="l01902"></a><span class="lineno"> 1902</span>&#160;                            <span class="keywordflow">for</span> (<span class="keyword">auto</span>&amp; x : *v.l)</div>
+<div class="line"><a name="l01903"></a><span class="lineno"> 1903</span>&#160;                            {</div>
+<div class="line"><a name="l01904"></a><span class="lineno"> 1904</span>&#160;                                <span class="keywordflow">if</span> (!first)</div>
+<div class="line"><a name="l01905"></a><span class="lineno"> 1905</span>&#160;                                {</div>
+<div class="line"><a name="l01906"></a><span class="lineno"> 1906</span>&#160;                                    out.push_back(<span class="charliteral">&#39;,&#39;</span>);</div>
+<div class="line"><a name="l01907"></a><span class="lineno"> 1907</span>&#160;                                }</div>
+<div class="line"><a name="l01908"></a><span class="lineno"> 1908</span>&#160;                                first = <span class="keyword">false</span>;</div>
+<div class="line"><a name="l01909"></a><span class="lineno"> 1909</span>&#160;                                dump_internal(x, out);</div>
+<div class="line"><a name="l01910"></a><span class="lineno"> 1910</span>&#160;                            }</div>
+<div class="line"><a name="l01911"></a><span class="lineno"> 1911</span>&#160;                        }</div>
+<div class="line"><a name="l01912"></a><span class="lineno"> 1912</span>&#160;                        out.push_back(<span class="charliteral">&#39;]&#39;</span>);</div>
+<div class="line"><a name="l01913"></a><span class="lineno"> 1913</span>&#160;                    }</div>
+<div class="line"><a name="l01914"></a><span class="lineno"> 1914</span>&#160;                    <span class="keywordflow">break</span>;</div>
+<div class="line"><a name="l01915"></a><span class="lineno"> 1915</span>&#160;                    <span class="keywordflow">case</span> type::Object:</div>
+<div class="line"><a name="l01916"></a><span class="lineno"> 1916</span>&#160;                    {</div>
+<div class="line"><a name="l01917"></a><span class="lineno"> 1917</span>&#160;                        out.push_back(<span class="charliteral">&#39;{&#39;</span>);</div>
+<div class="line"><a name="l01918"></a><span class="lineno"> 1918</span>&#160;                        <span class="keywordflow">if</span> (v.o)</div>
+<div class="line"><a name="l01919"></a><span class="lineno"> 1919</span>&#160;                        {</div>
+<div class="line"><a name="l01920"></a><span class="lineno"> 1920</span>&#160;                            <span class="keywordtype">bool</span> first = <span class="keyword">true</span>;</div>
+<div class="line"><a name="l01921"></a><span class="lineno"> 1921</span>&#160;                            <span class="keywordflow">for</span> (<span class="keyword">auto</span>&amp; kv : *v.o)</div>
+<div class="line"><a name="l01922"></a><span class="lineno"> 1922</span>&#160;                            {</div>
+<div class="line"><a name="l01923"></a><span class="lineno"> 1923</span>&#160;                                <span class="keywordflow">if</span> (!first)</div>
+<div class="line"><a name="l01924"></a><span class="lineno"> 1924</span>&#160;                                {</div>
+<div class="line"><a name="l01925"></a><span class="lineno"> 1925</span>&#160;                                    out.push_back(<span class="charliteral">&#39;,&#39;</span>);</div>
+<div class="line"><a name="l01926"></a><span class="lineno"> 1926</span>&#160;                                }</div>
+<div class="line"><a name="l01927"></a><span class="lineno"> 1927</span>&#160;                                first = <span class="keyword">false</span>;</div>
+<div class="line"><a name="l01928"></a><span class="lineno"> 1928</span>&#160;                                dump_string(kv.first, out);</div>
+<div class="line"><a name="l01929"></a><span class="lineno"> 1929</span>&#160;                                out.push_back(<span class="charliteral">&#39;:&#39;</span>);</div>
+<div class="line"><a name="l01930"></a><span class="lineno"> 1930</span>&#160;                                dump_internal(kv.second, out);</div>
+<div class="line"><a name="l01931"></a><span class="lineno"> 1931</span>&#160;                            }</div>
+<div class="line"><a name="l01932"></a><span class="lineno"> 1932</span>&#160;                        }</div>
+<div class="line"><a name="l01933"></a><span class="lineno"> 1933</span>&#160;                        out.push_back(<span class="charliteral">&#39;}&#39;</span>);</div>
+<div class="line"><a name="l01934"></a><span class="lineno"> 1934</span>&#160;                    }</div>
+<div class="line"><a name="l01935"></a><span class="lineno"> 1935</span>&#160;                    <span class="keywordflow">break</span>;</div>
+<div class="line"><a name="l01936"></a><span class="lineno"> 1936</span>&#160; </div>
+<div class="line"><a name="l01937"></a><span class="lineno"> 1937</span>&#160;                    <span class="keywordflow">case</span> type::Function:</div>
+<div class="line"><a name="l01938"></a><span class="lineno"> 1938</span>&#160;                        out += <span class="stringliteral">&quot;custom function&quot;</span>;</div>
+<div class="line"><a name="l01939"></a><span class="lineno"> 1939</span>&#160;                        <span class="keywordflow">break</span>;</div>
+<div class="line"><a name="l01940"></a><span class="lineno"> 1940</span>&#160;                }</div>
+<div class="line"><a name="l01941"></a><span class="lineno"> 1941</span>&#160;            }</div>
+<div class="line"><a name="l01942"></a><span class="lineno"> 1942</span>&#160; </div>
+<div class="line"><a name="l01943"></a><span class="lineno"> 1943</span>&#160;        <span class="keyword">public</span>:</div>
+<div class="line"><a name="l01944"></a><span class="lineno"> 1944</span>&#160;            std::string dump()<span class="keyword"> const</span></div>
+<div class="line"><a name="l01945"></a><span class="lineno"> 1945</span>&#160;<span class="keyword">            </span>{</div>
+<div class="line"><a name="l01946"></a><span class="lineno"> 1946</span>&#160;                std::string ret;</div>
+<div class="line"><a name="l01947"></a><span class="lineno"> 1947</span>&#160;                ret.reserve(<a class="code" href="classcrow_1_1json_1_1wvalue.html#a5af23d208ed3d066a0fb5339350978c6">estimate_length</a>());</div>
+<div class="line"><a name="l01948"></a><span class="lineno"> 1948</span>&#160;                dump_internal(*<span class="keyword">this</span>, ret);</div>
+<div class="line"><a name="l01949"></a><span class="lineno"> 1949</span>&#160;                <span class="keywordflow">return</span> ret;</div>
+<div class="line"><a name="l01950"></a><span class="lineno"> 1950</span>&#160;            }</div>
+<div class="line"><a name="l01951"></a><span class="lineno"> 1951</span>&#160;        };</div>
 <div class="line"><a name="l01952"></a><span class="lineno"> 1952</span>&#160; </div>
-<div class="line"><a name="l01953"></a><span class="lineno"> 1953</span>&#160;        <span class="comment">//std::vector&lt;asio::const_buffer&gt; dump_ref(wvalue&amp; v)</span></div>
-<div class="line"><a name="l01954"></a><span class="lineno"> 1954</span>&#160;        <span class="comment">//{</span></div>
-<div class="line"><a name="l01955"></a><span class="lineno"> 1955</span>&#160;        <span class="comment">//}</span></div>
-<div class="line"><a name="l01956"></a><span class="lineno"> 1956</span>&#160;    } <span class="comment">// namespace json</span></div>
-<div class="line"><a name="l01957"></a><span class="lineno"> 1957</span>&#160;} <span class="comment">// namespace crow</span></div>
+<div class="line"><a name="l01953"></a><span class="lineno"> 1953</span>&#160; </div>
+<div class="line"><a name="l01954"></a><span class="lineno"> 1954</span>&#160; </div>
+<div class="line"><a name="l01955"></a><span class="lineno"> 1955</span>&#160;        <span class="comment">//std::vector&lt;asio::const_buffer&gt; dump_ref(wvalue&amp; v)</span></div>
+<div class="line"><a name="l01956"></a><span class="lineno"> 1956</span>&#160;        <span class="comment">//{</span></div>
+<div class="line"><a name="l01957"></a><span class="lineno"> 1957</span>&#160;        <span class="comment">//}</span></div>
+<div class="line"><a name="l01958"></a><span class="lineno"> 1958</span>&#160;    } <span class="comment">// namespace json</span></div>
+<div class="line"><a name="l01959"></a><span class="lineno"> 1959</span>&#160;} <span class="comment">// namespace crow</span></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <div class="ttc" id="astructcrow_1_1json_1_1detail_1_1r__string_html_adeb368c4c0dfeb349bb32129e8dee23b"><div class="ttname"><a href="structcrow_1_1json_1_1detail_1_1r__string.html#adeb368c4c0dfeb349bb32129e8dee23b">crow::json::detail::r_string::e_</a></div><div class="ttdeci">char * e_</div><div class="ttdoc">End.</div><div class="ttdef"><b>Definition:</b> json.h:170</div></div>
@@ -2084,7 +2086,7 @@ $(document).ready(function(){initNavTree('json_8h_source.html',''); initResizabl
 			<ul>
 				<li class="navelem"><a class="el" href="dir_d44c64559bbebec7f509842c48db8b23.html">include</a></li><li class="navelem"><a class="el" href="dir_d22c1cb87b72f01e1a7f207eb3bfd1ca.html">crow</a></li><li class="navelem"><b>json.h</b></li>
 				<li class="footer">
-					Generated on Mon Jun 20 2022 for Crow by <a href="http://www.doxygen.org/index.html">
+					Generated on Tue Jun 21 2022 for Crow by <a href="http://www.doxygen.org/index.html">
 					<img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.17.
 					Dark theme by <a href="http://majerle.eu" target="_new">Tilen Majerle</a>. Edited by <a href="https://github.com/The-EDev" target="_new">Farook Al-Sammarraie</a>. All rights reserved.
 				</li>

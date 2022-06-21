@@ -14,7 +14,7 @@ var classcrow_1_1_web_socket_rule =
     [ "accept_handler_", "classcrow_1_1_web_socket_rule.html#a08de36976f908322a8ee86edb4a8ba23", null ],
     [ "app_", "classcrow_1_1_web_socket_rule.html#aab0e3390b3306fdc048f9fadaed50195", null ],
     [ "close_handler_", "classcrow_1_1_web_socket_rule.html#a68d2f5f5d6a6185bbb1b0faf8d8bbb12", null ],
-    [ "error_handler_", "classcrow_1_1_web_socket_rule.html#acc9f408edf7afd4c5d75799729c46b09", null ],
+    [ "error_handler_", "classcrow_1_1_web_socket_rule.html#ae8d7bf00757eb5727fc5d0eb479cc9df", null ],
     [ "max_payload_", "classcrow_1_1_web_socket_rule.html#a9ee993bdbed14eccd5232ba8cc472d52", null ],
     [ "max_payload_override_", "classcrow_1_1_web_socket_rule.html#a4f169c0aedfa2161fb2cdd8e456fb5c0", null ],
     [ "message_handler_", "classcrow_1_1_web_socket_rule.html#a9ecbb3cbccb90163fabcea7867b8f9f9", null ],

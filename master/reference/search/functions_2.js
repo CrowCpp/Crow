@@ -6,6 +6,6 @@ var searchData=
   ['close_289',['close',['../classcrow_1_1websocket_1_1_connection.html#a0be6d809da4a96c75865748d3b14d22f',1,'crow::websocket::Connection']]],
   ['complete_5frequest_290',['complete_request',['../classcrow_1_1_connection.html#aa40019a3731cc55174401e3b31602524',1,'crow::Connection']]],
   ['concurrency_291',['concurrency',['../classcrow_1_1_crow.html#a41686e6025705c1ab379b5ec71bbf983',1,'crow::Crow']]],
-  ['connection_292',['Connection',['../classcrow_1_1websocket_1_1_connection.html#afe5d29511594e015b7dc30db6909a80c',1,'crow::websocket::Connection']]],
+  ['connection_292',['Connection',['../classcrow_1_1websocket_1_1_connection.html#ae13084d8ea772f54bf3397a9fab107d8',1,'crow::websocket::Connection']]],
   ['crow_293',['Crow',['../classcrow_1_1_crow.html#abb69a7bf5d4a791a398c838d37086d94',1,'crow::Crow']]]
 ];
