@@ -17,23 +17,19 @@
 #include <type_traits>
 #include <functional>
 
-// use variant/filesystem with C++17 and newer
-// fallback to boost otherwise
-#ifdef CROW_CAN_USE_CPP17
+// REQUIRE C++17
 #include <variant>
-#else
-#include "boost/variant.hpp"
-#endif
 
 namespace crow
 {
-
     namespace detail
     {
-        using multi_value_types = black_magic::S<bool, int32_t, int64_t, uint64_t, double, std::string>;
+        using multi_value_types = black_magic::S<bool, int64_t, double, std::string>;
+
+        template<typename T>
+        using wrap_integral_t = std::conditional_t<std::is_integral_v<T>, int64_t, T>;
 
         /// A multi_value is a safe variant wrapper with json conversion support
-#ifdef CROW_CAN_USE_CPP17
         struct multi_value
         {
             json::wvalue json() const
@@ -59,91 +55,21 @@ namespace crow
                 // clang-format on
             }
 
-            template<typename T>
-            T get(const T& fallback)
+            template<typename T, typename RT = wrap_integral_t<T>>
+            RT get(const T& fallback)
             {
-                if (const T* val = std::get_if<T>(&v_)) return *val;
+                if (const RT* val = std::get_if<RT>(&v_)) return *val;
                 return fallback;
             }
 
-            template<typename T>
+            template<typename T, typename RT = wrap_integral_t<T>>
             void set(T val)
             {
-                v_ = std::move(val);
+                v_ = RT(std::move(val));
             }
 
             typename multi_value_types::rebind<std::variant> v_;
         };
-#else
-        struct multi_value
-        {
-            multi_value():
-              v_(false) {}
-
-            template<typename T, typename = typename std::enable_if<!std::is_same<T, multi_value>::value>::type>
-            multi_value(const T& t):
-              v_(t)
-            {}
-
-            struct json_visitor : public boost::static_visitor<json::wvalue>
-            {
-                template<typename T>
-                json::wvalue operator()(const T& t) const
-                {
-                    return json::wvalue(t);
-                }
-            };
-
-            struct string_visitor : public boost::static_visitor<std::string>
-            {
-                template<typename T>
-                typename std::enable_if<!std::is_same<std::string, T>::value, std::string>::type
-                  operator()(const T& t) const
-                {
-                    return std::to_string(t);
-                }
-
-                std::string operator()(const std::string& s) const { return s; }
-            };
-
-            template<typename T>
-            struct get_visitor : public boost::static_visitor<T>
-            {
-                get_visitor(const T& fallback):
-                  fallback(fallback) {}
-
-                template<typename U>
-                typename std::enable_if<!std::is_same<T, U>::value, T>::type
-                  operator()(const U&) const
-                {
-                    return fallback;
-                }
-
-                T operator()(const T& t) const { return t; }
-                const T& fallback;
-            };
-
-            json::wvalue json() const { return boost::apply_visitor(json_visitor(), v_); }
-
-            static multi_value from_json(const json::rvalue&);
-
-            std::string string() const { return boost::apply_visitor(string_visitor(), v_); }
-
-            template<typename T>
-            T get(const T& fallback)
-            {
-                return boost::apply_visitor(get_visitor<T>(fallback), v_);
-            }
-
-            template<typename T>
-            void set(T val)
-            {
-                v_ = std::move(val);
-            }
-
-            typename multi_value_types::rebind<boost::variant> v_;
-        };
-#endif
 
         inline multi_value multi_value::from_json(const json::rvalue& rv)
         {
@@ -155,7 +81,7 @@ namespace crow
                     if (rv.nt() == num_type::Floating_point)
                         return multi_value{rv.d()};
                     else if (rv.nt() == num_type::Unsigned_integer)
-                        return multi_value{rv.u()};
+                        return multi_value{int64_t(rv.u())};
                     else
                         return multi_value{rv.i()};
                 }
@@ -343,6 +269,8 @@ namespace crow
                 CROW_LOG_ERROR << "Exception occurred during session load";
                 return;
             }
+
+
 
             ctx.node = node;
             cache_[session_id] = node;
