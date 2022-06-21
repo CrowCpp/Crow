@@ -11,6 +11,5 @@
         {
             "name": "zlib"
         }
-    ],
-    "builtin-baseline": "44d94c2edbd44f0c01d66c2ad95eb6982a9a61bc"
+    ]
 }

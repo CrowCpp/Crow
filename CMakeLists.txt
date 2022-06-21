@@ -59,10 +59,7 @@ target_link_libraries(Crow
 	INTERFACE
 		Threads::Threads
 )
-target_include_directories(Crow
-	INTERFACE
-		${ASIO_INCLUDE_DIR}
-)
+include_directories(Crow INTERFACE ${ASIO_INCLUDE_DIR})
 
 if("compression" IN_LIST CROW_FEATURES)
 	find_package(ZLIB REQUIRED)
