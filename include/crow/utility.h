@@ -12,6 +12,10 @@
 
 #include "crow/settings.h"
 
+#ifdef CROW_CAN_USE_CPP17
+#include <filesystem>
+#endif
+
 // TODO(EDev): Adding C++20's [[likely]] and [[unlikely]] attributes might be useful
 #if defined(__GNUG__) || defined(__clang__)
 #define CROW_LIKELY(X) __builtin_expect(!!(X), 1)
@@ -780,16 +784,30 @@ namespace crow
                 }
             }
         }
-    
-        inline std::string random_alphanum(std::size_t size) {
-            static const char alphabet[] = "0123456789abcdefghijklmnopqrstuvwxyz";
+
+        inline std::string random_alphanum(std::size_t size)
+        {
+            static const char alphabet[] = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
             std::random_device dev;
             std::mt19937 rng(dev());
-            std::uniform_int_distribution<std::mt19937::result_type> dist(0, sizeof(alphabet)-2);
+            std::uniform_int_distribution<std::mt19937::result_type> dist(0, sizeof(alphabet) - 2);
             std::string out;
             out.reserve(size);
-            for (std::size_t i = 0; i < size; i++) out.push_back(alphabet[dist(rng)]);
+            for (std::size_t i = 0; i < size; i++)
+                out.push_back(alphabet[dist(rng)]);
             return out;
+        }
+
+        inline std::string join_path(std::string path, const std::string& fname)
+        {
+#ifdef CROW_CAN_USE_CPP17
+            return std::filesystem::path(path) / fname;
+#else
+            if (!(path.back() == '/' || path.back() == '\\'))
+                path += '/';
+            path += fname;
+            return path;
+#endif
         }
 
     } // namespace utility

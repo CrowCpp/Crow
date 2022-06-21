@@ -21,10 +21,8 @@
 // fallback to boost otherwise
 #ifdef CROW_CAN_USE_CPP17
 #include <variant>
-#include <filesystem>
 #else
 #include "boost/variant.hpp"
-#include "boost/filesystem.hpp"
 #endif
 
 namespace crow
@@ -34,7 +32,7 @@ namespace crow
     {
         using multi_value_types = black_magic::S<bool, int32_t, int64_t, uint64_t, double, std::string>;
 
-        /// A multi_value is a safe variant wrapper with json support
+        /// A multi_value is a safe variant wrapper with json conversion support
 #ifdef CROW_CAN_USE_CPP17
         struct multi_value
         {
@@ -156,6 +154,8 @@ namespace crow
                 {
                     if (rv.nt() == num_type::Floating_point)
                         return multi_value{rv.d()};
+                    else if (rv.nt() == num_type::Unsigned_integer)
+                        return multi_value{rv.u()};
                     else
                         return multi_value{rv.i()};
                 }
@@ -170,6 +170,7 @@ namespace crow
         struct CachedSession
         {
             std::string session_id;
+            std::string requested_session_id;
             std::unordered_map<std::string, multi_value> entries;
 
             // values that were changed after last load
@@ -206,7 +207,7 @@ namespace crow
             }
 
             // Check wheter this session is already present
-            bool valid() { return bool(node); }
+            bool exists() { return bool(node); }
 
             // Get a value by key or fallback if it doesn't exist or is of another type
             template<typename T>
@@ -218,6 +219,14 @@ namespace crow
                 auto it = node->entries.find(key);
                 if (it != node->entries.end()) return it->second.get<T>(fallback);
                 return fallback;
+            }
+
+            // Request a special session id for the store
+            // WARNING: it does not check for collisions!
+            void preset_id(std::string id)
+            {
+                check_node();
+                node->requested_session_id = std::move(id);
             }
 
             // Set a value by key
@@ -348,7 +357,12 @@ namespace crow
             // generate new id
             if (ctx.node->session_id == "")
             {
-                ctx.node->session_id = next_id();
+                // check for requested id
+                ctx.node->session_id = std::move(ctx.node->requested_session_id);
+                if (ctx.node->session_id == "")
+                {
+                    ctx.node->session_id = utility::random_alphanum(id_length_);
+                }
                 auto& cookies = all_ctx.template get<CookieParser>();
                 store_id(cookies, ctx.node->session_id);
             }
@@ -452,12 +466,7 @@ namespace crow
     // FileStore stores all data as json files in a folder
     struct FileStore
     {
-#ifdef CROW_CAN_USE_CPP17
-        using path_t = std::filesystem::path;
-#else
-        using path_t = std::string;
-#endif
-        FileStore(const path_t& folder):
+        FileStore(const std::string& folder):
           path(folder)
         {}
 
@@ -485,12 +494,7 @@ namespace crow
 
         std::string get_filename(const std::string& key)
         {
-#ifdef CROW_CAN_USE_CPP17
-            return path / (key + ".json");
-#else
-            using namespace boost::filesystem;
-            return (path / (key + ".json")).string();
-#endif
+            return utility::join_path(path, key + ".json");
         }
 
         bool contains(const std::string& key)
@@ -499,7 +503,7 @@ namespace crow
             return file.good();
         }
 
-        path_t path;
+        std::string path;
     };
 
 } // namespace crow

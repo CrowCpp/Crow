@@ -1,7 +1,8 @@
 #include "crow.h"
 #include "crow/middlewares/session.h"
 
-crow::response redirect() {
+crow::response redirect()
+{
     crow::response rsp;
     rsp.redirect("/");
     return rsp;
@@ -10,7 +11,7 @@ crow::response redirect() {
 int main()
 {
     // Choose a storage kind for:
-    // - InMemoryStore stores all entries in memory 
+    // - InMemoryStore stores all entries in memory
     // - FileStore stores all entries in json files
     using Session = crow::SessionMiddleware<crow::InMemoryStore>;
 
@@ -18,16 +19,15 @@ int main()
     // Check out the existing ones for guidelines
 
     // Make sure the CookieParser is registered before the Session
-    crow::App<crow::CookieParser, Session> app {Session{
-        // choose a secret key for sigining cookies
-        "MY_SECRET_KEY", 
-        // customize cookies
-        crow::CookieParser::Cookie("session").max_age(/*one day*/24 * 60 * 60).path("/"),
-        // set session_id length (small value only for demonstration purposes)
-        4, 
-        // init the store
-        crow::InMemoryStore{}
-    }};
+    crow::App<crow::CookieParser, Session> app{Session{
+      // choose a secret key for sigining sessions ids
+      "MY_SECRET_KEY",
+      // customize cookies
+      crow::CookieParser::Cookie("session").max_age(/*one day*/ 24 * 60 * 60).path("/"),
+      // set session id length (small value only for demonstration purposes)
+      4,
+      // init the store
+      crow::InMemoryStore{}}};
 
     // List all values
     CROW_ROUTE(app, "/")
@@ -37,13 +37,16 @@ int main()
 
         // atomically increase number of views
         // if "views" doesn't exist, it'll be default initialized
-        session.apply("views", [](int v){ return v + 1; });
+        session.apply("views", [](int v) {
+            return v + 1;
+        });
 
         // get all currently present keys
         auto keys = session.keys();
 
         std::string out;
-        for (const auto& key: keys) out += "<p> " + key + " = " + session.string(key) + "</p>";
+        for (const auto& key : keys)
+            out += "<p> " + key + " = " + session.string(key) + "</p>";
         return out;
     });
 
@@ -96,18 +99,34 @@ int main()
 
         std::lock_guard<std::recursive_mutex> l(session.mutex());
 
-        if (session.get("views", 0) % 2 == 0) {
+        if (session.get("views", 0) % 2 == 0)
+        {
             session.set("even", true);
-        } else {
+        }
+        else
+        {
             session.evict("even");
         }
 
         return redirect();
     });
 
+    // Manually hand out session ids
+    // This allows sharing sessions between devices or binding them to users, etc.
+    // Session ids are signed so they don't have to be random tokens
+    CROW_ROUTE(app, "/login")
+    ([&](const crow::request& req) {
+        auto& session = app.get_context<Session>(req);
+
+        if (!session.exists())
+        {
+            session.preset_id("user_email@email.com");
+        }
+    });
+
     app.port(18080)
-        //.multithreaded()
-        .run();
+      //.multithreaded()
+      .run();
 
     return 0;
 }
