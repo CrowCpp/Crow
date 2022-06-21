@@ -16,6 +16,9 @@
 #include <atomic>
 #include <type_traits>
 #include <functional>
+#include <chrono>
+#include <queue>
+#include <cstdio>
 
 // REQUIRE C++17
 #include <variant>
@@ -92,6 +95,48 @@ namespace crow
             }
         }
 
+        /// Expiration tracker
+        struct ExpirationTracker
+        {
+            using DataPair = std::pair<uint64_t /*time*/, std::string /*key*/>;
+
+            void add(std::string key, uint64_t time)
+            {
+                auto it = times_.find(key);
+                if (it != times_.end()) remove(key);
+                times_[key] = time;
+                queue_.insert({time, std::move(key)});
+            }
+
+            void remove(const std::string& key)
+            {
+                auto it = times_.find(key);
+                if (it != times_.end())
+                {
+                    queue_.erase({it->second, key});
+                    times_.erase(it);
+                }
+            }
+
+            uint64_t peek_first() const
+            {
+                if (queue_.empty()) return std::numeric_limits<uint64_t>::max();
+                return queue_.begin()->first;
+            }
+
+            std::string pop_first()
+            {
+                auto it = times_.find(queue_.begin()->second);
+                auto key = it->first;
+                times_.erase(it);
+                queue_.erase(queue_.begin());
+                return key;
+            }
+
+            std::set<DataPair> queue_;
+            std::unordered_map<std::string, uint64_t> times_;
+        };
+
         /// CachedSessions are shared across requests
         struct CachedSession
         {
@@ -103,6 +148,7 @@ namespace crow
             std::unordered_set<std::string> dirty;
 
             void* store_data;
+            bool requested_refresh;
 
             // number for references held - used for correctly destroying the cache
             // no need to be atomic, all SessionMiddleware accesses are synchronized
@@ -153,6 +199,14 @@ namespace crow
             {
                 check_node();
                 node->requested_session_id = std::move(id);
+            }
+
+            // Delay expiration by issuing another cookie with an updated expiration time
+            // and notifying the store
+            void refresh_expiration()
+            {
+                if (!node) return;
+                node->requested_refresh = true;
             }
 
             // Set a value by key
@@ -223,16 +277,21 @@ namespace crow
         };
 
         template<typename... Ts>
-        SessionMiddleware(const std::string& secret_key, CookieParser::Cookie cookie, int id_length, Ts... ts):
-          secret_key_(secret_key), id_length_(id_length), cookie_(cookie), store_(std::forward<Ts>(ts)...),
-          mutex_(new std::mutex{})
+        SessionMiddleware(const std::string& secret_key,
+                          CookieParser::Cookie cookie,
+                          int id_length,
+                          Ts... ts):
+          secret_key_(secret_key),
+          id_length_(id_length), cookie_(cookie),
+          store_(std::forward<Ts>(ts)...), mutex_(new std::mutex{})
         {}
 
         template<typename... Ts>
         SessionMiddleware(const std::string& secret_key, Ts... ts):
           SessionMiddleware(secret_key,
                             CookieParser::Cookie("session").path("/").max_age(/*month*/ 30 * 24 * 60 * 60),
-                            10, std::forward<Ts>(ts)...)
+                            /*id_length */ 10,
+                            std::forward<Ts>(ts)...)
         {}
 
         template<typename AllContext>
@@ -270,8 +329,6 @@ namespace crow
                 return;
             }
 
-
-
             ctx.node = node;
             cache_[session_id] = node;
         }
@@ -281,6 +338,7 @@ namespace crow
         {
             lock l(*mutex_);
             if (!ctx.node || --ctx.node->referrers > 0) return;
+            ctx.node->requested_refresh |= ctx.node->session_id == "";
 
             // generate new id
             if (ctx.node->session_id == "")
@@ -291,12 +349,16 @@ namespace crow
                 {
                     ctx.node->session_id = utility::random_alphanum(id_length_);
                 }
-                auto& cookies = all_ctx.template get<CookieParser>();
-                store_id(cookies, ctx.node->session_id);
             }
             else
             {
                 cache_.erase(ctx.node->session_id);
+            }
+
+            if (ctx.node->requested_refresh)
+            {
+                auto& cookies = all_ctx.template get<CookieParser>();
+                store_id(cookies, ctx.node->session_id);
             }
 
             try
@@ -394,12 +456,51 @@ namespace crow
     // FileStore stores all data as json files in a folder
     struct FileStore
     {
-        FileStore(const std::string& folder):
-          path(folder)
-        {}
+        FileStore(const std::string& folder, uint64_t expiration_seconds = /*month*/ 30 * 24 * 60 * 60):
+          path_(folder), expiration_seconds_(expiration_seconds)
+        {
+            std::ifstream ifs(get_filename(".expirations", false));
+
+            auto current_ts = chrono_time();
+            std::string key;
+            uint64_t time;
+            while (ifs >> key >> time)
+            {
+                if (current_ts > time)
+                {
+                    evict(key);
+                }
+                else
+                {
+                    expirations_.add(key, time);
+                }
+            }
+        }
+
+        ~FileStore()
+        {
+            std::ofstream ofs(get_filename(".expirations", false), std::ios::trunc);
+            for (const auto& p : expirations_.queue_)
+                ofs << p.second << " " << p.first << "\n";
+        }
+
+        // Delete expired entries
+        // At most 3 to prevent freezes
+        void handle_expired()
+        {
+            int deleted = 0;
+            auto current_ts = chrono_time();
+            while (current_ts > expirations_.peek_first() && deleted < 3)
+            {
+                evict(expirations_.pop_first());
+                deleted++;
+            }
+        }
 
         void load(detail::CachedSession& cn)
         {
+            handle_expired();
+
             std::ifstream file(get_filename(cn.session_id));
 
             std::stringstream buffer;
@@ -411,6 +512,8 @@ namespace crow
 
         void save(detail::CachedSession& cn)
         {
+            if (cn.requested_refresh)
+                expirations_.add(cn.session_id, chrono_time() + expiration_seconds_);
             if (cn.dirty.empty()) return;
 
             std::ofstream file(get_filename(cn.session_id));
@@ -420,9 +523,9 @@ namespace crow
             file << jw.dump() << std::flush;
         }
 
-        std::string get_filename(const std::string& key)
+        std::string get_filename(const std::string& key, bool suffix = true)
         {
-            return utility::join_path(path, key + ".json");
+            return utility::join_path(path_, key + (suffix ? ".json" : ""));
         }
 
         bool contains(const std::string& key)
@@ -431,7 +534,21 @@ namespace crow
             return file.good();
         }
 
-        std::string path;
+        void evict(const std::string& key)
+        {
+            std::remove(get_filename(key).c_str());
+        }
+
+        uint64_t chrono_time() const
+        {
+            return std::chrono::duration_cast<std::chrono::seconds>(
+                     std::chrono::system_clock::now().time_since_epoch())
+              .count();
+        }
+
+        std::string path_;
+        uint64_t expiration_seconds_;
+        detail::ExpirationTracker expirations_;
     };
 
 } // namespace crow
