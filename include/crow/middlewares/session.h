@@ -9,28 +9,35 @@
 
 #include <unordered_map>
 #include <unordered_set>
+#include <set>
+#include <queue>
+
 #include <memory>
 #include <string>
+#include <cstdio>
+#include <mutex>
+
 #include <fstream>
 #include <sstream>
-#include <atomic>
+
 #include <type_traits>
 #include <functional>
 #include <chrono>
-#include <queue>
-#include <cstdio>
 
 // REQUIRE C++17
 #include <variant>
 
+namespace {
+    // change all integral values to int64_t
+    template<typename T>
+    using wrap_integral_t = std::conditional_t<std::is_integral_v<T>, int64_t, T>;
+}
+
 namespace crow
 {
-    namespace detail
+    namespace session
     {
         using multi_value_types = black_magic::S<bool, int64_t, double, std::string>;
-
-        template<typename T>
-        using wrap_integral_t = std::conditional_t<std::is_integral_v<T>, int64_t, T>;
 
         /// A multi_value is a safe variant wrapper with json conversion support
         struct multi_value
@@ -95,11 +102,13 @@ namespace crow
             }
         }
 
-        /// Expiration tracker
+        /// Expiration tracker keeps track of soonest-to-expire keys
         struct ExpirationTracker
         {
             using DataPair = std::pair<uint64_t /*time*/, std::string /*key*/>;
 
+            /// Add key with time to tracker.
+            /// If the key is already present, it will be updated
             void add(std::string key, uint64_t time)
             {
                 auto it = times_.find(key);
@@ -118,6 +127,7 @@ namespace crow
                 }
             }
 
+            /// Get expiration time of soonest-to-expire entry
             uint64_t peek_first() const
             {
                 if (queue_.empty()) return std::numeric_limits<uint64_t>::max();
@@ -133,6 +143,11 @@ namespace crow
                 return key;
             }
 
+            auto begin() const { return queue_.cbegin(); }
+
+            auto end() const { return queue_.cend(); }
+
+        private:
             std::set<DataPair> queue_;
             std::unordered_map<std::string, uint64_t> times_;
         };
@@ -141,21 +156,20 @@ namespace crow
         struct CachedSession
         {
             std::string session_id;
-            std::string requested_session_id;
-            std::unordered_map<std::string, multi_value> entries;
+            std::string requested_session_id; // session hasn't been created yet, but a key was requested
 
-            // values that were changed after last load
-            std::unordered_set<std::string> dirty;
+            std::unordered_map<std::string, multi_value> entries;
+            std::unordered_set<std::string> dirty; // values that were changed after last load
 
             void* store_data;
             bool requested_refresh;
 
-            // number for references held - used for correctly destroying the cache
-            // no need to be atomic, all SessionMiddleware accesses are synchronized
+            // number of references held - used for correctly destroying the cache.
+            // No need to be atomic, all SessionMiddleware accesses are synchronized
             int referrers;
             std::recursive_mutex mutex;
         };
-    }; // namespace detail
+    }; // namespace session
 
     // SessionMiddleware allows storing securely and easily small snippets of user information
     template<typename Store>
@@ -270,10 +284,10 @@ namespace crow
 
             void check_node()
             {
-                if (!node) node = std::make_shared<detail::CachedSession>();
+                if (!node) node = std::make_shared<session::CachedSession>();
             }
 
-            std::shared_ptr<detail::CachedSession> node;
+            std::shared_ptr<session::CachedSession> node;
         };
 
         template<typename... Ts>
@@ -315,7 +329,7 @@ namespace crow
             // check this is a valid entry before loading
             if (!store_.contains(session_id)) return;
 
-            auto node = std::make_shared<detail::CachedSession>();
+            auto node = std::make_shared<session::CachedSession>();
             node->session_id = session_id;
             node->referrers = 1;
 
@@ -424,7 +438,7 @@ namespace crow
 
         // mutexes are immovable
         std::unique_ptr<std::mutex> mutex_;
-        std::unordered_map<std::string, std::shared_ptr<detail::CachedSession>> cache_;
+        std::unordered_map<std::string, std::shared_ptr<session::CachedSession>> cache_;
     };
 
     /// InMemoryStore stores all entries in memory
@@ -432,14 +446,14 @@ namespace crow
     {
         // Load a value into the session cache.
         // A load is always followed by a save, no loads happen consecutively
-        void load(detail::CachedSession& cn)
+        void load(session::CachedSession& cn)
         {
             // load & stores happen sequentially, so moving is safe
             cn.entries = std::move(entries[cn.session_id]);
         }
 
         // Persist session data
-        void save(detail::CachedSession& cn)
+        void save(session::CachedSession& cn)
         {
             entries[cn.session_id] = std::move(cn.entries);
             // cn.dirty is a list of changed keys since the last load
@@ -450,10 +464,11 @@ namespace crow
             return entries.count(key) > 0;
         }
 
-        std::unordered_map<std::string, std::unordered_map<std::string, detail::multi_value>> entries;
+        std::unordered_map<std::string, std::unordered_map<std::string, session::multi_value>> entries;
     };
 
-    // FileStore stores all data as json files in a folder
+    // FileStore stores all data as json files in a folder.
+    // Files are deleted after expiration. Expiration refreshes are automatically picked up.
     struct FileStore
     {
         FileStore(const std::string& folder, uint64_t expiration_seconds = /*month*/ 30 * 24 * 60 * 60):
@@ -480,7 +495,7 @@ namespace crow
         ~FileStore()
         {
             std::ofstream ofs(get_filename(".expirations", false), std::ios::trunc);
-            for (const auto& p : expirations_.queue_)
+            for (const auto& p : expirations_)
                 ofs << p.second << " " << p.first << "\n";
         }
 
@@ -497,7 +512,7 @@ namespace crow
             }
         }
 
-        void load(detail::CachedSession& cn)
+        void load(session::CachedSession& cn)
         {
             handle_expired();
 
@@ -507,10 +522,10 @@ namespace crow
             buffer << file.rdbuf() << std::endl;
 
             for (const auto& p : json::load(buffer.str()))
-                cn.entries[p.key()] = detail::multi_value::from_json(p);
+                cn.entries[p.key()] = session::multi_value::from_json(p);
         }
 
-        void save(detail::CachedSession& cn)
+        void save(session::CachedSession& cn)
         {
             if (cn.requested_refresh)
                 expirations_.add(cn.session_id, chrono_time() + expiration_seconds_);
@@ -548,7 +563,7 @@ namespace crow
 
         std::string path_;
         uint64_t expiration_seconds_;
-        detail::ExpirationTracker expirations_;
+        session::ExpirationTracker expirations_;
     };
 
 } // namespace crow

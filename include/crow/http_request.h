@@ -66,7 +66,7 @@ namespace crow
 
         ///
         /// This is meant to be used with requests of type "application/x-www-form-urlencoded"
-        const query_string get_body_params()
+        const query_string get_body_params() const
         {
             return query_string(body, false);
         }
