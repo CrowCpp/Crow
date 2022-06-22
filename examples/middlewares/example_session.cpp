@@ -122,6 +122,8 @@ int main()
         {
             session.preset_id("user_email@email.com");
         }
+
+        return redirect();
     });
 
     app.port(18080)

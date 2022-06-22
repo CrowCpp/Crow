@@ -32,7 +32,17 @@ namespace
 {
     // change all integral values to int64_t
     template<typename T>
-    using wrap_integral_t = typename std::conditional<std::is_integral<T>::value, int64_t, T>::type;
+    using wrap_integral_t = typename std::conditional<
+      std::is_integral<T>::value,
+      int64_t, T>::type;
+
+    template<typename T>
+    using wrap_char_t = typename std::conditional<
+      std::is_same<typename std::decay<T>::type, char*>::value,
+      std::string, T>::type;
+
+    template<typename T>
+    using wrap_mv_t = wrap_char_t<wrap_integral_t<T>>;
 } // namespace
 
 namespace crow
@@ -69,14 +79,14 @@ namespace crow
                 // clang-format on
             }
 
-            template<typename T, typename RT = wrap_integral_t<T>>
+            template<typename T, typename RT = wrap_mv_t<T>>
             RT get(const T& fallback)
             {
                 if (const RT* val = std::get_if<RT>(&v_)) return *val;
                 return fallback;
             }
 
-            template<typename T, typename RT = wrap_integral_t<T>>
+            template<typename T, typename RT = wrap_mv_t<T>>
             void set(T val)
             {
                 v_ = RT(std::move(val));
@@ -106,6 +116,9 @@ namespace crow
             }
         }
 #else
+        // Fallback for C++11/14 that uses a raw json::wvalue internally.
+        // This implementation consumes significantly more memory
+        // than the variant-based version
         struct multi_value
         {
             json::wvalue json() const { return v_; }
@@ -114,13 +127,13 @@ namespace crow
 
             std::string string() const { return v_.dump(); }
 
-            template<typename T, typename RT = wrap_integral_t<T>>
+            template<typename T, typename RT = wrap_mv_t<T>>
             RT get(const T& fallback)
             {
                 return json::wvalue_reader{v_}.get((const RT&)(fallback));
             }
 
-            template<typename T, typename RT = wrap_integral_t<T>>
+            template<typename T, typename RT = wrap_mv_t<T>>
             void set(T val)
             {
                 v_ = RT(std::move(val));
@@ -231,31 +244,21 @@ namespace crow
             bool exists() { return bool(node); }
 
             // Get a value by key or fallback if it doesn't exist or is of another type
-            template<typename T>
-            T get(const std::string& key, const T& fallback = T())
+            template<typename F>
+            auto get(const std::string& key, const F& fallback = F())
+              // This trick lets the mutli_value deduce the return type from the fallback
+              // which allows both:
+              //   context.get<std::string>("key")
+              //   context.get("key", "") -> char[] is transformed into string by mutlivalue
+              // to return a string
+              -> decltype(std::declval<session::multi_value>().get<F>(std::declval<F>()))
             {
                 if (!node) return fallback;
                 rc_lock l(node->mutex);
 
                 auto it = node->entries.find(key);
-                if (it != node->entries.end()) return it->second.get<T>(fallback);
+                if (it != node->entries.end()) return it->second.get<F>(fallback);
                 return fallback;
-            }
-
-            // Request a special session id for the store
-            // WARNING: it does not check for collisions!
-            void preset_id(std::string id)
-            {
-                check_node();
-                node->requested_session_id = std::move(id);
-            }
-
-            // Delay expiration by issuing another cookie with an updated expiration time
-            // and notifying the store
-            void refresh_expiration()
-            {
-                if (!node) return;
-                node->requested_refresh = true;
             }
 
             // Set a value by key
@@ -267,6 +270,12 @@ namespace crow
 
                 node->dirty.insert(key);
                 node->entries[key].set(std::move(value));
+            }
+
+            bool contains(const std::string& key)
+            {
+                if (!node) return false;
+                return node->entries.find(key) != node->entries.end();
             }
 
             // Atomically mutate a value with a function
@@ -312,6 +321,22 @@ namespace crow
                 for (const auto& p : node->entries)
                     out.push_back(p.first);
                 return out;
+            }
+
+            // Request a special session id for the store
+            // WARNING: it does not check for collisions!
+            void preset_id(std::string id)
+            {
+                check_node();
+                node->requested_session_id = std::move(id);
+            }
+
+            // Delay expiration by issuing another cookie with an updated expiration time
+            // and notifying the store
+            void refresh_expiration()
+            {
+                if (!node) return;
+                node->requested_refresh = true;
             }
 
         private:
@@ -520,7 +545,7 @@ namespace crow
                 {
                     evict(key);
                 }
-                else
+                else if (contains(key))
                 {
                     expirations_.add(key, time);
                 }
