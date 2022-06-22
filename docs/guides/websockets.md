@@ -7,9 +7,9 @@ A websocket route differs from a normal route quite a bit. It uses A slightly al
 
 - `#!cpp onaccept([&](const crow::request& req, void** userdata){handler code goes here})`
 - `#!cpp onopen([&](crow::websocket::connection& conn){handler code goes here})`
-- `#!cpp onmessage([&](crow::websocket::connection& conn, const std::string message, bool is_binary){handler code goes here})`
-- `#!cpp onerror([&](crow::websocket::connection& conn){handler code goes here})`
-- `#!cpp onclose([&](crow::websocket::connection& conn, const std::string reason){handler code goes here})`
+- `#!cpp onmessage([&](crow::websocket::connection& conn, const std::string& message, bool is_binary){handler code goes here})`
+- `#!cpp onerror([&](crow::websocket::connection& conn, const std::string& error_message){handler code goes here})`
+- `#!cpp onclose([&](crow::websocket::connection& conn, const std::string& reason){handler code goes here})`
 
 !!! note
 

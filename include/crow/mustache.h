@@ -379,6 +379,12 @@ namespace crow
                 return rendered_template(ret);
             }
 
+            /// Apply the values from the context provided and output a returnable template from this mustache template
+            rendered_template render(context&& ctx) const
+            {
+                return render(ctx);
+            }
+
             /// Output a returnable template from this mustache template
             std::string render_string() const
             {

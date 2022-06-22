@@ -75,7 +75,7 @@ namespace crow
                        std::function<void(crow::websocket::connection&)> open_handler,
                        std::function<void(crow::websocket::connection&, const std::string&, bool)> message_handler,
                        std::function<void(crow::websocket::connection&, const std::string&)> close_handler,
-                       std::function<void(crow::websocket::connection&)> error_handler,
+                       std::function<void(crow::websocket::connection&, const std::string&)> error_handler,
                        std::function<bool(const crow::request&, void**)> accept_handler):
               adaptor_(std::move(adaptor)),
               handler_(handler),
@@ -315,7 +315,7 @@ namespace crow
                                       adaptor_.shutdown_readwrite();
                                       adaptor_.close();
                                       if (error_handler_)
-                                          error_handler_(*this);
+                                          error_handler_(*this, "Client connection not masked.");
                                       check_destroy();
 #endif
                                   }
@@ -341,7 +341,7 @@ namespace crow
                                   adaptor_.shutdown_readwrite();
                                   adaptor_.close();
                                   if (error_handler_)
-                                      error_handler_(*this);
+                                      error_handler_(*this, ec.message());
                                   check_destroy();
                               }
                           });
@@ -379,7 +379,7 @@ namespace crow
                                   adaptor_.shutdown_readwrite();
                                   adaptor_.close();
                                   if (error_handler_)
-                                      error_handler_(*this);
+                                      error_handler_(*this, ec.message());
                                   check_destroy();
                               }
                           });
@@ -414,7 +414,7 @@ namespace crow
                                   adaptor_.shutdown_readwrite();
                                   adaptor_.close();
                                   if (error_handler_)
-                                      error_handler_(*this);
+                                      error_handler_(*this, ec.message());
                                   check_destroy();
                               }
                           });
@@ -426,7 +426,7 @@ namespace crow
                             close_connection_ = true;
                             adaptor_.close();
                             if (error_handler_)
-                                error_handler_(*this);
+                                error_handler_(*this, "Message length exceeds maximum paylaod.");
                             check_destroy();
                         }
                         else if (has_mask_)
@@ -455,7 +455,7 @@ namespace crow
                                   {
                                       close_connection_ = true;
                                       if (error_handler_)
-                                          error_handler_(*this);
+                                          error_handler_(*this, ec.message());
                                       adaptor_.shutdown_readwrite();
                                       adaptor_.close();
                                       check_destroy();
@@ -497,7 +497,7 @@ namespace crow
                               {
                                   close_connection_ = true;
                                   if (error_handler_)
-                                      error_handler_(*this);
+                                      error_handler_(*this, ec.message());
                                   adaptor_.shutdown_readwrite();
                                   adaptor_.close();
                                   check_destroy();
@@ -685,7 +685,7 @@ namespace crow
             std::function<void(crow::websocket::connection&)> open_handler_;
             std::function<void(crow::websocket::connection&, const std::string&, bool)> message_handler_;
             std::function<void(crow::websocket::connection&, const std::string&)> close_handler_;
-            std::function<void(crow::websocket::connection&)> error_handler_;
+            std::function<void(crow::websocket::connection&, const std::string&)> error_handler_;
             std::function<bool(const crow::request&, void**)> accept_handler_;
         };
     } // namespace websocket
