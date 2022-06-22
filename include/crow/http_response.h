@@ -4,6 +4,8 @@
 #include <ios>
 #include <fstream>
 #include <sstream>
+// S_ISREG is not defined for windows
+// This defines it like suggested in https://stackoverflow.com/a/62371749
 #if defined(_MSC_VER)
 #define _CRT_INTERNAL_NONSTDC_NAMES 1
 #endif
