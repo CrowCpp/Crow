@@ -39,7 +39,7 @@
 namespace crow
 {
 #ifdef CROW_ENABLE_SSL
-    using ssl_context_t = boost::asio::ssl::context;
+    using ssl_context_t = asio::ssl::context;
 #endif
     /// The main server application
 
@@ -293,14 +293,6 @@ namespace crow
             }
         }
 
-        /// Notify anything using `wait_for_server_start()` to proceed
-        void notify_server_start()
-        {
-            std::unique_lock<std::mutex> lock(start_mutex_);
-            server_started_ = true;
-            cv_started_.notify_all();
-        }
-
         /// Run the server
         void run()
         {
@@ -370,7 +362,7 @@ namespace crow
 
         void remove_websocket(crow::websocket::connection* conn)
         {
-            std::remove(websockets_.begin(), websockets_.end(), conn);
+            websockets_.erase(std::remove(websockets_.begin(), websockets_.end(), conn), websockets_.end());
         }
 
         /// Print the routing paths defined for each HTTP method
@@ -387,12 +379,12 @@ namespace crow
         self_t& ssl_file(const std::string& crt_filename, const std::string& key_filename)
         {
             ssl_used_ = true;
-            ssl_context_.set_verify_mode(boost::asio::ssl::verify_peer);
-            ssl_context_.set_verify_mode(boost::asio::ssl::verify_client_once);
+            ssl_context_.set_verify_mode(asio::ssl::verify_peer);
+            ssl_context_.set_verify_mode(asio::ssl::verify_client_once);
             ssl_context_.use_certificate_file(crt_filename, ssl_context_t::pem);
             ssl_context_.use_private_key_file(key_filename, ssl_context_t::pem);
             ssl_context_.set_options(
-              boost::asio::ssl::context::default_workarounds | boost::asio::ssl::context::no_sslv2 | boost::asio::ssl::context::no_sslv3);
+              asio::ssl::context::default_workarounds | asio::ssl::context::no_sslv2 | asio::ssl::context::no_sslv3);
             return *this;
         }
 
@@ -400,11 +392,11 @@ namespace crow
         self_t& ssl_file(const std::string& pem_filename)
         {
             ssl_used_ = true;
-            ssl_context_.set_verify_mode(boost::asio::ssl::verify_peer);
-            ssl_context_.set_verify_mode(boost::asio::ssl::verify_client_once);
+            ssl_context_.set_verify_mode(asio::ssl::verify_peer);
+            ssl_context_.set_verify_mode(asio::ssl::verify_client_once);
             ssl_context_.load_verify_file(pem_filename);
             ssl_context_.set_options(
-              boost::asio::ssl::context::default_workarounds | boost::asio::ssl::context::no_sslv2 | boost::asio::ssl::context::no_sslv3);
+              asio::ssl::context::default_workarounds | asio::ssl::context::no_sslv2 | asio::ssl::context::no_sslv3);
             return *this;
         }
 
@@ -412,16 +404,16 @@ namespace crow
         self_t& ssl_chainfile(const std::string& crt_filename, const std::string& key_filename)
         {
             ssl_used_ = true;
-            ssl_context_.set_verify_mode(boost::asio::ssl::verify_peer);
-            ssl_context_.set_verify_mode(boost::asio::ssl::verify_client_once);
+            ssl_context_.set_verify_mode(asio::ssl::verify_peer);
+            ssl_context_.set_verify_mode(asio::ssl::verify_client_once);
             ssl_context_.use_certificate_chain_file(crt_filename);
             ssl_context_.use_private_key_file(key_filename, ssl_context_t::pem);
             ssl_context_.set_options(
-              boost::asio::ssl::context::default_workarounds | boost::asio::ssl::context::no_sslv2 | boost::asio::ssl::context::no_sslv3);
+              asio::ssl::context::default_workarounds | asio::ssl::context::no_sslv2 | asio::ssl::context::no_sslv3);
             return *this;
         }
 
-        self_t& ssl(boost::asio::ssl::context&& ctx)
+        self_t& ssl(asio::ssl::context&& ctx)
         {
             ssl_used_ = true;
             ssl_context_ = std::move(ctx);
@@ -492,10 +484,17 @@ namespace crow
         /// Wait until the server has properly started
         void wait_for_server_start()
         {
-            std::unique_lock<std::mutex> lock(start_mutex_);
-            if (server_started_)
-                return;
-            cv_started_.wait(lock);
+            {
+                std::unique_lock<std::mutex> lock(start_mutex_);
+                if (!server_started_)
+                    cv_started_.wait(lock);
+            }
+            if (server_)
+                server_->wait_for_start();
+#ifdef CROW_ENABLE_SSL
+            else if (ssl_server_)
+                ssl_server_->wait_for_start();
+#endif
         }
 
     private:
@@ -506,6 +505,14 @@ namespace crow
             return std::make_tuple(
               std::forward<Middlewares>(
                 black_magic::tuple_extract<Middlewares, decltype(fwd)>(fwd))...);
+        }
+
+        /// Notify anything using `wait_for_server_start()` to proceed
+        void notify_server_start()
+        {
+            std::unique_lock<std::mutex> lock(start_mutex_);
+            server_started_ = true;
+            cv_started_.notify_all();
         }
 
 
@@ -533,7 +540,7 @@ namespace crow
 #ifdef CROW_ENABLE_SSL
         std::unique_ptr<ssl_server_t> ssl_server_;
         bool ssl_used_{false};
-        ssl_context_t ssl_context_{boost::asio::ssl::context::sslv23};
+        ssl_context_t ssl_context_{asio::ssl::context::sslv23};
 #endif
 
         std::unique_ptr<server_t> server_;

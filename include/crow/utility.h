@@ -5,8 +5,10 @@
 #include <tuple>
 #include <type_traits>
 #include <cstring>
+#include <cctype>
 #include <functional>
 #include <string>
+#include <sstream>
 #include <unordered_map>
 #include <random>
 
@@ -505,7 +507,6 @@ namespace crow
         {
             static constexpr auto value = get_index_of_element_from_tuple_by_type_impl<T, N + 1, Args...>::value;
         };
-
     } // namespace detail
 
     namespace utility
@@ -810,5 +811,90 @@ namespace crow
 #endif
         }
 
+        /**
+         * @brief Checks two string for equality.
+         * Always returns false if strings differ in size.
+         * Defaults to case-insensitive comparison.
+         */
+        inline static bool string_equals(const std::string& l, const std::string& r, bool case_sensitive = false)
+        {
+            if (l.length() != r.length())
+                return false;
+
+            for (size_t i = 0; i < l.length(); i++)
+            {
+                if (case_sensitive)
+                {
+                    if (l[i] != r[i])
+                        return false;
+                }
+                else
+                {
+                    if (std::toupper(l[i]) != std::toupper(r[i]))
+                        return false;
+                }
+            }
+
+            return true;
+        }
+
+        template<typename T, typename U>
+        inline static T lexical_cast(const U& v)
+        {
+            std::stringstream stream;
+            T res;
+
+            stream << v;
+            stream >> res;
+
+            return res;
+        }
+
+        template<typename T>
+        inline static T lexical_cast(const char* v, size_t count)
+        {
+            std::stringstream stream;
+            T res;
+
+            stream.write(v, count);
+            stream >> res;
+
+            return res;
+        }
+
+
+        /// Return a copy of the given string with its
+        /// leading and trailing whitespaces removed.
+        inline static std::string trim(const std::string& v)
+        {
+            if (v.empty())
+                return "";
+
+            size_t begin = 0, end = v.length();
+
+            size_t i;
+            for (i = 0; i < v.length(); i++)
+            {
+                if (!std::isspace(v[i]))
+                {
+                    begin = i;
+                    break;
+                }
+            }
+
+            if (i == v.length())
+                return "";
+
+            for (i = v.length(); i > 0; i--)
+            {
+                if (!std::isspace(v[i - 1]))
+                {
+                    end = i;
+                    break;
+                }
+            }
+
+            return v.substr(begin, end - begin);
+        }
     } // namespace utility
 } // namespace crow

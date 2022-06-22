@@ -1,7 +1,7 @@
 #pragma once
 #include <iomanip>
-#include <boost/optional.hpp>
-#include <boost/algorithm/string/trim.hpp>
+#include <memory>
+#include "crow/utility.h"
 #include "crow/http_request.h"
 #include "crow/http_response.h"
 
@@ -69,7 +69,7 @@ namespace crow
                 if (expires_at_)
                 {
                     ss << DIVIDER << "Expires="
-                       << std::put_time(expires_at_.get_ptr(), HTTP_DATE_FORMAT);
+                       << std::put_time(expires_at_.get(), HTTP_DATE_FORMAT);
                 }
                 if (max_age_)
                 {
@@ -106,14 +106,14 @@ namespace crow
             // Expires attribute
             Cookie& expires(const std::tm& time)
             {
-                expires_at_ = time;
+                expires_at_ = std::unique_ptr<std::tm>(new std::tm(time));
                 return *this;
             }
 
             // Max-Age attribute
             Cookie& max_age(long long seconds)
             {
-                max_age_ = seconds;
+                max_age_ = std::unique_ptr<long long>(new long long(seconds));
                 return *this;
             }
 
@@ -148,8 +148,26 @@ namespace crow
             // SameSite attribute
             Cookie& same_site(SameSitePolicy ssp)
             {
-                same_site_ = ssp;
+                same_site_ = std::unique_ptr<SameSitePolicy>(new SameSitePolicy(ssp));
                 return *this;
+            }
+
+            Cookie(const Cookie& c):
+              key_(c.key_),
+              value_(c.value_),
+              domain_(c.domain_),
+              path_(c.path_),
+              secure_(c.secure_),
+              httponly_(c.httponly_)
+            {
+                if (c.max_age_)
+                    max_age_ = std::unique_ptr<long long>(new long long(*c.max_age_));
+
+                if (c.expires_at_)
+                    expires_at_ = std::unique_ptr<std::tm>(new std::tm(*c.expires_at_));
+
+                if (c.same_site_)
+                    same_site_ = std::unique_ptr<SameSitePolicy>(new SameSitePolicy(*c.same_site_));
             }
 
         private:
@@ -167,13 +185,13 @@ namespace crow
         private:
             std::string key_;
             std::string value_;
-            boost::optional<long long> max_age_{};
+            std::unique_ptr<long long> max_age_{};
             std::string domain_ = "";
             std::string path_ = "";
             bool secure_ = false;
             bool httponly_ = false;
-            boost::optional<std::tm> expires_at_{};
-            boost::optional<SameSitePolicy> same_site_{};
+            std::unique_ptr<std::tm> expires_at_{};
+            std::unique_ptr<SameSitePolicy> same_site_{};
 
             static constexpr const char* DIVIDER = "; ";
         };
@@ -227,17 +245,15 @@ namespace crow
                 if (pos_equal == cookies.npos)
                     break;
                 std::string name = cookies.substr(pos, pos_equal - pos);
-                boost::trim(name);
+                name = utility::trim(name);
                 pos = pos_equal + 1;
-                while (pos < cookies.size() && cookies[pos] == ' ')
-                    pos++;
                 if (pos == cookies.size())
                     break;
 
                 size_t pos_semicolon = cookies.find(';', pos);
                 std::string value = cookies.substr(pos, pos_semicolon - pos);
 
-                boost::trim(value);
+                value = utility::trim(value);
                 if (value[0] == '"' && value[value.size() - 1] == '"')
                 {
                     value = value.substr(1, value.size() - 2);
@@ -249,8 +265,6 @@ namespace crow
                 if (pos == cookies.npos)
                     break;
                 pos++;
-                while (pos < cookies.size() && cookies[pos] == ' ')
-                    pos++;
             }
         }
 
@@ -278,7 +292,7 @@ namespace crow
     C::handle
         context.aaa
 
-    App::context : private CookieParser::contetx, ... 
+    App::context : private CookieParser::contetx, ...
     {
         jar
 

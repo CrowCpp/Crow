@@ -5,7 +5,6 @@
 #include <tuple>
 #include <unordered_map>
 #include <memory>
-#include <boost/lexical_cast.hpp>
 #include <vector>
 #include <algorithm>
 #include <type_traits>
@@ -509,8 +508,8 @@ namespace crow
         std::function<void(crow::websocket::connection&)> open_handler_;
         std::function<void(crow::websocket::connection&, const std::string&, bool)> message_handler_;
         std::function<void(crow::websocket::connection&, const std::string&)> close_handler_;
-        std::function<void(crow::websocket::connection&)> error_handler_;
-        std::function<bool(const crow::request&)> accept_handler_;
+        std::function<void(crow::websocket::connection&, const std::string&)> error_handler_;
+        std::function<bool(const crow::request&, void**)> accept_handler_;
         uint64_t max_payload_;
         bool max_payload_override_ = false;
     };

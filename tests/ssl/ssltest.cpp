@@ -8,8 +8,6 @@
 
 #define LOCALHOST_ADDRESS "127.0.0.1"
 
-using namespace boost;
-
 // TODO(EDev): SSL test with .pem file
 TEST_CASE("SSL")
 {
@@ -76,8 +74,8 @@ TEST_CASE("SSL")
             CHECK(std::string("Hello world, I'm keycrt.").substr((z * -1)) == to_test);
         }
 
-        boost::system::error_code ec;
-        c.lowest_layer().shutdown(boost::asio::socket_base::shutdown_type::shutdown_both, ec);
+        asio::error_code ec;
+        c.lowest_layer().shutdown(asio::socket_base::shutdown_type::shutdown_both, ec);
     }
 
     /*
