@@ -24,19 +24,23 @@
 #include <functional>
 #include <chrono>
 
-// REQUIRE C++17
+#ifdef CROW_CAN_USE_CPP17
 #include <variant>
+#endif
 
-namespace {
+namespace
+{
     // change all integral values to int64_t
     template<typename T>
-    using wrap_integral_t = std::conditional_t<std::is_integral_v<T>, int64_t, T>;
-}
+    using wrap_integral_t = typename std::conditional<std::is_integral<T>::value, int64_t, T>::type;
+} // namespace
 
 namespace crow
 {
     namespace session
     {
+
+#ifdef CROW_CAN_USE_CPP17
         using multi_value_types = black_magic::S<bool, int64_t, double, std::string>;
 
         /// A multi_value is a safe variant wrapper with json conversion support
@@ -101,6 +105,35 @@ namespace crow
                 default: return multi_value{false};
             }
         }
+#else
+        struct multi_value
+        {
+            json::wvalue json() const { return v_; }
+
+            static multi_value from_json(const json::rvalue&);
+
+            std::string string() const { return v_.dump(); }
+
+            template<typename T, typename RT = wrap_integral_t<T>>
+            RT get(const T& fallback)
+            {
+                return json::wvalue_reader{v_}.get((const RT&)(fallback));
+            }
+
+            template<typename T, typename RT = wrap_integral_t<T>>
+            void set(T val)
+            {
+                v_ = RT(std::move(val));
+            }
+
+            json::wvalue v_;
+        };
+
+        inline multi_value multi_value::from_json(const json::rvalue& rv)
+        {
+            return {rv};
+        }
+#endif
 
         /// Expiration tracker keeps track of soonest-to-expire keys
         struct ExpirationTracker
@@ -143,9 +176,11 @@ namespace crow
                 return key;
             }
 
-            auto begin() const { return queue_.cbegin(); }
+            using iterator = typename std::set<DataPair>::const_iterator;
 
-            auto end() const { return queue_.cend(); }
+            iterator begin() const { return queue_.cbegin(); }
+
+            iterator end() const { return queue_.cend(); }
 
         private:
             std::set<DataPair> queue_;
