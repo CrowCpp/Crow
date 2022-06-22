@@ -1,5 +1,7 @@
 #pragma once
+#ifndef ASIO_STANDALONE
 #define ASIO_STANDALONE
+#endif
 #include <asio.hpp>
 #ifdef CROW_ENABLE_SSL
 #include <asio/ssl.hpp>
