@@ -4,7 +4,15 @@
 #include <ios>
 #include <fstream>
 #include <sstream>
+#if defined(_MSC_VER)
+#define _CRT_INTERNAL_NONSTDC_NAMES 1
 #include <sys/stat.h>
+#if !defined(S_ISREG) && defined(S_IFMT) && defined(S_IFREG)
+#define S_ISREG(m) (((m)&S_IFMT) == S_IFREG)
+#endif
+#else
+#include <sys/stat.h>
+#endif
 
 #include "crow/http_request.h"
 #include "crow/ci_map.h"
