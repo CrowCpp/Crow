@@ -327,8 +327,9 @@ namespace crow
                 return out;
             }
 
-            // Request a special session id for the store
-            // WARNING: it does not check for collisions!
+            // Request a special session id for the store.
+            // WARNING: it does not check for collisions and might only
+            // be useful for custom stores that support duplicate ids!
             void preset_id(std::string id)
             {
                 check_node();
