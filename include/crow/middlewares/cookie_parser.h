@@ -50,7 +50,9 @@ namespace crow
                 value_ = std::forward<U>(value);
             }
 
-            Cookie(const std::string& key): Cookie() {
+            Cookie(const std::string& key):
+              Cookie()
+            {
                 key_ = key;
             }
 
@@ -94,12 +96,14 @@ namespace crow
                 return ss.str();
             }
 
-            const std::string& name() {
+            const std::string& name()
+            {
                 return key_;
             }
 
             template<typename U>
-            void value(U&& value) {
+            void value(U&& value)
+            {
                 value_ = std::forward<U>(value);
             }
 
@@ -216,7 +220,8 @@ namespace crow
                 return cookies_to_add.back();
             }
 
-            void set_cookie(Cookie cookie) {
+            void set_cookie(Cookie cookie)
+            {
                 cookies_to_add.push_back(std::move(cookie));
             }
 

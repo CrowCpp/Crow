@@ -34,8 +34,13 @@ int main()
     ([&](const crow::request& req) {
         // get session as middleware context
         auto& session = app.get_context<Session>(req);
+        // the session acts as a multi-type map
+        // that can store string, integers, doubles and bools
+        // besides get/set/remove it also supports more advanced locking operations
 
-        // atomically increase number of views
+        // Atomically increase number of views
+        // This will not skip a view even on multithreaded applications
+        // with multiple concurrent requests from a client
         // if "views" doesn't exist, it'll be default initialized
         session.apply("views", [](int v) {
             return v + 1;
@@ -46,6 +51,7 @@ int main()
 
         std::string out;
         for (const auto& key : keys)
+            // .string(key) converts a value of any type to a string
             out += "<p> " + key + " = " + session.string(key) + "</p>";
         return out;
     });
@@ -56,15 +62,21 @@ int main()
         auto& session = app.get_context<Session>(req);
         auto key = req.url_params.get("key");
 
-        // cast value to string
-        auto string_v = session.get<std::string>(key, "_NOT_FOUND_");
+        // get a string
+        // return "_NOT_FOUND_" if value is not found or of another type
+        std::string string_v = session.get(key, "_NOT_FOUND_");
+        // alternatively one can use
+        // session.get<std::string>(key)
+        // where the fallback is an empty value ""
         (void)string_v;
 
-        // cast value to int
-        int int_v = session.get<int>(key, -1);
+        // get int
+        // because supporting multiple integer types in a type bound map would be cumbersome,
+        // all integral values (except uint64_t) are promoted to int64_t
+        // that is why get<int>, get<uint32_t>, get<int64_t> are all accessing the same type
+        int int_v = session.get(key, -1);
         (void)int_v;
 
-        // get string representation
         return session.string(key);
     });
 
@@ -82,12 +94,12 @@ int main()
         return redirect();
     });
 
-    // Evict a key
-    CROW_ROUTE(app, "/evict")
+    // Remove a key
+    CROW_ROUTE(app, "/remove")
     ([&](const crow::request& req) {
         auto& session = app.get_context<Session>(req);
         auto key = req.url_params.get("key");
-        session.evict(key);
+        session.remove(key);
 
         return redirect();
     });
@@ -105,7 +117,7 @@ int main()
         }
         else
         {
-            session.evict("even");
+            session.remove("even");
         }
 
         return redirect();

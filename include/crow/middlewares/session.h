@@ -30,17 +30,21 @@
 
 namespace
 {
-    // change all integral values to int64_t
+    // convert all integer values to int64_t
     template<typename T>
     using wrap_integral_t = typename std::conditional<
-      std::is_integral<T>::value,
+      std::is_integral<T>::value && !std::is_same<bool, T>::value
+        // except for uint64_t because that could lead to overflow on conversion
+        && !std::is_same<uint64_t, T>::value,
       int64_t, T>::type;
 
+    // convert char[]/char* to std::string
     template<typename T>
     using wrap_char_t = typename std::conditional<
       std::is_same<typename std::decay<T>::type, char*>::value,
       std::string, T>::type;
 
+    // Upgrade to correct type for multi_variant use
     template<typename T>
     using wrap_mv_t = wrap_char_t<wrap_integral_t<T>>;
 } // namespace
@@ -292,7 +296,7 @@ namespace crow
             }
 
             // Remove a value from the session
-            void evict(const std::string& key)
+            void remove(const std::string& key)
             {
                 if (!node) return;
                 rc_lock l(node->mutex);
@@ -441,7 +445,6 @@ namespace crow
             }
             catch (...)
             {
-                // TODO(dranikpg): better handling?
                 CROW_LOG_ERROR << "Exception occurred during session save";
                 return;
             }
