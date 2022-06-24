@@ -1,12 +1,4 @@
-#define CATCH_CONFIG_MAIN
-#define CROW_LOG_LEVEL 0
-
-#include <thread>
-
-#include "../catch.hpp"
-#include "crow.h"
-
-#define LOCALHOST_ADDRESS "127.0.0.1"
+#include "unittest.h"
 
 // TODO(EDev): SSL test with .pem file
 TEST_CASE("SSL")

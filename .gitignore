@@ -21,7 +21,6 @@
 *.app
 
 example
-unittest
 Testing/*
 include/crow/tags
 
