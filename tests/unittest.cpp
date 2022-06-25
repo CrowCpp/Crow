@@ -14,6 +14,7 @@
 #include "crow.h"
 #include "crow/middlewares/cookie_parser.h"
 #include "crow/middlewares/cors.h"
+#include "crow/middlewares/session.h"
 
 using namespace std;
 using namespace crow;
@@ -1796,6 +1797,93 @@ TEST_CASE("middleware_cors")
 
     app.stop();
 } // middleware_cors
+
+TEST_CASE("middleware_session")
+{
+    static char buf[5012];
+
+    using Session = SessionMiddleware<InMemoryStore>;
+
+    App<crow::CookieParser, Session> app{
+      Session{
+        "TEST_KEY",
+        InMemoryStore{}}};
+
+    CROW_ROUTE(app, "/get")
+    ([&](const request& req) {
+        auto& session = app.get_context<Session>(req);
+        auto key = req.url_params.get("key");
+        return session.string(key);
+    });
+
+    CROW_ROUTE(app, "/set")
+    ([&](const request& req) {
+        auto& session = app.get_context<Session>(req);
+
+        if (!session.exists()) session.preset_id("test");
+
+        auto key = req.url_params.get("key");
+        auto value = req.url_params.get("value");
+        session.set(key, value);
+        return "ok";
+    });
+
+    CROW_ROUTE(app, "/count")
+    ([&](const request& req) {
+        auto& session = app.get_context<Session>(req);
+        session.apply("counter", [](int v) {
+            return v + 2;
+        });
+        return session.string("counter");
+    });
+
+
+    auto _ = async(launch::async,
+                   [&] {
+                       app.bindaddr(LOCALHOST_ADDRESS).port(45451).run();
+                   });
+
+    app.wait_for_server_start();
+    asio::io_service is;
+
+    auto make_request = [&](const std::string& rq) {
+        asio::ip::tcp::socket c(is);
+        c.connect(asio::ip::tcp::endpoint(
+          asio::ip::address::from_string(LOCALHOST_ADDRESS), 45451));
+        c.send(asio::buffer(rq));
+        c.receive(asio::buffer(buf, 2048));
+        c.close();
+        return std::string(buf);
+    };
+
+    std::string cookie = "Cookie: session=\"test:p3lQjfe4Y3a1gVGm1VXRTjdzH04=\"";
+
+    // test = works
+    {
+        auto res = make_request(
+          "GET /set?key=test&value=works\r\n" + cookie + "\r\n\r\n");
+        CHECK(res.find("test:p3lQjfe4Y3a1gVGm1VXRTjdzH04=") != std::string::npos);
+    }
+
+    // check test
+    {
+        auto res = make_request("GET /get?key=test\r\n" + cookie + "\r\n\r\n");
+        CHECK(res.find("works") != std::string::npos);
+    }
+
+    // check counter
+    {
+        for (int i = 1; i < 5; i++)
+        {
+            auto res = make_request("GET /count\r\n" + cookie + "\r\n\r\n");
+            CHECK(res.find(std::to_string(2 * i)) != std::string::npos);
+        }
+    }
+
+
+    app.stop();
+} // middleware_session
+
 
 TEST_CASE("bug_quick_repeated_request")
 {
