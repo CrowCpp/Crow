@@ -24,20 +24,20 @@ This will generate a `crow_all.h` file which you can use in the following steps
 ## Setting up your Crow project
 ### Using XCode
 1. Download and install [Homebrew](https://brew.sh).
-2. Run `brew install boost` in your terminal.
+2. Run `brew install asio` in your terminal.
 3. Create a new XCode project (macOS -> Command Line Tool).
 4. Change the following project settings:
 
     === "Multiple Headers"
 
-        1. Add header search paths for crow's include folder and boost's folder (`/usr/local/include`, `/usr/local/Cellar/boost/include`, and where you placed Crow's `include` folder)
-        2. Add linker flags (`-lpthread` and `-lboost_system` if you're running an old version of boost)
+        1. Add header search paths for crow's include folder and asio's folder (`/usr/local/include`, `/usr/local/Cellar/asio/include`, and where you placed Crow's `include` folder)
+        2. Add linker flags (`-lpthread`)
 
     === "Single Header"
 
         1. Place `crow_all.h` inside your project folder and add it to the project in XCode (you need to use File -> Add files to "project_name")
-        2. Add header search paths for boost's folder (`/usr/local/include`, and `/usr/local/Cellar/boost/include`)
-        3. Add linker flags (`-lpthread` and `-lboost_system` if you're running an old version of boost)
+        2. Add header search paths for asio's folder (`/usr/local/include`, and `/usr/local/Cellar/asio/include`)
+        3. Add linker flags (`-lpthread`)
 
 5. Write your Crow application in `main.cpp` (something like the Hello World example will work).
 6. Press `▶` to compile and run your Crow application.
@@ -49,7 +49,7 @@ This will generate a `crow_all.h` file which you can use in the following steps
     This tutorial can be used for Crow projects built with CMake as well
 
 1. Download and install [Homebrew](https://brew.sh).
-2. Run `brew install cmake boost` in your terminal.
+2. Run `brew install cmake asio` in your terminal.
 3. Get Crow's source code (the entire source code).
 3. Run the following Commands:
     1. `mkdir build`
@@ -70,6 +70,3 @@ g++ main.cpp -lpthread
     You'll need to install GCC via `brew install gcc`. the Clang compiler should be part of XCode or XCode command line tools.
 
 You can use arguments like `-DCROW_ENABLE_DEBUG`, `-DCROW_ENABLE_COMPRESSION -lz` for HTTP Compression, or `-DCROW_ENABLE_SSL -lssl` for HTTPS support, or even replace g++ with clang++.
-!!! warning
-
-    If you're using a version of boost prior to 1.69, you'll need to add the argument `-lboost_system` in order for you Crow application to compile correctly.

@@ -1,8 +1,12 @@
 @PACKAGE_INIT@
 
 include(CMakeFindDependencyMacro)
-find_dependency(Boost 1.64 COMPONENTS system date_time)
-find_dependency(Threads)
+
+get_filename_component(CROW_CMAKE_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
+
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
+find_dependency(asio)
+list(REMOVE_AT CMAKE_MODULE_PATH -1)
 
 set(CROW_INSTALLED_FEATURES "@CROW_FEATURES@")
 

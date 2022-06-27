@@ -8,6 +8,9 @@ project(Crow
 	LANGUAGES CXX
 )
 
+# Make sure Findasio.cmake module is found
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
+
 # Check if Crow is the main project
 set(CROW_IS_MAIN_PROJECT OFF)
 if (CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
@@ -52,13 +55,11 @@ target_include_directories(Crow
 		$<INSTALL_INTERFACE:include>
 )
 
-find_package(Boost 1.64 COMPONENTS system date_time REQUIRED)
-find_package(Threads REQUIRED)
+find_package(asio REQUIRED)
 
 target_link_libraries(Crow
 	INTERFACE
-		Boost::boost Boost::system Boost::date_time
-		Threads::Threads
+		asio::asio
 )
 
 if("compression" IN_LIST CROW_FEATURES)
@@ -127,6 +128,7 @@ if(CROW_INSTALL)
 		INSTALL_DESTINATION lib/cmake/Crow
 	)
 	install(FILES
+		"${CMAKE_CURRENT_SOURCE_DIR}/cmake/Findasio.cmake"
     "${CMAKE_CURRENT_BINARY_DIR}/CrowConfig.cmake"
     DESTINATION lib/cmake/Crow
   )
