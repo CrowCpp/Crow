@@ -33,10 +33,11 @@ Crow is a C++ framework for creating HTTP or Websocket web services. It uses rou
 ## Documentation
 Available [here](https://crowcpp.org).
 
-## Examples
-
 > **Warning**
-> If you are using version v0.3, then you have to put `#define CROW_MAIN` at the top of one and only one source file. Not doing so will result in errors.
+> 
+> If you are using Crow v0.3, then you have to put `#define CROW_MAIN` at the top of one and only one source file.
+
+## Examples
 
 #### Hello World
 ```cpp
