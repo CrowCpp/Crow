@@ -1,7 +1,7 @@
 #####################################
 # Define Project-Wide Settings
 #####################################
-cmake_minimum_required(VERSION 3.15.0 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.16.0 FATAL_ERROR)
 
 # Define the project name and language
 project(Crow
@@ -92,7 +92,7 @@ if(CROW_BUILD_EXAMPLES)
 endif()
 
 # Tests
-if(NOT MSVC AND CROW_BUILD_TESTS)
+if(CROW_BUILD_TESTS)
 	if(NOT "compression" IN_LIST CROW_FEATURES)
 		message(STATUS "Compression tests are omitted. (Configure with CROW_FEATURES containing 'compression' to enable them)")
 	endif()

@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.15)
+cmake_minimum_required(VERSION 3.16)
 project(crow_test)
 
 include(${CMAKE_SOURCE_DIR}/cmake/compiler_options.cmake)
@@ -31,7 +31,13 @@ endif()
 add_executable(unittest ${TEST_SRCS})
 target_include_directories(unittest PRIVATE include)
 target_link_libraries(unittest Crow::Crow)
+target_precompile_headers(unittest PRIVATE include/catch.hpp)
 add_warnings_optimizations(unittest)
+set_source_files_properties(src/catch.cpp
+  PROPERTIES
+    SKIP_PRECOMPILE_HEADERS ON
+)
+
 
 if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
   set_target_properties(unittest PROPERTIES COMPILE_FLAGS "--coverage -fprofile-arcs -ftest-coverage")
