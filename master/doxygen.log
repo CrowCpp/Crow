@@ -331,14 +331,14 @@ Generating docs for compound crow::/drone/src/include/crow/parser.h:95: warning:
 /drone/src/include/crow/logging.h:123: warning: Member setLogLevel(LogLevel level) (function) of class crow::logger is not documented.
 /drone/src/include/crow/logging.h:125: warning: Member setHandler(ILogHandler *handler) (function) of class crow::logger is not documented.
 /drone/src/include/crow/logging.h:127: warning: Member get_current_log_level() (function) of class crow::logger is not documented.
-/drone/src/include/crow/query_string.h:305: warning: Member query_string(const query_string &qs) (function) of class crow::query_string is not documented.
-/drone/src/include/crow/query_string.h:314: warning: Member operator=(const query_string &qs) (function) of class crow::query_string is not documented.
-/drone/src/include/crow/query_string.h:325: warning: Member operator=(query_string &&qs) (function) of class crow::query_string is not documented.
-/drone/src/include/crow/query_string.h:338: warning: Member query_string(std::string params, bool url=true) (function) of class crow::query_string is not documented.
-/drone/src/include/crow/query_string.h:350: warning: Member clear() (function) of class crow::query_string is not documented.
-/drone/src/include/crow/query_string.h:476: warning: Member keys() const (function) of class crow::query_string is not documented.
-/drone/src/include/crow/query_string.h:299: warning: Member MAX_KEY_VALUE_PAIRS_COUNT (variable) of class crow::query_string is not documented.
-/drone/src/include/crow/query_string.h:356: warning: Member operator<<(std::ostream &os, const query_string &qs) (friend) of class crow::query_string is not documented.
+/drone/src/include/crow/query_string.h:304: warning: Member query_string(const query_string &qs) (function) of class crow::query_string is not documented.
+/drone/src/include/crow/query_string.h:313: warning: Member operator=(const query_string &qs) (function) of class crow::query_string is not documented.
+/drone/src/include/crow/query_string.h:324: warning: Member operator=(query_string &&qs) (function) of class crow::query_string is not documented.
+/drone/src/include/crow/query_string.h:337: warning: Member query_string(std::string params, bool url=true) (function) of class crow::query_string is not documented.
+/drone/src/include/crow/query_string.h:349: warning: Member clear() (function) of class crow::query_string is not documented.
+/drone/src/include/crow/query_string.h:475: warning: Member keys() const (function) of class crow::query_string is not documented.
+/drone/src/include/crow/query_string.h:298: warning: Member MAX_KEY_VALUE_PAIRS_COUNT (variable) of class crow::query_string is not documented.
+/drone/src/include/crow/query_string.h:355: warning: Member operator<<(std::ostream &os, const query_string &qs) (friend) of class crow::query_string is not documented.
 /drone/src/include/crow/http_request.h:53: warning: Member add_header(std::string key, std::string value) (function) of class crow::request is not documented.
 /drone/src/include/crow/http_request.h:58: warning: Member get_header_value(const std::string &key) const (function) of class crow::request is not documented.
 /drone/src/include/crow/http_request.h:63: warning: Member check_version(unsigned char major, unsigned char minor) const (function) of class crow::request is not documented.
