@@ -307,6 +307,10 @@ TEST_CASE("http_method")
             return "1";
     });
 
+    CROW_ROUTE(app, "/head_only")
+      .methods("HEAD"_method)([](const request& /*req*/) {
+          return response{202};
+      });
     CROW_ROUTE(app, "/get_only")
       .methods("GET"_method)([](const request& /*req*/) {
           return "get";
@@ -350,6 +354,18 @@ TEST_CASE("http_method")
         app.handle(req, res);
 
         CHECK("1" == res.body);
+    }
+
+    {
+        request req;
+        response res;
+
+        req.url = "/head_only";
+        req.method = "HEAD"_method;
+        app.handle(req, res);
+
+        CHECK(202 == res.code);
+        CHECK("" == res.body);
     }
 
     {
@@ -451,6 +467,18 @@ TEST_CASE("http_method")
 
         CHECK(204 == res.code);
         CHECK("OPTIONS, HEAD, GET, POST, PATCH, PURGE" == res.get_header_value("Allow"));
+    }
+
+    {
+        request req;
+        response res;
+
+        req.url = "/head_only";
+        req.method = "OPTIONS"_method;
+        app.handle(req, res);
+
+        CHECK(204 == res.code);
+        CHECK("OPTIONS, HEAD" == res.get_header_value("Allow"));
     }
 } // http_method
 

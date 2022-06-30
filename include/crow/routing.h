@@ -1538,7 +1538,10 @@ namespace crow
                 return;
             else if (req.method == HTTPMethod::Head)
             {
-                method_actual = HTTPMethod::Get;
+                // support HEAD requests using GET if not defined as method for the requested URL
+                if (!std::get<0>(per_methods_[static_cast<int>(HTTPMethod::Head)].trie.find(req.url)))
+                    method_actual = HTTPMethod::Get;
+
                 res.skip_body = true;
             }
             else if (req.method == HTTPMethod::Options)
@@ -1549,6 +1552,9 @@ namespace crow
                 {
                     for (int i = 0; i < static_cast<int>(HTTPMethod::InternalMethodCount); i++)
                     {
+                        if (static_cast<int>(HTTPMethod::Head) == i)
+                            continue; // HEAD is always allowed
+
                         if (!per_methods_[i].trie.is_empty())
                         {
                             allow += method_name(static_cast<HTTPMethod>(i)) + ", ";
@@ -1562,14 +1568,20 @@ namespace crow
                 }
                 else
                 {
+                    bool rules_matched = false;
                     for (int i = 0; i < static_cast<int>(HTTPMethod::InternalMethodCount); i++)
                     {
                         if (std::get<0>(per_methods_[i].trie.find(req.url)))
                         {
+                            rules_matched = true;
+
+                            if (static_cast<int>(HTTPMethod::Head) == i)
+                                continue; // HEAD is always allowed
+
                             allow += method_name(static_cast<HTTPMethod>(i)) + ", ";
                         }
                     }
-                    if (allow != "OPTIONS, HEAD, ")
+                    if (rules_matched)
                     {
                         allow = allow.substr(0, allow.size() - 2);
                         res = response(204);
