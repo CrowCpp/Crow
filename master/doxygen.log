@@ -383,10 +383,10 @@ Generating docs for compound crow::/drone/src/include/crow/parser.h:95: warning:
 /drone/src/include/crow/routing.h:1389: warning: Member handle_upgrade(const request &req, response &res, Adaptor &&adaptor) (function) of class crow::Router is not documented.
 /drone/src/include/crow/routing.h:1461: warning: Member get_found_bp(std::vector< uint16_t > &bp_i, std::vector< Blueprint * > &blueprints, std::vector< Blueprint * > &found_bps, uint16_t index=0) (function) of class crow::Router is not documented.
 /drone/src/include/crow/routing.h:1534: warning: Member handle(request &req, response &res) (function) of class crow::Router is not documented.
-/drone/src/include/crow/routing.h:1665: warning: Member handle_rule(BaseRule *rule, crow::request &req, crow::response &res, const crow::routing_params &rp) (function) of class crow::Router is not documented.
-/drone/src/include/crow/routing.h:1701: warning: Member handle_rule(BaseRule *rule, crow::request &req, crow::response &res, const crow::routing_params &rp) (function) of class crow::Router is not documented.
-/drone/src/include/crow/routing.h:1706: warning: Member debug_print() (function) of class crow::Router is not documented.
-/drone/src/include/crow/routing.h:1715: warning: Member blueprints() (function) of class crow::Router is not documented.
+/drone/src/include/crow/routing.h:1677: warning: Member handle_rule(BaseRule *rule, crow::request &req, crow::response &res, const crow::routing_params &rp) (function) of class crow::Router is not documented.
+/drone/src/include/crow/routing.h:1713: warning: Member handle_rule(BaseRule *rule, crow::request &req, crow::response &res, const crow::routing_params &rp) (function) of class crow::Router is not documented.
+/drone/src/include/crow/routing.h:1718: warning: Member debug_print() (function) of class crow::Router is not documented.
+/drone/src/include/crow/routing.h:1727: warning: Member blueprints() (function) of class crow::Router is not documented.
 /drone/src/include/crow/routing.h:524: warning: Member self_t (typedef) of class crow::RuleParameterTraits is not documented.
 /drone/src/include/crow/routing.h:527: warning: Member websocket(App *app) (function) of class crow::RuleParameterTraits is not documented.
 /drone/src/include/crow/routing.h:534: warning: Member name(std::string name) noexcept (function) of class crow::RuleParameterTraits is not documented.
@@ -763,5 +763,5 @@ Generating example index...
 finalizing index lists...
 writing tag file...
 Running plantuml with JAVA...
-lookup cache used 2937/65536 hits=25045 misses=3318
+lookup cache used 2941/65536 hits=25069 misses=3322
 finished...
