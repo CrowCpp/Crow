@@ -1830,6 +1830,26 @@ TEST_CASE("middleware_session")
         return session.string("counter");
     });
 
+    CROW_ROUTE(app, "/lock")
+    ([&](const request& req) {
+        auto& session = app.get_context<Session>(req);
+        session.mutex().lock();
+        std::this_thread::sleep_for(std::chrono::milliseconds(50));
+        session.mutex().unlock();
+        return "OK";
+    });
+
+    CROW_ROUTE(app, "/check_lock")
+    ([&](const request& req) {
+        auto& session = app.get_context<Session>(req);
+        if (session.mutex().try_lock())
+            return "LOCKED";
+        else
+        {
+            session.mutex().unlock();
+            return "FAILED";
+        };
+    });
 
     auto _ = app.bindaddr(LOCALHOST_ADDRESS).port(45451).run_async();
 
@@ -1875,6 +1895,19 @@ TEST_CASE("middleware_session")
             auto res = make_request("GET /count\r\n" + cookie + "\r\n\r\n");
             CHECK(res.find(std::to_string(2 * i)) != std::string::npos);
         }
+    }
+
+    // lock
+    {
+        asio::ip::tcp::socket c_lock(is);
+        c_lock.connect(asio::ip::tcp::endpoint(
+          asio::ip::address::from_string(LOCALHOST_ADDRESS), 45451));
+        c_lock.send(asio::buffer("GET /lock\r\n" + cookie + "\r\n\r\n"));
+
+        auto res = make_request("GET /check_lock\r\n" + cookie + "\r\n\r\n");
+        CHECK(res.find("LOCKED") != std::string::npos);
+
+        c_lock.close();
     }
 
 
