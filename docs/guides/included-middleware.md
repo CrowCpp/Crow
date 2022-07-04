@@ -18,18 +18,17 @@ Session data can be stored in multiple ways:
 
 __Always list the CookieParser before the Session__
 ```cpp
-using Session = crow::SessionMiddleware<crow::InMemoryStore>;
-crow::App<crow::CookieParser, Session> app {Session{
-    "MY_SECRET_KEY",
-    crow::InMemoryStore{}
+using Session = crow::SessionMiddleware<crow::FileStore>;
+crow::App<crow::CookieParser, Session> app{Session{
+  crow::FileStore{"/tmp/sessiondata"}
 }};
 ```
 
-Session ids are stored in cookies and are signed with a secret key. After the key changes, all cookies are invalidated. Check the example for more details about expiration management and customization.
+Session ids are represented as random alphanumeric strings and are stored in cookies. See the examples for more customization options.
 
 ### Usage
 
-A session is basically a key-value map with support for multiple types: strings, integers, booleans and doubles.
+A session is basically a key-value map with support for multiple types: strings, integers, booleans and doubles. The map is created and persisted automatically as soon it is first written to.
 
 ```cpp
 auto& session = app.get_context<Session>(request);
@@ -49,14 +48,6 @@ this means we can perform atomic operations and even lock the object.
 ```cpp
 session.apply("views", [](int v){return v + 1;}); // this operation is always atomic, no way to get a data race
 session.mutex().lock(); // manually lock session
-```
-
-The session is created as soon as it is written to, but we can check whether it already exists.
-We can also request a specific id for the session when it is created. This is only useful for custom stores that will support equal ids on multiple clients. Because the cookie is signed, any id is secure.
-```cpp
-if (!session.exists()) {
-  session.preset_id(user_email);
-}
 ```
 
 ### Expiration
