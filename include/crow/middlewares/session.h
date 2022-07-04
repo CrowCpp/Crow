@@ -374,7 +374,7 @@ namespace crow
         {}
 
         template<typename AllContext>
-        void before_handle(request& /*req*/, response& /*rsp*/, context& ctx, AllContext& all_ctx)
+        void before_handle(request& /*req*/, response& /*res*/, context& ctx, AllContext& all_ctx)
         {
             lock l(*mutex_);
 
@@ -413,7 +413,7 @@ namespace crow
         }
 
         template<typename AllContext>
-        void after_handle(request& /*req*/, response& /*rsp*/, context& ctx, AllContext& all_ctx)
+        void after_handle(request& /*req*/, response& /*res*/, context& ctx, AllContext& all_ctx)
         {
             lock l(*mutex_);
             if (!ctx.node || --ctx.node->referrers > 0) return;

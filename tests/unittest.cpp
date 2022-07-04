@@ -1748,10 +1748,7 @@ TEST_CASE("middleware_cors")
         return "-";
     });
 
-    auto _ = async(launch::async,
-                   [&] {
-                       app.bindaddr(LOCALHOST_ADDRESS).port(45451).run();
-                   });
+    auto _ = app.bindaddr(LOCALHOST_ADDRESS).port(45451).run_async();
 
     app.wait_for_server_start();
     asio::io_service is;
@@ -1838,10 +1835,7 @@ TEST_CASE("middleware_session")
     });
 
 
-    auto _ = async(launch::async,
-                   [&] {
-                       app.bindaddr(LOCALHOST_ADDRESS).port(45451).run();
-                   });
+    auto _ = app.bindaddr(LOCALHOST_ADDRESS).port(45451).run_async();
 
     app.wait_for_server_start();
     asio::io_service is;

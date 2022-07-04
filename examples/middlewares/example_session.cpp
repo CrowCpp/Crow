@@ -3,9 +3,9 @@
 
 crow::response redirect()
 {
-    crow::response rsp;
-    rsp.redirect("/");
-    return rsp;
+    crow::response res;
+    res.redirect("/");
+    return res;
 }
 
 int main()
