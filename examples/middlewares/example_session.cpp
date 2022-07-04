@@ -20,8 +20,6 @@ int main()
 
     // Make sure the CookieParser is registered before the Session
     crow::App<crow::CookieParser, Session> app{Session{
-      // choose a secret key for sigining sessions ids
-      "MY_SECRET_KEY",
       // customize cookies
       crow::CookieParser::Cookie("session").max_age(/*one day*/ 24 * 60 * 60).path("/"),
       // set session id length (small value only for demonstration purposes)
@@ -118,21 +116,6 @@ int main()
         else
         {
             session.remove("even");
-        }
-
-        return redirect();
-    });
-
-    // Manually hand out session ids
-    // This allows sharing sessions between devices or binding them to users, etc.
-    // Session ids are signed so they don't have to be random tokens
-    CROW_ROUTE(app, "/login")
-    ([&](const crow::request& req) {
-        auto& session = app.get_context<Session>(req);
-
-        if (!session.exists())
-        {
-            session.preset_id("user_email@email.com");
         }
 
         return redirect();

@@ -9,6 +9,7 @@
 #include <thread>
 #include <chrono>
 #include <type_traits>
+#include <regex>
 
 #include "catch.hpp"
 #include "crow.h"
@@ -1802,9 +1803,7 @@ TEST_CASE("middleware_session")
     using Session = SessionMiddleware<InMemoryStore>;
 
     App<crow::CookieParser, Session> app{
-      Session{
-        "TEST_KEY",
-        InMemoryStore{}}};
+      Session{InMemoryStore{}}};
 
     CROW_ROUTE(app, "/get")
     ([&](const request& req) {
@@ -1816,9 +1815,6 @@ TEST_CASE("middleware_session")
     CROW_ROUTE(app, "/set")
     ([&](const request& req) {
         auto& session = app.get_context<Session>(req);
-
-        if (!session.exists()) session.preset_id("test");
-
         auto key = req.url_params.get("key");
         auto value = req.url_params.get("value");
         session.set(key, value);
@@ -1850,16 +1846,23 @@ TEST_CASE("middleware_session")
         return std::string(buf);
     };
 
-    std::string cookie = "Cookie: session=\"test:p3lQjfe4Y3a1gVGm1VXRTjdzH04=\"";
+    std::string cookie = "Cookie: session=";
 
     // test = works
     {
         auto res = make_request(
           "GET /set?key=test&value=works\r\n" + cookie + "\r\n\r\n");
-        CHECK(res.find("test:p3lQjfe4Y3a1gVGm1VXRTjdzH04=") != std::string::npos);
+
+        const std::regex cookiev_regex("Cookie:\\ssession=(.*?);", std::regex::icase);
+        auto istart = std::sregex_token_iterator(res.begin(), res.end(), cookiev_regex, 1);
+        auto iend = std::sregex_token_iterator();
+
+        CHECK(istart != iend);
+        cookie.append(istart->str());
+        cookie.push_back(';');
     }
 
-    // check test
+    // check test = works
     {
         auto res = make_request("GET /get?key=test\r\n" + cookie + "\r\n\r\n");
         CHECK(res.find("works") != std::string::npos);

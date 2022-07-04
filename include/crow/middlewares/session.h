@@ -2,7 +2,6 @@
 
 #include "crow/http_request.h"
 #include "crow/http_response.h"
-#include "crow/TinySHA1.hpp"
 #include "crow/json.h"
 #include "crow/utility.h"
 #include "crow/middlewares/cookie_parser.h"
@@ -327,15 +326,6 @@ namespace crow
                 return out;
             }
 
-            // Request a special session id for the store.
-            // WARNING: it does not check for collisions and might only
-            // be useful for custom stores that support duplicate ids!
-            void preset_id(std::string id)
-            {
-                check_node();
-                node->requested_session_id = std::move(id);
-            }
-
             // Delay expiration by issuing another cookie with an updated expiration time
             // and notifying the store
             void refresh_expiration()
@@ -356,21 +346,21 @@ namespace crow
         };
 
         template<typename... Ts>
-        SessionMiddleware(const std::string& secret_key,
-                          CookieParser::Cookie cookie,
-                          int id_length,
-                          Ts... ts):
-          secret_key_(secret_key),
-          id_length_(id_length), cookie_(cookie),
+        SessionMiddleware(
+          CookieParser::Cookie cookie,
+          int id_length,
+          Ts... ts):
+          id_length_(id_length),
+          cookie_(cookie),
           store_(std::forward<Ts>(ts)...), mutex_(new std::mutex{})
         {}
 
         template<typename... Ts>
-        SessionMiddleware(const std::string& secret_key, Ts... ts):
-          SessionMiddleware(secret_key,
-                            CookieParser::Cookie("session").path("/").max_age(/*month*/ 30 * 24 * 60 * 60),
-                            /*id_length */ 10,
-                            std::forward<Ts>(ts)...)
+        SessionMiddleware(Ts... ts):
+          SessionMiddleware(
+            CookieParser::Cookie("session").path("/").max_age(/*month*/ 30 * 24 * 60 * 60),
+            /*id_length */ 20, // around 10^34 possible combinations, but small enough to fit into SSO
+            std::forward<Ts>(ts)...)
         {}
 
         template<typename AllContext>
@@ -464,35 +454,16 @@ namespace crow
 
         std::string load_id(const CookieParser::context& cookies)
         {
-            auto session_raw = cookies.get_cookie(cookie_.name());
-
-            auto pos = session_raw.find(":");
-            if (pos <= 0 || pos >= session_raw.size() - 1) return "";
-
-            auto session_id = session_raw.substr(0, pos);
-            auto session_hmac = session_raw.substr(pos + 1, session_raw.size() - pos - 1);
-
-            return hash_id(session_id) == session_hmac ? session_id : "";
+            return cookies.get_cookie(cookie_.name());
         }
 
         void store_id(CookieParser::context& cookies, const std::string& session_id)
         {
-            cookie_.value(session_id + ":" + hash_id(session_id));
+            cookie_.value(session_id);
             cookies.set_cookie(cookie_);
         }
 
-        std::string hash_id(const std::string& key) const
-        {
-            sha1::SHA1 s;
-            std::string input = key + "/" + secret_key_;
-            s.processBytes(input.data(), input.size());
-            uint8_t digest[20];
-            s.getDigestBytes(digest);
-            return utility::base64encode((unsigned char*)digest, 20);
-        }
-
     private:
-        std::string secret_key_;
         int id_length_;
 
         // prototype for cookie
