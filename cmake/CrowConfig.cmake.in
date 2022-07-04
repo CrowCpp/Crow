@@ -4,7 +4,7 @@ include(CMakeFindDependencyMacro)
 
 get_filename_component(CROW_CMAKE_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
 
-list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
+list(APPEND CMAKE_MODULE_PATH ${CROW_CMAKE_DIR})
 find_dependency(asio)
 list(REMOVE_AT CMAKE_MODULE_PATH -1)
 

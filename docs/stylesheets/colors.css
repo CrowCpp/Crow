@@ -21,6 +21,8 @@
     --md-primary-fg-color: #24404f;
     --md-accent-fg-color:  #445e6d;
     --md-default-fg-color: rgba(255, 255, 255, 0.87);
+    --md-typeset-color: rgba(255, 255, 255, 0.80);
+    --md-admonition-fg-color: rgba(255, 255, 255, 0.80);
     --md-default-fg-color--light: rgba(255, 255, 255, 0.54);
     --md-default-fg-color--lighter: rgba(255, 255, 255, 0.32);
     --md-default-fg-color--lightest: rgba(255, 255, 255, 0.07);
@@ -30,6 +32,7 @@
     --md-code-hl-comment-color: var(--md-code-fg-color) !important;
     --md-code-hl-generic-color: var(--md-code-fg-color) !important;
     --md-code-hl-variable-color: var(--md-code-fg-color) !important;
+    --md-code-hl-operator-color: var(--md-code-fg-color) !important;
     --md-code-fg-color: #adadad !important;
     --md-code-hl-punctuation-color: #adadad !important;
     --home-border-color: #ffffff20;
