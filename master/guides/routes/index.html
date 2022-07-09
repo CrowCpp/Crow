@@ -1289,7 +1289,8 @@ you can see the first <code>&lt;int&gt;</code> is defined as <code>a</code> and 
 <p>You can change the HTTP methods the route uses from just the default <code>GET</code> by using <code>method()</code>, your route macro should look like <code>CROW_ROUTE(app, "/add/&lt;int&gt;/&lt;int&gt;").methods(crow::HTTPMethod::GET, crow::HTTPMethod::PATCH)</code> or <code>CROW_ROUTE(app, "/add/&lt;int&gt;/&lt;int&gt;").methods("GET"_method, "PATCH"_method)</code>.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>Crow handles <code>HEAD</code> and <code>OPTIONS</code> methods automatically. So adding those to your handler has no effect.</p>
+<p>Crow handles <code>OPTIONS</code> method automatically. The <code>HEAD</code> method is handled automatically unless defined in a route.
+Adding <code>OPTIONS</code> to a route's methods has no effect.</p>
 </div>
 <p>Crow defines the following methods:
 <div class="highlight"><pre><span></span><code>DELETE
