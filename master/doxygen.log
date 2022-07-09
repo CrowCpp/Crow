@@ -360,15 +360,16 @@ Generating docs for compound crow::/drone/src/include/crow/parser.h:95: warning:
 /drone/src/include/crow/http_response.h:74: warning: Member response(returnable &&value) (function) of class crow::response is not documented.
 /drone/src/include/crow/http_response.h:79: warning: Member response(returnable &value) (function) of class crow::response is not documented.
 /drone/src/include/crow/http_response.h:84: warning: Member response(int code, returnable &value) (function) of class crow::response is not documented.
-/drone/src/include/crow/http_response.h:91: warning: Member response(response &&r) (function) of class crow::response is not documented.
-/drone/src/include/crow/http_response.h:96: warning: Member response(std::string contentType, std::string body) (function) of class crow::response is not documented.
-/drone/src/include/crow/http_response.h:102: warning: Member response(int code, std::string contentType, std::string body) (function) of class crow::response is not documented.
-/drone/src/include/crow/http_response.h:110: warning: Member operator=(response &&r) noexcept (function) of class crow::response is not documented.
-/drone/src/include/crow/http_response.h:126: warning: Member clear() (function) of class crow::response is not documented.
-/drone/src/include/crow/http_response.h:175: warning: Member write(const std::string &body_part) (function) of class crow::response is not documented.
-/drone/src/include/crow/http_response.h:224: warning: Member path (variable) of class crow::response::static_file_info is not documented.
-/drone/src/include/crow/http_response.h:224: warning: Member statbuf (variable) of class crow::response::static_file_info is not documented.
-/drone/src/include/crow/http_response.h:226: warning: Member statResult (variable) of class crow::response::static_file_info is not documented.
+/drone/src/include/crow/http_response.h:90: warning: Member response(int code, returnable &&value) (function) of class crow::response is not documented.
+/drone/src/include/crow/http_response.h:96: warning: Member response(response &&r) (function) of class crow::response is not documented.
+/drone/src/include/crow/http_response.h:101: warning: Member response(std::string contentType, std::string body) (function) of class crow::response is not documented.
+/drone/src/include/crow/http_response.h:107: warning: Member response(int code, std::string contentType, std::string body) (function) of class crow::response is not documented.
+/drone/src/include/crow/http_response.h:115: warning: Member operator=(response &&r) noexcept (function) of class crow::response is not documented.
+/drone/src/include/crow/http_response.h:131: warning: Member clear() (function) of class crow::response is not documented.
+/drone/src/include/crow/http_response.h:180: warning: Member write(const std::string &body_part) (function) of class crow::response is not documented.
+/drone/src/include/crow/http_response.h:229: warning: Member path (variable) of class crow::response::static_file_info is not documented.
+/drone/src/include/crow/http_response.h:229: warning: Member statbuf (variable) of class crow::response::static_file_info is not documented.
+/drone/src/include/crow/http_response.h:231: warning: Member statResult (variable) of class crow::response::static_file_info is not documented.
 /drone/src/include/crow/returnable.h:11: warning: Member dump() const =0 (function) of class crow::returnable is not documented.
 /drone/src/include/crow/returnable.h:13: warning: Member returnable(std::string ctype) (function) of class crow::returnable is not documented.
 /drone/src/include/crow/returnable.h:10: warning: Member content_type (variable) of class crow::returnable is not documented.
@@ -763,5 +764,5 @@ Generating example index...
 finalizing index lists...
 writing tag file...
 Running plantuml with JAVA...
-lookup cache used 2941/65536 hits=25069 misses=3322
+lookup cache used 2942/65536 hits=25126 misses=3323
 finished...
