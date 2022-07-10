@@ -1745,6 +1745,14 @@ TEST_CASE("middleware_cookieparser_format")
         CHECK(valid(s, 2));
         CHECK(s.find("Expires=Wed, 01 Nov 2000 23:59:59 GMT") != std::string::npos);
     }
+    // prototype
+    {
+        auto c = Cookie("key");
+        c.value("value");
+        auto s = c.dump();
+        CHECK(valid(s, 1));
+        CHECK(s == "key=value");
+    }
 } // middleware_cookieparser_format
 
 TEST_CASE("middleware_cors")
