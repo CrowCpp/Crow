@@ -51,7 +51,7 @@ namespace crow
             }
 
             Cookie(const std::string& key):
-              Cookie(key, ""){}
+              Cookie(key, "") {}
 
             // format cookie to HTTP header format
             std::string dump() const
