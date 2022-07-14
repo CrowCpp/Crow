@@ -99,9 +99,10 @@ namespace crow
             }
 
             template<typename U>
-            void value(U&& value)
+            Cookie& value(U&& value)
             {
                 value_ = std::forward<U>(value);
+                return *this;
             }
 
             // Expires attribute
@@ -217,9 +218,10 @@ namespace crow
                 return cookies_to_add.back();
             }
 
-            void set_cookie(Cookie cookie)
+            Cookie& set_cookie(Cookie cookie)
             {
                 cookies_to_add.push_back(std::move(cookie));
+                return cookies_to_add.back();
             }
 
         private:

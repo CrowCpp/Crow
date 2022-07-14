@@ -786,7 +786,7 @@ namespace crow
             }
         }
 
-        inline std::string random_alphanum(std::size_t size)
+        inline static std::string random_alphanum(std::size_t size)
         {
             static const char alphabet[] = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
             std::random_device dev;
@@ -799,7 +799,7 @@ namespace crow
             return out;
         }
 
-        inline std::string join_path(std::string path, const std::string& fname)
+        inline static std::string join_path(std::string path, const std::string& fname)
         {
 #ifdef CROW_CAN_USE_CPP17
             return std::filesystem::path(path) / fname;
