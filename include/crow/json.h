@@ -1275,6 +1275,7 @@ namespace crow
             return load(str.data(), str.size());
         }
 
+        class wvalue_reader;
 
         /// JSON write value.
 
@@ -1284,6 +1285,7 @@ namespace crow
         class wvalue : public returnable
         {
             friend class crow::mustache::template_t;
+            friend class wvalue_reader;
 
         public:
             using object =
@@ -1950,7 +1952,38 @@ namespace crow
             }
         };
 
+        // Used for accessing the internals of a wvalue
+        struct wvalue_reader
+        {
+            int64_t get(int64_t fallback)
+            {
+                if (ref.t() != type::Number || ref.nt == num_type::Floating_point)
+                    return fallback;
+                return ref.num.si;
+            }
 
+            double get(double fallback)
+            {
+                if (ref.t() != type::Number || ref.nt != num_type::Floating_point)
+                    return fallback;
+                return ref.num.d;
+            }
+
+            bool get(bool fallback)
+            {
+                if (ref.t() == type::True) return true;
+                if (ref.t() == type::False) return false;
+                return fallback;
+            }
+
+            std::string get(const std::string& fallback)
+            {
+                if (ref.t() != type::String) return fallback;
+                return ref.s;
+            }
+
+            const wvalue& ref;
+        };
 
         //std::vector<asio::const_buffer> dump_ref(wvalue& v)
         //{

@@ -649,10 +649,7 @@ namespace crow
         inline std::string default_loader(const std::string& filename)
         {
             std::string path = detail::get_template_base_directory_ref();
-            if (!(path.back() == '/' || path.back() == '\\'))
-                path += '/';
-            path += filename;
-            std::ifstream inf(path);
+            std::ifstream inf(utility::join_path(path, filename));
             if (!inf)
             {
                 CROW_LOG_WARNING << "Template \"" << filename << "\" not found.";

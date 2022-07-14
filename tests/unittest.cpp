@@ -9,11 +9,13 @@
 #include <thread>
 #include <chrono>
 #include <type_traits>
+#include <regex>
 
 #include "catch.hpp"
 #include "crow.h"
 #include "crow/middlewares/cookie_parser.h"
 #include "crow/middlewares/cors.h"
+#include "crow/middlewares/session.h"
 
 using namespace std;
 using namespace crow;
@@ -1743,6 +1745,14 @@ TEST_CASE("middleware_cookieparser_format")
         CHECK(valid(s, 2));
         CHECK(s.find("Expires=Wed, 01 Nov 2000 23:59:59 GMT") != std::string::npos);
     }
+    // prototype
+    {
+        auto c = Cookie("key");
+        c.value("value");
+        auto s = c.dump();
+        CHECK(valid(s, 1));
+        CHECK(s == "key=value");
+    }
 } // middleware_cookieparser_format
 
 TEST_CASE("middleware_cors")
@@ -1775,10 +1785,7 @@ TEST_CASE("middleware_cors")
         return "-";
     });
 
-    auto _ = async(launch::async,
-                   [&] {
-                       app.bindaddr(LOCALHOST_ADDRESS).port(45451).run();
-                   });
+    auto _ = app.bindaddr(LOCALHOST_ADDRESS).port(45451).run_async();
 
     app.wait_for_server_start();
     asio::io_service is;
@@ -1824,6 +1831,125 @@ TEST_CASE("middleware_cors")
 
     app.stop();
 } // middleware_cors
+
+TEST_CASE("middleware_session")
+{
+    static char buf[5012];
+
+    using Session = SessionMiddleware<InMemoryStore>;
+
+    App<crow::CookieParser, Session> app{
+      Session{InMemoryStore{}}};
+
+    CROW_ROUTE(app, "/get")
+    ([&](const request& req) {
+        auto& session = app.get_context<Session>(req);
+        auto key = req.url_params.get("key");
+        return session.string(key);
+    });
+
+    CROW_ROUTE(app, "/set")
+    ([&](const request& req) {
+        auto& session = app.get_context<Session>(req);
+        auto key = req.url_params.get("key");
+        auto value = req.url_params.get("value");
+        session.set(key, value);
+        return "ok";
+    });
+
+    CROW_ROUTE(app, "/count")
+    ([&](const request& req) {
+        auto& session = app.get_context<Session>(req);
+        session.apply("counter", [](int v) {
+            return v + 2;
+        });
+        return session.string("counter");
+    });
+
+    CROW_ROUTE(app, "/lock")
+    ([&](const request& req) {
+        auto& session = app.get_context<Session>(req);
+        session.mutex().lock();
+        std::this_thread::sleep_for(std::chrono::milliseconds(50));
+        session.mutex().unlock();
+        return "OK";
+    });
+
+    CROW_ROUTE(app, "/check_lock")
+    ([&](const request& req) {
+        auto& session = app.get_context<Session>(req);
+        if (session.mutex().try_lock())
+            return "LOCKED";
+        else
+        {
+            session.mutex().unlock();
+            return "FAILED";
+        };
+    });
+
+    auto _ = app.bindaddr(LOCALHOST_ADDRESS).port(45451).run_async();
+
+    app.wait_for_server_start();
+    asio::io_service is;
+
+    auto make_request = [&](const std::string& rq) {
+        asio::ip::tcp::socket c(is);
+        c.connect(asio::ip::tcp::endpoint(
+          asio::ip::address::from_string(LOCALHOST_ADDRESS), 45451));
+        c.send(asio::buffer(rq));
+        c.receive(asio::buffer(buf, 2048));
+        c.close();
+        return std::string(buf);
+    };
+
+    std::string cookie = "Cookie: session=";
+
+    // test = works
+    {
+        auto res = make_request(
+          "GET /set?key=test&value=works\r\n" + cookie + "\r\n\r\n");
+
+        const std::regex cookiev_regex("Cookie:\\ssession=(.*?);", std::regex::icase);
+        auto istart = std::sregex_token_iterator(res.begin(), res.end(), cookiev_regex, 1);
+        auto iend = std::sregex_token_iterator();
+
+        CHECK(istart != iend);
+        cookie.append(istart->str());
+        cookie.push_back(';');
+    }
+
+    // check test = works
+    {
+        auto res = make_request("GET /get?key=test\r\n" + cookie + "\r\n\r\n");
+        CHECK(res.find("works") != std::string::npos);
+    }
+
+    // check counter
+    {
+        for (int i = 1; i < 5; i++)
+        {
+            auto res = make_request("GET /count\r\n" + cookie + "\r\n\r\n");
+            CHECK(res.find(std::to_string(2 * i)) != std::string::npos);
+        }
+    }
+
+    // lock
+    {
+        asio::ip::tcp::socket c_lock(is);
+        c_lock.connect(asio::ip::tcp::endpoint(
+          asio::ip::address::from_string(LOCALHOST_ADDRESS), 45451));
+        c_lock.send(asio::buffer("GET /lock\r\n" + cookie + "\r\n\r\n"));
+
+        auto res = make_request("GET /check_lock\r\n" + cookie + "\r\n\r\n");
+        CHECK(res.find("LOCKED") != std::string::npos);
+
+        c_lock.close();
+    }
+
+
+    app.stop();
+} // middleware_session
+
 
 TEST_CASE("bug_quick_repeated_request")
 {
