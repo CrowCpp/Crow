@@ -25,7 +25,8 @@ You can change the HTTP methods the route uses from just the default `GET` by us
 
 !!! note
 
-    Crow handles `HEAD` and `OPTIONS` methods automatically. So adding those to your handler has no effect.
+    Crow handles `OPTIONS` method automatically. The `HEAD` method is handled automatically unless defined in a route.
+    Adding `OPTIONS` to a route's methods has no effect.
 
 Crow defines the following methods:
 ```

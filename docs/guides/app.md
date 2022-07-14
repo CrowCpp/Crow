@@ -27,6 +27,10 @@ app.bindaddr(192.168.1.2)
 !!! note
 
     The `run()` method is blocking. To run a Crow app asynchronously `run_async()` should be used instead.
+    
+!!! warning
+
+    When using `run_async()`, make sure to use a variable to save the function's output (such as `#!cpp auto _a = app.run_async()`). Otherwise the app will run synchronously.
 
 <br><br>
 
