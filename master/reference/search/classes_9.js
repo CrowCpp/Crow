@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['node_250',['Node',['../structcrow_1_1_trie_1_1_node.html',1,'crow::Trie']]]
+  ['logger_256',['logger',['../classcrow_1_1logger.html',1,'crow']]]
 ];

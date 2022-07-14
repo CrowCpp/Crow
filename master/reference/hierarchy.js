@@ -7,6 +7,7 @@ var hierarchy =
       [ "crow::WebSocketRule< App >", "classcrow_1_1_web_socket_rule.html", null ]
     ] ],
     [ "crow::Blueprint", "classcrow_1_1_blueprint.html", null ],
+    [ "crow::session::CachedSession", "structcrow_1_1session_1_1_cached_session.html", null ],
     [ "crow::detail::routing_handler_call_helper::call< F, NInt, NUint, NDouble, NString, S1, S2 >", "structcrow_1_1detail_1_1routing__handler__call__helper_1_1call.html", null ],
     [ "crow::detail::routing_handler_call_helper::call< F, NInt, NUint, NDouble, NString, black_magic::S< double, Args1... >, black_magic::S< Args2... > >", "structcrow_1_1detail_1_1routing__handler__call__helper_1_1call_3_01_f_00_01_n_int_00_01_n_uint_0ac50968f63df9484eeaa96bf94c67fc5.html", null ],
     [ "crow::detail::routing_handler_call_helper::call< F, NInt, NUint, NDouble, NString, black_magic::S< int64_t, Args1... >, black_magic::S< Args2... > >", "structcrow_1_1detail_1_1routing__handler__call__helper_1_1call_3_01_f_00_01_n_int_00_01_n_uint_0b63d09427b176e92959de8d063124ae4.html", null ],
@@ -36,6 +37,7 @@ var hierarchy =
     ] ],
     [ "crow::CookieParser::context", "structcrow_1_1_cookie_parser_1_1context.html", null ],
     [ "crow::CORSHandler::context", "structcrow_1_1_c_o_r_s_handler_1_1context.html", null ],
+    [ "crow::SessionMiddleware< Store >::context", "structcrow_1_1_session_middleware_1_1context.html", null ],
     [ "crow::UTF8::context", "structcrow_1_1_u_t_f8_1_1context.html", null ],
     [ "crow::CookieParser::Cookie", "structcrow_1_1_cookie_parser_1_1_cookie.html", null ],
     [ "crow::CookieParser", "structcrow_1_1_cookie_parser.html", null ],
@@ -45,6 +47,8 @@ var hierarchy =
     [ "std::exception", null, [
       [ "crow::mustache::invalid_template_exception", "classcrow_1_1mustache_1_1invalid__template__exception.html", null ]
     ] ],
+    [ "crow::session::ExpirationTracker", "structcrow_1_1session_1_1_expiration_tracker.html", null ],
+    [ "crow::FileStore", "structcrow_1_1_file_store.html", null ],
     [ "crow::detail::check_before_handle_arity_3_const< MW >::get< T, const  >", "structcrow_1_1detail_1_1check__before__handle__arity__3__const_1_1get.html", null ],
     [ "crow::detail::check_before_handle_arity_3< MW >::get< T, >", "structcrow_1_1detail_1_1check__before__handle__arity__3_1_1get.html", null ],
     [ "crow::detail::check_after_handle_arity_3_const< MW >::get< T, const  >", "structcrow_1_1detail_1_1check__after__handle__arity__3__const_1_1get.html", null ],
@@ -63,6 +67,7 @@ var hierarchy =
     [ "crow::ILogHandler", "classcrow_1_1_i_log_handler.html", [
       [ "crow::CerrLogHandler", "classcrow_1_1_cerr_log_handler.html", null ]
     ] ],
+    [ "crow::InMemoryStore", "structcrow_1_1_in_memory_store.html", null ],
     [ "crow::detail::is_after_handle_arity_3_impl< T >", "structcrow_1_1detail_1_1is__after__handle__arity__3__impl.html", null ],
     [ "crow::detail::is_before_handle_arity_3_impl< T >", "structcrow_1_1detail_1_1is__before__handle__arity__3__impl.html", null ],
     [ "crow::detail::is_middleware_global< MW >", "structcrow_1_1detail_1_1is__middleware__global.html", null ],
@@ -72,6 +77,7 @@ var hierarchy =
     [ "crow::detail::middleware_call_criteria_dynamic< true >", "structcrow_1_1detail_1_1middleware__call__criteria__dynamic_3_01true_01_4.html", null ],
     [ "crow::detail::middleware_call_criteria_only_global", "structcrow_1_1detail_1_1middleware__call__criteria__only__global.html", null ],
     [ "crow::detail::middleware_indices", "structcrow_1_1detail_1_1middleware__indices.html", null ],
+    [ "crow::session::multi_value", "structcrow_1_1session_1_1multi__value.html", null ],
     [ "crow::Trie::Node", "structcrow_1_1_trie_1_1_node.html", null ],
     [ "crow::multipart::part", "structcrow_1_1multipart_1_1part.html", null ],
     [ "crow::detail::partial_context<>", "structcrow_1_1detail_1_1partial__context_3_4.html", null ],
@@ -95,6 +101,7 @@ var hierarchy =
     ] ],
     [ "crow::json::rvalue", "classcrow_1_1json_1_1rvalue.html", null ],
     [ "crow::Server< Handler, Adaptor, Middlewares >", "classcrow_1_1_server.html", null ],
+    [ "crow::SessionMiddleware< Store >", "structcrow_1_1_session_middleware.html", null ],
     [ "crow::SocketAdaptor", "structcrow_1_1_socket_adaptor.html", null ],
     [ "crow::SSLAdaptor", "structcrow_1_1_s_s_l_adaptor.html", null ],
     [ "crow::response::static_file_info", "structcrow_1_1response_1_1static__file__info.html", null ],
@@ -106,5 +113,6 @@ var hierarchy =
     [ "crow::mustache::template_t", "classcrow_1_1mustache_1_1template__t.html", null ],
     [ "crow::Trie", "classcrow_1_1_trie.html", null ],
     [ "crow::UTF8", "structcrow_1_1_u_t_f8.html", null ],
-    [ "crow::detail::routing_handler_call_helper::Wrapped< Func, ArgsWrapped >", "structcrow_1_1detail_1_1routing__handler__call__helper_1_1_wrapped.html", null ]
+    [ "crow::detail::routing_handler_call_helper::Wrapped< Func, ArgsWrapped >", "structcrow_1_1detail_1_1routing__handler__call__helper_1_1_wrapped.html", null ],
+    [ "crow::json::wvalue_reader", "structcrow_1_1json_1_1wvalue__reader.html", null ]
 ];

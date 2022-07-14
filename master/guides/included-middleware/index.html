@@ -100,7 +100,7 @@ Make sure you understand how to enable and use middleware.">
     <div data-md-component="skip">
       
         
-        <a href="#cookies" class="md-skip">
+        <a href="#sessions" class="md-skip">
           Skip to content
         </a>
       
@@ -932,6 +932,40 @@ Make sure you understand how to enable and use middleware.">
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#sessions" class="md-nav__link">
+    Sessions
+  </a>
+  
+    <nav class="md-nav" aria-label="Sessions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#setup" class="md-nav__link">
+    Setup
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#usage" class="md-nav__link">
+    Usage
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#expiration" class="md-nav__link">
+    Expiration
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#cookies" class="md-nav__link">
     Cookies
   </a>
@@ -1101,6 +1135,40 @@ Make sure you understand how to enable and use middleware.">
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#sessions" class="md-nav__link">
+    Sessions
+  </a>
+  
+    <nav class="md-nav" aria-label="Sessions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#setup" class="md-nav__link">
+    Setup
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#usage" class="md-nav__link">
+    Usage
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#expiration" class="md-nav__link">
+    Expiration
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#cookies" class="md-nav__link">
     Cookies
   </a>
@@ -1133,9 +1201,54 @@ Make sure you understand how to enable and use middleware.">
 <p>Crow contains some middlewares that are ready to be used in your application.
 <br>
 Make sure you understand how to enable and use <a href="../middleware/">middleware</a>.</p>
+<h2 id="sessions">Sessions<a class="headerlink" href="#sessions" title="Permanent link">&para;</a></h2>
+<p>Include: <code>crow/middlewares/session.h</code> <br>
+Examples: <code>examples/middlewares/session.cpp</code></p>
+<p>This middleware can be used for managing sessions - small packets of data associated with a single client that persist across multiple requests. Sessions shouldn't store anything permanent, but only context that is required to easily work with the current client (is the user authenticated, what page did he visit last, etc.).</p>
+<h3 id="setup">Setup<a class="headerlink" href="#setup" title="Permanent link">&para;</a></h3>
+<p>Session data can be stored in multiple ways:</p>
+<ul>
+<li><code>crow::InMemoryStore</code> - stores all data in memory</li>
+<li><code>crow::FileStore</code> - stores all all data in json files</li>
+<li>A custom store</li>
+</ul>
+<p><strong>Always list the CookieParser before the Session</strong>
+<div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">Session</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">crow</span><span class="o">::</span><span class="n">SessionMiddleware</span><span class="o">&lt;</span><span class="n">crow</span><span class="o">::</span><span class="n">FileStore</span><span class="o">&gt;</span><span class="p">;</span><span class="w"></span>
+<span class="n">crow</span><span class="o">::</span><span class="n">App</span><span class="o">&lt;</span><span class="n">crow</span><span class="o">::</span><span class="n">CookieParser</span><span class="p">,</span><span class="w"> </span><span class="n">Session</span><span class="o">&gt;</span><span class="w"> </span><span class="n">app</span><span class="p">{</span><span class="n">Session</span><span class="p">{</span><span class="w"></span>
+<span class="w">  </span><span class="n">crow</span><span class="o">::</span><span class="n">FileStore</span><span class="p">{</span><span class="s">&quot;/tmp/sessiondata&quot;</span><span class="p">}</span><span class="w"></span>
+<span class="p">}};</span><span class="w"></span>
+</code></pre></div></p>
+<p>Session ids are represented as random alphanumeric strings and are stored in cookies. See the examples for more customization options.</p>
+<h3 id="usage">Usage<a class="headerlink" href="#usage" title="Permanent link">&para;</a></h3>
+<p>A session is basically a key-value map with support for multiple types: strings, integers, booleans and doubles. The map is created and persisted automatically as soon it is first written to.</p>
+<div class="highlight"><pre><span></span><code><span class="k">auto</span><span class="o">&amp;</span><span class="w"> </span><span class="n">session</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">app</span><span class="p">.</span><span class="n">get_context</span><span class="o">&lt;</span><span class="n">Session</span><span class="o">&gt;</span><span class="p">(</span><span class="n">request</span><span class="p">);</span><span class="w"></span>
+
+<span class="n">session</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;key&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;not-found&quot;</span><span class="p">);</span><span class="w"> </span><span class="c1">// get string by key and return &quot;not-found&quot; if not found</span>
+<span class="n">session</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;int&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">-1</span><span class="p">);</span><span class="w"></span>
+<span class="n">session</span><span class="p">.</span><span class="n">get</span><span class="o">&lt;</span><span class="kt">bool</span><span class="o">&gt;</span><span class="p">(</span><span class="s">&quot;flag&quot;</span><span class="p">);</span><span class="w"> </span><span class="c1">// returns default value(false) if not found</span>
+
+<span class="n">session</span><span class="p">.</span><span class="n">set</span><span class="p">(</span><span class="s">&quot;key&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;new value&quot;</span><span class="p">);</span><span class="w"></span>
+<span class="n">session</span><span class="p">.</span><span class="n">string</span><span class="p">(</span><span class="s">&quot;any-type&quot;</span><span class="p">);</span><span class="w"> </span><span class="c1">// return any type as string representation</span>
+<span class="n">session</span><span class="p">.</span><span class="n">remove</span><span class="p">(</span><span class="s">&quot;key&quot;</span><span class="p">);</span><span class="w"></span>
+<span class="n">session</span><span class="p">.</span><span class="n">keys</span><span class="p">();</span><span class="w"> </span><span class="c1">// return list of keys</span>
+</code></pre></div>
+<p>Session objects are shared between concurrent requests,
+this means we can perform atomic operations and even lock the object.
+<div class="highlight"><pre><span></span><code><span class="n">session</span><span class="p">.</span><span class="n">apply</span><span class="p">(</span><span class="s">&quot;views&quot;</span><span class="p">,</span><span class="w"> </span><span class="p">[](</span><span class="kt">int</span><span class="w"> </span><span class="n">v</span><span class="p">){</span><span class="k">return</span><span class="w"> </span><span class="n">v</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">;});</span><span class="w"> </span><span class="c1">// this operation is always atomic, no way to get a data race</span>
+<span class="n">session</span><span class="p">.</span><span class="n">mutex</span><span class="p">().</span><span class="n">lock</span><span class="p">();</span><span class="w"> </span><span class="c1">// manually lock session</span>
+</code></pre></div></p>
+<h3 id="expiration">Expiration<a class="headerlink" href="#expiration" title="Permanent link">&para;</a></h3>
+<p>Expiration can happen either by the cookie expiring or the store deleting "old" data.</p>
+<ul>
+<li>By default, cookies expire after 30 days. This can be changed with the cookie option in the Session constructor. </li>
+<li><code>crow::FileStore</code> automatically supports deleting files that are expired (older than 30 days). The expiration age can also be changed in the constructor.</li>
+</ul>
+<p>The session expiration can be postponed. This will make the Session issue a new cookie and make the store acknowledge the new expiration time.
+<div class="highlight"><pre><span></span><code><span class="n">session</span><span class="p">.</span><span class="n">refresh_expiration</span><span class="p">()</span><span class="w"></span>
+</code></pre></div></p>
 <h2 id="cookies">Cookies<a class="headerlink" href="#cookies" title="Permanent link">&para;</a></h2>
 <p>Include: <code>crow/middlewares/cookie_parser.h</code> <br>
-Examples: <code>examples/middlewars/example_cookies.cpp</code></p>
+Examples: <code>examples/middlewares/example_cookies.cpp</code></p>
 <p>This middleware allows to read and write cookies by using <code>CookieParser</code>. Once enabled, it parses all incoming cookies.</p>
 <p>Cookies can be read and written with the middleware context. All cookie attributes can be changed as well.</p>
 <div class="highlight"><pre><span></span><code><span class="k">auto</span><span class="o">&amp;</span><span class="w"> </span><span class="n">ctx</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">app</span><span class="p">.</span><span class="n">get_context</span><span class="o">&lt;</span><span class="n">crow</span><span class="o">::</span><span class="n">CookieParser</span><span class="o">&gt;</span><span class="p">(</span><span class="n">request</span><span class="p">);</span><span class="w"></span>
@@ -1150,7 +1263,7 @@ Examples: <code>examples/middlewars/example_cookies.cpp</code></p>
 </div>
 <h2 id="cors">CORS<a class="headerlink" href="#cors" title="Permanent link">&para;</a></h2>
 <p>Include: <code>crow/middlewares/cors.h</code> <br>
-Examples: <code>examples/middlewars/example_cors.cpp</code></p>
+Examples: <code>examples/middlewares/example_cors.cpp</code></p>
 <p>This middleware allows to set CORS policies by using <code>CORSHandler</code>. Once enabled, it will apply the default CORS rules globally.</p>
 <p>The CORS rules can be modified by first getting the middleware via <code class="highlight"><span class="k">auto</span><span class="o">&amp;</span><span class="w"> </span><span class="n">cors</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">app</span><span class="p">.</span><span class="n">get_middleware</span><span class="o">&lt;</span><span class="n">crow</span><span class="o">::</span><span class="n">CORSHandler</span><span class="o">&gt;</span><span class="p">();</span><span class="w"></span></code>. The rules can be set per URL prefix using <code>prefix()</code>, per blueprint using <code>blueprint()</code>, or globally via <code>global()</code>. These will return a <code>CORSRules</code> object which contains the actual rules for the prefix, blueprint, or application. For more details go <a href="../../reference/structcrow_1_1_c_o_r_s_handler.html">here</a>.</p>
 <p><code>CORSRules</code> can  be modified using the methods <code>origin()</code>, <code>methods()</code>, <code>headers()</code>, <code>max_age()</code>, <code>allow_credentials()</code>, or <code>ignore()</code>. For more details on these methods and what default values they take go <a href="../../reference/structcrow_1_1_c_o_r_s_rules.html">here</a>.</p>

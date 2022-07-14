@@ -46,7 +46,8 @@ var annotated_dup =
           [ "r_string", "structcrow_1_1json_1_1detail_1_1r__string.html", "structcrow_1_1json_1_1detail_1_1r__string" ]
         ] ],
         [ "rvalue", "classcrow_1_1json_1_1rvalue.html", "classcrow_1_1json_1_1rvalue" ],
-        [ "wvalue", "classcrow_1_1json_1_1wvalue.html", "classcrow_1_1json_1_1wvalue" ]
+        [ "wvalue", "classcrow_1_1json_1_1wvalue.html", "classcrow_1_1json_1_1wvalue" ],
+        [ "wvalue_reader", "structcrow_1_1json_1_1wvalue__reader.html", "structcrow_1_1json_1_1wvalue__reader" ]
       ] ],
       [ "multipart", "namespacecrow_1_1multipart.html", "namespacecrow_1_1multipart" ],
       [ "mustache", null, [
@@ -54,6 +55,11 @@ var annotated_dup =
         [ "invalid_template_exception", "classcrow_1_1mustache_1_1invalid__template__exception.html", "classcrow_1_1mustache_1_1invalid__template__exception" ],
         [ "rendered_template", "structcrow_1_1mustache_1_1rendered__template.html", "structcrow_1_1mustache_1_1rendered__template" ],
         [ "template_t", "classcrow_1_1mustache_1_1template__t.html", "classcrow_1_1mustache_1_1template__t" ]
+      ] ],
+      [ "session", null, [
+        [ "CachedSession", "structcrow_1_1session_1_1_cached_session.html", "structcrow_1_1session_1_1_cached_session" ],
+        [ "ExpirationTracker", "structcrow_1_1session_1_1_expiration_tracker.html", "structcrow_1_1session_1_1_expiration_tracker" ],
+        [ "multi_value", "structcrow_1_1session_1_1multi__value.html", "structcrow_1_1session_1_1multi__value" ]
       ] ],
       [ "websocket", null, [
         [ "connection", "structcrow_1_1websocket_1_1connection.html", "structcrow_1_1websocket_1_1connection" ],
@@ -71,9 +77,11 @@ var annotated_dup =
       [ "CORSRules", "structcrow_1_1_c_o_r_s_rules.html", "structcrow_1_1_c_o_r_s_rules" ],
       [ "Crow", "classcrow_1_1_crow.html", "classcrow_1_1_crow" ],
       [ "DynamicRule", "classcrow_1_1_dynamic_rule.html", "classcrow_1_1_dynamic_rule" ],
+      [ "FileStore", "structcrow_1_1_file_store.html", "structcrow_1_1_file_store" ],
       [ "HTTPParser", "structcrow_1_1_h_t_t_p_parser.html", "structcrow_1_1_h_t_t_p_parser" ],
       [ "ILocalMiddleware", "structcrow_1_1_i_local_middleware.html", "structcrow_1_1_i_local_middleware" ],
       [ "ILogHandler", "classcrow_1_1_i_log_handler.html", "classcrow_1_1_i_log_handler" ],
+      [ "InMemoryStore", "structcrow_1_1_in_memory_store.html", "structcrow_1_1_in_memory_store" ],
       [ "logger", "classcrow_1_1logger.html", "classcrow_1_1logger" ],
       [ "query_string", "classcrow_1_1query__string.html", "classcrow_1_1query__string" ],
       [ "request", "structcrow_1_1request.html", "structcrow_1_1request" ],
@@ -82,6 +90,7 @@ var annotated_dup =
       [ "Router", "classcrow_1_1_router.html", "classcrow_1_1_router" ],
       [ "RuleParameterTraits", "structcrow_1_1_rule_parameter_traits.html", "structcrow_1_1_rule_parameter_traits" ],
       [ "Server", "classcrow_1_1_server.html", "classcrow_1_1_server" ],
+      [ "SessionMiddleware", "structcrow_1_1_session_middleware.html", "structcrow_1_1_session_middleware" ],
       [ "SocketAdaptor", "structcrow_1_1_socket_adaptor.html", "structcrow_1_1_socket_adaptor" ],
       [ "SSLAdaptor", "structcrow_1_1_s_s_l_adaptor.html", "structcrow_1_1_s_s_l_adaptor" ],
       [ "TaggedRule", "classcrow_1_1_tagged_rule.html", "classcrow_1_1_tagged_rule" ],

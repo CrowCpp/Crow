@@ -2,6 +2,7 @@ var structcrow_1_1_cookie_parser_1_1context =
 [
     [ "get_cookie", "structcrow_1_1_cookie_parser_1_1context.html#adb47daa9a7ada1039e16f9f8e0d1a869", null ],
     [ "set_cookie", "structcrow_1_1_cookie_parser_1_1context.html#a9cd0f07e304608e2f798d33ba222010d", null ],
-    [ "cookies_to_add", "structcrow_1_1_cookie_parser_1_1context.html#a1619f430019e3b5f8a3e9b341770f1ac", null ],
+    [ "set_cookie", "structcrow_1_1_cookie_parser_1_1context.html#aeeaf1d983ddd027fc4bc66318be77d94", null ],
+    [ "CookieParser", "structcrow_1_1_cookie_parser_1_1context.html#a89d260b4296a08bc3e1ca65a06cd9a05", null ],
     [ "jar", "structcrow_1_1_cookie_parser_1_1context.html#a65674550c5ee9ade652a4785c6b9b30c", null ]
 ];

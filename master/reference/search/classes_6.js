@@ -1,9 +1,4 @@
 var searchData=
 [
-  ['ilocalmiddleware_237',['ILocalMiddleware',['../structcrow_1_1_i_local_middleware.html',1,'crow']]],
-  ['iloghandler_238',['ILogHandler',['../classcrow_1_1_i_log_handler.html',1,'crow']]],
-  ['invalid_5ftemplate_5fexception_239',['invalid_template_exception',['../classcrow_1_1mustache_1_1invalid__template__exception.html',1,'crow::mustache']]],
-  ['is_5fafter_5fhandle_5farity_5f3_5fimpl_240',['is_after_handle_arity_3_impl',['../structcrow_1_1detail_1_1is__after__handle__arity__3__impl.html',1,'crow::detail']]],
-  ['is_5fbefore_5fhandle_5farity_5f3_5fimpl_241',['is_before_handle_arity_3_impl',['../structcrow_1_1detail_1_1is__before__handle__arity__3__impl.html',1,'crow::detail']]],
-  ['is_5fmiddleware_5fglobal_242',['is_middleware_global',['../structcrow_1_1detail_1_1is__middleware__global.html',1,'crow::detail']]]
+  ['get_241',['get',['../structcrow_1_1detail_1_1check__before__handle__arity__3__const_1_1get.html',1,'crow::detail::check_before_handle_arity_3_const&lt; MW &gt;::get&lt; T, const  &gt;'],['../structcrow_1_1detail_1_1check__before__handle__arity__3_1_1get.html',1,'crow::detail::check_before_handle_arity_3&lt; MW &gt;::get&lt; T, &gt;'],['../structcrow_1_1detail_1_1check__after__handle__arity__3__const_1_1get.html',1,'crow::detail::check_after_handle_arity_3_const&lt; MW &gt;::get&lt; T, const  &gt;'],['../structcrow_1_1detail_1_1check__after__handle__arity__3_1_1get.html',1,'crow::detail::check_after_handle_arity_3&lt; MW &gt;::get&lt; T, &gt;'],['../structcrow_1_1detail_1_1check__global__call__false_1_1get.html',1,'crow::detail::check_global_call_false&lt; MW &gt;::get&lt; T, type &gt;']]]
 ];
