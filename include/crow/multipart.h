@@ -89,7 +89,7 @@ namespace crow
                 if(result != part_map.end())
                     return result->second;
                 else
-                    return {}; 
+                    return {};
             }
 
             /// Represent all parts as a string (**does not include message headers**)
