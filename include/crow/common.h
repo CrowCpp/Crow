@@ -275,6 +275,9 @@ namespace crow
         return string_params[index];
     }
     /// @endcond
+
+    using routing_search_result = std::tuple<uint16_t, std::vector<uint16_t>, routing_params>;
+    using routing_handle_result = std::tuple<uint16_t, std::vector<uint16_t>, routing_params, HTTPMethod>;
 } // namespace crow
 
 // clang-format off

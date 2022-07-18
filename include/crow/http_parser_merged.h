@@ -98,6 +98,7 @@ enum http_connection_flags // This is basically 7 booleans placed into 1 integer
                                                                                         \
   /* Callback-related errors */                                                         \
   CROW_XX(CB_message_begin, "the on_message_begin callback failed")                     \
+  CROW_XX(CB_method, "the on_method callback failed")                                   \
   CROW_XX(CB_url, "the \"on_url\" callback failed")                                     \
   CROW_XX(CB_header_field, "the \"on_header_field\" callback failed")                   \
   CROW_XX(CB_header_value, "the \"on_header_value\" callback failed")                   \
@@ -179,6 +180,7 @@ enum http_errno {
     struct http_parser_settings
     {
         http_cb on_message_begin;
+        http_cb on_method;
         http_data_cb on_url;
         http_data_cb on_header_field;
         http_data_cb on_header_value;
@@ -854,6 +856,8 @@ reexecute:
           CROW_SET_ERRNO(CHPE_INVALID_METHOD);
           goto error;
         }
+
+        CROW_CALLBACK_NOTIFY_NOADVANCE(method);
 
         ++parser->index;
         break;

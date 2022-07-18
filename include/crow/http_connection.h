@@ -48,6 +48,7 @@ namespace crow
           adaptor_(io_service, adaptor_ctx_),
           handler_(handler),
           parser_(this),
+          req_(parser_.req),
           server_name_(server_name),
           middlewares_(middlewares),
           get_cached_date_str(get_cached_date_str_f),
@@ -94,10 +95,18 @@ namespace crow
             });
         }
 
+        void handle_url()
+        {
+            routing_handle_result_ = handler_->handle_initial(req_, res);
+            // if no route is found for the request method, return the response without parsing or processing anything further.
+            if (!std::get<0>(*routing_handle_result_))
+                complete_request();
+        }
+
         void handle_header()
         {
             // HTTP 1.1 Expect: 100-continue
-            if (parser_.http_major == 1 && parser_.http_minor == 1 && get_header_value(parser_.headers, "expect") == "100-continue") // Using the parser because the request isn't made yet.
+            if (req_.http_ver_major == 1 && req_.http_ver_minor == 1 && get_header_value(req_.headers, "expect") == "100-continue") // Using the parser because the request isn't made yet.
             {
                 buffers_.clear();
                 static std::string expect_100_continue = "HTTP/1.1 100 Continue\r\n\r\n";
@@ -108,29 +117,27 @@ namespace crow
 
         void handle()
         {
+            // TODO(EDev): This should be looked into, it might be a good idea to add it to handle_url() and then restart the timer once everything passes
             cancel_deadline_timer();
             bool is_invalid_request = false;
             add_keep_alive_ = false;
 
-            req_ = std::move(parser_.to_request());
-            request& req = req_;
+            req_.remote_ip_address = adaptor_.remote_endpoint().address().to_string();
 
-            req.remote_ip_address = adaptor_.remote_endpoint().address().to_string();
+            add_keep_alive_ = req_.keep_alive;
+            close_connection_ = req_.close_connection;
 
-            add_keep_alive_ = req.keep_alive;
-            close_connection_ = req.close_connection;
-
-            if (req.check_version(1, 1)) // HTTP/1.1
+            if (req_.check_version(1, 1)) // HTTP/1.1
             {
-                if (!req.headers.count("host"))
+                if (!req_.headers.count("host"))
                 {
                     is_invalid_request = true;
                     res = response(400);
                 }
-                if (req.upgrade)
+                if (req_.upgrade)
                 {
                     // h2 or h2c headers
-                    if (req.get_header_value("upgrade").substr(0, 2) == "h2")
+                    if (req_.get_header_value("upgrade").substr(0, 2) == "h2")
                     {
                         // TODO(ipkn): HTTP/2
                         // currently, ignore upgrade header
@@ -138,13 +145,13 @@ namespace crow
                     else
                     {
                         close_connection_ = true;
-                        handler_->handle_upgrade(req, res, std::move(adaptor_));
+                        handler_->handle_upgrade(req_, res, std::move(adaptor_));
                         return;
                     }
                 }
             }
 
-            CROW_LOG_INFO << "Request: " << utility::lexical_cast<std::string>(adaptor_.remote_endpoint()) << " " << this << " HTTP/" << (char)(req.http_ver_major + '0') << "." << (char)(req.http_ver_minor + '0') << ' ' << method_name(req.method) << " " << req.url;
+            CROW_LOG_INFO << "Request: " << utility::lexical_cast<std::string>(adaptor_.remote_endpoint()) << " " << this << " HTTP/" << (char)(req_.http_ver_major + '0') << "." << (char)(req_.http_ver_minor + '0') << ' ' << method_name(req_.method) << " " << req_.url;
 
 
             need_to_call_after_handlers_ = false;
@@ -156,12 +163,12 @@ namespace crow
                 };
 
                 ctx_ = detail::context<Middlewares...>();
-                req.middleware_context = static_cast<void*>(&ctx_);
-                req.middleware_container = static_cast<void*>(middlewares_);
-                req.io_service = &adaptor_.get_io_service();
+                req_.middleware_context = static_cast<void*>(&ctx_);
+                req_.middleware_container = static_cast<void*>(middlewares_);
+                req_.io_service = &adaptor_.get_io_service();
 
                 detail::middleware_call_helper<detail::middleware_call_criteria_only_global,
-                                               0, decltype(ctx_), decltype(*middlewares_)>({}, *middlewares_, req, res, ctx_);
+                                               0, decltype(ctx_), decltype(*middlewares_)>({}, *middlewares_, req_, res, ctx_);
 
                 if (!res.completed_)
                 {
@@ -169,7 +176,7 @@ namespace crow
                         this->complete_request();
                     };
                     need_to_call_after_handlers_ = true;
-                    handler_->handle(req, res);
+                    handler_->handle(req_, res, routing_handle_result_);
                     if (add_keep_alive_)
                         res.set_header("connection", "Keep-Alive");
                 }
@@ -593,7 +600,8 @@ namespace crow
         std::array<char, 4096> buffer_;
 
         HTTPParser<Connection> parser_;
-        request req_;
+        std::unique_ptr<routing_handle_result> routing_handle_result_;
+        request& req_;
         response res;
 
         bool close_connection_ = false;
