@@ -85,7 +85,11 @@ namespace crow
 
             part get_part_by_name(const std::string& name)
             {
-                return part_map.find(name)->second;
+                mp_map::iterator result = part_map.find(name);
+                if (result != part_map.end())
+                    return result->second;
+                else
+                    return {};
             }
 
             /// Represent all parts as a string (**does not include message headers**)
