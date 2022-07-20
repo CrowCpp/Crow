@@ -220,7 +220,7 @@ namespace crow
             int referrers;
             std::recursive_mutex mutex;
         };
-    }; // namespace session
+    } // namespace session
 
     // SessionMiddleware allows storing securely and easily small snippets of user information
     template<typename Store>
