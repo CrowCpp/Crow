@@ -92,7 +92,7 @@ namespace crow
         void handle_full(request& req, response& res)
         {
             auto found = handle_initial(req, res);
-            if (std::get<0>(*found))
+            if (found->rule_index)
                 handle(req, res, found);
         }
 

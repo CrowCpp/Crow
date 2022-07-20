@@ -99,14 +99,17 @@ namespace crow
         {
             routing_handle_result_ = handler_->handle_initial(req_, res);
             // if no route is found for the request method, return the response without parsing or processing anything further.
-            if (!std::get<0>(*routing_handle_result_))
+            if (!routing_handle_result_->rule_index)
+            {
+                parser_.done();
                 complete_request();
+            }
         }
 
         void handle_header()
         {
             // HTTP 1.1 Expect: 100-continue
-            if (req_.http_ver_major == 1 && req_.http_ver_minor == 1 && get_header_value(req_.headers, "expect") == "100-continue") // Using the parser because the request isn't made yet.
+            if (req_.http_ver_major == 1 && req_.http_ver_minor == 1 && get_header_value(req_.headers, "expect") == "100-continue")
             {
                 buffers_.clear();
                 static std::string expect_100_continue = "HTTP/1.1 100 Continue\r\n\r\n";
@@ -117,7 +120,7 @@ namespace crow
 
         void handle()
         {
-            // TODO(EDev): This should be looked into, it might be a good idea to add it to handle_url() and then restart the timer once everything passes
+            // TODO(EDev): cancel_deadline_timer should be looked into, it might be a good idea to add it to handle_url() and then restart the timer once everything passes
             cancel_deadline_timer();
             bool is_invalid_request = false;
             add_keep_alive_ = false;

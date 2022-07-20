@@ -276,8 +276,26 @@ namespace crow
     }
     /// @endcond
 
-    using routing_search_result = std::tuple<uint16_t, std::vector<uint16_t>, routing_params>;
-    using routing_handle_result = std::tuple<uint16_t, std::vector<uint16_t>, routing_params, HTTPMethod>;
+    struct routing_handle_result
+    {
+        uint16_t rule_index;
+        std::vector<uint16_t> blueprint_indices;
+        routing_params r_params;
+        HTTPMethod method;
+
+        routing_handle_result() {}
+
+        routing_handle_result(uint16_t rule_index_, std::vector<uint16_t> blueprint_indices_, routing_params r_params_):
+          rule_index(rule_index_),
+          blueprint_indices(blueprint_indices_),
+          r_params(r_params_) {}
+
+        routing_handle_result(uint16_t rule_index_, std::vector<uint16_t> blueprint_indices_, routing_params r_params_, HTTPMethod method_):
+          rule_index(rule_index_),
+          blueprint_indices(blueprint_indices_),
+          r_params(r_params_),
+          method(method_) {}
+    };
 } // namespace crow
 
 // clang-format off

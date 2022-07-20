@@ -2478,10 +2478,15 @@ TEST_CASE("websocket")
 
     SimpleApp app;
 
-    CROW_WEBSOCKET_ROUTE(app, "/ws").onopen([&](websocket::connection&) {
-                                        connected = true;
-                                        CROW_LOG_INFO << "Connected websocket and value is " << connected;
-                                    })
+    CROW_WEBSOCKET_ROUTE(app, "/ws")
+      .onaccept([&](const crow::request& req, void**) {
+          CROW_LOG_INFO << "Accepted websocket with URL " << req.url;
+          return true;
+      })
+      .onopen([&](websocket::connection&) {
+          connected = true;
+          CROW_LOG_INFO << "Connected websocket and value is " << connected;
+      })
       .onmessage([&](websocket::connection& conn, const std::string& message, bool isbin) {
           CROW_LOG_INFO << "Message is \"" << message << '\"';
           if (!isbin && message == "PINGME")
