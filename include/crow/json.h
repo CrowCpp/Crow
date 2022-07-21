@@ -1275,7 +1275,7 @@ namespace crow
             return load(str.data(), str.size());
         }
 
-        class wvalue_reader;
+        struct wvalue_reader;
 
         /// JSON write value.
 
@@ -1285,7 +1285,7 @@ namespace crow
         class wvalue : public returnable
         {
             friend class crow::mustache::template_t;
-            friend class wvalue_reader;
+            friend struct wvalue_reader;
 
         public:
             using object =
