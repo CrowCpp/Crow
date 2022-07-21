@@ -58,5 +58,5 @@ var classcrow_1_1json_1_1wvalue =
     [ "size", "classcrow_1_1json_1_1wvalue.html#a1ded929c63fcb6e3c53be38e9b54c672", null ],
     [ "t", "classcrow_1_1json_1_1wvalue.html#a2e8d3ed2849f16bb1894c4d48cb49921", null ],
     [ "crow::mustache::template_t", "classcrow_1_1json_1_1wvalue.html#aedfa8358796846a88c67b51d3b280461", null ],
-    [ "wvalue_reader", "classcrow_1_1json_1_1wvalue.html#a59db5bea10a750f0870d7b91a35a20b9", null ]
+    [ "wvalue_reader", "classcrow_1_1json_1_1wvalue.html#a2cf98ec966c306206e0d2d359bb561df", null ]
 ];
