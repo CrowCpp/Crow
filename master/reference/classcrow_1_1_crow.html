@@ -141,10 +141,18 @@ template&lt;typename... Ts&gt; </td></tr>
 <tr class="memitem:a6e435bf5275735effd32647772bdbd04"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classcrow_1_1_crow.html#a6e435bf5275735effd32647772bdbd04">handle_upgrade</a> (const <a class="el" href="structcrow_1_1request.html">request</a> &amp;req, <a class="el" href="structcrow_1_1response.html">response</a> &amp;res, Adaptor &amp;&amp;adaptor)</td></tr>
 <tr class="memdesc:a6e435bf5275735effd32647772bdbd04"><td class="mdescLeft">&#160;</td><td class="mdescRight">Process an Upgrade request.  <a href="classcrow_1_1_crow.html#a6e435bf5275735effd32647772bdbd04">More...</a><br /></td></tr>
 <tr class="separator:a6e435bf5275735effd32647772bdbd04"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a39304d67bfac6bde2a2940b3cc6438b1"><td class="memItemLeft" align="right" valign="top"><a id="a39304d67bfac6bde2a2940b3cc6438b1"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcrow_1_1_crow.html#a39304d67bfac6bde2a2940b3cc6438b1">handle</a> (<a class="el" href="structcrow_1_1request.html">request</a> &amp;req, <a class="el" href="structcrow_1_1response.html">response</a> &amp;res)</td></tr>
-<tr class="memdesc:a39304d67bfac6bde2a2940b3cc6438b1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Process the request and generate a response for it. <br /></td></tr>
-<tr class="separator:a39304d67bfac6bde2a2940b3cc6438b1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a761ebd8c33ae35a3c61c7a160ad40789"><td class="memItemLeft" align="right" valign="top"><a id="a761ebd8c33ae35a3c61c7a160ad40789"></a>
+std::unique_ptr&lt; <a class="el" href="structcrow_1_1routing__handle__result.html">routing_handle_result</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcrow_1_1_crow.html#a761ebd8c33ae35a3c61c7a160ad40789">handle_initial</a> (<a class="el" href="structcrow_1_1request.html">request</a> &amp;req, <a class="el" href="structcrow_1_1response.html">response</a> &amp;res)</td></tr>
+<tr class="memdesc:a761ebd8c33ae35a3c61c7a160ad40789"><td class="mdescLeft">&#160;</td><td class="mdescRight">Process only the method and URL of a request and provide a route (or an error response) <br /></td></tr>
+<tr class="separator:a761ebd8c33ae35a3c61c7a160ad40789"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a866cb219bb77c19326f39f431424e1c7"><td class="memItemLeft" align="right" valign="top"><a id="a866cb219bb77c19326f39f431424e1c7"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcrow_1_1_crow.html#a866cb219bb77c19326f39f431424e1c7">handle</a> (<a class="el" href="structcrow_1_1request.html">request</a> &amp;req, <a class="el" href="structcrow_1_1response.html">response</a> &amp;res, std::unique_ptr&lt; <a class="el" href="structcrow_1_1routing__handle__result.html">routing_handle_result</a> &gt; &amp;found)</td></tr>
+<tr class="memdesc:a866cb219bb77c19326f39f431424e1c7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Process the fully parsed request and generate a response for it. <br /></td></tr>
+<tr class="separator:a866cb219bb77c19326f39f431424e1c7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:accf00be55c273297b758fa243f107018"><td class="memItemLeft" align="right" valign="top"><a id="accf00be55c273297b758fa243f107018"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcrow_1_1_crow.html#accf00be55c273297b758fa243f107018">handle_full</a> (<a class="el" href="structcrow_1_1request.html">request</a> &amp;req, <a class="el" href="structcrow_1_1response.html">response</a> &amp;res)</td></tr>
+<tr class="memdesc:accf00be55c273297b758fa243f107018"><td class="mdescLeft">&#160;</td><td class="mdescRight">Process a fully parsed request from start to finish (primarily used for debugging) <br /></td></tr>
+<tr class="separator:accf00be55c273297b758fa243f107018"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0f408e47d261ad55ccfd8eb5f351c22e"><td class="memItemLeft" align="right" valign="top"><a id="a0f408e47d261ad55ccfd8eb5f351c22e"></a>
 <a class="el" href="classcrow_1_1_dynamic_rule.html">DynamicRule</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcrow_1_1_crow.html#a0f408e47d261ad55ccfd8eb5f351c22e">route_dynamic</a> (std::string &amp;&amp;rule)</td></tr>
 <tr class="memdesc:a0f408e47d261ad55ccfd8eb5f351c22e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a dynamic route using a rule (<b>Use CROW_ROUTE instead</b>) <br /></td></tr>
@@ -237,9 +245,7 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><b>compression_used</b> 
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcrow_1_1_crow.html#a193d8b03f717234a841cd92f72c6b4b5">run</a> ()</td></tr>
 <tr class="memdesc:a193d8b03f717234a841cd92f72c6b4b5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Run the server. <br /></td></tr>
 <tr class="separator:a193d8b03f717234a841cd92f72c6b4b5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aac4f72d944fb35caaf2d82cd21287269"><td class="memItemLeft" align="right" valign="top"><a id="aac4f72d944fb35caaf2d82cd21287269"></a>
-std::future&lt; void &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcrow_1_1_crow.html#aac4f72d944fb35caaf2d82cd21287269">run_async</a> ()</td></tr>
-<tr class="memdesc:aac4f72d944fb35caaf2d82cd21287269"><td class="mdescLeft">&#160;</td><td class="mdescRight">Non-blocking version of <a class="el" href="classcrow_1_1_crow.html#a193d8b03f717234a841cd92f72c6b4b5">run()</a> <br /></td></tr>
+<tr class="memitem:aac4f72d944fb35caaf2d82cd21287269"><td class="memItemLeft" align="right" valign="top">std::future&lt; void &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcrow_1_1_crow.html#aac4f72d944fb35caaf2d82cd21287269">run_async</a> ()</td></tr>
 <tr class="separator:aac4f72d944fb35caaf2d82cd21287269"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0266672657128919ab9a067d93f3868f"><td class="memItemLeft" align="right" valign="top"><a id="a0266672657128919ab9a067d93f3868f"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcrow_1_1_crow.html#a0266672657128919ab9a067d93f3868f">stop</a> ()</td></tr>
@@ -379,6 +385,35 @@ template&lt;typename... Middlewares&gt; </div>
 
 </div>
 </div>
+<a id="aac4f72d944fb35caaf2d82cd21287269"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aac4f72d944fb35caaf2d82cd21287269">&#9670;&nbsp;</a></span>run_async()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename... Middlewares&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::future&lt;void&gt; <a class="el" href="classcrow_1_1_crow.html">crow::Crow</a>&lt; Middlewares &gt;::run_async </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Non-blocking version of <a class="el" href="classcrow_1_1_crow.html#a193d8b03f717234a841cd92f72c6b4b5">run()</a></p>
+<p>The output from this method needs to be saved into a variable! Otherwise the call will be made on the same thread. </p>
+
+</div>
+</div>
 <a id="ae92390d22f6fc99987c41a617be71d64"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ae92390d22f6fc99987c41a617be71d64">&#9670;&nbsp;</a></span>stream_threshold()</h2>
 
@@ -450,7 +485,7 @@ template&lt;typename... Middlewares&gt; </div>
 			<ul>
 				<li class="navelem"><b>crow</b></li><li class="navelem"><a class="el" href="classcrow_1_1_crow.html">Crow</a></li>
 				<li class="footer">
-					Generated on Thu Jul 21 2022 for Crow by <a href="http://www.doxygen.org/index.html">
+					Generated on Fri Jul 22 2022 for Crow by <a href="http://www.doxygen.org/index.html">
 					<img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.17.
 					Dark theme by <a href="http://majerle.eu" target="_new">Tilen Majerle</a>. Edited by <a href="https://github.com/The-EDev" target="_new">Farook Al-Sammarraie</a>. All rights reserved.
 				</li>

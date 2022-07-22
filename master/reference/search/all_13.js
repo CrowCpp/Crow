@@ -1,8 +1,9 @@
 var searchData=
 [
-  ['u_195',['u',['../classcrow_1_1json_1_1rvalue.html#a775273fbbe868c7c8d3a71acdb9ee276',1,'crow::json::rvalue']]],
-  ['unescape_196',['unescape',['../classcrow_1_1json_1_1rvalue.html#a8c60e32c3e25b71c794cc79a4dea466c',1,'crow::json::rvalue']]],
-  ['url_197',['url',['../structcrow_1_1request.html#aa3df34c56847d6d42887e73655276167',1,'crow::request']]],
-  ['url_5fparams_198',['url_params',['../structcrow_1_1request.html#a745d5a94e9e9ae1fed64674aae0194b0',1,'crow::request::url_params()'],['../structcrow_1_1_h_t_t_p_parser.html#aa00ec7a2a2b475ec0b2cfe3d946c9b87',1,'crow::HTTPParser::url_params()']]],
-  ['utf8_199',['UTF8',['../structcrow_1_1_u_t_f8.html',1,'crow']]]
+  ['u_197',['u',['../classcrow_1_1json_1_1rvalue.html#a775273fbbe868c7c8d3a71acdb9ee276',1,'crow::json::rvalue']]],
+  ['unescape_198',['unescape',['../classcrow_1_1json_1_1rvalue.html#a8c60e32c3e25b71c794cc79a4dea466c',1,'crow::json::rvalue']]],
+  ['upgrade_199',['upgrade',['../structcrow_1_1request.html#ac4b5e2e32e2e0b633211925158b03559',1,'crow::request']]],
+  ['url_200',['url',['../structcrow_1_1request.html#aa3df34c56847d6d42887e73655276167',1,'crow::request']]],
+  ['url_5fparams_201',['url_params',['../structcrow_1_1request.html#a745d5a94e9e9ae1fed64674aae0194b0',1,'crow::request']]],
+  ['utf8_202',['UTF8',['../structcrow_1_1_u_t_f8.html',1,'crow']]]
 ];

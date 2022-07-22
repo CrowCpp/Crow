@@ -157,7 +157,7 @@ std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
 <tr class="separator:aa3df34c56847d6d42887e73655276167"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a745d5a94e9e9ae1fed64674aae0194b0"><td class="memItemLeft" align="right" valign="top"><a id="a745d5a94e9e9ae1fed64674aae0194b0"></a>
 <a class="el" href="classcrow_1_1query__string.html">query_string</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structcrow_1_1request.html#a745d5a94e9e9ae1fed64674aae0194b0">url_params</a></td></tr>
-<tr class="memdesc:a745d5a94e9e9ae1fed64674aae0194b0"><td class="mdescLeft">&#160;</td><td class="mdescRight">The parameters associated with the request. (everything after the <code>?</code>) <br /></td></tr>
+<tr class="memdesc:a745d5a94e9e9ae1fed64674aae0194b0"><td class="mdescLeft">&#160;</td><td class="mdescRight">The parameters associated with the request. (everything after the <code>?</code> in the URL) <br /></td></tr>
 <tr class="separator:a745d5a94e9e9ae1fed64674aae0194b0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a86d6c2a93b50611c4a5b5643b6da6540"><td class="memItemLeft" align="right" valign="top"><a id="a86d6c2a93b50611c4a5b5643b6da6540"></a>
 ci_map&#160;</td><td class="memItemRight" valign="bottom"><b>headers</b></td></tr>
@@ -176,13 +176,16 @@ unsigned char&#160;</td><td class="memItemRight" valign="bottom"><b>http_ver_maj
 unsigned char&#160;</td><td class="memItemRight" valign="bottom"><b>http_ver_minor</b></td></tr>
 <tr class="separator:ac0603f5ffe5c7b93c0ca3a5bed4ebacc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5148ce95969d261e50ee977c1dc7960c"><td class="memItemLeft" align="right" valign="top"><a id="a5148ce95969d261e50ee977c1dc7960c"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>keep_alive</b></td></tr>
+bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structcrow_1_1request.html#a5148ce95969d261e50ee977c1dc7960c">keep_alive</a></td></tr>
+<tr class="memdesc:a5148ce95969d261e50ee977c1dc7960c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether or not the server should send a <code>connection: Keep-Alive</code> header to the client. <br /></td></tr>
 <tr class="separator:a5148ce95969d261e50ee977c1dc7960c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4a3e4bcd0cd626ceaee38f4c17d28c8d"><td class="memItemLeft" align="right" valign="top"><a id="a4a3e4bcd0cd626ceaee38f4c17d28c8d"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>close_connection</b></td></tr>
+bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structcrow_1_1request.html#a4a3e4bcd0cd626ceaee38f4c17d28c8d">close_connection</a></td></tr>
+<tr class="memdesc:a4a3e4bcd0cd626ceaee38f4c17d28c8d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether or not the server should shut down the TCP connection once a response is sent. <br /></td></tr>
 <tr class="separator:a4a3e4bcd0cd626ceaee38f4c17d28c8d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac4b5e2e32e2e0b633211925158b03559"><td class="memItemLeft" align="right" valign="top"><a id="ac4b5e2e32e2e0b633211925158b03559"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>upgrade</b></td></tr>
+bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structcrow_1_1request.html#ac4b5e2e32e2e0b633211925158b03559">upgrade</a></td></tr>
+<tr class="memdesc:ac4b5e2e32e2e0b633211925158b03559"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether or noth the server should change the HTTP connection to a different connection. <br /></td></tr>
 <tr class="separator:ac4b5e2e32e2e0b633211925158b03559"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9de0c8721b1c26aab317db0bcdcf1b8a"><td class="memItemLeft" align="right" valign="top"><a id="a9de0c8721b1c26aab317db0bcdcf1b8a"></a>
 void *&#160;</td><td class="memItemRight" valign="bottom"><b>middleware_context</b> {}</td></tr>
@@ -235,7 +238,7 @@ asio::io_service *&#160;</td><td class="memItemRight" valign="bottom"><b>io_serv
 			<ul>
 				<li class="navelem"><b>crow</b></li><li class="navelem"><a class="el" href="structcrow_1_1request.html">request</a></li>
 				<li class="footer">
-					Generated on Thu Jul 21 2022 for Crow by <a href="http://www.doxygen.org/index.html">
+					Generated on Fri Jul 22 2022 for Crow by <a href="http://www.doxygen.org/index.html">
 					<img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.17.
 					Dark theme by <a href="http://majerle.eu" target="_new">Tilen Majerle</a>. Edited by <a href="https://github.com/The-EDev" target="_new">Farook Al-Sammarraie</a>. All rights reserved.
 				</li>

@@ -4,7 +4,7 @@ var classcrow_1_1_trie =
     [ "Trie", "classcrow_1_1_trie.html#ae6b070e1e25b6c5d77cfb2aa05473d73", null ],
     [ "add", "classcrow_1_1_trie.html#a3a71f4488027eace41a219f79d862620", null ],
     [ "debug_print", "classcrow_1_1_trie.html#a9ac17b6ae0f96dc94b595bb704a89101", null ],
-    [ "find", "classcrow_1_1_trie.html#a5abc884875975bed2134e25ce1820280", null ],
+    [ "find", "classcrow_1_1_trie.html#a644f13252d8848b498ab0024293c77bd", null ],
     [ "get_size", "classcrow_1_1_trie.html#a52993a04988b6adcbae88d8582ca3ed4", null ],
     [ "get_size", "classcrow_1_1_trie.html#a571907d5376d20032a3b010c2655b393", null ],
     [ "is_empty", "classcrow_1_1_trie.html#af2cada415bae6140779323f453a5a146", null ],

@@ -148,7 +148,7 @@ $(document).ready(function(){initNavTree('functions.html',''); initResizable(); 
 : <a class="el" href="classcrow_1_1websocket_1_1_connection.html#a0be6d809da4a96c75865748d3b14d22f">crow::websocket::Connection&lt; Adaptor, Handler &gt;</a>
 </li>
 <li>close_connection
-: <a class="el" href="structcrow_1_1_h_t_t_p_parser.html#afb0601e8d022a4db2b0cb1e08aa93238">crow::HTTPParser&lt; Handler &gt;</a>
+: <a class="el" href="structcrow_1_1request.html#a4a3e4bcd0cd626ceaee38f4c17d28c8d">crow::request</a>
 </li>
 <li>code
 : <a class="el" href="structcrow_1_1response.html#aabc1f9b3264b8c5a2d05dcb409e8ff3f">crow::response</a>
@@ -228,7 +228,7 @@ $(document).ready(function(){initNavTree('functions.html',''); initResizable(); 
 : <a class="el" href="classcrow_1_1query__string.html#af56add12ca6a7f0222956e353d1d40bb">crow::query_string</a>
 </li>
 <li>get_error()
-: <a class="el" href="classcrow_1_1_router.html#a68b3861332db76b182ae0ff07262c55a">crow::Router</a>
+: <a class="el" href="classcrow_1_1_router.html#a39beca1acc1997c68db0d34556b6cf87">crow::Router</a>
 </li>
 <li>get_list()
 : <a class="el" href="classcrow_1_1query__string.html#a657e5fe435375cd31229944ed2ad5608">crow::query_string</a>
@@ -242,16 +242,19 @@ $(document).ready(function(){initNavTree('functions.html',''); initResizable(); 
 
 <h3><a id="index_h"></a>- h -</h3><ul>
 <li>handle()
-: <a class="el" href="classcrow_1_1_crow.html#a39304d67bfac6bde2a2940b3cc6438b1">crow::Crow&lt; Middlewares &gt;</a>
+: <a class="el" href="classcrow_1_1_crow.html#a866cb219bb77c19326f39f431424e1c7">crow::Crow&lt; Middlewares &gt;</a>
 </li>
 <li>handle_fragment()
 : <a class="el" href="classcrow_1_1websocket_1_1_connection.html#a292002f44552e5eabd8dd65f476a4c28">crow::websocket::Connection&lt; Adaptor, Handler &gt;</a>
 </li>
+<li>handle_full()
+: <a class="el" href="classcrow_1_1_crow.html#accf00be55c273297b758fa243f107018">crow::Crow&lt; Middlewares &gt;</a>
+</li>
+<li>handle_initial()
+: <a class="el" href="classcrow_1_1_crow.html#a761ebd8c33ae35a3c61c7a160ad40789">crow::Crow&lt; Middlewares &gt;</a>
+</li>
 <li>handle_upgrade()
 : <a class="el" href="classcrow_1_1_crow.html#a6e435bf5275735effd32647772bdbd04">crow::Crow&lt; Middlewares &gt;</a>
-</li>
-<li>handler_
-: <a class="el" href="structcrow_1_1_h_t_t_p_parser.html#a8c9ef70473ed6548872bcb217965203e">crow::HTTPParser&lt; Handler &gt;</a>
 </li>
 <li>has()
 : <a class="el" href="classcrow_1_1json_1_1rvalue.html#a48ac4fff801f365fb2b82f1ed7ebe983">crow::json::rvalue</a>
@@ -292,7 +295,7 @@ $(document).ready(function(){initNavTree('functions.html',''); initResizable(); 
 
 <h3><a id="index_k"></a>- k -</h3><ul>
 <li>keep_alive
-: <a class="el" href="structcrow_1_1_h_t_t_p_parser.html#ae7475276c3cf8fbfb08084e9b5cb213c">crow::HTTPParser&lt; Handler &gt;</a>
+: <a class="el" href="structcrow_1_1request.html#a5148ce95969d261e50ee977c1dc7960c">crow::request</a>
 </li>
 </ul>
 
@@ -416,8 +419,11 @@ $(document).ready(function(){initNavTree('functions.html',''); initResizable(); 
 <li>render_string()
 : <a class="el" href="classcrow_1_1mustache_1_1template__t.html#a21199e08a066d7c66b5728354c2c40fd">crow::mustache::template_t</a>
 </li>
+<li>req
+: <a class="el" href="structcrow_1_1_h_t_t_p_parser.html#a56ce939040d6c582a62cea766e489d53">crow::HTTPParser&lt; Handler &gt;</a>
+</li>
 <li>request()
-: <a class="el" href="structcrow_1_1request.html#a838c9a8c9a5eb2283d57e66f3630b5a6">crow::request</a>
+: <a class="el" href="structcrow_1_1request.html#a111b70ddb2a100a79415b539e152e145">crow::request</a>
 </li>
 <li>route()
 : <a class="el" href="classcrow_1_1_crow.html#af221cb25926e5dabc2da21a7a1c9713c">crow::Crow&lt; Middlewares &gt;</a>
@@ -518,9 +524,6 @@ $(document).ready(function(){initNavTree('functions.html',''); initResizable(); 
 <li>timeout()
 : <a class="el" href="classcrow_1_1_crow.html#a47ed9a118820f6e6ba0b2bc37f0997fb">crow::Crow&lt; Middlewares &gt;</a>
 </li>
-<li>to_request()
-: <a class="el" href="structcrow_1_1_h_t_t_p_parser.html#a4c1e61f6ed620123661ffb95070c9ca0">crow::HTTPParser&lt; Handler &gt;</a>
-</li>
 </ul>
 
 
@@ -531,12 +534,14 @@ $(document).ready(function(){initNavTree('functions.html',''); initResizable(); 
 <li>unescape()
 : <a class="el" href="classcrow_1_1json_1_1rvalue.html#a8c60e32c3e25b71c794cc79a4dea466c">crow::json::rvalue</a>
 </li>
+<li>upgrade
+: <a class="el" href="structcrow_1_1request.html#ac4b5e2e32e2e0b633211925158b03559">crow::request</a>
+</li>
 <li>url
 : <a class="el" href="structcrow_1_1request.html#aa3df34c56847d6d42887e73655276167">crow::request</a>
 </li>
 <li>url_params
-: <a class="el" href="structcrow_1_1_h_t_t_p_parser.html#aa00ec7a2a2b475ec0b2cfe3d946c9b87">crow::HTTPParser&lt; Handler &gt;</a>
-, <a class="el" href="structcrow_1_1request.html#a745d5a94e9e9ae1fed64674aae0194b0">crow::request</a>
+: <a class="el" href="structcrow_1_1request.html#a745d5a94e9e9ae1fed64674aae0194b0">crow::request</a>
 </li>
 </ul>
 
@@ -571,7 +576,7 @@ $(document).ready(function(){initNavTree('functions.html',''); initResizable(); 
 		<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
 			<ul>
 				<li class="footer">
-					Generated on Thu Jul 21 2022 for Crow by <a href="http://www.doxygen.org/index.html">
+					Generated on Fri Jul 22 2022 for Crow by <a href="http://www.doxygen.org/index.html">
 					<img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.17.
 					Dark theme by <a href="http://majerle.eu" target="_new">Tilen Majerle</a>. Edited by <a href="https://github.com/The-EDev" target="_new">Farook Al-Sammarraie</a>. All rights reserved.
 				</li>

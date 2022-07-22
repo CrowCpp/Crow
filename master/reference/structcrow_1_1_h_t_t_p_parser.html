@@ -131,6 +131,9 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><b>done</b> ()</td></tr>
 <tr class="memitem:abc4649eacc92efe28b8c41c1d434e749"><td class="memItemLeft" align="right" valign="top"><a id="abc4649eacc92efe28b8c41c1d434e749"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>clear</b> ()</td></tr>
 <tr class="separator:abc4649eacc92efe28b8c41c1d434e749"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0c02c8afdc641b2b70d9d26772288370"><td class="memItemLeft" align="right" valign="top"><a id="a0c02c8afdc641b2b70d9d26772288370"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>process_url</b> ()</td></tr>
+<tr class="separator:a0c02c8afdc641b2b70d9d26772288370"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae074619da72a866f764821a981444404"><td class="memItemLeft" align="right" valign="top"><a id="ae074619da72a866f764821a981444404"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>process_header</b> ()</td></tr>
 <tr class="separator:ae074619da72a866f764821a981444404"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -140,16 +143,15 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>process_message</b> (
 <tr class="memitem:ac825fa6827ccc49ea6c6a1c3c203d919"><td class="memItemLeft" align="right" valign="top"><a id="ac825fa6827ccc49ea6c6a1c3c203d919"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>set_connection_parameters</b> ()</td></tr>
 <tr class="separator:ac825fa6827ccc49ea6c6a1c3c203d919"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4c1e61f6ed620123661ffb95070c9ca0"><td class="memItemLeft" align="right" valign="top"><a id="a4c1e61f6ed620123661ffb95070c9ca0"></a>
-<a class="el" href="structcrow_1_1request.html">request</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structcrow_1_1_h_t_t_p_parser.html#a4c1e61f6ed620123661ffb95070c9ca0">to_request</a> () const</td></tr>
-<tr class="memdesc:a4c1e61f6ed620123661ffb95070c9ca0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Take the parsed HTTP request data and convert it to a <a class="el" href="structcrow_1_1request.html">crow::request</a>. <br /></td></tr>
-<tr class="separator:a4c1e61f6ed620123661ffb95070c9ca0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
 <tr class="memitem:a44a23f77710b845a920384d8c186be4e"><td class="memItemLeft" align="right" valign="top"><a id="a44a23f77710b845a920384d8c186be4e"></a>
 static int&#160;</td><td class="memItemRight" valign="bottom"><b>on_message_begin</b> (http_parser *self_)</td></tr>
 <tr class="separator:a44a23f77710b845a920384d8c186be4e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6ddb8c12fcd4dcd4b2d241c8626c4747"><td class="memItemLeft" align="right" valign="top"><a id="a6ddb8c12fcd4dcd4b2d241c8626c4747"></a>
+static int&#160;</td><td class="memItemRight" valign="bottom"><b>on_method</b> (http_parser *self_)</td></tr>
+<tr class="separator:a6ddb8c12fcd4dcd4b2d241c8626c4747"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1045990cfa9a0be0a0e6cf3cdf533636"><td class="memItemLeft" align="right" valign="top"><a id="a1045990cfa9a0be0a0e6cf3cdf533636"></a>
 static int&#160;</td><td class="memItemRight" valign="bottom"><b>on_url</b> (http_parser *self_, const char *at, size_t length)</td></tr>
 <tr class="separator:a1045990cfa9a0be0a0e6cf3cdf533636"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -171,43 +173,8 @@ static int&#160;</td><td class="memItemRight" valign="bottom"><b>on_message_comp
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
-<tr class="memitem:ad9397de66fb97512420a50a4239057c4"><td class="memItemLeft" align="right" valign="top"><a id="ad9397de66fb97512420a50a4239057c4"></a>
-std::string&#160;</td><td class="memItemRight" valign="bottom"><b>raw_url</b></td></tr>
-<tr class="separator:ad9397de66fb97512420a50a4239057c4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad1ce74545377b48d5003c9a20bbe7106"><td class="memItemLeft" align="right" valign="top"><a id="ad1ce74545377b48d5003c9a20bbe7106"></a>
-std::string&#160;</td><td class="memItemRight" valign="bottom"><b>url</b></td></tr>
-<tr class="separator:ad1ce74545377b48d5003c9a20bbe7106"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af66d21628557efe1b854e05bb2512c84"><td class="memItemLeft" align="right" valign="top"><a id="af66d21628557efe1b854e05bb2512c84"></a>
-int&#160;</td><td class="memItemRight" valign="bottom"><b>header_building_state</b> = 0</td></tr>
-<tr class="separator:af66d21628557efe1b854e05bb2512c84"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac30b845f7195341f9c2892e0fd428c31"><td class="memItemLeft" align="right" valign="top"><a id="ac30b845f7195341f9c2892e0fd428c31"></a>
-std::string&#160;</td><td class="memItemRight" valign="bottom"><b>header_field</b></td></tr>
-<tr class="separator:ac30b845f7195341f9c2892e0fd428c31"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a17aebcf52cf5b5dc41508e7c707197c9"><td class="memItemLeft" align="right" valign="top"><a id="a17aebcf52cf5b5dc41508e7c707197c9"></a>
-std::string&#160;</td><td class="memItemRight" valign="bottom"><b>header_value</b></td></tr>
-<tr class="separator:a17aebcf52cf5b5dc41508e7c707197c9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad27f225ecbf23f01b429646d76a1a886"><td class="memItemLeft" align="right" valign="top"><a id="ad27f225ecbf23f01b429646d76a1a886"></a>
-ci_map&#160;</td><td class="memItemRight" valign="bottom"><b>headers</b></td></tr>
-<tr class="separator:ad27f225ecbf23f01b429646d76a1a886"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa00ec7a2a2b475ec0b2cfe3d946c9b87"><td class="memItemLeft" align="right" valign="top"><a id="aa00ec7a2a2b475ec0b2cfe3d946c9b87"></a>
-<a class="el" href="classcrow_1_1query__string.html">query_string</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structcrow_1_1_h_t_t_p_parser.html#aa00ec7a2a2b475ec0b2cfe3d946c9b87">url_params</a></td></tr>
-<tr class="memdesc:aa00ec7a2a2b475ec0b2cfe3d946c9b87"><td class="mdescLeft">&#160;</td><td class="mdescRight">What comes after the <code>?</code> in the URL. <br /></td></tr>
-<tr class="separator:aa00ec7a2a2b475ec0b2cfe3d946c9b87"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a38b29e8668db22997d92a2040a40eb69"><td class="memItemLeft" align="right" valign="top"><a id="a38b29e8668db22997d92a2040a40eb69"></a>
-std::string&#160;</td><td class="memItemRight" valign="bottom"><b>body</b></td></tr>
-<tr class="separator:a38b29e8668db22997d92a2040a40eb69"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae7475276c3cf8fbfb08084e9b5cb213c"><td class="memItemLeft" align="right" valign="top"><a id="ae7475276c3cf8fbfb08084e9b5cb213c"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structcrow_1_1_h_t_t_p_parser.html#ae7475276c3cf8fbfb08084e9b5cb213c">keep_alive</a></td></tr>
-<tr class="memdesc:ae7475276c3cf8fbfb08084e9b5cb213c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether or not the server should send a <code>connection: Keep-Alive</code> header to the client. <br /></td></tr>
-<tr class="separator:ae7475276c3cf8fbfb08084e9b5cb213c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afb0601e8d022a4db2b0cb1e08aa93238"><td class="memItemLeft" align="right" valign="top"><a id="afb0601e8d022a4db2b0cb1e08aa93238"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structcrow_1_1_h_t_t_p_parser.html#afb0601e8d022a4db2b0cb1e08aa93238">close_connection</a></td></tr>
-<tr class="memdesc:afb0601e8d022a4db2b0cb1e08aa93238"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether or not the server should shut down the TCP connection once a response is sent. <br /></td></tr>
-<tr class="separator:afb0601e8d022a4db2b0cb1e08aa93238"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8c9ef70473ed6548872bcb217965203e"><td class="memItemLeft" align="right" valign="top"><a id="a8c9ef70473ed6548872bcb217965203e"></a>
-Handler *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structcrow_1_1_h_t_t_p_parser.html#a8c9ef70473ed6548872bcb217965203e">handler_</a></td></tr>
-<tr class="memdesc:a8c9ef70473ed6548872bcb217965203e"><td class="mdescLeft">&#160;</td><td class="mdescRight">This is currently an HTTP connection object (<a class="el" href="classcrow_1_1_connection.html">crow::Connection</a>). <br /></td></tr>
-<tr class="separator:a8c9ef70473ed6548872bcb217965203e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a56ce939040d6c582a62cea766e489d53"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structcrow_1_1request.html">request</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structcrow_1_1_h_t_t_p_parser.html#a56ce939040d6c582a62cea766e489d53">req</a></td></tr>
+<tr class="separator:a56ce939040d6c582a62cea766e489d53"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><h3>template&lt;typename Handler&gt;<br />
@@ -215,7 +182,26 @@ struct crow::HTTPParser&lt; Handler &gt;</h3>
 
 <p>A wrapper for <code>nodejs/http-parser</code>. </p>
 <p>Used to generate a <a class="el" href="structcrow_1_1request.html">crow::request</a> from the TCP socket buffer. </p>
-</div><hr/>The documentation for this struct was generated from the following file:<ul>
+</div><h2 class="groupheader">Member Data Documentation</h2>
+<a id="a56ce939040d6c582a62cea766e489d53"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a56ce939040d6c582a62cea766e489d53">&#9670;&nbsp;</a></span>req</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Handler &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structcrow_1_1request.html">request</a> <a class="el" href="structcrow_1_1_h_t_t_p_parser.html">crow::HTTPParser</a>&lt; Handler &gt;::req</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>The final request that this parser outputs.</p>
+<p>Data parsed is put directly into this object as soon as the related callback returns. (e.g. the request will have the cooorect method as soon as on_method() returns) </p>
+
+</div>
+</div>
+<hr/>The documentation for this struct was generated from the following file:<ul>
 <li>/drone/src/include/crow/<a class="el" href="parser_8h_source.html">parser.h</a></li>
 </ul>
 </div><!-- contents -->
@@ -225,7 +211,7 @@ struct crow::HTTPParser&lt; Handler &gt;</h3>
 			<ul>
 				<li class="navelem"><b>crow</b></li><li class="navelem"><a class="el" href="structcrow_1_1_h_t_t_p_parser.html">HTTPParser</a></li>
 				<li class="footer">
-					Generated on Thu Jul 21 2022 for Crow by <a href="http://www.doxygen.org/index.html">
+					Generated on Fri Jul 22 2022 for Crow by <a href="http://www.doxygen.org/index.html">
 					<img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.17.
 					Dark theme by <a href="http://majerle.eu" target="_new">Tilen Majerle</a>. Edited by <a href="https://github.com/The-EDev" target="_new">Farook Al-Sammarraie</a>. All rights reserved.
 				</li>

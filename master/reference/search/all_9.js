@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['keep_5falive_96',['keep_alive',['../structcrow_1_1_h_t_t_p_parser.html#ae7475276c3cf8fbfb08084e9b5cb213c',1,'crow::HTTPParser']]]
+  ['keep_5falive_97',['keep_alive',['../structcrow_1_1request.html#a5148ce95969d261e50ee977c1dc7960c',1,'crow::request']]]
 ];

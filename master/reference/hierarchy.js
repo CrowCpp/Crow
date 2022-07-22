@@ -28,6 +28,7 @@ var hierarchy =
       [ "crow::websocket::Connection< Adaptor, Handler >", "classcrow_1_1websocket_1_1_connection.html", null ]
     ] ],
     [ "crow::Connection< Adaptor, Handler, Middlewares >", "classcrow_1_1_connection.html", null ],
+    [ "crow::UTF8::context", "structcrow_1_1_u_t_f8_1_1context.html", null ],
     [ "context", null, [
       [ "crow::detail::partial_context< Middlewares >", "structcrow_1_1detail_1_1partial__context.html", null ],
       [ "crow::detail::partial_context< Middlewares... >", "structcrow_1_1detail_1_1partial__context.html", [
@@ -38,7 +39,6 @@ var hierarchy =
     [ "crow::CookieParser::context", "structcrow_1_1_cookie_parser_1_1context.html", null ],
     [ "crow::CORSHandler::context", "structcrow_1_1_c_o_r_s_handler_1_1context.html", null ],
     [ "crow::SessionMiddleware< Store >::context", "structcrow_1_1_session_middleware_1_1context.html", null ],
-    [ "crow::UTF8::context", "structcrow_1_1_u_t_f8_1_1context.html", null ],
     [ "crow::CookieParser::Cookie", "structcrow_1_1_cookie_parser_1_1_cookie.html", null ],
     [ "crow::CookieParser", "structcrow_1_1_cookie_parser.html", null ],
     [ "crow::CORSHandler", "structcrow_1_1_c_o_r_s_handler.html", null ],
@@ -92,6 +92,7 @@ var hierarchy =
       [ "crow::mustache::rendered_template", "structcrow_1_1mustache_1_1rendered__template.html", null ]
     ] ],
     [ "crow::Router", "classcrow_1_1_router.html", null ],
+    [ "crow::routing_handle_result", "structcrow_1_1routing__handle__result.html", null ],
     [ "crow::RuleParameterTraits< T >", "structcrow_1_1_rule_parameter_traits.html", null ],
     [ "crow::RuleParameterTraits< DynamicRule >", "structcrow_1_1_rule_parameter_traits.html", [
       [ "crow::DynamicRule", "classcrow_1_1_dynamic_rule.html", null ]
