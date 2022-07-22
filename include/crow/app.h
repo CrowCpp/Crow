@@ -76,10 +76,24 @@ namespace crow
             router_.handle_upgrade(req, res, adaptor);
         }
 
-        /// Process the request and generate a response for it
-        void handle(request& req, response& res)
+        /// Process only the method and URL of a request and provide a route (or an error response)
+        std::unique_ptr<routing_handle_result> handle_initial(request& req, response& res)
         {
-            router_.handle<self_t>(req, res);
+            return router_.handle_initial(req, res);
+        }
+
+        /// Process the fully parsed request and generate a response for it
+        void handle(request& req, response& res, std::unique_ptr<routing_handle_result>& found)
+        {
+            router_.handle<self_t>(req, res, *found);
+        }
+
+        /// Process a fully parsed request from start to finish (primarily used for debugging)
+        void handle_full(request& req, response& res)
+        {
+            auto found = handle_initial(req, res);
+            if (found->rule_index)
+                handle(req, res, found);
         }
 
         /// Create a dynamic route using a rule (**Use CROW_ROUTE instead**)
@@ -327,6 +341,9 @@ namespace crow
         }
 
         /// Non-blocking version of \ref run()
+        ///
+        /// The output from this method needs to be saved into a variable!
+        /// Otherwise the call will be made on the same thread.
         std::future<void> run_async()
         {
             return std::async(std::launch::async, [&] {

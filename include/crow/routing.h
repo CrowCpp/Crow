@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include <cstdint>
 #include <utility>
@@ -773,27 +773,33 @@ namespace crow
                 switch (node->param)
                 {
                     case ParamType::INT:
-                        CROW_LOG_DEBUG << std::string(2 * level, ' ') << "<int>";
+                        CROW_LOG_DEBUG << std::string(3 * level, ' ') << "└➝ "
+                                       << "<int>";
                         break;
                     case ParamType::UINT:
-                        CROW_LOG_DEBUG << std::string(2 * level, ' ') << "<uint>";
+                        CROW_LOG_DEBUG << std::string(3 * level, ' ') << "└➝ "
+                                       << "<uint>";
                         break;
                     case ParamType::DOUBLE:
-                        CROW_LOG_DEBUG << std::string(2 * level, ' ') << "<double>";
+                        CROW_LOG_DEBUG << std::string(3 * level, ' ') << "└➝ "
+                                       << "<double>";
                         break;
                     case ParamType::STRING:
-                        CROW_LOG_DEBUG << std::string(2 * level, ' ') << "<string>";
+                        CROW_LOG_DEBUG << std::string(3 * level, ' ') << "└➝ "
+                                       << "<string>";
                         break;
                     case ParamType::PATH:
-                        CROW_LOG_DEBUG << std::string(2 * level, ' ') << "<path>";
+                        CROW_LOG_DEBUG << std::string(3 * level, ' ') << "└➝ "
+                                       << "<path>";
                         break;
                     default:
-                        CROW_LOG_DEBUG << std::string(2 * level, ' ') << "<ERROR>";
+                        CROW_LOG_DEBUG << std::string(3 * level, ' ') << "└➝ "
+                                       << "<ERROR>";
                         break;
                 }
             }
             else
-                CROW_LOG_DEBUG << std::string(2 * level, ' ') << node->key;
+                CROW_LOG_DEBUG << std::string(3 * level, ' ') << "└➝ " << node->key;
 
             for (auto& child : node->children)
             {
@@ -804,7 +810,7 @@ namespace crow
     public:
         void debug_print()
         {
-            CROW_LOG_DEBUG << "HEAD";
+            CROW_LOG_DEBUG << "└➙ ROOT";
             for (auto& child : head_.children)
                 debug_node_print(child, 1);
         }
@@ -817,7 +823,7 @@ namespace crow
         }
 
         //Rule_index, Blueprint_index, routing_params
-        std::tuple<uint16_t, std::vector<uint16_t>, routing_params> find(const std::string& req_url, const Node* node = nullptr, unsigned pos = 0, routing_params* params = nullptr, std::vector<uint16_t>* blueprints = nullptr) const
+        routing_handle_result find(const std::string& req_url, const Node* node = nullptr, unsigned pos = 0, routing_params* params = nullptr, std::vector<uint16_t>* blueprints = nullptr) const
         {
             //start params as an empty struct
             routing_params empty;
@@ -836,12 +842,12 @@ namespace crow
             if (node == nullptr)
                 node = &head_;
 
-            auto update_found = [&found, &found_BP, &match_params](std::tuple<uint16_t, std::vector<uint16_t>, routing_params>& ret) {
-                found_BP = std::move(std::get<1>(ret));
-                if (std::get<0>(ret) && (!found || found > std::get<0>(ret)))
+            auto update_found = [&found, &found_BP, &match_params](routing_handle_result& ret) {
+                found_BP = std::move(ret.blueprint_indices);
+                if (ret.rule_index && (!found || found > ret.rule_index))
                 {
-                    found = std::get<0>(ret);
-                    match_params = std::move(std::get<2>(ret));
+                    found = ret.rule_index;
+                    match_params = std::move(ret.r_params);
                 }
             };
 
@@ -849,7 +855,7 @@ namespace crow
             if (pos == req_url.size())
             {
                 found_BP = std::move(*blueprints);
-                return std::tuple<uint16_t, std::vector<uint16_t>, routing_params>{node->rule_index, *blueprints, *params};
+                return routing_handle_result{node->rule_index, *blueprints, *params};
             }
 
             bool found_fragment = false;
@@ -976,7 +982,7 @@ namespace crow
             if (!found_fragment)
                 found_BP = std::move(*blueprints);
 
-            return std::tuple<uint16_t, std::vector<uint16_t>, routing_params>{found, found_BP, match_params}; //Called after all the recursions have been done
+            return routing_handle_result{found, found_BP, match_params}; //Called after all the recursions have been done
         }
 
         //This functions assumes any blueprint info passed is valid
@@ -1393,13 +1399,13 @@ namespace crow
 
             auto& per_method = per_methods_[static_cast<int>(req.method)];
             auto& rules = per_method.rules;
-            unsigned rule_index = std::get<0>(per_method.trie.find(req.url));
+            unsigned rule_index = per_method.trie.find(req.url).rule_index;
 
             if (!rule_index)
             {
                 for (auto& per_method : per_methods_)
                 {
-                    if (std::get<0>(per_method.trie.find(req.url)))
+                    if (per_method.trie.find(req.url).rule_index)
                     {
                         CROW_LOG_DEBUG << "Cannot match method " << req.url << " " << method_name(req.method);
                         res = response(405);
@@ -1500,14 +1506,14 @@ namespace crow
         }
 
         /// Is used to handle errors, you insert the error code, found route, request, and response. and it'll either call the appropriate catchall route (considering the blueprint system) and send you a status string (which is mainly used for debug messages), or just set the response code to the proper error code.
-        std::string get_error(unsigned short code, std::tuple<uint16_t, std::vector<uint16_t>, routing_params>& found, const request& req, response& res)
+        std::string get_error(unsigned short code, routing_handle_result& found, const request& req, response& res)
         {
             res.code = code;
             std::vector<Blueprint*> bps_found;
-            get_found_bp(std::get<1>(found), blueprints_, bps_found);
+            get_found_bp(found.blueprint_indices, blueprints_, bps_found);
             for (int i = bps_found.size() - 1; i > 0; i--)
             {
-                std::vector<uint16_t> bpi = std::get<1>(found);
+                std::vector<uint16_t> bpi = found.blueprint_indices;
                 if (bps_found[i]->catchall_rule().has_handler())
                 {
                     bps_found[i]->catchall_rule().handler_(req, res);
@@ -1530,19 +1536,40 @@ namespace crow
             return std::string();
         }
 
-        template<typename App>
-        void handle(request& req, response& res)
+        std::unique_ptr<routing_handle_result> handle_initial(request& req, response& res)
         {
             HTTPMethod method_actual = req.method;
-            if (req.method >= HTTPMethod::InternalMethodCount)
-                return;
+
+            std::unique_ptr<routing_handle_result> found{
+              new routing_handle_result(
+                0,
+                std::vector<uint16_t>(),
+                routing_params(),
+                HTTPMethod::InternalMethodCount)}; // This is always returned to avoid a null pointer dereference.
+
+            // NOTE(EDev): This most likely will never run since the parser should handle this situation and close the connection before it gets here.
+            if (CROW_UNLIKELY(req.method >= HTTPMethod::InternalMethodCount))
+                return found;
             else if (req.method == HTTPMethod::Head)
             {
+                *found = per_methods_[static_cast<int>(method_actual)].trie.find(req.url);
                 // support HEAD requests using GET if not defined as method for the requested URL
-                if (!std::get<0>(per_methods_[static_cast<int>(HTTPMethod::Head)].trie.find(req.url)))
+                if (!found->rule_index)
+                {
                     method_actual = HTTPMethod::Get;
+                    *found = per_methods_[static_cast<int>(method_actual)].trie.find(req.url);
+                    if (!found->rule_index) // If a route is still not found, return a 404 without executing the rest of the HEAD specific code.
+                    {
+                        CROW_LOG_DEBUG << "Cannot match rules " << req.url;
+                        res = response(404); //TODO(EDev): Should this redirect to catchall?
+                        res.end();
+                        return found;
+                    }
+                }
 
                 res.skip_body = true;
+                found->method = method_actual;
+                return found;
             }
             else if (req.method == HTTPMethod::Options)
             {
@@ -1564,14 +1591,15 @@ namespace crow
                     res = response(204);
                     res.set_header("Allow", allow);
                     res.end();
-                    return;
+                    found->method = method_actual;
+                    return found;
                 }
                 else
                 {
                     bool rules_matched = false;
                     for (int i = 0; i < static_cast<int>(HTTPMethod::InternalMethodCount); i++)
                     {
-                        if (std::get<0>(per_methods_[i].trie.find(req.url)))
+                        if (per_methods_[i].trie.find(req.url).rule_index)
                         {
                             rules_matched = true;
 
@@ -1587,45 +1615,53 @@ namespace crow
                         res = response(204);
                         res.set_header("Allow", allow);
                         res.end();
-                        return;
+                        found->method = method_actual;
+                        return found;
                     }
                     else
                     {
                         CROW_LOG_DEBUG << "Cannot match rules " << req.url;
-                        res = response(404);
+                        res = response(404); //TODO(EDev): Should this redirect to catchall?
                         res.end();
-                        return;
+                        return found;
                     }
                 }
             }
-
-            auto& per_method = per_methods_[static_cast<int>(method_actual)];
-            auto& trie = per_method.trie;
-            auto& rules = per_method.rules;
-
-            auto found = trie.find(req.url);
-
-            unsigned rule_index = std::get<0>(found);
-
-            if (!rule_index)
+            else // Every request that isn't a HEAD or OPTIONS request
             {
-                for (auto& per_method : per_methods_)
+                *found = per_methods_[static_cast<int>(method_actual)].trie.find(req.url);
+                // TODO(EDev): maybe ending the else here would allow the requests coming from above (after removing the return statement) to be checked on whether they actually point to a route
+                if (!found->rule_index)
                 {
-                    if (std::get<0>(per_method.trie.find(req.url))) //Route found, but in another method
+                    for (auto& per_method : per_methods_)
                     {
-                        const std::string error_message(get_error(405, found, req, res));
-                        CROW_LOG_DEBUG << "Cannot match method " << req.url << " " << method_name(method_actual) << ". " << error_message;
-                        res.end();
-                        return;
+                        if (per_method.trie.find(req.url).rule_index) //Route found, but in another method
+                        {
+                            const std::string error_message(get_error(405, *found, req, res));
+                            CROW_LOG_DEBUG << "Cannot match method " << req.url << " " << method_name(method_actual) << ". " << error_message;
+                            res.end();
+                            return found;
+                        }
                     }
-                }
-                //Route does not exist anywhere
+                    //Route does not exist anywhere
 
-                const std::string error_message(get_error(404, found, req, res));
-                CROW_LOG_DEBUG << "Cannot match rules " << req.url << ". " << error_message;
-                res.end();
-                return;
+                    const std::string error_message(get_error(404, *found, req, res));
+                    CROW_LOG_DEBUG << "Cannot match rules " << req.url << ". " << error_message;
+                    res.end();
+                    return found;
+                }
+
+                found->method = method_actual;
+                return found;
             }
+        }
+
+        template<typename App>
+        void handle(request& req, response& res, routing_handle_result found)
+        {
+            HTTPMethod method_actual = found.method;
+            auto& rules = per_methods_[static_cast<int>(method_actual)].rules;
+            unsigned rule_index = found.rule_index;
 
             if (rule_index >= rules.size())
                 throw std::runtime_error("Trie internal structure corrupted!");
@@ -1654,7 +1690,7 @@ namespace crow
             try
             {
                 auto& rule = rules[rule_index];
-                handle_rule<App>(rule, req, res, std::get<2>(found));
+                handle_rule<App>(rule, req, res, found.r_params);
             }
             catch (std::exception& e)
             {
@@ -1719,8 +1755,12 @@ namespace crow
         {
             for (int i = 0; i < static_cast<int>(HTTPMethod::InternalMethodCount); i++)
             {
-                CROW_LOG_DEBUG << method_name(static_cast<HTTPMethod>(i));
-                per_methods_[i].trie.debug_print();
+                Trie& trie_ = per_methods_[i].trie;
+                if (!trie_.is_empty())
+                {
+                    CROW_LOG_DEBUG << method_name(static_cast<HTTPMethod>(i));
+                    trie_.debug_print();
+                }
             }
         }
 

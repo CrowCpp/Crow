@@ -116,7 +116,7 @@ TEST_CASE("PathRouting")
 
         req.url = "/file";
 
-        app.handle(req, res);
+        app.handle_full(req, res);
 
         CHECK(200 == res.code);
     }
@@ -126,7 +126,7 @@ TEST_CASE("PathRouting")
 
         req.url = "/file/";
 
-        app.handle(req, res);
+        app.handle_full(req, res);
         CHECK(404 == res.code);
     }
     {
@@ -135,7 +135,7 @@ TEST_CASE("PathRouting")
 
         req.url = "/path";
 
-        app.handle(req, res);
+        app.handle_full(req, res);
         CHECK(404 != res.code);
     }
     {
@@ -144,7 +144,7 @@ TEST_CASE("PathRouting")
 
         req.url = "/path/";
 
-        app.handle(req, res);
+        app.handle_full(req, res);
         CHECK(200 == res.code);
     }
 } // PathRouting
@@ -198,7 +198,7 @@ TEST_CASE("RoutingTest")
 
         req.url = "/-1";
 
-        app.handle(req, res);
+        app.handle_full(req, res);
 
         CHECK(404 == res.code);
     }
@@ -209,7 +209,7 @@ TEST_CASE("RoutingTest")
 
         req.url = "/0/1001999";
 
-        app.handle(req, res);
+        app.handle_full(req, res);
 
         CHECK(200 == res.code);
 
@@ -222,7 +222,7 @@ TEST_CASE("RoutingTest")
 
         req.url = "/1/-100/1999";
 
-        app.handle(req, res);
+        app.handle_full(req, res);
 
         CHECK(200 == res.code);
 
@@ -236,7 +236,7 @@ TEST_CASE("RoutingTest")
         req.url = "/4/5000/3/-2.71828/hellhere";
         req.add_header("TestHeader", "Value");
 
-        app.handle(req, res);
+        app.handle_full(req, res);
 
         CHECK(200 == res.code);
 
@@ -252,7 +252,7 @@ TEST_CASE("RoutingTest")
         req.url = "/5/-5/999/3.141592/hello_there/a/b/c/d";
         req.add_header("TestHeader", "Value");
 
-        app.handle(req, res);
+        app.handle_full(req, res);
 
         CHECK(200 == res.code);
 
@@ -343,7 +343,7 @@ TEST_CASE("http_method")
         response res;
 
         req.url = "/";
-        app.handle(req, res);
+        app.handle_full(req, res);
 
         CHECK("2" == res.body);
     }
@@ -353,7 +353,7 @@ TEST_CASE("http_method")
 
         req.url = "/";
         req.method = "POST"_method;
-        app.handle(req, res);
+        app.handle_full(req, res);
 
         CHECK("1" == res.body);
     }
@@ -364,7 +364,7 @@ TEST_CASE("http_method")
 
         req.url = "/head_only";
         req.method = "HEAD"_method;
-        app.handle(req, res);
+        app.handle_full(req, res);
 
         CHECK(202 == res.code);
         CHECK("" == res.body);
@@ -375,7 +375,7 @@ TEST_CASE("http_method")
         response res;
 
         req.url = "/get_only";
-        app.handle(req, res);
+        app.handle_full(req, res);
 
         CHECK("get" == res.body);
     }
@@ -386,7 +386,7 @@ TEST_CASE("http_method")
 
         req.url = "/patch_only";
         req.method = "PATCH"_method;
-        app.handle(req, res);
+        app.handle_full(req, res);
 
         CHECK("patch" == res.body);
     }
@@ -397,7 +397,7 @@ TEST_CASE("http_method")
 
         req.url = "/purge_only";
         req.method = "PURGE"_method;
-        app.handle(req, res);
+        app.handle_full(req, res);
 
         CHECK("purge" == res.body);
     }
@@ -408,7 +408,7 @@ TEST_CASE("http_method")
 
         req.url = "/get_only";
         req.method = "POST"_method;
-        app.handle(req, res);
+        app.handle_full(req, res);
 
         CHECK("get" != res.body);
     }
@@ -419,7 +419,7 @@ TEST_CASE("http_method")
 
         req.url = "/get_only";
         req.method = "POST"_method;
-        app.handle(req, res);
+        app.handle_full(req, res);
 
         CHECK(405 == res.code);
     }
@@ -430,7 +430,7 @@ TEST_CASE("http_method")
 
         req.url = "/get_only";
         req.method = "HEAD"_method;
-        app.handle(req, res);
+        app.handle_full(req, res);
 
         CHECK(200 == res.code);
         CHECK("" == res.body);
@@ -442,7 +442,7 @@ TEST_CASE("http_method")
 
         req.url = "/";
         req.method = "OPTIONS"_method;
-        app.handle(req, res);
+        app.handle_full(req, res);
 
         CHECK(204 == res.code);
         CHECK("OPTIONS, HEAD, GET, POST" == res.get_header_value("Allow"));
@@ -454,7 +454,7 @@ TEST_CASE("http_method")
 
         req.url = "/does_not_exist";
         req.method = "OPTIONS"_method;
-        app.handle(req, res);
+        app.handle_full(req, res);
 
         CHECK(404 == res.code);
     }
@@ -465,7 +465,7 @@ TEST_CASE("http_method")
 
         req.url = "/*";
         req.method = "OPTIONS"_method;
-        app.handle(req, res);
+        app.handle_full(req, res);
 
         CHECK(204 == res.code);
         CHECK("OPTIONS, HEAD, GET, POST, PATCH, PURGE" == res.get_header_value("Allow"));
@@ -477,7 +477,7 @@ TEST_CASE("http_method")
 
         req.url = "/head_only";
         req.method = "OPTIONS"_method;
-        app.handle(req, res);
+        app.handle_full(req, res);
 
         CHECK(204 == res.code);
         CHECK("OPTIONS, HEAD" == res.get_header_value("Allow"));
@@ -1259,7 +1259,7 @@ TEST_CASE("TemplateRouting")
 
         req.url = "/temp";
 
-        app.handle(req, res);
+        app.handle_full(req, res);
 
         CHECK("attack of killer tomatoes" == res.body);
         CHECK("text/html" == crow::get_header_value(res.headers, "Content-Type"));
@@ -1451,14 +1451,18 @@ TEST_CASE("middleware_context")
     {
         auto& out = test_middleware_context_vector;
         CHECK(1 == x);
-        CHECK(7 == out.size());
-        CHECK("1 before" == out[0]);
-        CHECK("2 before" == out[1]);
-        CHECK("3 before" == out[2]);
-        CHECK("handle" == out[3]);
-        CHECK("3 after" == out[4]);
-        CHECK("2 after" == out[5]);
-        CHECK("1 after" == out[6]);
+        bool cond = 7 == out.size();
+        CHECK(cond);
+        if (cond)
+        {
+            CHECK("1 before" == out[0]);
+            CHECK("2 before" == out[1]);
+            CHECK("3 before" == out[2]);
+            CHECK("handle" == out[3]);
+            CHECK("3 after" == out[4]);
+            CHECK("2 after" == out[5]);
+            CHECK("1 after" == out[6]);
+        }
     }
     std::string sendmsg2 = "GET /break\r\n\r\n";
     {
@@ -1473,11 +1477,15 @@ TEST_CASE("middleware_context")
     }
     {
         auto& out = test_middleware_context_vector;
-        CHECK(4 == out.size());
-        CHECK("1 before" == out[0]);
-        CHECK("2 before" == out[1]);
-        CHECK("2 after" == out[2]);
-        CHECK("1 after" == out[3]);
+        bool cond = 4 == out.size();
+        CHECK(cond);
+        if (cond)
+        {
+            CHECK("1 before" == out[0]);
+            CHECK("2 before" == out[1]);
+            CHECK("2 after" == out[2]);
+            CHECK("1 after" == out[3]);
+        }
     }
     app.stop();
 } // middleware_context
@@ -1612,14 +1620,18 @@ TEST_CASE("middleware_blueprint")
     }
     {
         auto& out = test_middleware_context_vector;
-        CHECK(7 == out.size());
-        CHECK("1 before" == out[0]);
-        CHECK("2 before" == out[1]);
-        CHECK("3 before" == out[2]);
-        CHECK("handle" == out[3]);
-        CHECK("3 after" == out[4]);
-        CHECK("2 after" == out[5]);
-        CHECK("1 after" == out[6]);
+        bool cond = 7 == out.size();
+        CHECK(cond);
+        if (cond)
+        {
+            CHECK("1 before" == out[0]);
+            CHECK("2 before" == out[1]);
+            CHECK("3 before" == out[2]);
+            CHECK("handle" == out[3]);
+            CHECK("3 after" == out[4]);
+            CHECK("2 after" == out[5]);
+            CHECK("1 after" == out[6]);
+        }
     }
     {
         asio::ip::tcp::socket c(is);
@@ -1633,11 +1645,15 @@ TEST_CASE("middleware_blueprint")
     }
     {
         auto& out = test_middleware_context_vector;
-        CHECK(4 == out.size());
-        CHECK("1 before" == out[0]);
-        CHECK("2 before" == out[1]);
-        CHECK("2 after" == out[2]);
-        CHECK("1 after" == out[3]);
+        bool cond = 4 == out.size();
+        CHECK(cond);
+        if (cond)
+        {
+            CHECK("1 before" == out[0]);
+            CHECK("2 before" == out[1]);
+            CHECK("2 after" == out[2]);
+            CHECK("1 after" == out[3]);
+        }
     }
 
     app.stop();
@@ -2200,28 +2216,28 @@ TEST_CASE("route_dynamic")
         request req;
         response res;
         req.url = "/";
-        app.handle(req, res);
+        app.handle_full(req, res);
         CHECK(x == 2);
     }
     {
         request req;
         response res;
         req.url = "/set_int/42";
-        app.handle(req, res);
+        app.handle_full(req, res);
         CHECK(x == 42);
     }
     {
         request req;
         response res;
         req.url = "/set5";
-        app.handle(req, res);
+        app.handle_full(req, res);
         CHECK(x == 5);
     }
     {
         request req;
         response res;
         req.url = "/set4";
-        app.handle(req, res);
+        app.handle_full(req, res);
         CHECK(x == 4);
     }
 } // route_dynamic
@@ -2267,7 +2283,7 @@ TEST_CASE("multipart")
         req.add_header("Content-Type", "multipart/form-data; boundary=CROW-BOUNDARY");
         req.body = test_string;
 
-        app.handle(req, res);
+        app.handle_full(req, res);
 
         CHECK(test_string == res.body);
 
@@ -2286,7 +2302,7 @@ TEST_CASE("multipart")
         req.add_header("Content-Type", "multipart/form-data; boundary=\"CROW-BOUNDARY\"");
         req.body = test_string;
 
-        app.handle(req, res);
+        app.handle_full(req, res);
 
         CHECK(test_string == res.body);
     }
@@ -2330,7 +2346,7 @@ TEST_CASE("send_file")
 
         req.url = "/jpg2";
 
-        app.handle(req, res);
+        app.handle_full(req, res);
 
 
         CHECK(404 == res.code);
@@ -2344,7 +2360,7 @@ TEST_CASE("send_file")
         req.url = "/jpg";
         req.http_ver_major = 1;
 
-        app.handle(req, res);
+        app.handle_full(req, res);
 
         CHECK(200 == res.code);
 
@@ -2365,7 +2381,7 @@ TEST_CASE("send_file")
         req.url = "/filewith.badext";
         req.http_ver_major = 1;
 
-        CHECK_NOTHROW(app.handle(req, res));
+        CHECK_NOTHROW(app.handle_full(req, res));
         CHECK(200 == res.code);
         CHECK(res.headers.count("Content-Type"));
         if (res.headers.count("Content-Type"))
@@ -2462,10 +2478,15 @@ TEST_CASE("websocket")
 
     SimpleApp app;
 
-    CROW_WEBSOCKET_ROUTE(app, "/ws").onopen([&](websocket::connection&) {
-                                        connected = true;
-                                        CROW_LOG_INFO << "Connected websocket and value is " << connected;
-                                    })
+    CROW_WEBSOCKET_ROUTE(app, "/ws")
+      .onaccept([&](const crow::request& req, void**) {
+          CROW_LOG_INFO << "Accepted websocket with URL " << req.url;
+          return true;
+      })
+      .onopen([&](websocket::connection&) {
+          connected = true;
+          CROW_LOG_INFO << "Connected websocket and value is " << connected;
+      })
       .onmessage([&](websocket::connection& conn, const std::string& message, bool isbin) {
           CROW_LOG_INFO << "Message is \"" << message << '\"';
           if (!isbin && message == "PINGME")
@@ -2923,7 +2944,7 @@ TEST_CASE("catchall")
 
         req.url = "/place";
 
-        app.handle(req, res);
+        app.handle_full(req, res);
 
         CHECK(200 == res.code);
     }
@@ -2934,7 +2955,7 @@ TEST_CASE("catchall")
 
         req.url = "/another_place";
 
-        app.handle(req, res);
+        app.handle_full(req, res);
 
         CHECK(404 == res.code);
         CHECK("!place" == res.body);
@@ -2946,7 +2967,7 @@ TEST_CASE("catchall")
 
         req.url = "/place";
 
-        app2.handle(req, res);
+        app2.handle_full(req, res);
 
         CHECK(200 == res.code);
     }
@@ -2957,7 +2978,7 @@ TEST_CASE("catchall")
 
         req.url = "/another_place";
 
-        app2.handle(req, res);
+        app2.handle_full(req, res);
 
         CHECK(404 == res.code);
     }
@@ -3004,7 +3025,7 @@ TEST_CASE("blueprint")
 
         req.url = "/bp_prefix/bp2/hello";
 
-        app.handle(req, res);
+        app.handle_full(req, res);
 
         CHECK("Hello world!" == res.body);
     }
@@ -3015,7 +3036,7 @@ TEST_CASE("blueprint")
 
         req.url = "/bp_prefix_second/hello";
 
-        app.handle(req, res);
+        app.handle_full(req, res);
 
         CHECK("Hello world!" == res.body);
     }
@@ -3026,7 +3047,7 @@ TEST_CASE("blueprint")
 
         req.url = "/bp_prefix/bp2/bp3/hi";
 
-        app.handle(req, res);
+        app.handle_full(req, res);
 
         CHECK("Hi world!" == res.body);
     }
@@ -3037,7 +3058,7 @@ TEST_CASE("blueprint")
 
         req.url = "/bp_prefix/nonexistent";
 
-        app.handle(req, res);
+        app.handle_full(req, res);
 
         CHECK(404 == res.code);
     }
@@ -3048,7 +3069,7 @@ TEST_CASE("blueprint")
 
         req.url = "/bp_prefix_second/nonexistent";
 
-        app.handle(req, res);
+        app.handle_full(req, res);
 
         CHECK(404 == res.code);
     }
@@ -3059,7 +3080,7 @@ TEST_CASE("blueprint")
 
         req.url = "/bp_prefix/bp2/nonexistent";
 
-        app.handle(req, res);
+        app.handle_full(req, res);
 
         CHECK(200 == res.code);
         CHECK("WRONG!!" == res.body);
@@ -3071,7 +3092,7 @@ TEST_CASE("blueprint")
 
         req.url = "/bp_prefix/bp2/bp3/nonexistent";
 
-        app.handle(req, res);
+        app.handle_full(req, res);
 
         CHECK(200 == res.code);
         CHECK("WRONG!!" == res.body);
