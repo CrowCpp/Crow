@@ -278,9 +278,16 @@ namespace crow
             {
 
 #ifndef CROW_DISABLE_STATIC_DIR
-                route<crow::black_magic::get_parameter_tag(CROW_STATIC_ENDPOINT)>(CROW_STATIC_ENDPOINT)([](crow::response& res, std::string file_path_partial) {
+
+                // stat on windows doesn't care whether '/' or '\' is being used. on Linux however, using '\' doesn't work. therefore every instance of '\' gets replaced with '/' then a check is done to make sure the directory ends with '/'.
+                std::string static_dir_(CROW_STATIC_DIRECTORY);
+                std::replace(static_dir_.begin(), static_dir_.end(), '\\', '/');
+                if (static_dir_[static_dir_.length() - 1] != '/')
+                  static_dir_ += '/';
+
+                route<crow::black_magic::get_parameter_tag(CROW_STATIC_ENDPOINT)>(CROW_STATIC_ENDPOINT)([static_dir_](crow::response& res, std::string file_path_partial) {
                     utility::sanitize_filename(file_path_partial);
-                    res.set_static_file_info_unsafe(CROW_STATIC_DIRECTORY + file_path_partial);
+                    res.set_static_file_info_unsafe(static_dir_ + file_path_partial);
                     res.end();
                 });
 
@@ -292,9 +299,15 @@ namespace crow
                     {
                         if (!bp->static_dir().empty())
                         {
-                            bp->new_rule_tagged<crow::black_magic::get_parameter_tag(CROW_STATIC_ENDPOINT)>(CROW_STATIC_ENDPOINT)([bp](crow::response& res, std::string file_path_partial) {
+                            // stat on windows doesn't care whether '/' or '\' is being used. on Linux however, using '\' doesn't work. therefore every instance of '\' gets replaced with '/' then a check is done to make sure the directory ends with '/'.
+                            std::string static_dir_(bp->static_dir());
+                            std::replace(static_dir_.begin(), static_dir_.end(), '\\', '/');
+                            if (static_dir_[static_dir_.length() - 1] != '/')
+                                static_dir_ += '/';
+
+                            bp->new_rule_tagged<crow::black_magic::get_parameter_tag(CROW_STATIC_ENDPOINT)>(CROW_STATIC_ENDPOINT)([bp, static_dir_](crow::response& res, std::string file_path_partial) {
                                 utility::sanitize_filename(file_path_partial);
-                                res.set_static_file_info_unsafe(bp->static_dir() + '/' + file_path_partial);
+                                res.set_static_file_info_unsafe(static_dir_ + file_path_partial);
                                 res.end();
                             });
                         }
