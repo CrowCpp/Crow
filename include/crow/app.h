@@ -283,7 +283,7 @@ namespace crow
                 std::string static_dir_(CROW_STATIC_DIRECTORY);
                 std::replace(static_dir_.begin(), static_dir_.end(), '\\', '/');
                 if (static_dir_[static_dir_.length() - 1] != '/')
-                  static_dir_ += '/';
+                    static_dir_ += '/';
 
                 route<crow::black_magic::get_parameter_tag(CROW_STATIC_ENDPOINT)>(CROW_STATIC_ENDPOINT)([static_dir_](crow::response& res, std::string file_path_partial) {
                     utility::sanitize_filename(file_path_partial);
