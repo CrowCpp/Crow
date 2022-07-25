@@ -261,7 +261,7 @@ namespace crow
                 do_read();
             }
 
-            void start_deadline(/*int timeout = 5*/) 
+            void start_deadline(/*int timeout = 5*/)
             {
                 cancel_deadline_timer();
 
@@ -711,7 +711,7 @@ namespace crow
             std::function<void(crow::websocket::connection&, const std::string&, bool)> message_handler_;
             std::function<void(crow::websocket::connection&, const std::string&)> close_handler_;
             std::function<void(crow::websocket::connection&, const std::string&)> error_handler_;
-            std::pair<std::function<void(crow::websocket::connection&, const std::string&)>,uint64_t> timeout_handler_;
+            std::pair<std::function<void(crow::websocket::connection&, const std::string&)>, uint64_t> timeout_handler_;
             std::function<bool(const crow::request&, void**)> accept_handler_;
 
             detail::task_timer task_timer_;

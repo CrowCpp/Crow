@@ -2499,7 +2499,8 @@ TEST_CASE("websocket")
       .ontimeout([&](websocket::connection& conn, const std::string&) {
           CROW_LOG_INFO << "Websocket Time Out";
           conn.send_text("TimeOut");
-      }, 2 /* seconds */)
+      },
+                 2 /* seconds */)
       .onclose([&](websocket::connection&, const std::string&) {
           CROW_LOG_INFO << "Closing websocket";
       });
