@@ -802,7 +802,7 @@ namespace crow
         inline static std::string join_path(std::string path, const std::string& fname)
         {
 #ifdef CROW_CAN_USE_CPP17
-            return std::filesystem::path(path) / fname;
+            return (std::filesystem::path(path) / fname).string();
 #else
             if (!(path.back() == '/' || path.back() == '\\'))
                 path += '/';
