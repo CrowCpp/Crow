@@ -1220,9 +1220,9 @@ TEST_CASE("template_function")
     auto t = crow::mustache::compile("attack of {{func}}");
     crow::mustache::context ctx;
     ctx["name"] = "killer tomatoes";
-    ctx["func"] = [&](std::string) {
+    ctx["func"] = std::function<std::string(std::string)>([&](std::string) {
         return std::string("{{name}}, IN SPACE!");
-    };
+    });
     auto result = t.render_string(ctx);
     CHECK("attack of killer tomatoes, IN SPACE!" == result);
 }
