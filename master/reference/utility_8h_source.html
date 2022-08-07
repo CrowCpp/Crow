@@ -115,7 +115,7 @@ $(document).ready(function(){initNavTree('utility_8h_source.html',''); initResiz
 <div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160; </div>
 <div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="preprocessor">#include &quot;crow/settings.h&quot;</span></div>
 <div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160; </div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="preprocessor">#ifdef CROW_CAN_USE_CPP17</span></div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="preprocessor">#if defined(CROW_CAN_USE_CPP17) &amp;&amp; !defined(CROW_FILESYSTEM_IS_EXPERIMENTAL)</span></div>
 <div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="preprocessor">#include &lt;filesystem&gt;</span></div>
 <div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;<span class="preprocessor">#endif</span></div>
 <div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160; </div>
@@ -902,8 +902,8 @@ $(document).ready(function(){initNavTree('utility_8h_source.html',''); initResiz
 <div class="line"><a name="l00801"></a><span class="lineno">  801</span>&#160; </div>
 <div class="line"><a name="l00802"></a><span class="lineno">  802</span>&#160;        <span class="keyword">inline</span> <span class="keyword">static</span> std::string join_path(std::string path, <span class="keyword">const</span> std::string&amp; fname)</div>
 <div class="line"><a name="l00803"></a><span class="lineno">  803</span>&#160;        {</div>
-<div class="line"><a name="l00804"></a><span class="lineno">  804</span>&#160;<span class="preprocessor">#ifdef CROW_CAN_USE_CPP17</span></div>
-<div class="line"><a name="l00805"></a><span class="lineno">  805</span>&#160;            <span class="keywordflow">return</span> std::filesystem::path(path) / fname;</div>
+<div class="line"><a name="l00804"></a><span class="lineno">  804</span>&#160;<span class="preprocessor">#if defined(CROW_CAN_USE_CPP17) &amp;&amp; !defined(CROW_FILESYSTEM_IS_EXPERIMENTAL)</span></div>
+<div class="line"><a name="l00805"></a><span class="lineno">  805</span>&#160;            <span class="keywordflow">return</span> (std::filesystem::path(path) / fname).string();</div>
 <div class="line"><a name="l00806"></a><span class="lineno">  806</span>&#160;<span class="preprocessor">#else</span></div>
 <div class="line"><a name="l00807"></a><span class="lineno">  807</span>&#160;            <span class="keywordflow">if</span> (!(path.back() == <span class="charliteral">&#39;/&#39;</span> || path.back() == <span class="charliteral">&#39;\\&#39;</span>))</div>
 <div class="line"><a name="l00808"></a><span class="lineno">  808</span>&#160;                path += <span class="charliteral">&#39;/&#39;</span>;</div>
@@ -1006,7 +1006,7 @@ $(document).ready(function(){initNavTree('utility_8h_source.html',''); initResiz
 			<ul>
 				<li class="navelem"><a class="el" href="dir_d44c64559bbebec7f509842c48db8b23.html">include</a></li><li class="navelem"><a class="el" href="dir_d22c1cb87b72f01e1a7f207eb3bfd1ca.html">crow</a></li><li class="navelem"><b>utility.h</b></li>
 				<li class="footer">
-					Generated on Fri Aug 5 2022 for Crow by <a href="http://www.doxygen.org/index.html">
+					Generated on Sun Aug 7 2022 for Crow by <a href="http://www.doxygen.org/index.html">
 					<img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.17.
 					Dark theme by <a href="http://majerle.eu" target="_new">Tilen Majerle</a>. Edited by <a href="https://github.com/The-EDev" target="_new">Farook Al-Sammarraie</a>. All rights reserved.
 				</li>
