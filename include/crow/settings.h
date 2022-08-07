@@ -45,6 +45,9 @@
 #endif
 #if __cplusplus >= 201703L
 #define CROW_CAN_USE_CPP17
+#if defined(__GNUC__) && __GNUC__ < 8
+#define CROW_FILESYSTEM_IS_EXPERIMENTAL
+#endif
 #endif
 
 #if defined(_MSC_VER)
