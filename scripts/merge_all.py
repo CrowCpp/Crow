@@ -52,7 +52,7 @@ headers += [('crow'+sep+'middlewares'+sep + x + '.h') for x in middlewares_actua
 print(headers)
 edges = defaultdict(list)
 for header in headers:
-    d = open(pt.join(header_path, header)).read()
+    d = open(pt.join(header_path, header), encoding='UTF-8').read()
     match = re_depends.findall(d)
     for m in match:
         actual_m = m
@@ -88,10 +88,10 @@ for x in edges:
 print(order)
 build = [lsc, '#pragma once']
 for header in order:
-    d = open(pt.join(header_path, header)).read()
+    d = open(pt.join(header_path, header), encoding='UTF-8').read()
     d_no_depend = re_depends.sub(lambda x: '', d)
     d_no_pragma = re_pragma.sub(lambda x: '', d_no_depend)
     build.append(d_no_pragma)
     #build.append('\n')
 
-open(output_path, 'w').write('\n'.join(build))
+open(output_path, 'w', encoding='UTF-8').write('\n'.join(build))
