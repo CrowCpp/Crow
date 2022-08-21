@@ -389,12 +389,14 @@ namespace crow
             if (res.file_info.statResult == 0)
             {
                 std::ifstream is(res.file_info.path.c_str(), std::ios::in | std::ios::binary);
+                std::vector<asio::const_buffer> buffers{1};
                 char buf[16384];
-                while (is.read(buf, sizeof(buf)).gcount() > 0)
+                is.read(buf, sizeof(buf));
+                while (is.gcount() > 0)
                 {
-                    std::vector<asio::const_buffer> buffers;
-                    buffers.push_back(asio::buffer(buf));
+                    buffers[0] = asio::buffer(buf, is.gcount());
                     do_write_sync(buffers);
+                    is.read(buf, sizeof(buf));
                 }
             }
             is_writing = false;
