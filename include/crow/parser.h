@@ -16,9 +16,8 @@ namespace crow
     template<typename Handler>
     struct HTTPParser : public http_parser
     {
-        static int on_message_begin(http_parser* self_)
+        static int on_message_begin(http_parser*)
         {
-            HTTPParser* self = static_cast<HTTPParser*>(self_);
             return 0;
         }
         static int on_method(http_parser* self_)
