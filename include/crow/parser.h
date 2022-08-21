@@ -5,8 +5,8 @@
 #include <boost/algorithm/string.hpp>
 #include <algorithm>
 
-#include "crow/http_parser_merged.h"
 #include "crow/http_request.h"
+#include "crow/http_parser_merged.h"
 
 namespace crow
 {
@@ -20,7 +20,6 @@ namespace crow
         static int on_message_begin(http_parser* self_)
         {
             HTTPParser* self = static_cast<HTTPParser*>(self_);
-            self->clear();
             return 0;
         }
         static int on_url(http_parser* self_, const char* at, size_t length)
@@ -85,7 +84,8 @@ namespace crow
         static int on_message_complete(http_parser* self_)
         {
             HTTPParser* self = static_cast<HTTPParser*>(self_);
-
+           
+            self->message_complete = true;
             // url params
             self->url = self->raw_url.substr(0, self->qs_point != 0 ? self->qs_point : std::string::npos);
             self->url_params = query_string(self->raw_url);
@@ -103,6 +103,9 @@ namespace crow
         /// Parse a buffer into the different sections of an HTTP request.
         bool feed(const char* buffer, int length)
         {
+            if (message_complete)
+                return true;
+
             const static http_parser_settings settings_{
               on_message_begin,
               on_url,
@@ -139,6 +142,8 @@ namespace crow
             qs_point = 0;
             http_major = 0;
             http_minor = 0;
+            message_complete = false;
+            state = CROW_NEW_MESSAGE();
             keep_alive = false;
             close_connection = false;
         }
@@ -178,6 +183,7 @@ namespace crow
         std::string url;
 
         int header_building_state = 0;
+        bool message_complete = false;
         std::string header_field;
         std::string header_value;
         ci_map headers;
@@ -189,3 +195,6 @@ namespace crow
         Handler* handler_; ///< This is currently an HTTP connection object (\ref crow.Connection).
     };
 } // namespace crow
+
+#undef CROW_NEW_MESSAGE
+#undef CROW_start_state
