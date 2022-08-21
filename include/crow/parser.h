@@ -4,8 +4,8 @@
 #include <unordered_map>
 #include <algorithm>
 
-#include "crow/http_parser_merged.h"
 #include "crow/http_request.h"
+#include "crow/http_parser_merged.h"
 
 namespace crow
 {
@@ -19,7 +19,6 @@ namespace crow
         static int on_message_begin(http_parser* self_)
         {
             HTTPParser* self = static_cast<HTTPParser*>(self_);
-            self->clear();
             return 0;
         }
         static int on_method(http_parser* self_)
@@ -97,6 +96,7 @@ namespace crow
         {
             HTTPParser* self = static_cast<HTTPParser*>(self_);
 
+            self->message_complete = true;
             self->process_message();
             return 0;
         }
@@ -110,6 +110,9 @@ namespace crow
         /// Parse a buffer into the different sections of an HTTP request.
         bool feed(const char* buffer, int length)
         {
+            if (message_complete)
+                return true;
+
             const static http_parser_settings settings_{
               on_message_begin,
               on_method,
@@ -141,6 +144,8 @@ namespace crow
             header_value.clear();
             header_building_state = 0;
             qs_point = 0;
+            message_complete = false;
+            state = CROW_NEW_MESSAGE();
         }
 
         inline void process_url()
@@ -184,9 +189,13 @@ namespace crow
 
     private:
         int header_building_state = 0;
+        bool message_complete = false;
         std::string header_field;
         std::string header_value;
 
         Handler* handler_; ///< This is currently an HTTP connection object (\ref crow.Connection).
     };
 } // namespace crow
+
+#undef CROW_NEW_MESSAGE
+#undef CROW_start_state

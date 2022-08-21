@@ -375,6 +375,7 @@ namespace crow
             else
 #endif
             {
+                // TODO(EDev): Move these 6 lines to a method in http_server.
                 std::vector<crow::websocket::connection*> websockets_to_close = websockets_;
                 for (auto websocket : websockets_to_close)
                 {
