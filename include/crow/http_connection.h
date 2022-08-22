@@ -84,6 +84,7 @@ namespace crow
                 if (!ec)
                 {
                     start_deadline();
+                    parser_.clear();
 
                     do_read();
                 }
@@ -137,7 +138,7 @@ namespace crow
                     is_invalid_request = true;
                     res = response(400);
                 }
-                if (req_.upgrade)
+                else if (req_.upgrade)
                 {
                     // h2 or h2c headers
                     if (req_.get_header_value("upgrade").substr(0, 2) == "h2")
@@ -409,6 +410,7 @@ namespace crow
             res.end();
             res.clear();
             buffers_.clear();
+            parser_.clear();
         }
 
         void do_write_general()
@@ -467,6 +469,7 @@ namespace crow
                 res.end();
                 res.clear();
                 buffers_.clear();
+                parser_.clear();
             }
         }
 
@@ -528,6 +531,7 @@ namespace crow
                   is_writing = false;
                   res.clear();
                   res_body_copy_.clear();
+                  parser_.clear();
                   if (!ec)
                   {
                       if (close_connection_)
