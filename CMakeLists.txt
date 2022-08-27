@@ -129,9 +129,8 @@ if(CROW_INSTALL)
 	)
 	install(FILES
 		"${CMAKE_CURRENT_SOURCE_DIR}/cmake/Findasio.cmake"
-    "${CMAKE_CURRENT_BINARY_DIR}/CrowConfig.cmake"
-    DESTINATION lib/cmake/Crow
-  )
+		"${CMAKE_CURRENT_BINARY_DIR}/CrowConfig.cmake"
+		DESTINATION lib/cmake/Crow)
 endif()
 
 set(CPACK_GENERATOR "DEB")
