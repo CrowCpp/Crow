@@ -715,7 +715,7 @@ namespace crow
             bool pong_received_{false};
             bool is_close_handler_called_{false};
 
-            std::shared_ptr<void> anchor_ = std::make_shared<nullptr_t>();
+            std::shared_ptr<void> anchor_ = std::make_shared<int>(); // Value is just for placeholding
 
             std::function<void(crow::websocket::connection&)> open_handler_;
             std::function<void(crow::websocket::connection&, const std::string&, bool)> message_handler_;
