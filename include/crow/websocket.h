@@ -123,7 +123,9 @@ namespace crow
                 auto watch = std::weak_ptr<void>{std::exchange(anchor_, nullptr)};
 
                 // Wait until all unhandled asynchronous operations to join.
-                while (not watch.expired())
+                // As the deletion occurs inside 'check_destroy()', which already locks
+                //  anchor, use count can be 1 on valid deletion context.
+                while (watch.use_count() > 1)
                 {
                     std::this_thread::yield();
                 }
@@ -653,7 +655,7 @@ namespace crow
                     }
                     asio::async_write(
                       adaptor_.socket(), buffers,
-                      [&,watch = std::weak_ptr<void>{anchor_}](const asio::error_code& ec, std::size_t /*bytes_transferred*/) {
+                      [&, watch = std::weak_ptr<void>{anchor_}](const asio::error_code& ec, std::size_t /*bytes_transferred*/) {
                           sending_buffers_.clear();
                           if (!ec && !close_connection_)
                           {
@@ -665,7 +667,7 @@ namespace crow
                           else
                           {
                               auto anchor = watch.lock();
-                              if(anchor == nullptr) { return; }
+                              if (anchor == nullptr) { return; }
 
                               close_connection_ = true;
                               check_destroy();
