@@ -120,12 +120,13 @@ namespace crow
 
             ~Connection() noexcept override
             {
-                auto watch = std::weak_ptr<void>{std::exchange(anchor_, nullptr)};
+                // Do not modify anchor_ here since writing shared_ptr is not atomic.
+                auto watch = std::weak_ptr<void>{anchor_};
 
                 // Wait until all unhandled asynchronous operations to join.
                 // As the deletion occurs inside 'check_destroy()', which already locks
                 //  anchor, use count can be 1 on valid deletion context.
-                while (watch.use_count() > 1)
+                while (watch.use_count() > 2) // 1 for 'check_destroy() routine', 1 for 'this->anchor_'
                 {
                     std::this_thread::yield();
                 }
