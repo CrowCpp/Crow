@@ -118,18 +118,45 @@ namespace crow
                 start(crow::utility::base64encode((unsigned char*)digest, 20));
             }
 
+            ~Connection() noexcept override
+            {
+                auto watch = std::weak_ptr<void>{std::exchange(anchor_, nullptr)};
+
+                // Wait until all unhandled asynchronous operations to join.
+                while (not watch.expired())
+                {
+                    std::this_thread::yield();
+                }
+            }
+
             /// Send data through the socket.
             template<typename CompletionHandler>
-            void dispatch(CompletionHandler handler)
+            void dispatch(CompletionHandler&& handler)
             {
-                adaptor_.get_io_service().dispatch(handler);
+                adaptor_.get_io_service().dispatch(
+                  [this,
+                   handler = std::forward<CompletionHandler>(handler),
+                   watch = std::weak_ptr<void>{anchor_}] {
+                      auto anchor = watch.lock();
+                      if (anchor == nullptr) { return; }
+
+                      handler();
+                  });
             }
 
             /// Send data through the socket and return immediately.
             template<typename CompletionHandler>
-            void post(CompletionHandler handler)
+            void post(CompletionHandler&& handler)
             {
-                adaptor_.get_io_service().post(handler);
+                adaptor_.get_io_service().post(
+                  [this,
+                   handler = std::forward<CompletionHandler>(handler),
+                   watch = std::weak_ptr<void>{anchor_}] {
+                      auto anchor = watch.lock();
+                      if (anchor == nullptr) { return; }
+
+                      handler();
+                  });
             }
 
             /// Send a "Ping" message.
@@ -626,7 +653,7 @@ namespace crow
                     }
                     asio::async_write(
                       adaptor_.socket(), buffers,
-                      [&](const asio::error_code& ec, std::size_t /*bytes_transferred*/) {
+                      [&,watch = std::weak_ptr<void>{anchor_}](const asio::error_code& ec, std::size_t /*bytes_transferred*/) {
                           sending_buffers_.clear();
                           if (!ec && !close_connection_)
                           {
@@ -637,6 +664,9 @@ namespace crow
                           }
                           else
                           {
+                              auto anchor = watch.lock();
+                              if(anchor == nullptr) { return; }
+
                               close_connection_ = true;
                               check_destroy();
                           }
@@ -681,6 +711,8 @@ namespace crow
             bool error_occured_{false};
             bool pong_received_{false};
             bool is_close_handler_called_{false};
+
+            std::shared_ptr<void> anchor_ = std::make_shared<nullptr_t>();
 
             std::function<void(crow::websocket::connection&)> open_handler_;
             std::function<void(crow::websocket::connection&, const std::string&, bool)> message_handler_;
