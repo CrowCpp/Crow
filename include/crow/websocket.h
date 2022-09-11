@@ -657,9 +657,9 @@ namespace crow
                     asio::async_write(
                       adaptor_.socket(), buffers,
                       [&, watch = std::weak_ptr<void>{anchor_}](const asio::error_code& ec, std::size_t /*bytes_transferred*/) {
-                          sending_buffers_.clear();
                           if (!ec && !close_connection_)
                           {
+                              sending_buffers_.clear();
                               if (!write_buffers_.empty())
                                   do_write();
                               if (has_sent_close_)
@@ -670,6 +670,7 @@ namespace crow
                               auto anchor = watch.lock();
                               if (anchor == nullptr) { return; }
 
+                              sending_buffers_.clear();
                               close_connection_ = true;
                               check_destroy();
                           }
