@@ -120,16 +120,16 @@ namespace crow
 
             /// Send data through the socket.
             template<typename CompletionHandler>
-            void dispatch(CompletionHandler handler)
+            void dispatch(CompletionHandler&& handler)
             {
-                adaptor_.get_io_service().dispatch(handler);
+                adaptor_.get_io_service().dispatch(std::forward<CompletionHandler>(handler));
             }
 
             /// Send data through the socket and return immediately.
             template<typename CompletionHandler>
-            void post(CompletionHandler handler)
+            void post(CompletionHandler&& handler)
             {
-                adaptor_.get_io_service().post(handler);
+                adaptor_.get_io_service().post(std::forward<CompletionHandler>(handler));
             }
 
             /// Send a "Ping" message.
