@@ -22,13 +22,13 @@ namespace crow
         /// A base class for websocket connection.
         struct connection
         {
-            virtual void send_binary(const std::string& msg) = 0;
-            virtual void send_text(const std::string& msg) = 0;
-            virtual void send_ping(const std::string& msg) = 0;
-            virtual void send_pong(const std::string& msg) = 0;
-            virtual void close(const std::string& msg = "quit") = 0;
+            virtual void send_binary(std::string msg) = 0;
+            virtual void send_text(std::string msg) = 0;
+            virtual void send_ping(std::string msg) = 0;
+            virtual void send_pong(std::string msg) = 0;
+            virtual void close(std::string msg = "quit") = 0;
             virtual std::string get_remote_ip() = 0;
-            virtual ~connection() {}
+            virtual ~connection() = default;
 
             void userdata(void* u) { userdata_ = u; }
             void* userdata() { return userdata_; }
@@ -136,12 +136,12 @@ namespace crow
 
             ///
             /// Usually invoked to check if the other point is still online.
-            void send_ping(const std::string& msg) override
+            void send_ping(std::string msg) override
             {
-                dispatch([this, msg] {
+                dispatch([this, msg = std::move(msg)]() mutable {
                     auto header = build_header(0x9, msg.size());
                     write_buffers_.emplace_back(std::move(header));
-                    write_buffers_.emplace_back(msg);
+                    write_buffers_.emplace_back(std::move(msg));
                     do_write();
                 });
             }
@@ -150,34 +150,34 @@ namespace crow
 
             ///
             /// Usually automatically invoked as a response to a "Ping" message.
-            void send_pong(const std::string& msg) override
+            void send_pong(std::string msg) override
             {
-                dispatch([this, msg] {
+                dispatch([this, msg = std::move(msg)]() mutable {
                     auto header = build_header(0xA, msg.size());
                     write_buffers_.emplace_back(std::move(header));
-                    write_buffers_.emplace_back(msg);
+                    write_buffers_.emplace_back(std::move(msg));
                     do_write();
                 });
             }
 
             /// Send a binary encoded message.
-            void send_binary(const std::string& msg) override
+            void send_binary(std::string msg) override
             {
-                dispatch([this, msg] {
+                dispatch([this, msg = std::move(msg)]() mutable {
                     auto header = build_header(2, msg.size());
                     write_buffers_.emplace_back(std::move(header));
-                    write_buffers_.emplace_back(msg);
+                    write_buffers_.emplace_back(std::move(msg));
                     do_write();
                 });
             }
 
             /// Send a plaintext message.
-            void send_text(const std::string& msg) override
+            void send_text(std::string msg) override
             {
-                dispatch([this, msg] {
+                dispatch([this, msg = std::move(msg)]() mutable {
                     auto header = build_header(1, msg.size());
                     write_buffers_.emplace_back(std::move(header));
-                    write_buffers_.emplace_back(msg);
+                    write_buffers_.emplace_back(std::move(msg));
                     do_write();
                 });
             }
@@ -186,9 +186,9 @@ namespace crow
 
             ///
             /// Sets a flag to destroy the object once the message is sent.
-            void close(const std::string& msg) override
+            void close(std::string msg) override
             {
-                dispatch([this, msg] {
+                dispatch([this, msg = std::move(msg)]() mutable {
                     has_sent_close_ = true;
                     if (has_recv_close_ && !is_close_handler_called_)
                     {
@@ -198,7 +198,7 @@ namespace crow
                     }
                     auto header = build_header(0x8, msg.size());
                     write_buffers_.emplace_back(std::move(header));
-                    write_buffers_.emplace_back(msg);
+                    write_buffers_.emplace_back(std::move(msg));
                     do_write();
                 });
             }
@@ -244,10 +244,11 @@ namespace crow
             /// Finishes the handshake process, then starts reading messages from the socket.
             void start(std::string&& hello)
             {
-                static std::string header = "HTTP/1.1 101 Switching Protocols\r\n"
-                                            "Upgrade: websocket\r\n"
-                                            "Connection: Upgrade\r\n"
-                                            "Sec-WebSocket-Accept: ";
+                static const std::string header =
+                  "HTTP/1.1 101 Switching Protocols\r\n"
+                  "Upgrade: websocket\r\n"
+                  "Connection: Upgrade\r\n"
+                  "Sec-WebSocket-Accept: ";
                 write_buffers_.emplace_back(header);
                 write_buffers_.emplace_back(std::move(hello));
                 write_buffers_.emplace_back(crlf);
