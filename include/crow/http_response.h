@@ -18,7 +18,7 @@
 #include "crow/ci_map.h"
 #include "crow/socket_adaptors.h"
 #include "crow/logging.h"
-#include "crow/mime_types.h"
+#include "crow/mime_utils.h"
 #include "crow/returnable.h"
 
 
@@ -101,13 +101,13 @@ namespace crow
         response(std::string contentType, std::string body):
           body(std::move(body))
         {
-            set_header("Content-Type", mime_types.at(contentType));
+            set_header("Content-Type", get_mime_type(contentType));
         }
 
         response(int code, std::string contentType, std::string body):
           code(code), body(std::move(body))
         {
-            set_header("Content-Type", mime_types.at(contentType));
+            set_header("Content-Type", get_mime_type(contentType));
         }
 
         response& operator=(const response& r) = delete;
@@ -255,15 +255,7 @@ namespace crow
 
                 if (!extension.empty())
                 {
-                    const auto mimeType = mime_types.find(extension);
-                    if (mimeType != mime_types.end())
-                    {
-                        this->add_header("Content-Type", mimeType->second);
-                    }
-                    else
-                    {
-                        this->add_header("Content-Type", "text/plain");
-                    }
+                    this->add_header("Content-Type", get_mime_type(extension));
                 }
             }
             else
