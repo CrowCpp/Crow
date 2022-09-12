@@ -138,12 +138,7 @@ namespace crow
             /// Usually invoked to check if the other point is still online.
             void send_ping(std::string msg) override
             {
-                dispatch([this, msg = std::move(msg)]() mutable {
-                    auto header = build_header(0x9, msg.size());
-                    write_buffers_.emplace_back(std::move(header));
-                    write_buffers_.emplace_back(std::move(msg));
-                    do_write();
-                });
+                send_data(0x9, std::move(msg));
             }
 
             /// Send a "Pong" message.
@@ -152,34 +147,19 @@ namespace crow
             /// Usually automatically invoked as a response to a "Ping" message.
             void send_pong(std::string msg) override
             {
-                dispatch([this, msg = std::move(msg)]() mutable {
-                    auto header = build_header(0xA, msg.size());
-                    write_buffers_.emplace_back(std::move(header));
-                    write_buffers_.emplace_back(std::move(msg));
-                    do_write();
-                });
+                send_data(0xA, std::move(msg));
             }
 
             /// Send a binary encoded message.
             void send_binary(std::string msg) override
             {
-                dispatch([this, msg = std::move(msg)]() mutable {
-                    auto header = build_header(2, msg.size());
-                    write_buffers_.emplace_back(std::move(header));
-                    write_buffers_.emplace_back(std::move(msg));
-                    do_write();
-                });
+                send_data(0x2, std::move(msg));
             }
 
             /// Send a plaintext message.
             void send_text(std::string msg) override
             {
-                dispatch([this, msg = std::move(msg)]() mutable {
-                    auto header = build_header(1, msg.size());
-                    write_buffers_.emplace_back(std::move(header));
-                    write_buffers_.emplace_back(std::move(msg));
-                    do_write();
-                });
+                send_data(0x1, std::move(msg));
             }
 
             /// Send a close signal.
@@ -655,6 +635,42 @@ namespace crow
                 handler_->remove_websocket(this);
                 if (sending_buffers_.empty() && !is_reading)
                     delete this;
+            }
+
+
+            struct SendMessageType
+            {
+                std::string payload;
+                Connection* self;
+                int opcode;
+
+                void operator()()
+                {
+                    self->send_data_impl(this);
+                }
+            };
+
+            static_assert(
+              std::is_nothrow_move_assignable<SendMessageType>::value &&
+                std::is_nothrow_move_constructible<SendMessageType>::value,
+              "SendMessageType must be nothrow movable!");
+
+            void send_data_impl(SendMessageType* s)
+            {
+                auto header = build_header(s->opcode, s->payload.size());
+                write_buffers_.emplace_back(std::move(header));
+                write_buffers_.emplace_back(std::move(s->payload));
+                do_write();
+            }
+
+            void send_data(int opcode, std::string&& msg)
+            {
+                SendMessageType event_arg{
+                  std::move(msg),
+                  this,
+                  opcode};
+
+                post(std::move(event_arg));
             }
 
         private:
