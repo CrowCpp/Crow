@@ -122,14 +122,14 @@ namespace crow
             template<typename CompletionHandler>
             void dispatch(CompletionHandler&& handler)
             {
-                adaptor_.get_io_service().dispatch(std::forward<CompletionHandler>(handler));
+                asio::dispatch(adaptor_.get_io_service(), std::forward<CompletionHandler>(handler));
             }
 
             /// Send data through the socket and return immediately.
             template<typename CompletionHandler>
             void post(CompletionHandler&& handler)
             {
-                adaptor_.get_io_service().post(std::forward<CompletionHandler>(handler));
+                asio::post(adaptor_.get_io_service(), std::forward<CompletionHandler>(handler));
             }
 
             /// Send a "Ping" message.
@@ -648,6 +648,14 @@ namespace crow
                 {
                     self->send_data_impl(this);
                 }
+
+                SendMessageType() noexcept = default;
+
+                SendMessageType(SendMessageType const&) = delete;
+                SendMessageType& operator=(SendMessageType const&) = delete;
+
+                SendMessageType(SendMessageType&&) noexcept = default;
+                SendMessageType& operator=(SendMessageType&&) noexcept = default;
             };
 
             static_assert(
