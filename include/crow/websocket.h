@@ -26,7 +26,7 @@ namespace crow
             virtual void send_text(std::string msg) = 0;
             virtual void send_ping(std::string msg) = 0;
             virtual void send_pong(std::string msg) = 0;
-            virtual void close(std::string msg = "quit") = 0;
+            virtual void close(std::string const& msg = "quit") = 0;
             virtual std::string get_remote_ip() = 0;
             virtual ~connection() = default;
 
@@ -166,9 +166,9 @@ namespace crow
 
             ///
             /// Sets a flag to destroy the object once the message is sent.
-            void close(std::string msg) override
+            void close(std::string const& msg) override
             {
-                dispatch([this, msg = std::move(msg)]() mutable {
+                dispatch([this, msg]() mutable {
                     has_sent_close_ = true;
                     if (has_recv_close_ && !is_close_handler_called_)
                     {
@@ -178,7 +178,7 @@ namespace crow
                     }
                     auto header = build_header(0x8, msg.size());
                     write_buffers_.emplace_back(std::move(header));
-                    write_buffers_.emplace_back(std::move(msg));
+                    write_buffers_.emplace_back(msg);
                     do_write();
                 });
             }
@@ -648,20 +648,7 @@ namespace crow
                 {
                     self->send_data_impl(this);
                 }
-
-                SendMessageType() noexcept = default;
-
-                SendMessageType(SendMessageType const&) = delete;
-                SendMessageType& operator=(SendMessageType const&) = delete;
-
-                SendMessageType(SendMessageType&&) noexcept = default;
-                SendMessageType& operator=(SendMessageType&&) noexcept = default;
             };
-
-            static_assert(
-              std::is_nothrow_move_assignable<SendMessageType>::value &&
-                std::is_nothrow_move_constructible<SendMessageType>::value,
-              "SendMessageType must be nothrow movable!");
 
             void send_data_impl(SendMessageType* s)
             {
