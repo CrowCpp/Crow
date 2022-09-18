@@ -407,7 +407,7 @@ namespace crow
                             close_connection_ = true;
                             adaptor_.close();
                             if (error_handler_)
-                                error_handler_(*this, "Message length exceeds maximum paylaod.");
+                                error_handler_(*this, "Message length exceeds maximum payload.");
                             check_destroy();
                         }
                         else if (has_mask_)
@@ -593,7 +593,7 @@ namespace crow
             /// Send the buffers' data through the socket.
 
             ///
-            /// Also destroyes the object if the Close flag is set.
+            /// Also destroys the object if the Close flag is set.
             void do_write()
             {
                 if (sending_buffers_.empty())
@@ -690,7 +690,7 @@ namespace crow
             uint16_t mini_header_;
             bool has_sent_close_{false};
             bool has_recv_close_{false};
-            bool error_occured_{false};
+            bool error_occurred_{false};
             bool pong_received_{false};
             bool is_close_handler_called_{false};
 
