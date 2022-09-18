@@ -296,7 +296,7 @@ namespace crow
     C::handle
         context.aaa
 
-    App::context : private CookieParser::contetx, ...
+    App::context : private CookieParser::context, ...
     {
         jar
 
