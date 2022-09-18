@@ -290,6 +290,34 @@ TEST_CASE("simple_response_routing_params")
     CHECK("hello" == rp.get<string>(0));
 } // simple_response_routing_params
 
+TEST_CASE("custom_content_types")
+{
+    // standard behaviour: content type is a key of mime_types
+    CHECK("text/html" == response("html", "").get_header_value("Content-Type"));
+    CHECK("image/jpeg" == response("jpg", "").get_header_value("Content-Type"));
+    CHECK("video/mpeg" == response("mpg", "").get_header_value("Content-Type"));
+
+    // content type is already a valid mime type
+    CHECK("text/csv" == response("text/csv", "").get_header_value("Content-Type"));
+    CHECK("application/xhtml+xml" == response("application/xhtml+xml", "").get_header_value("Content-Type"));
+    CHECK("font/custom;parameters=ok" == response("font/custom;parameters=ok", "").get_header_value("Content-Type"));
+
+    // content type looks like a mime type, but is invalid
+    // note: RFC6838 only allows a limited set of parent types:
+    // https://datatracker.ietf.org/doc/html/rfc6838#section-4.2.7
+    //
+    // These types are: application, audio, font, example, image, message,
+    //                  model, multipart, text, video
+
+    CHECK("text/plain" == response("custom/type", "").get_header_value("Content-Type"));
+
+    // content type does not look like a mime type.
+    CHECK("text/plain" == response("notarealextension", "").get_header_value("Content-Type"));
+    CHECK("text/plain" == response("image/", "").get_header_value("Content-Type"));
+    CHECK("text/plain" == response("/json", "").get_header_value("Content-Type"));
+
+} // custom_content_types
+
 TEST_CASE("handler_with_response")
 {
     SimpleApp app;

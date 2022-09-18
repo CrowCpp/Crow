@@ -243,16 +243,16 @@ namespace crow
                 return node->mutex;
             }
 
-            // Check wheter this session is already present
+            // Check whether this session is already present
             bool exists() { return bool(node); }
 
             // Get a value by key or fallback if it doesn't exist or is of another type
             template<typename F>
             auto get(const std::string& key, const F& fallback = F())
-              // This trick lets the mutli_value deduce the return type from the fallback
+              // This trick lets the multi_value deduce the return type from the fallback
               // which allows both:
               //   context.get<std::string>("key")
-              //   context.get("key", "") -> char[] is transformed into string by mutlivalue
+              //   context.get("key", "") -> char[] is transformed into string by multivalue
               // to return a string
               -> decltype(std::declval<session::multi_value>().get<F>(std::declval<F>()))
             {
