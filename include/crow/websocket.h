@@ -118,18 +118,51 @@ namespace crow
                 start(crow::utility::base64encode((unsigned char*)digest, 20));
             }
 
+            ~Connection() noexcept override
+            {
+                // Do not modify anchor_ here since writing shared_ptr is not atomic.
+                auto watch = std::weak_ptr<void>{anchor_};
+
+                // Wait until all unhandled asynchronous operations to join.
+                // As the deletion occurs inside 'check_destroy()', which already locks
+                //  anchor, use count can be 1 on valid deletion context.
+                while (watch.use_count() > 2) // 1 for 'check_destroy() routine', 1 for 'this->anchor_'
+                {
+                    std::this_thread::yield();
+                }
+            }
+
+            template<typename Callable>
+            struct WeakWrappedMessage
+            {
+                Callable callable;
+                std::weak_ptr<void> watch;
+
+                void operator()()
+                {
+                    if (auto anchor = watch.lock())
+                    {
+                        std::move(callable)();
+                    }
+                }
+            };
+
             /// Send data through the socket.
             template<typename CompletionHandler>
             void dispatch(CompletionHandler&& handler)
             {
-                asio::dispatch(adaptor_.get_io_service(), std::forward<CompletionHandler>(handler));
+                asio::dispatch(adaptor_.get_io_service(),
+                               WeakWrappedMessage<typename std::decay<CompletionHandler>::type>{
+                                 std::forward<CompletionHandler>(handler), anchor_});
             }
 
             /// Send data through the socket and return immediately.
             template<typename CompletionHandler>
             void post(CompletionHandler&& handler)
             {
-                asio::post(adaptor_.get_io_service(), std::forward<CompletionHandler>(handler));
+                asio::post(adaptor_.get_io_service(),
+                           WeakWrappedMessage<typename std::decay<CompletionHandler>::type>{
+                             std::forward<CompletionHandler>(handler), anchor_});
             }
 
             /// Send a "Ping" message.
@@ -605,12 +638,13 @@ namespace crow
                     {
                         buffers.emplace_back(asio::buffer(s));
                     }
+                    auto watch = std::weak_ptr<void>{anchor_};
                     asio::async_write(
                       adaptor_.socket(), buffers,
-                      [&](const asio::error_code& ec, std::size_t /*bytes_transferred*/) {
-                          sending_buffers_.clear();
+                      [&, watch](const asio::error_code& ec, std::size_t /*bytes_transferred*/) {
                           if (!ec && !close_connection_)
                           {
+                              sending_buffers_.clear();
                               if (!write_buffers_.empty())
                                   do_write();
                               if (has_sent_close_)
@@ -618,6 +652,10 @@ namespace crow
                           }
                           else
                           {
+                              auto anchor = watch.lock();
+                              if (anchor == nullptr) { return; }
+
+                              sending_buffers_.clear();
                               close_connection_ = true;
                               check_destroy();
                           }
@@ -693,6 +731,8 @@ namespace crow
             bool error_occurred_{false};
             bool pong_received_{false};
             bool is_close_handler_called_{false};
+
+            std::shared_ptr<void> anchor_ = std::make_shared<int>(); // Value is just for placeholding
 
             std::function<void(crow::websocket::connection&)> open_handler_;
             std::function<void(crow::websocket::connection&, const std::string&, bool)> message_handler_;
