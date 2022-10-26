@@ -709,7 +709,7 @@ namespace crow
             uint16_t blueprint_index{INVALID_BP_ID};
             std::string key;
             ParamType param = ParamType::MAX; // MAX = No param.
-            std::vector<Node*> children;
+            std::vector<Node> children;
 
             bool IsSimpleNode() const
             {
@@ -717,9 +717,15 @@ namespace crow
                        blueprint_index == INVALID_BP_ID &&
                        children.size() < 2 &&
                        param == ParamType::MAX &&
-                       std::all_of(std::begin(children), std::end(children), [](Node* x) {
-                           return x->param == ParamType::MAX;
+                       std::all_of(std::begin(children), std::end(children), [](const Node& x) {
+                           return x.param == ParamType::MAX;
                        });
+            }
+
+            Node& add_child_node()
+            {
+                children.emplace_back();
+                return children.back();
             }
         };
 
@@ -735,7 +741,7 @@ namespace crow
 
         void optimize()
         {
-            for (auto child : head_.children)
+            for (auto& child : head_.children)
             {
                 optimizeNode(child);
             }
@@ -743,34 +749,33 @@ namespace crow
 
 
     private:
-        void optimizeNode(Node* node)
+        void optimizeNode(Node& node)
         {
-            if (node->children.empty())
+            if (node.children.empty())
                 return;
-            if (node->IsSimpleNode())
+            if (node.IsSimpleNode())
             {
-                Node* child_temp = node->children[0];
-                node->key = node->key + child_temp->key;
-                node->rule_index = child_temp->rule_index;
-                node->blueprint_index = child_temp->blueprint_index;
-                node->children = std::move(child_temp->children);
-                delete (child_temp);
+                auto& child_temp = node.children[0];
+                node.key += child_temp.key;
+                node.rule_index = child_temp.rule_index;
+                node.blueprint_index = child_temp.blueprint_index;
+                node.children = std::move(child_temp.children);
                 optimizeNode(node);
             }
             else
             {
-                for (auto& child : node->children)
+                for (auto& child : node.children)
                 {
                     optimizeNode(child);
                 }
             }
         }
 
-        void debug_node_print(Node* node, int level)
+        void debug_node_print(const Node& node, int level)
         {
-            if (node->param != ParamType::MAX)
+            if (node.param != ParamType::MAX)
             {
-                switch (node->param)
+                switch (node.param)
                 {
                     case ParamType::INT:
                         CROW_LOG_DEBUG << std::string(3 * level, ' ') << "└➝ "
@@ -799,9 +804,9 @@ namespace crow
                 }
             }
             else
-                CROW_LOG_DEBUG << std::string(3 * level, ' ') << "└➝ " << node->key;
+                CROW_LOG_DEBUG << std::string(3 * level, ' ') << "└➝ " << node.key;
 
-            for (auto& child : node->children)
+            for (const auto& child : node.children)
             {
                 debug_node_print(child, level + 1);
             }
@@ -811,7 +816,7 @@ namespace crow
         void debug_print()
         {
             CROW_LOG_DEBUG << "└➙ ROOT";
-            for (auto& child : head_.children)
+            for (const auto& child : head_.children)
                 debug_node_print(child, 1);
         }
 
@@ -823,7 +828,7 @@ namespace crow
         }
 
         //Rule_index, Blueprint_index, routing_params
-        routing_handle_result find(const std::string& req_url, const Node* node = nullptr, unsigned pos = 0, routing_params* params = nullptr, std::vector<uint16_t>* blueprints = nullptr) const
+        routing_handle_result find(const std::string& req_url, const Node& node, unsigned pos = 0, routing_params* params = nullptr, std::vector<uint16_t>* blueprints = nullptr) const
         {
             //start params as an empty struct
             routing_params empty;
@@ -838,10 +843,6 @@ namespace crow
             std::vector<uint16_t> found_BP; //The Blueprint indices to be found
             routing_params match_params;    //supposedly the final matched parameters
 
-            //start from the head node
-            if (node == nullptr)
-                node = &head_;
-
             auto update_found = [&found, &found_BP, &match_params](routing_handle_result& ret) {
                 found_BP = std::move(ret.blueprint_indices);
                 if (ret.rule_index && (!found || found > ret.rule_index))
@@ -855,16 +856,16 @@ namespace crow
             if (pos == req_url.size())
             {
                 found_BP = std::move(*blueprints);
-                return routing_handle_result{node->rule_index, *blueprints, *params};
+                return routing_handle_result{node.rule_index, *blueprints, *params};
             }
 
             bool found_fragment = false;
 
-            for (auto& child : node->children)
+            for (const auto& child : node.children)
             {
-                if (child->param != ParamType::MAX)
+                if (child.param != ParamType::MAX)
                 {
-                    if (child->param == ParamType::INT)
+                    if (child.param == ParamType::INT)
                     {
                         char c = req_url[pos];
                         if ((c >= '0' && c <= '9') || c == '+' || c == '-')
@@ -876,7 +877,7 @@ namespace crow
                             {
                                 found_fragment = true;
                                 params->int_params.push_back(value);
-                                if (child->blueprint_index != INVALID_BP_ID) blueprints->push_back(child->blueprint_index);
+                                if (child.blueprint_index != INVALID_BP_ID) blueprints->push_back(child.blueprint_index);
                                 auto ret = find(req_url, child, eptr - req_url.data(), params, blueprints);
                                 update_found(ret);
                                 params->int_params.pop_back();
@@ -885,7 +886,7 @@ namespace crow
                         }
                     }
 
-                    else if (child->param == ParamType::UINT)
+                    else if (child.param == ParamType::UINT)
                     {
                         char c = req_url[pos];
                         if ((c >= '0' && c <= '9') || c == '+')
@@ -897,7 +898,7 @@ namespace crow
                             {
                                 found_fragment = true;
                                 params->uint_params.push_back(value);
-                                if (child->blueprint_index != INVALID_BP_ID) blueprints->push_back(child->blueprint_index);
+                                if (child.blueprint_index != INVALID_BP_ID) blueprints->push_back(child.blueprint_index);
                                 auto ret = find(req_url, child, eptr - req_url.data(), params, blueprints);
                                 update_found(ret);
                                 params->uint_params.pop_back();
@@ -906,7 +907,7 @@ namespace crow
                         }
                     }
 
-                    else if (child->param == ParamType::DOUBLE)
+                    else if (child.param == ParamType::DOUBLE)
                     {
                         char c = req_url[pos];
                         if ((c >= '0' && c <= '9') || c == '+' || c == '-' || c == '.')
@@ -918,7 +919,7 @@ namespace crow
                             {
                                 found_fragment = true;
                                 params->double_params.push_back(value);
-                                if (child->blueprint_index != INVALID_BP_ID) blueprints->push_back(child->blueprint_index);
+                                if (child.blueprint_index != INVALID_BP_ID) blueprints->push_back(child.blueprint_index);
                                 auto ret = find(req_url, child, eptr - req_url.data(), params, blueprints);
                                 update_found(ret);
                                 params->double_params.pop_back();
@@ -927,7 +928,7 @@ namespace crow
                         }
                     }
 
-                    else if (child->param == ParamType::STRING)
+                    else if (child.param == ParamType::STRING)
                     {
                         size_t epos = pos;
                         for (; epos < req_url.size(); epos++)
@@ -940,7 +941,7 @@ namespace crow
                         {
                             found_fragment = true;
                             params->string_params.push_back(req_url.substr(pos, epos - pos));
-                            if (child->blueprint_index != INVALID_BP_ID) blueprints->push_back(child->blueprint_index);
+                            if (child.blueprint_index != INVALID_BP_ID) blueprints->push_back(child.blueprint_index);
                             auto ret = find(req_url, child, epos, params, blueprints);
                             update_found(ret);
                             params->string_params.pop_back();
@@ -948,7 +949,7 @@ namespace crow
                         }
                     }
 
-                    else if (child->param == ParamType::PATH)
+                    else if (child.param == ParamType::PATH)
                     {
                         size_t epos = req_url.size();
 
@@ -956,7 +957,7 @@ namespace crow
                         {
                             found_fragment = true;
                             params->string_params.push_back(req_url.substr(pos, epos - pos));
-                            if (child->blueprint_index != INVALID_BP_ID) blueprints->push_back(child->blueprint_index);
+                            if (child.blueprint_index != INVALID_BP_ID) blueprints->push_back(child.blueprint_index);
                             auto ret = find(req_url, child, epos, params, blueprints);
                             update_found(ret);
                             params->string_params.pop_back();
@@ -967,11 +968,11 @@ namespace crow
 
                 else
                 {
-                    const std::string& fragment = child->key;
+                    const std::string& fragment = child.key;
                     if (req_url.compare(pos, fragment.size(), fragment) == 0)
                     {
                         found_fragment = true;
-                        if (child->blueprint_index != INVALID_BP_ID) blueprints->push_back(child->blueprint_index);
+                        if (child.blueprint_index != INVALID_BP_ID) blueprints->push_back(child.blueprint_index);
                         auto ret = find(req_url, child, pos + fragment.size(), params, blueprints);
                         update_found(ret);
                         if (!blueprints->empty()) blueprints->pop_back();
@@ -985,10 +986,15 @@ namespace crow
             return routing_handle_result{found, found_BP, match_params}; //Called after all the recursions have been done
         }
 
+        routing_handle_result find(const std::string& req_url) const
+        {
+            return find(req_url, head_);
+        }
+
         //This functions assumes any blueprint info passed is valid
         void add(const std::string& url, uint16_t rule_index, unsigned bp_prefix_length = 0, uint16_t blueprint_index = INVALID_BP_ID)
         {
-            Node* idx = &head_;
+            auto idx = &head_;
 
             bool has_blueprint = bp_prefix_length != 0 && blueprint_index != INVALID_BP_ID;
 
@@ -1012,16 +1018,16 @@ namespace crow
                         {ParamType::PATH, "<path>"},
                       };
 
-                    for (auto& x : paramTraits)
+                    for (const auto& x : paramTraits)
                     {
                         if (url.compare(i, x.name.size(), x.name) == 0)
                         {
                             bool found = false;
-                            for (Node* child : idx->children)
+                            for (auto& child : idx->children)
                             {
-                                if (child->param == x.type)
+                                if (child.param == x.type)
                                 {
-                                    idx = child;
+                                    idx = &child;
                                     i += x.name.size();
                                     found = true;
                                     break;
@@ -1030,7 +1036,7 @@ namespace crow
                             if (found)
                                 break;
 
-                            auto new_node_idx = new_node(idx);
+                            auto new_node_idx = &idx->add_child_node();
                             new_node_idx->param = x.type;
                             idx = new_node_idx;
                             i += x.name.size();
@@ -1046,16 +1052,16 @@ namespace crow
                     bool piece_found = false;
                     for (auto& child : idx->children)
                     {
-                        if (child->key[0] == c)
+                        if (child.key[0] == c)
                         {
-                            idx = child;
+                            idx = &child;
                             piece_found = true;
                             break;
                         }
                     }
                     if (!piece_found)
                     {
-                        auto new_node_idx = new_node(idx);
+                        auto new_node_idx = &idx->add_child_node();
                         new_node_idx->key = c;
                         //The assumption here is that you'd only need to add a blueprint index if the tree didn't have the BP prefix.
                         if (has_blueprint && i == bp_prefix_length)
@@ -1071,33 +1077,7 @@ namespace crow
             idx->rule_index = rule_index;
         }
 
-        size_t get_size()
-        {
-            return get_size(&head_);
-        }
-
-        size_t get_size(Node* node)
-        {
-            unsigned size = 5;          //rule_index, blueprint_index, and param
-            size += (node->key.size()); //each character in the key is 1 byte
-            for (auto child : node->children)
-            {
-                size += get_size(child);
-            }
-            return size;
-        }
-
-
     private:
-        Node* new_node(Node* parent)
-        {
-            auto& children = parent->children;
-            children.resize(children.size() + 1);
-            children[children.size() - 1] = new Node();
-            return children[children.size() - 1];
-        }
-
-
         Node head_;
     };
 
