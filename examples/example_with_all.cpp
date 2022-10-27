@@ -81,8 +81,7 @@ int main()
 
     // more json example
     CROW_ROUTE(app, "/add_json")
-	.methods("POST"_method)
-    ([](const crow::request& req) {
+	.methods("POST"_method)([](const crow::request& req) {
         auto x = crow::json::load(req.body);
         if (!x)
             return crow::response(400);
