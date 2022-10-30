@@ -622,7 +622,7 @@ namespace crow
         std::string date_str_;
         std::string res_body_copy_;
 
-        detail::task_timer::identifier_type task_id_;
+        detail::task_timer::identifier_type task_id_{};
 
         bool is_reading{};
         bool is_writing{};
