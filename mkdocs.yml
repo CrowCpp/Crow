@@ -16,7 +16,7 @@ theme:
   favicon: 'assets/favicon.svg'
   logo: 'assets/favicon.svg'
   icon:
-    repo: fontawesome/brands/github-square
+    repo: fontawesome/brands/square-github
   static_templates:
     - privacy_policy.html
   palette:
