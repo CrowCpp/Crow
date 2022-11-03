@@ -101,6 +101,7 @@ var hierarchy =
       [ "crow::TaggedRule< Args >", "classcrow_1_1_tagged_rule.html", null ]
     ] ],
     [ "crow::json::rvalue", "classcrow_1_1json_1_1rvalue.html", null ],
+    [ "crow::websocket::Connection< Adaptor, Handler >::SendMessageType", "structcrow_1_1websocket_1_1_connection_1_1_send_message_type.html", null ],
     [ "crow::Server< Handler, Adaptor, Middlewares >", "classcrow_1_1_server.html", null ],
     [ "crow::SessionMiddleware< Store >", "structcrow_1_1_session_middleware.html", null ],
     [ "crow::SocketAdaptor", "structcrow_1_1_socket_adaptor.html", null ],
@@ -114,6 +115,7 @@ var hierarchy =
     [ "crow::mustache::template_t", "classcrow_1_1mustache_1_1template__t.html", null ],
     [ "crow::Trie", "classcrow_1_1_trie.html", null ],
     [ "crow::UTF8", "structcrow_1_1_u_t_f8.html", null ],
+    [ "crow::websocket::Connection< Adaptor, Handler >::WeakWrappedMessage< Callable >", "structcrow_1_1websocket_1_1_connection_1_1_weak_wrapped_message.html", null ],
     [ "crow::detail::routing_handler_call_helper::Wrapped< Func, ArgsWrapped >", "structcrow_1_1detail_1_1routing__handler__call__helper_1_1_wrapped.html", null ],
     [ "crow::json::wvalue_reader", "structcrow_1_1json_1_1wvalue__reader.html", null ]
 ];

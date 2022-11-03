@@ -96,6 +96,7 @@ $(document).ready(function(){initNavTree('classcrow_1_1websocket_1_1_connection.
 
 <div class="header">
   <div class="summary">
+<a href="#nested-classes">Classes</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pro-methods">Protected Member Functions</a> &#124;
 <a href="classcrow_1_1websocket_1_1_connection-members.html">List of all members</a>  </div>
@@ -118,38 +119,45 @@ Inheritance diagram for crow::websocket::Connection&lt; Adaptor, Handler &gt;:</
   </map>
 </div></div>
 <table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
+Classes</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structcrow_1_1websocket_1_1_connection_1_1_send_message_type.html">SendMessageType</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structcrow_1_1websocket_1_1_connection_1_1_weak_wrapped_message.html">WeakWrappedMessage</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:ae13084d8ea772f54bf3397a9fab107d8"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcrow_1_1websocket_1_1_connection.html#ae13084d8ea772f54bf3397a9fab107d8">Connection</a> (const <a class="el" href="structcrow_1_1request.html">crow::request</a> &amp;req, Adaptor &amp;&amp;adaptor, Handler *handler, uint64_t max_payload, std::function&lt; void(<a class="el" href="structcrow_1_1websocket_1_1connection.html">crow::websocket::connection</a> &amp;)&gt; open_handler, std::function&lt; void(<a class="el" href="structcrow_1_1websocket_1_1connection.html">crow::websocket::connection</a> &amp;, const std::string &amp;, bool)&gt; message_handler, std::function&lt; void(<a class="el" href="structcrow_1_1websocket_1_1connection.html">crow::websocket::connection</a> &amp;, const std::string &amp;)&gt; close_handler, std::function&lt; void(<a class="el" href="structcrow_1_1websocket_1_1connection.html">crow::websocket::connection</a> &amp;, const std::string &amp;)&gt; error_handler, std::function&lt; bool(const <a class="el" href="structcrow_1_1request.html">crow::request</a> &amp;, void **)&gt; accept_handler)</td></tr>
 <tr class="memdesc:ae13084d8ea772f54bf3397a9fab107d8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor for a connection.  <a href="classcrow_1_1websocket_1_1_connection.html#ae13084d8ea772f54bf3397a9fab107d8">More...</a><br /></td></tr>
 <tr class="separator:ae13084d8ea772f54bf3397a9fab107d8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a73ed9ab5896440516b44345f3bf3c833"><td class="memTemplParams" colspan="2"><a id="a73ed9ab5896440516b44345f3bf3c833"></a>
+<tr class="memitem:a0d7758d7d22d74ee9ed17c8c7df0a380"><td class="memTemplParams" colspan="2"><a id="a0d7758d7d22d74ee9ed17c8c7df0a380"></a>
 template&lt;typename CompletionHandler &gt; </td></tr>
-<tr class="memitem:a73ed9ab5896440516b44345f3bf3c833"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classcrow_1_1websocket_1_1_connection.html#a73ed9ab5896440516b44345f3bf3c833">dispatch</a> (CompletionHandler handler)</td></tr>
-<tr class="memdesc:a73ed9ab5896440516b44345f3bf3c833"><td class="mdescLeft">&#160;</td><td class="mdescRight">Send data through the socket. <br /></td></tr>
-<tr class="separator:a73ed9ab5896440516b44345f3bf3c833"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1a3d226896c8773708715273cdb285d6"><td class="memTemplParams" colspan="2"><a id="a1a3d226896c8773708715273cdb285d6"></a>
+<tr class="memitem:a0d7758d7d22d74ee9ed17c8c7df0a380"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classcrow_1_1websocket_1_1_connection.html#a0d7758d7d22d74ee9ed17c8c7df0a380">dispatch</a> (CompletionHandler &amp;&amp;handler)</td></tr>
+<tr class="memdesc:a0d7758d7d22d74ee9ed17c8c7df0a380"><td class="mdescLeft">&#160;</td><td class="mdescRight">Send data through the socket. <br /></td></tr>
+<tr class="separator:a0d7758d7d22d74ee9ed17c8c7df0a380"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae55db4104d46350f5a9e040d32600984"><td class="memTemplParams" colspan="2"><a id="ae55db4104d46350f5a9e040d32600984"></a>
 template&lt;typename CompletionHandler &gt; </td></tr>
-<tr class="memitem:a1a3d226896c8773708715273cdb285d6"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classcrow_1_1websocket_1_1_connection.html#a1a3d226896c8773708715273cdb285d6">post</a> (CompletionHandler handler)</td></tr>
-<tr class="memdesc:a1a3d226896c8773708715273cdb285d6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Send data through the socket and return immediately. <br /></td></tr>
-<tr class="separator:a1a3d226896c8773708715273cdb285d6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a672bda5d8c95cd66b7f73f9066e968d9"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcrow_1_1websocket_1_1_connection.html#a672bda5d8c95cd66b7f73f9066e968d9">send_ping</a> (const std::string &amp;msg) override</td></tr>
-<tr class="memdesc:a672bda5d8c95cd66b7f73f9066e968d9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Send a "Ping" message.  <a href="classcrow_1_1websocket_1_1_connection.html#a672bda5d8c95cd66b7f73f9066e968d9">More...</a><br /></td></tr>
-<tr class="separator:a672bda5d8c95cd66b7f73f9066e968d9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aec915e6ef0e542d855a784e11013021c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcrow_1_1websocket_1_1_connection.html#aec915e6ef0e542d855a784e11013021c">send_pong</a> (const std::string &amp;msg) override</td></tr>
-<tr class="memdesc:aec915e6ef0e542d855a784e11013021c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Send a "Pong" message.  <a href="classcrow_1_1websocket_1_1_connection.html#aec915e6ef0e542d855a784e11013021c">More...</a><br /></td></tr>
-<tr class="separator:aec915e6ef0e542d855a784e11013021c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8cfafe2c0c8f440b797110ab31662eb0"><td class="memItemLeft" align="right" valign="top"><a id="a8cfafe2c0c8f440b797110ab31662eb0"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcrow_1_1websocket_1_1_connection.html#a8cfafe2c0c8f440b797110ab31662eb0">send_binary</a> (const std::string &amp;msg) override</td></tr>
-<tr class="memdesc:a8cfafe2c0c8f440b797110ab31662eb0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Send a binary encoded message. <br /></td></tr>
-<tr class="separator:a8cfafe2c0c8f440b797110ab31662eb0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af9839749b1616dc7f8a70c9c3e571832"><td class="memItemLeft" align="right" valign="top"><a id="af9839749b1616dc7f8a70c9c3e571832"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcrow_1_1websocket_1_1_connection.html#af9839749b1616dc7f8a70c9c3e571832">send_text</a> (const std::string &amp;msg) override</td></tr>
-<tr class="memdesc:af9839749b1616dc7f8a70c9c3e571832"><td class="mdescLeft">&#160;</td><td class="mdescRight">Send a plaintext message. <br /></td></tr>
-<tr class="separator:af9839749b1616dc7f8a70c9c3e571832"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0be6d809da4a96c75865748d3b14d22f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcrow_1_1websocket_1_1_connection.html#a0be6d809da4a96c75865748d3b14d22f">close</a> (const std::string &amp;msg) override</td></tr>
-<tr class="memdesc:a0be6d809da4a96c75865748d3b14d22f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Send a close signal.  <a href="classcrow_1_1websocket_1_1_connection.html#a0be6d809da4a96c75865748d3b14d22f">More...</a><br /></td></tr>
-<tr class="separator:a0be6d809da4a96c75865748d3b14d22f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae55db4104d46350f5a9e040d32600984"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classcrow_1_1websocket_1_1_connection.html#ae55db4104d46350f5a9e040d32600984">post</a> (CompletionHandler &amp;&amp;handler)</td></tr>
+<tr class="memdesc:ae55db4104d46350f5a9e040d32600984"><td class="mdescLeft">&#160;</td><td class="mdescRight">Send data through the socket and return immediately. <br /></td></tr>
+<tr class="separator:ae55db4104d46350f5a9e040d32600984"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab5c1387014e5fdc0e9ebbb8661be04da"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcrow_1_1websocket_1_1_connection.html#ab5c1387014e5fdc0e9ebbb8661be04da">send_ping</a> (std::string msg) override</td></tr>
+<tr class="memdesc:ab5c1387014e5fdc0e9ebbb8661be04da"><td class="mdescLeft">&#160;</td><td class="mdescRight">Send a "Ping" message.  <a href="classcrow_1_1websocket_1_1_connection.html#ab5c1387014e5fdc0e9ebbb8661be04da">More...</a><br /></td></tr>
+<tr class="separator:ab5c1387014e5fdc0e9ebbb8661be04da"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a22c353583685e0e878813ab67333342c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcrow_1_1websocket_1_1_connection.html#a22c353583685e0e878813ab67333342c">send_pong</a> (std::string msg) override</td></tr>
+<tr class="memdesc:a22c353583685e0e878813ab67333342c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Send a "Pong" message.  <a href="classcrow_1_1websocket_1_1_connection.html#a22c353583685e0e878813ab67333342c">More...</a><br /></td></tr>
+<tr class="separator:a22c353583685e0e878813ab67333342c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac8ba4036c9777f0e3af3531791d8ca62"><td class="memItemLeft" align="right" valign="top"><a id="ac8ba4036c9777f0e3af3531791d8ca62"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcrow_1_1websocket_1_1_connection.html#ac8ba4036c9777f0e3af3531791d8ca62">send_binary</a> (std::string msg) override</td></tr>
+<tr class="memdesc:ac8ba4036c9777f0e3af3531791d8ca62"><td class="mdescLeft">&#160;</td><td class="mdescRight">Send a binary encoded message. <br /></td></tr>
+<tr class="separator:ac8ba4036c9777f0e3af3531791d8ca62"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a595b84a3c7206d4923286ac863b45ffb"><td class="memItemLeft" align="right" valign="top"><a id="a595b84a3c7206d4923286ac863b45ffb"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcrow_1_1websocket_1_1_connection.html#a595b84a3c7206d4923286ac863b45ffb">send_text</a> (std::string msg) override</td></tr>
+<tr class="memdesc:a595b84a3c7206d4923286ac863b45ffb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Send a plaintext message. <br /></td></tr>
+<tr class="separator:a595b84a3c7206d4923286ac863b45ffb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a663d3f3917b8cc7f9b54e6c7dfc8d604"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcrow_1_1websocket_1_1_connection.html#a663d3f3917b8cc7f9b54e6c7dfc8d604">close</a> (std::string const &amp;msg) override</td></tr>
+<tr class="memdesc:a663d3f3917b8cc7f9b54e6c7dfc8d604"><td class="mdescLeft">&#160;</td><td class="mdescRight">Send a close signal.  <a href="classcrow_1_1websocket_1_1_connection.html#a663d3f3917b8cc7f9b54e6c7dfc8d604">More...</a><br /></td></tr>
+<tr class="separator:a663d3f3917b8cc7f9b54e6c7dfc8d604"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae6b8882caf42fc65295920e064e83ecc"><td class="memItemLeft" align="right" valign="top"><a id="ae6b8882caf42fc65295920e064e83ecc"></a>
 std::string&#160;</td><td class="memItemRight" valign="bottom"><b>get_remote_ip</b> () override</td></tr>
 <tr class="separator:ae6b8882caf42fc65295920e064e83ecc"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -194,6 +202,12 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcrow_1_1websocket_1_1_connection.html#a8030e7ca3e9ee5d07ccf7f8cb43fa317">check_destroy</a> ()</td></tr>
 <tr class="memdesc:a8030e7ca3e9ee5d07ccf7f8cb43fa317"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destroy the <a class="el" href="classcrow_1_1websocket_1_1_connection.html" title="A websocket connection.">Connection</a>. <br /></td></tr>
 <tr class="separator:a8030e7ca3e9ee5d07ccf7f8cb43fa317"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad7f9fc603b168908dba35e4a82dce69b"><td class="memItemLeft" align="right" valign="top"><a id="ad7f9fc603b168908dba35e4a82dce69b"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>send_data_impl</b> (<a class="el" href="structcrow_1_1websocket_1_1_connection_1_1_send_message_type.html">SendMessageType</a> *s)</td></tr>
+<tr class="separator:ad7f9fc603b168908dba35e4a82dce69b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac27434329d97c1a7be8c2f649c180612"><td class="memItemLeft" align="right" valign="top"><a id="ac27434329d97c1a7be8c2f649c180612"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>send_data</b> (int <a class="el" href="classcrow_1_1websocket_1_1_connection.html#a6d74305323202dc7ebd07cbd3ee19f98">opcode</a>, std::string &amp;&amp;msg)</td></tr>
+<tr class="separator:ac27434329d97c1a7be8c2f649c180612"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><h3>template&lt;typename Adaptor, typename Handler&gt;<br />
@@ -286,8 +300,8 @@ template&lt;typename Adaptor , typename Handler &gt; </div>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a0be6d809da4a96c75865748d3b14d22f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0be6d809da4a96c75865748d3b14d22f">&#9670;&nbsp;</a></span>close()</h2>
+<a id="a663d3f3917b8cc7f9b54e6c7dfc8d604"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a663d3f3917b8cc7f9b54e6c7dfc8d604">&#9670;&nbsp;</a></span>close()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -300,7 +314,7 @@ template&lt;typename Adaptor , typename Handler &gt; </div>
         <tr>
           <td class="memname">void <a class="el" href="classcrow_1_1websocket_1_1_connection.html">crow::websocket::Connection</a>&lt; Adaptor, Handler &gt;::close </td>
           <td>(</td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramtype">std::string const &amp;&#160;</td>
           <td class="paramname"><em>msg</em></td><td>)</td>
           <td></td>
         </tr>
@@ -379,7 +393,7 @@ template&lt;typename Adaptor , typename Handler &gt; </div>
 </div><div class="memdoc">
 
 <p>Send the buffers' data through the socket. </p>
-<p>Also destroyes the object if the Close flag is set. </p>
+<p>Also destroys the object if the Close flag is set. </p>
 
 </div>
 </div>
@@ -413,8 +427,8 @@ template&lt;typename Adaptor , typename Handler &gt; </div>
 
 </div>
 </div>
-<a id="a672bda5d8c95cd66b7f73f9066e968d9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a672bda5d8c95cd66b7f73f9066e968d9">&#9670;&nbsp;</a></span>send_ping()</h2>
+<a id="ab5c1387014e5fdc0e9ebbb8661be04da"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab5c1387014e5fdc0e9ebbb8661be04da">&#9670;&nbsp;</a></span>send_ping()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -427,7 +441,7 @@ template&lt;typename Adaptor , typename Handler &gt; </div>
         <tr>
           <td class="memname">void <a class="el" href="classcrow_1_1websocket_1_1_connection.html">crow::websocket::Connection</a>&lt; Adaptor, Handler &gt;::send_ping </td>
           <td>(</td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramtype">std::string&#160;</td>
           <td class="paramname"><em>msg</em></td><td>)</td>
           <td></td>
         </tr>
@@ -446,8 +460,8 @@ template&lt;typename Adaptor , typename Handler &gt; </div>
 
 </div>
 </div>
-<a id="aec915e6ef0e542d855a784e11013021c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aec915e6ef0e542d855a784e11013021c">&#9670;&nbsp;</a></span>send_pong()</h2>
+<a id="a22c353583685e0e878813ab67333342c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a22c353583685e0e878813ab67333342c">&#9670;&nbsp;</a></span>send_pong()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -460,7 +474,7 @@ template&lt;typename Adaptor , typename Handler &gt; </div>
         <tr>
           <td class="memname">void <a class="el" href="classcrow_1_1websocket_1_1_connection.html">crow::websocket::Connection</a>&lt; Adaptor, Handler &gt;::send_pong </td>
           <td>(</td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramtype">std::string&#160;</td>
           <td class="paramname"><em>msg</em></td><td>)</td>
           <td></td>
         </tr>
@@ -520,7 +534,7 @@ template&lt;typename Adaptor , typename Handler &gt; </div>
 			<ul>
 				<li class="navelem"><b>crow</b></li><li class="navelem"><b>websocket</b></li><li class="navelem"><a class="el" href="classcrow_1_1websocket_1_1_connection.html">Connection</a></li>
 				<li class="footer">
-					Generated on Sun Aug 7 2022 for Crow by <a href="http://www.doxygen.org/index.html">
+					Generated on Thu Nov 3 2022 for Crow by <a href="http://www.doxygen.org/index.html">
 					<img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.17.
 					Dark theme by <a href="http://majerle.eu" target="_new">Tilen Majerle</a>. Edited by <a href="https://github.com/The-EDev" target="_new">Farook Al-Sammarraie</a>. All rights reserved.
 				</li>
