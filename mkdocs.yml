@@ -99,7 +99,7 @@ extra:
 plugins:
   - redirects:
       redirect_maps:
-        'getting_started/setup/': 'getting_started/setup/linux.md'
+        'getting_started/setup.md': 'getting_started/setup/linux.md'
   - meta-descriptions
   - search
 
