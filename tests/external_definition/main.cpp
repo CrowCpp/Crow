@@ -10,7 +10,7 @@ void define_endpoints(crow::SimpleApp& app) {
           return true;
       })
       .onopen([](crow::websocket::connection&) {})
-      .onclose([](crow::websocket::connection&, std::string_view) {});
+      .onclose([](crow::websocket::connection&, const std::string&) {});
 }
 
 int main()
