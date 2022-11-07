@@ -1,8 +1,10 @@
 // Testing whether crow routes can be defined in an external function.
 #include "crow.h"
 
-void define_endpoints(crow::SimpleApp& app) {
-    CROW_ROUTE(app, "/") ([]() {
+void define_endpoints(crow::SimpleApp& app)
+{
+    CROW_ROUTE(app, "/")
+    ([]() {
         return "Hello, world!";
     });
     CROW_WEBSOCKET_ROUTE(app, "/ws")
