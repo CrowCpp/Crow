@@ -755,7 +755,8 @@ namespace crow
                 return;
             if (node.IsSimpleNode())
             {
-                auto& child_temp = node.children[0];
+                auto children_temp = std::move(node.children);
+                auto& child_temp = children_temp[0];
                 node.key += child_temp.key;
                 node.rule_index = child_temp.rule_index;
                 node.blueprint_index = child_temp.blueprint_index;
