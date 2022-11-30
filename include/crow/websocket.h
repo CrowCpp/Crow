@@ -88,7 +88,7 @@ namespace crow
             {
                 if (!utility::string_equals(req.get_header_value("upgrade"), "websocket"))
                 {
-                    adaptor.close();
+                    adaptor_.close();
                     handler_->remove_websocket(this);
                     delete this;
                     return;
@@ -99,7 +99,7 @@ namespace crow
                     void* ud = nullptr;
                     if (!accept_handler_(req, &ud))
                     {
-                        adaptor.close();
+                        adaptor_.close();
                         handler_->remove_websocket(this);
                         delete this;
                         return;
