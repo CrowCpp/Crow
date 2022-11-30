@@ -10,5 +10,5 @@ var structcrow_1_1_session_middleware_1_1context =
     [ "remove", "structcrow_1_1_session_middleware_1_1context.html#ae567ec6b3e255bd14ddb9795750d87b4", null ],
     [ "set", "structcrow_1_1_session_middleware_1_1context.html#ac3ac42ff45eae328ca44b3c91eab48be", null ],
     [ "string", "structcrow_1_1_session_middleware_1_1context.html#a88d30090b1b4af5a59499552aeffd868", null ],
-    [ "SessionMiddleware", "structcrow_1_1_session_middleware_1_1context.html#a9c66dc1fdf22d69c88e976e16df800f3", null ]
+    [ "SessionMiddleware", "structcrow_1_1_session_middleware_1_1context.html#a93e20eae6e0fe6f6d0c85f772c928a95", null ]
 ];
