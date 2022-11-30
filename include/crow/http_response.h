@@ -139,7 +139,7 @@ namespace crow
             set_header("Content-Type", value.content_type);
         }
         response(int code, returnable&& value):
-          code(code), body(std::move(value.dump()))
+          code(code), body(value.dump())
         {
             set_header("Content-Type", std::move(value.content_type));
         }
