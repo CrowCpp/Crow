@@ -84,6 +84,7 @@ namespace crow
                 if (!ec)
                 {
                     start_deadline();
+                    parser_.clear();
 
                     do_read();
                 }
@@ -137,7 +138,7 @@ namespace crow
                     is_invalid_request = true;
                     res = response(400);
                 }
-                if (req_.upgrade)
+                else if (req_.upgrade)
                 {
                     // h2 or h2c headers
                     if (req_.get_header_value("upgrade").substr(0, 2) == "h2")
@@ -389,12 +390,14 @@ namespace crow
             if (res.file_info.statResult == 0)
             {
                 std::ifstream is(res.file_info.path.c_str(), std::ios::in | std::ios::binary);
+                std::vector<asio::const_buffer> buffers{1};
                 char buf[16384];
-                while (is.read(buf, sizeof(buf)).gcount() > 0)
+                is.read(buf, sizeof(buf));
+                while (is.gcount() > 0)
                 {
-                    std::vector<asio::const_buffer> buffers;
-                    buffers.push_back(asio::buffer(buf));
+                    buffers[0] = asio::buffer(buf, is.gcount());
                     do_write_sync(buffers);
+                    is.read(buf, sizeof(buf));
                 }
             }
             is_writing = false;
@@ -409,6 +412,7 @@ namespace crow
             res.end();
             res.clear();
             buffers_.clear();
+            parser_.clear();
         }
 
         void do_write_general()
@@ -467,6 +471,7 @@ namespace crow
                 res.end();
                 res.clear();
                 buffers_.clear();
+                parser_.clear();
             }
         }
 
@@ -528,6 +533,7 @@ namespace crow
                   is_writing = false;
                   res.clear();
                   res_body_copy_.clear();
+                  parser_.clear();
                   if (!ec)
                   {
                       if (close_connection_)
@@ -616,7 +622,7 @@ namespace crow
         std::string date_str_;
         std::string res_body_copy_;
 
-        detail::task_timer::identifier_type task_id_;
+        detail::task_timer::identifier_type task_id_{};
 
         bool is_reading{};
         bool is_writing{};

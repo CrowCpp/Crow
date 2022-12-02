@@ -290,6 +290,34 @@ TEST_CASE("simple_response_routing_params")
     CHECK("hello" == rp.get<string>(0));
 } // simple_response_routing_params
 
+TEST_CASE("custom_content_types")
+{
+    // standard behaviour: content type is a key of mime_types
+    CHECK("text/html" == response("html", "").get_header_value("Content-Type"));
+    CHECK("image/jpeg" == response("jpg", "").get_header_value("Content-Type"));
+    CHECK("video/mpeg" == response("mpg", "").get_header_value("Content-Type"));
+
+    // content type is already a valid mime type
+    CHECK("text/csv" == response("text/csv", "").get_header_value("Content-Type"));
+    CHECK("application/xhtml+xml" == response("application/xhtml+xml", "").get_header_value("Content-Type"));
+    CHECK("font/custom;parameters=ok" == response("font/custom;parameters=ok", "").get_header_value("Content-Type"));
+
+    // content type looks like a mime type, but is invalid
+    // note: RFC6838 only allows a limited set of parent types:
+    // https://datatracker.ietf.org/doc/html/rfc6838#section-4.2.7
+    //
+    // These types are: application, audio, font, example, image, message,
+    //                  model, multipart, text, video
+
+    CHECK("text/plain" == response("custom/type", "").get_header_value("Content-Type"));
+
+    // content type does not look like a mime type.
+    CHECK("text/plain" == response("notarealextension", "").get_header_value("Content-Type"));
+    CHECK("text/plain" == response("image/", "").get_header_value("Content-Type"));
+    CHECK("text/plain" == response("/json", "").get_header_value("Content-Type"));
+
+} // custom_content_types
+
 TEST_CASE("handler_with_response")
 {
     SimpleApp app;
@@ -1220,9 +1248,9 @@ TEST_CASE("template_function")
     auto t = crow::mustache::compile("attack of {{func}}");
     crow::mustache::context ctx;
     ctx["name"] = "killer tomatoes";
-    ctx["func"] = [&](std::string) {
+    ctx["func"] = std::function<std::string(std::string)>([&](std::string) {
         return std::string("{{name}}, IN SPACE!");
-    };
+    });
     auto result = t.render_string(ctx);
     CHECK("attack of killer tomatoes, IN SPACE!" == result);
 }
@@ -2472,7 +2500,7 @@ TEST_CASE("stream_response")
 
 TEST_CASE("websocket")
 {
-    static std::string http_message = "GET /ws HTTP/1.1\r\nConnection: keep-alive, Upgrade\r\nupgrade: websocket\r\nSec-WebSocket-Key: dGhlIHNhbXBsZSBub25jZQ==\r\nSec-WebSocket-Version: 13\r\n\r\n";
+    static std::string http_message = "GET /ws HTTP/1.1\r\nConnection: keep-alive, Upgrade\r\nupgrade: websocket\r\nSec-WebSocket-Key: dGhlIHNhbXBsZSBub25jZQ==\r\nSec-WebSocket-Version: 13\r\nHost: localhost\r\n\r\n";
 
     static bool connected{false};
 
@@ -2649,9 +2677,65 @@ TEST_CASE("websocket")
     app.stop();
 } // websocket
 
-TEST_CASE("websocket_max_payload")
+TEST_CASE("websocket_missing_host")
 {
     static std::string http_message = "GET /ws HTTP/1.1\r\nConnection: keep-alive, Upgrade\r\nupgrade: websocket\r\nSec-WebSocket-Key: dGhlIHNhbXBsZSBub25jZQ==\r\nSec-WebSocket-Version: 13\r\n\r\n";
+
+    static bool connected{false};
+
+    SimpleApp app;
+
+    CROW_WEBSOCKET_ROUTE(app, "/ws")
+      .onaccept([&](const crow::request& req, void**) {
+          CROW_LOG_INFO << "Accepted websocket with URL " << req.url;
+          return true;
+      })
+      .onopen([&](websocket::connection&) {
+          connected = true;
+          CROW_LOG_INFO << "Connected websocket and value is " << connected;
+      })
+      .onmessage([&](websocket::connection& conn, const std::string& message, bool isbin) {
+          CROW_LOG_INFO << "Message is \"" << message << '\"';
+          if (!isbin && message == "PINGME")
+              conn.send_ping("");
+          else if (!isbin && message == "Hello")
+              conn.send_text("Hello back");
+          else if (isbin && message == "Hello bin")
+              conn.send_binary("Hello back bin");
+      })
+      .onclose([&](websocket::connection&, const std::string&) {
+          CROW_LOG_INFO << "Closing websocket";
+      });
+
+    app.validate();
+
+    auto _ = app.bindaddr(LOCALHOST_ADDRESS).port(45471).run_async();
+    app.wait_for_server_start();
+    asio::io_service is;
+
+    asio::ip::tcp::socket c(is);
+    c.connect(asio::ip::tcp::endpoint(
+      asio::ip::address::from_string(LOCALHOST_ADDRESS), 45471));
+
+
+    char buf[2048];
+
+    // Handshake should fail
+    {
+        std::fill_n(buf, 2048, 0);
+        c.send(asio::buffer(http_message));
+
+        c.receive(asio::buffer(buf, 2048));
+        std::this_thread::sleep_for(std::chrono::milliseconds(5));
+        CHECK(!connected);
+    }
+
+    app.stop();
+} // websocket
+
+TEST_CASE("websocket_max_payload")
+{
+    static std::string http_message = "GET /ws HTTP/1.1\r\nConnection: keep-alive, Upgrade\r\nupgrade: websocket\r\nSec-WebSocket-Key: dGhlIHNhbXBsZSBub25jZQ==\r\nSec-WebSocket-Version: 13\r\nHost: localhost\r\n\r\n";
 
     static bool connected{false};
 

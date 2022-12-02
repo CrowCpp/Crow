@@ -16,7 +16,7 @@ theme:
   favicon: 'assets/favicon.svg'
   logo: 'assets/favicon.svg'
   icon:
-    repo: fontawesome/brands/github-square
+    repo: fontawesome/brands/square-github
   static_templates:
     - privacy_policy.html
   palette:
@@ -99,7 +99,7 @@ extra:
 plugins:
   - redirects:
       redirect_maps:
-        'getting_started/setup/': 'getting_started/setup/linux.md'
+        'getting_started/setup.md': 'getting_started/setup/linux.md'
   - meta-descriptions
   - search
 

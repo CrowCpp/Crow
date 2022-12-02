@@ -11,7 +11,7 @@ HTTP compression is by default disabled in crow. Do the following to enable it: 
 
 !!! note
 
-    3<sup>rd</sup> point is not needed for MSVC or CMake projects using `Crow::Crow` since `vcpckg.json` and Crow's target already include zlib as a dependency.
+    3<sup>rd</sup> point is not needed for MSVC or CMake projects using `Crow::Crow` since `vcpkg.json` and Crow's target already include zlib as a dependency.
 
 For the compression algorithm you can use `crow::compression::algorithm::DEFLATE` or `crow::compression::algorithm::GZIP`.<br>
 And now your HTTP responses will be compressed.

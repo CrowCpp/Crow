@@ -62,6 +62,8 @@ target_link_libraries(Crow
 		asio::asio
 )
 
+target_compile_definitions(Crow INTERFACE "")
+
 if("compression" IN_LIST CROW_FEATURES)
 	find_package(ZLIB REQUIRED)
 	target_link_libraries(Crow INTERFACE ZLIB::ZLIB)
@@ -140,8 +142,10 @@ set(CPACK_DEBIAN_PACKAGE_MAINTAINER "CrowCpp")
 set(CPACK_PACKAGE_VENDOR "CrowCpp")
 set(CPACK_PACKAGE_DESCRIPTION "A Fast and Easy to use C++ microframework for the web.")
 set(CPACK_PACKAGE_HOMEPAGE_URL "https://crowcpp.org")
+set(CPACK_DEBIAN_PACKAGE_ARCHITECTURE "all")
 set(CPACK_DEBIAN_PACKAGE_DEBUG OFF)
-set(CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON)
+set(CPACK_DEBIAN_PACKAGE_DEPENDS "libasio-dev")
+set(CPACK_DEBIAN_PACKAGE_SECTION "libdevel")
 
 include(CPack)
 

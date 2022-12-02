@@ -225,7 +225,7 @@ namespace crow
             }
 
         private:
-            friend class CookieParser;
+            friend struct CookieParser;
             std::vector<Cookie> cookies_to_add;
         };
 
@@ -296,7 +296,7 @@ namespace crow
     C::handle
         context.aaa
 
-    App::context : private CookieParser::contetx, ...
+    App::context : private CookieParser::context, ...
     {
         jar
 

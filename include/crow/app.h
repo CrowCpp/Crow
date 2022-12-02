@@ -305,7 +305,7 @@ namespace crow
                             if (static_dir_[static_dir_.length() - 1] != '/')
                                 static_dir_ += '/';
 
-                            bp->new_rule_tagged<crow::black_magic::get_parameter_tag(CROW_STATIC_ENDPOINT)>(CROW_STATIC_ENDPOINT)([bp, static_dir_](crow::response& res, std::string file_path_partial) {
+                            bp->new_rule_tagged<crow::black_magic::get_parameter_tag(CROW_STATIC_ENDPOINT)>(CROW_STATIC_ENDPOINT)([static_dir_](crow::response& res, std::string file_path_partial) {
                                 utility::sanitize_filename(file_path_partial);
                                 res.set_static_file_info_unsafe(static_dir_ + file_path_partial);
                                 res.end();
@@ -375,6 +375,7 @@ namespace crow
             else
 #endif
             {
+                // TODO(EDev): Move these 6 lines to a method in http_server.
                 std::vector<crow::websocket::connection*> websockets_to_close = websockets_;
                 for (auto websocket : websockets_to_close)
                 {

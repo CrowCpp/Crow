@@ -1576,7 +1576,6 @@ reexecute:
 
         if (parser->flags & F_TRAILING) {
           /* End of a chunked request */
-          parser->state = CROW_NEW_MESSAGE();
           CROW_CALLBACK_NOTIFY(message_complete);
           break;
         }
@@ -1652,14 +1651,12 @@ reexecute:
 
         /* Exit, the rest of the connect is in a different protocol. */
         if (parser->upgrade) {
-          parser->state = CROW_NEW_MESSAGE();
           CROW_CALLBACK_NOTIFY(message_complete);
           parser->nread = nread;
           return (p - data) + 1;
         }
 
         if (parser->flags & F_SKIPBODY) {
-          parser->state = CROW_NEW_MESSAGE();
           CROW_CALLBACK_NOTIFY(message_complete);
         } else if (parser->flags & F_CHUNKED) {
           /* chunked encoding - ignore Content-Length header,
@@ -1699,7 +1696,6 @@ reexecute:
             if (parser->content_length == 0)
             {
                 /* Content-Length header given but zero: Content-Length: 0\r\n */
-                parser->state = CROW_NEW_MESSAGE();
                 CROW_CALLBACK_NOTIFY(message_complete);
             }
             else if (parser->content_length != CROW_ULLONG_MAX)
@@ -1710,7 +1706,6 @@ reexecute:
             else
             {
                 /* Assume content-length 0 - read the next */
-                parser->state = CROW_NEW_MESSAGE();
                 CROW_CALLBACK_NOTIFY(message_complete);
             }
         }
@@ -1762,7 +1757,6 @@ reexecute:
         break;
 
       case s_message_done:
-        parser->state = CROW_NEW_MESSAGE();
         CROW_CALLBACK_NOTIFY(message_complete);
         break;
 
@@ -2007,9 +2001,7 @@ http_parser_set_max_header_size(uint32_t size) {
 #undef CROW_TOKEN
 #undef CROW_IS_URL_CHAR
 //#undef CROW_IS_HOST_CHAR
-#undef CROW_start_state
 #undef CROW_STRICT_CHECK
-#undef CROW_NEW_MESSAGE
 
 }
 
