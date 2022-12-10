@@ -62,6 +62,8 @@ target_link_libraries(Crow
 		asio::asio
 )
 
+target_compile_definitions(Crow INTERFACE "")
+
 if("compression" IN_LIST CROW_FEATURES)
 	find_package(ZLIB REQUIRED)
 	target_link_libraries(Crow INTERFACE ZLIB::ZLIB)

@@ -335,7 +335,7 @@ namespace crow
             }
 
         private:
-            friend class SessionMiddleware;
+            friend struct SessionMiddleware;
 
             void check_node()
             {
