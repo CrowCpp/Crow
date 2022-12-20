@@ -23,7 +23,7 @@ int qs_strncmp(const char* s, const char* qs, size_t n);
  *  Also decodes the value portion of the k/v pair *in-place*.  In a future
  *  enhancement it will also have a compile-time option of sorting qs_kv
  *  alphabetically by key.  */
-int qs_parse(char* qs, char* qs_kv[], int qs_kv_size, bool parse_url);
+size_t qs_parse(char* qs, char* qs_kv[], size_t qs_kv_size, bool parse_url);
 
 
 /*  Used by qs_parse to decode the value portion of a k/v pair  */
@@ -34,7 +34,7 @@ int qs_decode(char * qs);
  *  A future enhancement will be a compile-time option to look up the key
  *  in a pre-sorted qs_kv array via a binary search.  */
 //char * qs_k2v(const char * key, char * qs_kv[], int qs_kv_size);
- char * qs_k2v(const char * key, char * const * qs_kv, int qs_kv_size, int nth);
+ char * qs_k2v(const char * key, char * const * qs_kv, size_t qs_kv_size, int nth);
 
 
 /*  Non-destructive lookup of value, based on key.  User provides the
@@ -97,9 +97,9 @@ inline int qs_strncmp(const char * s, const char * qs, size_t n)
 }
 
 
-inline int qs_parse(char* qs, char* qs_kv[], int qs_kv_size, bool parse_url = true)
+inline size_t qs_parse(char* qs, char* qs_kv[], size_t qs_kv_size, bool parse_url = true)
 {
-    int i, j;
+    size_t i, j;
     char * substr_ptr;
 
     for(i=0; i<qs_kv_size; i++)  qs_kv[i] = NULL;
@@ -172,9 +172,9 @@ inline int qs_decode(char * qs)
 }
 
 
-inline char * qs_k2v(const char * key, char * const * qs_kv, int qs_kv_size, int nth = 0)
+inline char * qs_k2v(const char * key, char * const * qs_kv, size_t qs_kv_size, int nth = 0)
 {
-    int i;
+    size_t i;
     size_t key_len, skip;
 
     key_len = strlen(key);
@@ -202,9 +202,9 @@ inline char * qs_k2v(const char * key, char * const * qs_kv, int qs_kv_size, int
     return nullptr;
 }
 
-inline std::unique_ptr<std::pair<std::string, std::string>> qs_dict_name2kv(const char * dict_name, char * const * qs_kv, int qs_kv_size, int nth = 0)
+inline std::unique_ptr<std::pair<std::string, std::string>> qs_dict_name2kv(const char * dict_name, char * const * qs_kv, size_t qs_kv_size, int nth = 0)
 {
-    int i;
+    size_t i;
     size_t name_len, skip_to_eq, skip_to_brace_open, skip_to_brace_close;
 
     name_len = strlen(dict_name);
@@ -342,7 +342,7 @@ namespace crow
 
             key_value_pairs_.resize(MAX_KEY_VALUE_PAIRS_COUNT);
 
-            int count = qs_parse(&url_[0], &key_value_pairs_[0], MAX_KEY_VALUE_PAIRS_COUNT, url);
+            size_t count = qs_parse(&url_[0], &key_value_pairs_[0], MAX_KEY_VALUE_PAIRS_COUNT, url);
             key_value_pairs_.resize(count);
         }
 
