@@ -1830,11 +1830,6 @@ namespace crow
                                 CROW_LOG_WARNING << "Invalid JSON value detected (" << v.num.d << "), value set to null";
                                 break;
                             }
-#ifdef _MSC_VER
-#define MSC_COMPATIBLE_SPRINTF(BUFFER_PTR, FORMAT_PTR, VALUE) sprintf_s((BUFFER_PTR), 128, (FORMAT_PTR), (VALUE))
-#else
-#define MSC_COMPATIBLE_SPRINTF(BUFFER_PTR, FORMAT_PTR, VALUE) sprintf((BUFFER_PTR), (FORMAT_PTR), (VALUE))
-#endif
                             enum
                             {
                                 start,
@@ -1842,7 +1837,11 @@ namespace crow
                                 zero
                             } f_state;
                             char outbuf[128];
-                            MSC_COMPATIBLE_SPRINTF(outbuf, "%f", v.num.d);
+#ifdef _MSC_VER
+			    sprintf_s(outbuf, sizeof(outbuf), "%f", v.num.d);
+#else
+			    snprintf(outbuf, sizeof(outbuf), "%f", v.num.d);
+#endif
                             char *p = &outbuf[0], *o = nullptr; // o is the position of the first trailing 0
                             f_state = start;
                             while (*p != '\0')
@@ -1882,7 +1881,6 @@ namespace crow
                             if (o != nullptr) // if any trailing 0s are found, terminate the string where they begin
                                 *o = '\0';
                             out += outbuf;
-#undef MSC_COMPATIBLE_SPRINTF
                         }
                         else if (v.nt == num_type::Signed_integer)
                         {
