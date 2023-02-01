@@ -1122,8 +1122,12 @@ namespace crow
         Blueprint& operator=(Blueprint&& value) noexcept
         {
             prefix_ = std::move(value.prefix_);
+            static_dir_ = std::move(value.static_dir_);
+            templates_dir_ = std::move(value.templates_dir_);
             all_rules_ = std::move(value.all_rules_);
             catchall_rule_ = std::move(value.catchall_rule_);
+            blueprints_ = std::move(value.blueprints_);
+            mw_indices_ = std::move(value.mw_indices_);
             return *this;
         }
 
