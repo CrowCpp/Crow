@@ -1243,6 +1243,24 @@ TEST_CASE("template_basic")
     CHECK("attack of killer tomatoes" == result);
 } // template_basic
 
+TEST_CASE("template_true_tag")
+{
+    auto t = crow::mustache::compile(R"---({{true_value}})---");
+    crow::mustache::context ctx;
+    ctx["true_value"] = true;
+    auto result = t.render_string(ctx);
+    CHECK("true" == result);
+} // template_true_tag
+
+TEST_CASE("template_false_tag")
+{
+    auto t = crow::mustache::compile(R"---({{false_value}})---");
+    crow::mustache::context ctx;
+    ctx["false_value"] = false;d
+    auto result = t.render_string(ctx);
+    CHECK("false" == result);
+} // template_false_tag
+
 TEST_CASE("template_function")
 {
     auto t = crow::mustache::compile("attack of {{func}}");
