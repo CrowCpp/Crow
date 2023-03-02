@@ -4,7 +4,6 @@
 #include <sys/stat.h>
 
 #include <iostream>
-#include <sstream>
 #include <vector>
 #include <thread>
 #include <chrono>
@@ -148,6 +147,27 @@ TEST_CASE("PathRouting")
         CHECK(200 == res.code);
     }
 } // PathRouting
+
+TEST_CASE("InvalidPathRouting")
+{
+    SimpleApp app;
+
+    CROW_ROUTE(app, "invalid_route")
+    ([] {
+        return "should not arrive here";
+    });
+
+    try
+    {
+        app.validate();
+        FAIL_CHECK();
+    }
+    catch (std::exception& e)
+    {
+        auto expected_exception_text = "Internal error: Routes must start with a '/'";
+        CHECK(strcmp(expected_exception_text, e.what()) == 0);
+    }
+} // InvalidPathRouting
 
 TEST_CASE("RoutingTest")
 {
@@ -1256,7 +1276,7 @@ TEST_CASE("template_false_tag")
 {
     auto t = crow::mustache::compile(R"---({{false_value}})---");
     crow::mustache::context ctx;
-    ctx["false_value"] = false;d
+    ctx["false_value"] = false;
     auto result = t.render_string(ctx);
     CHECK("false" == result);
 } // template_false_tag

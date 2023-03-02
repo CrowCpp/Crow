@@ -649,6 +649,9 @@ namespace crow
 
         void validate() override
         {
+            if (rule_.at(0) != '/')
+                throw std::runtime_error("Internal error: Routes must start with a '/'");
+
             if (!handler_)
             {
                 throw std::runtime_error(name_ + (!name_.empty() ? ": " : "") + "no handler for url " + rule_);
