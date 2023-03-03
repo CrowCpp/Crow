@@ -12,7 +12,7 @@ void broadcast(const string& msg)
 {
     msgs.push_back(msg);
     crow::json::wvalue x;
-    x["msgs"][0] = msgs.back();
+    x["msgs"][0] = msg;
     x["last"] = msgs.size();
     string body = x.dump();
     for (auto p : ress)
