@@ -1299,6 +1299,9 @@ namespace crow
 
             type t() const { return t_; }
 
+            /// Create an empty json value (outputs "{}" instead of a "null" string)
+            static crow::json::wvalue empty_object() { return crow::json::wvalue(std::move(crow::json::wvalue::object())); }
+
         private:
             type t_{type::Null};         ///< The type of the value.
             num_type nt{num_type::Null}; ///< The specific type of the number if \ref t_ is a number.
