@@ -13,11 +13,11 @@ Has middlewares.
 To use a Crow app, simply define `#!cpp crow::SimpleApp` or `#!cpp crow::App<m1, m2 ...>` if you're using middlewares.<br>
 The methods of an app can be chained. That means that you can configure and run your app in the same code line.
 ``` cpp
-app.bindaddr(192.168.1.2).port(443).ssl_file("certfile.crt","keyfile.key").multithreaded().run();
+app.bindaddr("192.168.1.2").port(443).ssl_file("certfile.crt","keyfile.key").multithreaded().run();
 ```
 Or if you like your code neat
 ``` cpp
-app.bindaddr(192.168.1.2)
+app.bindaddr("192.168.1.2")
 .port(443)
 .ssl_file("certfile.crt","keyfile.key")
 .multithreaded()
