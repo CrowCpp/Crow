@@ -1256,7 +1256,7 @@ TEST_CASE("template_false_tag")
 {
     auto t = crow::mustache::compile(R"---({{false_value}})---");
     crow::mustache::context ctx;
-    ctx["false_value"] = false;d
+    ctx["false_value"] = false;
     auto result = t.render_string(ctx);
     CHECK("false" == result);
 } // template_false_tag
