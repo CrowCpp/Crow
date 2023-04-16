@@ -2216,13 +2216,34 @@ TEST_CASE("websocket")
     }
     //----------Close----------
     {
-        std::fill_n(buf, 2048, 0);
-        char close_message[10]("\x88"); //I do not know why, but the websocket code does not read this unless it's longer than 4 or so bytes
+        char const close_message[11]{
+          "\x88"     // close opcode
+          "\x08"     // body length (2 byte reason + 6 byte text)
+          "\x03\x39" // reason code 1000 (normal)
+          "RAISON"   // text
+        };
+        size_t const N = sizeof(close_message) - 1; // exclude NUL byte
 
-        c.send(asio::buffer(close_message, 10));
-        c.receive(asio::buffer(buf, 2048));
-        std::this_thread::sleep_for(std::chrono::milliseconds(5));
+        c.send(asio::buffer(close_message, N));
+
+        // server MUST immediately close the connection
+        bool completion_invoked = false;
+        std::fill_n(buf, 2048, 0);
+        asio::async_read(c, asio::buffer(buf), [&completion_invoked, N](boost::system::error_code ec, size_t n) {
+            completion_invoked = true;
+            CHECK(ec == asio::error::eof); // closed before buffer full
+            REQUIRE(n == N);               // expect echoed close frame
+        });
+
+        auto handler_count = is.run_for(std::chrono::milliseconds(5));
+
+        CHECK(handler_count > 0);  // (intermediate) completion handlers were invoked
+        CHECK(completion_invoked); // final completion handler was invoked
         CHECK((int)(unsigned char)buf[0] == 0x88);
+
+        CHECK(std::equal(close_message, close_message + N, buf)); // expect same body as sent
+
+        is.restart(); // allow reuse
     }
 
     app.stop();
