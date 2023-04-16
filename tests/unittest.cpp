@@ -2237,7 +2237,7 @@ TEST_CASE("websocket_missing_host")
     SimpleApp app;
 
     CROW_ROUTE(app, "/ws").websocket()
-      .onaccept([&](const crow::request& req, void**) {
+      .onaccept([&](const crow::request& req) {
           CROW_LOG_INFO << "Accepted websocket with URL " << req.url;
           return true;
       })
