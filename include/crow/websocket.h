@@ -582,10 +582,14 @@ namespace crow
                           sending_buffers_.clear();
                           if (!ec && !close_connection_)
                           {
+                              if (has_sent_close_)
+                              {
+                                  close_connection_ = true;
+                                  adaptor_.close();
+                                  check_destroy();
+                              }
                               if (!write_buffers_.empty())
                                   do_write();
-                              if (has_sent_close_)
-                                  close_connection_ = true;
                           }
                           else
                           {
