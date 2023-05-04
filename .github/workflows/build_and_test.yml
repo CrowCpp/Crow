@@ -1,0 +1,76 @@
+name: Build and test (cmake based build)
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+env:
+  # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
+  BUILD_TYPE: Release
+
+jobs:
+  build:
+    # The CMake configure and build commands are platform agnostic and should work equally well on Windows or Mac.
+    # You can convert this to a matrix build if you need cross-platform coverage.
+    # See: https://docs.github.com/en/free-pro-team@latest/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ ubuntu-latest, ubuntu-20.04,
+              macos-latest, macos-11, macos-10.15
+            ]
+ # ubuntu-18.04 does not work due to compile error on asio
+ # windows-latest, windows-2019 - wip missing asio lib install
+               
+    steps:
+    - uses: actions/checkout@v3
+    - name: Prepare dependencies
+      run:   |
+         if [ "$RUNNER_OS" == "Linux" ]; then
+              sudo apt-get update && \
+              sudo apt-get install -yq \
+                libasio-dev \
+                cmake \
+                graphviz doxygen
+         elif [ "$RUNNER_OS" == "Windows" ]; then
+              vcpkg install;
+              choco install graphviz doxygen.install
+         elif [ "$RUNNER_OS" == "macOS" ]; then
+              brew install asio graphviz doxygen
+         else
+              echo "$RUNNER_OS not supported"
+              exit 1
+         fi
+      shell: bash      
+
+    - name: Configure CMake
+      run: |
+         if [ "$RUNNER_OS" == "Windows" ]; then
+              mkdir build;
+              cd build;
+              cmake .. -DCMAKE_TOOLCHAIN_FILE="%VCPKG_ROOT%\scripts\buildsystems\vcpkg.cmake" ..
+         else
+              cmake -B build
+         fi
+      shell: bash      
+    - name: Build
+      # Build your program with the given configuration
+      run: cmake --build build --config ${{env.BUILD_TYPE}}
+      shell: bash      
+
+    - name: Test
+      working-directory: ${{github.workspace}}/build
+      # Execute tests defined by the CMake configuration.
+      # See https://cmake.org/cmake/help/latest/manual/ctest.1.html for more detail
+      run: ctest --output-on-failure -C ${{env.BUILD_TYPE}}
+
+    #- name: Package
+    #  working-directory: ${{github.workspace}}/build
+    #  run: | 
+    #    cmake --build . --target ALL_BUILD && \ 
+    #    cmake --build . --target doc && \
+    #    cmake --build . --target package && \ 
+    #    cpack --config CPackSourceConfig.cmake
