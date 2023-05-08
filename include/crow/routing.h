@@ -1718,7 +1718,7 @@ namespace crow
                     return;
                 }
 
-                res.complete_request_handler_ = [&rule, &ctx, &container, &req, &res, &glob_completion_handler] {
+                res.complete_request_handler_ = [&rule, &ctx, &container, &req, &res, glob_completion_handler] {
                     detail::middleware_call_criteria_dynamic<true> crit_bwd(rule->mw_indices_.indices());
 
                     detail::after_handlers_call_helper<
