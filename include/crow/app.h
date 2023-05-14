@@ -252,6 +252,24 @@ namespace crow
             return *this;
         }
 
+        /// Set the function to call to handle uncaught exceptions generated in routes (Default generates error 500).
+
+        ///
+        /// The function must have the following signature: void(crow::response&).
+        /// It must set the response passed in argument to the function, which will be sent back to the client.
+        /// See Router::default_exception_handler() for the default implementation.
+        template<typename Func>
+        self_t& exception_handler(Func&& f)
+        {
+            router_.exception_handler() = std::forward<Func>(f);
+            return *this;
+        }
+
+        std::function<void(crow::response&)>& exception_handler()
+        {
+            return router_.exception_handler();
+        }
+
         /// Set a custom duration and function to run on every tick
         template<typename Duration, typename Func>
         self_t& tick(Duration d, Func f)

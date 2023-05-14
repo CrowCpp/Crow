@@ -3221,6 +3221,79 @@ TEST_CASE("blueprint")
     }
 } // blueprint
 
+TEST_CASE("exception_handler")
+{
+    SimpleApp app;
+
+    CROW_ROUTE(app, "/get_error")
+    ([&]() -> std::string {
+        throw std::runtime_error("some error occurred");
+    });
+
+    CROW_ROUTE(app, "/get_no_error")
+    ([&]() {
+        return "Hello world";
+    });
+
+    app.validate();
+
+    {
+        request req;
+        response res;
+
+        req.url = "/get_error";
+        app.handle_full(req, res);
+
+        CHECK(500 == res.code);
+        CHECK(res.body.empty());
+    }
+
+    {
+        request req;
+        response res;
+
+        req.url = "/get_no_error";
+        app.handle_full(req, res);
+
+        CHECK(200 == res.code);
+        CHECK(res.body.find("Hello world") != std::string::npos);
+    }
+
+    app.exception_handler([](crow::response& res) {
+        try
+        {
+            throw;
+        }
+        catch (const std::exception& e)
+        {
+            res = response(501, e.what());
+        }
+    });
+
+    {
+        request req;
+        response res;
+
+        req.url = "/get_error";
+        app.handle_full(req, res);
+
+        CHECK(501 == res.code);
+        CHECK(res.body.find("some error occurred") != std::string::npos);
+    }
+
+    {
+        request req;
+        response res;
+
+        req.url = "/get_no_error";
+        app.handle_full(req, res);
+
+        CHECK(200 == res.code);
+        CHECK(res.body.find("some error occurred") == std::string::npos);
+        CHECK(res.body.find("Hello world") != std::string::npos);
+    }
+} // exception_handler
+
 TEST_CASE("base64")
 {
     unsigned char sample_bin[] = {0x14, 0xfb, 0x9c, 0x03, 0xd9, 0x7e};
