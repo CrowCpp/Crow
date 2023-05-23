@@ -114,26 +114,29 @@ endif()
 # Install Files
 #####################################
 if(CROW_INSTALL)
+	include(GNUInstallDirs)
 	install(TARGETS Crow EXPORT CrowTargets)
-	install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/ DESTINATION include)
+	install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/
+		DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+	)
 
 	install(EXPORT CrowTargets
 		FILE CrowTargets.cmake
 		NAMESPACE Crow::
-		DESTINATION lib/cmake/Crow
+		DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/Crow"
 	)
 
 	include(CMakePackageConfigHelpers)
 	configure_package_config_file(
 		"${CMAKE_CURRENT_SOURCE_DIR}/cmake/CrowConfig.cmake.in"
 		"${CMAKE_CURRENT_BINARY_DIR}/CrowConfig.cmake"
-		INSTALL_DESTINATION lib/cmake/Crow
+		INSTALL_DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/Crow"
 	)
 	install(FILES
 		"${CMAKE_CURRENT_SOURCE_DIR}/cmake/Findasio.cmake"
-    "${CMAKE_CURRENT_BINARY_DIR}/CrowConfig.cmake"
-    DESTINATION lib/cmake/Crow
-  )
+		"${CMAKE_CURRENT_BINARY_DIR}/CrowConfig.cmake"
+		DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/Crow"
+	)
 endif()
 
 set(CPACK_GENERATOR "DEB")
