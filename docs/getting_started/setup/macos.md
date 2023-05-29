@@ -70,3 +70,5 @@ g++ main.cpp -lpthread
     You'll need to install GCC via `brew install gcc`. the Clang compiler should be part of XCode or XCode command line tools.
 
 You can use arguments like `-DCROW_ENABLE_DEBUG`, `-DCROW_ENABLE_COMPRESSION -lz` for HTTP Compression, or `-DCROW_ENABLE_SSL -lssl` for HTTPS support, or even replace g++ with clang++.
+
+If GCC throws errors and your program does not compile, you may be using C++03 instead of ≥C++11. Use the flag `-std=c++11`.
