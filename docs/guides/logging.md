@@ -7,7 +7,7 @@ Crow comes with a simple and easy to use logging system.<br><br>
 ## Setting up logging level
 You can set up the level at which crow displays logs by using the app's `loglevel(crow::LogLevel)` method.<br><br>
 
-The available log levels are as follows (please not that setting a level will also display all logs below this level):
+The available log levels are as follows (please note that setting a level will also display all logs below this level):
 
 - Debug
 - Info
@@ -28,7 +28,7 @@ Writing a log is as simple as `#!cpp CROW_LOG_<LOG LEVEL> << "Hello";` (replace&
 
 !!! note
 
-    Log times are reported in GMT timezone by default. This is because HTTP requires all reported times for requests and responses to be in GMT. This can be changed by using the macro `CROW_USE_LOCALTIMEZONE` which will set **only the log timezone** to the server's local timezone.
+    Log times are reported in UTC timezone by default. This is because HTTP requires all reported times for requests and responses to be in UTC. This can be changed by using the macro `CROW_USE_LOCALTIMEZONE` which will set **only the log timezone** to the server's local timezone.
 
 ## Creating A custom logger
 <span class="tag">[:octicons-feed-tag-16: v1.0](https://github.com/CrowCpp/Crow/releases/v1.0)</span>
