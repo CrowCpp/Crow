@@ -1,5 +1,5 @@
 {
-    "name": "crow-examples",
+    "name": "crow",
     "version-string": "master",
     "dependencies": [
         "asio",
