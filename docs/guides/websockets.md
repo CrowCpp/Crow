@@ -2,7 +2,7 @@ Websockets are a way of connecting a client and a server without the request res
 
 ## Routes
 To create a websocket in Crow, you need a websocket route.<br>
-A websocket route differs from a normal route quite a bit. It uses A slightly altered `CROW_WEBSOCKET_ROUTE(app, "/url")` macro, which is then followed by a series of methods (with handlers inside) for each event. These are (sorted by order of execution):
+A websocket route differs from a normal route quite a bit. It uses a slightly altered `CROW_WEBSOCKET_ROUTE(app, "/url")` macro, which is then followed by a series of methods (with handlers inside) for each event. These are (sorted by order of execution):
 
 
 - `#!cpp onaccept([&](const crow::request& req, void** userdata){handler code goes here})`

@@ -119,10 +119,10 @@ int main()
 }
 ```
 
-1. We are adding a `string` variable to the URL and a counterpart (`std::string name`) to our Route, this can be anything the user wants.
+1. We are adding a `string` variable to the URL and a counterpart (`std::string name`) to our route - this can be anything the user wants.
 2. We are using `load()` instead of `load_text()` since we have an actual variable now.
 3. We are creating a new [context](../../guides/templating/#context) containing the `person` variable from our template and the `name` we got from the URL.
-4. we are using `render(ctx)` to apply our context to the template.
+4. We are using `render(ctx)` to apply our context to the template.
 
 Now (after compiling the code and running the executable a second time) calling `http://localhost:18080/Bob` should return a webpage containing "Hello Bob!". **We did it!**
 

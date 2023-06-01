@@ -3,7 +3,7 @@
 
 A static file is any file that resides in the server's storage.
 
-Crow supports returning Static files as responses in 2 ways.
+Crow supports returning static files as responses either implicitly or explicitly.
 
 ## Implicit
 Crow implicitly returns any static files placed in a `static` directory and any subdirectories, as long as the user calls the endpoint `/static/path/to/file`.<br><br>

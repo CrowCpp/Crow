@@ -55,7 +55,7 @@ nav:
       - MacOS: getting_started/setup/macos.md
       - Windows: getting_started/setup/windows.md
     - Your First Application: getting_started/your_first_application.md
-    - A simple Webpage: getting_started/a_simple_webpage.md
+    - A Simple Webpage: getting_started/a_simple_webpage.md
   - Guides:
     - Different parts of Crow:
       - App: guides/app.md
