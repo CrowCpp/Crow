@@ -1,7 +1,7 @@
-Websockets are a way of connecting a client and a server without the request response nature of HTTP.<br>
+Websockets are a way of connecting a client and a server without the request response nature of HTTP.<br><br>
 
 ## Routes
-To create a websocket in Crow, you need a websocket route.<br><br>
+To create a websocket in Crow, you need a websocket route.<br>
 A websocket route differs from a normal route quite a bit. It uses a slightly altered `CROW_WEBSOCKET_ROUTE(app, "/url")` macro, which is then followed by a series of methods (with handlers inside) for each event. These are (sorted by order of execution):
 
 
