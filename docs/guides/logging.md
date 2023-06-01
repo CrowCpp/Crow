@@ -28,7 +28,7 @@ Writing a log is as simple as `#!cpp CROW_LOG_<LOG LEVEL> << "Hello";` (replace&
 
 !!! note
 
-    Log times are reported in UTC timezone by default. This is because HTTP requires all reported times for requests and responses to be in UTC. This can be changed by using the macro `CROW_USE_LOCALTIMEZONE` which will set **only the log timezone** to the server's local timezone.
+    Log times are reported in GMT timezone by default. This is because HTTP requires all reported times for requests and responses to be in GMT. This can be changed by using the macro `CROW_USE_LOCALTIMEZONE` which will set **only the log timezone** to the server's local timezone.
 
 ## Creating A custom logger
 <span class="tag">[:octicons-feed-tag-16: v1.0](https://github.com/CrowCpp/Crow/releases/v1.0)</span>
