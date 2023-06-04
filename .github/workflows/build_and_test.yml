@@ -1,5 +1,6 @@
 name: Build and test (cmake based build)
 
+#on: push
 on:
   push:
     branches: [ "master" ]
@@ -17,14 +18,14 @@ jobs:
     # See: https://docs.github.com/en/free-pro-team@latest/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
     runs-on: ${{ matrix.os }}
     strategy:
-      fail-fast: false
+      fail-fast: true
       matrix:
         os: [ ubuntu-latest, ubuntu-20.04,
-              macos-latest, macos-11, macos-10.15
+              macos-latest, macos-11,
+              windows-latest
             ]
- # ubuntu-18.04 does not work due to compile error on asio
- # windows-latest, windows-2019 - wip missing asio lib install
-               
+            # ubuntu-18.04 does not work due to compile error on asio
+            # windows-2019 not included to spare free minutes   
     steps:
     - uses: actions/checkout@v3
     - name: Prepare dependencies
@@ -33,13 +34,11 @@ jobs:
               sudo apt-get update && \
               sudo apt-get install -yq \
                 libasio-dev \
-                cmake \
-                graphviz doxygen
+                cmake
          elif [ "$RUNNER_OS" == "Windows" ]; then
-              vcpkg install;
-              choco install graphviz doxygen.install
+              VCPKG_DEFAULT_TRIPLET=x64-windows vcpkg install
          elif [ "$RUNNER_OS" == "macOS" ]; then
-              brew install asio graphviz doxygen
+              brew install asio
          else
               echo "$RUNNER_OS not supported"
               exit 1
@@ -48,13 +47,11 @@ jobs:
 
     - name: Configure CMake
       run: |
-         if [ "$RUNNER_OS" == "Windows" ]; then
-              mkdir build;
-              cd build;
-              cmake .. -DCMAKE_TOOLCHAIN_FILE="%VCPKG_ROOT%\scripts\buildsystems\vcpkg.cmake" ..
-         else
+         if [ "$RUNNER_OS" == "Windows" ]; then 
+              cmake -DCMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake -B build
+          else 
               cmake -B build
-         fi
+          fi
       shell: bash      
     - name: Build
       # Build your program with the given configuration
