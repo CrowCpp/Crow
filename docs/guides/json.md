@@ -20,7 +20,7 @@ JSON read value, used for taking a JSON string and parsing it into `crow::json`.
 You can read individual items of the rvalue, but you cannot add items to it.<br>
 To do that, you need to convert it to a `wvalue`, which can be done by simply writing `#!cpp crow::json::wvalue wval (rval);` (assuming `rval` is your `rvalue`).<br><br>
 
-For more info on read values go [here](../../reference/classcrow_1_1json_1_1rvalue.html).<br><br>
+For more info on read values go [here](../reference/classcrow_1_1json_1_1rvalue.html).<br><br>
 
 ## wvalue
 JSON write value, used for creating, editing and converting JSON to a string.<br><br>
@@ -43,7 +43,7 @@ An object type `wvalue` uses `std::unordered_map` by default, if you want to hav
     
 A JSON `wvalue` can be returned directly inside a route handler, this will cause the `content-type` header to automatically be set to `Application/json` and the JSON value will be converted to string and placed in the response body. For more information go to [Routes](../routes).<br><br>
 
-For more info on write values go [here](../../reference/classcrow_1_1json_1_1wvalue.html).
+For more info on write values go [here](../reference/classcrow_1_1json_1_1wvalue.html).
 
 !!! note
 

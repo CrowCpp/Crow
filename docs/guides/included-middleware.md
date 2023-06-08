@@ -88,9 +88,9 @@ Examples: `examples/middlewares/example_cors.cpp`
 
 This middleware allows to set CORS policies by using `CORSHandler`. Once enabled, it will apply the default CORS rules globally.
 
-The CORS rules can be modified by first getting the middleware via `#!cpp auto& cors = app.get_middleware<crow::CORSHandler>();`. The rules can be set per URL prefix using `prefix()`, per blueprint using `blueprint()`, or globally via `global()`. These will return a `CORSRules` object which contains the actual rules for the prefix, blueprint, or application. For more details go [here](../../reference/structcrow_1_1_c_o_r_s_handler.html).
+The CORS rules can be modified by first getting the middleware via `#!cpp auto& cors = app.get_middleware<crow::CORSHandler>();`. The rules can be set per URL prefix using `prefix()`, per blueprint using `blueprint()`, or globally via `global()`. These will return a `CORSRules` object which contains the actual rules for the prefix, blueprint, or application. For more details go [here](../reference/structcrow_1_1_c_o_r_s_handler.html).
 
-`CORSRules` can  be modified using the methods `origin()`, `methods()`, `headers()`, `max_age()`, `allow_credentials()`, or `ignore()`. For more details on these methods and what default values they take go [here](../../reference/structcrow_1_1_c_o_r_s_rules.html).
+`CORSRules` can  be modified using the methods `origin()`, `methods()`, `headers()`, `max_age()`, `allow_credentials()`, or `ignore()`. For more details on these methods and what default values they take go [here](../reference/structcrow_1_1_c_o_r_s_rules.html).
 
 ```cpp
 auto& cors = app.get_middleware<crow::CORSHandler>();

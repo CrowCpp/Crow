@@ -21,9 +21,15 @@ jobs:
       - name: configure
         run: cmake -B build -S . -DEXPATPP_BUILD_DOCS=ON
       - name: clean generated docs dir
-        run: rm -rf build/html
-      - name: build
-        run: cmake --build build --target doc
+        run: rm -rf site docs/reference
+      - name: clone dxygen theme
+        run: git clone https://github.com/CrowCpp/darxygen.git
+      - name: run doxygen
+        run: doxygen
+      - name: run mkdocs
+        run: mkdocs build
+      #- name: build
+      #  run: cmake --build build --target doc
 
       - name: Deploy 🚀
         uses: JamesIves/github-pages-deploy-action@v4

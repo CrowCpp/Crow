@@ -29,4 +29,4 @@ Part headers are organized in a similar way to request and response headers, and
 
 The message's individual body parts can be accessed by name using `msg.get_part_by_name("part-name")`.<br><br>
 
-For more info on Multipart messages, go [here](../../reference/namespacecrow_1_1multipart.html)
+For more info on Multipart messages, go [here](../reference/namespacecrow_1_1multipart.html)

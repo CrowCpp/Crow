@@ -47,6 +47,6 @@ The maximum payload size that a connection accepts can be adjusted either global
     By default, This limit is disabled. To disable the global setting in specific routes, you only need to call `#!cpp CROW_WEBSOCKET_ROUTE(app, "/url").max_payload(UINT64_MAX)`.
 
 
-For more info about websocket routes go [here](../../reference/classcrow_1_1_web_socket_rule.html).
+For more info about websocket routes go [here](../reference/classcrow_1_1_web_socket_rule.html).
 
-For more info about websocket connections go [here](../../reference/classcrow_1_1websocket_1_1_connection.html).
+For more info about websocket connections go [here](../reference/classcrow_1_1websocket_1_1_connection.html).
