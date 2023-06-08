@@ -1,10 +1,10 @@
 name: Deploy Doxygen results to Github Pages
 
-on: push
-#on:
-#  push:
-#    branches:
-#      - main
+#on: push
+on:
+  push:
+    branches:
+      - main
 
 permissions:
   contents: write
@@ -20,7 +20,7 @@ jobs:
       - name: prepate pip dependencies
         run: pip3 install mkdocs-material mkdocs-redirects pyyaml mkdocs-meta-descriptions-plugin --no-input
       - name: configure
-        run: cmake -B build -S . -DCROW_BUILD_DOCS=ON
+        run: cmake -B build -DCROW_AMALGAMATE=ON 
       - name: clean generated docs dir
         run: rm -rf site docs/reference
       - name: clone doxygen theme
@@ -29,8 +29,6 @@ jobs:
         run: doxygen
       - name: run mkdocs
         run: mkdocs build
-      #- name: build
-      #  run: cmake --build build --target doc
 
       - name: Deploy 🚀
         uses: JamesIves/github-pages-deploy-action@v4
