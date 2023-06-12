@@ -51,7 +51,6 @@ char * qs_scanvalue(const char * key, const char * qs, char * val, size_t val_le
 
 inline int qs_strncmp(const char * s, const char * qs, size_t n)
 {
-    int i=0;
     unsigned char u1, u2, unyb, lnyb;
 
     while(n-- > 0)
@@ -88,7 +87,6 @@ inline int qs_strncmp(const char * s, const char * qs, size_t n)
             return u1 - u2;
         if ( u1 == '\0' )
             return 0;
-        i++;
     }
     if ( CROW_QS_ISQSCHR(*qs) )
         return -1;
