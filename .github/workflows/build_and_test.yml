@@ -50,7 +50,11 @@ jobs:
     - name: Configure CMake
       run: |
          if [ "$RUNNER_OS" == "Windows" ]; then 
-              cmake -DCMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake -B build
+              cmake \
+               -DCMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake  \
+               -DCROW_FEATURES="ssl;compression" \
+               -DCROW_AMALGAMATE=ON \
+                -B build
           else 
               cmake -B build
           fi
