@@ -171,7 +171,7 @@ class a : public crow::returnable
     ...
     ...
 
-    std::string dump() override
+    std::string dump() const override
     {
         return this.as_string();
     }
