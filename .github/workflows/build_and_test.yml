@@ -10,6 +10,8 @@ on:
 env:
   # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
   BUILD_TYPE: Release
+  COVERALLS_PULL_REQUEST: ${{ github.event.number }}
+  COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
 
 jobs:
   build:
@@ -52,17 +54,30 @@ jobs:
           else 
               cmake -B build
           fi
-      shell: bash      
+      shell: bash
     - name: Build
       # Build your program with the given configuration
       run: cmake --build build --config ${{env.BUILD_TYPE}}
-      shell: bash      
+      shell: bash
 
     - name: Test
       working-directory: ${{github.workspace}}/build
       # Execute tests defined by the CMake configuration.
       # See https://cmake.org/cmake/help/latest/manual/ctest.1.html for more detail
       run: ctest --output-on-failure -C ${{env.BUILD_TYPE}}
+
+    - name: Coverage Report
+      if: matrix.os == 'ubuntu-latest'
+      run: |
+        export CI_BRANCH=${GITHUB_BASE_REF:-${GITHUB_REF#refs/heads/}}
+          echo "CI_BRANCH=$CI_BRANCH" >> $GITHUB_ENV && \
+        export TRAVIS_JOB_ID=$GITHUB_RUN_NUMBER && \
+        git clone https://github.com/CrowCpp/cpp-coveralls.git && \
+        cd cpp-coveralls && \
+        pip3 install . --no-input && \
+        cd .. && \
+        coveralls --verbose --exclude-pattern .*/http_parser_merged.h --exclude-pattern .*/TinySHA1.hpp
+      shell: bash
 
     #- name: Package
     #  working-directory: ${{github.workspace}}/build

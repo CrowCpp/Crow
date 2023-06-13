@@ -1,4 +1,4 @@
-service_name: drone-io
+service_name: gh-actions
 gcov_options: \-lp
 include:
   - include

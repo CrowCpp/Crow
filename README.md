@@ -2,13 +2,12 @@
 
 <h4 align="center">A Fast and Easy to use microframework for the web.</h4>
 <p align="center">
-<a href="https://cloud.drone.io/CrowCpp/Crow"><img src="https://cloud.drone.io/api/badges/CrowCpp/Crow/status.svg" alt="Build Status"></a>
+<a href="https://github.com/CrowCpp/Crow/actions/workflows/build_and_test.yml"><img src="https://github.com/CrowCpp/Crow/actions/workflows/build_and_test.yml/badge.svg?branch=master" alt="Build Status"></a>
 <a href="https://coveralls.io/github/CrowCpp/Crow?branch=master"><img src="https://coveralls.io/repos/github/CrowCpp/Crow/badge.svg?branch=master" alt="Coverage Status"></a>
 <a href="https://crowcpp.org"><img src="https://img.shields.io/badge/-Documentation-informational" alt="Documentation"></a>
 <a href="https://gitter.im/crowfork/community?utm_source=badge&amp;utm_medium=badge&amp;utm_campaign=pr-badge"><img src="https://img.shields.io/gitter/room/crowfork/community?color=8DDEC5&logo=gitter" alt="Gitter"></a>
 <a href="https://opencollective.com/crow"><img alt="Open Collective" src="https://img.shields.io/opencollective/all/crow?label=Support%20Crow&logo=opencollective"></a>
 </p>
-
 
 ## Description
 
