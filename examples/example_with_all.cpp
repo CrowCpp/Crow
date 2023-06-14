@@ -33,7 +33,7 @@ int main()
 
     CROW_ROUTE(app, "/json-initializer-list-constructor")
     ([] {
-        return crow::json::wvalue({
+        crow::json::wvalue r({
           {"first", "Hello world!"},                     /* stores a char const* hence a json::type::String */
           {"second", std::string("How are you today?")}, /* stores a std::string hence a json::type::String. */
           {"third", 54},                                 /* stores an int (as 54 is an int literal) hence a std::int64_t. */
@@ -45,6 +45,7 @@ int main()
           {"ninth", nullptr},                            /* stores a std::nullptr hence json::type::Null . */
           {"tenth", true}                                /* stores a bool hence json::type::True . */
         });
+        return r;
     });
 
     // json list response
