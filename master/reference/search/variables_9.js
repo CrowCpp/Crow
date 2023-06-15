@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['upgrade_427',['upgrade',['../structcrow_1_1request.html#ac4b5e2e32e2e0b633211925158b03559',1,'crow::request']]],
-  ['url_428',['url',['../structcrow_1_1request.html#aa3df34c56847d6d42887e73655276167',1,'crow::request']]],
-  ['url_5fparams_429',['url_params',['../structcrow_1_1request.html#a745d5a94e9e9ae1fed64674aae0194b0',1,'crow::request']]]
+  ['raw_5furl_444',['raw_url',['../structcrow_1_1request.html#a72f5504a56f9ba70d7d33f86aaf9bc8a',1,'crow::request']]],
+  ['remote_5fip_5faddress_445',['remote_ip_address',['../structcrow_1_1request.html#aa8a04e30e2249f04614f233d25ffaad7',1,'crow::request']]],
+  ['req_446',['req',['../structcrow_1_1_h_t_t_p_parser.html#a56ce939040d6c582a62cea766e489d53',1,'crow::HTTPParser']]]
 ];

@@ -6,6 +6,7 @@ var dir_d22c1cb87b72f01e1a7f207eb3bfd1ca =
     [ "common.h", "common_8h_source.html", null ],
     [ "compression.h", "compression_8h_source.html", null ],
     [ "http_connection.h", "http__connection_8h_source.html", null ],
+    [ "http_parser_merged.h", "http__parser__merged_8h_source.html", null ],
     [ "http_request.h", "http__request_8h_source.html", null ],
     [ "http_response.h", "http__response_8h_source.html", null ],
     [ "http_server.h", "http__server_8h_source.html", null ],
@@ -23,6 +24,7 @@ var dir_d22c1cb87b72f01e1a7f207eb3bfd1ca =
     [ "settings.h", "settings_8h_source.html", null ],
     [ "socket_adaptors.h", "socket__adaptors_8h_source.html", null ],
     [ "task_timer.h", "task__timer_8h_source.html", null ],
+    [ "TinySHA1.hpp", "_tiny_s_h_a1_8hpp_source.html", null ],
     [ "utility.h", "utility_8h_source.html", null ],
     [ "version.h", "version_8h_source.html", null ],
     [ "websocket.h", "websocket_8h_source.html", null ]
