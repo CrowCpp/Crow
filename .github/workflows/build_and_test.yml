@@ -45,20 +45,21 @@ jobs:
               echo "$RUNNER_OS not supported"
               exit 1
          fi
-      shell: bash      
+      shell: bash
 
     - name: Configure CMake
       run: |
-         if [ "$RUNNER_OS" == "Windows" ]; then 
+         if [ "$RUNNER_OS" == "Windows" ]; then
               cmake \
                -DCMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake  \
                -DCROW_FEATURES="ssl;compression" \
                -DCROW_AMALGAMATE=ON \
                 -B build
-          else 
+          else
               cmake -B build
           fi
       shell: bash
+
     - name: Build
       # Build your program with the given configuration
       run: cmake --build build --config ${{env.BUILD_TYPE}}
@@ -84,8 +85,8 @@ jobs:
       shell: bash
 
 
-    - name: Save PR number
-    - uses: actions/upload-artifact@v3
+    - name: Save report
+      uses: actions/upload-artifact@v3
       if: matrix.os == 'ubuntu-latest'
       with:
         name: coveralls.json
