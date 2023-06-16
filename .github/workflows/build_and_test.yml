@@ -71,23 +71,25 @@ jobs:
       run: ctest --output-on-failure -C ${{env.BUILD_TYPE}}
 
     - name: Generate coverage report
-     if: matrix.os == 'ubuntu-latest'
-     run: |
-       export CI_BRANCH=${GITHUB_BASE_REF:-${GITHUB_REF#refs/heads/}}
-         echo "CI_BRANCH=$CI_BRANCH" >> $GITHUB_ENV && \
-       export TRAVIS_JOB_ID=$GITHUB_RUN_NUMBER && \
-       git clone https://github.com/CrowCpp/cpp-coveralls.git && \
-       cd cpp-coveralls && \
-       pip3 install . --no-input && \
-       cd .. && \
-       coveralls --verbose --exclude-pattern .*/http_parser_merged.h --exclude-pattern .*/TinySHA1.hpp --dump coveralls.json
-     shell: bash
+      if: matrix.os == 'ubuntu-latest'
+      run: |
+        export CI_BRANCH=${GITHUB_BASE_REF:-${GITHUB_REF#refs/heads/}}
+          echo "CI_BRANCH=$CI_BRANCH" >> $GITHUB_ENV && \
+        export TRAVIS_JOB_ID=$GITHUB_RUN_NUMBER && \
+        git clone https://github.com/CrowCpp/cpp-coveralls.git && \
+        cd cpp-coveralls && \
+        pip3 install . --no-input && \
+        cd .. && \
+        coveralls --verbose --exclude-pattern .*/http_parser_merged.h --exclude-pattern .*/TinySHA1.hpp --dump coveralls.json
+      shell: bash
 
-     - uses: actions/upload-artifact@v3
-     - name: Save PR number
-       with:
-         name: coveralls.json
-         path: coveralls.json
+
+    - name: Save PR number
+    - uses: actions/upload-artifact@v3
+      if: matrix.os == 'ubuntu-latest'
+      with:
+        name: coveralls.json
+        path: coveralls.json
 
 
     #- name: Package
