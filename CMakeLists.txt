@@ -130,7 +130,6 @@ if(CROW_INSTALL)
     "${CMAKE_CURRENT_BINARY_DIR}/CrowConfig.cmake"
     DESTINATION lib/cmake/Crow
   )
-endif()
 
 set(CPACK_GENERATOR "DEB")
 set(CPACK_PACKAGE_NAME "Crow")
@@ -154,4 +153,5 @@ if(NOT TARGET uninstall)
 
   add_custom_target(uninstall
     COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake)
+endif()
 endif()
