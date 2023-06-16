@@ -4,9 +4,8 @@ name: Submit coverage
 # access to secrets
 on:
   workflow_run:
-    workflows: ["Build and test"]
-    types:
-      - completed
+    workflows: [Build and test]
+    types: [completed]
 
 env:
   COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
@@ -35,7 +34,8 @@ jobs:
         shell: bash
 
       - name: 'Generate full report'
-        run: cat coveralls.json | jq --arg repo_token $COVERALLS_REPO_TOKEN '. += {repo_token: $repo_token}' > coveralls_full.json
+        run: |
+          cat coveralls.json | jq --arg repo_token $COVERALLS_REPO_TOKEN '. += {repo_token: $repo_token}' > coveralls_full.json
         shell: bash
 
       - name: 'Upload final report'
