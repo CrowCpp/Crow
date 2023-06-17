@@ -173,10 +173,8 @@ namespace crow
             bool isTagInsideObjectBlock(const int& current, const std::vector<context*>& stack) const
             {
                 int openedBlock = 0;
-                int totalBlocksBefore = 0;
                 for (int i = current; i > 0; --i)
                 {
-                    ++totalBlocksBefore;
                     auto& action = actions_[i - 1];
 
                     if (action.t == ActionType::OpenBlock)
