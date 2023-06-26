@@ -1495,7 +1495,14 @@ namespace crow
                 std::vector<uint16_t> bpi = found.blueprint_indices;
                 if (bps_found[i]->catchall_rule().has_handler())
                 {
-                    bps_found[i]->catchall_rule().handler_(req, res);
+                    try
+                    {
+                        bps_found[i]->catchall_rule().handler_(req, res);
+                    }
+                    catch (...)
+                    {
+                        exception_handler_(res);
+                    }
 #ifdef CROW_ENABLE_DEBUG
                     return std::string("Redirected to Blueprint \"" + bps_found[i]->prefix() + "\" Catchall rule");
 #else
@@ -1505,7 +1512,14 @@ namespace crow
             }
             if (catchall_rule_.has_handler())
             {
-                catchall_rule_.handler_(req, res);
+                try
+                {
+                    catchall_rule_.handler_(req, res);
+                }
+                catch (...)
+                {
+                    exception_handler_(res);
+                }
 #ifdef CROW_ENABLE_DEBUG
                 return std::string("Redirected to global Catchall rule");
 #else
