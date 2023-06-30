@@ -19,7 +19,7 @@
         <link rel="next" href="../base64/">
       
       <link rel="icon" href="../../assets/favicon.svg">
-      <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.16">
+      <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.17">
     
     
       
@@ -1126,11 +1126,10 @@ A websocket route differs from a normal route quite a bit. It uses a slightly al
 </div>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
-<p>By default, Crow allows Clients to send unmasked websocket messages, which is useful for debugging but goes against the protocol specification. Production Crow applications should enforce the protocol by adding <code class="highlight"><span class="cp">#define CROW_ENFORCE_WS_SPEC</span></code> to their source code.</p>
+<p>By default, Crow allows clients to send unmasked websocket messages. This is useful for debugging, but goes against the protocol specifications. Production Crow applications should enforce the protocol by adding <code class="highlight"><span class="cp">#define CROW_ENFORCE_WS_SPEC</span></code> to their source code.</p>
 </div>
-<p>These event methods and their handlers can be chained. The full Route should look similar to this:
-<div class="highlight"><pre><span></span><code><span class="n">CROW_ROUTE</span><span class="p">(</span><span class="n">app</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;/ws&quot;</span><span class="p">)</span>
-<span class="w">    </span><span class="p">.</span><span class="n">websocket</span><span class="p">()</span>
+<p>These event methods and their handlers can be chained. The full route should look similar to this:
+<div class="highlight"><pre><span></span><code><span class="n">CROW_WEBSOCKET_ROUTE</span><span class="p">(</span><span class="n">app</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;/ws&quot;</span><span class="p">)</span>
 <span class="w">    </span><span class="p">.</span><span class="n">onopen</span><span class="p">([</span><span class="o">&amp;</span><span class="p">](</span><span class="n">crow</span><span class="o">::</span><span class="n">websocket</span><span class="o">::</span><span class="n">connection</span><span class="o">&amp;</span><span class="w"> </span><span class="n">conn</span><span class="p">){</span>
 <span class="w">            </span><span class="n">do_something</span><span class="p">();</span>
 <span class="w">            </span><span class="p">})</span>
@@ -1149,7 +1148,7 @@ A websocket route differs from a normal route quite a bit. It uses a slightly al
 <p>The maximum payload size that a connection accepts can be adjusted either globally by using <code class="highlight"><span class="n">app</span><span class="p">.</span><span class="n">websocket_max_payload</span><span class="p">(</span><span class="o">&lt;</span><span class="n">value</span><span class="w"> </span><span class="n">in</span><span class="w"> </span><span class="n">bytes</span><span class="o">&gt;</span><span class="p">)</span></code> or per route by using <code class="highlight"><span class="n">CROW_WEBSOCKET_ROUTE</span><span class="p">(</span><span class="n">app</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;/url&quot;</span><span class="p">).</span><span class="n">max_payload</span><span class="p">(</span><span class="o">&lt;</span><span class="n">value</span><span class="w"> </span><span class="n">in</span><span class="w"> </span><span class="n">bytes</span><span class="o">&gt;</span><span class="p">)</span></code>. In case a message was sent that exceeded the limit. The connection would be shut down and <code>onerror</code> would be triggered.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>By default, This limit is disabled. To disable the global setting in specific routes, you only need to call <code class="highlight"><span class="n">CROW_WEBSOCKET_ROUTE</span><span class="p">(</span><span class="n">app</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;/url&quot;</span><span class="p">).</span><span class="n">max_payload</span><span class="p">(</span><span class="n">UINT64_MAX</span><span class="p">)</span></code>.</p>
+<p>By default, this limit is disabled. To disable the global setting in specific routes, you only need to call <code class="highlight"><span class="n">CROW_WEBSOCKET_ROUTE</span><span class="p">(</span><span class="n">app</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;/url&quot;</span><span class="p">).</span><span class="n">max_payload</span><span class="p">(</span><span class="n">UINT64_MAX</span><span class="p">)</span></code>.</p>
 </div>
 <p>For more info about websocket routes go <a href="../../reference/classcrow_1_1_web_socket_rule.html">here</a>.</p>
 <p>For more info about websocket connections go <a href="../../reference/classcrow_1_1websocket_1_1_connection.html">here</a>.</p>
@@ -1340,7 +1339,7 @@ A websocket route differs from a normal route quite a bit. It uses a slightly al
     <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.tabs", "content.code.annotate"], "search": "../../assets/javascripts/workers/search.208ed371.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"default": "latest", "provider": "mike"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.a51614de.min.js"></script>
+      <script src="../../assets/javascripts/bundle.b425cdc4.min.js"></script>
       
     
   </body>
