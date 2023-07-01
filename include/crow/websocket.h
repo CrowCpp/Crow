@@ -603,7 +603,11 @@ namespace crow
                         if (is_FIN())
                         {
                             if (message_handler_)
+#ifdef CROW_ENABLE_COMPRESSION
                                 message_handler_(*this, is_compressed() && decompressor_ ? decompressor_->decompress(message_) : message_, is_binary_);
+#else
+                                message_handler_(*this, message_, is_binary_);
+#endif
                             message_.clear();
                         }
                     }
@@ -615,7 +619,11 @@ namespace crow
                         if (is_FIN())
                         {
                             if (message_handler_)
+#ifdef CROW_ENABLE_COMPRESSION
                                 message_handler_(*this, is_compressed() && decompressor_ ? decompressor_->decompress(message_) : message_, is_binary_);
+#else
+                                message_handler_(*this, message_, is_binary_);
+#endif
                             message_.clear();
                         }
                     }
@@ -627,7 +635,11 @@ namespace crow
                         if (is_FIN())
                         {
                             if (message_handler_)
+#ifdef CROW_ENABLE_COMPRESSION
                                 message_handler_(*this, is_compressed() && decompressor_ ? decompressor_->decompress(message_) : message_, is_binary_);
+#else
+                                message_handler_(*this, message_, is_binary_);
+#endif
                             message_.clear();
                         }
                     }
@@ -782,9 +794,10 @@ namespace crow
 
             std::shared_ptr<void> anchor_ = std::make_shared<int>(); // Value is just for placeholding
 
+#ifdef CROW_ENABLE_COMPRESSION
             std::unique_ptr<compression::Compressor> compressor_;
             std::unique_ptr<compression::Decompressor> decompressor_;
-
+#endif
             std::function<void(crow::websocket::connection&)> open_handler_;
             std::function<void(crow::websocket::connection&, const std::string&, bool)> message_handler_;
             std::function<void(crow::websocket::connection&, const std::string&)> close_handler_;
