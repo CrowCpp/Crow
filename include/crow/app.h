@@ -283,7 +283,7 @@ namespace crow
 
         ///
         /// Go through the rules, upgrade them if possible, and add them to the list of rules
-        void validate()
+        void validate(std::string staticDir = CROW_STATIC_DIRECTORY)
         {
             if (!validated_)
             {
@@ -291,7 +291,7 @@ namespace crow
 #ifndef CROW_DISABLE_STATIC_DIR
 
                 // stat on windows doesn't care whether '/' or '\' is being used. on Linux however, using '\' doesn't work. therefore every instance of '\' gets replaced with '/' then a check is done to make sure the directory ends with '/'.
-                std::string static_dir_(CROW_STATIC_DIRECTORY);
+                std::string static_dir_(staticDir);
                 std::replace(static_dir_.begin(), static_dir_.end(), '\\', '/');
                 if (static_dir_[static_dir_.length() - 1] != '/')
                     static_dir_ += '/';
@@ -332,10 +332,10 @@ namespace crow
         }
 
         /// Run the server
-        void run()
+        void run(std::string staticDir = CROW_STATIC_DIRECTORY)
         {
 
-            validate();
+            validate(staticDir);
 
 #ifdef CROW_ENABLE_SSL
             if (ssl_used_)
@@ -368,10 +368,10 @@ namespace crow
         ///
         /// The output from this method needs to be saved into a variable!
         /// Otherwise the call will be made on the same thread.
-        std::future<void> run_async()
+        std::future<void> run_async(std::string staticDir = CROW_STATIC_DIRECTORY)
         {
             return std::async(std::launch::async, [&] {
-                this->run();
+                this->run(staticDir);
             });
         }
 
