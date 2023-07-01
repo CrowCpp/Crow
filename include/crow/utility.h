@@ -11,6 +11,7 @@
 #include <sstream>
 #include <unordered_map>
 #include <random>
+#include <algorithm>
 
 #include "crow/settings.h"
 
@@ -702,6 +703,14 @@ namespace crow
             return base64decode(data.data(), data.length());
         }
 
+        inline static std::string normalize_path(const std::string& directoryPath)
+        {
+            std::string normalizedPath = directoryPath;
+            std::replace(normalizedPath.begin(), normalizedPath.end(), '\\', '/');
+            if (!normalizedPath.empty() && normalizedPath.back() != '/')
+                normalizedPath += '/';
+            return normalizedPath;
+        }
 
         inline static void sanitize_filename(std::string& data, char replacement = '_')
         {
@@ -715,8 +724,8 @@ namespace crow
             // a special device. Thus we search for the string (case-insensitive), and then check if the string ends or if
             // is has a dangerous follow up character (.:\/)
             auto sanitizeSpecialFile = [](std::string& source, unsigned ofs, const char* pattern, bool includeNumber, char replacement) {
-	      unsigned i = ofs;
-	      size_t len = source.length();
+                unsigned i = ofs;
+                size_t len = source.length();
                 const char* p = pattern;
                 while (*p)
                 {
