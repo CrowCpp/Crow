@@ -279,62 +279,56 @@ namespace crow
             return compression_used_;
         }
 #endif
-        /// A wrapper for `validate()` in the router
 
-        ///
-        /// Go through the rules, upgrade them if possible, and add them to the list of rules
-        void validate()
+        /// Apply blueprints
+        void add_blueprint()
         {
-            if (!validated_)
+#if defined(__APPLE__) || defined(__MACH__)
+            if (router_.blueprints().empty()) return;
+#endif
+
+            for (Blueprint* bp : router_.blueprints())
             {
+                if (bp->static_dir().empty()) continue;
 
-#ifndef CROW_DISABLE_STATIC_DIR
+                auto static_dir_ = crow::utility::normalize_path(bp->static_dir());
 
-                // stat on windows doesn't care whether '/' or '\' is being used. on Linux however, using '\' doesn't work. therefore every instance of '\' gets replaced with '/' then a check is done to make sure the directory ends with '/'.
-                std::string static_dir_(CROW_STATIC_DIRECTORY);
-                std::replace(static_dir_.begin(), static_dir_.end(), '\\', '/');
-                if (static_dir_[static_dir_.length() - 1] != '/')
-                    static_dir_ += '/';
-
-                route<crow::black_magic::get_parameter_tag(CROW_STATIC_ENDPOINT)>(CROW_STATIC_ENDPOINT)([static_dir_](crow::response& res, std::string file_path_partial) {
+                bp->new_rule_tagged<crow::black_magic::get_parameter_tag(CROW_STATIC_ENDPOINT)>(CROW_STATIC_ENDPOINT)([static_dir_](crow::response& res, std::string file_path_partial) {
                     utility::sanitize_filename(file_path_partial);
                     res.set_static_file_info_unsafe(static_dir_ + file_path_partial);
                     res.end();
                 });
-
-#if defined(__APPLE__) || defined(__MACH__)
-                if (!router_.blueprints().empty())
-#endif
-                {
-                    for (Blueprint* bp : router_.blueprints())
-                    {
-                        if (!bp->static_dir().empty())
-                        {
-                            // stat on windows doesn't care whether '/' or '\' is being used. on Linux however, using '\' doesn't work. therefore every instance of '\' gets replaced with '/' then a check is done to make sure the directory ends with '/'.
-                            std::string static_dir_(bp->static_dir());
-                            std::replace(static_dir_.begin(), static_dir_.end(), '\\', '/');
-                            if (static_dir_[static_dir_.length() - 1] != '/')
-                                static_dir_ += '/';
-
-                            bp->new_rule_tagged<crow::black_magic::get_parameter_tag(CROW_STATIC_ENDPOINT)>(CROW_STATIC_ENDPOINT)([static_dir_](crow::response& res, std::string file_path_partial) {
-                                utility::sanitize_filename(file_path_partial);
-                                res.set_static_file_info_unsafe(static_dir_ + file_path_partial);
-                                res.end();
-                            });
-                        }
-                    }
-                }
-#endif
-
-                router_.validate();
-                validated_ = true;
             }
+
+            router_.validate_bp();
+        }
+
+        //TODO(Stefano): can this be executed multiple times?
+        /// Go through the rules, upgrade them if possible, and add them to the list of rules
+        void add_static_dir()
+        {
+            auto static_dir_ = crow::utility::normalize_path(CROW_STATIC_DIRECTORY);
+
+            route<crow::black_magic::get_parameter_tag(CROW_STATIC_ENDPOINT)>(CROW_STATIC_ENDPOINT)([static_dir_](crow::response& res, std::string file_path_partial) {
+                utility::sanitize_filename(file_path_partial);
+                res.set_static_file_info_unsafe(static_dir_ + file_path_partial);
+                res.end();
+            });
+        }
+
+        /// A wrapper for `validate()` in the router
+        void validate()
+        {
+            router_.validate();
         }
 
         /// Run the server
         void run()
         {
-
+#ifndef CROW_DISABLE_STATIC_DIR
+            add_blueprint();
+            add_static_dir();
+#endif
             validate();
 
 #ifdef CROW_ENABLE_SSL
@@ -563,7 +557,6 @@ namespace crow
         uint16_t port_ = 80;
         uint16_t concurrency_ = 2;
         uint64_t max_payload_{UINT64_MAX};
-        bool validated_ = false;
         std::string server_name_ = std::string("Crow/") + VERSION;
         std::string bindaddr_ = "0.0.0.0";
         size_t res_stream_threshold_ = 1048576;
