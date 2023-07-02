@@ -22,9 +22,11 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        os: [ ubuntu-latest, ubuntu-20.04,
-              macos-latest, macos-11,
-              windows-latest
+        os: [ ubuntu-latest,
+              windows-latest,
+              ubuntu-20.04,
+              macos-latest,
+              macos-11
             ]
             # ubuntu-18.04 does not work due to compile error on asio
             # windows-2019 not included to spare free minutes   
@@ -36,11 +38,12 @@ jobs:
               sudo apt-get update && \
               sudo apt-get install -yq \
                 libasio-dev \
+                libssl-dev zlib1g-dev \
                 cmake
          elif [ "$RUNNER_OS" == "Windows" ]; then
               VCPKG_DEFAULT_TRIPLET=x64-windows vcpkg install
          elif [ "$RUNNER_OS" == "macOS" ]; then
-              brew install asio
+              brew install asio openssl zlib
          else
               echo "$RUNNER_OS not supported"
               exit 1
@@ -51,12 +54,25 @@ jobs:
       run: |
          if [ "$RUNNER_OS" == "Windows" ]; then
               cmake \
-               -DCMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake  \
-               -DCROW_FEATURES="ssl;compression" \
-               -DCROW_AMALGAMATE=ON \
+                -DCMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake  \
+                -DCROW_FEATURES="ssl;compression" \
+                -DCROW_AMALGAMATE=ON \
+                -DCROW_BUILD_TESTS=ON \
                 -B build
-          else
-              cmake -B build
+          elif [ "$RUNNER_OS" == "macOS" ]; then
+              LDFLAGS="-L/usr/local/opt/openssl@1.1/lib" \
+              CPPFLAGS="-I/usr/local/opt/openssl@1.1/include" \
+              cmake \
+                -DCROW_FEATURES="ssl;compression" \
+                -DCROW_AMALGAMATE=ON \
+                -DCROW_BUILD_TESTS=ON \
+                -B build
+         else
+              cmake \
+                -DCROW_FEATURES="ssl;compression" \
+                -DCROW_AMALGAMATE=ON \
+                -DCROW_BUILD_TESTS=ON \
+                -B build
           fi
       shell: bash
 

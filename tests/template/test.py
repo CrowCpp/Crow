@@ -18,7 +18,10 @@ for testfile in glob.glob("*.json"):
         else:
             open('partials', 'w').write("{}")
 
-        ret = subprocess.check_output("./mustachetest").decode('utf8')
+        if os.name == 'nt':
+            ret = subprocess.check_output("mustachetest.exe").decode('utf8')
+        else:
+            ret = subprocess.check_output('./mustachetest').decode('utf8')
         print(testfile, test["name"])
 
         if ret != test["expected"]:
