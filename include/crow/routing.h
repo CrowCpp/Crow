@@ -1594,15 +1594,18 @@ namespace crow
                             if (static_cast<int>(HTTPMethod::Head) == i)
                                 continue; // HEAD is always allowed
 
-                            allow += method_name(static_cast<HTTPMethod>(i)) + ", ";
+                            // To avoid duplicate entries for OPTIONS
+                            if (static_cast<HTTPMethod>(i) != HTTPMethod::OPTIONS)
+                                allow += method_name(static_cast<HTTPMethod>(i)) + ", ";
                         }
                     }
                     if (rules_matched)
                     {
+                        *found = per_methods_[static_cast<int>(method_actual)].trie.find(req.url);
                         allow = allow.substr(0, allow.size() - 2);
                         res = response(204);
                         res.set_header("Allow", allow);
-                        res.end();
+                        // res.end();
                         found->method = method_actual;
                         return found;
                     }
