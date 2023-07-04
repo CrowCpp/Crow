@@ -1589,6 +1589,10 @@ TEST_CASE("local_middleware")
           return "works!";
       });
 
+#ifndef CROW_DISABLE_STATIC_DIR
+    app.add_static_dir();
+    app.add_blueprint();
+#endif
     app.validate();
 
     auto _ = app.bindaddr(LOCALHOST_ADDRESS).port(45451).run_async();
@@ -3141,6 +3145,8 @@ TEST_CASE("blueprint")
     bp.register_blueprint(sub_bp);
     sub_bp.register_blueprint(sub_sub_bp);
 
+    app.add_blueprint();
+    app.add_static_dir();
     app.validate();
 
     {
