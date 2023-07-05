@@ -532,6 +532,28 @@ TEST_CASE("http_method")
     }
 } // http_method
 
+TEST_CASE("validate can be called multiple times")
+{
+    SimpleApp app;
+    CROW_ROUTE(app, "/")([]() { return "1"; });
+    app.validate();
+    app.validate();
+
+    CROW_ROUTE(app, "/test")([]() { return "1"; });
+    app.validate();
+
+    try
+    {
+        CROW_ROUTE(app, "/")([]() { return "1"; });
+        app.validate();      
+        FAIL_CHECK();
+    }
+    catch (std::exception& e)
+    {
+        CROW_LOG_DEBUG << e.what();
+    }
+} // validate can be called multiple times
+
 TEST_CASE("server_handling_error_request")
 {
     static char buf[2048];
@@ -1589,10 +1611,6 @@ TEST_CASE("local_middleware")
           return "works!";
       });
 
-#ifndef CROW_DISABLE_STATIC_DIR
-    app.add_static_dir();
-    app.add_blueprint();
-#endif
     app.validate();
 
     auto _ = app.bindaddr(LOCALHOST_ADDRESS).port(45451).run_async();
@@ -3265,6 +3283,11 @@ TEST_CASE("base64")
     CHECK(crow::utility::base64decode(sample_bin2_enc, 8) == sample_bin2_str);
     CHECK(crow::utility::base64decode(sample_bin2_enc_np, 6) == sample_bin2_str);
 } // base64
+
+TEST_CASE("normalize_path") {
+    CHECK(crow::utility::normalize_path("/abc/def") == "/abc/def/");
+    CHECK(crow::utility::normalize_path("path\\to\\directory") == "path/to/directory/");
+} // normalize_path
 
 TEST_CASE("sanitize_filename")
 {
