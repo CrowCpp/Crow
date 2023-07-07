@@ -26,7 +26,14 @@ include("${CMAKE_CURRENT_LIST_DIR}/CrowTargets.cmake")
 check_required_components("@PROJECT_NAME@")
 
 get_target_property(_CROW_ILL Crow::Crow INTERFACE_LINK_LIBRARIES)
+if(_CROW_ILL STREQUAL "_CROW_ILL-NOTFOUND")
+    set(_CROW_ILL "")
+endif()
+
 get_target_property(_CROW_ICD Crow::Crow INTERFACE_COMPILE_DEFINITIONS)
+if(_CROW_ICD STREQUAL "_CROW_ICD-NOTFOUND")
+    set(_CROW_ICD "")
+endif()
 
 list(REMOVE_ITEM _CROW_ILL "ZLIB::ZLIB" "OpenSSL::SSL")
 list(REMOVE_ITEM _CROW_ICD "CROW_ENABLE_SSL" "CROW_ENABLE_COMPRESSION")
