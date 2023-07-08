@@ -1154,11 +1154,10 @@ namespace crow
             return static_dir_;
         }
 
-        DynamicRule& new_rule_dynamic(std::string&& rule)
+        DynamicRule& new_rule_dynamic(const std::string& rule)
         {
-            std::string new_rule = std::move(rule);
-            new_rule = '/' + prefix_ + new_rule;
-            auto ruleObject = new DynamicRule(new_rule);
+            std::string new_rule = '/' + prefix_ + rule;
+            auto ruleObject = new DynamicRule(std::move(new_rule));
             ruleObject->custom_templates_base = templates_dir_;
             all_rules_.emplace_back(ruleObject);
 
@@ -1166,13 +1165,12 @@ namespace crow
         }
 
         template<uint64_t N>
-        typename black_magic::arguments<N>::type::template rebind<TaggedRule>& new_rule_tagged(std::string&& rule)
+        typename black_magic::arguments<N>::type::template rebind<TaggedRule>& new_rule_tagged(const std::string& rule)
         {
-            std::string new_rule = std::move(rule);
-            new_rule = '/' + prefix_ + new_rule;
+            std::string new_rule = '/' + prefix_ + rule;
             using RuleT = typename black_magic::arguments<N>::type::template rebind<TaggedRule>;
 
-            auto ruleObject = new RuleT(new_rule);
+            auto ruleObject = new RuleT(std::move(new_rule));
             ruleObject->custom_templates_base = templates_dir_;
             all_rules_.emplace_back(ruleObject);
 
