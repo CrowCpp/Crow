@@ -769,7 +769,7 @@ namespace crow
 
                 // Sanitize individual characters
                 unsigned char c = data[i];
-                if ((c < ' ') || ((c >= 0x80) && (c <= 0x9F)) || (c == '?') || (c == '<') || (c == '>') || (c == ':') || (c == '*') || (c == '|') || (c == '\"'))
+                if ((c < ' ') || (c == '?') || (c == '<') || (c == '>') || (c == ':') || (c == '*') || (c == '|') || (c == '\"'))
                 {
                     data[i] = replacement;
                 }
