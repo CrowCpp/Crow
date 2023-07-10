@@ -150,7 +150,7 @@ namespace crow
 
         std::string rule_;
         std::string name_;
-        bool added_ = false;
+        bool added_{false};
 
         std::unique_ptr<BaseRule> rule_to_upgrade_;
 
@@ -1164,6 +1164,14 @@ namespace crow
             return static_dir_;
         }
 
+        void set_added() {
+            added_ = true;
+        }
+
+        bool is_added() {
+            return added_;
+        }
+
         DynamicRule& new_rule_dynamic(const std::string& rule)
         {
             std::string new_rule = '/' + prefix_ + rule;
@@ -1236,6 +1244,7 @@ namespace crow
         CatchallRule catchall_rule_;
         std::vector<Blueprint*> blueprints_;
         detail::middleware_indices mw_indices_;
+        bool added_{false};
 
         friend class Router;
     };
@@ -1347,6 +1356,9 @@ namespace crow
             for (unsigned i = 0; i < blueprints.size(); i++)
             {
                 Blueprint* blueprint = blueprints[i];
+
+                if (blueprint->is_added()) continue;
+
                 if (blueprint->static_dir_ == "" && blueprint->all_rules_.empty())
                 {
                     std::vector<HTTPMethod> methods;
@@ -1373,6 +1385,7 @@ namespace crow
                 }
                 validate_bp(blueprint->blueprints_, current_mw);
                 current_mw.pop_back(blueprint->mw_indices_);
+                blueprint->set_added();
             }
         }
 
