@@ -303,10 +303,10 @@ namespace crow
             router_.validate_bp();
         }
 
-        //TODO(Stefano): can this be executed multiple times?
         /// Go through the rules, upgrade them if possible, and add them to the list of rules
         void add_static_dir()
         {
+            if (are_static_routes_added()) return;
             auto static_dir_ = crow::utility::normalize_path(CROW_STATIC_DIRECTORY);
 
             route<crow::black_magic::get_parameter_tag(CROW_STATIC_ENDPOINT)>(CROW_STATIC_ENDPOINT)([static_dir_](crow::response& res, std::string file_path_partial) {
@@ -314,6 +314,7 @@ namespace crow
                 res.set_static_file_info_unsafe(static_dir_ + file_path_partial);
                 res.end();
             });
+            set_static_routes_added();
         }
 
         /// A wrapper for `validate()` in the router
@@ -551,6 +552,13 @@ namespace crow
             cv_started_.notify_all();
         }
 
+        void set_static_routes_added() {
+            static_routes_added_ = true;
+        }
+
+        bool are_static_routes_added() {
+            return static_routes_added_;
+        }
 
     private:
         std::uint8_t timeout_{5};
@@ -561,6 +569,7 @@ namespace crow
         std::string bindaddr_ = "0.0.0.0";
         size_t res_stream_threshold_ = 1048576;
         Router router_;
+        bool static_routes_added_{false};
 
 #ifdef CROW_ENABLE_COMPRESSION
         compression::algorithm comp_algorithm_;
