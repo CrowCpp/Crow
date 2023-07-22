@@ -1320,8 +1320,11 @@ This will generate a <code>crow_all.h</code> file which you can use in the follo
 <input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><label for="__tabbed_1_2">Single Header</label><div class="tabbed-content">
 <ol>
 <li>Place <code>crow_all.h</code> inside your project folder and add it to the project in XCode (you need to use File -&gt; Add files to "project_name")</li>
-<li>Add header search paths for asio's folder (<code>/usr/local/include</code>, and <code>/usr/local/Cellar/asio/include</code>)</li>
-<li>Add linker flags (<code>-lpthread</code>)</li>
+<li>Add header search paths for asio's folder:</li>
+<li><code>/usr/local/include</code>, and</li>
+<li><strong>Silicon</strong>: <code>/opt/homebrew/Cellar/asio/&lt;asio_version&gt;/include</code></li>
+<li><strong>Intel</strong>: <code>/usr/local/Cellar/asio/&lt;asio_version&gt;/include</code></li>
+<li>Add linker flags (<code>-lpthread</code> for g++, <code>-pthread</code> for clang++)</li>
 </ol>
 </div>
 </div>
