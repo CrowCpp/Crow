@@ -1656,7 +1656,7 @@ namespace crow
                 }
                 else
                 {
-#if defined(__APPLE__) || defined(__MACH__) || defined (__FreeBSD__)  || defined (__ANDROID__)
+#if defined(__APPLE__) || defined(__MACH__) || defined(__FreeBSD__) || defined(__ANDROID__)
                     o = std::unique_ptr<object>(new object(initializer_list));
 #else
                     (*o) = initializer_list;
@@ -1675,7 +1675,7 @@ namespace crow
                 }
                 else
                 {
-#if defined(__APPLE__) || defined(__MACH__) || defined (__FreeBSD__)
+#if defined(__APPLE__) || defined(__MACH__) || defined(__FreeBSD__)
                     o = std::unique_ptr<object>(new object(value));
 #else
                     (*o) = value;
@@ -1719,7 +1719,12 @@ namespace crow
                 return (*l)[index];
             }
 
-            int count(const std::string& str)
+            const wvalue& operator[](unsigned index) const
+            {
+                return const_cast<wvalue*>(this)->operator[](index);
+            }
+
+            int count(const std::string& str) const
             {
                 if (t_ != type::Object)
                     return 0;
@@ -1736,6 +1741,11 @@ namespace crow
                 if (!o)
                     o = std::unique_ptr<object>(new object{});
                 return (*o)[str];
+            }
+
+            const wvalue& operator[](const std::string& str) const
+            {
+                return const_cast<wvalue*>(this)->operator[](str);
             }
 
             std::vector<std::string> keys() const
@@ -1841,9 +1851,9 @@ namespace crow
                             } f_state;
                             char outbuf[128];
 #ifdef _MSC_VER
-			    sprintf_s(outbuf, sizeof(outbuf), "%f", v.num.d);
+                            sprintf_s(outbuf, sizeof(outbuf), "%f", v.num.d);
 #else
-			    snprintf(outbuf, sizeof(outbuf), "%f", v.num.d);
+                            snprintf(outbuf, sizeof(outbuf), "%f", v.num.d);
 #endif
                             char *p = &outbuf[0], *o = nullptr; // o is the position of the first trailing 0
                             f_state = start;
