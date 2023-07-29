@@ -71,7 +71,8 @@ namespace crow
             ///
             /// Requires a request with an "Upgrade: websocket" header.<br>
             /// Automatically handles the handshake.
-            Connection(const crow::request& req, Adaptor&& adaptor, Handler* handler, uint64_t max_payload,
+            Connection(const crow::request& req, Adaptor&& adaptor, Handler* handler,
+                       uint64_t max_payload, const std::vector<std::string>& subprotocols,
                        std::function<void(crow::websocket::connection&)> open_handler,
                        std::function<void(crow::websocket::connection&, const std::string&, bool)> message_handler,
                        std::function<void(crow::websocket::connection&, const std::string&)> close_handler,
@@ -92,6 +93,24 @@ namespace crow
                     handler_->remove_websocket(this);
                     delete this;
                     return;
+                }
+
+                std::string requested_subprotocols_header = req.get_header_value("Sec-WebSocket-Protocol");
+                if (!subprotocols.empty() || !requested_subprotocols_header.empty())
+                {
+                    auto requested_subprotocols = utility::split(requested_subprotocols_header, ", ");
+                    auto subprotocol = std::find_first_of(subprotocols.begin(), subprotocols.end(), requested_subprotocols.begin(), requested_subprotocols.end());
+                    if (subprotocol == subprotocols.end())
+                    {
+                        adaptor_.close();
+                        handler_->remove_websocket(this);
+                        delete this;
+                        return;
+                    }
+                    else
+                    {
+                        subprotocol_ = *subprotocol;
+                    }
                 }
 
                 if (accept_handler_)
@@ -265,6 +284,12 @@ namespace crow
                 write_buffers_.emplace_back(header);
                 write_buffers_.emplace_back(std::move(hello));
                 write_buffers_.emplace_back(crlf);
+                if (!subprotocol_.empty())
+                {
+                    write_buffers_.emplace_back("Sec-WebSocket-Protocol: ");
+                    write_buffers_.emplace_back(subprotocol_);
+                    write_buffers_.emplace_back(crlf);
+                }
                 write_buffers_.emplace_back(crlf);
                 do_write();
                 if (open_handler_)
@@ -721,6 +746,7 @@ namespace crow
             uint16_t remaining_length16_{0};
             uint64_t remaining_length_{0};
             uint64_t max_payload_bytes_{UINT64_MAX};
+            std::string subprotocol_;
             bool close_connection_{false};
             bool is_reading{false};
             bool has_mask_{false};

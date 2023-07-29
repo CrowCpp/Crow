@@ -451,12 +451,12 @@ namespace crow
         void handle_upgrade(const request& req, response&, SocketAdaptor&& adaptor) override
         {
             max_payload_ = max_payload_override_ ? max_payload_ : app_->websocket_max_payload();
-            new crow::websocket::Connection<SocketAdaptor, App>(req, std::move(adaptor), app_, max_payload_, open_handler_, message_handler_, close_handler_, error_handler_, accept_handler_);
+            new crow::websocket::Connection<SocketAdaptor, App>(req, std::move(adaptor), app_, max_payload_, subprotocols_, open_handler_, message_handler_, close_handler_, error_handler_, accept_handler_);
         }
 #ifdef CROW_ENABLE_SSL
         void handle_upgrade(const request& req, response&, SSLAdaptor&& adaptor) override
         {
-            new crow::websocket::Connection<SSLAdaptor, App>(req, std::move(adaptor), app_, max_payload_, open_handler_, message_handler_, close_handler_, error_handler_, accept_handler_);
+            new crow::websocket::Connection<SSLAdaptor, App>(req, std::move(adaptor), app_, max_payload_, subprotocols_, open_handler_, message_handler_, close_handler_, error_handler_, accept_handler_);
         }
 #endif
 
@@ -465,6 +465,12 @@ namespace crow
         {
             max_payload_ = max_payload;
             max_payload_override_ = true;
+            return *this;
+        }
+
+        self_t& subprotocols(std::vector<std::string>&& subprotocols)
+        {
+            subprotocols_ = subprotocols;
             return *this;
         }
 
@@ -512,6 +518,7 @@ namespace crow
         std::function<bool(const crow::request&, void**)> accept_handler_;
         uint64_t max_payload_;
         bool max_payload_override_ = false;
+        std::vector<std::string> subprotocols_;
     };
 
     /// Allows the user to assign parameters using functions.

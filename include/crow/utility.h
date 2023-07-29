@@ -897,5 +897,23 @@ namespace crow
 
             return v.substr(begin, end - begin);
         }
+
+        /**
+         * @brief splits a string based on a separator
+         */
+        inline static std::vector<std::string> split(const std::string& v, const std::string& separator)
+        {
+            std::vector<std::string> result;
+            size_t startPos = 0;
+
+            for (size_t foundPos = v.find(separator); foundPos != std::string::npos; foundPos = v.find(separator, startPos))
+            {
+                result.push_back(v.substr(startPos, foundPos - startPos));
+                startPos = foundPos + separator.size();
+            }
+
+            result.push_back(v.substr(startPos));
+            return result;
+        }
     } // namespace utility
 } // namespace crow
