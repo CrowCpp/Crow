@@ -28,6 +28,7 @@ namespace crow
             virtual void send_pong(std::string msg) = 0;
             virtual void close(std::string const& msg = "quit") = 0;
             virtual std::string get_remote_ip() = 0;
+            virtual std::string get_subprotocol() const = 0;
             virtual ~connection() = default;
 
             void userdata(void* u) { userdata_ = u; }
@@ -243,6 +244,12 @@ namespace crow
             void set_max_payload_size(uint64_t payload)
             {
                 max_payload_bytes_ = payload;
+            }
+
+            /// Returns the matching client/server subprotocol, empty string if none matched. 
+            std::string get_subprotocol() const override
+            {
+                return subprotocol_;
             }
 
         protected:
