@@ -929,12 +929,9 @@ namespace crow
         {
             for (; first1 != last1; ++first1)
             {
-                for (auto it = first2; it != last2; ++it)
+                if (std::find(first2, last2, *first1) != last2)
                 {
-                    if (*first1 == *it)
-                    {
-                        return first1;
-                    }
+                    return first1;
                 }
             }
             return last1;
