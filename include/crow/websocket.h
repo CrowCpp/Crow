@@ -99,7 +99,7 @@ namespace crow
                 if (!subprotocols.empty() || !requested_subprotocols_header.empty())
                 {
                     auto requested_subprotocols = utility::split(requested_subprotocols_header, ", ");
-                    auto subprotocol = std::find_first_of(subprotocols.begin(), subprotocols.end(), requested_subprotocols.begin(), requested_subprotocols.end());
+                    auto subprotocol = utility::find_first_of(subprotocols.begin(), subprotocols.end(), requested_subprotocols.begin(), requested_subprotocols.end());
                     if (subprotocol == subprotocols.end())
                     {
                         adaptor_.close();
