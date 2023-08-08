@@ -468,7 +468,7 @@ namespace crow
             return *this;
         }
 
-        self_t& subprotocols(std::vector<std::string>&& subprotocols)
+        self_t& subprotocols(const std::vector<std::string>& subprotocols)
         {
             subprotocols_ = subprotocols;
             return *this;
