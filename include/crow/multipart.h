@@ -78,6 +78,11 @@ namespace crow
             std::vector<part> parts; ///< The individual parts of the message
             mp_map part_map;         ///< The individual parts of the message, organized in a map with the `name` header parameter being the key
 
+            operator bool() const noexcept
+            {
+                return m_is_valid;
+            }
+
             const std::string& get_header_value(const std::string& key) const
             {
                 return crow::get_header_value(headers, key);
@@ -152,6 +157,8 @@ namespace crow
             }
 
         private:
+            bool m_is_valid = true;
+
             std::string get_boundary(const std::string& header) const
             {
                 constexpr char boundary_text[] = "boundary=";
@@ -180,6 +187,7 @@ namespace crow
                     if (found == std::string::npos)
                     {
                         // did not find delimiter; probably an ill-formed body; ignore the rest
+                        m_is_valid = false;
                         break;
                     }
                     std::string section = body.substr(0, found);
