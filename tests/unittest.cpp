@@ -2335,7 +2335,14 @@ TEST_CASE("multipart")
     CROW_ROUTE(app, "/multipart")
     ([](const crow::request& req, crow::response& res) {
         multipart::message msg(req);
-        res.body = msg.dump();
+        if (!msg)
+        {
+            res.code = 400;
+        }
+        else
+        {
+            res.body = msg.dump();
+        }
         res.end();
     });
 
@@ -2371,6 +2378,19 @@ TEST_CASE("multipart")
         app.handle_full(req, res);
 
         CHECK(test_string == res.body);
+    }
+
+    {
+        request req;
+        response res;
+
+        req.url = "/multipart";
+        req.add_header("Content-Type", "application/json");
+        req.body = R"({"hello ": " world "})";
+
+        app.handle_full(req, res);
+
+        CHECK(res.code == 400);
     }
 } // multipart
 
