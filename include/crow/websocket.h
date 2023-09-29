@@ -390,6 +390,7 @@ namespace crow
                                         message_handler_(*this, message_, is_binary_);
                                     message_.clear();
                                 }
+                                break; // Fixing fallthrough error
                             }
                         case 1: // Text
                             {
