@@ -1851,10 +1851,11 @@ namespace crow
                             } f_state;
                             char outbuf[128];
 #ifdef _MSC_VER
-                            sprintf_s(outbuf, sizeof(outbuf), "%f", v.num.d);
+#define MSC_COMPATIBLE_SPRINTF(BUFFER_PTR, FORMAT_PTR, VALUE) sprintf_s((BUFFER_PTR), 128, (FORMAT_PTR), DBL_DECIMAL_DIG, (VALUE))
 #else
-                            snprintf(outbuf, sizeof(outbuf), "%f", v.num.d);
+#define MSC_COMPATIBLE_SPRINTF(BUFFER_PTR, FORMAT_PTR, VALUE) sprintf((BUFFER_PTR), (FORMAT_PTR), DECIMAL_DIG, (VALUE))
 #endif
+                            MSC_COMPATIBLE_SPRINTF(outbuf, "%.*g", v.num.d);
                             char *p = &outbuf[0], *o = nullptr; // o is the position of the first trailing 0
                             f_state = start;
                             while (*p != '\0')

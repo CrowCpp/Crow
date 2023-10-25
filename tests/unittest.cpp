@@ -1038,11 +1038,13 @@ TEST_CASE("json::wvalue::wvalue(float)")
 
 TEST_CASE("json::wvalue::wvalue(double)")
 {
-    double d = 4.2;
+    double d = 0.036303908355795146;
     json::wvalue value = d;
 
     CHECK(value.t() == json::type::Number);
-    CHECK(value.dump() == "4.2");
+    auto dumped_value = value.dump();
+    CROW_LOG_DEBUG << dumped_value;
+    CHECK(std::abs(utility::lexical_cast<double>(dumped_value) - d) < numeric_limits<double>::epsilon());
 } // json::wvalue::wvalue(double)
 
 TEST_CASE("json::wvalue::wvalue(char const*)")
