@@ -254,8 +254,8 @@ namespace crow
         }
 
     private:
-        asio::io_service io_service_;
         std::vector<std::unique_ptr<asio::io_service>> io_service_pool_;
+        asio::io_service io_service_;
         std::vector<detail::task_timer*> task_timer_pool_;
         std::vector<std::function<std::string()>> get_cached_date_str_pool_;
         tcp::acceptor acceptor_;
