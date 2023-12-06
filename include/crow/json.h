@@ -456,6 +456,13 @@ namespace crow
                 return detail::r_string{start_, end_};
             }
 
+            /// Any stringstream lexical cast.
+            template <typename cast_t>
+            cast_t cast() const
+            {
+                return utility::lexical_cast<cast_t>(start_, end_ - start_);
+            }
+
             /// The list or object value
             std::vector<rvalue> lo()
             {
