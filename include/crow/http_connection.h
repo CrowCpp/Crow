@@ -436,26 +436,16 @@ namespace crow
                 cancel_deadline_timer();
                 if (res.body.length() > 0)
                 {
-                    std::string buf;
-                    std::vector<asio::const_buffer> buffers;
-
-                    while (res.body.length() > 16384)
+                    std::vector<asio::const_buffer> buffers{1};
+                    const uint8_t *data = reinterpret_cast<const uint8_t*>(res.body.data());
+                    size_t length = res.body.length();
+                    for(size_t transferred = 0; transferred < length;)
                     {
-                        //buf.reserve(16385);
-                        buf = res.body.substr(0, 16384);
-                        res.body = res.body.substr(16384);
-                        buffers.clear();
-                        buffers.push_back(asio::buffer(buf));
+                        size_t to_transfer = std::min(16385UL, length-transferred);
+                        buffers[0] = asio::const_buffer(data+transferred, to_transfer);
                         do_write_sync(buffers);
+                        transferred += to_transfer;
                     }
-                    // Collect whatever is left (less than 16KB) and send it down the socket
-                    // buf.reserve(is.length());
-                    buf = res.body;
-                    res.body.clear();
-
-                    buffers.clear();
-                    buffers.push_back(asio::buffer(buf));
-                    do_write_sync(buffers);
                 }
                 if (close_connection_)
                 {
