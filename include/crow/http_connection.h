@@ -111,6 +111,7 @@ namespace crow
             // HTTP 1.1 Expect: 100-continue
             if (req_.http_ver_major == 1 && req_.http_ver_minor == 1 && get_header_value(req_.headers, "expect") == "100-continue")
             {
+                continue_requested = true;
                 buffers_.clear();
                 static std::string expect_100_continue = "HTTP/1.1 100 Continue\r\n\r\n";
                 buffers_.emplace_back(expect_100_continue.data(), expect_100_continue.size());
@@ -521,8 +522,16 @@ namespace crow
               adaptor_.socket(), buffers_,
               [self](const asio::error_code& ec, std::size_t /*bytes_transferred*/) {
                   self->res.clear();
-                  self->res_body_copy_.clear();
-                  self->parser_.clear();
+                  self->res_body_copy_.clear();                  
+                  if (!self->continue_requested)
+                  {
+                      self->parser_.clear();
+                  }
+                  else
+                  {
+                      self->continue_requested = false;
+                  }
+                  
                   if (!ec)
                   {
                       if (self->close_connection_)
@@ -600,6 +609,7 @@ namespace crow
 
         detail::task_timer::identifier_type task_id_{};
 
+        bool continue_requested{};
         bool need_to_call_after_handlers_{};
         bool need_to_start_read_after_complete_{};
         bool add_keep_alive_{};
