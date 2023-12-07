@@ -441,7 +441,7 @@ namespace crow
                     size_t length = res.body.length();
                     for(size_t transferred = 0; transferred < length;)
                     {
-                        size_t to_transfer = std::min(16385UL, length-transferred);
+                        size_t to_transfer = std::min(16384UL, length-transferred);
                         buffers[0] = asio::const_buffer(data+transferred, to_transfer);
                         do_write_sync(buffers);
                         transferred += to_transfer;
