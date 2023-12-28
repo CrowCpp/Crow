@@ -3,6 +3,7 @@
 #define ASIO_STANDALONE
 #endif
 #include <asio.hpp>
+#include <algorithm>
 #include <atomic>
 #include <chrono>
 #include <vector>
