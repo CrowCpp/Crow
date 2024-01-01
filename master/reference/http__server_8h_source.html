@@ -355,8 +355,8 @@ $(document).ready(function(){initNavTree('http__server_8h_source.html',''); init
 <div class="line"><a name="l00254"></a><span class="lineno">  254</span>&#160;        }</div>
 <div class="line"><a name="l00255"></a><span class="lineno">  255</span>&#160; </div>
 <div class="line"><a name="l00256"></a><span class="lineno">  256</span>&#160;    <span class="keyword">private</span>:</div>
-<div class="line"><a name="l00257"></a><span class="lineno">  257</span>&#160;        asio::io_service io_service_;</div>
-<div class="line"><a name="l00258"></a><span class="lineno">  258</span>&#160;        std::vector&lt;std::unique_ptr&lt;asio::io_service&gt;&gt; io_service_pool_;</div>
+<div class="line"><a name="l00257"></a><span class="lineno">  257</span>&#160;        std::vector&lt;std::unique_ptr&lt;asio::io_service&gt;&gt; io_service_pool_;</div>
+<div class="line"><a name="l00258"></a><span class="lineno">  258</span>&#160;        asio::io_service io_service_;</div>
 <div class="line"><a name="l00259"></a><span class="lineno">  259</span>&#160;        std::vector&lt;detail::task_timer*&gt; task_timer_pool_;</div>
 <div class="line"><a name="l00260"></a><span class="lineno">  260</span>&#160;        std::vector&lt;std::function&lt;std::string()&gt;&gt; get_cached_date_str_pool_;</div>
 <div class="line"><a name="l00261"></a><span class="lineno">  261</span>&#160;        tcp::acceptor acceptor_;</div>
