@@ -11,6 +11,10 @@ add_executable(unittest ${TEST_SRCS})
 target_link_libraries(unittest Crow::Crow)
 add_warnings_optimizations(unittest)
 
+if("${CMAKE_SYSTEM_NAME}" STREQUAL "Android")
+  target_link_libraries(unittest log)
+endif()
+
 if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
   set_target_properties(unittest PROPERTIES COMPILE_FLAGS "--coverage -fprofile-arcs -ftest-coverage")
   target_link_libraries(unittest gcov)
