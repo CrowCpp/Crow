@@ -3,6 +3,7 @@
 #define ASIO_STANDALONE
 #endif
 #include <asio.hpp>
+#include <algorithm>
 #include <atomic>
 #include <chrono>
 #include <vector>
@@ -111,6 +112,7 @@ namespace crow
             // HTTP 1.1 Expect: 100-continue
             if (req_.http_ver_major == 1 && req_.http_ver_minor == 1 && get_header_value(req_.headers, "expect") == "100-continue")
             {
+                continue_requested = true;
                 buffers_.clear();
                 static std::string expect_100_continue = "HTTP/1.1 100 Continue\r\n\r\n";
                 buffers_.emplace_back(expect_100_continue.data(), expect_100_continue.size());
@@ -436,26 +438,16 @@ namespace crow
                 cancel_deadline_timer();
                 if (res.body.length() > 0)
                 {
-                    std::string buf;
-                    std::vector<asio::const_buffer> buffers;
-
-                    while (res.body.length() > 16384)
+                    std::vector<asio::const_buffer> buffers{1};
+                    const uint8_t *data = reinterpret_cast<const uint8_t*>(res.body.data());
+                    size_t length = res.body.length();
+                    for(size_t transferred = 0; transferred < length;)
                     {
-                        //buf.reserve(16385);
-                        buf = res.body.substr(0, 16384);
-                        res.body = res.body.substr(16384);
-                        buffers.clear();
-                        buffers.push_back(asio::buffer(buf));
+                        size_t to_transfer = CROW_MIN(16384UL, length-transferred);
+                        buffers[0] = asio::const_buffer(data+transferred, to_transfer);
                         do_write_sync(buffers);
+                        transferred += to_transfer;
                     }
-                    // Collect whatever is left (less than 16KB) and send it down the socket
-                    // buf.reserve(is.length());
-                    buf = res.body;
-                    res.body.clear();
-
-                    buffers.clear();
-                    buffers.push_back(asio::buffer(buf));
-                    do_write_sync(buffers);
                 }
                 if (close_connection_)
                 {
@@ -521,8 +513,16 @@ namespace crow
               adaptor_.socket(), buffers_,
               [self](const asio::error_code& ec, std::size_t /*bytes_transferred*/) {
                   self->res.clear();
-                  self->res_body_copy_.clear();
-                  self->parser_.clear();
+                  self->res_body_copy_.clear();                  
+                  if (!self->continue_requested)
+                  {
+                      self->parser_.clear();
+                  }
+                  else
+                  {
+                      self->continue_requested = false;
+                  }
+                  
                   if (!ec)
                   {
                       if (self->close_connection_)
@@ -600,6 +600,7 @@ namespace crow
 
         detail::task_timer::identifier_type task_id_{};
 
+        bool continue_requested{};
         bool need_to_call_after_handlers_{};
         bool need_to_start_read_after_complete_{};
         bool add_keep_alive_{};
