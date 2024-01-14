@@ -101,14 +101,7 @@ namespace crow
                 {
                     auto requested_subprotocols = utility::split(requested_subprotocols_header, ", ");
                     auto subprotocol = utility::find_first_of(subprotocols.begin(), subprotocols.end(), requested_subprotocols.begin(), requested_subprotocols.end());
-                    if (subprotocol == subprotocols.end())
-                    {
-                        adaptor_.close();
-                        handler_->remove_websocket(this);
-                        delete this;
-                        return;
-                    }
-                    else
+                    if (subprotocol != subprotocols.end())
                     {
                         subprotocol_ = *subprotocol;
                     }
