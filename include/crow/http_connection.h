@@ -162,7 +162,7 @@ namespace crow
             need_to_call_after_handlers_ = false;
             if (!is_invalid_request)
             {
-                res.complete_request_handler_ = nullptr;
+                res.complete_request_handler_.clear();
                 auto self = this->shared_from_this();
                 res.is_alive_helper_ = [self]() -> bool {
                     return self->adaptor_.is_open();
@@ -202,7 +202,7 @@ namespace crow
         void complete_request()
         {
             CROW_LOG_INFO << "Response: " << this << ' ' << req_.raw_url << ' ' << res.code << ' ' << close_connection_;
-            res.is_alive_helper_ = nullptr;
+            res.is_alive_helper_.clear();
 
             if (need_to_call_after_handlers_)
             {
@@ -271,8 +271,8 @@ namespace crow
     private:
         void prepare_buffers()
         {
-            res.complete_request_handler_ = nullptr;
-            res.is_alive_helper_ = nullptr;
+            res.complete_request_handler_.clear();
+            res.is_alive_helper_.clear();
 
             if (!adaptor_.is_open())
             {

@@ -3445,3 +3445,25 @@ TEST_CASE("lexical_cast")
     CHECK(utility::lexical_cast<string>(4) == "4");
     CHECK(utility::lexical_cast<float>("10", 2) == 10.0f);
 }
+
+TEST_CASE("lambda_wrapper")
+{
+    utility::lambda_wrapper<int, std::string> empty;
+    CHECK(empty != true);
+    CHECK_THROWS_AS(empty("hello"), crow::utility::call_error);
+
+    utility::lambda_wrapper<int> const_val([]()->int { return 42; });
+    CHECK(const_val == true);
+    CHECK(const_val() == 42);
+
+    utility::lambda_wrapper<int, int, int> plus([](int a, int b)->int { return a + b; });
+    CHECK(plus == true);
+    CHECK(plus(2, 3) == 5);
+
+    const std::string name{"Motoko"};
+    utility::lambda_wrapper<void, std::string&> func([name](std::string& str) { str = name; });
+    CHECK(func == true);
+    std::string strval;
+    func(strval);
+    CHECK(strval == name);
+}
