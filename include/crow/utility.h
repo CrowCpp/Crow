@@ -11,6 +11,7 @@
 #include <sstream>
 #include <unordered_map>
 #include <random>
+#include <algorithm>
 
 #include "crow/settings.h"
 
