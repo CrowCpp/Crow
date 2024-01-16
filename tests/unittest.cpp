@@ -4,7 +4,6 @@
 #include <sys/stat.h>
 
 #include <iostream>
-#include <sstream>
 #include <vector>
 #include <thread>
 #include <chrono>
@@ -149,6 +148,27 @@ TEST_CASE("PathRouting")
     }
 } // PathRouting
 
+TEST_CASE("InvalidPathRouting")
+{
+    SimpleApp app;
+
+    CROW_ROUTE(app, "invalid_route")
+    ([] {
+        return "should not arrive here";
+    });
+
+    try
+    {
+        app.validate();
+        FAIL_CHECK();
+    }
+    catch (std::exception& e)
+    {
+        auto expected_exception_text = "Internal error: Routes must start with a '/'";
+        CHECK(strcmp(expected_exception_text, e.what()) == 0);
+    }
+} // InvalidPathRouting
+
 TEST_CASE("RoutingTest")
 {
     SimpleApp app;
@@ -289,6 +309,34 @@ TEST_CASE("simple_response_routing_params")
     CHECK(3 == rp.get<double>(0));
     CHECK("hello" == rp.get<string>(0));
 } // simple_response_routing_params
+
+TEST_CASE("custom_content_types")
+{
+    // standard behaviour: content type is a key of mime_types
+    CHECK("text/html" == response("html", "").get_header_value("Content-Type"));
+    CHECK("image/jpeg" == response("jpg", "").get_header_value("Content-Type"));
+    CHECK("video/mpeg" == response("mpg", "").get_header_value("Content-Type"));
+
+    // content type is already a valid mime type
+    CHECK("text/csv" == response("text/csv", "").get_header_value("Content-Type"));
+    CHECK("application/xhtml+xml" == response("application/xhtml+xml", "").get_header_value("Content-Type"));
+    CHECK("font/custom;parameters=ok" == response("font/custom;parameters=ok", "").get_header_value("Content-Type"));
+
+    // content type looks like a mime type, but is invalid
+    // note: RFC6838 only allows a limited set of parent types:
+    // https://datatracker.ietf.org/doc/html/rfc6838#section-4.2.7
+    //
+    // These types are: application, audio, font, example, image, message,
+    //                  model, multipart, text, video
+
+    CHECK("text/plain" == response("custom/type", "").get_header_value("Content-Type"));
+
+    // content type does not look like a mime type.
+    CHECK("text/plain" == response("notarealextension", "").get_header_value("Content-Type"));
+    CHECK("text/plain" == response("image/", "").get_header_value("Content-Type"));
+    CHECK("text/plain" == response("/json", "").get_header_value("Content-Type"));
+
+} // custom_content_types
 
 TEST_CASE("handler_with_response")
 {
@@ -1214,6 +1262,24 @@ TEST_CASE("template_basic")
     auto result = t.render_string(ctx);
     CHECK("attack of killer tomatoes" == result);
 } // template_basic
+
+TEST_CASE("template_true_tag")
+{
+    auto t = crow::mustache::compile(R"---({{true_value}})---");
+    crow::mustache::context ctx;
+    ctx["true_value"] = true;
+    auto result = t.render_string(ctx);
+    CHECK("true" == result);
+} // template_true_tag
+
+TEST_CASE("template_false_tag")
+{
+    auto t = crow::mustache::compile(R"---({{false_value}})---");
+    crow::mustache::context ctx;
+    ctx["false_value"] = false;
+    auto result = t.render_string(ctx);
+    CHECK("false" == result);
+} // template_false_tag
 
 TEST_CASE("template_function")
 {

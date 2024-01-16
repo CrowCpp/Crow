@@ -715,7 +715,8 @@ namespace crow
             // a special device. Thus we search for the string (case-insensitive), and then check if the string ends or if
             // is has a dangerous follow up character (.:\/)
             auto sanitizeSpecialFile = [](std::string& source, unsigned ofs, const char* pattern, bool includeNumber, char replacement) {
-                unsigned i = ofs, len = source.length();
+	      unsigned i = ofs;
+	      size_t len = source.length();
                 const char* p = pattern;
                 while (*p)
                 {

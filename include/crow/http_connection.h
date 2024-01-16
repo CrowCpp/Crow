@@ -3,9 +3,11 @@
 #define ASIO_STANDALONE
 #endif
 #include <asio.hpp>
+#include <algorithm>
 #include <atomic>
 #include <chrono>
 #include <vector>
+#include <memory>
 
 #include "crow/http_parser_merged.h"
 #include "crow/common.h"
@@ -31,7 +33,7 @@ namespace crow
 
     /// An HTTP connection.
     template<typename Adaptor, typename Handler, typename... Middlewares>
-    class Connection
+    class Connection: public std::enable_shared_from_this<Connection<Adaptor, Handler, Middlewares...>>
     {
         friend struct crow::response;
 
@@ -64,8 +66,6 @@ namespace crow
 
         ~Connection()
         {
-            res.complete_request_handler_ = nullptr;
-            cancel_deadline_timer();
 #ifdef CROW_ENABLE_DEBUG
             connectionCount--;
             CROW_LOG_DEBUG << "Connection (" << this << ") freed, total: " << connectionCount;
@@ -80,18 +80,18 @@ namespace crow
 
         void start()
         {
-            adaptor_.start([this](const asio::error_code& ec) {
+            auto self = this->shared_from_this();
+            adaptor_.start([self](const asio::error_code& ec) {
                 if (!ec)
                 {
-                    start_deadline();
-                    parser_.clear();
+                    self->start_deadline();
+                    self->parser_.clear();
 
-                    do_read();
+                    self->do_read();
                 }
                 else
                 {
                     CROW_LOG_ERROR << "Could not start adaptor: " << ec.message();
-                    check_destroy();
                 }
             });
         }
@@ -112,6 +112,7 @@ namespace crow
             // HTTP 1.1 Expect: 100-continue
             if (req_.http_ver_major == 1 && req_.http_ver_minor == 1 && get_header_value(req_.headers, "expect") == "100-continue")
             {
+                continue_requested = true;
                 buffers_.clear();
                 static std::string expect_100_continue = "HTTP/1.1 100 Continue\r\n\r\n";
                 buffers_.emplace_back(expect_100_continue.data(), expect_100_continue.size());
@@ -161,9 +162,10 @@ namespace crow
             need_to_call_after_handlers_ = false;
             if (!is_invalid_request)
             {
-                res.complete_request_handler_ = [] {};
-                res.is_alive_helper_ = [this]() -> bool {
-                    return adaptor_.is_open();
+                res.complete_request_handler_ = nullptr;
+                auto self = this->shared_from_this();
+                res.is_alive_helper_ = [self]() -> bool {
+                    return self->adaptor_.is_open();
                 };
 
                 ctx_ = detail::context<Middlewares...>();
@@ -176,8 +178,9 @@ namespace crow
 
                 if (!res.completed_)
                 {
-                    res.complete_request_handler_ = [this] {
-                        this->complete_request();
+                    auto self = this->shared_from_this();
+                    res.complete_request_handler_ = [self] {
+                        self->complete_request();
                     };
                     need_to_call_after_handlers_ = true;
                     handler_->handle(req_, res, routing_handle_result_);
@@ -199,6 +202,7 @@ namespace crow
         void complete_request()
         {
             CROW_LOG_INFO << "Response: " << this << ' ' << req_.raw_url << ' ' << res.code << ' ' << close_connection_;
+            res.is_alive_helper_ = nullptr;
 
             if (need_to_call_after_handlers_)
             {
@@ -267,8 +271,8 @@ namespace crow
     private:
         void prepare_buffers()
         {
-            //auto self = this->shared_from_this();
             res.complete_request_handler_ = nullptr;
+            res.is_alive_helper_ = nullptr;
 
             if (!adaptor_.is_open())
             {
@@ -384,7 +388,6 @@ namespace crow
 
         void do_write_static()
         {
-            is_writing = true;
             asio::write(adaptor_.socket(), buffers_);
 
             if (res.file_info.statResult == 0)
@@ -400,13 +403,11 @@ namespace crow
                     is.read(buf, sizeof(buf));
                 }
             }
-            is_writing = false;
             if (close_connection_)
             {
                 adaptor_.shutdown_readwrite();
                 adaptor_.close();
                 CROW_LOG_DEBUG << this << " from write (static)";
-                check_destroy();
             }
 
             res.end();
@@ -433,39 +434,26 @@ namespace crow
             }
             else
             {
-                is_writing = true;
                 asio::write(adaptor_.socket(), buffers_); // Write the response start / headers
                 cancel_deadline_timer();
                 if (res.body.length() > 0)
                 {
-                    std::string buf;
-                    std::vector<asio::const_buffer> buffers;
-
-                    while (res.body.length() > 16384)
+                    std::vector<asio::const_buffer> buffers{1};
+                    const uint8_t *data = reinterpret_cast<const uint8_t*>(res.body.data());
+                    size_t length = res.body.length();
+                    for(size_t transferred = 0; transferred < length;)
                     {
-                        //buf.reserve(16385);
-                        buf = res.body.substr(0, 16384);
-                        res.body = res.body.substr(16384);
-                        buffers.clear();
-                        buffers.push_back(asio::buffer(buf));
+                        size_t to_transfer = CROW_MIN(16384UL, length-transferred);
+                        buffers[0] = asio::const_buffer(data+transferred, to_transfer);
                         do_write_sync(buffers);
+                        transferred += to_transfer;
                     }
-                    // Collect whatever is left (less than 16KB) and send it down the socket
-                    // buf.reserve(is.length());
-                    buf = res.body;
-                    res.body.clear();
-
-                    buffers.clear();
-                    buffers.push_back(asio::buffer(buf));
-                    do_write_sync(buffers);
                 }
-                is_writing = false;
                 if (close_connection_)
                 {
                     adaptor_.shutdown_readwrite();
                     adaptor_.close();
                     CROW_LOG_DEBUG << this << " from write (res_stream)";
-                    check_destroy();
                 }
 
                 res.end();
@@ -477,16 +465,15 @@ namespace crow
 
         void do_read()
         {
-            //auto self = this->shared_from_this();
-            is_reading = true;
+            auto self = this->shared_from_this();
             adaptor_.socket().async_read_some(
               asio::buffer(buffer_),
-              [this](const asio::error_code& ec, std::size_t bytes_transferred) {
+              [self](const asio::error_code& ec, std::size_t bytes_transferred) {
                   bool error_while_reading = true;
                   if (!ec)
                   {
-                      bool ret = parser_.feed(buffer_.data(), bytes_transferred);
-                      if (ret && adaptor_.is_open())
+                      bool ret = self->parser_.feed(self->buffer_.data(), bytes_transferred);
+                      if (ret && self->adaptor_.is_open())
                       {
                           error_while_reading = false;
                       }
@@ -494,60 +481,60 @@ namespace crow
 
                   if (error_while_reading)
                   {
-                      cancel_deadline_timer();
-                      parser_.done();
-                      adaptor_.shutdown_read();
-                      adaptor_.close();
-                      is_reading = false;
-                      CROW_LOG_DEBUG << this << " from read(1) with description: \"" << http_errno_description(static_cast<http_errno>(parser_.http_errno)) << '\"';
-                      check_destroy();
+                      self->cancel_deadline_timer();
+                      self->parser_.done();
+                      self->adaptor_.shutdown_read();
+                      self->adaptor_.close();
+                      CROW_LOG_DEBUG << self << " from read(1) with description: \"" << http_errno_description(static_cast<http_errno>(self->parser_.http_errno)) << '\"';
                   }
-                  else if (close_connection_)
+                  else if (self->close_connection_)
                   {
-                      cancel_deadline_timer();
-                      parser_.done();
-                      is_reading = false;
-                      check_destroy();
+                      self->cancel_deadline_timer();
+                      self->parser_.done();
                       // adaptor will close after write
                   }
-                  else if (!need_to_call_after_handlers_)
+                  else if (!self->need_to_call_after_handlers_)
                   {
-                      start_deadline();
-                      do_read();
+                      self->start_deadline();
+                      self->do_read();
                   }
                   else
                   {
                       // res will be completed later by user
-                      need_to_start_read_after_complete_ = true;
+                      self->need_to_start_read_after_complete_ = true;
                   }
               });
         }
 
         void do_write()
         {
-            //auto self = this->shared_from_this();
-            is_writing = true;
+            auto self = this->shared_from_this();
             asio::async_write(
               adaptor_.socket(), buffers_,
-              [&](const asio::error_code& ec, std::size_t /*bytes_transferred*/) {
-                  is_writing = false;
-                  res.clear();
-                  res_body_copy_.clear();
-                  parser_.clear();
+              [self](const asio::error_code& ec, std::size_t /*bytes_transferred*/) {
+                  self->res.clear();
+                  self->res_body_copy_.clear();                  
+                  if (!self->continue_requested)
+                  {
+                      self->parser_.clear();
+                  }
+                  else
+                  {
+                      self->continue_requested = false;
+                  }
+                  
                   if (!ec)
                   {
-                      if (close_connection_)
+                      if (self->close_connection_)
                       {
-                          adaptor_.shutdown_write();
-                          adaptor_.close();
-                          CROW_LOG_DEBUG << this << " from write(1)";
-                          check_destroy();
+                          self->adaptor_.shutdown_write();
+                          self->adaptor_.close();
+                          CROW_LOG_DEBUG << self << " from write(1)";
                       }
                   }
                   else
                   {
-                      CROW_LOG_DEBUG << this << " from write(2)";
-                      check_destroy();
+                      CROW_LOG_DEBUG << self << " from write(2)";
                   }
               });
         }
@@ -564,21 +551,9 @@ namespace crow
                 {
                     CROW_LOG_ERROR << ec << " - happened while sending buffers";
                     CROW_LOG_DEBUG << this << " from write (sync)(2)";
-                    check_destroy();
                     return true;
                 }
             });
-        }
-
-        void check_destroy()
-        {
-            CROW_LOG_DEBUG << this << " is_reading " << is_reading << " is_writing " << is_writing;
-            if (!is_reading && !is_writing)
-            {
-                queue_length_--;
-                CROW_LOG_DEBUG << this << " delete (idle) (queue length: " << queue_length_ << ')';
-                delete this;
-            }
         }
 
         void cancel_deadline_timer()
@@ -591,13 +566,14 @@ namespace crow
         {
             cancel_deadline_timer();
 
-            task_id_ = task_timer_.schedule([this] {
-                if (!adaptor_.is_open())
+            auto self = this->shared_from_this();
+            task_id_ = task_timer_.schedule([self] {
+                if (!self->adaptor_.is_open())
                 {
                     return;
                 }
-                adaptor_.shutdown_readwrite();
-                adaptor_.close();
+                self->adaptor_.shutdown_readwrite();
+                self->adaptor_.close();
             });
             CROW_LOG_DEBUG << this << " timer added: " << &task_timer_ << ' ' << task_id_;
         }
@@ -622,10 +598,9 @@ namespace crow
         std::string date_str_;
         std::string res_body_copy_;
 
-        detail::task_timer::identifier_type task_id_;
+        detail::task_timer::identifier_type task_id_{};
 
-        bool is_reading{};
-        bool is_writing{};
+        bool continue_requested{};
         bool need_to_call_after_handlers_{};
         bool need_to_start_read_after_complete_{};
         bool add_keep_alive_{};

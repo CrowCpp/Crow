@@ -31,6 +31,12 @@ if(NOT CMAKE_BUILD_TYPE)
 		set(CMAKE_BUILD_TYPE "Debug")
 	endif()
 endif()
+if (MSVC)
+  add_compile_options(/bigobj)
+endif ()
+
+include(FindPython3)
+find_package(Python3) 
 
 #####################################
 # Define Options
@@ -62,6 +68,8 @@ target_link_libraries(Crow
 		asio::asio
 )
 
+target_compile_definitions(Crow INTERFACE "")
+
 if("compression" IN_LIST CROW_FEATURES)
 	find_package(ZLIB REQUIRED)
 	target_link_libraries(Crow INTERFACE ZLIB::ZLIB)
@@ -92,45 +100,57 @@ if(CROW_BUILD_EXAMPLES)
 endif()
 
 # Tests
-if(NOT MSVC AND CROW_BUILD_TESTS)
-	if(NOT "compression" IN_LIST CROW_FEATURES)
-		message(STATUS "Compression tests are omitted. (Configure with CROW_FEATURES containing 'compression' to enable them)")
-	endif()
-	if(NOT "ssl" IN_LIST CROW_FEATURES)
-		message(STATUS "SSL tests are omitted. (Configure with CROW_FEATURES containing 'ssl' to enable them)")
-	else()
-		add_test(NAME ssl_test COMMAND ${CMAKE_CURRENT_BINARY_DIR}/tests/ssl/ssltest)
-	endif()
+if(CROW_BUILD_TESTS)
 
-	add_subdirectory(tests)
-	enable_testing()
-	add_test(NAME crow_test COMMAND ${CMAKE_CURRENT_BINARY_DIR}/tests/unittest)
-	add_test(NAME template_test COMMAND ${CMAKE_CURRENT_BINARY_DIR}/tests/template/test.py WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/tests/template)
+  add_subdirectory(tests)
+  enable_testing()
+  add_test(
+    NAME crow_test
+    COMMAND ${CMAKE_CURRENT_BINARY_DIR}/tests/unittest
+  )
+
+  if(NOT "compression" IN_LIST CROW_FEATURES)
+    message(STATUS "Compression tests are omitted. (Configure with CROW_FEATURES containing 'compression' to enable them)")
+  endif()
+  if(NOT "ssl" IN_LIST CROW_FEATURES)
+    message(STATUS "SSL tests are omitted. (Configure with CROW_FEATURES containing 'ssl' to enable them)")
+  else()
+    if(NOT MSVC)
+      add_test(
+	NAME ssl_test
+	COMMAND ${CMAKE_CURRENT_BINARY_DIR}/tests/ssl/ssltest
+      )
+    endif()
+  endif()
 endif()
 
 #####################################
 # Install Files
 #####################################
 if(CROW_INSTALL)
+	include(GNUInstallDirs)
 	install(TARGETS Crow EXPORT CrowTargets)
-	install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/ DESTINATION include)
+	install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/
+		DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+	)
 
 	install(EXPORT CrowTargets
 		FILE CrowTargets.cmake
 		NAMESPACE Crow::
-		DESTINATION lib/cmake/Crow
+		DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/Crow"
 	)
 
 	include(CMakePackageConfigHelpers)
 	configure_package_config_file(
 		"${CMAKE_CURRENT_SOURCE_DIR}/cmake/CrowConfig.cmake.in"
 		"${CMAKE_CURRENT_BINARY_DIR}/CrowConfig.cmake"
-		INSTALL_DESTINATION lib/cmake/Crow
+		INSTALL_DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/Crow"
 	)
 	install(FILES
 		"${CMAKE_CURRENT_SOURCE_DIR}/cmake/Findasio.cmake"
 		"${CMAKE_CURRENT_BINARY_DIR}/CrowConfig.cmake"
-		DESTINATION lib/cmake/Crow)
+		DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/Crow"
+	)
 endif()
 
 set(CPACK_GENERATOR "DEB")
@@ -139,8 +159,10 @@ set(CPACK_DEBIAN_PACKAGE_MAINTAINER "CrowCpp")
 set(CPACK_PACKAGE_VENDOR "CrowCpp")
 set(CPACK_PACKAGE_DESCRIPTION "A Fast and Easy to use C++ microframework for the web.")
 set(CPACK_PACKAGE_HOMEPAGE_URL "https://crowcpp.org")
+set(CPACK_DEBIAN_PACKAGE_ARCHITECTURE "all")
 set(CPACK_DEBIAN_PACKAGE_DEBUG OFF)
-set(CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON)
+set(CPACK_DEBIAN_PACKAGE_DEPENDS "libasio-dev")
+set(CPACK_DEBIAN_PACKAGE_SECTION "libdevel")
 
 include(CPack)
 

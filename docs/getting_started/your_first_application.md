@@ -32,7 +32,7 @@ Once you're happy with how you defined all your routes, you're going to want to 
 ``` cpp
 app.port(18080).multithreaded().run();
 ```
-Please note that the `port()` and `multithreaded()` methods aren't needed, Though not using `port()` will cause the default port (`80`) to be used.<br>
+Please note that the `port()` and `multithreaded()` methods aren't needed, though not using `port()` will cause the default port (`80`) to be used.<br>
 
 ## Putting it all together
 

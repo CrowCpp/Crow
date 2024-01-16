@@ -36,4 +36,4 @@ Works the same as `get_dict` but removing the values from the query string.
     if your query string contains both a list and dictionary with the same key, it is best to use `pop_list` before either `get_dict` or `pop_dict`, since a map cannot contain more than one value per key, each item in the list will override the previous and only the last will remain with an empty key.
 
 <br><br>
-For more information take a look [here](../../reference/classcrow_1_1query__string.html).
+For more information take a look [here](../reference/classcrow_1_1query__string.html).

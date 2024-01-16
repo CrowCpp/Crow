@@ -88,7 +88,7 @@ You can also access the URL parameters in the handler using `#!cpp req.url_param
     parameters inside the body can be parsed using `#!cpp req.get_body_params();`. which is useful for requests of type `application/x-www-form-urlencoded`. Its format is similar to `url_params`.
 
 
-For more information on `crow::request` go [here](../../reference/structcrow_1_1request.html).<br><br>
+For more information on `crow::request` go [here](../reference/structcrow_1_1request.html).<br><br>
 
 ### Response
 Crow also provides the ability to define a response in the parameters by using `#!cpp ([](crow::response& res){...})`.<br><br>
@@ -97,7 +97,7 @@ Please note that in order to return a response defined as a parameter you'll nee
 
 Alternatively, you can define the response in the body and return it (`#!cpp ([](){return crow::response()})`).<br>
 
-For more information on `crow::response` go [here](../../reference/structcrow_1_1response.html).<br><br>
+For more information on `crow::response` go [here](../reference/structcrow_1_1response.html).<br><br>
     
 Crow defines the following status codes:
 ```
@@ -152,7 +152,7 @@ Crow defines the following status codes:
 ### Return statement
 A `crow::response` is very strictly tied to a route. If you can have something in a response constructor, you can return it in a handler.<br><br>
 The main return type is `std::string`, although you could also return a `crow::json::wvalue` or `crow::multipart::message` directly.<br><br>
-For more information on the specific constructors for a `crow::response` go [here](../../reference/structcrow_1_1response.html).
+For more information on the specific constructors for a `crow::response` go [here](../reference/structcrow_1_1response.html).
 
 ## Returning custom classes
 <span class="tag">[:octicons-feed-tag-16: v0.3](https://github.com/CrowCpp/Crow/releases/v0.3)</span>
@@ -171,7 +171,7 @@ class a : public crow::returnable
     ...
     ...
 
-    std::string dump() override
+    std::string dump() const override
     {
         return this.as_string();
     }

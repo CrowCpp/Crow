@@ -16,7 +16,7 @@ theme:
   favicon: 'assets/favicon.svg'
   logo: 'assets/favicon.svg'
   icon:
-    repo: fontawesome/brands/github-square
+    repo: fontawesome/brands/square-github
   static_templates:
     - privacy_policy.html
   palette:
@@ -55,7 +55,7 @@ nav:
       - MacOS: getting_started/setup/macos.md
       - Windows: getting_started/setup/windows.md
     - Your First Application: getting_started/your_first_application.md
-    - A simple Webpage: getting_started/a_simple_webpage.md
+    - A Simple Webpage: getting_started/a_simple_webpage.md
   - Guides:
     - Different parts of Crow:
       - App: guides/app.md
@@ -99,7 +99,7 @@ extra:
 plugins:
   - redirects:
       redirect_maps:
-        'getting_started/setup/': 'getting_started/setup/linux.md'
+        'getting_started/setup.md': 'getting_started/setup/linux.md'
   - meta-descriptions
   - search
 
@@ -108,4 +108,4 @@ extra_css:
   - 'stylesheets/latofonts.css'
   - 'stylesheets/extra.css'
 
-copyright: 'Copyright &copy; 2020-2022 CrowCpp'
+copyright: 'Copyright &copy; 2020-2023 CrowCpp'

@@ -2,7 +2,7 @@ Websockets are a way of connecting a client and a server without the request res
 
 ## Routes
 To create a websocket in Crow, you need a websocket route.<br>
-A websocket route differs from a normal route quite a bit. It uses A slightly altered `CROW_WEBSOCKET_ROUTE(app, "/url")` macro, which is then followed by a series of methods (with handlers inside) for each event. These are (sorted by order of execution):
+A websocket route differs from a normal route quite a bit. It uses a slightly altered `CROW_WEBSOCKET_ROUTE(app, "/url")` macro, which is then followed by a series of methods (with handlers inside) for each event. These are (sorted by order of execution):
 
 
 - `#!cpp onaccept([&](const crow::request& req, void** userdata){handler code goes here})`
@@ -17,12 +17,11 @@ A websocket route differs from a normal route quite a bit. It uses A slightly al
 
 !!! Warning
 
-    By default, Crow allows Clients to send unmasked websocket messages, which is useful for debugging but goes against the protocol specification. Production Crow applications should enforce the protocol by adding `#!cpp #define CROW_ENFORCE_WS_SPEC` to their source code.
+    By default, Crow allows clients to send unmasked websocket messages. This is useful for debugging, but goes against the protocol specifications. Production Crow applications should enforce the protocol by adding `#!cpp #define CROW_ENFORCE_WS_SPEC` to their source code.
 
-These event methods and their handlers can be chained. The full Route should look similar to this:
+These event methods and their handlers can be chained. The full route should look similar to this:
 ```cpp
-CROW_ROUTE(app, "/ws")
-    .websocket()
+CROW_WEBSOCKET_ROUTE(app, "/ws")
     .onopen([&](crow::websocket::connection& conn){
             do_something();
             })
@@ -44,9 +43,9 @@ The maximum payload size that a connection accepts can be adjusted either global
 
 !!! note
 
-    By default, This limit is disabled. To disable the global setting in specific routes, you only need to call `#!cpp CROW_WEBSOCKET_ROUTE(app, "/url").max_payload(UINT64_MAX)`.
+    By default, this limit is disabled. To disable the global setting in specific routes, you only need to call `#!cpp CROW_WEBSOCKET_ROUTE(app, "/url").max_payload(UINT64_MAX)`.
 
 
-For more info about websocket routes go [here](../../reference/classcrow_1_1_web_socket_rule.html).
+For more info about websocket routes go [here](../reference/classcrow_1_1_web_socket_rule.html).
 
-For more info about websocket connections go [here](../../reference/classcrow_1_1websocket_1_1_connection.html).
+For more info about websocket connections go [here](../reference/classcrow_1_1websocket_1_1_connection.html).

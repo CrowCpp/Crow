@@ -221,7 +221,7 @@ namespace crow
                 task_queue_length_pool_[service_idx]++;
                 CROW_LOG_DEBUG << &is << " {" << service_idx << "} queue length: " << task_queue_length_pool_[service_idx];
 
-                auto p = new Connection<Adaptor, Handler, Middlewares...>(
+                auto p = std::make_shared<Connection<Adaptor, Handler, Middlewares...>>(
                   is, handler_, server_name_, middlewares_,
                   get_cached_date_str_pool_[service_idx], *task_timer_pool_[service_idx], adaptor_ctx_, task_queue_length_pool_[service_idx]);
 
@@ -239,7 +239,6 @@ namespace crow
                       {
                           task_queue_length_pool_[service_idx]--;
                           CROW_LOG_DEBUG << &is << " {" << service_idx << "} queue length: " << task_queue_length_pool_[service_idx];
-                          delete p;
                       }
                       do_accept();
                   });
@@ -255,8 +254,8 @@ namespace crow
         }
 
     private:
-        asio::io_service io_service_;
         std::vector<std::unique_ptr<asio::io_service>> io_service_pool_;
+        asio::io_service io_service_;
         std::vector<detail::task_timer*> task_timer_pool_;
         std::vector<std::function<std::string()>> get_cached_date_str_pool_;
         tcp::acceptor acceptor_;

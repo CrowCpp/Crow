@@ -85,7 +85,7 @@ namespace crow
             {
                 return body_.substr(action.start, action.end - action.start);
             }
-            auto find_context(const std::string& name, const std::vector<context*>& stack, bool shouldUseOnlyFirstStackValue = false) const -> std::pair<bool, context&>
+            auto find_context(const std::string& name, const std::vector<const context*>& stack, bool shouldUseOnlyFirstStackValue = false) const -> std::pair<bool, const context&>
             {
                 if (name == ".")
                 {
@@ -123,7 +123,7 @@ namespace crow
 
                     for (auto it = stack.rbegin(); it != stack.rend(); ++it)
                     {
-                        context* view = *it;
+                        const context* view = *it;
                         bool found = true;
                         for (auto jt = names.begin(); jt != names.end(); ++jt)
                         {
@@ -170,13 +170,11 @@ namespace crow
                 }
             }
 
-            bool isTagInsideObjectBlock(const int& current, const std::vector<context*>& stack) const
+            bool isTagInsideObjectBlock(const int& current, const std::vector<const context*>& stack) const
             {
                 int openedBlock = 0;
-                int totalBlocksBefore = 0;
                 for (int i = current; i > 0; --i)
                 {
-                    ++totalBlocksBefore;
                     auto& action = actions_[i - 1];
 
                     if (action.t == ActionType::OpenBlock)
@@ -196,7 +194,7 @@ namespace crow
                 return false;
             }
 
-            void render_internal(int actionBegin, int actionEnd, std::vector<context*>& stack, std::string& out, int indent) const
+            void render_internal(int actionBegin, int actionEnd, std::vector<const context*>& stack, std::string& out, int indent) const
             {
                 int current = actionBegin;
 
@@ -233,6 +231,8 @@ namespace crow
                             auto& ctx = optional_ctx.second;
                             switch (ctx.t())
                             {
+                                case json::type::False:
+                                case json::type::True:
                                 case json::type::Number:
                                     out += ctx.dump();
                                     break;
@@ -360,7 +360,7 @@ namespace crow
             rendered_template render() const
             {
                 context empty_ctx;
-                std::vector<context*> stack;
+                std::vector<const context*> stack;
                 stack.emplace_back(&empty_ctx);
 
                 std::string ret;
@@ -369,9 +369,9 @@ namespace crow
             }
 
             /// Apply the values from the context provided and output a returnable template from this mustache template
-            rendered_template render(context& ctx) const
+            rendered_template render(const context& ctx) const
             {
-                std::vector<context*> stack;
+                std::vector<const context*> stack;
                 stack.emplace_back(&ctx);
 
                 std::string ret;
@@ -380,7 +380,7 @@ namespace crow
             }
 
             /// Apply the values from the context provided and output a returnable template from this mustache template
-            rendered_template render(context&& ctx) const
+            rendered_template render(const context&& ctx) const
             {
                 return render(ctx);
             }
@@ -389,7 +389,7 @@ namespace crow
             std::string render_string() const
             {
                 context empty_ctx;
-                std::vector<context*> stack;
+                std::vector<const context*> stack;
                 stack.emplace_back(&empty_ctx);
 
                 std::string ret;
@@ -398,9 +398,9 @@ namespace crow
             }
 
             /// Apply the values from the context provided and output a returnable template from this mustache template
-            std::string render_string(context& ctx) const
+            std::string render_string(const context& ctx) const
             {
-                std::vector<context*> stack;
+                std::vector<const context*> stack;
                 stack.emplace_back(&ctx);
 
                 std::string ret;

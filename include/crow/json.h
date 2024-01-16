@@ -1299,6 +1299,9 @@ namespace crow
 
             type t() const { return t_; }
 
+            /// Create an empty json value (outputs "{}" instead of a "null" string)
+            static crow::json::wvalue empty_object() { return crow::json::wvalue::object(); }
+
         private:
             type t_{type::Null};         ///< The type of the value.
             num_type nt{num_type::Null}; ///< The specific type of the number if \ref t_ is a number.
@@ -1653,7 +1656,7 @@ namespace crow
                 }
                 else
                 {
-#if defined(__APPLE__) || defined(__MACH__)
+#if defined(__APPLE__) || defined(__MACH__) || defined(__FreeBSD__) || defined(__ANDROID__)
                     o = std::unique_ptr<object>(new object(initializer_list));
 #else
                     (*o) = initializer_list;
@@ -1672,7 +1675,7 @@ namespace crow
                 }
                 else
                 {
-#if defined(__APPLE__) || defined(__MACH__)
+#if defined(__APPLE__) || defined(__MACH__) || defined(__FreeBSD__) || defined(__ANDROID__)
                     o = std::unique_ptr<object>(new object(value));
 #else
                     (*o) = value;
@@ -1716,7 +1719,12 @@ namespace crow
                 return (*l)[index];
             }
 
-            int count(const std::string& str)
+            const wvalue& operator[](unsigned index) const
+            {
+                return const_cast<wvalue*>(this)->operator[](index);
+            }
+
+            int count(const std::string& str) const
             {
                 if (t_ != type::Object)
                     return 0;
@@ -1733,6 +1741,11 @@ namespace crow
                 if (!o)
                     o = std::unique_ptr<object>(new object{});
                 return (*o)[str];
+            }
+
+            const wvalue& operator[](const std::string& str) const
+            {
+                return const_cast<wvalue*>(this)->operator[](str);
             }
 
             std::vector<std::string> keys() const
@@ -1830,11 +1843,6 @@ namespace crow
                                 CROW_LOG_WARNING << "Invalid JSON value detected (" << v.num.d << "), value set to null";
                                 break;
                             }
-#ifdef _MSC_VER
-#define MSC_COMPATIBLE_SPRINTF(BUFFER_PTR, FORMAT_PTR, VALUE) sprintf_s((BUFFER_PTR), 128, (FORMAT_PTR), (VALUE))
-#else
-#define MSC_COMPATIBLE_SPRINTF(BUFFER_PTR, FORMAT_PTR, VALUE) sprintf((BUFFER_PTR), (FORMAT_PTR), (VALUE))
-#endif
                             enum
                             {
                                 start,
@@ -1842,7 +1850,11 @@ namespace crow
                                 zero
                             } f_state;
                             char outbuf[128];
-                            MSC_COMPATIBLE_SPRINTF(outbuf, "%f", v.num.d);
+#ifdef _MSC_VER
+                            sprintf_s(outbuf, sizeof(outbuf), "%f", v.num.d);
+#else
+                            snprintf(outbuf, sizeof(outbuf), "%f", v.num.d);
+#endif
                             char *p = &outbuf[0], *o = nullptr; // o is the position of the first trailing 0
                             f_state = start;
                             while (*p != '\0')
@@ -1882,7 +1894,6 @@ namespace crow
                             if (o != nullptr) // if any trailing 0s are found, terminate the string where they begin
                                 *o = '\0';
                             out += outbuf;
-#undef MSC_COMPATIBLE_SPRINTF
                         }
                         else if (v.nt == num_type::Signed_integer)
                         {
