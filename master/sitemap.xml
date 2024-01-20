@@ -2,127 +2,127 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://crowcpp.org/</loc>
-         <lastmod>2024-01-16</lastmod>
+         <lastmod>2024-01-20</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://crowcpp.org/getting_started/a_simple_webpage/</loc>
-         <lastmod>2024-01-16</lastmod>
+         <lastmod>2024-01-20</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://crowcpp.org/getting_started/your_first_application/</loc>
-         <lastmod>2024-01-16</lastmod>
+         <lastmod>2024-01-20</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://crowcpp.org/getting_started/setup/linux/</loc>
-         <lastmod>2024-01-16</lastmod>
+         <lastmod>2024-01-20</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://crowcpp.org/getting_started/setup/macos/</loc>
-         <lastmod>2024-01-16</lastmod>
+         <lastmod>2024-01-20</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://crowcpp.org/getting_started/setup/windows/</loc>
-         <lastmod>2024-01-16</lastmod>
+         <lastmod>2024-01-20</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://crowcpp.org/guides/app/</loc>
-         <lastmod>2024-01-16</lastmod>
+         <lastmod>2024-01-20</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://crowcpp.org/guides/auth/</loc>
-         <lastmod>2024-01-16</lastmod>
+         <lastmod>2024-01-20</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://crowcpp.org/guides/base64/</loc>
-         <lastmod>2024-01-16</lastmod>
+         <lastmod>2024-01-20</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://crowcpp.org/guides/blueprints/</loc>
-         <lastmod>2024-01-16</lastmod>
+         <lastmod>2024-01-20</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://crowcpp.org/guides/compression/</loc>
-         <lastmod>2024-01-16</lastmod>
+         <lastmod>2024-01-20</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://crowcpp.org/guides/included-middleware/</loc>
-         <lastmod>2024-01-16</lastmod>
+         <lastmod>2024-01-20</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://crowcpp.org/guides/json/</loc>
-         <lastmod>2024-01-16</lastmod>
+         <lastmod>2024-01-20</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://crowcpp.org/guides/logging/</loc>
-         <lastmod>2024-01-16</lastmod>
+         <lastmod>2024-01-20</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://crowcpp.org/guides/middleware/</loc>
-         <lastmod>2024-01-16</lastmod>
+         <lastmod>2024-01-20</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://crowcpp.org/guides/multipart/</loc>
-         <lastmod>2024-01-16</lastmod>
+         <lastmod>2024-01-20</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://crowcpp.org/guides/proxies/</loc>
-         <lastmod>2024-01-16</lastmod>
+         <lastmod>2024-01-20</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://crowcpp.org/guides/query-string/</loc>
-         <lastmod>2024-01-16</lastmod>
+         <lastmod>2024-01-20</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://crowcpp.org/guides/routes/</loc>
-         <lastmod>2024-01-16</lastmod>
+         <lastmod>2024-01-20</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://crowcpp.org/guides/ssl/</loc>
-         <lastmod>2024-01-16</lastmod>
+         <lastmod>2024-01-20</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://crowcpp.org/guides/static/</loc>
-         <lastmod>2024-01-16</lastmod>
+         <lastmod>2024-01-20</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://crowcpp.org/guides/syste/</loc>
-         <lastmod>2024-01-16</lastmod>
+         <lastmod>2024-01-20</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://crowcpp.org/guides/templating/</loc>
-         <lastmod>2024-01-16</lastmod>
+         <lastmod>2024-01-20</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://crowcpp.org/guides/testing/</loc>
-         <lastmod>2024-01-16</lastmod>
+         <lastmod>2024-01-20</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://crowcpp.org/guides/websockets/</loc>
-         <lastmod>2024-01-16</lastmod>
+         <lastmod>2024-01-20</lastmod>
          <changefreq>daily</changefreq>
     </url>
 </urlset>
