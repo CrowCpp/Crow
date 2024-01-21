@@ -4,7 +4,7 @@ name: Deploy Doxygen results to Github Pages
 on:
   push:
     branches:
-      - master
+      - v1.1
 
 permissions:
   contents: write
@@ -34,4 +34,4 @@ jobs:
         uses: JamesIves/github-pages-deploy-action@v4
         with:
           folder: site # The folder the action should deploy.
-          target-folder: master # deploy to versioned directory
+          target-folder: 1.1 # deploy to versioned directory
