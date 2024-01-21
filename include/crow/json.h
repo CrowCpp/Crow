@@ -1826,7 +1826,14 @@ namespace crow
                 out.push_back('"');
             }
 
-            inline void dump_internal(const wvalue& v, std::string& out) const
+            inline void dump_indentation_part(std::string& out, const int indent, const char separator, const int indent_level) const
+            {
+                out.push_back('\n');
+                out.append(indent_level * indent, separator);
+            }
+
+
+            inline void dump_internal(const wvalue& v, std::string& out, const int indent, const char separator, const int indent_level = 0) const
             {
                 switch (v.t_)
                 {
@@ -1909,6 +1916,12 @@ namespace crow
                     case type::List:
                     {
                         out.push_back('[');
+
+                        if (indent >= 0)
+                        {
+                            dump_indentation_part(out, indent, separator, indent_level + 1);
+                        }
+
                         if (v.l)
                         {
                             bool first = true;
@@ -1917,17 +1930,34 @@ namespace crow
                                 if (!first)
                                 {
                                     out.push_back(',');
+
+                                    if (indent >= 0)
+                                    {
+                                        dump_indentation_part(out, indent, separator, indent_level + 1);
+                                    }
                                 }
                                 first = false;
-                                dump_internal(x, out);
+                                dump_internal(x, out, indent, separator, indent_level + 1);
                             }
                         }
+
+                        if (indent >= 0)
+                        {
+                            dump_indentation_part(out, indent, separator, indent_level);
+                        }
+
                         out.push_back(']');
                     }
                     break;
                     case type::Object:
                     {
                         out.push_back('{');
+
+                        if (indent >= 0)
+                        {
+                            dump_indentation_part(out, indent, separator, indent_level + 1);
+                        }
+
                         if (v.o)
                         {
                             bool first = true;
@@ -1936,13 +1966,29 @@ namespace crow
                                 if (!first)
                                 {
                                     out.push_back(',');
+                                    if (indent >= 0)
+                                    {
+                                        dump_indentation_part(out, indent, separator, indent_level + 1);
+                                    }
                                 }
                                 first = false;
                                 dump_string(kv.first, out);
                                 out.push_back(':');
-                                dump_internal(kv.second, out);
+
+                                if (indent >= 0)
+                                {
+                                    out.push_back(' ');
+                                }
+
+                                dump_internal(kv.second, out, indent, separator, indent_level + 1);
                             }
                         }
+
+                        if (indent >= 0)
+                        {
+                            dump_indentation_part(out, indent, separator, indent_level);
+                        }
+
                         out.push_back('}');
                     }
                     break;
@@ -1954,12 +2000,19 @@ namespace crow
             }
 
         public:
-            std::string dump() const
+            std::string dump(const int indent, const char separator = ' ') const
             {
                 std::string ret;
                 ret.reserve(estimate_length());
-                dump_internal(*this, ret);
+                dump_internal(*this, ret, indent, separator);
                 return ret;
+            }
+
+            std::string dump() const
+            {
+                static constexpr int DontIndent = -1;
+
+                return dump(DontIndent);
             }
         };
 
