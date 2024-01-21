@@ -1,0 +1,92 @@
+[data-md-color-scheme="crow-light"]{
+
+    --md-primary-fg-color: #24404f;
+    --md-accent-fg-color:  #122027;
+    --md-typeset-a-color: var(--md-accent-fg-color) !important;
+    --md-default-bg-color: #e5f2f8;
+    --md-code-bg-color: #cfcfcf !important;
+    --md-code-hl-comment-color: var(--md-code-fg-color) !important;
+    --md-code-hl-generic-color: var(--md-code-fg-color) !important;
+    --md-code-hl-variable-color: var(--md-code-fg-color) !important;
+    --md-code-fg-color: #1d1d1d !important;
+    --md-code-hl-punctuation-color: #1d1d1d !important;
+    --home-border-color: #00000080;
+    --home-shadow-color: #00000040;
+    --home-image-border: linear-gradient(90deg, rgba(0,0,0,0) 0%, rgb(0, 0, 0) 50%, rgba(0,0,0,0) 100%);
+    --md-default-tag-bg-color: var(--md-default-bg-color);
+
+}
+
+[data-md-color-scheme="crow-dark"]{
+
+    --md-primary-fg-color: #24404f;
+    --md-accent-fg-color:  #445e6d;
+    --md-default-fg-color: rgba(255, 255, 255, 0.87);
+    --md-typeset-color: rgba(255, 255, 255, 0.80);
+    --md-admonition-fg-color: rgba(255, 255, 255, 0.80);
+    --md-default-fg-color--light: rgba(255, 255, 255, 0.54);
+    --md-default-fg-color--lighter: rgba(255, 255, 255, 0.32);
+    --md-default-fg-color--lightest: rgba(255, 255, 255, 0.07);
+    --md-typeset-a-color: var(--md-accent-fg-color) !important;
+    --md-default-bg-color: #1a2124;
+    --md-code-bg-color: #101010 !important;
+    --md-code-hl-comment-color: var(--md-code-fg-color) !important;
+    --md-code-hl-generic-color: var(--md-code-fg-color) !important;
+    --md-code-hl-variable-color: var(--md-code-fg-color) !important;
+    --md-code-hl-operator-color: var(--md-code-fg-color) !important;
+    --md-code-fg-color: #cfcfcf !important;
+    --md-code-hl-punctuation-color: #adadad !important;
+    --home-border-color: #ffffff20;
+    --home-shadow-color: #00000040;
+    --home-image-border: linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.3) 50%, rgba(255, 255, 255, 0) 100%);
+    --md-admonition-bg-color: #272a2b;
+    --md-code-hl-color: rgba(255, 255, 0, 0.18);
+    --md-default-tag-bg-color: var(--md-default-fg-color);
+
+}
+
+.md-typeset .md-button {
+    color: var(--md-default-fg-color--light);
+    border-radius: 0.5rem;
+}
+
+/*
+:root{
+    --md-default-fg-color: rgba(255, 255, 255, 0.87);
+    --md-default-fg-color--light: rgba(255, 255, 255, 0.54);
+    --md-default-fg-color--lighter: rgba(255, 255, 255, 0.32);
+    --md-default-fg-color--lightest: rgba(255, 255, 255, 0.07);
+    --md-default-bg-color: #1a2124;
+	--md-typeset-a-color: var(--md-accent-fg-color) !important;
+}
+
+.md-typeset code {
+    background-color: #2f2f2f;
+}
+
+
+.highlight .c, .highlight .c1, .highlight .ch, .highlight .cm, .highlight .cs, .highlight .sd {
+    color: #606060 !important;
+}
+
+.linenos {
+    background-color: #cfcfcf !important;
+    color: #1d1d1d !important;
+}
+
+.highlighttable .linenodiv pre {
+    background-color: #cfcfcf !important;
+    color: #1d1d1d !important;
+}
+
+.highlight .p {
+    color: #1d1d1d;
+}
+
+.highlight .o {
+    color: #1d1d1d;
+}
+
+.highlight .n {
+    color: #1d1d1d;
+}

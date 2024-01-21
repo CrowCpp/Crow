@@ -1,0 +1,536 @@
+{% extends "main.html" %}
+
+<!-- Render hero under tabs -->
+
+{% block extrahead %}
+<meta property="og:title" content="CrowCpp"/>
+<meta property="og:type" content="website" />
+<meta property="og:description" content="A Fast and Easy to use microframework for the web."/>
+<meta name="description" content="Crow is a C++ framework for creating HTTP or Websocket web services. It uses routing similar to Python's Flask which makes it easy to use. It is also extremely fast, beating multiple existing C++ frameworks as well as non C++ frameworks.">
+<meta property="og:image" content="assets/og_img.png" />
+<meta property="og:url" content="https://crowcpp.org">
+<meta property="twitter:card" content="summary_large_image">
+<meta property="twitter:image" content="assets/og_img.png">
+{% endblock %}
+
+<!-- Content -->
+{% block content %}
+<style>
+.clogo{
+    width: 50%;
+    margin-inline: auto;
+    display: block;
+}
+
+.ccard{
+    border-style: solid;
+    border-width: .1rem;
+    border-color: var(--home-border-color);
+    border-radius: 0.5rem;
+    width: 10rem;
+    height: 12rem;
+    box-shadow: 2px 5px 5px var(--home-shadow-color);
+    margin-inline: 1.5rem;
+    margin-bottom: 1rem;
+    display: inline-block;
+    transition: transform 0.3s;
+}
+
+.ccard:hover{
+    transform: scale(1.1);
+}
+
+.ccard__image{
+    max-width: 7.5rem;
+    max-height: 7.5rem;
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+    margin-top: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: solid;    
+    border-width: 0.1rem;
+    border-image-slice: 1;
+    border-image-source: var(--home-image-border);
+}
+
+.ccard__text{
+    text-align: center;
+}
+
+.csection{
+    text-align: center;
+}
+
+.ssection{
+    display:flex;
+    justify-content: center;
+}
+
+.sdescription{
+    display:flex;
+    align-items: center;
+    justify-content: center;
+    width: 50%;
+    height: 14rem;
+}
+
+.scontent{
+    display:flex;
+    align-items: center;
+    justify-content: center;
+    width: 50%;
+    height: 14rem;
+}
+.highlight{
+    width: 100%
+}
+
+.sbuttons{
+    display: block;
+    text-align: center;
+}
+
+.crow-button{
+    margin: 1rem 1rem;
+}
+
+code{
+    border-radius: 0.3rem !important;
+}
+
+.dcard{
+    width: 10rem;
+    height: 14rem;
+    margin-inline: 0.5rem;
+    display: inline-block;
+    transition: transform 0.3s;
+}
+
+.dcard:hover{
+    transform: scale(1.1);
+}
+
+.dcard__image{
+    max-width: 7.5rem;
+    max-height: 7.5rem;
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+    margin-top: 1rem;
+}
+
+.dcard__title{
+    font-size: 1.25rem;
+    margin: 0px 0px;
+    text-align: center;
+}
+
+.dcard__description{
+    font-size: 0.75rem;
+    margin: 0.1rem 0px;
+    text-align: center;
+    display: block;
+    min-height: 50px;
+    overflow: hidden;
+}
+
+.md-footer-copyright {
+    color: var(--md-footer-fg-color--light);
+    font-size: .64rem;
+    margin: auto .6rem;
+    padding: .4rem 0;
+}
+
+</style>
+<img class="clogo" alt="logo" src="assets/crowlogo_main_color.svg#only-light">
+<img class="clogo" alt="logo" src="assets/crowlogo_main_light_color.svg#only-dark">
+
+<h1 style="text-align:center;">A Fast and Easy to use microframework for the web.</h1>
+
+<hr>
+<p style="text-align:center;">Crow is a C++ framework for creating HTTP or Websocket web services. It uses routing similar to Python's Flask which makes it easy to use. It is also extremely fast, beating multiple existing C++ frameworks as well as non C++ frameworks.</p>
+<hr>
+
+<section class="csection">
+<div class="ccard">
+    <img class="ccard__image" src= assets/fast_icon.svg#only-light>
+    <img class="ccard__image" src= assets/fast_light_icon.svg#only-dark>
+    <p class="ccard__text">Blazingly Fast</p>
+</div>
+<div class="ccard">
+    <img class="ccard__image" src= assets/header_icon.svg#only-light>
+    <img class="ccard__image" src= assets/header_light_icon.svg#only-dark>
+    <p class="ccard__text">Header Only</p>
+</div>
+<div class="ccard">
+    <img class="ccard__image" src= assets/typesafe_icon.svg#only-light>
+    <img class="ccard__image" src= assets/typesafe_light_icon.svg#only-dark>
+    <p class="ccard__text">Typesafe handlers</p>
+</div>
+<div class="ccard">
+    <img class="ccard__image" src= assets/websocket_icon.svg#only-light>
+    <img class="ccard__image" src= assets/websocket_light_icon.svg#only-dark>
+    <p class="ccard__text">Websocket Support</p>
+</div>
+</section>
+
+
+<hr>
+
+<section class="ssection">
+    <div class="sdescription">
+        <h2 style="text-align: center;">Easy to get started</h2>
+    </div>
+    <div class="scontent">
+        <div class="highlight"><pre id="__code_0"><span></span><button class="md-clipboard md-icon" title="Copy to clipboard" data-clipboard-target="#__code_0 > code"></button><code><span class="cp">#include</span> <span class="cpf">"crow.h"</span><span class="cp"></span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">crow</span><span class="o">::</span><span class="n">SimpleApp</span> <span class="n">app</span><span class="p">;</span>
+
+    <span class="cp">CROW_ROUTE</span><span class="p">(</span><span class="n">app</span><span class="p">,</span> <span class="s">"/"</span><span class="p">)([](){</span>
+        <span class="k">return</span> <span class="s">"Hello world"</span><span class="p">;</span>
+    <span class="p">});</span>
+
+    <span class="n">app</span><span class="p">.</span><span class="n">port</span><span class="p">(</span><span class="mi">18080</span><span class="p">).</span><span class="n">run</span><span class="p">();</span>
+<span class="p">}</span>
+</code></pre></div>
+    </div>
+</section>
+
+<section class="ssection">    
+    <div class="scontent">
+       <div class="highlight"><pre id="__code_1"><span></span><button class="md-clipboard md-icon" title="Copy to clipboard" data-clipboard-target="#__code_1 > code"></button><code><span class="cp">CROW_ROUTE</span><span class="p">(</span><span class="n">app</span><span class="p">,</span> <span class="s">"/json"</span><span class="p">)</span>
+<span class="p">([]{</span>
+    <span class="n">crow</span><span class="o">::</span><span class="n">json</span><span class="o">::</span><span class="n">wvalue</span> <span class="n">x</span><span class="p">{{"({{"}}</span><span class="s">"message"</span><span class="p">,</span> <span class="s">"Hello, World!"</span><span class="p">{{"}});"}}</span>
+    <span class="n">x</span><span class="p">[</span><span class="s">"message2"</span><span class="p">]</span> <span class="o">=</span> <span class="s">"Hello, World.. Again!"</span><span class="p">;</span>
+    <span class="k">return</span> <span class="n">x</span><span class="p">;</span>
+<span class="p">});</span>
+</code></pre></div>
+    </div>
+    <div class="sdescription">
+        <h2 style="text-align: center;">JSON Support Built-in</h2>
+    </div>
+
+</section>
+
+<section class="ssection">
+    <div class="sdescription">
+        <h2 style="text-align: center;">URL parameter support as well!</h2>
+    </div>
+    <div class="scontent">
+        <div class="highlight"><pre id="__code_2"><span></span><button class="md-clipboard md-icon" title="Copy to clipboard" data-clipboard-target="#__code_2 > code"></button><code><span class="cp">CROW_ROUTE</span><span class="p">(</span><span class="n">app</span><span class="p">,</span><span class="s">"/hello/&lt;int&gt;"</span><span class="p">)</span>
+<span class="p">([](</span><span class="kt">int</span> <span class="n">count</span><span class="p">){</span>
+    <span class="k">return</span> <span class="n">crow</span><span class="o">::</span><span class="n">response</span><span class="p">(std::to_string(count));</span></span>
+<span class="p">});</span>
+</code></pre></div>
+    </div>
+</section>
+
+<hr>
+
+<h1 style="text-align:center;">Support Crow</h1>
+<h3 style="text-align:center;">Crow is provided free of charge courtesy of everyone who is donating their money, time, and expertise to keep it going.<h3>
+<h3 style="text-align:center;">Help us make something great!</h3>
+
+<dev class="sbuttons" id="contributors">
+</dev>
+<dev class="sbuttons">
+    <a href="https://opencollective.com/crow" title="Crow - OpenCollective" class="md-button crow-button">Fund Crow</a>
+    <a href="https://github.com/CrowCpp/Crow" title="Crow - OpenCollective" class="md-button crow-button">Develop Crow</a>
+    <a href="https://gitter.im/crowfork/community" title="Crow - OpenCollective" class="md-button crow-button">Chat with us</a>
+</dev>
+
+<hr>
+<h1 style="text-align:center;">Get Crow</h1>
+<h3 style="text-align:center;">Crow is everywhere, you just need to grab it!<h3>
+
+<section class="csection">
+
+<div class="dcard">
+<a href="https://github.com/CrowCpp/Crow/releases/latest">
+    <img class="dcard__image" src="assets/pkg_logos/ubuntu.png">
+    <p class="dcard__title">.deb file</p>
+    <p class="dcard__description">for Ubuntu/Debian based systems</p>
+</a>
+</div>
+
+<div class="dcard">
+<a href="https://aur.archlinux.org/packages/crow">
+    <img class="dcard__image" src="assets/pkg_logos/arch.png">
+    <p class="dcard__title">AUR</p>
+    <p class="dcard__description">for Arch Linux based systems</p>
+</a>
+</div>
+
+<div class="dcard">
+<a href="https://vcpkg.io">
+    <img class="dcard__image" src="assets/pkg_logos/vcpkg.png">
+    <p class="dcard__title">VCPKG</p>
+    <p class="dcard__description">for Windows systems</p>
+</a>
+</div>
+
+<div class="dcard">
+<a href="https://conan.io/center/crowcpp-crow">
+    <img class="dcard__image" src="assets/pkg_logos/conan.png">
+    <p class="dcard__title">Conan Center</p>
+    <p class="dcard__description">for developers using the conan package manager</p>
+</a>
+</div>
+
+<div class="dcard">
+<a href="https://github.com/CrowCpp/Crow/releases/latest">
+    <img class="dcard__image" src="assets/pkg_logos/github.png">
+    <p class="dcard__title">Header File</p>
+    <p class="dcard__description">Download Crow directly from github</p>
+</a>
+</div>
+
+</section>
+
+<hr>
+<h1 style="text-align:center;">Learn Crow</h1>
+<h3 style="text-align:center;">The 1000 mile journey begins with a single step. Get started by installing Crow and building you first application. Or go through the guides if you're stuck somewhere.<h3>
+
+<dev class="sbuttons">
+    <a href="getting_started/setup/" title="Get Started" class="md-button crow-button">Get Started</a>
+    <a href="guides/app/" title="Guides" class="md-button crow-button">Guides</a>
+    <a href="reference/index.html" title="API Reference" class="md-button crow-button">API Reference</a>
+</dev>
+
+
+<script>
+let text = "";
+
+function convertRemToPixels(rem) {    
+    return rem * parseFloat(getComputedStyle(document.documentElement).fontSize);
+}
+
+function makeCard(name, img_url, ref, size = 6)
+{
+  let finalName = fixLong(name);
+  if (img_url == null)
+  {
+    img_url = AvatarImage(name);
+  }
+  return `<a title="${name}" href="${ref}" style=\"border-style: solid;border-width: .1rem;border-color: var(--home-border-color);border-radius: ${size/12}rem;width: ${size}rem;height: ${size}rem;box-shadow: 2px 5px 5px var(--home-shadow-color);margin-inline: ${size/12}rem;margin-bottom: ${size/12}rem;margin-top: ${size/12}rem;display: inline-block;\"><img style=\"width: ${size/2}rem;height: ${size/2}rem; border-radius: ${size/10}rem;margin-left: auto;margin-right: auto;display: block;margin-top: ${size/7.7}rem;\" src=\"${img_url}\"><p style=\"text-align: center;font-size: ${size/7.7}rem;\">${finalName}</p></a>`;
+}
+
+function fixLong(name)
+{
+  if (name.length > 12)
+  {
+    name = name.slice(0,9);
+    name += "...";
+  }
+  return name;
+}
+
+function GetColor(name)
+{
+  var r = 0;
+  var g = 0;
+  var b = 0;
+  if (name.length >= 3)
+  {
+    var i = 0;
+    for (i; i < name.length/3; i++)
+    {
+      r += name[i].charCodeAt();
+    }
+    r %= 256;
+    for (i; i < name.length*2/3; i++)
+    {
+      g += name[i].charCodeAt();
+    }
+    g %= 256;
+    for (i; i < name.length; i++)
+    {
+      b += name[i].charCodeAt();
+    }
+    b %= 256;
+    console.log(`rgb(${r},${g},${b})`);
+    return `rgb(${r},${g},${b})`;
+  }
+  return "rgb(0,0,0)";
+}
+
+function AvatarImage(name) 
+{
+  var letters = name.includes(' ') ? name[0] + name.split(' ').slice(-1)[0][0] : name.slice(0,2);
+  var canvas = document.createElement('canvas');
+  var context = canvas.getContext("2d");
+  var size = convertRemToPixels(3);
+  var color = GetColor(name);
+  canvas.width = size;
+  canvas.height = size;
+  context.font = Math.round(canvas.width / 2) + "px Arial";
+  context.textAlign = "center";
+  // Setup background and front color
+  context.fillStyle = color;
+  context.fillRect(0, 0, canvas.width, canvas.height);
+  
+  // Check the color brightness (0-255)
+  color = color.match(/^rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*(\d+(?:\.\d+)?))?\)$/);
+  r = color[1];
+  g = color[2];
+  b = color[3];
+  hsp = Math.sqrt(0.299 * (r * r) + 0.587 * (g * g) + 0.114 * (b * b));
+  
+  context.fillStyle = hsp > 150 ? "#333" : "#EEE"; // 150 was reached by trial and error
+  context.fillText(letters, size / 2, size / 1.5);
+  // Set image representation in default format (png)
+  dataURI = canvas.toDataURL();
+  // Dispose canvas element
+  canvas = null;
+  return dataURI;
+}
+
+async function getGHData()
+{
+  let x = await fetch("https://api.github.com/repos/crowcpp/crow/contributors?per_page=100");
+  let y = await x.json();
+  text += "<a href=\"https://github.com/CrowCpp/Crow\"><h2>Code Contributors</h2></a><section>  ";
+  if (y.length != null)
+  {
+    for(var i = 0; i < y.length; i++){let item = y[i]; text += makeCard(item.login, item.avatar_url, item.html_url, 3.5);}
+  }
+  else
+  {
+    text += "<h3>GitHub won't let us show our awesome Code Contributors at the moment.</h3>"
+  }
+  text += "</section><br><br>";
+}
+
+async function getData()
+{
+  let backers = [];
+  let boosters = [];
+  let sponsors = [];
+  let donations = [];
+
+  let x = await fetch("https://opencollective.com/crow/members/all.json");
+  let y = await x.json();
+  
+  for (var i = 0; i < y.length; i++)
+  {
+    let item = y[i];
+    if (item.role === "BACKER") {
+      if(item.tier === "Backer"){
+        backers.push(item);
+      }
+      else if(item.tier === "Booster"){
+        boosters.push(item);
+      }
+      else if(item.tier === "Sponsor"){
+        sponsors.push(item);
+      }
+      else if(item.tier === "Donation"){
+        donations.push(item);
+      }
+    }
+  }
+  
+  let ghx = await fetch("https://gh-sponsors-dsdpxxx9d-filiptronicek.vercel.app/sponsors/CrowCpp");
+  let ghy = await fetch("https://gh-sponsors-dsdpxxx9d-filiptronicek.vercel.app/count/CrowCpp");
+  let ghsponsors = await ghx.json();
+  ghsponsors = ghsponsors.sponsors;
+  let ghx_count = await ghy.json();
+  ghx_count = ghx_count.sponsors.count;
+
+  if (ghx_count > ghsponsors.length)
+  {
+    let priv_count = ghx_count - ghsponsors.length;
+    ghsponsors.push({handle: priv_count = 1 ? "Private sponsor" : `${priv_count} Private sponsors`, avatar:null, profile:"https://github.com/CrowCpp"});
+  }
+
+
+  text += "<section style=\"text-align: center;\"><a href=\"https://opencollective.com/crow/contribute/sponsor-30717/checkout\"><h2>Sponsors</h2></a>";
+  for(var i = 0; i < sponsors.length; i++){let item  = sponsors[i];  text += makeCard(item.name, item.image, item.profile, 10);}
+
+  text += "</section><br><section style=\"text-align: center;\"><a href=\"https://opencollective.com/crow/contribute/booster-30767/checkout\"><h2>Boosters</h2></a>";
+  for(var i = 0; i < boosters.length; i++){let item  = boosters[i];  text += makeCard(item.name, item.image, item.profile, 5);}
+
+  text += "</section><br><section style=\"text-align: center;\"><a href=\"https://opencollective.com/crow/contribute/backer-30716/checkout\"><h2>Backers</h2></a>";
+  for(var i = 0; i < backers.length; i++){let item   = backers[i];   text += makeCard(item.name, item.image, item.profile, 3.5);}
+
+  text += "</section><br><section style=\"text-align: center;\"><a href=\"https://opencollective.com/crow/contribute/donation-30769/checkout\"><h2>Donations</h2></a>";
+  for(var i = 0; i < donations.length; i++){let item = donations[i]; text += makeCard(item.name, item.image, item.profile, 3.5);}
+
+  text += "</section><br><section style=\"text-align: center;\"><a href=\"https://github.com/sponsors/CrowCpp\"><h2>GitHub Sponsors</h2></a>";
+  for(var i = 0; i < ghsponsors.length; i++){let item  = ghsponsors[i];  text += makeCard(item.handle, item.avatar, item.profile, 5);}
+
+  text += "</section><section style=\"text-align: center;\">";
+  await getGHData();
+  text += "</section>";
+  document.getElementById("contributors").innerHTML = text;
+}
+
+getData();
+</script>
+
+{% endblock %}
+
+<!-- Navigation -->
+{% block site_nav %}
+
+<!-- Main navigation -->
+{% if nav %}
+<div
+class="md-sidebar md-sidebar--primary"
+data-md-component="sidebar"
+data-md-type="navigation"
+hidden
+>
+  <div class="md-sidebar__scrollwrap">
+    <div class="md-sidebar__inner">
+      {% include "partials/nav.html" %}
+    </div>
+  </div>
+</div>
+{% endif %}
+
+<!-- Table of contents -->
+{% if page.toc and not "toc.integrate" in features %}
+  <div
+  class="md-sidebar md-sidebar--secondary"
+  data-md-component="sidebar"
+  data-md-type="toc"
+  hidden
+  >
+    <div class="md-sidebar__scrollwrap">
+      <div class="md-sidebar__inner">
+        {% include "partials/toc.html" %}
+      </div>
+    </div>
+  </div>
+{% endif %}
+{% endblock %}
+
+{% block footer %}
+
+<footer class="md-footer">
+  <!-- Further information -->
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+
+      <!-- Copyright and theme information -->
+      <div class="md-footer-copyright" style="flex: 1;display: flex;justify-content: left;">
+        {% if config.copyright %}
+          <div class="md-footer-copyright__highlight">
+            {{ config.copyright }}
+          </div>
+        {% endif %}
+        {{ extracopyright }}
+      </div>
+
+      <a style="margin: auto .6rem; font-size: .64rem;text-align: center;flex: 1;display: flex;justify-content: center;" href="privacy_policy.html">Privacy Policy</a>
+
+      <!-- Social links -->
+      {% include "partials/social.html" %}
+    </div>
+  </div>
+</footer>
+{% endblock %}
