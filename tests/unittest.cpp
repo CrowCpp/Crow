@@ -943,6 +943,72 @@ TEST_CASE("json_write")
     CHECK(R"({"scores":[1,2,3]})" == y.dump());
 } // json_write
 
+TEST_CASE("json_write_with_indent")
+{
+    static constexpr int IndentationLevelOne = 1;
+    static constexpr int IndentationLevelTwo = 2;
+    static constexpr int IndentationLevelFour = 4;
+
+    json::wvalue y;
+
+    y["scores"][0] = 1;
+    y["scores"][1] = "king";
+    y["scores"][2][0] = "real";
+    y["scores"][2][1] = false;
+    y["scores"][2][2] = true;
+
+    CHECK(R"({
+ "scores": [
+  1,
+  "king",
+  [
+   "real",
+   false,
+   true
+  ]
+ ]
+})" == y.dump(IndentationLevelOne));
+
+    CHECK(R"({
+  "scores": [
+    1,
+    "king",
+    [
+      "real",
+      false,
+      true
+    ]
+  ]
+})" == y.dump(IndentationLevelTwo));
+
+    CHECK(R"({
+    "scores": [
+        1,
+        "king",
+        [
+            "real",
+            false,
+            true
+        ]
+    ]
+})" == y.dump(IndentationLevelFour));
+
+    static constexpr char TabSeparator = '\t';
+
+    CHECK(R"({
+	"scores": [
+		1,
+		"king",
+		[
+			"real",
+			false,
+			true
+		]
+	]
+})" == y.dump(IndentationLevelOne, TabSeparator));
+} // json_write_with_indent
+
+
 TEST_CASE("json_copy_r_to_w_to_w_to_r")
 {
     json::rvalue r = json::load(
