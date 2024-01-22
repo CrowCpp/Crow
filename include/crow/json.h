@@ -1851,9 +1851,9 @@ namespace crow
                             } f_state;
                             char outbuf[128];
 #ifdef _MSC_VER
-                            sprintf_s(outbuf, 128, "%.*g", DBL_DECIMAL_DIG, v.num.d);
+                            sprintf_s(outbuf, sizeof(outbuf), "%.*g", DBL_DECIMAL_DIG, v.num.d);
 #else
-                            sprintf(outbuf, "%.*g", DECIMAL_DIG, v.num.d);
+                            snprintf(outbuf, sizeof(outbuf), "%.*g", DECIMAL_DIG, v.num.d);
 #endif
                             char *p = &outbuf[0], *o = nullptr; // o is the position of the first trailing 0
                             f_state = start;
