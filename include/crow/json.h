@@ -14,6 +14,7 @@
 #include <memory>
 #include <vector>
 #include <cmath>
+#include <cfloat>
 
 #include "crow/utility.h"
 #include "crow/settings.h"
