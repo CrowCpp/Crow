@@ -6,6 +6,7 @@ cmake_minimum_required(VERSION 3.15.0 FATAL_ERROR)
 # Define the project name and language
 project(Crow
 	LANGUAGES CXX
+	VERSION 1.1.1
 )
 
 # Make sure Findasio.cmake module is found
@@ -153,7 +154,7 @@ if(CROW_INSTALL)
 	)
 endif()
 
-set(CPACK_GENERATOR "DEB")
+set(CPACK_GENERATOR "ZIP")
 set(CPACK_PACKAGE_NAME "Crow")
 set(CPACK_DEBIAN_PACKAGE_MAINTAINER "CrowCpp")
 set(CPACK_PACKAGE_VENDOR "CrowCpp")
