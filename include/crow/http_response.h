@@ -238,7 +238,6 @@ namespace crow
         {
             if (!completed_)
             {
-                completed_ = true;
                 if (skip_body)
                 {
                     set_header("Content-Length", std::to_string(body.size()));
@@ -248,6 +247,8 @@ namespace crow
                 if (complete_request_handler_)
                 {
                     complete_request_handler_();
+                    manual_length_header = false;
+                    skip_body = false;
                 }
             }
         }
