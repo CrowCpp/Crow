@@ -37,6 +37,7 @@ var classcrow_1_1json_1_1wvalue =
     [ "operator=", "classcrow_1_1json_1_1wvalue.html#aee7c185b7984ce7cd39567580d44dc3e", null ],
     [ "operator=", "classcrow_1_1json_1_1wvalue.html#a59bab9796cae55bab5350ee8ee47676a", null ],
     [ "operator=", "classcrow_1_1json_1_1wvalue.html#a5571fb38b397935150885ff7960a6ac6", null ],
+    [ "operator=", "classcrow_1_1json_1_1wvalue.html#a10981d0d4b6c3773a32a172e8820a8af", null ],
     [ "operator=", "classcrow_1_1json_1_1wvalue.html#aad8380b24617a991d0afd81993c11b12", null ],
     [ "operator=", "classcrow_1_1json_1_1wvalue.html#a2d9cf8c7ef5676469cd98f7af50a600d", null ],
     [ "operator=", "classcrow_1_1json_1_1wvalue.html#a80b6297e11ab7dfa3ca9819281cd337d", null ],
