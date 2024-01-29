@@ -14,6 +14,7 @@
 #include <memory>
 #include <vector>
 #include <cmath>
+#include <cfloat>
 
 #include "crow/utility.h"
 #include "crow/settings.h"
@@ -105,7 +106,8 @@ namespace crow
             Signed_integer,
             Unsigned_integer,
             Floating_point,
-            Null
+            Null,
+            Double_precision_floating_point
         };
 
         class rvalue;
@@ -781,6 +783,7 @@ namespace crow
                         switch (r.nt())
                         {
                             case num_type::Floating_point: os << r.d(); break;
+                            case num_type::Double_precision_floating_point: os << r.d(); break;
                             case num_type::Signed_integer: os << r.i(); break;
                             case num_type::Unsigned_integer: os << r.u(); break;
                             case num_type::Null: throw std::runtime_error("Number with num_type Null");
@@ -1318,7 +1321,9 @@ namespace crow
                   ui(value) {}
                 constexpr number(std::int64_t value) noexcept:
                   si(value) {}
-                constexpr number(double value) noexcept:
+                explicit constexpr number(double value) noexcept:
+                  d(value) {}
+                explicit constexpr number(float value) noexcept:
                   d(value) {}
             } num;                                      ///< Value if type is a number.
             std::string s;                              ///< Value if type is a string.
@@ -1357,7 +1362,7 @@ namespace crow
             wvalue(float value):
               returnable("application/json"), t_(type::Number), nt(num_type::Floating_point), num(static_cast<double>(value)) {}
             wvalue(double value):
-              returnable("application/json"), t_(type::Number), nt(num_type::Floating_point), num(static_cast<double>(value)) {}
+              returnable("application/json"), t_(type::Number), nt(num_type::Double_precision_floating_point), num(static_cast<double>(value)) {}
 
             wvalue(char const* value):
               returnable("application/json"), t_(type::String), s(value) {}
@@ -1408,7 +1413,7 @@ namespace crow
                         return;
                     case type::Number:
                         nt = r.nt();
-                        if (nt == num_type::Floating_point)
+                        if (nt == num_type::Floating_point || nt == num_type::Double_precision_floating_point)
                             num.d = r.d();
                         else if (nt == num_type::Signed_integer)
                             num.si = r.i();
@@ -1444,7 +1449,7 @@ namespace crow
                         return;
                     case type::Number:
                         nt = r.nt;
-                        if (nt == num_type::Floating_point)
+                        if (nt == num_type::Floating_point || nt == num_type::Double_precision_floating_point)
                             num.d = r.num.d;
                         else if (nt == num_type::Signed_integer)
                             num.si = r.num.si;
@@ -1514,12 +1519,21 @@ namespace crow
                 return *this;
             }
 
-            wvalue& operator=(double value)
+            wvalue& operator=(float value)
             {
                 reset();
                 t_ = type::Number;
                 num.d = value;
                 nt = num_type::Floating_point;
+                return *this;
+            }
+
+            wvalue& operator=(double value)
+            {
+                reset();
+                t_ = type::Number;
+                num.d = value;
+                nt = num_type::Double_precision_floating_point;
                 return *this;
             }
 
@@ -1835,7 +1849,7 @@ namespace crow
                     case type::True: out += "true"; break;
                     case type::Number:
                     {
-                        if (v.nt == num_type::Floating_point)
+                        if (v.nt == num_type::Floating_point || v.nt == num_type::Double_precision_floating_point)
                         {
                             if (isnan(v.num.d) || isinf(v.num.d))
                             {
@@ -1850,11 +1864,22 @@ namespace crow
                                 zero
                             } f_state;
                             char outbuf[128];
+                            if (v.nt == num_type::Double_precision_floating_point)
+                            {
 #ifdef _MSC_VER
-                            sprintf_s(outbuf, sizeof(outbuf), "%f", v.num.d);
+                                sprintf_s(outbuf, sizeof(outbuf), "%.*g", DECIMAL_DIG, v.num.d);
 #else
-                            snprintf(outbuf, sizeof(outbuf), "%f", v.num.d);
+                                snprintf(outbuf, sizeof(outbuf), "%.*g", DECIMAL_DIG, v.num.d);
 #endif
+                            }
+                            else
+                            {
+#ifdef _MSC_VER
+                                sprintf_s(outbuf, sizeof(outbuf), "%f", v.num.d);
+#else
+                                snprintf(outbuf, sizeof(outbuf), "%f", v.num.d);
+#endif 
+                            }
                             char *p = &outbuf[0], *o = nullptr; // o is the position of the first trailing 0
                             f_state = start;
                             while (*p != '\0')
@@ -1968,14 +1993,16 @@ namespace crow
         {
             int64_t get(int64_t fallback)
             {
-                if (ref.t() != type::Number || ref.nt == num_type::Floating_point)
+                if (ref.t() != type::Number || ref.nt == num_type::Floating_point || 
+                    ref.nt == num_type::Double_precision_floating_point)
                     return fallback;
                 return ref.num.si;
             }
 
             double get(double fallback)
             {
-                if (ref.t() != type::Number || ref.nt != num_type::Floating_point)
+                if (ref.t() != type::Number || ref.nt != num_type::Floating_point ||
+                    ref.nt == num_type::Double_precision_floating_point)
                     return fallback;
                 return ref.num.d;
             }
