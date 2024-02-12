@@ -122,68 +122,71 @@ namespace crow
 
         void handle()
         {
-            // TODO(EDev): cancel_deadline_timer should be looked into, it might be a good idea to add it to handle_url() and then restart the timer once everything passes
             cancel_deadline_timer();
             bool is_invalid_request = false;
             add_keep_alive_ = false;
 
-            req_.remote_ip_address = adaptor_.remote_endpoint().address().to_string();
+            req_ = std::move(parser_.to_request());
+            request& req = req_;
 
-            add_keep_alive_ = req_.keep_alive;
-            close_connection_ = req_.close_connection;
+            req.remote_ip_address = adaptor_.remote_endpoint().address().to_string();
+            
+            // Create context
+            ctx_ = detail::context<Middlewares...>();
+            req.middleware_context = static_cast<void*>(&ctx_);
+            req.middleware_container = static_cast<void*>(middlewares_);
+            req.io_service = &adaptor_.get_io_service();
 
-            if (req_.check_version(1, 1)) // HTTP/1.1
+            add_keep_alive_ = req.keep_alive;
+            close_connection_ = req.close_connection;
+
+            if (req.check_version(1, 1)) // HTTP/1.1
             {
-                if (!req_.headers.count("host"))
+                if (!req.headers.count("host"))
                 {
                     is_invalid_request = true;
                     res = response(400);
                 }
-                else if (req_.upgrade)
+                else if (req.upgrade)
                 {
                     // h2 or h2c headers
-                    if (req_.get_header_value("upgrade").substr(0, 2) == "h2")
+                    if (req.get_header_value("upgrade").substr(0, 2) == "h2")
                     {
                         // TODO(ipkn): HTTP/2
                         // currently, ignore upgrade header
                     }
                     else
                     {
+                        detail::middleware_call_helper<detail::middleware_call_criteria_only_global, 
+                            0, decltype(ctx_), decltype(*middlewares_)>(*middlewares_, req, res, ctx_);
                         close_connection_ = true;
-                        handler_->handle_upgrade(req_, res, std::move(adaptor_));
+                        handler_->handle_upgrade(req, res, std::move(adaptor_));
                         return;
                     }
                 }
             }
 
-            CROW_LOG_INFO << "Request: " << utility::lexical_cast<std::string>(adaptor_.remote_endpoint()) << " " << this << " HTTP/" << (char)(req_.http_ver_major + '0') << "." << (char)(req_.http_ver_minor + '0') << ' ' << method_name(req_.method) << " " << req_.url;
+            CROW_LOG_INFO << "Request: " << boost::lexical_cast<std::string>(adaptor_.remote_endpoint()) << " " << this << " HTTP/" << (char)(req.http_ver_major + '0') << "." << (char)(req.http_ver_minor + '0') << ' ' << method_name(req.method) << " " << req.url;
 
 
             need_to_call_after_handlers_ = false;
             if (!is_invalid_request)
             {
-                res.complete_request_handler_ = nullptr;
-                auto self = this->shared_from_this();
-                res.is_alive_helper_ = [self]() -> bool {
-                    return self->adaptor_.is_open();
+                res.complete_request_handler_ = [] {};
+                res.is_alive_helper_ = [this]() -> bool {
+                    return adaptor_.is_open();
                 };
 
-                ctx_ = detail::context<Middlewares...>();
-                req_.middleware_context = static_cast<void*>(&ctx_);
-                req_.middleware_container = static_cast<void*>(middlewares_);
-                req_.io_service = &adaptor_.get_io_service();
-
                 detail::middleware_call_helper<detail::middleware_call_criteria_only_global,
-                                               0, decltype(ctx_), decltype(*middlewares_)>({}, *middlewares_, req_, res, ctx_);
+                                               0, decltype(ctx_), decltype(*middlewares_)>(*middlewares_, req, res, ctx_);
 
                 if (!res.completed_)
                 {
-                    auto self = this->shared_from_this();
-                    res.complete_request_handler_ = [self] {
-                        self->complete_request();
+                    res.complete_request_handler_ = [this] {
+                        this->complete_request();
                     };
                     need_to_call_after_handlers_ = true;
-                    handler_->handle(req_, res, routing_handle_result_);
+                    handler_->handle(req, res);
                     if (add_keep_alive_)
                         res.set_header("connection", "Keep-Alive");
                 }
