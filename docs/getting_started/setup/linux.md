@@ -45,7 +45,9 @@ You can also download the `crow_all.h` file and simply include that into your pr
 
 !!! note
 
-    While building you can set the `CROW_FEATURES` variable (as a `;` separated list). You can use an argument such as `-DCROW_FEATURES="ssl;compression"`.
+    While building you can set:
+	  the `CROW_ENABLE_SSL` variable to enable the support for https
+	  the `CROW_ENABLE_COMPRESSION` variable to enable the support for http compression
 
 !!! note
 
@@ -83,7 +85,10 @@ target_link_libraries(your_project PUBLIC Crow::Crow)
 From there CMake should handle compiling and linking your project.
 !!! note
 
-    For optional features like HTTP Compression or HTTPS you can set the `CROW_FEATURES` variable using lines such as `set(CROW_FEATURES "ssl;compression")`, `set(CROW_FEATURES ssl compression)`, or `set(CROW_FEATURES ssl)`.
+    For optional features like HTTP Compression or HTTPS you can set
+	
+	  the `CROW_ENABLE_SSL` variable to enable the support for https
+	  the `CROW_ENABLE_COMPRESSION` variable to enable the support for http compression
 
 ### Directly using a compiler
 All you need to do is run the following command:
