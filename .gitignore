@@ -54,3 +54,5 @@ html/
 
 #VS-Code
 .vscode
+.idea
+cmake-build-debug
