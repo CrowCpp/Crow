@@ -153,15 +153,15 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcrow_1_1_crow.html#accf00be55c273297b758fa243f107018">handle_full</a> (<a class="el" href="structcrow_1_1request.html">request</a> &amp;req, <a class="el" href="structcrow_1_1response.html">response</a> &amp;res)</td></tr>
 <tr class="memdesc:accf00be55c273297b758fa243f107018"><td class="mdescLeft">&#160;</td><td class="mdescRight">Process a fully parsed request from start to finish (primarily used for debugging) <br /></td></tr>
 <tr class="separator:accf00be55c273297b758fa243f107018"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0f408e47d261ad55ccfd8eb5f351c22e"><td class="memItemLeft" align="right" valign="top"><a id="a0f408e47d261ad55ccfd8eb5f351c22e"></a>
-<a class="el" href="classcrow_1_1_dynamic_rule.html">DynamicRule</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcrow_1_1_crow.html#a0f408e47d261ad55ccfd8eb5f351c22e">route_dynamic</a> (std::string &amp;&amp;rule)</td></tr>
-<tr class="memdesc:a0f408e47d261ad55ccfd8eb5f351c22e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a dynamic route using a rule (<b>Use CROW_ROUTE instead</b>) <br /></td></tr>
-<tr class="separator:a0f408e47d261ad55ccfd8eb5f351c22e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af221cb25926e5dabc2da21a7a1c9713c"><td class="memTemplParams" colspan="2"><a id="af221cb25926e5dabc2da21a7a1c9713c"></a>
+<tr class="memitem:a0822a573ed653c3218f06c819a773ec2"><td class="memItemLeft" align="right" valign="top"><a id="a0822a573ed653c3218f06c819a773ec2"></a>
+<a class="el" href="classcrow_1_1_dynamic_rule.html">DynamicRule</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcrow_1_1_crow.html#a0822a573ed653c3218f06c819a773ec2">route_dynamic</a> (const std::string &amp;rule)</td></tr>
+<tr class="memdesc:a0822a573ed653c3218f06c819a773ec2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a dynamic route using a rule (<b>Use CROW_ROUTE instead</b>) <br /></td></tr>
+<tr class="separator:a0822a573ed653c3218f06c819a773ec2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5e1e54d49ff3015fd08f545b574ab44f"><td class="memTemplParams" colspan="2"><a id="a5e1e54d49ff3015fd08f545b574ab44f"></a>
 template&lt;uint64_t Tag&gt; </td></tr>
-<tr class="memitem:af221cb25926e5dabc2da21a7a1c9713c"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classcrow_1_1_crow.html#af221cb25926e5dabc2da21a7a1c9713c">route</a> (std::string &amp;&amp;rule) -&gt; typename std::result_of&lt; decltype(&amp;Router::new_rule_tagged&lt; Tag &gt;)(<a class="el" href="classcrow_1_1_router.html">Router</a>, std::string &amp;&amp;)&gt;::type</td></tr>
-<tr class="memdesc:af221cb25926e5dabc2da21a7a1c9713c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a route using a rule (<b>Use CROW_ROUTE instead</b>) <br /></td></tr>
-<tr class="separator:af221cb25926e5dabc2da21a7a1c9713c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5e1e54d49ff3015fd08f545b574ab44f"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classcrow_1_1_crow.html#a5e1e54d49ff3015fd08f545b574ab44f">route</a> (const std::string &amp;rule) -&gt; typename std::result_of&lt; decltype(&amp;Router::new_rule_tagged&lt; Tag &gt;)(<a class="el" href="classcrow_1_1_router.html">Router</a>, const std::string &amp;)&gt;::type</td></tr>
+<tr class="memdesc:a5e1e54d49ff3015fd08f545b574ab44f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a route using a rule (<b>Use CROW_ROUTE instead</b>) <br /></td></tr>
+<tr class="separator:a5e1e54d49ff3015fd08f545b574ab44f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab1beefb0c6fc3c534160ba3bbc615069"><td class="memItemLeft" align="right" valign="top"><a id="ab1beefb0c6fc3c534160ba3bbc615069"></a>
 <a class="el" href="classcrow_1_1_catchall_rule.html">CatchallRule</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcrow_1_1_crow.html#ab1beefb0c6fc3c534160ba3bbc615069">catchall_route</a> ()</td></tr>
 <tr class="memdesc:ab1beefb0c6fc3c534160ba3bbc615069"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a route for any requests without a proper route (<b>Use CROW_CATCHALL_ROUTE instead</b>) <br /></td></tr>
@@ -493,7 +493,7 @@ template&lt;typename... Middlewares&gt; </div>
 			<ul>
 				<li class="navelem"><b>crow</b></li><li class="navelem"><a class="el" href="classcrow_1_1_crow.html">Crow</a></li>
 				<li class="footer">
-					Generated on Sun Jan 21 2024 for Crow by <a href="http://www.doxygen.org/index.html">
+					Generated on Wed Feb 21 2024 for Crow by <a href="http://www.doxygen.org/index.html">
 					<img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.9.1.
 					Dark theme by <a href="http://majerle.eu" target="_new">Tilen Majerle</a>. Edited by <a href="https://github.com/The-EDev" target="_new">Farook Al-Sammarraie</a>. All rights reserved.
 				</li>
