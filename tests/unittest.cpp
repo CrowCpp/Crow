@@ -1038,11 +1038,13 @@ TEST_CASE("json::wvalue::wvalue(float)")
 
 TEST_CASE("json::wvalue::wvalue(double)")
 {
-    double d = 4.2;
+    double d = 0.036303908355795146;
     json::wvalue value = d;
 
     CHECK(value.t() == json::type::Number);
-    CHECK(value.dump() == "4.2");
+    auto dumped_value = value.dump();
+    CROW_LOG_DEBUG << dumped_value;
+    CHECK(std::abs(utility::lexical_cast<double>(dumped_value) - d) < numeric_limits<double>::epsilon());
 } // json::wvalue::wvalue(double)
 
 TEST_CASE("json::wvalue::wvalue(char const*)")
@@ -1867,7 +1869,8 @@ TEST_CASE("middleware_cors")
         return "-";
     });
 
-    auto _ = app.bindaddr(LOCALHOST_ADDRESS).port(45451).run_async();
+    const auto port = 33333;
+    auto _ = app.bindaddr(LOCALHOST_ADDRESS).port(port).run_async();
 
     app.wait_for_server_start();
     asio::io_service is;
@@ -1875,7 +1878,20 @@ TEST_CASE("middleware_cors")
     {
         asio::ip::tcp::socket c(is);
         c.connect(asio::ip::tcp::endpoint(
-          asio::ip::address::from_string(LOCALHOST_ADDRESS), 45451));
+          asio::ip::address::from_string(LOCALHOST_ADDRESS), port));
+
+        c.send(asio::buffer("OPTIONS / HTTP/1.1\r\n\r\n"));
+
+        c.receive(asio::buffer(buf, 2048));
+        c.close();
+
+        CHECK(std::string(buf).find("Access-Control-Allow-Origin: *") != std::string::npos);
+    }
+
+    {
+        asio::ip::tcp::socket c(is);
+        c.connect(asio::ip::tcp::endpoint(
+          asio::ip::address::from_string(LOCALHOST_ADDRESS), port));
 
         c.send(asio::buffer("GET /\r\n\r\n"));
 
@@ -1888,7 +1904,7 @@ TEST_CASE("middleware_cors")
     {
         asio::ip::tcp::socket c(is);
         c.connect(asio::ip::tcp::endpoint(
-          asio::ip::address::from_string(LOCALHOST_ADDRESS), 45451));
+          asio::ip::address::from_string(LOCALHOST_ADDRESS), port));
 
         c.send(asio::buffer("GET /origin\r\n\r\n"));
 
@@ -1901,7 +1917,7 @@ TEST_CASE("middleware_cors")
     {
         asio::ip::tcp::socket c(is);
         c.connect(asio::ip::tcp::endpoint(
-          asio::ip::address::from_string(LOCALHOST_ADDRESS), 45451));
+          asio::ip::address::from_string(LOCALHOST_ADDRESS), port));
 
         c.send(asio::buffer("GET /nocors/path\r\n\r\n"));
 

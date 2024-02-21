@@ -97,25 +97,25 @@ namespace crow
         }
 
         /// Create a dynamic route using a rule (**Use CROW_ROUTE instead**)
-        DynamicRule& route_dynamic(std::string&& rule)
+        DynamicRule& route_dynamic(const std::string& rule)
         {
-            return router_.new_rule_dynamic(std::move(rule));
+            return router_.new_rule_dynamic(rule);
         }
 
-        ///Create a route using a rule (**Use CROW_ROUTE instead**)
+        /// Create a route using a rule (**Use CROW_ROUTE instead**)
         template<uint64_t Tag>
 #ifdef CROW_GCC83_WORKAROUND
-        auto& route(std::string&& rule)
+        auto& route(const std::string& rule)
 #else
-        auto route(std::string&& rule)
+        auto route(const std::string& rule)
 #endif
 #if defined CROW_CAN_USE_CPP17 && !defined CROW_GCC83_WORKAROUND
-          -> typename std::invoke_result<decltype(&Router::new_rule_tagged<Tag>), Router, std::string&&>::type
+          -> typename std::invoke_result<decltype(&Router::new_rule_tagged<Tag>), Router, const std::string&>::type
 #elif !defined CROW_GCC83_WORKAROUND
-          -> typename std::result_of<decltype (&Router::new_rule_tagged<Tag>)(Router, std::string&&)>::type
+          -> typename std::result_of<decltype (&Router::new_rule_tagged<Tag>)(Router, const std::string&)>::type
 #endif
         {
-            return router_.new_rule_tagged<Tag>(std::move(rule));
+            return router_.new_rule_tagged<Tag>(rule);
         }
 
         /// Create a route for any requests without a proper route (**Use CROW_CATCHALL_ROUTE instead**)
@@ -187,7 +187,7 @@ namespace crow
             bindaddr_ = bindaddr;
             return *this;
         }
-        
+
         /// Get the address that Crow will handle requests on
         std::string bindaddr()
         {
@@ -208,7 +208,7 @@ namespace crow
             concurrency_ = concurrency;
             return *this;
         }
-        
+
         /// Get the number of threads that server is using
         std::uint16_t concurrency()
         {

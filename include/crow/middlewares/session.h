@@ -105,7 +105,7 @@ namespace crow
             {
                 case type::Number:
                 {
-                    if (rv.nt() == num_type::Floating_point)
+                    if (rv.nt() == num_type::Floating_point || rv.nt() == num_type::Double_precision_floating_point)
                         return multi_value{rv.d()};
                     else if (rv.nt() == num_type::Unsigned_integer)
                         return multi_value{int64_t(rv.u())};
