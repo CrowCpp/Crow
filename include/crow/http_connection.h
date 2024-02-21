@@ -103,6 +103,7 @@ namespace crow
             if (!routing_handle_result_->rule_index)
             {
                 parser_.done();
+                need_to_call_after_handlers_ = true;
                 complete_request();
             }
         }
