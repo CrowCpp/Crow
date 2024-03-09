@@ -11,11 +11,11 @@
 
 ## Description
 
-Crow is a C++ framework for creating HTTP or Websocket web services. It uses routing similar to Python's Flask which makes it easy to use. It is also extremely fast, beating multiple existing C++ frameworks as well as non C++ frameworks.
+Crow is a C++ framework for creating HTTP or Websocket web services. It uses routing similar to Python's Flask which makes it easy to use. It is also extremely fast, beating multiple existing C++ frameworks as well as non-C++ frameworks.
 
 ### Features
- - Easy Routing (similar to flask).
- - Type-safe Handlers.
+ - Easy Routing (similar to Flask).
+ - Type-safe handlers.
  - Blazingly fast (see [this benchmark](https://github.com/ipkn/crow-benchmark) and [this benchmark](https://github.com/guteksan/REST-CPP-benchmark)).
  - Built in JSON support.
  - [Mustache](http://mustache.github.io/) based templating library (`crow::mustache`).
@@ -77,7 +77,7 @@ CROW_ROUTE(app,"/hello/<int>")
 ```
 Handler arguments type check at compile time
 ```cpp
-// Compile error with message "Handler type is mismatched with URL paramters"
+// Compile error with message "Handler type is mismatched with URL parameters"
 CROW_ROUTE(app,"/another/<int>")
 ([](int a, int b){
     return crow::response(500);
