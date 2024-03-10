@@ -1461,22 +1461,13 @@ namespace crow
 
             CROW_LOG_DEBUG << "Matched rule (upgrade) '" << rules[rule_index]->rule_ << "' " << static_cast<uint32_t>(req.method) << " / " << rules[rule_index]->get_methods();
 
-            // any uncaught exceptions become 500s
             try
             {
                 rules[rule_index]->handle_upgrade(req, res, std::move(adaptor));
             }
-            catch (std::exception& e)
-            {
-                CROW_LOG_ERROR << "An uncaught exception occurred: " << e.what();
-                res = response(500);
-                res.end();
-                return;
-            }
             catch (...)
             {
-                CROW_LOG_ERROR << "An uncaught exception occurred. The type was unknown so no information was available.";
-                res = response(500);
+                exception_handler_(res);
                 res.end();
                 return;
             }
@@ -1534,7 +1525,14 @@ namespace crow
                 std::vector<uint16_t> bpi = found.blueprint_indices;
                 if (bps_found[i]->catchall_rule().has_handler())
                 {
-                    bps_found[i]->catchall_rule().handler_(req, res);
+                    try
+                    {
+                        bps_found[i]->catchall_rule().handler_(req, res);
+                    }
+                    catch (...)
+                    {
+                        exception_handler_(res);
+                    }
 #ifdef CROW_ENABLE_DEBUG
                     return std::string("Redirected to Blueprint \"" + bps_found[i]->prefix() + "\" Catchall rule");
 #else
@@ -1544,7 +1542,14 @@ namespace crow
             }
             if (catchall_rule_.has_handler())
             {
-                catchall_rule_.handler_(req, res);
+                try
+                {
+                    catchall_rule_.handler_(req, res);
+                }
+                catch (...)
+                {
+                    exception_handler_(res);
+                }
 #ifdef CROW_ENABLE_DEBUG
                 return std::string("Redirected to global Catchall rule");
 #else
@@ -1704,23 +1709,14 @@ namespace crow
 
             CROW_LOG_DEBUG << "Matched rule '" << rules[rule_index]->rule_ << "' " << static_cast<uint32_t>(req.method) << " / " << rules[rule_index]->get_methods();
 
-            // any uncaught exceptions become 500s
             try
             {
                 auto& rule = rules[rule_index];
                 handle_rule<App>(rule, req, res, found.r_params);
             }
-            catch (std::exception& e)
-            {
-                CROW_LOG_ERROR << "An uncaught exception occurred: " << e.what();
-                res = response(500);
-                res.end();
-                return;
-            }
             catch (...)
             {
-                CROW_LOG_ERROR << "An uncaught exception occurred. The type was unknown so no information was available.";
-                res = response(500);
+                exception_handler_(res);
                 res.end();
                 return;
             }
@@ -1787,6 +1783,30 @@ namespace crow
             return blueprints_;
         }
 
+        std::function<void(crow::response&)>& exception_handler()
+        {
+            return exception_handler_;
+        }
+
+        static void default_exception_handler(response& res)
+        {
+            // any uncaught exceptions become 500s
+            res = response(500);
+
+            try
+            {
+                throw;
+            }
+            catch (const std::exception& e)
+            {
+                CROW_LOG_ERROR << "An uncaught exception occurred: " << e.what();
+            }
+            catch (...)
+            {
+                CROW_LOG_ERROR << "An uncaught exception occurred. The type was unknown so no information was available.";
+            }
+        }
+
     private:
         CatchallRule catchall_rule_;
 
@@ -1802,5 +1822,6 @@ namespace crow
         std::array<PerMethod, static_cast<int>(HTTPMethod::InternalMethodCount)> per_methods_;
         std::vector<std::unique_ptr<BaseRule>> all_rules_;
         std::vector<Blueprint*> blueprints_;
+        std::function<void(crow::response&)> exception_handler_ = &default_exception_handler;
     };
 } // namespace crow
