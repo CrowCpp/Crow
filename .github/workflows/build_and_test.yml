@@ -31,7 +31,7 @@ jobs:
             # ubuntu-18.04 does not work due to compile error on asio
             # windows-2019 not included to spare free minutes   
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: Prepare dependencies
       run:   |
          if [ "$RUNNER_OS" == "Linux" ]; then
