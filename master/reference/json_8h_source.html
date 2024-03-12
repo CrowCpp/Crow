@@ -1941,194 +1941,247 @@ $(document).ready(function(){initNavTree('json_8h_source.html',''); initResizabl
 <div class="line"><a name="l01840"></a><span class="lineno"> 1840</span>&#160;                out.push_back(<span class="charliteral">&#39;&quot;&#39;</span>);</div>
 <div class="line"><a name="l01841"></a><span class="lineno"> 1841</span>&#160;            }</div>
 <div class="line"><a name="l01842"></a><span class="lineno"> 1842</span>&#160; </div>
-<div class="line"><a name="l01843"></a><span class="lineno"> 1843</span>&#160;            <span class="keyword">inline</span> <span class="keywordtype">void</span> dump_internal(<span class="keyword">const</span> wvalue&amp; v, std::string&amp; out)<span class="keyword"> const</span></div>
+<div class="line"><a name="l01843"></a><span class="lineno"> 1843</span>&#160;            <span class="keyword">inline</span> <span class="keywordtype">void</span> dump_indentation_part(std::string&amp; out, <span class="keyword">const</span> <span class="keywordtype">int</span> indent, <span class="keyword">const</span> <span class="keywordtype">char</span> separator, <span class="keyword">const</span> <span class="keywordtype">int</span> indent_level)<span class="keyword"> const</span></div>
 <div class="line"><a name="l01844"></a><span class="lineno"> 1844</span>&#160;<span class="keyword">            </span>{</div>
-<div class="line"><a name="l01845"></a><span class="lineno"> 1845</span>&#160;                <span class="keywordflow">switch</span> (v.t_)</div>
-<div class="line"><a name="l01846"></a><span class="lineno"> 1846</span>&#160;                {</div>
-<div class="line"><a name="l01847"></a><span class="lineno"> 1847</span>&#160;                    <span class="keywordflow">case</span> type::Null: out += <span class="stringliteral">&quot;null&quot;</span>; <span class="keywordflow">break</span>;</div>
-<div class="line"><a name="l01848"></a><span class="lineno"> 1848</span>&#160;                    <span class="keywordflow">case</span> type::False: out += <span class="stringliteral">&quot;false&quot;</span>; <span class="keywordflow">break</span>;</div>
-<div class="line"><a name="l01849"></a><span class="lineno"> 1849</span>&#160;                    <span class="keywordflow">case</span> type::True: out += <span class="stringliteral">&quot;true&quot;</span>; <span class="keywordflow">break</span>;</div>
-<div class="line"><a name="l01850"></a><span class="lineno"> 1850</span>&#160;                    <span class="keywordflow">case</span> type::Number:</div>
-<div class="line"><a name="l01851"></a><span class="lineno"> 1851</span>&#160;                    {</div>
-<div class="line"><a name="l01852"></a><span class="lineno"> 1852</span>&#160;                        <span class="keywordflow">if</span> (v.nt == num_type::Floating_point || v.nt == num_type::Double_precision_floating_point)</div>
-<div class="line"><a name="l01853"></a><span class="lineno"> 1853</span>&#160;                        {</div>
-<div class="line"><a name="l01854"></a><span class="lineno"> 1854</span>&#160;                            <span class="keywordflow">if</span> (isnan(v.num.d) || isinf(v.num.d))</div>
-<div class="line"><a name="l01855"></a><span class="lineno"> 1855</span>&#160;                            {</div>
-<div class="line"><a name="l01856"></a><span class="lineno"> 1856</span>&#160;                                out += <span class="stringliteral">&quot;null&quot;</span>;</div>
-<div class="line"><a name="l01857"></a><span class="lineno"> 1857</span>&#160;                                CROW_LOG_WARNING &lt;&lt; <span class="stringliteral">&quot;Invalid JSON value detected (&quot;</span> &lt;&lt; v.num.d &lt;&lt; <span class="stringliteral">&quot;), value set to null&quot;</span>;</div>
-<div class="line"><a name="l01858"></a><span class="lineno"> 1858</span>&#160;                                <span class="keywordflow">break</span>;</div>
-<div class="line"><a name="l01859"></a><span class="lineno"> 1859</span>&#160;                            }</div>
-<div class="line"><a name="l01860"></a><span class="lineno"> 1860</span>&#160;                            <span class="keyword">enum</span></div>
-<div class="line"><a name="l01861"></a><span class="lineno"> 1861</span>&#160;                            {</div>
-<div class="line"><a name="l01862"></a><span class="lineno"> 1862</span>&#160;                                start,</div>
-<div class="line"><a name="l01863"></a><span class="lineno"> 1863</span>&#160;                                decp, <span class="comment">// Decimal point</span></div>
-<div class="line"><a name="l01864"></a><span class="lineno"> 1864</span>&#160;                                zero</div>
-<div class="line"><a name="l01865"></a><span class="lineno"> 1865</span>&#160;                            } f_state;</div>
-<div class="line"><a name="l01866"></a><span class="lineno"> 1866</span>&#160;                            <span class="keywordtype">char</span> outbuf[128];</div>
-<div class="line"><a name="l01867"></a><span class="lineno"> 1867</span>&#160;                            <span class="keywordflow">if</span> (v.nt == num_type::Double_precision_floating_point)</div>
+<div class="line"><a name="l01845"></a><span class="lineno"> 1845</span>&#160;                out.push_back(<span class="charliteral">&#39;\n&#39;</span>);</div>
+<div class="line"><a name="l01846"></a><span class="lineno"> 1846</span>&#160;                out.append(indent_level * indent, separator);</div>
+<div class="line"><a name="l01847"></a><span class="lineno"> 1847</span>&#160;            }</div>
+<div class="line"><a name="l01848"></a><span class="lineno"> 1848</span>&#160; </div>
+<div class="line"><a name="l01849"></a><span class="lineno"> 1849</span>&#160; </div>
+<div class="line"><a name="l01850"></a><span class="lineno"> 1850</span>&#160;            <span class="keyword">inline</span> <span class="keywordtype">void</span> dump_internal(<span class="keyword">const</span> wvalue&amp; v, std::string&amp; out, <span class="keyword">const</span> <span class="keywordtype">int</span> indent, <span class="keyword">const</span> <span class="keywordtype">char</span> separator, <span class="keyword">const</span> <span class="keywordtype">int</span> indent_level = 0)<span class="keyword"> const</span></div>
+<div class="line"><a name="l01851"></a><span class="lineno"> 1851</span>&#160;<span class="keyword">            </span>{</div>
+<div class="line"><a name="l01852"></a><span class="lineno"> 1852</span>&#160;                <span class="keywordflow">switch</span> (v.t_)</div>
+<div class="line"><a name="l01853"></a><span class="lineno"> 1853</span>&#160;                {</div>
+<div class="line"><a name="l01854"></a><span class="lineno"> 1854</span>&#160;                    <span class="keywordflow">case</span> type::Null: out += <span class="stringliteral">&quot;null&quot;</span>; <span class="keywordflow">break</span>;</div>
+<div class="line"><a name="l01855"></a><span class="lineno"> 1855</span>&#160;                    <span class="keywordflow">case</span> type::False: out += <span class="stringliteral">&quot;false&quot;</span>; <span class="keywordflow">break</span>;</div>
+<div class="line"><a name="l01856"></a><span class="lineno"> 1856</span>&#160;                    <span class="keywordflow">case</span> type::True: out += <span class="stringliteral">&quot;true&quot;</span>; <span class="keywordflow">break</span>;</div>
+<div class="line"><a name="l01857"></a><span class="lineno"> 1857</span>&#160;                    <span class="keywordflow">case</span> type::Number:</div>
+<div class="line"><a name="l01858"></a><span class="lineno"> 1858</span>&#160;                    {</div>
+<div class="line"><a name="l01859"></a><span class="lineno"> 1859</span>&#160;                        <span class="keywordflow">if</span> (v.nt == num_type::Floating_point || v.nt == num_type::Double_precision_floating_point)</div>
+<div class="line"><a name="l01860"></a><span class="lineno"> 1860</span>&#160;                        {</div>
+<div class="line"><a name="l01861"></a><span class="lineno"> 1861</span>&#160;                            <span class="keywordflow">if</span> (isnan(v.num.d) || isinf(v.num.d))</div>
+<div class="line"><a name="l01862"></a><span class="lineno"> 1862</span>&#160;                            {</div>
+<div class="line"><a name="l01863"></a><span class="lineno"> 1863</span>&#160;                                out += <span class="stringliteral">&quot;null&quot;</span>;</div>
+<div class="line"><a name="l01864"></a><span class="lineno"> 1864</span>&#160;                                CROW_LOG_WARNING &lt;&lt; <span class="stringliteral">&quot;Invalid JSON value detected (&quot;</span> &lt;&lt; v.num.d &lt;&lt; <span class="stringliteral">&quot;), value set to null&quot;</span>;</div>
+<div class="line"><a name="l01865"></a><span class="lineno"> 1865</span>&#160;                                <span class="keywordflow">break</span>;</div>
+<div class="line"><a name="l01866"></a><span class="lineno"> 1866</span>&#160;                            }</div>
+<div class="line"><a name="l01867"></a><span class="lineno"> 1867</span>&#160;                            <span class="keyword">enum</span></div>
 <div class="line"><a name="l01868"></a><span class="lineno"> 1868</span>&#160;                            {</div>
-<div class="line"><a name="l01869"></a><span class="lineno"> 1869</span>&#160;<span class="preprocessor">#ifdef _MSC_VER</span></div>
-<div class="line"><a name="l01870"></a><span class="lineno"> 1870</span>&#160;                                sprintf_s(outbuf, <span class="keyword">sizeof</span>(outbuf), <span class="stringliteral">&quot;%.*g&quot;</span>, DECIMAL_DIG, v.num.d);</div>
-<div class="line"><a name="l01871"></a><span class="lineno"> 1871</span>&#160;<span class="preprocessor">#else</span></div>
-<div class="line"><a name="l01872"></a><span class="lineno"> 1872</span>&#160;                                snprintf(outbuf, <span class="keyword">sizeof</span>(outbuf), <span class="stringliteral">&quot;%.*g&quot;</span>, DECIMAL_DIG, v.num.d);</div>
-<div class="line"><a name="l01873"></a><span class="lineno"> 1873</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l01874"></a><span class="lineno"> 1874</span>&#160;                            }</div>
-<div class="line"><a name="l01875"></a><span class="lineno"> 1875</span>&#160;                            <span class="keywordflow">else</span></div>
-<div class="line"><a name="l01876"></a><span class="lineno"> 1876</span>&#160;                            {</div>
-<div class="line"><a name="l01877"></a><span class="lineno"> 1877</span>&#160;<span class="preprocessor">#ifdef _MSC_VER</span></div>
-<div class="line"><a name="l01878"></a><span class="lineno"> 1878</span>&#160;                                sprintf_s(outbuf, <span class="keyword">sizeof</span>(outbuf), <span class="stringliteral">&quot;%f&quot;</span>, v.num.d);</div>
-<div class="line"><a name="l01879"></a><span class="lineno"> 1879</span>&#160;<span class="preprocessor">#else</span></div>
-<div class="line"><a name="l01880"></a><span class="lineno"> 1880</span>&#160;                                snprintf(outbuf, <span class="keyword">sizeof</span>(outbuf), <span class="stringliteral">&quot;%f&quot;</span>, v.num.d);</div>
-<div class="line"><a name="l01881"></a><span class="lineno"> 1881</span>&#160;<span class="preprocessor">#endif </span></div>
-<div class="line"><a name="l01882"></a><span class="lineno"> 1882</span>&#160;                            }</div>
-<div class="line"><a name="l01883"></a><span class="lineno"> 1883</span>&#160;                            <span class="keywordtype">char</span> *p = &amp;outbuf[0], *o = <span class="keyword">nullptr</span>; <span class="comment">// o is the position of the first trailing 0</span></div>
-<div class="line"><a name="l01884"></a><span class="lineno"> 1884</span>&#160;                            f_state = start;</div>
-<div class="line"><a name="l01885"></a><span class="lineno"> 1885</span>&#160;                            <span class="keywordflow">while</span> (*p != <span class="charliteral">&#39;\0&#39;</span>)</div>
-<div class="line"><a name="l01886"></a><span class="lineno"> 1886</span>&#160;                            {</div>
-<div class="line"><a name="l01887"></a><span class="lineno"> 1887</span>&#160;                                <span class="comment">//std::cout &lt;&lt; *p &lt;&lt; std::endl;</span></div>
-<div class="line"><a name="l01888"></a><span class="lineno"> 1888</span>&#160;                                <span class="keywordtype">char</span> ch = *p;</div>
-<div class="line"><a name="l01889"></a><span class="lineno"> 1889</span>&#160;                                <span class="keywordflow">switch</span> (f_state)</div>
-<div class="line"><a name="l01890"></a><span class="lineno"> 1890</span>&#160;                                {</div>
-<div class="line"><a name="l01891"></a><span class="lineno"> 1891</span>&#160;                                    <span class="keywordflow">case</span> start: <span class="comment">// Loop and lookahead until a decimal point is found</span></div>
-<div class="line"><a name="l01892"></a><span class="lineno"> 1892</span>&#160;                                        <span class="keywordflow">if</span> (ch == <span class="charliteral">&#39;.&#39;</span>)</div>
-<div class="line"><a name="l01893"></a><span class="lineno"> 1893</span>&#160;                                        {</div>
-<div class="line"><a name="l01894"></a><span class="lineno"> 1894</span>&#160;                                            <span class="keywordtype">char</span> fch = *(p + 1);</div>
-<div class="line"><a name="l01895"></a><span class="lineno"> 1895</span>&#160;                                            <span class="comment">// if the first character is 0, leave it be (this is so that &quot;1.00000&quot; becomes &quot;1.0&quot; and not &quot;1.&quot;)</span></div>
-<div class="line"><a name="l01896"></a><span class="lineno"> 1896</span>&#160;                                            <span class="keywordflow">if</span> (fch != <span class="charliteral">&#39;\0&#39;</span> &amp;&amp; fch == <span class="charliteral">&#39;0&#39;</span>) p++;</div>
-<div class="line"><a name="l01897"></a><span class="lineno"> 1897</span>&#160;                                            f_state = decp;</div>
-<div class="line"><a name="l01898"></a><span class="lineno"> 1898</span>&#160;                                        }</div>
-<div class="line"><a name="l01899"></a><span class="lineno"> 1899</span>&#160;                                        p++;</div>
-<div class="line"><a name="l01900"></a><span class="lineno"> 1900</span>&#160;                                        <span class="keywordflow">break</span>;</div>
-<div class="line"><a name="l01901"></a><span class="lineno"> 1901</span>&#160;                                    <span class="keywordflow">case</span> decp: <span class="comment">// Loop until a 0 is found, if found, record its position</span></div>
-<div class="line"><a name="l01902"></a><span class="lineno"> 1902</span>&#160;                                        <span class="keywordflow">if</span> (ch == <span class="charliteral">&#39;0&#39;</span>)</div>
-<div class="line"><a name="l01903"></a><span class="lineno"> 1903</span>&#160;                                        {</div>
-<div class="line"><a name="l01904"></a><span class="lineno"> 1904</span>&#160;                                            f_state = zero;</div>
-<div class="line"><a name="l01905"></a><span class="lineno"> 1905</span>&#160;                                            o = p;</div>
-<div class="line"><a name="l01906"></a><span class="lineno"> 1906</span>&#160;                                        }</div>
-<div class="line"><a name="l01907"></a><span class="lineno"> 1907</span>&#160;                                        p++;</div>
-<div class="line"><a name="l01908"></a><span class="lineno"> 1908</span>&#160;                                        <span class="keywordflow">break</span>;</div>
-<div class="line"><a name="l01909"></a><span class="lineno"> 1909</span>&#160;                                    <span class="keywordflow">case</span> zero: <span class="comment">// if a non 0 is found (e.g. 1.00004) remove the earlier recorded 0 position and look for more trailing 0s</span></div>
-<div class="line"><a name="l01910"></a><span class="lineno"> 1910</span>&#160;                                        <span class="keywordflow">if</span> (ch != <span class="charliteral">&#39;0&#39;</span>)</div>
-<div class="line"><a name="l01911"></a><span class="lineno"> 1911</span>&#160;                                        {</div>
-<div class="line"><a name="l01912"></a><span class="lineno"> 1912</span>&#160;                                            o = <span class="keyword">nullptr</span>;</div>
-<div class="line"><a name="l01913"></a><span class="lineno"> 1913</span>&#160;                                            f_state = decp;</div>
-<div class="line"><a name="l01914"></a><span class="lineno"> 1914</span>&#160;                                        }</div>
-<div class="line"><a name="l01915"></a><span class="lineno"> 1915</span>&#160;                                        p++;</div>
-<div class="line"><a name="l01916"></a><span class="lineno"> 1916</span>&#160;                                        <span class="keywordflow">break</span>;</div>
-<div class="line"><a name="l01917"></a><span class="lineno"> 1917</span>&#160;                                }</div>
-<div class="line"><a name="l01918"></a><span class="lineno"> 1918</span>&#160;                            }</div>
-<div class="line"><a name="l01919"></a><span class="lineno"> 1919</span>&#160;                            <span class="keywordflow">if</span> (o != <span class="keyword">nullptr</span>) <span class="comment">// if any trailing 0s are found, terminate the string where they begin</span></div>
-<div class="line"><a name="l01920"></a><span class="lineno"> 1920</span>&#160;                                *o = <span class="charliteral">&#39;\0&#39;</span>;</div>
-<div class="line"><a name="l01921"></a><span class="lineno"> 1921</span>&#160;                            out += outbuf;</div>
-<div class="line"><a name="l01922"></a><span class="lineno"> 1922</span>&#160;                        }</div>
-<div class="line"><a name="l01923"></a><span class="lineno"> 1923</span>&#160;                        <span class="keywordflow">else</span> <span class="keywordflow">if</span> (v.nt == num_type::Signed_integer)</div>
-<div class="line"><a name="l01924"></a><span class="lineno"> 1924</span>&#160;                        {</div>
-<div class="line"><a name="l01925"></a><span class="lineno"> 1925</span>&#160;                            out += std::to_string(v.num.si);</div>
-<div class="line"><a name="l01926"></a><span class="lineno"> 1926</span>&#160;                        }</div>
-<div class="line"><a name="l01927"></a><span class="lineno"> 1927</span>&#160;                        <span class="keywordflow">else</span></div>
-<div class="line"><a name="l01928"></a><span class="lineno"> 1928</span>&#160;                        {</div>
-<div class="line"><a name="l01929"></a><span class="lineno"> 1929</span>&#160;                            out += std::to_string(v.num.ui);</div>
-<div class="line"><a name="l01930"></a><span class="lineno"> 1930</span>&#160;                        }</div>
-<div class="line"><a name="l01931"></a><span class="lineno"> 1931</span>&#160;                    }</div>
-<div class="line"><a name="l01932"></a><span class="lineno"> 1932</span>&#160;                    <span class="keywordflow">break</span>;</div>
-<div class="line"><a name="l01933"></a><span class="lineno"> 1933</span>&#160;                    <span class="keywordflow">case</span> type::String: dump_string(v.s, out); <span class="keywordflow">break</span>;</div>
-<div class="line"><a name="l01934"></a><span class="lineno"> 1934</span>&#160;                    <span class="keywordflow">case</span> type::List:</div>
-<div class="line"><a name="l01935"></a><span class="lineno"> 1935</span>&#160;                    {</div>
-<div class="line"><a name="l01936"></a><span class="lineno"> 1936</span>&#160;                        out.push_back(<span class="charliteral">&#39;[&#39;</span>);</div>
-<div class="line"><a name="l01937"></a><span class="lineno"> 1937</span>&#160;                        <span class="keywordflow">if</span> (v.l)</div>
-<div class="line"><a name="l01938"></a><span class="lineno"> 1938</span>&#160;                        {</div>
-<div class="line"><a name="l01939"></a><span class="lineno"> 1939</span>&#160;                            <span class="keywordtype">bool</span> first = <span class="keyword">true</span>;</div>
-<div class="line"><a name="l01940"></a><span class="lineno"> 1940</span>&#160;                            <span class="keywordflow">for</span> (<span class="keyword">auto</span>&amp; x : *v.l)</div>
-<div class="line"><a name="l01941"></a><span class="lineno"> 1941</span>&#160;                            {</div>
-<div class="line"><a name="l01942"></a><span class="lineno"> 1942</span>&#160;                                <span class="keywordflow">if</span> (!first)</div>
-<div class="line"><a name="l01943"></a><span class="lineno"> 1943</span>&#160;                                {</div>
-<div class="line"><a name="l01944"></a><span class="lineno"> 1944</span>&#160;                                    out.push_back(<span class="charliteral">&#39;,&#39;</span>);</div>
-<div class="line"><a name="l01945"></a><span class="lineno"> 1945</span>&#160;                                }</div>
-<div class="line"><a name="l01946"></a><span class="lineno"> 1946</span>&#160;                                first = <span class="keyword">false</span>;</div>
-<div class="line"><a name="l01947"></a><span class="lineno"> 1947</span>&#160;                                dump_internal(x, out);</div>
-<div class="line"><a name="l01948"></a><span class="lineno"> 1948</span>&#160;                            }</div>
-<div class="line"><a name="l01949"></a><span class="lineno"> 1949</span>&#160;                        }</div>
-<div class="line"><a name="l01950"></a><span class="lineno"> 1950</span>&#160;                        out.push_back(<span class="charliteral">&#39;]&#39;</span>);</div>
-<div class="line"><a name="l01951"></a><span class="lineno"> 1951</span>&#160;                    }</div>
-<div class="line"><a name="l01952"></a><span class="lineno"> 1952</span>&#160;                    <span class="keywordflow">break</span>;</div>
-<div class="line"><a name="l01953"></a><span class="lineno"> 1953</span>&#160;                    <span class="keywordflow">case</span> type::Object:</div>
-<div class="line"><a name="l01954"></a><span class="lineno"> 1954</span>&#160;                    {</div>
-<div class="line"><a name="l01955"></a><span class="lineno"> 1955</span>&#160;                        out.push_back(<span class="charliteral">&#39;{&#39;</span>);</div>
-<div class="line"><a name="l01956"></a><span class="lineno"> 1956</span>&#160;                        <span class="keywordflow">if</span> (v.o)</div>
-<div class="line"><a name="l01957"></a><span class="lineno"> 1957</span>&#160;                        {</div>
-<div class="line"><a name="l01958"></a><span class="lineno"> 1958</span>&#160;                            <span class="keywordtype">bool</span> first = <span class="keyword">true</span>;</div>
-<div class="line"><a name="l01959"></a><span class="lineno"> 1959</span>&#160;                            <span class="keywordflow">for</span> (<span class="keyword">auto</span>&amp; kv : *v.o)</div>
-<div class="line"><a name="l01960"></a><span class="lineno"> 1960</span>&#160;                            {</div>
-<div class="line"><a name="l01961"></a><span class="lineno"> 1961</span>&#160;                                <span class="keywordflow">if</span> (!first)</div>
-<div class="line"><a name="l01962"></a><span class="lineno"> 1962</span>&#160;                                {</div>
-<div class="line"><a name="l01963"></a><span class="lineno"> 1963</span>&#160;                                    out.push_back(<span class="charliteral">&#39;,&#39;</span>);</div>
-<div class="line"><a name="l01964"></a><span class="lineno"> 1964</span>&#160;                                }</div>
-<div class="line"><a name="l01965"></a><span class="lineno"> 1965</span>&#160;                                first = <span class="keyword">false</span>;</div>
-<div class="line"><a name="l01966"></a><span class="lineno"> 1966</span>&#160;                                dump_string(kv.first, out);</div>
-<div class="line"><a name="l01967"></a><span class="lineno"> 1967</span>&#160;                                out.push_back(<span class="charliteral">&#39;:&#39;</span>);</div>
-<div class="line"><a name="l01968"></a><span class="lineno"> 1968</span>&#160;                                dump_internal(kv.second, out);</div>
-<div class="line"><a name="l01969"></a><span class="lineno"> 1969</span>&#160;                            }</div>
-<div class="line"><a name="l01970"></a><span class="lineno"> 1970</span>&#160;                        }</div>
-<div class="line"><a name="l01971"></a><span class="lineno"> 1971</span>&#160;                        out.push_back(<span class="charliteral">&#39;}&#39;</span>);</div>
-<div class="line"><a name="l01972"></a><span class="lineno"> 1972</span>&#160;                    }</div>
-<div class="line"><a name="l01973"></a><span class="lineno"> 1973</span>&#160;                    <span class="keywordflow">break</span>;</div>
-<div class="line"><a name="l01974"></a><span class="lineno"> 1974</span>&#160; </div>
-<div class="line"><a name="l01975"></a><span class="lineno"> 1975</span>&#160;                    <span class="keywordflow">case</span> type::Function:</div>
-<div class="line"><a name="l01976"></a><span class="lineno"> 1976</span>&#160;                        out += <span class="stringliteral">&quot;custom function&quot;</span>;</div>
-<div class="line"><a name="l01977"></a><span class="lineno"> 1977</span>&#160;                        <span class="keywordflow">break</span>;</div>
-<div class="line"><a name="l01978"></a><span class="lineno"> 1978</span>&#160;                }</div>
-<div class="line"><a name="l01979"></a><span class="lineno"> 1979</span>&#160;            }</div>
+<div class="line"><a name="l01869"></a><span class="lineno"> 1869</span>&#160;                                start,</div>
+<div class="line"><a name="l01870"></a><span class="lineno"> 1870</span>&#160;                                decp, <span class="comment">// Decimal point</span></div>
+<div class="line"><a name="l01871"></a><span class="lineno"> 1871</span>&#160;                                zero</div>
+<div class="line"><a name="l01872"></a><span class="lineno"> 1872</span>&#160;                            } f_state;</div>
+<div class="line"><a name="l01873"></a><span class="lineno"> 1873</span>&#160;                            <span class="keywordtype">char</span> outbuf[128];</div>
+<div class="line"><a name="l01874"></a><span class="lineno"> 1874</span>&#160;                            <span class="keywordflow">if</span> (v.nt == num_type::Double_precision_floating_point)</div>
+<div class="line"><a name="l01875"></a><span class="lineno"> 1875</span>&#160;                            {</div>
+<div class="line"><a name="l01876"></a><span class="lineno"> 1876</span>&#160;<span class="preprocessor">#ifdef _MSC_VER</span></div>
+<div class="line"><a name="l01877"></a><span class="lineno"> 1877</span>&#160;                                sprintf_s(outbuf, <span class="keyword">sizeof</span>(outbuf), <span class="stringliteral">&quot;%.*g&quot;</span>, DECIMAL_DIG, v.num.d);</div>
+<div class="line"><a name="l01878"></a><span class="lineno"> 1878</span>&#160;<span class="preprocessor">#else</span></div>
+<div class="line"><a name="l01879"></a><span class="lineno"> 1879</span>&#160;                                snprintf(outbuf, <span class="keyword">sizeof</span>(outbuf), <span class="stringliteral">&quot;%.*g&quot;</span>, DECIMAL_DIG, v.num.d);</div>
+<div class="line"><a name="l01880"></a><span class="lineno"> 1880</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l01881"></a><span class="lineno"> 1881</span>&#160;                            }</div>
+<div class="line"><a name="l01882"></a><span class="lineno"> 1882</span>&#160;                            <span class="keywordflow">else</span></div>
+<div class="line"><a name="l01883"></a><span class="lineno"> 1883</span>&#160;                            {</div>
+<div class="line"><a name="l01884"></a><span class="lineno"> 1884</span>&#160;<span class="preprocessor">#ifdef _MSC_VER</span></div>
+<div class="line"><a name="l01885"></a><span class="lineno"> 1885</span>&#160;                                sprintf_s(outbuf, <span class="keyword">sizeof</span>(outbuf), <span class="stringliteral">&quot;%f&quot;</span>, v.num.d);</div>
+<div class="line"><a name="l01886"></a><span class="lineno"> 1886</span>&#160;<span class="preprocessor">#else</span></div>
+<div class="line"><a name="l01887"></a><span class="lineno"> 1887</span>&#160;                                snprintf(outbuf, <span class="keyword">sizeof</span>(outbuf), <span class="stringliteral">&quot;%f&quot;</span>, v.num.d);</div>
+<div class="line"><a name="l01888"></a><span class="lineno"> 1888</span>&#160;<span class="preprocessor">#endif </span></div>
+<div class="line"><a name="l01889"></a><span class="lineno"> 1889</span>&#160;                            }</div>
+<div class="line"><a name="l01890"></a><span class="lineno"> 1890</span>&#160;                            <span class="keywordtype">char</span> *p = &amp;outbuf[0], *o = <span class="keyword">nullptr</span>; <span class="comment">// o is the position of the first trailing 0</span></div>
+<div class="line"><a name="l01891"></a><span class="lineno"> 1891</span>&#160;                            f_state = start;</div>
+<div class="line"><a name="l01892"></a><span class="lineno"> 1892</span>&#160;                            <span class="keywordflow">while</span> (*p != <span class="charliteral">&#39;\0&#39;</span>)</div>
+<div class="line"><a name="l01893"></a><span class="lineno"> 1893</span>&#160;                            {</div>
+<div class="line"><a name="l01894"></a><span class="lineno"> 1894</span>&#160;                                <span class="comment">//std::cout &lt;&lt; *p &lt;&lt; std::endl;</span></div>
+<div class="line"><a name="l01895"></a><span class="lineno"> 1895</span>&#160;                                <span class="keywordtype">char</span> ch = *p;</div>
+<div class="line"><a name="l01896"></a><span class="lineno"> 1896</span>&#160;                                <span class="keywordflow">switch</span> (f_state)</div>
+<div class="line"><a name="l01897"></a><span class="lineno"> 1897</span>&#160;                                {</div>
+<div class="line"><a name="l01898"></a><span class="lineno"> 1898</span>&#160;                                    <span class="keywordflow">case</span> start: <span class="comment">// Loop and lookahead until a decimal point is found</span></div>
+<div class="line"><a name="l01899"></a><span class="lineno"> 1899</span>&#160;                                        <span class="keywordflow">if</span> (ch == <span class="charliteral">&#39;.&#39;</span>)</div>
+<div class="line"><a name="l01900"></a><span class="lineno"> 1900</span>&#160;                                        {</div>
+<div class="line"><a name="l01901"></a><span class="lineno"> 1901</span>&#160;                                            <span class="keywordtype">char</span> fch = *(p + 1);</div>
+<div class="line"><a name="l01902"></a><span class="lineno"> 1902</span>&#160;                                            <span class="comment">// if the first character is 0, leave it be (this is so that &quot;1.00000&quot; becomes &quot;1.0&quot; and not &quot;1.&quot;)</span></div>
+<div class="line"><a name="l01903"></a><span class="lineno"> 1903</span>&#160;                                            <span class="keywordflow">if</span> (fch != <span class="charliteral">&#39;\0&#39;</span> &amp;&amp; fch == <span class="charliteral">&#39;0&#39;</span>) p++;</div>
+<div class="line"><a name="l01904"></a><span class="lineno"> 1904</span>&#160;                                            f_state = decp;</div>
+<div class="line"><a name="l01905"></a><span class="lineno"> 1905</span>&#160;                                        }</div>
+<div class="line"><a name="l01906"></a><span class="lineno"> 1906</span>&#160;                                        p++;</div>
+<div class="line"><a name="l01907"></a><span class="lineno"> 1907</span>&#160;                                        <span class="keywordflow">break</span>;</div>
+<div class="line"><a name="l01908"></a><span class="lineno"> 1908</span>&#160;                                    <span class="keywordflow">case</span> decp: <span class="comment">// Loop until a 0 is found, if found, record its position</span></div>
+<div class="line"><a name="l01909"></a><span class="lineno"> 1909</span>&#160;                                        <span class="keywordflow">if</span> (ch == <span class="charliteral">&#39;0&#39;</span>)</div>
+<div class="line"><a name="l01910"></a><span class="lineno"> 1910</span>&#160;                                        {</div>
+<div class="line"><a name="l01911"></a><span class="lineno"> 1911</span>&#160;                                            f_state = zero;</div>
+<div class="line"><a name="l01912"></a><span class="lineno"> 1912</span>&#160;                                            o = p;</div>
+<div class="line"><a name="l01913"></a><span class="lineno"> 1913</span>&#160;                                        }</div>
+<div class="line"><a name="l01914"></a><span class="lineno"> 1914</span>&#160;                                        p++;</div>
+<div class="line"><a name="l01915"></a><span class="lineno"> 1915</span>&#160;                                        <span class="keywordflow">break</span>;</div>
+<div class="line"><a name="l01916"></a><span class="lineno"> 1916</span>&#160;                                    <span class="keywordflow">case</span> zero: <span class="comment">// if a non 0 is found (e.g. 1.00004) remove the earlier recorded 0 position and look for more trailing 0s</span></div>
+<div class="line"><a name="l01917"></a><span class="lineno"> 1917</span>&#160;                                        <span class="keywordflow">if</span> (ch != <span class="charliteral">&#39;0&#39;</span>)</div>
+<div class="line"><a name="l01918"></a><span class="lineno"> 1918</span>&#160;                                        {</div>
+<div class="line"><a name="l01919"></a><span class="lineno"> 1919</span>&#160;                                            o = <span class="keyword">nullptr</span>;</div>
+<div class="line"><a name="l01920"></a><span class="lineno"> 1920</span>&#160;                                            f_state = decp;</div>
+<div class="line"><a name="l01921"></a><span class="lineno"> 1921</span>&#160;                                        }</div>
+<div class="line"><a name="l01922"></a><span class="lineno"> 1922</span>&#160;                                        p++;</div>
+<div class="line"><a name="l01923"></a><span class="lineno"> 1923</span>&#160;                                        <span class="keywordflow">break</span>;</div>
+<div class="line"><a name="l01924"></a><span class="lineno"> 1924</span>&#160;                                }</div>
+<div class="line"><a name="l01925"></a><span class="lineno"> 1925</span>&#160;                            }</div>
+<div class="line"><a name="l01926"></a><span class="lineno"> 1926</span>&#160;                            <span class="keywordflow">if</span> (o != <span class="keyword">nullptr</span>) <span class="comment">// if any trailing 0s are found, terminate the string where they begin</span></div>
+<div class="line"><a name="l01927"></a><span class="lineno"> 1927</span>&#160;                                *o = <span class="charliteral">&#39;\0&#39;</span>;</div>
+<div class="line"><a name="l01928"></a><span class="lineno"> 1928</span>&#160;                            out += outbuf;</div>
+<div class="line"><a name="l01929"></a><span class="lineno"> 1929</span>&#160;                        }</div>
+<div class="line"><a name="l01930"></a><span class="lineno"> 1930</span>&#160;                        <span class="keywordflow">else</span> <span class="keywordflow">if</span> (v.nt == num_type::Signed_integer)</div>
+<div class="line"><a name="l01931"></a><span class="lineno"> 1931</span>&#160;                        {</div>
+<div class="line"><a name="l01932"></a><span class="lineno"> 1932</span>&#160;                            out += std::to_string(v.num.si);</div>
+<div class="line"><a name="l01933"></a><span class="lineno"> 1933</span>&#160;                        }</div>
+<div class="line"><a name="l01934"></a><span class="lineno"> 1934</span>&#160;                        <span class="keywordflow">else</span></div>
+<div class="line"><a name="l01935"></a><span class="lineno"> 1935</span>&#160;                        {</div>
+<div class="line"><a name="l01936"></a><span class="lineno"> 1936</span>&#160;                            out += std::to_string(v.num.ui);</div>
+<div class="line"><a name="l01937"></a><span class="lineno"> 1937</span>&#160;                        }</div>
+<div class="line"><a name="l01938"></a><span class="lineno"> 1938</span>&#160;                    }</div>
+<div class="line"><a name="l01939"></a><span class="lineno"> 1939</span>&#160;                    <span class="keywordflow">break</span>;</div>
+<div class="line"><a name="l01940"></a><span class="lineno"> 1940</span>&#160;                    <span class="keywordflow">case</span> type::String: dump_string(v.s, out); <span class="keywordflow">break</span>;</div>
+<div class="line"><a name="l01941"></a><span class="lineno"> 1941</span>&#160;                    <span class="keywordflow">case</span> type::List:</div>
+<div class="line"><a name="l01942"></a><span class="lineno"> 1942</span>&#160;                    {</div>
+<div class="line"><a name="l01943"></a><span class="lineno"> 1943</span>&#160;                        out.push_back(<span class="charliteral">&#39;[&#39;</span>);</div>
+<div class="line"><a name="l01944"></a><span class="lineno"> 1944</span>&#160; </div>
+<div class="line"><a name="l01945"></a><span class="lineno"> 1945</span>&#160;                        <span class="keywordflow">if</span> (indent &gt;= 0)</div>
+<div class="line"><a name="l01946"></a><span class="lineno"> 1946</span>&#160;                        {</div>
+<div class="line"><a name="l01947"></a><span class="lineno"> 1947</span>&#160;                            dump_indentation_part(out, indent, separator, indent_level + 1);</div>
+<div class="line"><a name="l01948"></a><span class="lineno"> 1948</span>&#160;                        }</div>
+<div class="line"><a name="l01949"></a><span class="lineno"> 1949</span>&#160; </div>
+<div class="line"><a name="l01950"></a><span class="lineno"> 1950</span>&#160;                        <span class="keywordflow">if</span> (v.l)</div>
+<div class="line"><a name="l01951"></a><span class="lineno"> 1951</span>&#160;                        {</div>
+<div class="line"><a name="l01952"></a><span class="lineno"> 1952</span>&#160;                            <span class="keywordtype">bool</span> first = <span class="keyword">true</span>;</div>
+<div class="line"><a name="l01953"></a><span class="lineno"> 1953</span>&#160;                            <span class="keywordflow">for</span> (<span class="keyword">auto</span>&amp; x : *v.l)</div>
+<div class="line"><a name="l01954"></a><span class="lineno"> 1954</span>&#160;                            {</div>
+<div class="line"><a name="l01955"></a><span class="lineno"> 1955</span>&#160;                                <span class="keywordflow">if</span> (!first)</div>
+<div class="line"><a name="l01956"></a><span class="lineno"> 1956</span>&#160;                                {</div>
+<div class="line"><a name="l01957"></a><span class="lineno"> 1957</span>&#160;                                    out.push_back(<span class="charliteral">&#39;,&#39;</span>);</div>
+<div class="line"><a name="l01958"></a><span class="lineno"> 1958</span>&#160; </div>
+<div class="line"><a name="l01959"></a><span class="lineno"> 1959</span>&#160;                                    <span class="keywordflow">if</span> (indent &gt;= 0)</div>
+<div class="line"><a name="l01960"></a><span class="lineno"> 1960</span>&#160;                                    {</div>
+<div class="line"><a name="l01961"></a><span class="lineno"> 1961</span>&#160;                                        dump_indentation_part(out, indent, separator, indent_level + 1);</div>
+<div class="line"><a name="l01962"></a><span class="lineno"> 1962</span>&#160;                                    }</div>
+<div class="line"><a name="l01963"></a><span class="lineno"> 1963</span>&#160;                                }</div>
+<div class="line"><a name="l01964"></a><span class="lineno"> 1964</span>&#160;                                first = <span class="keyword">false</span>;</div>
+<div class="line"><a name="l01965"></a><span class="lineno"> 1965</span>&#160;                                dump_internal(x, out, indent, separator, indent_level + 1);</div>
+<div class="line"><a name="l01966"></a><span class="lineno"> 1966</span>&#160;                            }</div>
+<div class="line"><a name="l01967"></a><span class="lineno"> 1967</span>&#160;                        }</div>
+<div class="line"><a name="l01968"></a><span class="lineno"> 1968</span>&#160; </div>
+<div class="line"><a name="l01969"></a><span class="lineno"> 1969</span>&#160;                        <span class="keywordflow">if</span> (indent &gt;= 0)</div>
+<div class="line"><a name="l01970"></a><span class="lineno"> 1970</span>&#160;                        {</div>
+<div class="line"><a name="l01971"></a><span class="lineno"> 1971</span>&#160;                            dump_indentation_part(out, indent, separator, indent_level);</div>
+<div class="line"><a name="l01972"></a><span class="lineno"> 1972</span>&#160;                        }</div>
+<div class="line"><a name="l01973"></a><span class="lineno"> 1973</span>&#160; </div>
+<div class="line"><a name="l01974"></a><span class="lineno"> 1974</span>&#160;                        out.push_back(<span class="charliteral">&#39;]&#39;</span>);</div>
+<div class="line"><a name="l01975"></a><span class="lineno"> 1975</span>&#160;                    }</div>
+<div class="line"><a name="l01976"></a><span class="lineno"> 1976</span>&#160;                    <span class="keywordflow">break</span>;</div>
+<div class="line"><a name="l01977"></a><span class="lineno"> 1977</span>&#160;                    <span class="keywordflow">case</span> type::Object:</div>
+<div class="line"><a name="l01978"></a><span class="lineno"> 1978</span>&#160;                    {</div>
+<div class="line"><a name="l01979"></a><span class="lineno"> 1979</span>&#160;                        out.push_back(<span class="charliteral">&#39;{&#39;</span>);</div>
 <div class="line"><a name="l01980"></a><span class="lineno"> 1980</span>&#160; </div>
-<div class="line"><a name="l01981"></a><span class="lineno"> 1981</span>&#160;        <span class="keyword">public</span>:</div>
-<div class="line"><a name="l01982"></a><span class="lineno"> 1982</span>&#160;            std::string dump()<span class="keyword"> const</span></div>
-<div class="line"><a name="l01983"></a><span class="lineno"> 1983</span>&#160;<span class="keyword">            </span>{</div>
-<div class="line"><a name="l01984"></a><span class="lineno"> 1984</span>&#160;                std::string ret;</div>
-<div class="line"><a name="l01985"></a><span class="lineno"> 1985</span>&#160;                ret.reserve(<a class="code" href="classcrow_1_1json_1_1wvalue.html#a5af23d208ed3d066a0fb5339350978c6">estimate_length</a>());</div>
-<div class="line"><a name="l01986"></a><span class="lineno"> 1986</span>&#160;                dump_internal(*<span class="keyword">this</span>, ret);</div>
-<div class="line"><a name="l01987"></a><span class="lineno"> 1987</span>&#160;                <span class="keywordflow">return</span> ret;</div>
-<div class="line"><a name="l01988"></a><span class="lineno"> 1988</span>&#160;            }</div>
-<div class="line"><a name="l01989"></a><span class="lineno"> 1989</span>&#160;        };</div>
-<div class="line"><a name="l01990"></a><span class="lineno"> 1990</span>&#160; </div>
-<div class="line"><a name="l01991"></a><span class="lineno"> 1991</span>&#160;        <span class="comment">// Used for accessing the internals of a wvalue</span></div>
-<div class="line"><a name="l01992"></a><span class="lineno"><a class="line" href="structcrow_1_1json_1_1wvalue__reader.html"> 1992</a></span>&#160;        <span class="keyword">struct </span><a class="code" href="structcrow_1_1json_1_1wvalue__reader.html">wvalue_reader</a></div>
-<div class="line"><a name="l01993"></a><span class="lineno"> 1993</span>&#160;        {</div>
-<div class="line"><a name="l01994"></a><span class="lineno"> 1994</span>&#160;            int64_t get(int64_t fallback)</div>
-<div class="line"><a name="l01995"></a><span class="lineno"> 1995</span>&#160;            {</div>
-<div class="line"><a name="l01996"></a><span class="lineno"> 1996</span>&#160;                <span class="keywordflow">if</span> (ref.t() != type::Number || ref.nt == num_type::Floating_point || </div>
-<div class="line"><a name="l01997"></a><span class="lineno"> 1997</span>&#160;                    ref.nt == num_type::Double_precision_floating_point)</div>
-<div class="line"><a name="l01998"></a><span class="lineno"> 1998</span>&#160;                    <span class="keywordflow">return</span> fallback;</div>
-<div class="line"><a name="l01999"></a><span class="lineno"> 1999</span>&#160;                <span class="keywordflow">return</span> ref.num.si;</div>
-<div class="line"><a name="l02000"></a><span class="lineno"> 2000</span>&#160;            }</div>
-<div class="line"><a name="l02001"></a><span class="lineno"> 2001</span>&#160; </div>
-<div class="line"><a name="l02002"></a><span class="lineno"> 2002</span>&#160;            <span class="keywordtype">double</span> get(<span class="keywordtype">double</span> fallback)</div>
-<div class="line"><a name="l02003"></a><span class="lineno"> 2003</span>&#160;            {</div>
-<div class="line"><a name="l02004"></a><span class="lineno"> 2004</span>&#160;                <span class="keywordflow">if</span> (ref.t() != type::Number || ref.nt != num_type::Floating_point ||</div>
-<div class="line"><a name="l02005"></a><span class="lineno"> 2005</span>&#160;                    ref.nt == num_type::Double_precision_floating_point)</div>
-<div class="line"><a name="l02006"></a><span class="lineno"> 2006</span>&#160;                    <span class="keywordflow">return</span> fallback;</div>
-<div class="line"><a name="l02007"></a><span class="lineno"> 2007</span>&#160;                <span class="keywordflow">return</span> ref.num.d;</div>
-<div class="line"><a name="l02008"></a><span class="lineno"> 2008</span>&#160;            }</div>
-<div class="line"><a name="l02009"></a><span class="lineno"> 2009</span>&#160; </div>
-<div class="line"><a name="l02010"></a><span class="lineno"> 2010</span>&#160;            <span class="keywordtype">bool</span> get(<span class="keywordtype">bool</span> fallback)</div>
-<div class="line"><a name="l02011"></a><span class="lineno"> 2011</span>&#160;            {</div>
-<div class="line"><a name="l02012"></a><span class="lineno"> 2012</span>&#160;                <span class="keywordflow">if</span> (ref.t() == type::True) <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
-<div class="line"><a name="l02013"></a><span class="lineno"> 2013</span>&#160;                <span class="keywordflow">if</span> (ref.t() == type::False) <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
-<div class="line"><a name="l02014"></a><span class="lineno"> 2014</span>&#160;                <span class="keywordflow">return</span> fallback;</div>
-<div class="line"><a name="l02015"></a><span class="lineno"> 2015</span>&#160;            }</div>
+<div class="line"><a name="l01981"></a><span class="lineno"> 1981</span>&#160;                        <span class="keywordflow">if</span> (indent &gt;= 0)</div>
+<div class="line"><a name="l01982"></a><span class="lineno"> 1982</span>&#160;                        {</div>
+<div class="line"><a name="l01983"></a><span class="lineno"> 1983</span>&#160;                            dump_indentation_part(out, indent, separator, indent_level + 1);</div>
+<div class="line"><a name="l01984"></a><span class="lineno"> 1984</span>&#160;                        }</div>
+<div class="line"><a name="l01985"></a><span class="lineno"> 1985</span>&#160; </div>
+<div class="line"><a name="l01986"></a><span class="lineno"> 1986</span>&#160;                        <span class="keywordflow">if</span> (v.o)</div>
+<div class="line"><a name="l01987"></a><span class="lineno"> 1987</span>&#160;                        {</div>
+<div class="line"><a name="l01988"></a><span class="lineno"> 1988</span>&#160;                            <span class="keywordtype">bool</span> first = <span class="keyword">true</span>;</div>
+<div class="line"><a name="l01989"></a><span class="lineno"> 1989</span>&#160;                            <span class="keywordflow">for</span> (<span class="keyword">auto</span>&amp; kv : *v.o)</div>
+<div class="line"><a name="l01990"></a><span class="lineno"> 1990</span>&#160;                            {</div>
+<div class="line"><a name="l01991"></a><span class="lineno"> 1991</span>&#160;                                <span class="keywordflow">if</span> (!first)</div>
+<div class="line"><a name="l01992"></a><span class="lineno"> 1992</span>&#160;                                {</div>
+<div class="line"><a name="l01993"></a><span class="lineno"> 1993</span>&#160;                                    out.push_back(<span class="charliteral">&#39;,&#39;</span>);</div>
+<div class="line"><a name="l01994"></a><span class="lineno"> 1994</span>&#160;                                    <span class="keywordflow">if</span> (indent &gt;= 0)</div>
+<div class="line"><a name="l01995"></a><span class="lineno"> 1995</span>&#160;                                    {</div>
+<div class="line"><a name="l01996"></a><span class="lineno"> 1996</span>&#160;                                        dump_indentation_part(out, indent, separator, indent_level + 1);</div>
+<div class="line"><a name="l01997"></a><span class="lineno"> 1997</span>&#160;                                    }</div>
+<div class="line"><a name="l01998"></a><span class="lineno"> 1998</span>&#160;                                }</div>
+<div class="line"><a name="l01999"></a><span class="lineno"> 1999</span>&#160;                                first = <span class="keyword">false</span>;</div>
+<div class="line"><a name="l02000"></a><span class="lineno"> 2000</span>&#160;                                dump_string(kv.first, out);</div>
+<div class="line"><a name="l02001"></a><span class="lineno"> 2001</span>&#160;                                out.push_back(<span class="charliteral">&#39;:&#39;</span>);</div>
+<div class="line"><a name="l02002"></a><span class="lineno"> 2002</span>&#160; </div>
+<div class="line"><a name="l02003"></a><span class="lineno"> 2003</span>&#160;                                <span class="keywordflow">if</span> (indent &gt;= 0)</div>
+<div class="line"><a name="l02004"></a><span class="lineno"> 2004</span>&#160;                                {</div>
+<div class="line"><a name="l02005"></a><span class="lineno"> 2005</span>&#160;                                    out.push_back(<span class="charliteral">&#39; &#39;</span>);</div>
+<div class="line"><a name="l02006"></a><span class="lineno"> 2006</span>&#160;                                }</div>
+<div class="line"><a name="l02007"></a><span class="lineno"> 2007</span>&#160; </div>
+<div class="line"><a name="l02008"></a><span class="lineno"> 2008</span>&#160;                                dump_internal(kv.second, out, indent, separator, indent_level + 1);</div>
+<div class="line"><a name="l02009"></a><span class="lineno"> 2009</span>&#160;                            }</div>
+<div class="line"><a name="l02010"></a><span class="lineno"> 2010</span>&#160;                        }</div>
+<div class="line"><a name="l02011"></a><span class="lineno"> 2011</span>&#160; </div>
+<div class="line"><a name="l02012"></a><span class="lineno"> 2012</span>&#160;                        <span class="keywordflow">if</span> (indent &gt;= 0)</div>
+<div class="line"><a name="l02013"></a><span class="lineno"> 2013</span>&#160;                        {</div>
+<div class="line"><a name="l02014"></a><span class="lineno"> 2014</span>&#160;                            dump_indentation_part(out, indent, separator, indent_level);</div>
+<div class="line"><a name="l02015"></a><span class="lineno"> 2015</span>&#160;                        }</div>
 <div class="line"><a name="l02016"></a><span class="lineno"> 2016</span>&#160; </div>
-<div class="line"><a name="l02017"></a><span class="lineno"> 2017</span>&#160;            std::string get(<span class="keyword">const</span> std::string&amp; fallback)</div>
-<div class="line"><a name="l02018"></a><span class="lineno"> 2018</span>&#160;            {</div>
-<div class="line"><a name="l02019"></a><span class="lineno"> 2019</span>&#160;                <span class="keywordflow">if</span> (ref.t() != type::String) <span class="keywordflow">return</span> fallback;</div>
-<div class="line"><a name="l02020"></a><span class="lineno"> 2020</span>&#160;                <span class="keywordflow">return</span> ref.s;</div>
-<div class="line"><a name="l02021"></a><span class="lineno"> 2021</span>&#160;            }</div>
-<div class="line"><a name="l02022"></a><span class="lineno"> 2022</span>&#160; </div>
-<div class="line"><a name="l02023"></a><span class="lineno"> 2023</span>&#160;            <span class="keyword">const</span> <a class="code" href="classcrow_1_1json_1_1wvalue.html">wvalue</a>&amp; ref;</div>
-<div class="line"><a name="l02024"></a><span class="lineno"> 2024</span>&#160;        };</div>
-<div class="line"><a name="l02025"></a><span class="lineno"> 2025</span>&#160; </div>
-<div class="line"><a name="l02026"></a><span class="lineno"> 2026</span>&#160;        <span class="comment">//std::vector&lt;asio::const_buffer&gt; dump_ref(wvalue&amp; v)</span></div>
-<div class="line"><a name="l02027"></a><span class="lineno"> 2027</span>&#160;        <span class="comment">//{</span></div>
-<div class="line"><a name="l02028"></a><span class="lineno"> 2028</span>&#160;        <span class="comment">//}</span></div>
-<div class="line"><a name="l02029"></a><span class="lineno"> 2029</span>&#160;    } <span class="comment">// namespace json</span></div>
-<div class="line"><a name="l02030"></a><span class="lineno"> 2030</span>&#160;} <span class="comment">// namespace crow</span></div>
+<div class="line"><a name="l02017"></a><span class="lineno"> 2017</span>&#160;                        out.push_back(<span class="charliteral">&#39;}&#39;</span>);</div>
+<div class="line"><a name="l02018"></a><span class="lineno"> 2018</span>&#160;                    }</div>
+<div class="line"><a name="l02019"></a><span class="lineno"> 2019</span>&#160;                    <span class="keywordflow">break</span>;</div>
+<div class="line"><a name="l02020"></a><span class="lineno"> 2020</span>&#160; </div>
+<div class="line"><a name="l02021"></a><span class="lineno"> 2021</span>&#160;                    <span class="keywordflow">case</span> type::Function:</div>
+<div class="line"><a name="l02022"></a><span class="lineno"> 2022</span>&#160;                        out += <span class="stringliteral">&quot;custom function&quot;</span>;</div>
+<div class="line"><a name="l02023"></a><span class="lineno"> 2023</span>&#160;                        <span class="keywordflow">break</span>;</div>
+<div class="line"><a name="l02024"></a><span class="lineno"> 2024</span>&#160;                }</div>
+<div class="line"><a name="l02025"></a><span class="lineno"> 2025</span>&#160;            }</div>
+<div class="line"><a name="l02026"></a><span class="lineno"> 2026</span>&#160; </div>
+<div class="line"><a name="l02027"></a><span class="lineno"> 2027</span>&#160;        <span class="keyword">public</span>:</div>
+<div class="line"><a name="l02028"></a><span class="lineno"> 2028</span>&#160;            std::string dump(<span class="keyword">const</span> <span class="keywordtype">int</span> indent, <span class="keyword">const</span> <span class="keywordtype">char</span> separator = <span class="charliteral">&#39; &#39;</span>)<span class="keyword"> const</span></div>
+<div class="line"><a name="l02029"></a><span class="lineno"> 2029</span>&#160;<span class="keyword">            </span>{</div>
+<div class="line"><a name="l02030"></a><span class="lineno"> 2030</span>&#160;                std::string ret;</div>
+<div class="line"><a name="l02031"></a><span class="lineno"> 2031</span>&#160;                ret.reserve(<a class="code" href="classcrow_1_1json_1_1wvalue.html#a5af23d208ed3d066a0fb5339350978c6">estimate_length</a>());</div>
+<div class="line"><a name="l02032"></a><span class="lineno"> 2032</span>&#160;                dump_internal(*<span class="keyword">this</span>, ret, indent, separator);</div>
+<div class="line"><a name="l02033"></a><span class="lineno"> 2033</span>&#160;                <span class="keywordflow">return</span> ret;</div>
+<div class="line"><a name="l02034"></a><span class="lineno"> 2034</span>&#160;            }</div>
+<div class="line"><a name="l02035"></a><span class="lineno"> 2035</span>&#160; </div>
+<div class="line"><a name="l02036"></a><span class="lineno"> 2036</span>&#160;            std::string dump()<span class="keyword"> const</span></div>
+<div class="line"><a name="l02037"></a><span class="lineno"> 2037</span>&#160;<span class="keyword">            </span>{</div>
+<div class="line"><a name="l02038"></a><span class="lineno"> 2038</span>&#160;                <span class="keyword">static</span> constexpr <span class="keywordtype">int</span> DontIndent = -1;</div>
+<div class="line"><a name="l02039"></a><span class="lineno"> 2039</span>&#160; </div>
+<div class="line"><a name="l02040"></a><span class="lineno"> 2040</span>&#160;                <span class="keywordflow">return</span> dump(DontIndent);</div>
+<div class="line"><a name="l02041"></a><span class="lineno"> 2041</span>&#160;            }</div>
+<div class="line"><a name="l02042"></a><span class="lineno"> 2042</span>&#160;        };</div>
+<div class="line"><a name="l02043"></a><span class="lineno"> 2043</span>&#160; </div>
+<div class="line"><a name="l02044"></a><span class="lineno"> 2044</span>&#160;        <span class="comment">// Used for accessing the internals of a wvalue</span></div>
+<div class="line"><a name="l02045"></a><span class="lineno"><a class="line" href="structcrow_1_1json_1_1wvalue__reader.html"> 2045</a></span>&#160;        <span class="keyword">struct </span><a class="code" href="structcrow_1_1json_1_1wvalue__reader.html">wvalue_reader</a></div>
+<div class="line"><a name="l02046"></a><span class="lineno"> 2046</span>&#160;        {</div>
+<div class="line"><a name="l02047"></a><span class="lineno"> 2047</span>&#160;            int64_t get(int64_t fallback)</div>
+<div class="line"><a name="l02048"></a><span class="lineno"> 2048</span>&#160;            {</div>
+<div class="line"><a name="l02049"></a><span class="lineno"> 2049</span>&#160;                <span class="keywordflow">if</span> (ref.t() != type::Number || ref.nt == num_type::Floating_point || </div>
+<div class="line"><a name="l02050"></a><span class="lineno"> 2050</span>&#160;                    ref.nt == num_type::Double_precision_floating_point)</div>
+<div class="line"><a name="l02051"></a><span class="lineno"> 2051</span>&#160;                    <span class="keywordflow">return</span> fallback;</div>
+<div class="line"><a name="l02052"></a><span class="lineno"> 2052</span>&#160;                <span class="keywordflow">return</span> ref.num.si;</div>
+<div class="line"><a name="l02053"></a><span class="lineno"> 2053</span>&#160;            }</div>
+<div class="line"><a name="l02054"></a><span class="lineno"> 2054</span>&#160; </div>
+<div class="line"><a name="l02055"></a><span class="lineno"> 2055</span>&#160;            <span class="keywordtype">double</span> get(<span class="keywordtype">double</span> fallback)</div>
+<div class="line"><a name="l02056"></a><span class="lineno"> 2056</span>&#160;            {</div>
+<div class="line"><a name="l02057"></a><span class="lineno"> 2057</span>&#160;                <span class="keywordflow">if</span> (ref.t() != type::Number || ref.nt != num_type::Floating_point ||</div>
+<div class="line"><a name="l02058"></a><span class="lineno"> 2058</span>&#160;                    ref.nt == num_type::Double_precision_floating_point)</div>
+<div class="line"><a name="l02059"></a><span class="lineno"> 2059</span>&#160;                    <span class="keywordflow">return</span> fallback;</div>
+<div class="line"><a name="l02060"></a><span class="lineno"> 2060</span>&#160;                <span class="keywordflow">return</span> ref.num.d;</div>
+<div class="line"><a name="l02061"></a><span class="lineno"> 2061</span>&#160;            }</div>
+<div class="line"><a name="l02062"></a><span class="lineno"> 2062</span>&#160; </div>
+<div class="line"><a name="l02063"></a><span class="lineno"> 2063</span>&#160;            <span class="keywordtype">bool</span> get(<span class="keywordtype">bool</span> fallback)</div>
+<div class="line"><a name="l02064"></a><span class="lineno"> 2064</span>&#160;            {</div>
+<div class="line"><a name="l02065"></a><span class="lineno"> 2065</span>&#160;                <span class="keywordflow">if</span> (ref.t() == type::True) <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
+<div class="line"><a name="l02066"></a><span class="lineno"> 2066</span>&#160;                <span class="keywordflow">if</span> (ref.t() == type::False) <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><a name="l02067"></a><span class="lineno"> 2067</span>&#160;                <span class="keywordflow">return</span> fallback;</div>
+<div class="line"><a name="l02068"></a><span class="lineno"> 2068</span>&#160;            }</div>
+<div class="line"><a name="l02069"></a><span class="lineno"> 2069</span>&#160; </div>
+<div class="line"><a name="l02070"></a><span class="lineno"> 2070</span>&#160;            std::string get(<span class="keyword">const</span> std::string&amp; fallback)</div>
+<div class="line"><a name="l02071"></a><span class="lineno"> 2071</span>&#160;            {</div>
+<div class="line"><a name="l02072"></a><span class="lineno"> 2072</span>&#160;                <span class="keywordflow">if</span> (ref.t() != type::String) <span class="keywordflow">return</span> fallback;</div>
+<div class="line"><a name="l02073"></a><span class="lineno"> 2073</span>&#160;                <span class="keywordflow">return</span> ref.s;</div>
+<div class="line"><a name="l02074"></a><span class="lineno"> 2074</span>&#160;            }</div>
+<div class="line"><a name="l02075"></a><span class="lineno"> 2075</span>&#160; </div>
+<div class="line"><a name="l02076"></a><span class="lineno"> 2076</span>&#160;            <span class="keyword">const</span> <a class="code" href="classcrow_1_1json_1_1wvalue.html">wvalue</a>&amp; ref;</div>
+<div class="line"><a name="l02077"></a><span class="lineno"> 2077</span>&#160;        };</div>
+<div class="line"><a name="l02078"></a><span class="lineno"> 2078</span>&#160; </div>
+<div class="line"><a name="l02079"></a><span class="lineno"> 2079</span>&#160;        <span class="comment">//std::vector&lt;asio::const_buffer&gt; dump_ref(wvalue&amp; v)</span></div>
+<div class="line"><a name="l02080"></a><span class="lineno"> 2080</span>&#160;        <span class="comment">//{</span></div>
+<div class="line"><a name="l02081"></a><span class="lineno"> 2081</span>&#160;        <span class="comment">//}</span></div>
+<div class="line"><a name="l02082"></a><span class="lineno"> 2082</span>&#160;    } <span class="comment">// namespace json</span></div>
+<div class="line"><a name="l02083"></a><span class="lineno"> 2083</span>&#160;} <span class="comment">// namespace crow</span></div>
 <div class="ttc" id="aclasscrow_1_1json_1_1rvalue_html"><div class="ttname"><a href="classcrow_1_1json_1_1rvalue.html">crow::json::rvalue</a></div><div class="ttdoc">JSON read value.</div><div class="ttdef"><b>Definition:</b> json.h:276</div></div>
 <div class="ttc" id="aclasscrow_1_1json_1_1rvalue_html_a1a9a1a3616d6484bf3dcdb941cf8e6da"><div class="ttname"><a href="classcrow_1_1json_1_1rvalue.html#a1a9a1a3616d6484bf3dcdb941cf8e6da">crow::json::rvalue::i</a></div><div class="ttdeci">int64_t i() const</div><div class="ttdoc">The integer value.</div><div class="ttdef"><b>Definition:</b> json.h:398</div></div>
 <div class="ttc" id="aclasscrow_1_1json_1_1rvalue_html_a2b938dacf1809bb38add4ac8bbeb46ed"><div class="ttname"><a href="classcrow_1_1json_1_1rvalue.html#a2b938dacf1809bb38add4ac8bbeb46ed">crow::json::rvalue::lo</a></div><div class="ttdeci">std::vector&lt; rvalue &gt; lo()</div><div class="ttdoc">The list or object value.</div><div class="ttdef"><b>Definition:</b> json.h:462</div></div>
@@ -2150,7 +2203,7 @@ $(document).ready(function(){initNavTree('json_8h_source.html',''); initResizabl
 <div class="ttc" id="astructcrow_1_1json_1_1detail_1_1r__string_html"><div class="ttname"><a href="structcrow_1_1json_1_1detail_1_1r__string.html">crow::json::detail::r_string</a></div><div class="ttdoc">A read string implementation with comparison functionality.</div><div class="ttdef"><b>Definition:</b> json.h:120</div></div>
 <div class="ttc" id="astructcrow_1_1json_1_1detail_1_1r__string_html_a9a0a048fb2cb904e8336926817947448"><div class="ttname"><a href="structcrow_1_1json_1_1detail_1_1r__string.html#a9a0a048fb2cb904e8336926817947448">crow::json::detail::r_string::s_</a></div><div class="ttdeci">char * s_</div><div class="ttdoc">Start.</div><div class="ttdef"><b>Definition:</b> json.h:171</div></div>
 <div class="ttc" id="astructcrow_1_1json_1_1detail_1_1r__string_html_adeb368c4c0dfeb349bb32129e8dee23b"><div class="ttname"><a href="structcrow_1_1json_1_1detail_1_1r__string.html#adeb368c4c0dfeb349bb32129e8dee23b">crow::json::detail::r_string::e_</a></div><div class="ttdeci">char * e_</div><div class="ttdoc">End.</div><div class="ttdef"><b>Definition:</b> json.h:172</div></div>
-<div class="ttc" id="astructcrow_1_1json_1_1wvalue__reader_html"><div class="ttname"><a href="structcrow_1_1json_1_1wvalue__reader.html">crow::json::wvalue_reader</a></div><div class="ttdef"><b>Definition:</b> json.h:1993</div></div>
+<div class="ttc" id="astructcrow_1_1json_1_1wvalue__reader_html"><div class="ttname"><a href="structcrow_1_1json_1_1wvalue__reader.html">crow::json::wvalue_reader</a></div><div class="ttdef"><b>Definition:</b> json.h:2046</div></div>
 <div class="ttc" id="astructcrow_1_1returnable_html"><div class="ttname"><a href="structcrow_1_1returnable.html">crow::returnable</a></div><div class="ttdoc">An abstract class that allows any other class to be returned by a handler.</div><div class="ttdef"><b>Definition:</b> returnable.h:9</div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
@@ -2159,7 +2212,7 @@ $(document).ready(function(){initNavTree('json_8h_source.html',''); initResizabl
 			<ul>
 				<li class="navelem"><a class="el" href="dir_d44c64559bbebec7f509842c48db8b23.html">include</a></li><li class="navelem"><a class="el" href="dir_d22c1cb87b72f01e1a7f207eb3bfd1ca.html">crow</a></li><li class="navelem"><b>json.h</b></li>
 				<li class="footer">
-					Generated on Sat Mar 2 2024 for Crow by <a href="http://www.doxygen.org/index.html">
+					Generated on Tue Mar 12 2024 for Crow by <a href="http://www.doxygen.org/index.html">
 					<img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.9.1.
 					Dark theme by <a href="http://majerle.eu" target="_new">Tilen Majerle</a>. Edited by <a href="https://github.com/The-EDev" target="_new">Farook Al-Sammarraie</a>. All rights reserved.
 				</li>
