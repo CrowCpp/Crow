@@ -320,8 +320,8 @@ namespace crow
 
     private:
         bool completed_{};
-        std::function<void()> complete_request_handler_;
-        std::function<bool()> is_alive_helper_;
+        crow::utility::lambda_wrapper<void> complete_request_handler_;
+        crow::utility::lambda_wrapper<bool> is_alive_helper_;
         static_file_info file_info;
     };
 } // namespace crow

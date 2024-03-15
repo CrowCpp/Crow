@@ -221,7 +221,7 @@ namespace crow
         {
             return p == s.size() ? 0 :
                    s[p] == '<'   ? (
-                                   is_int(s, p)   ? get_parameter_tag(s, find_closing_tag(s, p)) * 6 + 1 :
+                                    is_int(s, p)   ? get_parameter_tag(s, find_closing_tag(s, p)) * 6 + 1 :
                                      is_uint(s, p)  ? get_parameter_tag(s, find_closing_tag(s, p)) * 6 + 2 :
                                      is_float(s, p) ? get_parameter_tag(s, find_closing_tag(s, p)) * 6 + 3 :
                                      is_str(s, p)   ? get_parameter_tag(s, find_closing_tag(s, p)) * 6 + 4 :
@@ -490,7 +490,6 @@ namespace crow
 
     namespace detail
     {
-
         template<class T, std::size_t N, class... Args>
         struct get_index_of_element_from_tuple_by_type_impl
         {
@@ -906,5 +905,48 @@ namespace crow
 
             return v.substr(begin, end - begin);
         }
+
+        class call_error : public std::runtime_error
+        {
+        public:
+            call_error() : std::runtime_error{"call error"}
+            {
+            }
+        };
+
+        template <typename ReturnType, typename... Args>
+        class lambda_wrapper
+        {
+        public:
+            lambda_wrapper() = default;
+
+            lambda_wrapper(std::function<ReturnType(Args...)> func) : valid_(true), func_(func)
+            {
+            }
+
+            void clear() { valid_ = false; }
+
+            operator bool() const { return valid_; }
+
+            lambda_wrapper<ReturnType, Args...>& operator=(std::function<ReturnType(Args...)> func)
+            {
+                valid_ = true;
+                func_ = func;
+                return *this;
+            }
+
+            ReturnType operator()(Args... args) const
+            {
+                if (valid_)
+                {
+                    return func_(args...);
+                }
+                throw call_error();
+            }
+
+        private:
+            mutable bool valid_{};
+            std::function<ReturnType(Args...)> func_;
+        };
     } // namespace utility
 } // namespace crow
