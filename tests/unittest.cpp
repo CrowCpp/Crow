@@ -3629,3 +3629,47 @@ TEST_CASE("lexical_cast")
     CHECK(utility::lexical_cast<string>(4) == "4");
     CHECK(utility::lexical_cast<float>("10", 2) == 10.0f);
 }
+
+TEST_CASE("http2_upgrade_is_ignored")
+{
+    // Crow does not support HTTP/2 so upgrade headers must be ignored
+    // relevant RFC: https://datatracker.ietf.org/doc/html/rfc7540#section-3.2
+
+    static char buf[5012];
+
+    SimpleApp app;
+    CROW_ROUTE(app, "/echo").methods("POST"_method)
+    ([](crow::request const& req) {
+        return req.body;
+    });
+
+    auto _ = app.bindaddr(LOCALHOST_ADDRESS).port(45451).run_async();
+
+    app.wait_for_server_start();
+    asio::io_service is;
+
+    auto make_request = [&](const std::string& rq) {
+        asio::ip::tcp::socket c(is);
+        c.connect(asio::ip::tcp::endpoint(
+          asio::ip::address::from_string(LOCALHOST_ADDRESS), 45451));
+        c.send(asio::buffer(rq));
+        c.receive(asio::buffer(buf, 2048));
+        c.close();
+        return std::string(buf);
+    };
+
+    std::string request =
+        "POST /echo HTTP/1.1\r\n"
+        "user-agent: unittest.cpp\r\n"
+        "host: " LOCALHOST_ADDRESS ":45451\r\n"
+        "content-length: 48\r\n"
+        "connection: upgrade\r\n"
+        "upgrade: h2c\r\n"
+        "\r\n"
+        "http2 upgrade is not supported so body is parsed\r\n"
+        "\r\n";
+
+    auto res = make_request(request);
+    CHECK(res.find("http2 upgrade is not supported so body is parsed") != std::string::npos);
+    app.stop();
+}
