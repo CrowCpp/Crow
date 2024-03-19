@@ -1771,7 +1771,7 @@ $(document).ready(function(){initNavTree('json_8h_source.html',''); initResizabl
 <div class="line"><a name="l01670"></a><span class="lineno"> 1670</span>&#160;                }</div>
 <div class="line"><a name="l01671"></a><span class="lineno"> 1671</span>&#160;                <span class="keywordflow">else</span></div>
 <div class="line"><a name="l01672"></a><span class="lineno"> 1672</span>&#160;                {</div>
-<div class="line"><a name="l01673"></a><span class="lineno"> 1673</span>&#160;<span class="preprocessor">#if defined(__APPLE__) || defined(__MACH__) || defined(__FreeBSD__) || defined(__ANDROID__)</span></div>
+<div class="line"><a name="l01673"></a><span class="lineno"> 1673</span>&#160;<span class="preprocessor">#if defined(__APPLE__) || defined(__MACH__) || defined(__FreeBSD__) || defined(__ANDROID__) || defined(_LIBCPP_VERSION)</span></div>
 <div class="line"><a name="l01674"></a><span class="lineno"> 1674</span>&#160;                    o = std::unique_ptr&lt;object&gt;(<span class="keyword">new</span> <span class="keywordtype">object</span>(initializer_list));</div>
 <div class="line"><a name="l01675"></a><span class="lineno"> 1675</span>&#160;<span class="preprocessor">#else</span></div>
 <div class="line"><a name="l01676"></a><span class="lineno"> 1676</span>&#160;                    (*o) = initializer_list;</div>
@@ -1790,7 +1790,7 @@ $(document).ready(function(){initNavTree('json_8h_source.html',''); initResizabl
 <div class="line"><a name="l01689"></a><span class="lineno"> 1689</span>&#160;                }</div>
 <div class="line"><a name="l01690"></a><span class="lineno"> 1690</span>&#160;                <span class="keywordflow">else</span></div>
 <div class="line"><a name="l01691"></a><span class="lineno"> 1691</span>&#160;                {</div>
-<div class="line"><a name="l01692"></a><span class="lineno"> 1692</span>&#160;<span class="preprocessor">#if defined(__APPLE__) || defined(__MACH__) || defined(__FreeBSD__) || defined(__ANDROID__)</span></div>
+<div class="line"><a name="l01692"></a><span class="lineno"> 1692</span>&#160;<span class="preprocessor">#if defined(__APPLE__) || defined(__MACH__) || defined(__FreeBSD__) || defined(__ANDROID__) || defined(_LIBCPP_VERSION)</span></div>
 <div class="line"><a name="l01693"></a><span class="lineno"> 1693</span>&#160;                    o = std::unique_ptr&lt;object&gt;(<span class="keyword">new</span> <span class="keywordtype">object</span>(value));</div>
 <div class="line"><a name="l01694"></a><span class="lineno"> 1694</span>&#160;<span class="preprocessor">#else</span></div>
 <div class="line"><a name="l01695"></a><span class="lineno"> 1695</span>&#160;                    (*o) = value;</div>
@@ -2212,7 +2212,7 @@ $(document).ready(function(){initNavTree('json_8h_source.html',''); initResizabl
 			<ul>
 				<li class="navelem"><a class="el" href="dir_d44c64559bbebec7f509842c48db8b23.html">include</a></li><li class="navelem"><a class="el" href="dir_d22c1cb87b72f01e1a7f207eb3bfd1ca.html">crow</a></li><li class="navelem"><b>json.h</b></li>
 				<li class="footer">
-					Generated on Sun Mar 17 2024 for Crow by <a href="http://www.doxygen.org/index.html">
+					Generated on Tue Mar 19 2024 for Crow by <a href="http://www.doxygen.org/index.html">
 					<img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.9.1.
 					Dark theme by <a href="http://majerle.eu" target="_new">Tilen Majerle</a>. Edited by <a href="https://github.com/The-EDev" target="_new">Farook Al-Sammarraie</a>. All rights reserved.
 				</li>
