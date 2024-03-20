@@ -24,8 +24,8 @@ jobs:
       matrix:
         os: [ ubuntu-latest,
               windows-latest,
-              ubuntu-20.04,
               macos-latest,
+              ubuntu-20.04,
               macos-11
             ]
             # ubuntu-18.04 does not work due to compile error on asio
@@ -55,7 +55,8 @@ jobs:
          if [ "$RUNNER_OS" == "Windows" ]; then
               cmake \
                 -DCMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake  \
-                -DCROW_FEATURES="ssl;compression" \
+                -DCROW_ENABLE_SSL=ON \
+                -DCROW_ENABLE_COMPRESSION=ON \
                 -DCROW_AMALGAMATE=ON \
                 -DCROW_BUILD_TESTS=ON \
                 -B build
@@ -63,13 +64,15 @@ jobs:
               LDFLAGS="-L/usr/local/opt/openssl@1.1/lib" \
               CPPFLAGS="-I/usr/local/opt/openssl@1.1/include" \
               cmake \
-                -DCROW_FEATURES="ssl;compression" \
+                -DCROW_ENABLE_SSL=ON \
+                -DCROW_ENABLE_COMPRESSION=ON \
                 -DCROW_AMALGAMATE=ON \
                 -DCROW_BUILD_TESTS=ON \
                 -B build
          else
               cmake \
-                -DCROW_FEATURES="ssl;compression" \
+                -DCROW_ENABLE_SSL=ON \
+                -DCROW_ENABLE_COMPRESSION=ON \
                 -DCROW_AMALGAMATE=ON \
                 -DCROW_BUILD_TESTS=ON \
                 -B build

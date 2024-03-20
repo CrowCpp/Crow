@@ -48,7 +48,10 @@ option(CROW_AMALGAMATE         "Combine all headers into one"           OFF)
 option(CROW_INSTALL            "Add install step for Crow"              ON )
 
 # Possible values: ssl, compression
-option(CROW_FEATURES					 "Enable features extending Crow's abilities" "")
+#option(CROW_FEATURES					 "Enable features extending Crow's abilities" "")
+option(CROW_ENABLE_SSL "Enable Crow's SSL feature"                      OFF)
+option(CROW_ENABLE_COMPRESSION "Enable Crow's Compression feature"      OFF)
+
 
 #####################################
 # Define Targets
@@ -71,13 +74,13 @@ target_link_libraries(Crow
 
 target_compile_definitions(Crow INTERFACE "")
 
-if("compression" IN_LIST CROW_FEATURES)
+if(CROW_ENABLE_COMPRESSION)
 	find_package(ZLIB REQUIRED)
 	target_link_libraries(Crow INTERFACE ZLIB::ZLIB)
 	target_compile_definitions(Crow INTERFACE CROW_ENABLE_COMPRESSION)
 endif()
 
-if("ssl" IN_LIST CROW_FEATURES)
+if(CROW_ENABLE_SSL)
 	find_package(OpenSSL REQUIRED)
 	target_link_libraries(Crow INTERFACE OpenSSL::SSL)
 	target_compile_definitions(Crow INTERFACE CROW_ENABLE_SSL)
@@ -110,11 +113,11 @@ if(CROW_BUILD_TESTS)
     COMMAND ${CMAKE_CURRENT_BINARY_DIR}/tests/unittest
   )
 
-  if(NOT "compression" IN_LIST CROW_FEATURES)
-    message(STATUS "Compression tests are omitted. (Configure with CROW_FEATURES containing 'compression' to enable them)")
+  if(NOT CROW_ENABLE_COMPRESSION)
+    message(STATUS "Compression tests are omitted. (Configure with CROW_ENABLE_COMPRESSION to enable them)")
   endif()
-  if(NOT "ssl" IN_LIST CROW_FEATURES)
-    message(STATUS "SSL tests are omitted. (Configure with CROW_FEATURES containing 'ssl' to enable them)")
+  if(NOT CROW_ENABLE_SSL)
+    message(STATUS "SSL tests are omitted. (Configure with CROW_ENABLE_SSL to enable them)")
   else()
     if(NOT MSVC)
       add_test(
