@@ -144,7 +144,7 @@ namespace crow
 
             signals_.async_wait(
               [&](const asio::error_code& /*error*/, int /*signal_number*/) {
-                  stop();
+                  // stop();
               });
 
             while (worker_thread_count != init_count)
@@ -187,12 +187,12 @@ namespace crow
 
         void signal_clear()
         {
-            signals_.clear();
+            //signals_.clear();
         }
 
         void signal_add(int signal_number)
         {
-            signals_.add(signal_number);
+            //signals_.add(signal_number);
         }
 
     private:
