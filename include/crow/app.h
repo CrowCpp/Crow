@@ -587,7 +587,7 @@ namespace crow
 
         std::unique_ptr<server_t> server_;
 
-        std::vector<int> signals_{SIGINT, SIGTERM};
+        std::vector<int> signals_{};
 
         bool server_started_{false};
         std::condition_variable cv_started_;
