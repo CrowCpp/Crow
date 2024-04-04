@@ -46,6 +46,7 @@ option(CROW_BUILD_EXAMPLES     "Build the examples in the project"      ${CROW_I
 option(CROW_BUILD_TESTS        "Build the tests in the project"         ${CROW_IS_MAIN_PROJECT})
 option(CROW_AMALGAMATE         "Combine all headers into one"           OFF)
 option(CROW_INSTALL            "Add install step for Crow"              ON )
+option(CROW_USE_BOOST          "Use Boost.Asio for Crow"                OFF)
 
 # Possible values: ssl, compression
 option(CROW_FEATURES					 "Enable features extending Crow's abilities" "")
@@ -62,12 +63,20 @@ target_include_directories(Crow
 		$<INSTALL_INTERFACE:include>
 )
 
-find_package(asio REQUIRED)
-
-target_link_libraries(Crow
-	INTERFACE
-		asio::asio
-)
+if(CROW_USE_BOOST)
+	find_package(Boost 1.64 COMPONENTS system date_time REQUIRED)
+	target_link_libraries(Crow
+		INTERFACE
+			Boost::boost Boost::system Boost::date_time
+	)
+	target_compile_definitions(Crow INTERFACE CROW_USE_BOOST)
+else()
+    find_package(asio REQUIRED)
+	target_link_libraries(Crow
+		INTERFACE
+			asio::asio
+	)
+endif()
 
 target_compile_definitions(Crow INTERFACE "")
 

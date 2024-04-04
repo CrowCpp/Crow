@@ -1,31 +1,42 @@
 #pragma once
+
+#ifdef CROW_USE_BOOST
+#include <boost/asio.hpp>
+#else
 #ifndef ASIO_STANDALONE
 #define ASIO_STANDALONE
 #endif
 #include <asio.hpp>
+#endif
+
 #include <algorithm>
 #include <atomic>
 #include <chrono>
-#include <vector>
 #include <memory>
+#include <vector>
 
 #include "crow/http_parser_merged.h"
 #include "crow/common.h"
-#include "crow/parser.h"
+#include "crow/compression.h"
 #include "crow/http_response.h"
 #include "crow/logging.h"
-#include "crow/settings.h"
-#include "crow/task_timer.h"
-#include "crow/middleware_context.h"
 #include "crow/middleware.h"
+#include "crow/middleware_context.h"
+#include "crow/parser.h"
+#include "crow/settings.h"
 #include "crow/socket_adaptors.h"
-#include "crow/compression.h"
+#include "crow/task_timer.h"
 #include "crow/utility.h"
 
 namespace crow
 {
+#ifdef CROW_USE_BOOST
+    namespace asio = boost::asio;
+    using error_code = boost::system::error_code;
+#else
+    using error_code = asio::error_code;
+#endif
     using tcp = asio::ip::tcp;
-
 
 #ifdef CROW_ENABLE_DEBUG
     static std::atomic<int> connectionCount;
@@ -81,7 +92,7 @@ namespace crow
         void start()
         {
             auto self = this->shared_from_this();
-            adaptor_.start([self](const asio::error_code& ec) {
+            adaptor_.start([self](const error_code& ec) {
                 if (!ec)
                 {
                     self->start_deadline();
@@ -473,7 +484,7 @@ namespace crow
             auto self = this->shared_from_this();
             adaptor_.socket().async_read_some(
               asio::buffer(buffer_),
-              [self](const asio::error_code& ec, std::size_t bytes_transferred) {
+              [self](const error_code& ec, std::size_t bytes_transferred) {
                   bool error_while_reading = true;
                   if (!ec)
                   {
@@ -516,7 +527,7 @@ namespace crow
             auto self = this->shared_from_this();
             asio::async_write(
               adaptor_.socket(), buffers_,
-              [self](const asio::error_code& ec, std::size_t /*bytes_transferred*/) {
+              [self](const error_code& ec, std::size_t /*bytes_transferred*/) {
                   self->res.clear();
                   self->res_body_copy_.clear();                  
                   if (!self->continue_requested)
@@ -547,7 +558,7 @@ namespace crow
         inline void do_write_sync(std::vector<asio::const_buffer>& buffers)
         {
 
-            asio::write(adaptor_.socket(), buffers, [&](asio::error_code ec, std::size_t) {
+            asio::write(adaptor_.socket(), buffers, [&](error_code ec, std::size_t) {
                 if (!ec)
                 {
                     return false;
