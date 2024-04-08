@@ -6,11 +6,6 @@
 #ifdef CROW_ENABLE_SSL
 #include <boost/asio/ssl.hpp>
 #endif
-#if BOOST_VERSION >= 107000
-#define GET_IO_SERVICE(s) ((boost::asio::io_context&)(s).get_executor().context())
-#else
-#define GET_IO_SERVICE(s) ((s).get_io_service())
-#endif
 #else
 #ifndef ASIO_STANDALONE
 #define ASIO_STANDALONE
@@ -20,13 +15,14 @@
 #ifdef CROW_ENABLE_SSL
 #include <asio/ssl.hpp>
 #endif
-#if ASIO_VERSION >= 101300 // 1.13.0
+#endif
+#include "crow/settings.h"
+
+#if (CROW_USE_BOOST && BOOST_VERSION >= 107000) || (ASIO_VERSION >= 101300)
 #define GET_IO_SERVICE(s) ((asio::io_context&)(s).get_executor().context())
 #else
 #define GET_IO_SERVICE(s) ((s).get_io_service())
 #endif
-#endif
-#include "crow/settings.h"
 
 namespace crow
 {
