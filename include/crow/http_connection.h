@@ -312,6 +312,7 @@ namespace crow
               {status::FORBIDDEN, "HTTP/1.1 403 Forbidden\r\n"},
               {status::NOT_FOUND, "HTTP/1.1 404 Not Found\r\n"},
               {status::METHOD_NOT_ALLOWED, "HTTP/1.1 405 Method Not Allowed\r\n"},
+              {status::NOT_ACCEPTABLE, "HTTP/1.1 406 Not Acceptable\r\n"},
               {status::PROXY_AUTHENTICATION_REQUIRED, "HTTP/1.1 407 Proxy Authentication Required\r\n"},
               {status::CONFLICT, "HTTP/1.1 409 Conflict\r\n"},
               {status::GONE, "HTTP/1.1 410 Gone\r\n"},
