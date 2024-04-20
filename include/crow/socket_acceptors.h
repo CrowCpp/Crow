@@ -35,7 +35,8 @@ namespace crow
         using endpoint = stream_protocol::endpoint;
         stream_protocol::acceptor acceptor_;
         UnixSocketAcceptor(asio::io_service& io_service, const endpoint& endpoint):
-          acceptor_(io_service, endpoint) {}
+          acceptor_(io_service, endpoint, false) {}
+        // reuse addr must be false (https://github.com/chriskohlhoff/asio/issues/622)
 
         int16_t port() const
         {
