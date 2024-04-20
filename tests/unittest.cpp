@@ -3674,3 +3674,30 @@ TEST_CASE("http2_upgrade_is_ignored")
     CHECK(res.find("http2 upgrade is not supported so body is parsed") != std::string::npos);
     app.stop();
 }
+
+TEST_CASE("unix_socket")
+{
+    static char buf[2048];
+    SimpleApp app;
+    CROW_ROUTE(app, "/").methods("GET"_method)([] {
+        return "A";
+    });
+
+    constexpr const char* socket_path = "unittest.sock";
+    unlink(socket_path);
+    auto _ = app.unix_path(socket_path).run_async();
+    app.wait_for_server_start();
+
+    std::string sendmsg = "GET / HTTP/1.0\r\n\r\n";
+    {
+        asio::io_service is;
+        asio::local::stream_protocol::socket c(is);
+        c.connect(asio::local::stream_protocol::endpoint(socket_path));
+
+        c.send(asio::buffer(sendmsg));
+
+        size_t recved = c.receive(asio::buffer(buf, 2048));
+        CHECK('A' == buf[recved - 1]);
+    }
+    app.stop();
+} // unix_socket
