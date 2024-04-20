@@ -1,11 +1,6 @@
 #include "crow.h"
 
-#ifdef WIN32
-#include <fileapi.h>
-#else
-#include <unistd.h>
 #include <sys/stat.h>
-#endif
 
 int main()
 {
@@ -17,11 +12,7 @@ int main()
     });
 
     std::string unix_path = "example.sock";
-#ifdef WIN32
-    DeleteFileA(unix_path.c_str());
-#else
     unlink(unix_path.c_str());
-#endif
     app.unix_path(unix_path).run();
 
 }
