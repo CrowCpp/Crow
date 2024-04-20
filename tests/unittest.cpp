@@ -1464,7 +1464,8 @@ struct NullSimpleMiddleware
 TEST_CASE("middleware_simple")
 {
     App<NullMiddleware, NullSimpleMiddleware> app;
-    decltype(app)::server_t server(&app, LOCALHOST_ADDRESS, 45451);
+    TCPAcceptor::endpoint endpoint(asio::ip::address::from_string(LOCALHOST_ADDRESS), 45451);
+    decltype(app)::server_t server(&app, endpoint);
     CROW_ROUTE(app, "/")
     ([&](const crow::request& req) {
         app.get_context<NullMiddleware>(req);
