@@ -189,7 +189,7 @@ namespace crow
 
         std::string address() const
         {
-            return socket_.remote_endpoint().address().to_string();
+            return ssl_socket_->lowest_layer().remote_endpoint().address().to_string();
         }
 
         bool is_open()
