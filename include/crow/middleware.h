@@ -18,6 +18,10 @@ namespace crow
         using call_global = std::false_type;
     };
 
+    /**
+     * \namespace detail
+     * \brief TODO
+     */
     namespace detail
     {
         template<typename MW>
