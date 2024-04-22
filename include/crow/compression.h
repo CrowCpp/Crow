@@ -7,10 +7,6 @@
 // http://zlib.net/manual.html
 namespace crow // NOTE: Already documented in "crow/app.h"
 {
-    /**
-     * \namespace crow::compression
-     * \brief TODO
-     */
     namespace compression
     {
         // Values used in the 'windowBits' parameter for deflateInit2.

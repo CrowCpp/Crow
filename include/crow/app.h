@@ -287,21 +287,18 @@ namespace crow
             return max_payload_;
         }
 
-        /// \brief (TODO)
         self_t& signal_clear()
         {
             signals_.clear();
             return *this;
         }
 
-        /// \brief (TODO)
         self_t& signal_add(int signal_number)
         {
             signals_.push_back(signal_number);
             return *this;
         }
 
-        /// \brief (TODO)
         std::vector<int> signals()
         {
             return signals_;
@@ -397,7 +394,7 @@ namespace crow
             return res_stream_threshold_;
         }
 
-        /// \brief (TODO)
+        
         self_t& register_blueprint(Blueprint& blueprint)
         {
             router_.register_blueprint(blueprint);
@@ -416,7 +413,6 @@ namespace crow
             return *this;
         }
 
-        /// \brief (TODO)
         std::function<void(crow::response&)>& exception_handler()
         {
             return router_.exception_handler();
@@ -432,7 +428,7 @@ namespace crow
         }
 
 #ifdef CROW_ENABLE_COMPRESSION
-        /// \brief (TODO)
+        
         self_t& use_compression(compression::algorithm algorithm)
         {
             comp_algorithm_ = algorithm;
@@ -440,13 +436,11 @@ namespace crow
             return *this;
         }
 
-        /// \brief (TODO)
         compression::algorithm compression_algorithm()
         {
             return comp_algorithm_;
         }
 
-        /// \brief (TODO)
         bool compression_used() const
         {
             return compression_used_;
@@ -565,13 +559,11 @@ namespace crow
             }
         }
 
-        /// \brief (TODO)
         void add_websocket(crow::websocket::connection* conn)
         {
             websockets_.push_back(conn);
         }
 
-        /// \brief (TODO)
         void remove_websocket(crow::websocket::connection* conn)
         {
             websockets_.erase(std::remove(websockets_.begin(), websockets_.end(), conn), websockets_.end());
@@ -625,7 +617,6 @@ namespace crow
             return *this;
         }
 
-        /// \brief (TODO)
         self_t& ssl(asio::ssl::context&& ctx)
         {
             ssl_used_ = true;
@@ -633,13 +624,12 @@ namespace crow
             return *this;
         }
 
-        /// \brief (TODO)
         bool ssl_used() const
         {
             return ssl_used_;
         }
 #else
-        /// \brief (TODO)
+        
         template<typename T, typename... Remain>
         self_t& ssl_file(T&&, Remain&&...)
         {
@@ -651,7 +641,6 @@ namespace crow
             return *this;
         }
 
-        /// \brief (TODO)
         template<typename T, typename... Remain>
         self_t& ssl_chainfile(T&&, Remain&&...)
         {
@@ -663,7 +652,6 @@ namespace crow
             return *this;
         }
 
-        /// \brief (TODO)
         template<typename T>
         self_t& ssl(T&&)
         {
@@ -675,7 +663,6 @@ namespace crow
             return *this;
         }
 
-        /// \brief (TODO)
         bool ssl_used() const
         {
             return false;
@@ -693,7 +680,6 @@ namespace crow
             return ctx.template get<T>();
         }
 
-        /// \brief (TODO)
         template<typename T>
         T& get_middleware()
         {
@@ -717,7 +703,6 @@ namespace crow
         }
 
     private:
-        /// \brief TODO (But it's not so necessary).
         template<typename... Ts>
         std::tuple<Middlewares...> make_middleware_tuple(Ts&&... ts)
         {
@@ -735,12 +720,10 @@ namespace crow
             cv_started_.notify_all();
         }
 
-        /// \brief TODO (But it's not so necessary).
         void set_static_routes_added() {
             static_routes_added_ = true;
         }
 
-        /// \brief TODO (But it's not so necessary).
         bool are_static_routes_added() {
             return static_routes_added_;
         }

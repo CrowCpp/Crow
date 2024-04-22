@@ -32,10 +32,6 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         class template_t;
     }
 
-    /**
-     * \namespace crow::json
-     * \brief TODO
-     */
     namespace json
     {
         inline void escape(const std::string& str, std::string& ret)
