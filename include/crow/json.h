@@ -25,13 +25,17 @@ using std::isinf;
 using std::isnan;
 
 
-namespace crow
+namespace crow // NOTE: Already documented in "crow/app.h"
 {
     namespace mustache
     {
         class template_t;
     }
 
+    /**
+     * \namespace crow::json
+     * \brief TODO
+     */
     namespace json
     {
         inline void escape(const std::string& str, std::string& ret)

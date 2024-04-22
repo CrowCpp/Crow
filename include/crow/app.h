@@ -22,7 +22,7 @@
 #include "crow/websocket.h"
 #ifdef CROW_ENABLE_COMPRESSION
 #include "crow/compression.h"
-#endif
+#endif // #ifdef CROW_ENABLE_COMPRESSION
 
 
 #ifdef CROW_MSVC_WORKAROUND
@@ -56,9 +56,9 @@
  * \def CROW_BP_ROUTE(blueprint, url)
  * \brief Creates a route for a blueprint using a rule.
  *
- * It may use crow::Blueprint::new_rule_dynamic or
- * crow::Blueprint::new_rule_tagged to define a new rule for an
- * given blueprint. It's usage is similar to CROW_ROUTE macro:
+ * It may use crow::Blueprint::new_rule_dynamic or crow::Blueprint::new_rule_tagged
+ * to define a new rule for an given blueprint. It's usage is similar
+ * to CROW_ROUTE macro:
  *
  * ```cpp
  * crow::Blueprint my_bp();
@@ -79,9 +79,9 @@
  * \def CROW_WEBSOCKET_ROUTE(app, url)
  * \brief Defines WebSocket route for app.
  *
- * It binds a WebSocket route to app. 
- * for more information about how implement WebSockets in your
- * application. The usage syntax of this macro is like this:
+ * It binds a WebSocket route to app. Easy solution to implement
+ * WebSockets in your app. The usage syntax of this macro is
+ * like this:
  *
  * ```cpp
  * auto app = crow::SimpleApp(); // or crow::App()
@@ -110,8 +110,8 @@
  * or blueprint.
  *
  * It defines the usage of a Middleware in one route. And it
- * can be used in both crow::SimpleApp (and crow::App)
- * instances and crow::Blueprint. Its usage syntax is like this:
+ * can be used in both crow::SimpleApp (and crow::App) instances and
+ * crow::Blueprint. Its usage syntax is like this:
  *
  * ```cpp
  * auto app = crow::SimpleApp(); // or crow::App()
@@ -157,11 +157,12 @@
 
 /**
  * \namespace crow
- * \brief The main namespace. In this namespace are the most important
- * classes and functions of the library.
+ * \brief The main namespace of the library. In this namespace
+ * is defined the most important classes and functions of the
+ * library.
  * 
- * Within this namespace, the Crow class is defined, whose instances
- * represent web applications with routes and rules.
+ * Within this namespace, the Crow class, Router class, Connection
+ * class, and other are defined.
  */
 namespace crow
 {
@@ -172,7 +173,7 @@ namespace crow
      * \class Crow
      * \brief The main server application class.
      *
-     * Use SimpleApp or App<Middleware1, Middleware2, etc...> instead of
+     * Use crow::SimpleApp or crow::App<Middleware1, Middleware2, etc...> instead of
      * directly instantiate this class.
      */
     template<typename... Middlewares>
@@ -378,6 +379,7 @@ namespace crow
             return res_stream_threshold_;
         }
 
+        /// \brief (TODO)
         self_t& register_blueprint(Blueprint& blueprint)
         {
             router_.register_blueprint(blueprint);
