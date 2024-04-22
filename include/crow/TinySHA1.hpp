@@ -1,8 +1,4 @@
-/* 
- * \file TinySHA1.hpp
- * \brief TinySHA1 - a header only implementation of the SHA1 algorithm in C++. Based
- * on the implementation in boost::uuid::details.
- * 
+/*
  * SHA1 Wikipedia Page: http://en.wikipedia.org/wiki/SHA-1
  * 
  * Copyright (c) 2012-22 SAURAV MOHAPATRA <mohaps@gmail.com>
@@ -18,6 +14,17 @@
  * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ */
+
+/** 
+ * \file TinySHA1.hpp
+ * \author SAURAV MOHAPATRA <mohaps@gmail.com>
+ * \date 2012-22
+ * \brief TinySHA1 - a header only implementation of the SHA1 algorithm in C++. Based
+ * on the implementation in boost::uuid::details.
+ *
+ * In this file are defined:
+ * - sha1::SHA1
  */
 #ifndef _TINY_SHA1_HPP_
 #define _TINY_SHA1_HPP_

@@ -1,3 +1,20 @@
+/**
+ * \file crow/app.h
+ * \brief This file includes the definition of the crow::Crow class,
+ * the crow::App and crow::SimpleApp aliases, and some macros.
+ *
+ * In this file are defined:
+ * - crow::Crow
+ * - crow::App
+ * - crow::SimpleApp
+ * - \ref CROW_ROUTE
+ * - \ref CROW_BP_ROUTE
+ * - \ref CROW_WEBSOCKET_ROUTE
+ * - \ref CROW_MIDDLEWARES
+ * - \ref CROW_CATCHALL_ROUTE
+ * - \ref CROW_BP_CATCHALL_ROUTE
+ */
+
 #pragma once
 
 #include <chrono>
@@ -56,8 +73,9 @@
  * \def CROW_BP_ROUTE(blueprint, url)
  * \brief Creates a route for a blueprint using a rule.
  *
- * It may use crow::Blueprint::new_rule_dynamic or crow::Blueprint::new_rule_tagged
- * to define a new rule for an given blueprint. It's usage is similar
+ * It may use crow::Blueprint::new_rule_dynamic or
+ * crow::Blueprint::new_rule_tagged to define a new rule for
+ * an given blueprint. It's usage is similar
  * to CROW_ROUTE macro:
  *
  * ```cpp
