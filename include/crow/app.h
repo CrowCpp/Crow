@@ -44,8 +44,8 @@
 
 #ifdef CROW_MSVC_WORKAROUND
 
-#define CROW_ROUTE(app, url) app.route_dynamic(url) // See the documentation in the comment bellow.
-#define CROW_BP_ROUTE(blueprint, url) blueprint.new_rule_dynamic(url) // See the documentation in the comment bellow.
+#define CROW_ROUTE(app, url) app.route_dynamic(url) // See the documentation in the comment below.
+#define CROW_BP_ROUTE(blueprint, url) blueprint.new_rule_dynamic(url) // See the documentation in the comment below.
 
 #else // #ifdef CROW_MSVC_WORKAROUND
 
