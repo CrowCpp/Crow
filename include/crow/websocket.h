@@ -6,7 +6,7 @@
 #include "crow/TinySHA1.hpp"
 #include "crow/utility.h"
 
-namespace crow
+namespace crow // NOTE: Already documented in "crow/app.h"
 {
 #ifdef CROW_USE_BOOST
     namespace asio = boost::asio;
@@ -14,6 +14,14 @@ namespace crow
 #else
     using error_code = asio::error_code;
 #endif
+
+    /**
+     * \namespace crow::websocket
+     * \brief Namespace that includes the \ref Connection class
+     * and \ref connection struct. Useful for WebSockets connection.
+     *
+     * Used specially in crow/websocket.h, crow/app.h and crow/routing.h
+     */
     namespace websocket
     {
         enum class WebSocketReadState

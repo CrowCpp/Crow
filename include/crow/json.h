@@ -25,7 +25,7 @@ using std::isinf;
 using std::isnan;
 
 
-namespace crow
+namespace crow // NOTE: Already documented in "crow/app.h"
 {
     namespace mustache
     {

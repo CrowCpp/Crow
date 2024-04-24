@@ -27,7 +27,8 @@
 #include "crow/logging.h"
 #include "crow/task_timer.h"
 
-namespace crow
+
+namespace crow // NOTE: Already documented in "crow/app.h"
 {
 #ifdef CROW_USE_BOOST
     namespace asio = boost::asio;

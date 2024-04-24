@@ -1,3 +1,20 @@
+/**
+ * \file crow/app.h
+ * \brief This file includes the definition of the crow::Crow class,
+ * the crow::App and crow::SimpleApp aliases, and some macros.
+ *
+ * In this file are defined:
+ * - crow::Crow
+ * - crow::App
+ * - crow::SimpleApp
+ * - \ref CROW_ROUTE
+ * - \ref CROW_BP_ROUTE
+ * - \ref CROW_WEBSOCKET_ROUTE
+ * - \ref CROW_MIDDLEWARES
+ * - \ref CROW_CATCHALL_ROUTE
+ * - \ref CROW_BP_CATCHALL_ROUTE
+ */
+
 #pragma once
 
 #include <chrono>
@@ -22,52 +39,185 @@
 #include "crow/websocket.h"
 #ifdef CROW_ENABLE_COMPRESSION
 #include "crow/compression.h"
-#endif
+#endif // #ifdef CROW_ENABLE_COMPRESSION
+
 
 #ifdef CROW_MSVC_WORKAROUND
-#define CROW_ROUTE(app, url) app.route_dynamic(url)
-#define CROW_BP_ROUTE(blueprint, url) blueprint.new_rule_dynamic(url)
-#else
+
+#define CROW_ROUTE(app, url) app.route_dynamic(url) // See the documentation in the comment below.
+#define CROW_BP_ROUTE(blueprint, url) blueprint.new_rule_dynamic(url) // See the documentation in the comment below.
+
+#else // #ifdef CROW_MSVC_WORKAROUND
+
+/**
+ * \def CROW_ROUTE(app, url)
+ * \brief Creates a route for app using a rule.
+ *
+ * It use crow::Crow::route_dynamic or crow::Crow::route to define
+ * a rule for your application. It's usage is like this:
+ *
+ * ```cpp
+ * auto app = crow::SimpleApp(); // or crow::App()
+ * CROW_ROUTE(app, "/")
+ * ([](){
+ *     return "<h1>Hello, world!</h1>";
+ * });
+ * ```
+ *
+ * This is the recommended way to define routes in a crow application.
+ * \see [Page of guide "Routes"](https://crowcpp.org/master/guides/routes/).
+ */
 #define CROW_ROUTE(app, url) app.template route<crow::black_magic::get_parameter_tag(url)>(url)
+
+/**
+ * \def CROW_BP_ROUTE(blueprint, url)
+ * \brief Creates a route for a blueprint using a rule.
+ *
+ * It may use crow::Blueprint::new_rule_dynamic or
+ * crow::Blueprint::new_rule_tagged to define a new rule for
+ * an given blueprint. It's usage is similar
+ * to CROW_ROUTE macro:
+ *
+ * ```cpp
+ * crow::Blueprint my_bp();
+ * CROW_BP_ROUTE(my_bp, "/")
+ * ([](){
+ *     return "<h1>Hello, world!</h1>";
+ * });
+ * ```
+ *
+ * This is the recommended way to define routes in a crow blueprint
+ * because of its compile-time capabilities.
+ *
+ * \see [Page of the guide "Blueprints"](https://crowcpp.org/master/guides/blueprints/).
+ */
 #define CROW_BP_ROUTE(blueprint, url) blueprint.new_rule_tagged<crow::black_magic::get_parameter_tag(url)>(url)
+
+/**
+ * \def CROW_WEBSOCKET_ROUTE(app, url)
+ * \brief Defines WebSocket route for app.
+ *
+ * It binds a WebSocket route to app. Easy solution to implement
+ * WebSockets in your app. The usage syntax of this macro is
+ * like this:
+ *
+ * ```cpp
+ * auto app = crow::SimpleApp(); // or crow::App()
+ * CROW_WEBSOCKET_ROUTE(app, "/ws")
+ *     .onopen([&](crow::websocket::connection& conn){
+ *                do_something();
+ *            })
+ *     .onclose([&](crow::websocket::connection& conn, const std::string& reason){
+ *                 do_something();
+ *             })
+ *     .onmessage([&](crow::websocket::connection&, const std::string& data, bool is_binary){
+ *                   if (is_binary)
+ *                       do_something(data);
+ *                   else
+ *                       do_something_else(data);
+ *               });
+ * ```
+ *
+ * \see [Page of the guide "WebSockets"](https://crowcpp.org/master/guides/websockets/).
+ */
 #define CROW_WEBSOCKET_ROUTE(app, url) app.route<crow::black_magic::get_parameter_tag(url)>(url).websocket<std::remove_reference<decltype(app)>::type>(&app)
+
+/**
+ * \def CROW_MIDDLEWARES(app, ...)
+ * \brief Enable a Middleware for an specific route in app
+ * or blueprint.
+ *
+ * It defines the usage of a Middleware in one route. And it
+ * can be used in both crow::SimpleApp (and crow::App) instances and
+ * crow::Blueprint. Its usage syntax is like this:
+ *
+ * ```cpp
+ * auto app = crow::SimpleApp(); // or crow::App()
+ * CROW_ROUTE(app, "/with_middleware")
+ * .CROW_MIDDLEWARES(app, LocalMiddleware) // Can be used more than one
+ * ([]() {                                 // middleware.
+ *     return "Hello world!";
+ * });
+ * ```
+ *
+ * \see [Page of the guide "Middlewares"](https://crowcpp.org/master/guides/middleware/).
+ */
 #define CROW_MIDDLEWARES(app, ...) template middlewares<typename std::remove_reference<decltype(app)>::type, __VA_ARGS__>()
-#endif
+
+#endif // #ifdef CROW_MSVC_WORKAROUND
+
+/**
+ * \def CROW_CATCHALL_ROUTE(app)
+ * \brief Defines a custom catchall route for app using a
+ * custom rule.
+ *
+ * It defines a handler when the client make a request for an
+ * undefined route. Instead of just reply with a `404` status
+ * code (default behavior), you can define a custom handler
+ * using this macro.
+ *
+ * \see [Page of the guide "Routes" (Catchall routes)](https://crowcpp.org/master/guides/routes/#catchall-routes).
+ */ 
 #define CROW_CATCHALL_ROUTE(app) app.catchall_route()
+
+/**
+ * \def CROW_BP_CATCHALL_ROUTE(blueprint)
+ * \brief Defines a custom catchall route for blueprint
+ * using a custom rule.
+ *
+ * It defines a handler when the client make a request for an
+ * undefined route in the blueprint.
+ *
+ * \see [Page of the guide "Blueprint" (Define a custom Catchall route)](https://crowcpp.org/master/guides/blueprints/#define-a-custom-catchall-route).
+ */ 
 #define CROW_BP_CATCHALL_ROUTE(blueprint) blueprint.catchall_rule()
 
+
+/**
+ * \namespace crow
+ * \brief The main namespace of the library. In this namespace
+ * is defined the most important classes and functions of the
+ * library.
+ * 
+ * Within this namespace, the Crow class, Router class, Connection
+ * class, and other are defined.
+ */
 namespace crow
 {
 #ifdef CROW_ENABLE_SSL
     using ssl_context_t = asio::ssl::context;
 #endif
-    /// The main server application
-
-    ///
-    /// Use `SimpleApp` or `App<Middleware1, Middleware2, etc...>`
+    /**
+     * \class Crow
+     * \brief The main server application class.
+     *
+     * Use crow::SimpleApp or crow::App<Middleware1, Middleware2, etc...> instead of
+     * directly instantiate this class.
+     */
     template<typename... Middlewares>
     class Crow
     {
     public:
-        /// This crow application
+        /// \brief This is the crow application
         using self_t = Crow;
-        /// The HTTP server
+
+        /// \brief The HTTP server
         using server_t = Server<Crow, SocketAdaptor, Middlewares...>;
+
 #ifdef CROW_ENABLE_SSL
-        /// An HTTP server that runs on SSL with an SSLAdaptor
+        /// \brief An HTTP server that runs on SSL with an SSLAdaptor
         using ssl_server_t = Server<Crow, SSLAdaptor, Middlewares...>;
 #endif
         Crow()
         {}
 
-        /// Construct Crow with a subset of middleware
+        /// \brief Construct Crow with a subset of middleware
         template<typename... Ts>
         Crow(Ts&&... ts):
           middlewares_(make_middleware_tuple(std::forward<Ts>(ts)...))
         {}
 
-        /// Process an Upgrade request
-
+        /// \brief Process an Upgrade request
         ///
         /// Currently used to upgrade an HTTP connection to a WebSocket connection
         template<typename Adaptor>
@@ -76,19 +226,19 @@ namespace crow
             router_.handle_upgrade(req, res, adaptor);
         }
 
-        /// Process only the method and URL of a request and provide a route (or an error response)
+        /// \brief Process only the method and URL of a request and provide a route (or an error response)
         std::unique_ptr<routing_handle_result> handle_initial(request& req, response& res)
         {
             return router_.handle_initial(req, res);
         }
 
-        /// Process the fully parsed request and generate a response for it
+        /// \brief Process the fully parsed request and generate a response for it
         void handle(request& req, response& res, std::unique_ptr<routing_handle_result>& found)
         {
             router_.handle<self_t>(req, res, *found);
         }
 
-        /// Process a fully parsed request from start to finish (primarily used for debugging)
+        /// \brief Process a fully parsed request from start to finish (primarily used for debugging)
         void handle_full(request& req, response& res)
         {
             auto found = handle_initial(req, res);
@@ -96,13 +246,13 @@ namespace crow
                 handle(req, res, found);
         }
 
-        /// Create a dynamic route using a rule (**Use CROW_ROUTE instead**)
+        /// \brief Create a dynamic route using a rule (**Use CROW_ROUTE instead**)
         DynamicRule& route_dynamic(const std::string& rule)
         {
             return router_.new_rule_dynamic(rule);
         }
 
-        /// Create a route using a rule (**Use CROW_ROUTE instead**)
+        /// \brief Create a route using a rule (**Use CROW_ROUTE instead**)
         template<uint64_t Tag>
 #ifdef CROW_GCC83_WORKAROUND
         auto& route(const std::string& rule)
@@ -118,20 +268,20 @@ namespace crow
             return router_.new_rule_tagged<Tag>(rule);
         }
 
-        /// Create a route for any requests without a proper route (**Use CROW_CATCHALL_ROUTE instead**)
+        /// \brief Create a route for any requests without a proper route (**Use CROW_CATCHALL_ROUTE instead**)
         CatchallRule& catchall_route()
         {
             return router_.catchall_rule();
         }
 
-        /// Set the default max payload size for websockets
+        /// \brief Set the default max payload size for websockets
         self_t& websocket_max_payload(uint64_t max_payload)
         {
             max_payload_ = max_payload;
             return *this;
         }
 
-        /// Get the default max payload size for websockets
+        /// \brief Get the default max payload size for websockets
         uint64_t websocket_max_payload()
         {
             return max_payload_;
@@ -154,53 +304,53 @@ namespace crow
             return signals_;
         }
 
-        /// Set the port that Crow will handle requests on
+        /// \brief Set the port that Crow will handle requests on
         self_t& port(std::uint16_t port)
         {
             port_ = port;
             return *this;
         }
 
-        /// Get the port that Crow will handle requests on
+        /// \brief Get the port that Crow will handle requests on
         std::uint16_t port()
         {
             return port_;
         }
 
-        /// Set the connection timeout in seconds (default is 5)
+        /// \brief Set the connection timeout in seconds (default is 5)
         self_t& timeout(std::uint8_t timeout)
         {
             timeout_ = timeout;
             return *this;
         }
 
-        /// Set the server name
+        /// \brief Set the server name
         self_t& server_name(std::string server_name)
         {
             server_name_ = server_name;
             return *this;
         }
 
-        /// The IP address that Crow will handle requests on (default is 0.0.0.0)
+        /// \brief The IP address that Crow will handle requests on (default is 0.0.0.0)
         self_t& bindaddr(std::string bindaddr)
         {
             bindaddr_ = bindaddr;
             return *this;
         }
 
-        /// Get the address that Crow will handle requests on
+        /// \brief Get the address that Crow will handle requests on
         std::string bindaddr()
         {
             return bindaddr_;
         }
 
-        /// Run the server on multiple threads using all available threads
+        /// \brief Run the server on multiple threads using all available threads
         self_t& multithreaded()
         {
             return concurrency(std::thread::hardware_concurrency());
         }
 
-        /// Run the server on multiple threads using a specific number
+        /// \brief Run the server on multiple threads using a specific number
         self_t& concurrency(std::uint16_t concurrency)
         {
             if (concurrency < 2) // Crow can have a minimum of 2 threads running
@@ -209,29 +359,27 @@ namespace crow
             return *this;
         }
 
-        /// Get the number of threads that server is using
+        /// \brief Get the number of threads that server is using
         std::uint16_t concurrency()
         {
             return concurrency_;
         }
 
-        /// Set the server's log level
-
+        /// \brief Set the server's log level
         ///
-        /// Possible values are:<br>
-        /// crow::LogLevel::Debug       (0)<br>
-        /// crow::LogLevel::Info        (1)<br>
-        /// crow::LogLevel::Warning     (2)<br>
-        /// crow::LogLevel::Error       (3)<br>
-        /// crow::LogLevel::Critical    (4)<br>
+        /// Possible values are:
+        /// - crow::LogLevel::Debug       (0)
+        /// - crow::LogLevel::Info        (1)
+        /// - crow::LogLevel::Warning     (2)
+        /// - crow::LogLevel::Error       (3)
+        /// - crow::LogLevel::Critical    (4)
         self_t& loglevel(LogLevel level)
         {
             crow::logger::setLogLevel(level);
             return *this;
         }
 
-        /// Set the response body size (in bytes) beyond which Crow automatically streams responses (Default is 1MiB)
-
+        /// \brief Set the response body size (in bytes) beyond which Crow automatically streams responses (Default is 1MiB)
         ///
         /// Any streamed response is unaffected by Crow's timer, and therefore won't timeout before a response is fully sent.
         self_t& stream_threshold(size_t threshold)
@@ -240,20 +388,20 @@ namespace crow
             return *this;
         }
 
-        /// Get the response body size (in bytes) beyond which Crow automatically streams responses
+        /// \brief Get the response body size (in bytes) beyond which Crow automatically streams responses
         size_t& stream_threshold()
         {
             return res_stream_threshold_;
         }
 
+        
         self_t& register_blueprint(Blueprint& blueprint)
         {
             router_.register_blueprint(blueprint);
             return *this;
         }
 
-        /// Set the function to call to handle uncaught exceptions generated in routes (Default generates error 500).
-
+        /// \brief Set the function to call to handle uncaught exceptions generated in routes (Default generates error 500).
         ///
         /// The function must have the following signature: void(crow::response&).
         /// It must set the response passed in argument to the function, which will be sent back to the client.
@@ -270,7 +418,7 @@ namespace crow
             return router_.exception_handler();
         }
 
-        /// Set a custom duration and function to run on every tick
+        /// \brief Set a custom duration and function to run on every tick
         template<typename Duration, typename Func>
         self_t& tick(Duration d, Func f)
         {
@@ -280,6 +428,7 @@ namespace crow
         }
 
 #ifdef CROW_ENABLE_COMPRESSION
+        
         self_t& use_compression(compression::algorithm algorithm)
         {
             comp_algorithm_ = algorithm;
@@ -298,7 +447,7 @@ namespace crow
         }
 #endif
 
-        /// Apply blueprints
+        /// \brief Apply blueprints
         void add_blueprint()
         {
 #if defined(__APPLE__) || defined(__MACH__)
@@ -321,7 +470,7 @@ namespace crow
             router_.validate_bp();
         }
 
-        /// Go through the rules, upgrade them if possible, and add them to the list of rules
+        /// \brief Go through the rules, upgrade them if possible, and add them to the list of rules
         void add_static_dir()
         {
             if (are_static_routes_added()) return;
@@ -335,13 +484,13 @@ namespace crow
             set_static_routes_added();
         }
 
-        /// A wrapper for `validate()` in the router
+        /// \brief A wrapper for `validate()` in the router
         void validate()
         {
             router_.validate();
         }
 
-        /// Run the server
+        /// \brief Run the server
         void run()
         {
 #ifndef CROW_DISABLE_STATIC_DIR
@@ -377,7 +526,7 @@ namespace crow
             }
         }
 
-        /// Non-blocking version of \ref run()
+        /// \brief Non-blocking version of \ref run()
         ///
         /// The output from this method needs to be saved into a variable!
         /// Otherwise the call will be made on the same thread.
@@ -388,7 +537,7 @@ namespace crow
             });
         }
 
-        /// Stop the server
+        /// \brief Stop the server
         void stop()
         {
 #ifdef CROW_ENABLE_SSL
@@ -420,7 +569,7 @@ namespace crow
             websockets_.erase(std::remove(websockets_.begin(), websockets_.end(), conn), websockets_.end());
         }
 
-        /// Print the routing paths defined for each HTTP method
+        /// \brief Print the routing paths defined for each HTTP method
         void debug_print()
         {
             CROW_LOG_DEBUG << "Routing:";
@@ -430,7 +579,7 @@ namespace crow
 
 #ifdef CROW_ENABLE_SSL
 
-        /// Use certificate and key files for SSL
+        /// \brief Use certificate and key files for SSL
         self_t& ssl_file(const std::string& crt_filename, const std::string& key_filename)
         {
             ssl_used_ = true;
@@ -443,7 +592,7 @@ namespace crow
             return *this;
         }
 
-        /// Use .pem file for SSL
+        /// \brief Use `.pem` file for SSL
         self_t& ssl_file(const std::string& pem_filename)
         {
             ssl_used_ = true;
@@ -455,7 +604,7 @@ namespace crow
             return *this;
         }
 
-        /// Use certificate chain and key files for SSL
+        /// \brief Use certificate chain and key files for SSL
         self_t& ssl_chainfile(const std::string& crt_filename, const std::string& key_filename)
         {
             ssl_used_ = true;
@@ -480,6 +629,7 @@ namespace crow
             return ssl_used_;
         }
 #else
+        
         template<typename T, typename... Remain>
         self_t& ssl_file(T&&, Remain&&...)
         {
@@ -536,7 +686,7 @@ namespace crow
             return utility::get_element_by_type<T, Middlewares...>(middlewares_);
         }
 
-        /// Wait until the server has properly started
+        /// \brief Wait until the server has properly started
         void wait_for_server_start()
         {
             {
@@ -562,7 +712,7 @@ namespace crow
                 black_magic::tuple_extract<Middlewares, decltype(fwd)>(fwd))...);
         }
 
-        /// Notify anything using `wait_for_server_start()` to proceed
+        /// \brief Notify anything using \ref wait_for_server_start() to proceed
         void notify_server_start()
         {
             std::unique_lock<std::mutex> lock(start_mutex_);
@@ -614,7 +764,13 @@ namespace crow
         std::mutex start_mutex_;
         std::vector<crow::websocket::connection*> websockets_;
     };
+
+    /// \brief Alias of Crow<Middlewares...>. Useful if you want
+    /// a instance of an Crow application that require Middlewares
     template<typename... Middlewares>
     using App = Crow<Middlewares...>;
+
+    /// \brief Alias of Crow<>. Useful if you want a instance of
+    /// an Crow application that doesn't require of Middlewares
     using SimpleApp = Crow<>;
 } // namespace crow
