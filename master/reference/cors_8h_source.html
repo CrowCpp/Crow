@@ -104,7 +104,7 @@ $(document).ready(function(){initNavTree('cors_8h_source.html',''); initResizabl
 <div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="preprocessor">#include &quot;crow/http_response.h&quot;</span></div>
 <div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="preprocessor">#include &quot;crow/routing.h&quot;</span></div>
 <div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160; </div>
-<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="keyword">namespace </span>crow</div>
+<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespacecrow.html">crow</a></div>
 <div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;{</div>
 <div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;    <span class="keyword">struct </span>CORSHandler;</div>
 <div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="comment"></span> </div>
@@ -198,7 +198,7 @@ $(document).ready(function(){initNavTree('cors_8h_source.html',''); initResizabl
 <div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;<span class="comment"></span>        <span class="keywordtype">void</span> set_header_no_override(<span class="keyword">const</span> std::string&amp; key, <span class="keyword">const</span> std::string&amp; value, <a class="code" href="structcrow_1_1response.html">crow::response</a>&amp; res)</div>
 <div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;        {</div>
 <div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;            <span class="keywordflow">if</span> (value.size() == 0) <span class="keywordflow">return</span>;</div>
-<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;            <span class="keywordflow">if</span> (!get_header_value(res.<a class="code" href="structcrow_1_1response.html#ae56cfc39f24a56748c11016842427fb3">headers</a>, key).empty()) <span class="keywordflow">return</span>;</div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;            <span class="keywordflow">if</span> (!<a class="code" href="namespacecrow.html#ac0940ae1e094df6107d3a2604537279a">get_header_value</a>(res.<a class="code" href="structcrow_1_1response.html#ae56cfc39f24a56748c11016842427fb3">headers</a>, key).empty()) <span class="keywordflow">return</span>;</div>
 <div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;            res.<a class="code" href="structcrow_1_1response.html#a16d1a8bcec6460ba97f90b80881693b8">add_header</a>(key, value);</div>
 <div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;        }</div>
 <div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;<span class="comment"></span> </div>
@@ -300,6 +300,8 @@ $(document).ready(function(){initNavTree('cors_8h_source.html',''); initResizabl
 <div class="line"><a name="l00199"></a><span class="lineno">  199</span>&#160; </div>
 <div class="line"><a name="l00200"></a><span class="lineno">  200</span>&#160;} <span class="comment">// namespace crow</span></div>
 <div class="ttc" id="aclasscrow_1_1_blueprint_html"><div class="ttname"><a href="classcrow_1_1_blueprint.html">crow::Blueprint</a></div><div class="ttdoc">A blueprint can be considered a smaller section of a Crow app, specifically where the router is conec...</div><div class="ttdef"><b>Definition:</b> routing.h:1104</div></div>
+<div class="ttc" id="anamespacecrow_html"><div class="ttname"><a href="namespacecrow.html">crow</a></div><div class="ttdoc">The main namespace of the library. In this namespace is defined the most important classes and functi...</div></div>
+<div class="ttc" id="anamespacecrow_html_ac0940ae1e094df6107d3a2604537279a"><div class="ttname"><a href="namespacecrow.html#ac0940ae1e094df6107d3a2604537279a">crow::get_header_value</a></div><div class="ttdeci">const std::string &amp; get_header_value(const T &amp;headers, const std::string &amp;key)</div><div class="ttdoc">Find and return the value associated with the key. (returns an empty string if nothing is found)</div><div class="ttdef"><b>Definition:</b> http_request.h:24</div></div>
 <div class="ttc" id="astructcrow_1_1_c_o_r_s_handler_1_1context_html"><div class="ttname"><a href="structcrow_1_1_c_o_r_s_handler_1_1context.html">crow::CORSHandler::context</a></div><div class="ttdef"><b>Definition:</b> cors.h:135</div></div>
 <div class="ttc" id="astructcrow_1_1_c_o_r_s_handler_html"><div class="ttname"><a href="structcrow_1_1_c_o_r_s_handler.html">crow::CORSHandler</a></div><div class="ttdoc">CORSHandler is a global middleware for setting CORS headers.</div><div class="ttdef"><b>Definition:</b> cors.h:133</div></div>
 <div class="ttc" id="astructcrow_1_1_c_o_r_s_handler_html_a218d078e061f8d2ad4c16e7db6022cad"><div class="ttname"><a href="structcrow_1_1_c_o_r_s_handler.html#a218d078e061f8d2ad4c16e7db6022cad">crow::CORSHandler::blueprint</a></div><div class="ttdeci">CORSRules &amp; blueprint(const Blueprint &amp;bp)</div><div class="ttdoc">Handle CORS for a specific blueprint.</div><div class="ttdef"><b>Definition:</b> cors.h:154</div></div>
@@ -329,7 +331,7 @@ $(document).ready(function(){initNavTree('cors_8h_source.html',''); initResizabl
 			<ul>
 				<li class="navelem"><a class="el" href="dir_d44c64559bbebec7f509842c48db8b23.html">include</a></li><li class="navelem"><a class="el" href="dir_d22c1cb87b72f01e1a7f207eb3bfd1ca.html">crow</a></li><li class="navelem"><a class="el" href="dir_5bc98d550c303c0206de23cf2f7c59bb.html">middlewares</a></li><li class="navelem"><b>cors.h</b></li>
 				<li class="footer">
-					Generated on Fri Apr 19 2024 for Crow by <a href="http://www.doxygen.org/index.html">
+					Generated on Wed Apr 24 2024 for Crow by <a href="http://www.doxygen.org/index.html">
 					<img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.9.1.
 					Dark theme by <a href="http://majerle.eu" target="_new">Tilen Majerle</a>. Edited by <a href="https://github.com/The-EDev" target="_new">Farook Al-Sammarraie</a>. All rights reserved.
 				</li>

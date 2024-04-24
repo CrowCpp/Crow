@@ -1,6 +1,6 @@
 var annotated_dup =
 [
-    [ "crow", null, [
+    [ "crow", "namespacecrow.html", [
       [ "detail", null, [
         [ "routing_handler_call_helper", null, [
           [ "call_pair", "structcrow_1_1detail_1_1routing__handler__call__helper_1_1call__pair.html", "structcrow_1_1detail_1_1routing__handler__call__helper_1_1call__pair" ],
@@ -65,7 +65,7 @@ var annotated_dup =
         [ "ExpirationTracker", "structcrow_1_1session_1_1_expiration_tracker.html", "structcrow_1_1session_1_1_expiration_tracker" ],
         [ "CachedSession", "structcrow_1_1session_1_1_cached_session.html", "structcrow_1_1session_1_1_cached_session" ]
       ] ],
-      [ "websocket", null, [
+      [ "websocket", "namespacecrow_1_1websocket.html", [
         [ "connection", "structcrow_1_1websocket_1_1connection.html", "structcrow_1_1websocket_1_1connection" ],
         [ "Connection", "classcrow_1_1websocket_1_1_connection.html", "classcrow_1_1websocket_1_1_connection" ]
       ] ],
@@ -105,7 +105,7 @@ var annotated_dup =
       [ "SocketAdaptor", "structcrow_1_1_socket_adaptor.html", "structcrow_1_1_socket_adaptor" ],
       [ "SSLAdaptor", "structcrow_1_1_s_s_l_adaptor.html", "structcrow_1_1_s_s_l_adaptor" ]
     ] ],
-    [ "sha1", null, [
+    [ "sha1", "namespacesha1.html", [
       [ "SHA1", "classsha1_1_1_s_h_a1.html", "classsha1_1_1_s_h_a1" ]
     ] ]
 ];

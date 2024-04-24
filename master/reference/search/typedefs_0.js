@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['mp_5fmap_459',['mp_map',['../namespacecrow_1_1multipart.html#a071bb6d802c0edd823147fa6acaebb2b',1,'crow::multipart']]],
-  ['mph_5fmap_460',['mph_map',['../namespacecrow_1_1multipart.html#a6a2722b508669592976047a34d6eba0c',1,'crow::multipart']]]
+  ['app_480',['App',['../namespacecrow.html#a153c1bf24903d1a8629ef6eaf045110b',1,'crow']]]
 ];
