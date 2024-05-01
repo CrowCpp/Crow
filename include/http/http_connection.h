@@ -28,7 +28,7 @@
 #include "http/task_timer.h"
 #include "http/utility.h"
 
-namespace crow
+namespace http
 {
 #ifdef CROW_USE_BOOST
     namespace asio = boost::asio;
@@ -46,7 +46,7 @@ namespace crow
     template<typename Adaptor, typename Handler, typename... Middlewares>
     class Connection: public std::enable_shared_from_this<Connection<Adaptor, Handler, Middlewares...>>
     {
-        friend struct crow::response;
+        friend struct response;
 
     public:
         Connection(
@@ -633,4 +633,4 @@ namespace crow
         std::atomic<unsigned int>& queue_length_;
     };
 
-} // namespace crow
+} // namespace http

@@ -6,7 +6,7 @@
 #include <iostream>
 #include "http/utility.h"
 
-namespace crow
+namespace http
 {
     const char cr = '\r';
     const char lf = '\n';
@@ -297,57 +297,57 @@ namespace crow
           r_params(r_params_),
           method(method_) {}
     };
-} // namespace crow
+} // namespace http
 
 // clang-format off
 #ifndef CROW_MSVC_WORKAROUND
-constexpr crow::HTTPMethod method_from_string(const char* str)
+constexpr http::HTTPMethod method_from_string(const char* str)
 {
-    return crow::black_magic::is_equ_p(str, "GET", 3)    ? crow::HTTPMethod::Get :
-           crow::black_magic::is_equ_p(str, "DELETE", 6) ? crow::HTTPMethod::Delete :
-           crow::black_magic::is_equ_p(str, "HEAD", 4)   ? crow::HTTPMethod::Head :
-           crow::black_magic::is_equ_p(str, "POST", 4)   ? crow::HTTPMethod::Post :
-           crow::black_magic::is_equ_p(str, "PUT", 3)    ? crow::HTTPMethod::Put :
+    return http::black_magic::is_equ_p(str, "GET", 3)    ? http::HTTPMethod::Get :
+           http::black_magic::is_equ_p(str, "DELETE", 6) ? http::HTTPMethod::Delete :
+           http::black_magic::is_equ_p(str, "HEAD", 4)   ? http::HTTPMethod::Head :
+           http::black_magic::is_equ_p(str, "POST", 4)   ? http::HTTPMethod::Post :
+           http::black_magic::is_equ_p(str, "PUT", 3)    ? http::HTTPMethod::Put :
 
-           crow::black_magic::is_equ_p(str, "OPTIONS", 7) ? crow::HTTPMethod::Options :
-           crow::black_magic::is_equ_p(str, "CONNECT", 7) ? crow::HTTPMethod::Connect :
-           crow::black_magic::is_equ_p(str, "TRACE", 5)   ? crow::HTTPMethod::Trace :
+           http::black_magic::is_equ_p(str, "OPTIONS", 7) ? http::HTTPMethod::Options :
+           http::black_magic::is_equ_p(str, "CONNECT", 7) ? http::HTTPMethod::Connect :
+           http::black_magic::is_equ_p(str, "TRACE", 5)   ? http::HTTPMethod::Trace :
 
-           crow::black_magic::is_equ_p(str, "PATCH", 5)     ? crow::HTTPMethod::Patch :
-           crow::black_magic::is_equ_p(str, "PURGE", 5)     ? crow::HTTPMethod::Purge :
-           crow::black_magic::is_equ_p(str, "COPY", 4)      ? crow::HTTPMethod::Copy :
-           crow::black_magic::is_equ_p(str, "LOCK", 4)      ? crow::HTTPMethod::Lock :
-           crow::black_magic::is_equ_p(str, "MKCOL", 5)     ? crow::HTTPMethod::MkCol :
-           crow::black_magic::is_equ_p(str, "MOVE", 4)      ? crow::HTTPMethod::Move :
-           crow::black_magic::is_equ_p(str, "PROPFIND", 8)  ? crow::HTTPMethod::Propfind :
-           crow::black_magic::is_equ_p(str, "PROPPATCH", 9) ? crow::HTTPMethod::Proppatch :
-           crow::black_magic::is_equ_p(str, "SEARCH", 6)    ? crow::HTTPMethod::Search :
-           crow::black_magic::is_equ_p(str, "UNLOCK", 6)    ? crow::HTTPMethod::Unlock :
-           crow::black_magic::is_equ_p(str, "BIND", 4)      ? crow::HTTPMethod::Bind :
-           crow::black_magic::is_equ_p(str, "REBIND", 6)    ? crow::HTTPMethod::Rebind :
-           crow::black_magic::is_equ_p(str, "UNBIND", 6)    ? crow::HTTPMethod::Unbind :
-           crow::black_magic::is_equ_p(str, "ACL", 3)       ? crow::HTTPMethod::Acl :
+           http::black_magic::is_equ_p(str, "PATCH", 5)     ? http::HTTPMethod::Patch :
+           http::black_magic::is_equ_p(str, "PURGE", 5)     ? http::HTTPMethod::Purge :
+           http::black_magic::is_equ_p(str, "COPY", 4)      ? http::HTTPMethod::Copy :
+           http::black_magic::is_equ_p(str, "LOCK", 4)      ? http::HTTPMethod::Lock :
+           http::black_magic::is_equ_p(str, "MKCOL", 5)     ? http::HTTPMethod::MkCol :
+           http::black_magic::is_equ_p(str, "MOVE", 4)      ? http::HTTPMethod::Move :
+           http::black_magic::is_equ_p(str, "PROPFIND", 8)  ? http::HTTPMethod::Propfind :
+           http::black_magic::is_equ_p(str, "PROPPATCH", 9) ? http::HTTPMethod::Proppatch :
+           http::black_magic::is_equ_p(str, "SEARCH", 6)    ? http::HTTPMethod::Search :
+           http::black_magic::is_equ_p(str, "UNLOCK", 6)    ? http::HTTPMethod::Unlock :
+           http::black_magic::is_equ_p(str, "BIND", 4)      ? http::HTTPMethod::Bind :
+           http::black_magic::is_equ_p(str, "REBIND", 6)    ? http::HTTPMethod::Rebind :
+           http::black_magic::is_equ_p(str, "UNBIND", 6)    ? http::HTTPMethod::Unbind :
+           http::black_magic::is_equ_p(str, "ACL", 3)       ? http::HTTPMethod::Acl :
 
-           crow::black_magic::is_equ_p(str, "REPORT", 6)      ? crow::HTTPMethod::Report :
-           crow::black_magic::is_equ_p(str, "MKACTIVITY", 10) ? crow::HTTPMethod::MkActivity :
-           crow::black_magic::is_equ_p(str, "CHECKOUT", 8)    ? crow::HTTPMethod::Checkout :
-           crow::black_magic::is_equ_p(str, "MERGE", 5)       ? crow::HTTPMethod::Merge :
+           http::black_magic::is_equ_p(str, "REPORT", 6)      ? http::HTTPMethod::Report :
+           http::black_magic::is_equ_p(str, "MKACTIVITY", 10) ? http::HTTPMethod::MkActivity :
+           http::black_magic::is_equ_p(str, "CHECKOUT", 8)    ? http::HTTPMethod::Checkout :
+           http::black_magic::is_equ_p(str, "MERGE", 5)       ? http::HTTPMethod::Merge :
 
-           crow::black_magic::is_equ_p(str, "MSEARCH", 7)      ? crow::HTTPMethod::MSearch :
-           crow::black_magic::is_equ_p(str, "NOTIFY", 6)       ? crow::HTTPMethod::Notify :
-           crow::black_magic::is_equ_p(str, "SUBSCRIBE", 9)    ? crow::HTTPMethod::Subscribe :
-           crow::black_magic::is_equ_p(str, "UNSUBSCRIBE", 11) ? crow::HTTPMethod::Unsubscribe :
+           http::black_magic::is_equ_p(str, "MSEARCH", 7)      ? http::HTTPMethod::MSearch :
+           http::black_magic::is_equ_p(str, "NOTIFY", 6)       ? http::HTTPMethod::Notify :
+           http::black_magic::is_equ_p(str, "SUBSCRIBE", 9)    ? http::HTTPMethod::Subscribe :
+           http::black_magic::is_equ_p(str, "UNSUBSCRIBE", 11) ? http::HTTPMethod::Unsubscribe :
 
-           crow::black_magic::is_equ_p(str, "MKCALENDAR", 10) ? crow::HTTPMethod::MkCalendar :
+           http::black_magic::is_equ_p(str, "MKCALENDAR", 10) ? http::HTTPMethod::MkCalendar :
 
-           crow::black_magic::is_equ_p(str, "LINK", 4)   ? crow::HTTPMethod::Link :
-           crow::black_magic::is_equ_p(str, "UNLINK", 6) ? crow::HTTPMethod::Unlink :
+           http::black_magic::is_equ_p(str, "LINK", 4)   ? http::HTTPMethod::Link :
+           http::black_magic::is_equ_p(str, "UNLINK", 6) ? http::HTTPMethod::Unlink :
 
-           crow::black_magic::is_equ_p(str, "SOURCE", 6) ? crow::HTTPMethod::Source :
+           http::black_magic::is_equ_p(str, "SOURCE", 6) ? http::HTTPMethod::Source :
                                                            throw std::runtime_error("invalid http method");
 }
 
-constexpr crow::HTTPMethod operator"" _method(const char* str, size_t /*len*/)
+constexpr http::HTTPMethod operator"" _method(const char* str, size_t /*len*/)
 {
     return method_from_string( str );
 }

@@ -9,7 +9,7 @@
 #include "http/returnable.h"
 #include "http/utility.h"
 
-namespace crow
+namespace http
 {
     namespace mustache
     {
@@ -718,4 +718,4 @@ namespace crow
             return compile(detail::get_loader_ref()(filename));
         }
     } // namespace mustache
-} // namespace crow
+} // namespace http

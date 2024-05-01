@@ -8,7 +8,7 @@
 #include "http/returnable.h"
 #include "http/ci_map.h"
 
-namespace crow
+namespace http
 {
 
     /// Encapsulates anything related to processing and organizing `multipart/xyz` messages
@@ -80,7 +80,7 @@ namespace crow
 
             const std::string& get_header_value(const std::string& key) const
             {
-                return crow::get_header_value(headers, key);
+                return http::get_header_value(headers, key);
             }
 
             part get_part_by_name(const std::string& name)
@@ -270,4 +270,4 @@ namespace crow
             }
         };
     } // namespace multipart
-} // namespace crow
+} // namespace http

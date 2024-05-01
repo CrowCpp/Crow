@@ -6,7 +6,7 @@
 #include "http/TinySHA1.hpp"
 #include "http/utility.h"
 
-namespace crow // NOTE: Already documented in "crow/app.h"
+namespace http // NOTE: Already documented in "crow/app.h"
 {
 #ifdef CROW_USE_BOOST
     namespace asio = boost::asio;
@@ -16,7 +16,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
 #endif
 
     /**
-     * \namespace crow::websocket
+     * \namespace http::websocket
      * \brief Namespace that includes the \ref Connection class
      * and \ref connection struct. Useful for WebSockets connection.
      *
@@ -85,12 +85,12 @@ namespace crow // NOTE: Already documented in "crow/app.h"
             ///
             /// Requires a request with an "Upgrade: websocket" header.<br>
             /// Automatically handles the handshake.
-            Connection(const crow::request& req, Adaptor&& adaptor, Handler* handler, uint64_t max_payload,
-                       std::function<void(crow::websocket::connection&)> open_handler,
-                       std::function<void(crow::websocket::connection&, const std::string&, bool)> message_handler,
-                       std::function<void(crow::websocket::connection&, const std::string&)> close_handler,
-                       std::function<void(crow::websocket::connection&, const std::string&)> error_handler,
-                       std::function<bool(const crow::request&, void**)> accept_handler):
+            Connection(const request& req, Adaptor&& adaptor, Handler* handler, uint64_t max_payload,
+                       std::function<void(websocket::connection&)> open_handler,
+                       std::function<void(websocket::connection&, const std::string&, bool)> message_handler,
+                       std::function<void(websocket::connection&, const std::string&)> close_handler,
+                       std::function<void(websocket::connection&, const std::string&)> error_handler,
+                       std::function<bool(const request&, void**)> accept_handler):
               adaptor_(std::move(adaptor)),
               handler_(handler),
               max_payload_bytes_(max_payload),
@@ -129,7 +129,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                 uint8_t digest[20];
                 s.getDigestBytes(digest);
 
-                start(crow::utility::base64encode((unsigned char*)digest, 20));
+                start(utility::base64encode((unsigned char*)digest, 20));
             }
 
             ~Connection() noexcept override
@@ -748,11 +748,11 @@ namespace crow // NOTE: Already documented in "crow/app.h"
 
             std::shared_ptr<void> anchor_ = std::make_shared<int>(); // Value is just for placeholding
 
-            std::function<void(crow::websocket::connection&)> open_handler_;
-            std::function<void(crow::websocket::connection&, const std::string&, bool)> message_handler_;
-            std::function<void(crow::websocket::connection&, const std::string&)> close_handler_;
-            std::function<void(crow::websocket::connection&, const std::string&)> error_handler_;
-            std::function<bool(const crow::request&, void**)> accept_handler_;
+            std::function<void(websocket::connection&)> open_handler_;
+            std::function<void(websocket::connection&, const std::string&, bool)> message_handler_;
+            std::function<void(websocket::connection&, const std::string&)> close_handler_;
+            std::function<void(websocket::connection&, const std::string&)> error_handler_;
+            std::function<bool(const request&, void**)> accept_handler_;
         };
     } // namespace websocket
-} // namespace crow
+} // namespace http

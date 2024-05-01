@@ -2,7 +2,7 @@
 #include <unordered_map>
 #include <string>
 
-namespace crow
+namespace http
 {
     const std::unordered_map<std::string, std::string> mime_types{
       {"shtml", "text/html"},

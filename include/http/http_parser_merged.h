@@ -38,7 +38,7 @@ typedef unsigned __int64 uint64_t;
 }
 
 #include "http/common.h"
-namespace crow
+namespace http
 {
 /* Maximium header size allowed. If the macro is not defined
  * before including this header then the default is used. To

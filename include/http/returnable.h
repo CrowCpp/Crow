@@ -2,7 +2,7 @@
 
 #include <string>
 
-namespace crow
+namespace http
 {
     /// An abstract class that allows any other class to be returned by a handler.
     struct returnable
@@ -16,4 +16,4 @@ namespace crow
 
         virtual ~returnable(){};
     };
-} // namespace crow
+} // namespace http

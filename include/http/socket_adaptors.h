@@ -24,7 +24,7 @@
 #define GET_IO_SERVICE(s) ((s).get_io_service())
 #endif
 
-namespace crow
+namespace http
 {
 #ifdef CROW_USE_BOOST
     namespace asio = boost::asio;
@@ -185,4 +185,4 @@ namespace crow
         std::unique_ptr<asio::ssl::stream<tcp::socket>> ssl_socket_;
     };
 #endif
-} // namespace crow
+} // namespace http

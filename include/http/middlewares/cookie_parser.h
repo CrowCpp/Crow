@@ -5,7 +5,7 @@
 #include "http/http_request.h"
 #include "http/http_response.h"
 
-namespace crow
+namespace http
 {
     // Any middleware requires following 3 members:
 
@@ -304,4 +304,4 @@ namespace crow
 
     SimpleApp
     */
-} // namespace crow
+} // namespace http

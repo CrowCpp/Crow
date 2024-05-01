@@ -18,7 +18,7 @@
 
 #include "http/logging.h"
 
-namespace crow
+namespace http
 {
 #ifdef CROW_USE_BOOST
     namespace asio = boost::asio;
@@ -145,4 +145,4 @@ namespace crow
             identifier_type highest_id_{0};
         };
     } // namespace detail
-} // namespace crow
+} // namespace http

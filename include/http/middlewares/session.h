@@ -48,7 +48,7 @@ namespace
     using wrap_mv_t = wrap_char_t<wrap_integral_t<T>>;
 } // namespace
 
-namespace crow
+namespace http
 {
     namespace session
     {
@@ -601,4 +601,4 @@ namespace crow
         session::ExpirationTracker expirations_;
     };
 
-} // namespace crow
+} // namespace http

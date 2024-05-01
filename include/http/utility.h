@@ -28,7 +28,7 @@
 #define CROW_UNLIKELY(X) (X)
 #endif
 
-namespace crow
+namespace http
 {
     /// @cond SKIP
     namespace black_magic
@@ -907,4 +907,4 @@ namespace crow
             return v.substr(begin, end - begin);
         }
     } // namespace utility
-} // namespace crow
+} // namespace http

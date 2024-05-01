@@ -3,14 +3,14 @@
 #include "http/http_response.h"
 #include "http/routing.h"
 
-namespace crow
+namespace http
 {
     struct CORSHandler;
 
     /// Used for tuning CORS policies
     struct CORSRules
     {
-        friend struct crow::CORSHandler;
+        friend struct CORSHandler;
 
         /// Set Access-Control-Allow-Origin. Default is "*"
         CORSRules& origin(const std::string& origin)
@@ -20,17 +20,17 @@ namespace crow
         }
 
         /// Set Access-Control-Allow-Methods. Default is "*"
-        CORSRules& methods(crow::HTTPMethod method)
+        CORSRules& methods(HTTPMethod method)
         {
-            add_list_item(methods_, crow::method_name(method));
+            add_list_item(methods_, method_name(method));
             return *this;
         }
 
         /// Set Access-Control-Allow-Methods. Default is "*"
         template<typename... Methods>
-        CORSRules& methods(crow::HTTPMethod method, Methods... method_list)
+        CORSRules& methods(HTTPMethod method, Methods... method_list)
         {
-            add_list_item(methods_, crow::method_name(method));
+            add_list_item(methods_, method_name(method));
             methods(method_list...);
             return *this;
         }
@@ -94,7 +94,7 @@ namespace crow
         }
 
         /// Set header `key` to `value` if it is not set
-        void set_header_no_override(const std::string& key, const std::string& value, crow::response& res)
+        void set_header_no_override(const std::string& key, const std::string& value, response& res)
         {
             if (value.size() == 0) return;
             if (!get_header_value(res.headers, key).empty()) return;
@@ -102,7 +102,7 @@ namespace crow
         }
 
         /// Set response headers
-        void apply(crow::response& res)
+        void apply(response& res)
         {
             if (ignore_) return;
             set_header_no_override("Access-Control-Allow-Origin", origin_, res);
@@ -134,10 +134,10 @@ namespace crow
         struct context
         {};
 
-        void before_handle(crow::request& /*req*/, crow::response& /*res*/, context& /*ctx*/)
+        void before_handle(request& /*req*/, response& /*res*/, context& /*ctx*/)
         {}
 
-        void after_handle(crow::request& req, crow::response& res, context& /*ctx*/)
+        void after_handle(request& req, response& res, context& /*ctx*/)
         {
             auto& rule = find_rule(req.url);
             rule.apply(res);
@@ -197,4 +197,4 @@ namespace crow
         return handler_->global();
     }
 
-} // namespace crow
+} // namespace http

@@ -28,7 +28,7 @@
 #include "http/task_timer.h"
 
 
-namespace crow // NOTE: Already documented in "crow/app.h"
+namespace http // NOTE: Already documented in "crow/app.h"
 {
 #ifdef CROW_USE_BOOST
     namespace asio = boost::asio;
@@ -297,4 +297,4 @@ namespace crow // NOTE: Already documented in "crow/app.h"
 
         typename Adaptor::context* adaptor_ctx_;
     };
-} // namespace crow
+} // namespace http

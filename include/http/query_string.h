@@ -8,7 +8,7 @@
 #include <iostream>
 #include <memory>
 
-namespace crow
+namespace http
 {
 
 // ----------------------------------------------------------------------------
@@ -286,7 +286,7 @@ inline char * qs_scanvalue(const char * key, const char * qs, char * val, size_t
 // ----------------------------------------------------------------------------
 
 
-namespace crow
+namespace http
 {
     struct request;
     /// A class to represent any data coming after the `?` in the request URL into key-value pairs.
@@ -486,4 +486,4 @@ namespace crow
         std::vector<char*> key_value_pairs_;
     };
 
-} // namespace crow
+} // namespace http

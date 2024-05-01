@@ -27,7 +27,7 @@ def main():
         "#include <unordered_map>",
         "#include <string>",
         "",
-        "namespace crow",
+        "namespace http",
         "{",
         tabspace + "const std::unordered_map<std::string, std::string> mime_types{"])
 

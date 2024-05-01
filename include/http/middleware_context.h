@@ -4,7 +4,7 @@
 #include "http/http_request.h"
 #include "http/http_response.h"
 
-namespace crow
+namespace http
 {
     namespace detail
     {
@@ -13,7 +13,7 @@ namespace crow
         template<typename... Middlewares>
         struct partial_context : public black_magic::pop_back<Middlewares...>::template rebind<partial_context>, public black_magic::last_element_type<Middlewares...>::type::context
         {
-            using parent_context = typename black_magic::pop_back<Middlewares...>::template rebind<::crow::detail::partial_context>;
+            using parent_context = typename black_magic::pop_back<Middlewares...>::template rebind<detail::partial_context>;
             template<int N>
             using partial = typename std::conditional<N == sizeof...(Middlewares) - 1, partial_context, typename parent_context::template partial<N>>::type;
 
@@ -57,4 +57,4 @@ namespace crow
             using partial = typename partial_context<Middlewares...>::template partial<N>;
         };
     } // namespace detail
-} // namespace crow
+} // namespace http

@@ -2,7 +2,7 @@
 #include "http/http_request.h"
 #include "http/http_response.h"
 
-namespace crow
+namespace http
 {
 
     struct UTF8
@@ -22,4 +22,4 @@ namespace crow
         }
     };
 
-} // namespace crow
+} // namespace http

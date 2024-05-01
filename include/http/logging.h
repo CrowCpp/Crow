@@ -9,7 +9,7 @@
 #include <sstream>
 #include <string>
 
-namespace crow
+namespace http
 {
     enum class LogLevel
     {
@@ -146,20 +146,20 @@ namespace crow
         std::ostringstream stringstream_;
         LogLevel level_;
     };
-} // namespace crow
+} // namespace http
 
 #define CROW_LOG_CRITICAL                                                  \
-    if (crow::logger::get_current_log_level() <= crow::LogLevel::Critical) \
-    crow::logger(crow::LogLevel::Critical)
+    if (http::logger::get_current_log_level() <= http::LogLevel::Critical) \
+    http::logger(http::LogLevel::Critical)
 #define CROW_LOG_ERROR                                                  \
-    if (crow::logger::get_current_log_level() <= crow::LogLevel::Error) \
-    crow::logger(crow::LogLevel::Error)
+    if (http::logger::get_current_log_level() <= http::LogLevel::Error) \
+    http::logger(http::LogLevel::Error)
 #define CROW_LOG_WARNING                                                  \
-    if (crow::logger::get_current_log_level() <= crow::LogLevel::Warning) \
-    crow::logger(crow::LogLevel::Warning)
+    if (http::logger::get_current_log_level() <= http::LogLevel::Warning) \
+    http::logger(http::LogLevel::Warning)
 #define CROW_LOG_INFO                                                  \
-    if (crow::logger::get_current_log_level() <= crow::LogLevel::Info) \
-    crow::logger(crow::LogLevel::Info)
+    if (http::logger::get_current_log_level() <= http::LogLevel::Info) \
+    http::logger(http::LogLevel::Info)
 #define CROW_LOG_DEBUG                                                  \
-    if (crow::logger::get_current_log_level() <= crow::LogLevel::Debug) \
-    crow::logger(crow::LogLevel::Debug)
+    if (http::logger::get_current_log_level() <= http::LogLevel::Debug) \
+    http::logger(http::LogLevel::Debug)

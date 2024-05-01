@@ -4,7 +4,7 @@
 #include <unordered_map>
 #include "http/utility.h"
 
-namespace crow
+namespace http
 {
     /// Hashing function for ci_map (unordered_multimap).
     struct ci_hash
@@ -38,4 +38,4 @@ namespace crow
     };
 
     using ci_map = std::unordered_multimap<std::string, std::string, ci_hash, ci_key_eq>;
-} // namespace crow
+} // namespace http

@@ -18,7 +18,7 @@
 #include "http/mustache.h"
 #include "http/middleware.h"
 
-namespace crow // NOTE: Already documented in "crow/app.h"
+namespace http // NOTE: Already documented in "crow/app.h"
 {
 
     constexpr const uint16_t INVALID_BP_ID{((uint16_t)-1)};
@@ -37,7 +37,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
             {
                 using MwContainer = typename App::mw_container_t;
                 static_assert(black_magic::has_type<MW, MwContainer>::value, "Middleware must be present in app");
-                static_assert(std::is_base_of<crow::ILocalMiddleware, MW>::value, "Middleware must extend ILocalMiddleware");
+                static_assert(std::is_base_of<ILocalMiddleware, MW>::value, "Middleware must extend ILocalMiddleware");
                 int idx = black_magic::tuple_index<MW, MwContainer>::value;
                 indices_.push_back(idx);
                 push<App, Middlewares...>();
@@ -301,21 +301,21 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                 template<typename... Args>
                 struct handler_type_helper
                 {
-                    using type = std::function<void(const crow::request&, crow::response&, Args...)>;
+                    using type = std::function<void(const request&, response&, Args...)>;
                     using args_type = black_magic::S<typename black_magic::promote_t<Args>...>;
                 };
 
                 template<typename... Args>
                 struct handler_type_helper<const request&, Args...>
                 {
-                    using type = std::function<void(const crow::request&, crow::response&, Args...)>;
+                    using type = std::function<void(const request&, response&, Args...)>;
                     using args_type = black_magic::S<typename black_magic::promote_t<Args>...>;
                 };
 
                 template<typename... Args>
                 struct handler_type_helper<const request&, response&, Args...>
                 {
-                    using type = std::function<void(const crow::request&, crow::response&, Args...)>;
+                    using type = std::function<void(const request&, response&, Args...)>;
                     using args_type = black_magic::S<typename black_magic::promote_t<Args>...>;
                 };
 
@@ -366,11 +366,11 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         template<typename Func>
         typename std::enable_if<
           !black_magic::CallHelper<Func, black_magic::S<>>::value &&
-            black_magic::CallHelper<Func, black_magic::S<crow::request>>::value,
+            black_magic::CallHelper<Func, black_magic::S<request>>::value,
           void>::type
           operator()(Func&& f)
         {
-            static_assert(!std::is_same<void, decltype(f(std::declval<crow::request>()))>::value,
+            static_assert(!std::is_same<void, decltype(f(std::declval<request>()))>::value,
                           "Handler function cannot have void return type; valid return types: string, int, crow::response, crow::returnable");
 
             handler_ = (
@@ -379,7 +379,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
 #else
               [f]
 #endif
-              (const crow::request& req, crow::response& res) {
+              (const request& req, response& res) {
                   res = response(f(req));
                   res.end();
               });
@@ -388,12 +388,12 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         template<typename Func>
         typename std::enable_if<
           !black_magic::CallHelper<Func, black_magic::S<>>::value &&
-            !black_magic::CallHelper<Func, black_magic::S<crow::request>>::value &&
-            black_magic::CallHelper<Func, black_magic::S<crow::response&>>::value,
+            !black_magic::CallHelper<Func, black_magic::S<request>>::value &&
+            black_magic::CallHelper<Func, black_magic::S<response&>>::value,
           void>::type
           operator()(Func&& f)
         {
-            static_assert(std::is_same<void, decltype(f(std::declval<crow::response&>()))>::value,
+            static_assert(std::is_same<void, decltype(f(std::declval<response&>()))>::value,
                           "Handler function with response argument should have void return type");
             handler_ = (
 #ifdef CROW_CAN_USE_CPP14
@@ -401,7 +401,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
 #else
               [f]
 #endif
-              (const crow::request&, crow::response& res) {
+              (const request&, response& res) {
                   f(res);
               });
         }
@@ -409,12 +409,12 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         template<typename Func>
         typename std::enable_if<
           !black_magic::CallHelper<Func, black_magic::S<>>::value &&
-            !black_magic::CallHelper<Func, black_magic::S<crow::request>>::value &&
-            !black_magic::CallHelper<Func, black_magic::S<crow::response&>>::value,
+            !black_magic::CallHelper<Func, black_magic::S<request>>::value &&
+            !black_magic::CallHelper<Func, black_magic::S<response&>>::value,
           void>::type
           operator()(Func&& f)
         {
-            static_assert(std::is_same<void, decltype(f(std::declval<crow::request>(), std::declval<crow::response&>()))>::value,
+            static_assert(std::is_same<void, decltype(f(std::declval<request>(), std::declval<response&>()))>::value,
                           "Handler function with response argument should have void return type");
 
             handler_ = std::move(f);
@@ -429,7 +429,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         friend class Router;
 
     private:
-        std::function<void(const crow::request&, crow::response&)> handler_;
+        std::function<void(const request&, response&)> handler_;
     };
 
 
@@ -461,7 +461,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         void handle_upgrade(const request& req, response&, SocketAdaptor&& adaptor) override
         {
             max_payload_ = max_payload_override_ ? max_payload_ : app_->websocket_max_payload();
-            new crow::websocket::Connection<SocketAdaptor, App>(req, std::move(adaptor), app_, max_payload_, open_handler_, message_handler_, close_handler_, error_handler_, accept_handler_);
+            new websocket::Connection<SocketAdaptor, App>(req, std::move(adaptor), app_, max_payload_, open_handler_, message_handler_, close_handler_, error_handler_, accept_handler_);
         }
 #ifdef CROW_ENABLE_SSL
         void handle_upgrade(const request& req, response&, SSLAdaptor&& adaptor) override
@@ -515,11 +515,11 @@ namespace crow // NOTE: Already documented in "crow/app.h"
 
     protected:
         App* app_;
-        std::function<void(crow::websocket::connection&)> open_handler_;
-        std::function<void(crow::websocket::connection&, const std::string&, bool)> message_handler_;
-        std::function<void(crow::websocket::connection&, const std::string&)> close_handler_;
-        std::function<void(crow::websocket::connection&, const std::string&)> error_handler_;
-        std::function<bool(const crow::request&, void**)> accept_handler_;
+        std::function<void(websocket::connection&)> open_handler_;
+        std::function<void(websocket::connection&, const std::string&, bool)> message_handler_;
+        std::function<void(websocket::connection&, const std::string&)> close_handler_;
+        std::function<void(websocket::connection&, const std::string&)> error_handler_;
+        std::function<bool(const request&, void**)> accept_handler_;
         uint64_t max_payload_;
         bool max_payload_override_ = false;
     };
@@ -677,7 +677,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
 #else
               [f]
 #endif
-              (crow::request& req, crow::response& res, Args... args) {
+              (request& req, response& res, Args... args) {
                   detail::wrapped_handler_call(req, res, f, std::forward<Args>(args)...);
               });
         }
@@ -705,7 +705,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         }
 
     private:
-        std::function<void(crow::request&, crow::response&, Args...)> handler_;
+        std::function<void(request&, response&, Args...)> handler_;
     };
 
     const int RULE_SPECIAL_REDIRECT_SLASH = 1;
@@ -1724,7 +1724,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
 
         template<typename App>
         typename std::enable_if<std::tuple_size<typename App::mw_container_t>::value != 0, void>::type
-          handle_rule(BaseRule* rule, crow::request& req, crow::response& res, const crow::routing_params& rp)
+          handle_rule(BaseRule* rule, request& req, response& res, const routing_params& rp)
         {
             if (!rule->mw_indices_.empty())
             {
@@ -1760,7 +1760,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
 
         template<typename App>
         typename std::enable_if<std::tuple_size<typename App::mw_container_t>::value == 0, void>::type
-          handle_rule(BaseRule* rule, crow::request& req, crow::response& res, const crow::routing_params& rp)
+          handle_rule(BaseRule* rule, request& req, response& res, const routing_params& rp)
         {
             rule->handle(req, res, rp);
         }
@@ -1783,7 +1783,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
             return blueprints_;
         }
 
-        std::function<void(crow::response&)>& exception_handler()
+        std::function<void(response&)>& exception_handler()
         {
             return exception_handler_;
         }
@@ -1822,6 +1822,6 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         std::array<PerMethod, static_cast<int>(HTTPMethod::InternalMethodCount)> per_methods_;
         std::vector<std::unique_ptr<BaseRule>> all_rules_;
         std::vector<Blueprint*> blueprints_;
-        std::function<void(crow::response&)> exception_handler_ = &default_exception_handler;
+        std::function<void(response&)> exception_handler_ = &default_exception_handler;
     };
-} // namespace crow
+} // namespace http

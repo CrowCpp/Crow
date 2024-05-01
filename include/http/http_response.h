@@ -22,7 +22,7 @@
 #include "http/returnable.h"
 
 
-namespace crow
+namespace http
 {
     template<typename Adaptor, typename Handler, typename... Middlewares>
     class Connection;
@@ -33,7 +33,7 @@ namespace crow
     struct response
     {
         template<typename Adaptor, typename Handler, typename... Middlewares>
-        friend class crow::Connection;
+        friend class Connection;
 
         friend class Router;
 
@@ -62,7 +62,7 @@ namespace crow
 
         const std::string& get_header_value(const std::string& key)
         {
-            return crow::get_header_value(headers, key);
+            return http::get_header_value(headers, key);
         }
 
         // naive validation of a mime-type string
@@ -324,4 +324,4 @@ namespace crow
         std::function<bool()> is_alive_helper_;
         static_file_info file_info;
     };
-} // namespace crow
+} // namespace http

@@ -5,7 +5,7 @@
 #include <zlib.h>
 
 // http://zlib.net/manual.html
-namespace crow // NOTE: Already documented in "crow/app.h"
+namespace http // NOTE: Already documented in "crow/app.h"
 {
     namespace compression
     {
@@ -94,6 +94,6 @@ namespace crow // NOTE: Already documented in "crow/app.h"
             return inflated_string;
         }
     } // namespace compression
-} // namespace crow
+} // namespace http
 
 #endif

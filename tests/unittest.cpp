@@ -40,7 +40,7 @@
 #include "http/middlewares/session.h"
 
 using namespace std;
-using namespace crow;
+using namespace http;
 
 #ifdef CROW_USE_BOOST
 namespace asio = boost::asio;
@@ -85,7 +85,7 @@ TEST_CASE("Rule")
     CHECK(1 == x);
 
     // registering handler with request argument
-    r([&x](const crow::request&) {
+    r([&x](const request&) {
         x = 2;
         return "";
     });
@@ -372,7 +372,7 @@ TEST_CASE("handler_with_response")
 {
     SimpleApp app;
     CROW_ROUTE(app, "/")
-    ([](const crow::request&, crow::response&) {});
+    ([](const request&, response&) {});
 } // handler_with_response
 
 TEST_CASE("http_method")
@@ -1376,8 +1376,8 @@ TEST_CASE("json_list")
 
 TEST_CASE("template_basic")
 {
-    auto t = crow::mustache::compile(R"---(attack of {{name}})---");
-    crow::mustache::context ctx;
+    auto t = mustache::compile(R"---(attack of {{name}})---");
+    mustache::context ctx;
     ctx["name"] = "killer tomatoes";
     auto result = t.render_string(ctx);
     CHECK("attack of killer tomatoes" == result);
@@ -1385,8 +1385,8 @@ TEST_CASE("template_basic")
 
 TEST_CASE("template_true_tag")
 {
-    auto t = crow::mustache::compile(R"---({{true_value}})---");
-    crow::mustache::context ctx;
+    auto t = mustache::compile(R"---({{true_value}})---");
+    mustache::context ctx;
     ctx["true_value"] = true;
     auto result = t.render_string(ctx);
     CHECK("true" == result);
@@ -1394,8 +1394,8 @@ TEST_CASE("template_true_tag")
 
 TEST_CASE("template_false_tag")
 {
-    auto t = crow::mustache::compile(R"---({{false_value}})---");
-    crow::mustache::context ctx;
+    auto t = mustache::compile(R"---({{false_value}})---");
+    mustache::context ctx;
     ctx["false_value"] = false;
     auto result = t.render_string(ctx);
     CHECK("false" == result);
@@ -1403,8 +1403,8 @@ TEST_CASE("template_false_tag")
 
 TEST_CASE("template_function")
 {
-    auto t = crow::mustache::compile("attack of {{func}}");
-    crow::mustache::context ctx;
+    auto t = mustache::compile("attack of {{func}}");
+    mustache::context ctx;
     ctx["name"] = "killer tomatoes";
     ctx["func"] = std::function<std::string(std::string)>([&](std::string) {
         return std::string("{{name}}, IN SPACE!");
@@ -1415,10 +1415,10 @@ TEST_CASE("template_function")
 
 TEST_CASE("template_load")
 {
-    crow::mustache::set_base(".");
+    mustache::set_base(".");
     ofstream("test.mustache") << R"---(attack of {{name}})---";
-    auto t = crow::mustache::load("test.mustache");
-    crow::mustache::context ctx;
+    auto t = mustache::load("test.mustache");
+    mustache::context ctx;
     ctx["name"] = "killer tomatoes";
     auto result = t.render_string(ctx);
     CHECK("attack of killer tomatoes" == result);
@@ -1431,10 +1431,10 @@ TEST_CASE("TemplateRouting")
 
     CROW_ROUTE(app, "/temp")
     ([] {
-        auto t = crow::mustache::compile(R"---(attack of {{name}})---");
-        crow::mustache::context ctx;
+        auto t = mustache::compile(R"---(attack of {{name}})---");
+        mustache::context ctx;
         ctx["name"] = "killer tomatoes";
-        return crow::response(t.render(ctx));
+        return response(t.render(ctx));
     });
 
     app.validate();
@@ -1448,7 +1448,7 @@ TEST_CASE("TemplateRouting")
         app.handle_full(req, res);
 
         CHECK("attack of killer tomatoes" == res.body);
-        CHECK("text/html" == crow::get_header_value(res.headers, "Content-Type"));
+        CHECK("text/html" == get_header_value(res.headers, "Content-Type"));
     }
 } // PathRouting
 
@@ -1496,7 +1496,7 @@ TEST_CASE("middleware_simple")
     App<NullMiddleware, NullSimpleMiddleware> app;
     decltype(app)::server_t server(&app, LOCALHOST_ADDRESS, 45451);
     CROW_ROUTE(app, "/")
-    ([&](const crow::request& req) {
+    ([&](const request& req) {
         app.get_context<NullMiddleware>(req);
         app.get_context<NullSimpleMiddleware>(req);
         return "";
@@ -1529,7 +1529,7 @@ struct empty_type
 {};
 
 template<bool Local>
-struct FirstMW : public std::conditional<Local, crow::ILocalMiddleware, empty_type>::type
+struct FirstMW : public std::conditional<Local, ILocalMiddleware, empty_type>::type
 {
     struct context
     {
@@ -1549,7 +1549,7 @@ struct FirstMW : public std::conditional<Local, crow::ILocalMiddleware, empty_ty
 };
 
 template<bool Local>
-struct SecondMW : public std::conditional<Local, crow::ILocalMiddleware, empty_type>::type
+struct SecondMW : public std::conditional<Local, ILocalMiddleware, empty_type>::type
 {
     struct context
     {};
@@ -1568,7 +1568,7 @@ struct SecondMW : public std::conditional<Local, crow::ILocalMiddleware, empty_t
 };
 
 template<bool Local>
-struct ThirdMW : public std::conditional<Local, crow::ILocalMiddleware, empty_type>::type
+struct ThirdMW : public std::conditional<Local, ILocalMiddleware, empty_type>::type
 {
     struct context
     {};
@@ -1676,7 +1676,7 @@ TEST_CASE("middleware_context")
     app.stop();
 } // middleware_context
 
-struct LocalSecretMiddleware : crow::ILocalMiddleware
+struct LocalSecretMiddleware : ILocalMiddleware
 {
     struct context
     {};
@@ -1769,7 +1769,7 @@ TEST_CASE("middleware_blueprint")
     Blueprint bp3("c", "c3", "c3");
 
     CROW_BP_ROUTE(bp2, "/")
-      .CROW_MIDDLEWARES(app, ThirdMW<true>)([&app](const crow::request& req) {
+      .CROW_MIDDLEWARES(app, ThirdMW<true>)([&app](const request& req) {
           {
               auto& ctx = app.get_context<FirstMW<true>>(req);
               ctx.v.push_back("handle");
@@ -1778,7 +1778,7 @@ TEST_CASE("middleware_blueprint")
       });
 
     CROW_BP_ROUTE(bp3, "/break")
-      .CROW_MIDDLEWARES(app, SecondMW<true>, ThirdMW<true>)([&app](const crow::request& req) {
+      .CROW_MIDDLEWARES(app, SecondMW<true>, ThirdMW<true>)([&app](const request& req) {
           {
               auto& ctx = app.get_context<FirstMW<true>>(req);
               ctx.v.push_back("handle");
@@ -1961,9 +1961,9 @@ TEST_CASE("middleware_cors")
 {
     static char buf[5012];
 
-    App<crow::CORSHandler> app;
+    App<CORSHandler> app;
 
-    auto& cors = app.get_middleware<crow::CORSHandler>();
+    auto& cors = app.get_middleware<CORSHandler>();
     // clang-format off
     cors
       .prefix("/origin")
@@ -2054,7 +2054,7 @@ TEST_CASE("middleware_session")
 
     using Session = SessionMiddleware<InMemoryStore>;
 
-    App<crow::CookieParser, Session> app{
+    App<CookieParser, Session> app{
       Session{InMemoryStore{}}};
 
     CROW_ROUTE(app, "/get")
@@ -2214,7 +2214,7 @@ TEST_CASE("simple_url_params")
     query_string last_url_params;
 
     CROW_ROUTE(app, "/params")
-    ([&last_url_params](const crow::request& req) {
+    ([&last_url_params](const request& req) {
         last_url_params = std::move(req.url_params);
         return "OK";
     });
@@ -2467,7 +2467,7 @@ TEST_CASE("multipart")
     SimpleApp app;
 
     CROW_ROUTE(app, "/multipart")
-    ([](const crow::request& req, crow::response& res) {
+    ([](const request& req, response& res) {
         multipart::message msg(req);
         res.body = msg.dump();
         res.end();
@@ -2519,20 +2519,20 @@ TEST_CASE("send_file")
     SimpleApp app;
 
     CROW_ROUTE(app, "/jpg")
-    ([](const crow::request&, crow::response& res) {
+    ([](const request&, response& res) {
         res.set_static_file_info("tests/img/cat.jpg");
         res.end();
     });
 
     CROW_ROUTE(app, "/jpg2")
-    ([](const crow::request&, crow::response& res) {
+    ([](const request&, response& res) {
         res.set_static_file_info(
           "tests/img/cat2.jpg"); // This file is nonexistent on purpose
         res.end();
     });
 
     CROW_ROUTE(app, "/filewith.badext")
-    ([](const crow::request&, crow::response& res) {
+    ([](const request&, response& res) {
         res.set_static_file_info("tests/img/filewith.badext");
         res.end();
     });
@@ -2608,7 +2608,7 @@ TEST_CASE("stream_response")
         key_response += keyword_;
 
     CROW_ROUTE(app, "/test")
-    ([&key_response](const crow::request&, crow::response& res) {
+    ([&key_response](const request&, response& res) {
         res.body = key_response;
         res.end();
     });
@@ -2679,7 +2679,7 @@ TEST_CASE("websocket")
     SimpleApp app;
 
     CROW_WEBSOCKET_ROUTE(app, "/ws")
-      .onaccept([&](const crow::request& req, void**) {
+      .onaccept([&](const request& req, void**) {
           CROW_LOG_INFO << "Accepted websocket with URL " << req.url;
           return true;
       })
@@ -2842,7 +2842,7 @@ TEST_CASE("websocket_missing_host")
     SimpleApp app;
 
     CROW_WEBSOCKET_ROUTE(app, "/ws")
-      .onaccept([&](const crow::request& req, void**) {
+      .onaccept([&](const request& req, void**) {
           CROW_LOG_INFO << "Accepted websocket with URL " << req.url;
           return true;
       })
@@ -3243,10 +3243,10 @@ TEST_CASE("catchall")
 TEST_CASE("blueprint")
 {
     SimpleApp app;
-    crow::Blueprint bp("bp_prefix", "cstat", "ctemplate");
-    crow::Blueprint bp_not_sub("bp_prefix_second");
-    crow::Blueprint sub_bp("bp2", "csstat", "cstemplate");
-    crow::Blueprint sub_sub_bp("bp3");
+    Blueprint bp("bp_prefix", "cstat", "ctemplate");
+    Blueprint bp_not_sub("bp_prefix_second");
+    Blueprint sub_bp("bp2", "csstat", "cstemplate");
+    Blueprint sub_sub_bp("bp3");
 
     CROW_BP_ROUTE(sub_bp, "/hello")
     ([]() {
@@ -3395,7 +3395,7 @@ TEST_CASE("exception_handler")
         CHECK(res.body.find("Hello world") != std::string::npos);
     }
 
-    app.exception_handler([](crow::response& res) {
+    app.exception_handler([](response& res) {
         try
         {
             throw;
@@ -3451,31 +3451,31 @@ TEST_CASE("base64")
     std::string sample_base64 = "Q3JvdyBBbGxvd3MgdXNlcnMgdG8gaGFuZGxlIHJlcXVlc3RzIHRoYXQgbWF5IG5vdCBjb21lIGZyb20gdGhlIG5ldHdvcmsuIFRoaXMgaXMgZG9uZSBieSBjYWxsaW5nIHRoZSBoYW5kbGUocmVxLCByZXMpIG1ldGhvZCBhbmQgcHJvdmlkaW5nIGEgcmVxdWVzdCBhbmQgcmVzcG9uc2Ugb2JqZWN0cy4gV2hpY2ggY2F1c2VzIGNyb3cgdG8gaWRlbnRpZnkgYW5kIHJ1biB0aGUgYXBwcm9wcmlhdGUgaGFuZGxlciwgcmV0dXJuaW5nIHRoZSByZXN1bHRpbmcgcmVzcG9uc2Uu";
 
 
-    CHECK(crow::utility::base64encode(sample_text, sample_text.length()) == sample_base64);
-    CHECK(crow::utility::base64encode(sample_bin, 6) == sample_bin_enc);
-    CHECK(crow::utility::base64encode_urlsafe(sample_bin, 6) == sample_bin_enc_url);
-    CHECK(crow::utility::base64encode(sample_bin1, 5) == sample_bin1_enc);
-    CHECK(crow::utility::base64encode(sample_bin2, 4) == sample_bin2_enc);
+    CHECK(utility::base64encode(sample_text, sample_text.length()) == sample_base64);
+    CHECK(utility::base64encode(sample_bin, 6) == sample_bin_enc);
+    CHECK(utility::base64encode_urlsafe(sample_bin, 6) == sample_bin_enc_url);
+    CHECK(utility::base64encode(sample_bin1, 5) == sample_bin1_enc);
+    CHECK(utility::base64encode(sample_bin2, 4) == sample_bin2_enc);
 
-    CHECK(crow::utility::base64decode(sample_base64) == sample_text);
-    CHECK(crow::utility::base64decode(sample_base64, sample_base64.length()) == sample_text);
-    CHECK(crow::utility::base64decode(sample_bin_enc, 8) == sample_bin_str);
-    CHECK(crow::utility::base64decode(sample_bin_enc_url, 8) == sample_bin_str);
-    CHECK(crow::utility::base64decode(sample_bin1_enc, 8) == sample_bin1_str);
-    CHECK(crow::utility::base64decode(sample_bin1_enc_np, 7) == sample_bin1_str);
-    CHECK(crow::utility::base64decode(sample_bin2_enc, 8) == sample_bin2_str);
-    CHECK(crow::utility::base64decode(sample_bin2_enc_np, 6) == sample_bin2_str);
+    CHECK(utility::base64decode(sample_base64) == sample_text);
+    CHECK(utility::base64decode(sample_base64, sample_base64.length()) == sample_text);
+    CHECK(utility::base64decode(sample_bin_enc, 8) == sample_bin_str);
+    CHECK(utility::base64decode(sample_bin_enc_url, 8) == sample_bin_str);
+    CHECK(utility::base64decode(sample_bin1_enc, 8) == sample_bin1_str);
+    CHECK(utility::base64decode(sample_bin1_enc_np, 7) == sample_bin1_str);
+    CHECK(utility::base64decode(sample_bin2_enc, 8) == sample_bin2_str);
+    CHECK(utility::base64decode(sample_bin2_enc_np, 6) == sample_bin2_str);
 } // base64
 
 TEST_CASE("normalize_path") {
-    CHECK(crow::utility::normalize_path("/abc/def") == "/abc/def/");
-    CHECK(crow::utility::normalize_path("path\\to\\directory") == "path/to/directory/");
+    CHECK(utility::normalize_path("/abc/def") == "/abc/def/");
+    CHECK(utility::normalize_path("path\\to\\directory") == "path/to/directory/");
 } // normalize_path
 
 TEST_CASE("sanitize_filename")
 {
     auto sanitize_filename = [](string s) {
-        crow::utility::sanitize_filename(s);
+        utility::sanitize_filename(s);
         return s;
     };
     CHECK(sanitize_filename("abc/def") == "abc/def");
@@ -3597,7 +3597,7 @@ TEST_CASE("task_timer")
     bool a = false;
     bool b = false;
 
-    crow::detail::task_timer timer(io_service);
+    detail::task_timer timer(io_service);
     CHECK(timer.get_default_timeout() == 5);
     timer.set_default_timeout(7);
     CHECK(timer.get_default_timeout() == 7);
@@ -3669,7 +3669,7 @@ TEST_CASE("http2_upgrade_is_ignored")
 
     SimpleApp app;
     CROW_ROUTE(app, "/echo").methods("POST"_method)
-    ([](crow::request const& req) {
+    ([](request const& req) {
         return req.body;
     });
 

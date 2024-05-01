@@ -7,8 +7,8 @@
 #include "crow/mustache.h"
 
 using namespace std;
-using namespace crow;
-using namespace crow::mustache;
+using namespace http;
+using namespace http::mustache;
 
 string read_all(const string& filename)
 {

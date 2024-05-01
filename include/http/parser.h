@@ -7,7 +7,7 @@
 #include "http/http_request.h"
 #include "http/http_parser_merged.h"
 
-namespace crow
+namespace http
 {
     /// A wrapper for `nodejs/http-parser`.
 
@@ -138,7 +138,7 @@ namespace crow
 
         void clear()
         {
-            req = crow::request();
+            req = request();
             header_field.clear();
             header_value.clear();
             header_building_state = 0;
@@ -194,7 +194,7 @@ namespace crow
 
         Handler* handler_; ///< This is currently an HTTP connection object (\ref crow.Connection).
     };
-} // namespace crow
+} // namespace http
 
 #undef CROW_NEW_MESSAGE
 #undef CROW_start_state

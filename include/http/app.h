@@ -67,7 +67,7 @@
  * This is the recommended way to define routes in a crow application.
  * \see [Page of guide "Routes"](https://crowcpp.org/master/guides/routes/).
  */
-#define CROW_ROUTE(app, url) app.template route<crow::black_magic::get_parameter_tag(url)>(url)
+#define CROW_ROUTE(app, url) app.template route<::http::black_magic::get_parameter_tag(url)>(url)
 
 /**
  * \def CROW_BP_ROUTE(blueprint, url)
@@ -91,7 +91,7 @@
  *
  * \see [Page of the guide "Blueprints"](https://crowcpp.org/master/guides/blueprints/).
  */
-#define CROW_BP_ROUTE(blueprint, url) blueprint.new_rule_tagged<crow::black_magic::get_parameter_tag(url)>(url)
+#define CROW_BP_ROUTE(blueprint, url) blueprint.new_rule_tagged<::http::black_magic::get_parameter_tag(url)>(url)
 
 /**
  * \def CROW_WEBSOCKET_ROUTE(app, url)
@@ -120,7 +120,7 @@
  *
  * \see [Page of the guide "WebSockets"](https://crowcpp.org/master/guides/websockets/).
  */
-#define CROW_WEBSOCKET_ROUTE(app, url) app.route<crow::black_magic::get_parameter_tag(url)>(url).websocket<std::remove_reference<decltype(app)>::type>(&app)
+#define CROW_WEBSOCKET_ROUTE(app, url) app.route<::http::black_magic::get_parameter_tag(url)>(url).websocket<std::remove_reference<decltype(app)>::type>(&app)
 
 /**
  * \def CROW_MIDDLEWARES(app, ...)
@@ -174,7 +174,7 @@
 
 
 /**
- * \namespace crow
+ * \namespace http
  * \brief The main namespace of the library. In this namespace
  * is defined the most important classes and functions of the
  * library.
@@ -182,7 +182,7 @@
  * Within this namespace, the Crow class, Router class, Connection
  * class, and other are defined.
  */
-namespace crow
+namespace http
 {
 #ifdef CROW_ENABLE_SSL
     using ssl_context_t = asio::ssl::context;
@@ -375,7 +375,7 @@ namespace crow
         /// - crow::LogLevel::Critical    (4)
         self_t& loglevel(LogLevel level)
         {
-            crow::logger::setLogLevel(level);
+            logger::setLogLevel(level);
             return *this;
         }
 
@@ -413,7 +413,7 @@ namespace crow
             return *this;
         }
 
-        std::function<void(crow::response&)>& exception_handler()
+        std::function<void(response&)>& exception_handler()
         {
             return router_.exception_handler();
         }
@@ -458,9 +458,9 @@ namespace crow
             {
                 if (bp->static_dir().empty()) continue;
 
-                auto static_dir_ = crow::utility::normalize_path(bp->static_dir());
+                auto static_dir_ = utility::normalize_path(bp->static_dir());
 
-                bp->new_rule_tagged<crow::black_magic::get_parameter_tag(CROW_STATIC_ENDPOINT)>(CROW_STATIC_ENDPOINT)([static_dir_](crow::response& res, std::string file_path_partial) {
+                bp->new_rule_tagged<black_magic::get_parameter_tag(CROW_STATIC_ENDPOINT)>(CROW_STATIC_ENDPOINT)([static_dir_](response& res, std::string file_path_partial) {
                     utility::sanitize_filename(file_path_partial);
                     res.set_static_file_info_unsafe(static_dir_ + file_path_partial);
                     res.end();
@@ -474,9 +474,9 @@ namespace crow
         void add_static_dir()
         {
             if (are_static_routes_added()) return;
-            auto static_dir_ = crow::utility::normalize_path(CROW_STATIC_DIRECTORY);
+            auto static_dir_ = utility::normalize_path(CROW_STATIC_DIRECTORY);
 
-            route<crow::black_magic::get_parameter_tag(CROW_STATIC_ENDPOINT)>(CROW_STATIC_ENDPOINT)([static_dir_](crow::response& res, std::string file_path_partial) {
+            route<black_magic::get_parameter_tag(CROW_STATIC_ENDPOINT)>(CROW_STATIC_ENDPOINT)([static_dir_](response& res, std::string file_path_partial) {
                 utility::sanitize_filename(file_path_partial);
                 res.set_static_file_info_unsafe(static_dir_ + file_path_partial);
                 res.end();
@@ -549,7 +549,7 @@ namespace crow
 #endif
             {
                 // TODO(EDev): Move these 6 lines to a method in http_server.
-                std::vector<crow::websocket::connection*> websockets_to_close = websockets_;
+                std::vector<websocket::connection*> websockets_to_close = websockets_;
                 for (auto websocket : websockets_to_close)
                 {
                     CROW_LOG_INFO << "Quitting Websocket: " << websocket;
@@ -559,12 +559,12 @@ namespace crow
             }
         }
 
-        void add_websocket(crow::websocket::connection* conn)
+        void add_websocket(websocket::connection* conn)
         {
             websockets_.push_back(conn);
         }
 
-        void remove_websocket(crow::websocket::connection* conn)
+        void remove_websocket(websocket::connection* conn)
         {
             websockets_.erase(std::remove(websockets_.begin(), websockets_.end(), conn), websockets_.end());
         }
@@ -762,7 +762,7 @@ namespace crow
         bool server_started_{false};
         std::condition_variable cv_started_;
         std::mutex start_mutex_;
-        std::vector<crow::websocket::connection*> websockets_;
+        std::vector<websocket::connection*> websockets_;
     };
 
     /// \brief Alias of Crow<Middlewares...>. Useful if you want
@@ -773,4 +773,4 @@ namespace crow
     /// \brief Alias of Crow<>. Useful if you want a instance of
     /// an Crow application that doesn't require of Middlewares
     using SimpleApp = Crow<>;
-} // namespace crow
+} // namespace http

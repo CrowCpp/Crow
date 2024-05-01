@@ -13,7 +13,7 @@
 #include "http/ci_map.h"
 #include "http/query_string.h"
 
-namespace crow // NOTE: Already documented in "crow/app.h"
+namespace http // NOTE: Already documented in "crow/app.h"
 {
 #ifdef CROW_USE_BOOST
     namespace asio = boost::asio;
@@ -67,7 +67,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
 
         const std::string& get_header_value(const std::string& key) const
         {
-            return crow::get_header_value(headers, key);
+            return http::get_header_value(headers, key);
         }
 
         bool check_version(unsigned char major, unsigned char minor) const
@@ -98,4 +98,4 @@ namespace crow // NOTE: Already documented in "crow/app.h"
             io_service->dispatch(handler);
         }
     };
-} // namespace crow
+} // namespace http

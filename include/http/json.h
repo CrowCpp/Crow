@@ -25,7 +25,7 @@ using std::isinf;
 using std::isnan;
 
 
-namespace crow // NOTE: Already documented in "crow/app.h"
+namespace http // NOTE: Already documented in "crow/app.h"
 {
     namespace mustache
     {
@@ -184,7 +184,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                     e_ = s_ + length;
                     owned_ = 1;
                 }
-                friend rvalue crow::json::load(const char* data, size_t size);
+                friend rvalue json::load(const char* data, size_t size);
 
                 friend bool operator==(const r_string& l, const r_string& r);
                 friend bool operator==(const std::string& l, const r_string& r);
@@ -1287,7 +1287,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         /// Write means this class is used to primarily assemble JSON objects using keys and values and export those into a string.
         class wvalue : public returnable
         {
-            friend class crow::mustache::template_t;
+            friend class mustache::template_t;
             friend struct wvalue_reader;
 
         public:
@@ -1303,7 +1303,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
             type t() const { return t_; }
 
             /// Create an empty json value (outputs "{}" instead of a "null" string)
-            static crow::json::wvalue empty_object() { return crow::json::wvalue::object(); }
+            static json::wvalue empty_object() { return json::wvalue::object(); }
 
         private:
             type t_{type::Null};         ///< The type of the value.
@@ -2080,4 +2080,4 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         //{
         //}
     } // namespace json
-} // namespace crow
+} // namespace http
