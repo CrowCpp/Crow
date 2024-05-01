@@ -50,7 +50,6 @@ jobs:
               cmake \
                 -DCMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake  \
                 -DCROW_FEATURES="ssl;compression" \
-                -DCROW_AMALGAMATE=ON \
                 -DCROW_BUILD_TESTS=ON \
                 -B build
           elif [ "$RUNNER_OS" == "macOS" ]; then
@@ -58,13 +57,11 @@ jobs:
               CPPFLAGS="-I/usr/local/opt/openssl@1.1/include" \
               cmake \
                 -DCROW_FEATURES="ssl;compression" \
-                -DCROW_AMALGAMATE=ON \
                 -DCROW_BUILD_TESTS=ON \
                 -B build
          else
               cmake \
                 -DCROW_FEATURES="ssl;compression" \
-                -DCROW_AMALGAMATE=ON \
                 -DCROW_BUILD_TESTS=ON \
                 -B build
           fi
