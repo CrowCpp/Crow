@@ -2,11 +2,11 @@
 
 int main()
 {
-    crow::SimpleApp app;
+    http::SimpleApp app;
 
     CROW_ROUTE(app, "/uploadfile")
-      .methods(crow::HTTPMethod::Post)([](const crow::request& req) {
-          crow::multipart::message file_message(req);
+      .methods(http::HTTPMethod::Post)([](const http::request& req) {
+          http::multipart::message file_message(req);
           for (const auto& part : file_message.part_map)
           {
               const auto& part_name = part.first;
@@ -19,13 +19,13 @@ int main()
                   if (headers_it == part_value.headers.end())
                   {
                       CROW_LOG_ERROR << "No Content-Disposition found";
-                      return crow::response(400);
+                      return http::response(400);
                   }
                   auto params_it = headers_it->second.params.find("filename");
                   if (params_it == headers_it->second.params.end())
                   {
                       CROW_LOG_ERROR << "Part with name \"InputFile\" should have a file";
-                      return crow::response(400);
+                      return http::response(400);
                   }
                   const std::string outfile_name = params_it->second;
 
@@ -58,11 +58,11 @@ int main()
                   CROW_LOG_DEBUG << " Value: " << part_value.body << '\n';
               }
           }
-          return crow::response(200);
+          return http::response(200);
       });
 
     // enables all log
-    app.loglevel(crow::LogLevel::Debug);
+    app.loglevel(http::LogLevel::Debug);
 
     app.port(18080)
       .multithreaded()

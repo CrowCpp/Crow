@@ -1,9 +1,9 @@
-#include "crow_all.h"
+#include "http.h"
 
-class ExampleLogHandler : public crow::ILogHandler
+class ExampleLogHandler : public http::ILogHandler
 {
 public:
-    void log(std::string /*message*/, crow::LogLevel /*level*/) override
+    void log(std::string /*message*/, http::LogLevel /*level*/) override
     {
         //            cerr << "ExampleLogHandler -> " << message;
     }
@@ -11,7 +11,7 @@ public:
 
 int main()
 {
-    crow::SimpleApp app;
+    http::SimpleApp app;
 
     CROW_ROUTE(app, "/")
       .name("hello")([] {
@@ -26,14 +26,14 @@ int main()
     // simple json response
     CROW_ROUTE(app, "/json")
     ([] {
-        crow::json::wvalue x({{"message", "Hello, World!"}});
+        http::json::wvalue x({{"message", "Hello, World!"}});
         x["message2"] = "Hello, World.. Again!";
         return x;
     });
 
     CROW_ROUTE(app, "/json-initializer-list-constructor")
     ([] {
-      crow::json::wvalue r({
+        http::json::wvalue r({
           {"first", "Hello world!"},                     /* stores a char const* hence a json::type::String */
           {"second", std::string("How are you today?")}, /* stores a std::string hence a json::type::String. */
           {"third", 54},                                 /* stores an int (as 54 is an int literal) hence a std::int64_t. */
@@ -51,23 +51,23 @@ int main()
     // json list response
     CROW_ROUTE(app, "/json_list")
     ([] {
-        crow::json::wvalue x(crow::json::wvalue::list({1, 2, 3}));
+        http::json::wvalue x(http::json::wvalue::list({1, 2, 3}));
         return x;
     });
 
     CROW_ROUTE(app, "/hello/<int>")
     ([](int count) {
         if (count > 100)
-            return crow::response(400);
+            return http::response(400);
         std::ostringstream os;
         os << count << " bottles of beer!";
-        return crow::response(os.str());
+        return http::response(os.str());
     });
 
     // example which uses only response as a paramter without
     // request being a parameter.
     CROW_ROUTE(app, "/add/<int>/<int>")
-    ([](crow::response& res, int a, int b) {
+    ([](http::response& res, int a, int b) {
         std::ostringstream os;
         os << a + b;
         res.write(os.str());
@@ -82,24 +82,24 @@ int main()
 
     // more json example
     CROW_ROUTE(app, "/add_json")
-      .methods("POST"_method)([](const crow::request& req) {
-          auto x = crow::json::load(req.body);
+      .methods("POST"_method)([](const http::request& req) {
+          auto x = http::json::load(req.body);
           if (!x)
-              return crow::response(400);
+              return http::response(400);
           int sum = x["a"].i() + x["b"].i();
           std::ostringstream os;
           os << sum;
-          return crow::response{os.str()};
+          return http::response{os.str()};
       });
 
     CROW_ROUTE(app, "/params")
-    ([](const crow::request& req) {
+    ([](const http::request& req) {
         std::ostringstream os;
         os << "Params: " << req.url_params << "\n\n";
         os << "The key 'foo' was " << (req.url_params.get("foo") == nullptr ? "not " : "") << "found.\n";
         if (req.url_params.get("pew") != nullptr)
         {
-            double countD = crow::utility::lexical_cast<double>(req.url_params.get("pew"));
+            double countD = http::utility::lexical_cast<double>(req.url_params.get("pew"));
             os << "The value of 'pew' is " << countD << '\n';
         }
         auto count = req.url_params.get_list("count");
@@ -108,11 +108,11 @@ int main()
         {
             os << " - " << countVal << '\n';
         }
-        return crow::response{os.str()};
+        return http::response{os.str()};
     });
 
     // ignore all log
-    crow::logger::setLogLevel(crow::LogLevel::Debug);
+    http::logger::setLogLevel(http::LogLevel::Debug);
     //crow::logger::setHandler(std::make_shared<ExampleLogHandler>());
 
     app.port(18080)

@@ -1,9 +1,9 @@
 #include "http.h"
 
-class ExampleLogHandler : public crow::ILogHandler
+class ExampleLogHandler : public http::ILogHandler
 {
 public:
-    void log(std::string /*message*/, crow::LogLevel /*level*/) override
+    void log(std::string /*message*/, http::LogLevel /*level*/) override
     {
         //            cerr << "ExampleLogHandler -> " << message;
     }
@@ -26,12 +26,12 @@ struct ExampleMiddleware
     struct context
     {};
 
-    void before_handle(crow::request& /*req*/, crow::response& /*res*/, context& /*ctx*/)
+    void before_handle(http::request& /*req*/, http::response& /*res*/, context& /*ctx*/)
     {
         CROW_LOG_DEBUG << " - MESSAGE: " << message;
     }
 
-    void after_handle(crow::request& /*req*/, crow::response& /*res*/, context& /*ctx*/)
+    void after_handle(http::request& /*req*/, http::response& /*res*/, context& /*ctx*/)
     {
         // no-op
     }
@@ -39,7 +39,7 @@ struct ExampleMiddleware
 
 int main()
 {
-    crow::App<ExampleMiddleware> app;
+    http::App<ExampleMiddleware> app;
 
     app.get_middleware<ExampleMiddleware>().setMessage("hello");
 
@@ -63,14 +63,14 @@ int main()
     // simple json response
     CROW_ROUTE(app, "/json")
     ([] {
-        crow::json::wvalue x({{"message", "Hello, World!"}});
+        http::json::wvalue x({{"message", "Hello, World!"}});
         x["message2"] = "Hello, World.. Again!";
         return x;
     });
 
     CROW_ROUTE(app, "/json-initializer-list-constructor")
     ([] {
-        return crow::json::wvalue({
+        return http::json::wvalue({
           {"first", "Hello world!"},                     /* stores a char const* hence a json::type::String */
           {"second", std::string("How are you today?")}, /* stores a std::string hence a json::type::String. */
           {"third", std::int64_t(54)},                   /* stores a 64-bit int hence a std::int64_t. */
@@ -87,7 +87,7 @@ int main()
     // json list response
     CROW_ROUTE(app, "/json_list")
     ([] {
-        crow::json::wvalue x(crow::json::wvalue::list({1, 2, 3}));
+        http::json::wvalue x(http::json::wvalue::list({1, 2, 3}));
         return x;
     });
 
@@ -96,25 +96,25 @@ int main()
     CROW_ROUTE(app, "/hello/<int>")
     ([](int count) {
         if (count > 100)
-            return crow::response(400);
+            return http::response(400);
         std::ostringstream os;
         os << count << " bottles of beer!";
-        return crow::response(os.str());
+        return http::response(os.str());
     });
 
     // Same as above, but using crow::status
     CROW_ROUTE(app, "/hello_status/<int>")
     ([](int count) {
         if (count > 100)
-            return crow::response(crow::status::BAD_REQUEST);
+            return http::response(http::status::BAD_REQUEST);
         std::ostringstream os;
         os << count << " bottles of beer!";
-        return crow::response(os.str());
+        return http::response(os.str());
     });
 
     // To see it in action submit {ip}:18080/add/1/2 and you should receive 3 (exciting, isn't it)
     CROW_ROUTE(app, "/add/<int>/<int>")
-    ([](crow::response& res, int a, int b) {
+    ([](http::response& res, int a, int b) {
         std::ostringstream os;
         os << a + b;
         res.write(os.str());
@@ -124,8 +124,8 @@ int main()
     //same as the example above but uses mustache instead of stringstream
     CROW_ROUTE(app, "/add_mustache/<int>/<int>")
     ([](int a, int b) {
-        auto t = crow::mustache::compile("Value is {{func}}");
-        crow::mustache::context ctx;
+        auto t = http::mustache::compile("Value is {{func}}");
+        http::mustache::context ctx;
         ctx["func"] = [&](std::string) {
             return std::to_string(a + b);
         };
@@ -151,21 +151,21 @@ int main()
     // A simpler way for json example:
     //      * curl -d '{"a":1,"b":2}' {ip}:18080/add_json
     CROW_ROUTE(app, "/add_json")
-      .methods("POST"_method)([](const crow::request& req) {
-          auto x = crow::json::load(req.body);
+      .methods("POST"_method)([](const http::request& req) {
+          auto x = http::json::load(req.body);
           if (!x)
-              return crow::response(400);
+              return http::response(400);
           int sum = x["a"].i() + x["b"].i();
           std::ostringstream os;
           os << sum;
-          return crow::response{os.str()};
+          return http::response{os.str()};
       });
 
     // Example of a request taking URL parameters
     // If you want to activate all the functions just query
     // {ip}:18080/params?foo='blabla'&pew=32&count[]=a&count[]=b
     CROW_ROUTE(app, "/params")
-    ([](const crow::request& req) {
+    ([](const http::request& req) {
         std::ostringstream os;
 
         // To get a simple string from the url params
@@ -177,7 +177,7 @@ int main()
         // To see in action submit something like '/params?pew=42'
         if (req.url_params.get("pew") != nullptr)
         {
-            double countD = crow::utility::lexical_cast<double>(req.url_params.get("pew"));
+            double countD = http::utility::lexical_cast<double>(req.url_params.get("pew"));
             os << "The value of 'pew' is " << countD << '\n';
         }
 
@@ -199,7 +199,7 @@ int main()
             os << " - " << mydictVal.first << " -> " << mydictVal.second << '\n';
         }
 
-        return crow::response{os.str()};
+        return http::response{os.str()};
     });
 
     CROW_ROUTE(app, "/large")
@@ -209,14 +209,14 @@ int main()
 
     // Take a multipart/form-data request and print out its body
     CROW_ROUTE(app, "/multipart")
-    ([](const crow::request& req) {
-        crow::multipart::message msg(req);
+    ([](const http::request& req) {
+        http::multipart::message msg(req);
         CROW_LOG_INFO << "body of the first part " << msg.parts[0].body;
         return "it works!";
     });
 
     // enables all log
-    app.loglevel(crow::LogLevel::Debug);
+    app.loglevel(http::LogLevel::Debug);
     //crow::logger::setHandler(std::make_shared<ExampleLogHandler>());
 
     app.port(18080)

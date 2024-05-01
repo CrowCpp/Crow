@@ -1,9 +1,9 @@
 #include "http.h"
-#include "crow/middlewares/session.h"
+#include "http/middlewares/session.h"
 
-crow::response redirect()
+http::response redirect()
 {
-    crow::response res;
+    http::response res;
     res.redirect("/");
     return res;
 }
@@ -13,23 +13,23 @@ int main()
     // Choose a storage kind for:
     // - InMemoryStore stores all entries in memory
     // - FileStore stores all entries in json files
-    using Session = crow::SessionMiddleware<crow::InMemoryStore>;
+    using Session = http::SessionMiddleware<http::InMemoryStore>;
 
     // Writing your own store is easy
     // Check out the existing ones for guidelines
 
     // Make sure the CookieParser is registered before the Session
-    crow::App<crow::CookieParser, Session> app{Session{
+    http::App<http::CookieParser, Session> app{Session{
       // customize cookies
-      crow::CookieParser::Cookie("session").max_age(/*one day*/ 24 * 60 * 60).path("/"),
+      http::CookieParser::Cookie("session").max_age(/*one day*/ 24 * 60 * 60).path("/"),
       // set session id length (small value only for demonstration purposes)
       4,
       // init the store
-      crow::InMemoryStore{}}};
+      http::InMemoryStore{}}};
 
     // List all values
     CROW_ROUTE(app, "/")
-    ([&](const crow::request& req) {
+    ([&](const http::request& req) {
         // get session as middleware context
         auto& session = app.get_context<Session>(req);
         // the session acts as a multi-type map
@@ -56,7 +56,7 @@ int main()
 
     // Get a key
     CROW_ROUTE(app, "/get")
-    ([&](const crow::request& req) {
+    ([&](const http::request& req) {
         auto& session = app.get_context<Session>(req);
         auto key = req.url_params.get("key");
 
@@ -81,7 +81,7 @@ int main()
     // Set a key
     // A session is stored as soon as it becomes non empty
     CROW_ROUTE(app, "/set")
-    ([&](const crow::request& req) {
+    ([&](const http::request& req) {
         auto& session = app.get_context<Session>(req);
 
         auto key = req.url_params.get("key");
@@ -94,7 +94,7 @@ int main()
 
     // Remove a key
     CROW_ROUTE(app, "/remove")
-    ([&](const crow::request& req) {
+    ([&](const http::request& req) {
         auto& session = app.get_context<Session>(req);
         auto key = req.url_params.get("key");
         session.remove(key);
@@ -104,7 +104,7 @@ int main()
 
     // Manually lock a session for synchronization in parallel requests
     CROW_ROUTE(app, "/lock")
-    ([&](const crow::request& req) {
+    ([&](const http::request& req) {
         auto& session = app.get_context<Session>(req);
 
         std::lock_guard<std::recursive_mutex> l(session.mutex());

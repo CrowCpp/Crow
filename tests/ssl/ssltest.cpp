@@ -18,8 +18,8 @@ TEST_CASE("SSL")
     //std::system("cat test.key > test.pem");
     //std::system("cat test.crt >> test.pem");
 
-    crow::SimpleApp app;
-    //crow::SimpleApp app2;
+    http::SimpleApp app;
+    //http::SimpleApp app2;
 
     CROW_ROUTE(app, "/")
     ([]() {

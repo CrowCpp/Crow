@@ -1,5 +1,5 @@
 #include "http.h"
-#include "crow/middlewares/cors.h"
+#include "http/middlewares/cors.h"
 
 // Warning!
 // If you want to use CORS with OPTIONS cache on browser requests,
@@ -12,10 +12,10 @@
 int main()
 {
     // Enable CORS
-    crow::App<crow::CORSHandler> app;
+    http::App<http::CORSHandler> app;
 
     // Customize CORS
-    auto& cors = app.get_middleware<crow::CORSHandler>();
+    auto& cors = app.get_middleware<http::CORSHandler>();
 
     // clang-format off
     cors

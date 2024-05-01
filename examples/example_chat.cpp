@@ -6,12 +6,12 @@
 using namespace std;
 
 vector<string> msgs;
-vector<pair<crow::response*, decltype(chrono::steady_clock::now())>> ress;
+vector<pair<http::response*, decltype(chrono::steady_clock::now())>> ress;
 
 void broadcast(const string& msg)
 {
     msgs.push_back(msg);
-    crow::json::wvalue x;
+    http::json::wvalue x;
     x["msgs"][0] = msgs.back();
     x["last"] = msgs.size();
     string body = x.dump();
@@ -26,19 +26,19 @@ void broadcast(const string& msg)
 // To see how it works go on {ip}:40080 but I just got it working with external build (not directly in IDE, I guess a problem with dependency)
 int main()
 {
-    crow::SimpleApp app;
-    crow::mustache::set_base(".");
+    http::SimpleApp app;
+    http::mustache::set_base(".");
 
     CROW_ROUTE(app, "/")
     ([] {
-        crow::mustache::context ctx;
-        return crow::mustache::load("example_chat.html").render();
+        http::mustache::context ctx;
+        return http::mustache::load("example_chat.html").render();
     });
 
     CROW_ROUTE(app, "/logs")
     ([] {
         CROW_LOG_INFO << "logs requested";
-        crow::json::wvalue x;
+        http::json::wvalue x;
         int start = max(0, (int)msgs.size() - 100);
         for (int i = start; i < (int)msgs.size(); i++)
             x["msgs"][i - start] = msgs[i];
@@ -48,11 +48,11 @@ int main()
     });
 
     CROW_ROUTE(app, "/logs/<int>")
-    ([](const crow::request& /*req*/, crow::response& res, int after) {
+    ([](const http::request& /*req*/, http::response& res, int after) {
         CROW_LOG_INFO << "logs with last " << after;
         if (after < (int)msgs.size())
         {
-            crow::json::wvalue x;
+            http::json::wvalue x;
             for (int i = after; i < (int)msgs.size(); i++)
                 x["msgs"][i - after] = msgs[i];
             x["last"] = msgs.size();
@@ -62,7 +62,7 @@ int main()
         }
         else
         {
-            vector<pair<crow::response*, decltype(chrono::steady_clock::now())>> filtered;
+            vector<pair<http::response*, decltype(chrono::steady_clock::now())>> filtered;
             for (auto p : ress)
             {
                 if (p.first->is_alive() && chrono::steady_clock::now() - p.second < chrono::seconds(30))
@@ -77,7 +77,7 @@ int main()
     });
 
     CROW_ROUTE(app, "/send")
-      .methods("GET"_method, "POST"_method)([](const crow::request& req) {
+      .methods("GET"_method, "POST"_method)([](const http::request& req) {
           CROW_LOG_INFO << "msg from client: " << req.body;
           broadcast(req.body);
           return "";

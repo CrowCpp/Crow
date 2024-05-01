@@ -3,8 +3,8 @@
 #include <iterator>
 #include <string>
 
-#include "crow/json.h"
-#include "crow/mustache.h"
+#include "http/json.h"
+#include "http/mustache.h"
 
 using namespace std;
 using namespace http;

@@ -2,12 +2,12 @@
 
 int main()
 {
-    crow::SimpleApp app;
+    http::SimpleApp app;
 
-    crow::Blueprint bp("bp_prefix", "cstat", "ctemplate");
+    http::Blueprint bp("bp_prefix", "cstat", "ctemplate");
 
 
-    crow::Blueprint sub_bp("bp2", "csstat", "cstemplate");
+    http::Blueprint sub_bp("bp2", "csstat", "cstemplate");
 
     CROW_BP_ROUTE(sub_bp, "/")
     ([]() {
@@ -33,5 +33,5 @@ int main()
     bp.register_blueprint(sub_bp);
     app.register_blueprint(bp);
 
-    app.loglevel(crow::LogLevel::Debug).port(18080).run();
+    app.loglevel(http::LogLevel::Debug).port(18080).run();
 }

@@ -1,22 +1,22 @@
 #include "http.h"
-#include "crow/middlewares/cookie_parser.h"
+#include "http/middlewares/cookie_parser.h"
 
 int main()
 {
     // Include CookieParser middleware
-    crow::App<crow::CookieParser> app;
+    http::App<http::CookieParser> app;
 
     CROW_ROUTE(app, "/read")
-    ([&](const crow::request& req) {
-        auto& ctx = app.get_context<crow::CookieParser>(req);
+    ([&](const http::request& req) {
+        auto& ctx = app.get_context<http::CookieParser>(req);
         // Read cookies with get_cookie
         auto value = ctx.get_cookie("key");
         return "value: " + value;
     });
 
     CROW_ROUTE(app, "/write")
-    ([&](const crow::request& req) {
-        auto& ctx = app.get_context<crow::CookieParser>(req);
+    ([&](const http::request& req) {
+        auto& ctx = app.get_context<http::CookieParser>(req);
         // Store cookies with set_cookie
         ctx.set_cookie("key", "word")
           // configure additional parameters

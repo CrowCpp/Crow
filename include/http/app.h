@@ -38,7 +38,7 @@
 #include "http/task_timer.h"
 #include "http/websocket.h"
 #ifdef CROW_ENABLE_COMPRESSION
-#include "crow/compression.h"
+#include "http/compression.h"
 #endif // #ifdef CROW_ENABLE_COMPRESSION
 
 

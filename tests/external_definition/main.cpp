@@ -1,23 +1,23 @@
 // Testing whether crow routes can be defined in an external function.
 #include "http.h"
 
-void define_endpoints(crow::SimpleApp& app)
+void define_endpoints(http::SimpleApp& app)
 {
     CROW_ROUTE(app, "/")
     ([]() {
         return "Hello, world!";
     });
     CROW_WEBSOCKET_ROUTE(app, "/ws")
-      .onaccept([&](const crow::request&, void**) {
+      .onaccept([&](const http::request&, void**) {
           return true;
       })
-      .onopen([](crow::websocket::connection&) {})
-      .onclose([](crow::websocket::connection&, const std::string&) {});
+      .onopen([](http::websocket::connection&) {})
+      .onclose([](http::websocket::connection&, const std::string&) {});
 }
 
 int main()
 {
-    crow::SimpleApp app;
+    http::SimpleApp app;
 
     define_endpoints(app);
 
