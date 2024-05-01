@@ -10,13 +10,13 @@ import sys, getopt
 
 if len(sys.argv) < 3:
     print("Usage: {} <CROW_HEADERS_DIRECTORY_PATH> <CROW_OUTPUT_HEADER_PATH> (-i(include) OR -e(exclude) item1,item2...)".format(sys.argv[0]))
-    print("Available middlewares are in `include/crow/middlewares`. Do NOT type the `.h` when including or excluding")
+    print("Available middlewares are in `include/http/middlewares`. Do NOT type the `.h` when including or excluding")
     sys.exit(1)
 
 header_path = sys.argv[1]
 output_path = sys.argv[2]
 
-middlewares = [x.rsplit(sep, 1)[-1][:-2] for x in glob(pt.join(header_path, ('crow'+sep+'middlewares'+sep+'*.h*')))]
+middlewares = [x.rsplit(sep, 1)[-1][:-2] for x in glob(pt.join(header_path, ('http'+sep+'middlewares'+sep+'*.h*')))]
 
 with open(header_path+'/../LICENSE', 'r') as file:
     lsc = '/*' + file.read() + '*/'
@@ -47,8 +47,8 @@ print("Middlewares: " + str(middlewares_actual))
 re_depends = re.compile('^#include \"(.*)\"\n', re.MULTILINE)
 re_pragma = re.compile('^(.*)#pragma once(.*)\n', re.MULTILINE)
 headers = [x.rsplit(sep, 1)[-1] for x in glob(pt.join(header_path, '*.h*'))]
-headers += ['crow'+sep + x.rsplit(sep, 1)[-1] for x in glob(pt.join(header_path, 'crow'+sep+'*.h*'))]
-headers += [('crow'+sep+'middlewares'+sep + x + '.h') for x in middlewares_actual]
+headers += ['http'+sep + x.rsplit(sep, 1)[-1] for x in glob(pt.join(header_path, 'http'+sep+'*.h*'))]
+headers += [('http'+sep+'middlewares'+sep + x + '.h') for x in middlewares_actual]
 print(headers)
 edges = defaultdict(list)
 for header in headers:
