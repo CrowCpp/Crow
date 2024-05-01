@@ -4,8 +4,8 @@
 #include <unordered_map>
 #include <algorithm>
 
-#include "crow/http_request.h"
-#include "crow/http_parser_merged.h"
+#include "http/http_request.h"
+#include "http/http_parser_merged.h"
 
 namespace crow
 {

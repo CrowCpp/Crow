@@ -25,7 +25,7 @@ docs/reference/**
 example
 unittest
 Testing/*
-include/crow/tags
+include/http/tags
 
 *.swp
 *.gcov

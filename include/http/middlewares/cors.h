@@ -1,7 +1,7 @@
 #pragma once
-#include "crow/http_request.h"
-#include "crow/http_response.h"
-#include "crow/routing.h"
+#include "http/http_request.h"
+#include "http/http_response.h"
+#include "http/routing.h"
 
 namespace crow
 {

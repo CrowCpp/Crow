@@ -9,9 +9,9 @@
 #include <asio.hpp>
 #endif
 
-#include "crow/common.h"
-#include "crow/ci_map.h"
-#include "crow/query_string.h"
+#include "http/common.h"
+#include "http/ci_map.h"
+#include "http/query_string.h"
 
 namespace crow // NOTE: Already documented in "crow/app.h"
 {

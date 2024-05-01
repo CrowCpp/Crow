@@ -15,18 +15,18 @@
 #include <memory>
 #include <vector>
 
-#include "crow/http_parser_merged.h"
-#include "crow/common.h"
-#include "crow/compression.h"
-#include "crow/http_response.h"
-#include "crow/logging.h"
-#include "crow/middleware.h"
-#include "crow/middleware_context.h"
-#include "crow/parser.h"
-#include "crow/settings.h"
-#include "crow/socket_adaptors.h"
-#include "crow/task_timer.h"
-#include "crow/utility.h"
+#include "http/http_parser_merged.h"
+#include "http/common.h"
+#include "http/compression.h"
+#include "http/http_response.h"
+#include "http/logging.h"
+#include "http/middleware.h"
+#include "http/middleware_context.h"
+#include "http/parser.h"
+#include "http/settings.h"
+#include "http/socket_adaptors.h"
+#include "http/task_timer.h"
+#include "http/utility.h"
 
 namespace crow
 {

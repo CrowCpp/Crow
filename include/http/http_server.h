@@ -22,10 +22,10 @@
 #include <memory>
 #include <vector>
 
-#include "crow/version.h"
-#include "crow/http_connection.h"
-#include "crow/logging.h"
-#include "crow/task_timer.h"
+#include "http/version.h"
+#include "http/http_connection.h"
+#include "http/logging.h"
+#include "http/task_timer.h"
 
 
 namespace crow // NOTE: Already documented in "crow/app.h"

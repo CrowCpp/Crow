@@ -14,12 +14,12 @@
 #define S_ISREG(m) (((m)&S_IFMT) == S_IFREG)
 #endif
 
-#include "crow/http_request.h"
-#include "crow/ci_map.h"
-#include "crow/socket_adaptors.h"
-#include "crow/logging.h"
-#include "crow/mime_types.h"
-#include "crow/returnable.h"
+#include "http/http_request.h"
+#include "http/ci_map.h"
+#include "http/socket_adaptors.h"
+#include "http/logging.h"
+#include "http/mime_types.h"
+#include "http/returnable.h"
 
 
 namespace crow
