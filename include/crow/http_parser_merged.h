@@ -1273,7 +1273,14 @@ reexecute:
 
         switch (parser->header_state) {
           case h_upgrade:
-            parser->flags |= F_UPGRADE;
+            // Crow does not support HTTP/2 at the moment.
+            // According to the RFC https://datatracker.ietf.org/doc/html/rfc7540#section-3.2
+            // "A server that does not support HTTP/2 can respond to the request as though the Upgrade header field were absent"
+            // => `F_UPGRADE` is not set if the header starts by "h2".
+            // This prevents the parser from skipping the request body.
+            if (ch != 'h' || p+1 == (data + len) || *(p+1) != '2') {
+              parser->flags |= F_UPGRADE;
+            }
             parser->header_state = h_general;
             break;
 

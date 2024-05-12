@@ -7,6 +7,7 @@ enable_testing()
 
 set(TEST_SRCS
   unittest.cpp
+  query_string_tests.cpp
 )
 
 add_executable(unittest ${TEST_SRCS})

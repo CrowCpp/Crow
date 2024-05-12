@@ -19,6 +19,13 @@
 using namespace std;
 using namespace crow;
 
+#ifdef CROW_USE_BOOST
+namespace asio = boost::asio;
+using asio_error_code = boost::system::error_code;
+#else
+using asio_error_code = asio::error_code;
+#endif
+
 #define LOCALHOST_ADDRESS "127.0.0.1"
 
 TEST_CASE("Rule")
@@ -532,6 +539,28 @@ TEST_CASE("http_method")
     }
 } // http_method
 
+TEST_CASE("validate can be called multiple times")
+{
+    SimpleApp app;
+    CROW_ROUTE(app, "/")([]() { return "1"; });
+    app.validate();
+    app.validate();
+
+    CROW_ROUTE(app, "/test")([]() { return "1"; });
+    app.validate();
+
+    try
+    {
+        CROW_ROUTE(app, "/")([]() { return "1"; });
+        app.validate();      
+        FAIL_CHECK();
+    }
+    catch (std::exception& e)
+    {
+        CROW_LOG_DEBUG << e.what();
+    }
+} // validate can be called multiple times
+
 TEST_CASE("server_handling_error_request")
 {
     static char buf[2048];
@@ -920,6 +949,72 @@ TEST_CASE("json_write")
     y["scores"] = std::vector<int>{1, 2, 3};
     CHECK(R"({"scores":[1,2,3]})" == y.dump());
 } // json_write
+
+TEST_CASE("json_write_with_indent")
+{
+    static constexpr int IndentationLevelOne = 1;
+    static constexpr int IndentationLevelTwo = 2;
+    static constexpr int IndentationLevelFour = 4;
+
+    json::wvalue y;
+
+    y["scores"][0] = 1;
+    y["scores"][1] = "king";
+    y["scores"][2][0] = "real";
+    y["scores"][2][1] = false;
+    y["scores"][2][2] = true;
+
+    CHECK(R"({
+ "scores": [
+  1,
+  "king",
+  [
+   "real",
+   false,
+   true
+  ]
+ ]
+})" == y.dump(IndentationLevelOne));
+
+    CHECK(R"({
+  "scores": [
+    1,
+    "king",
+    [
+      "real",
+      false,
+      true
+    ]
+  ]
+})" == y.dump(IndentationLevelTwo));
+
+    CHECK(R"({
+    "scores": [
+        1,
+        "king",
+        [
+            "real",
+            false,
+            true
+        ]
+    ]
+})" == y.dump(IndentationLevelFour));
+
+    static constexpr char TabSeparator = '\t';
+
+    CHECK(R"({
+	"scores": [
+		1,
+		"king",
+		[
+			"real",
+			false,
+			true
+		]
+	]
+})" == y.dump(IndentationLevelOne, TabSeparator));
+} // json_write_with_indent
+
 
 TEST_CASE("json_copy_r_to_w_to_w_to_r")
 {
@@ -2837,7 +2932,7 @@ TEST_CASE("websocket_max_payload")
         }
     }
 
-    asio::error_code ec;
+    asio_error_code ec;
     c.lowest_layer().shutdown(asio::socket_base::shutdown_type::shutdown_both, ec);
 
     app.stop();
@@ -3155,6 +3250,8 @@ TEST_CASE("blueprint")
     bp.register_blueprint(sub_bp);
     sub_bp.register_blueprint(sub_sub_bp);
 
+    app.add_blueprint();
+    app.add_static_dir();
     app.validate();
 
     {
@@ -3237,6 +3334,79 @@ TEST_CASE("blueprint")
     }
 } // blueprint
 
+TEST_CASE("exception_handler")
+{
+    SimpleApp app;
+
+    CROW_ROUTE(app, "/get_error")
+    ([&]() -> std::string {
+        throw std::runtime_error("some error occurred");
+    });
+
+    CROW_ROUTE(app, "/get_no_error")
+    ([&]() {
+        return "Hello world";
+    });
+
+    app.validate();
+
+    {
+        request req;
+        response res;
+
+        req.url = "/get_error";
+        app.handle_full(req, res);
+
+        CHECK(500 == res.code);
+        CHECK(res.body.empty());
+    }
+
+    {
+        request req;
+        response res;
+
+        req.url = "/get_no_error";
+        app.handle_full(req, res);
+
+        CHECK(200 == res.code);
+        CHECK(res.body.find("Hello world") != std::string::npos);
+    }
+
+    app.exception_handler([](crow::response& res) {
+        try
+        {
+            throw;
+        }
+        catch (const std::exception& e)
+        {
+            res = response(501, e.what());
+        }
+    });
+
+    {
+        request req;
+        response res;
+
+        req.url = "/get_error";
+        app.handle_full(req, res);
+
+        CHECK(501 == res.code);
+        CHECK(res.body.find("some error occurred") != std::string::npos);
+    }
+
+    {
+        request req;
+        response res;
+
+        req.url = "/get_no_error";
+        app.handle_full(req, res);
+
+        CHECK(200 == res.code);
+        CHECK(res.body.find("some error occurred") == std::string::npos);
+        CHECK(res.body.find("Hello world") != std::string::npos);
+    }
+} // exception_handler
+
 TEST_CASE("base64")
 {
     unsigned char sample_bin[] = {0x14, 0xfb, 0x9c, 0x03, 0xd9, 0x7e};
@@ -3273,6 +3443,11 @@ TEST_CASE("base64")
     CHECK(crow::utility::base64decode(sample_bin2_enc, 8) == sample_bin2_str);
     CHECK(crow::utility::base64decode(sample_bin2_enc_np, 6) == sample_bin2_str);
 } // base64
+
+TEST_CASE("normalize_path") {
+    CHECK(crow::utility::normalize_path("/abc/def") == "/abc/def/");
+    CHECK(crow::utility::normalize_path("path\\to\\directory") == "path/to/directory/");
+} // normalize_path
 
 TEST_CASE("sanitize_filename")
 {
@@ -3342,7 +3517,7 @@ TEST_CASE("timeout")
               asio::ip::address::from_string(LOCALHOST_ADDRESS), 45451));
 
             auto receive_future = async(launch::async, [&]() {
-                asio::error_code ec;
+                asio_error_code ec;
                 c.receive(asio::buffer(buf, 2048), 0, ec);
                 return ec;
             });
@@ -3362,7 +3537,7 @@ TEST_CASE("timeout")
 
             size_t received;
             auto receive_future = async(launch::async, [&]() {
-                asio::error_code ec;
+                asio_error_code ec;
                 received = c.receive(asio::buffer(buf, 2048), 0, ec);
                 return ec;
             });
@@ -3460,4 +3635,48 @@ TEST_CASE("lexical_cast")
     CHECK(utility::lexical_cast<int>("5") == 5);
     CHECK(utility::lexical_cast<string>(4) == "4");
     CHECK(utility::lexical_cast<float>("10", 2) == 10.0f);
+}
+
+TEST_CASE("http2_upgrade_is_ignored")
+{
+    // Crow does not support HTTP/2 so upgrade headers must be ignored
+    // relevant RFC: https://datatracker.ietf.org/doc/html/rfc7540#section-3.2
+
+    static char buf[5012];
+
+    SimpleApp app;
+    CROW_ROUTE(app, "/echo").methods("POST"_method)
+    ([](crow::request const& req) {
+        return req.body;
+    });
+
+    auto _ = app.bindaddr(LOCALHOST_ADDRESS).port(45451).run_async();
+
+    app.wait_for_server_start();
+    asio::io_service is;
+
+    auto make_request = [&](const std::string& rq) {
+        asio::ip::tcp::socket c(is);
+        c.connect(asio::ip::tcp::endpoint(
+          asio::ip::address::from_string(LOCALHOST_ADDRESS), 45451));
+        c.send(asio::buffer(rq));
+        c.receive(asio::buffer(buf, 2048));
+        c.close();
+        return std::string(buf);
+    };
+
+    std::string request =
+        "POST /echo HTTP/1.1\r\n"
+        "user-agent: unittest.cpp\r\n"
+        "host: " LOCALHOST_ADDRESS ":45451\r\n"
+        "content-length: 48\r\n"
+        "connection: upgrade\r\n"
+        "upgrade: h2c\r\n"
+        "\r\n"
+        "http2 upgrade is not supported so body is parsed\r\n"
+        "\r\n";
+
+    auto res = make_request(request);
+    CHECK(res.find("http2 upgrade is not supported so body is parsed") != std::string::npos);
+    app.stop();
 }

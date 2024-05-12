@@ -6,8 +6,22 @@
 #include "crow/TinySHA1.hpp"
 #include "crow/utility.h"
 
-namespace crow
+namespace crow // NOTE: Already documented in "crow/app.h"
 {
+#ifdef CROW_USE_BOOST
+    namespace asio = boost::asio;
+    using error_code = boost::system::error_code;
+#else
+    using error_code = asio::error_code;
+#endif
+
+    /**
+     * \namespace crow::websocket
+     * \brief Namespace that includes the \ref Connection class
+     * and \ref connection struct. Useful for WebSockets connection.
+     *
+     * Used specially in crow/websocket.h, crow/app.h and crow/routing.h
+     */
     namespace websocket
     {
         enum class WebSocketReadState
@@ -299,7 +313,7 @@ namespace crow
                         //asio::async_read(adaptor_.socket(), asio::buffer(&mini_header_, 1),
                         adaptor_.socket().async_read_some(
                           asio::buffer(&mini_header_, 2),
-                          [this](const asio::error_code& ec, std::size_t
+                          [this](const error_code& ec, std::size_t
 #ifdef CROW_ENABLE_DEBUG
                                                                bytes_transferred
 #endif
@@ -367,7 +381,7 @@ namespace crow
                         remaining_length16_ = 0;
                         asio::async_read(
                           adaptor_.socket(), asio::buffer(&remaining_length16_, 2),
-                          [this](const asio::error_code& ec, std::size_t
+                          [this](const error_code& ec, std::size_t
 #ifdef CROW_ENABLE_DEBUG
                                                                bytes_transferred
 #endif
@@ -403,7 +417,7 @@ namespace crow
                     {
                         asio::async_read(
                           adaptor_.socket(), asio::buffer(&remaining_length_, 8),
-                          [this](const asio::error_code& ec, std::size_t
+                          [this](const error_code& ec, std::size_t
 #ifdef CROW_ENABLE_DEBUG
                                                                bytes_transferred
 #endif
@@ -447,7 +461,7 @@ namespace crow
                         {
                             asio::async_read(
                               adaptor_.socket(), asio::buffer((char*)&mask_, 4),
-                              [this](const asio::error_code& ec, std::size_t
+                              [this](const error_code& ec, std::size_t
 #ifdef CROW_ENABLE_DEBUG
                                                                    bytes_transferred
 #endif
@@ -489,7 +503,7 @@ namespace crow
                             to_read = remaining_length_;
                         adaptor_.socket().async_read_some(
                           asio::buffer(buffer_, static_cast<std::size_t>(to_read)),
-                          [this](const asio::error_code& ec, std::size_t bytes_transferred) {
+                          [this](const error_code& ec, std::size_t bytes_transferred) {
                               is_reading = false;
 
                               if (!ec)
@@ -641,7 +655,7 @@ namespace crow
                     auto watch = std::weak_ptr<void>{anchor_};
                     asio::async_write(
                       adaptor_.socket(), buffers,
-                      [&, watch](const asio::error_code& ec, std::size_t /*bytes_transferred*/) {
+                      [&, watch](const error_code& ec, std::size_t /*bytes_transferred*/) {
                           if (!ec && !close_connection_)
                           {
                               sending_buffers_.clear();

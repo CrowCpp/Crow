@@ -138,7 +138,7 @@ inline size_t qs_parse(char* qs, char* qs_kv[], size_t qs_kv_size, bool parse_ur
 #endif
 
     return i;
-    }
+}
 
 
 inline int qs_decode(char * qs)
@@ -295,9 +295,7 @@ namespace crow
     public:
         static const int MAX_KEY_VALUE_PAIRS_COUNT = 256;
 
-        query_string()
-        {
-        }
+        query_string() = default;
 
         query_string(const query_string& qs):
           url_(qs.url_)
@@ -319,7 +317,7 @@ namespace crow
             return *this;
         }
 
-        query_string& operator=(query_string&& qs)
+        query_string& operator=(query_string&& qs) noexcept
         {
             key_value_pairs_ = std::move(qs.key_value_pairs_);
             char* old_data = (char*)qs.url_.c_str();
@@ -339,9 +337,10 @@ namespace crow
                 return;
 
             key_value_pairs_.resize(MAX_KEY_VALUE_PAIRS_COUNT);
-
             size_t count = qs_parse(&url_[0], &key_value_pairs_[0], MAX_KEY_VALUE_PAIRS_COUNT, url);
+
             key_value_pairs_.resize(count);
+            key_value_pairs_.shrink_to_fit();
         }
 
         void clear()
@@ -472,13 +471,19 @@ namespace crow
 
         std::vector<std::string> keys() const
         {
-            std::vector<std::string> ret;
-            for (auto element : key_value_pairs_)
+            std::vector<std::string> keys;
+            keys.reserve(key_value_pairs_.size());
+
+            for (const char* const element : key_value_pairs_)
             {
-                std::string str_element(element);
-                ret.emplace_back(str_element.substr(0, str_element.find('=')));
+                const char* delimiter = strchr(element, '=');
+                if (delimiter)
+                    keys.emplace_back(element, delimiter);
+                else
+                    keys.emplace_back(element);
             }
-            return ret;
+
+            return keys;
         }
 
     private:

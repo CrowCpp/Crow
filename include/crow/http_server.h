@@ -1,6 +1,11 @@
 #pragma once
 
-#include <chrono>
+#ifdef CROW_USE_BOOST
+#include <boost/asio.hpp>
+#ifdef CROW_ENABLE_SSL
+#include <boost/asio/ssl.hpp>
+#endif
+#else
 #ifndef ASIO_STANDALONE
 #define ASIO_STANDALONE
 #endif
@@ -8,19 +13,29 @@
 #ifdef CROW_ENABLE_SSL
 #include <asio/ssl.hpp>
 #endif
-#include <cstdint>
+#endif
+
 #include <atomic>
+#include <chrono>
+#include <cstdint>
 #include <future>
-#include <vector>
 #include <memory>
+#include <vector>
 
 #include "crow/version.h"
 #include "crow/http_connection.h"
 #include "crow/logging.h"
 #include "crow/task_timer.h"
 
-namespace crow
+
+namespace crow // NOTE: Already documented in "crow/app.h"
 {
+#ifdef CROW_USE_BOOST
+    namespace asio = boost::asio;
+    using error_code = boost::system::error_code;
+#else
+    using error_code = asio::error_code;
+#endif
     using tcp = asio::ip::tcp;
 
     template<typename Handler, typename Adaptor = SocketAdaptor, typename... Middlewares>
@@ -52,7 +67,7 @@ namespace crow
         {
             tick_function_();
             tick_timer_.expires_after(std::chrono::milliseconds(tick_interval_.count()));
-            tick_timer_.async_wait([this](const asio::error_code& ec) {
+            tick_timer_.async_wait([this](const error_code& ec) {
                 if (ec)
                     return;
                 on_tick();
@@ -128,7 +143,7 @@ namespace crow
             {
                 tick_timer_.expires_after(std::chrono::milliseconds(tick_interval_.count()));
                 tick_timer_.async_wait(
-                  [this](const asio::error_code& ec) {
+                  [this](const error_code& ec) {
                       if (ec)
                           return;
                       on_tick();
@@ -143,7 +158,7 @@ namespace crow
             CROW_LOG_INFO << "Call `app.loglevel(crow::LogLevel::Warning)` to hide Info level logs.";
 
             signals_.async_wait(
-              [&](const asio::error_code& /*error*/, int /*signal_number*/) {
+              [&](const error_code& /*error*/, int /*signal_number*/) {
                   stop();
               });
 
@@ -227,7 +242,7 @@ namespace crow
 
                 acceptor_.async_accept(
                   p->socket(),
-                  [this, p, &is, service_idx](asio::error_code ec) {
+                  [this, p, &is, service_idx](error_code ec) {
                       if (!ec)
                       {
                           is.post(
