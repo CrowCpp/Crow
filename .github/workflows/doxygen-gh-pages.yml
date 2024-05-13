@@ -33,10 +33,7 @@ jobs:
         run: |
           git config --global user.name Docs deploy
           git config --global user.email docs@dummy.bot.com
-      - name: run mike
-        run: mike deploy master
-      - name: Deploy 🚀
-        uses: JamesIves/github-pages-deploy-action@v4
-        with:
-          folder: site # The folder the action should deploy.
-          target-folder: master # deploy to versioned directory
+      - name: run mike (Deploy 🚀)
+        run: |
+          git fetch origin gh-pages --depth=1
+          mike deploy master --push
