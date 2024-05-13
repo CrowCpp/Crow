@@ -35,6 +35,9 @@ jobs:
           git config --global user.email docs@dummy.bot.com
       - name: run mike
         run: mike deploy master
+        run: mike deploy 1.1
+        run: mike deploy 1.0
+        run: mike deploy 0.3
       - name: Deploy 🚀
         uses: JamesIves/github-pages-deploy-action@v4
         with:
