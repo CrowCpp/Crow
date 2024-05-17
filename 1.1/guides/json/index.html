@@ -20,7 +20,7 @@
       
       
       <link rel="icon" href="../../assets/favicon.svg">
-      <meta name="generator" content="mkdocs-1.6.0, mkdocs-material-9.5.22">
+      <meta name="generator" content="mkdocs-1.6.0, mkdocs-material-9.5.23">
     
     
       
@@ -28,7 +28,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.732c4fb1.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.6543a935.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
@@ -1436,7 +1436,7 @@
 <li><code>String</code>: from type <code>std::string</code>.</li>
 <li><code>List</code>: from type <code>std::vector</code>.</li>
 <li><code>Object</code>: from type <code>crow::json::wvalue or crow::json::rvalue</code>.<br>
-This last type means that <code>rvalue or wvalue</code> can have keys.</li>
+≈bThis last type means that <code>rvalue or wvalue</code> can have keys.</li>
 </ul>
 <h2 id="rvalue">rvalue<a class="headerlink" href="#rvalue" title="Permanent link">&para;</a></h2>
 <p>JSON read value, used for taking a JSON string and parsing it into <code>crow::json</code>.<br><br></p>
@@ -1457,7 +1457,7 @@ To do that, you need to convert it to a <code>wvalue</code>, which can be done b
 <p><br><br></p>
 <p>Additionally, a <code>wvalue</code> can be initialized as an object using an initializer list, an example object would be <code>wvalue x = {{"a", 1}, {"b", 2}}</code>. Or as a list using <code>wvalue x = json::wvalue::list({1, 2, 3})</code>, lists can include any type that <code>wvalue</code> supports.<br><br></p>
 <p>An object type <code>wvalue</code> uses <code>std::unordered_map</code> by default, if you want to have your returned <code>wvalue</code> key value pairs be sorted (using <code>std::map</code>) you can add <code class="highlight"><span class="cp">#define CROW_JSON_USE_MAP</span></code> to the top of your program.<br><br></p>
-<p>A JSON <code>wvalue</code> can be returned directly inside a route handler, this will cause the <code>content-type</code> header to automatically be set to <code>Application/json</code> and the JSON value will be converted to string and placed in the response body. For more information go to <a href="../routes">Routes</a>.<br><br></p>
+<p>A JSON <code>wvalue</code> can be returned directly inside a route handler, this will cause the <code>content-type</code> header to automatically be set to <code>Application/json</code> and the JSON value will be converted to string and placed in the response body. For more information go to <a href="../routes/">Routes</a>.<br><br></p>
 <p>For more info on write values go <a href="../../reference/classcrow_1_1json_1_1wvalue.html">here</a>.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -1662,7 +1662,7 @@ To do that, you need to convert it to a <code>wvalue</code>, which can be done b
     <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.tabs", "content.code.annotate"], "search": "../../assets/javascripts/workers/search.b8dbb3d2.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"default": "latest", "provider": "mike"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.5cfa9459.min.js"></script>
+      <script src="../../assets/javascripts/bundle.ebd0bdb7.min.js"></script>
       
     
   </body>
