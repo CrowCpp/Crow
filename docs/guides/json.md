@@ -12,7 +12,7 @@ The types of values that `rvalue and wvalue` can take are as follows:<br>
 - `String`: from type `std::string`.
 - `List`: from type `std::vector`.
 - `Object`: from type `crow::json::wvalue or crow::json::rvalue`.<br>
-This last type means that `rvalue or wvalue` can have keys.
+≈bThis last type means that `rvalue or wvalue` can have keys.
 
 ## rvalue
 JSON read value, used for taking a JSON string and parsing it into `crow::json`.<br><br>
@@ -41,7 +41,7 @@ Additionally, a `wvalue` can be initialized as an object using an initializer li
 
 An object type `wvalue` uses `std::unordered_map` by default, if you want to have your returned `wvalue` key value pairs be sorted (using `std::map`) you can add `#!cpp #define CROW_JSON_USE_MAP` to the top of your program.<br><br>
     
-A JSON `wvalue` can be returned directly inside a route handler, this will cause the `content-type` header to automatically be set to `Application/json` and the JSON value will be converted to string and placed in the response body. For more information go to [Routes](../routes).<br><br>
+A JSON `wvalue` can be returned directly inside a route handler, this will cause the `content-type` header to automatically be set to `Application/json` and the JSON value will be converted to string and placed in the response body. For more information go to [Routes](routes.md).<br><br>
 
 For more info on write values go [here](../reference/classcrow_1_1json_1_1wvalue.html).
 

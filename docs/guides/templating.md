@@ -16,12 +16,12 @@ There are 2 components of a mustache template implementation:
 ### Page
 The HTML page (including the mustache tags). It is usually loaded into `crow::mustache::template_t`. It needs to be placed in the *templates directory* which should be directly inside the current working directory of the crow executable.<br><br>
 
-The templates directory is usually called `templates`, but can be adjusted per Route (via `crow::mustache::set_base("new_templates_directory")`), per [Blueprint](../blueprints), or globally (via `crow::mustache::set_global_base("new_templates_directory"")`).<br><br>
+The templates directory is usually called `templates`, but can be adjusted per Route (via `crow::mustache::set_base("new_templates_directory")`), per [Blueprint](blueprints.md), or globally (via `crow::mustache::set_global_base("new_templates_directory"")`).<br><br>
 
 For more information on how to formulate a template, see [this mustache manual](http://mustache.github.io/mustache.5.html).
 
 ### Context
-A JSON object containing the tags as keys and their values. `crow::mustache::context` is actually a [crow::json::wvalue](../json#wvalue).<br><br>
+A JSON object containing the tags as keys and their values. `crow::mustache::context` is actually a [crow::json::wvalue](json.md#wvalue).<br><br>
 
 !!! note
 
