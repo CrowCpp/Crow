@@ -1,7 +1,7 @@
 var dir_d22c1cb87b72f01e1a7f207eb3bfd1ca =
 [
     [ "middlewares", "dir_5bc98d550c303c0206de23cf2f7c59bb.html", "dir_5bc98d550c303c0206de23cf2f7c59bb" ],
-    [ "app.h", "app_8h_source.html", null ],
+    [ "app.h", "app_8h.html", "app_8h" ],
     [ "ci_map.h", "ci__map_8h_source.html", null ],
     [ "common.h", "common_8h_source.html", null ],
     [ "compression.h", "compression_8h_source.html", null ],
@@ -24,7 +24,7 @@ var dir_d22c1cb87b72f01e1a7f207eb3bfd1ca =
     [ "settings.h", "settings_8h_source.html", null ],
     [ "socket_adaptors.h", "socket__adaptors_8h_source.html", null ],
     [ "task_timer.h", "task__timer_8h_source.html", null ],
-    [ "TinySHA1.hpp", "_tiny_s_h_a1_8hpp_source.html", null ],
+    [ "TinySHA1.hpp", "_tiny_s_h_a1_8hpp.html", "_tiny_s_h_a1_8hpp" ],
     [ "utility.h", "utility_8h_source.html", null ],
     [ "version.h", "version_8h_source.html", null ],
     [ "websocket.h", "websocket_8h_source.html", null ]
