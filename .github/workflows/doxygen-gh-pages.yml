@@ -1,10 +1,8 @@
 name: Deploy Doxygen results to Github Pages
 
-#on: push
 on:
   push:
-    branches:
-      - master
+    branches: [ "v1.2" ]
 
 permissions:
   contents: write
@@ -36,4 +34,4 @@ jobs:
       - name: run mike (Deploy 🚀)
         run: |
           git fetch origin gh-pages --depth=1
-          mike deploy master --push
+          mike deploy 1.2 --push
