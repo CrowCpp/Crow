@@ -6,7 +6,7 @@ cmake_minimum_required(VERSION 3.15.0 FATAL_ERROR)
 # Define the project name and language
 project(Crow
 	LANGUAGES CXX
-	VERSION 1.1.1
+	VERSION 1.2.0
 )
 
 # Make sure Findasio.cmake module is found
