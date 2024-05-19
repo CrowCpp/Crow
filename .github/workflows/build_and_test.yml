@@ -4,7 +4,6 @@ name: Build and test
 on:
   push:
     branches: [ "v1.1" ]
-  pull_request:
 
 env:
   # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
