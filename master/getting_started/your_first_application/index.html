@@ -1470,14 +1470,14 @@
 <span class="p">}</span>
 </code></pre></div>
 The App (or SimpleApp) class organizes all the different parts of Crow and provides the developer (you) a simple interface to interact with these parts.
-For more information, please go <a href="../../guides/app">here</a>.</p>
+For more information, please go <a href="../../guides/app/">here</a>.</p>
 <h2 id="3-adding-routes">3. Adding routes<a class="headerlink" href="#3-adding-routes" title="Permanent link">&para;</a></h2>
 <p>Once you have your app, the next step is to add routes (or endpoints). You can do so with the <code>CROW_ROUTE</code> macro.
 <div class="highlight"><pre><span></span><code><span class="n">CROW_ROUTE</span><span class="p">(</span><span class="n">app</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;/&quot;</span><span class="p">)([](){</span>
 <span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="s">&quot;Hello world&quot;</span><span class="p">;</span>
 <span class="p">});</span>
 </code></pre></div>
-For more details on routes, please go <a href="../../guides/routes">here</a>.</p>
+For more details on routes, please go <a href="../../guides/routes/">here</a>.</p>
 <h2 id="4-running-the-app">4. Running the app<a class="headerlink" href="#4-running-the-app" title="Permanent link">&para;</a></h2>
 <p>Once you're happy with how you defined all your routes, you're going to want to instruct Crow to run your app. This is done using the <code>run()</code> method.
 <div class="highlight"><pre><span></span><code><span class="n">app</span><span class="p">.</span><span class="n">port</span><span class="p">(</span><span class="mi">18080</span><span class="p">).</span><span class="n">multithreaded</span><span class="p">().</span><span class="n">run</span><span class="p">();</span>
@@ -1515,7 +1515,10 @@ Please note that the <code>port()</code> and <code>multithreaded()</code> method
 <span class="w">    </span><span class="n">app</span><span class="p">.</span><span class="n">port</span><span class="p">(</span><span class="mi">18080</span><span class="p">).</span><span class="n">multithreaded</span><span class="p">().</span><span class="n">run</span><span class="p">();</span>
 <span class="p">}</span>
 </code></pre></div></td></tr></table></div>
-<p>You then need to compile your code on your <a href="../setup/linux#compiling-your-project">Linux</a>, <a href="../setup/macos#compiling-using-a-compiler-directly">MacOS</a>, or <a href="../setup/windows#getting-and-compiling-crow">Windows</a> machine</p>
+<p>You then need to compile your code on your 
+<a href="../setup/linux/#compiling-your-project">Linux</a>, 
+<a href="../setup/macos/#compiling-using-a-compiler-directly">MacOS</a>, or 
+<a href="../setup/windows/#getting-and-compiling-crow">Windows</a> machine</p>
 <p>After building your <code>.cpp</code> file and running the resulting executable, you should be able to access your endpoint at <a href="http://localhost:18080">http://localhost:18080</a>. Opening this URL in your browser will show a white screen with "Hello world" typed on it.</p>
 
 

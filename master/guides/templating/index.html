@@ -1465,10 +1465,10 @@
 </ul>
 <h3 id="page">Page<a class="headerlink" href="#page" title="Permanent link">&para;</a></h3>
 <p>The HTML page (including the mustache tags). It is usually loaded into <code>crow::mustache::template_t</code>. It needs to be placed in the <em>templates directory</em> which should be directly inside the current working directory of the crow executable.<br><br></p>
-<p>The templates directory is usually called <code>templates</code>, but can be adjusted per Route (via <code>crow::mustache::set_base("new_templates_directory")</code>), per <a href="../blueprints">Blueprint</a>, or globally (via <code>crow::mustache::set_global_base("new_templates_directory"")</code>).<br><br></p>
+<p>The templates directory is usually called <code>templates</code>, but can be adjusted per Route (via <code>crow::mustache::set_base("new_templates_directory")</code>), per <a href="../blueprints/">Blueprint</a>, or globally (via <code>crow::mustache::set_global_base("new_templates_directory"")</code>).<br><br></p>
 <p>For more information on how to formulate a template, see <a href="http://mustache.github.io/mustache.5.html">this mustache manual</a>.</p>
 <h3 id="context">Context<a class="headerlink" href="#context" title="Permanent link">&para;</a></h3>
-<p>A JSON object containing the tags as keys and their values. <code>crow::mustache::context</code> is actually a <a href="../json#wvalue">crow::json::wvalue</a>.<br><br></p>
+<p>A JSON object containing the tags as keys and their values. <code>crow::mustache::context</code> is actually a <a href="../json/#wvalue">crow::json::wvalue</a>.<br><br></p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p><code>crow::mustache::context</code> can take a C++ lambda as a value. The lambda needs to take a string as an argument and return a string, such as <code class="highlight"><span class="n">ctx</span><span class="p">[</span><span class="n">lmd</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="o">&amp;</span><span class="p">](</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">){</span><span class="k">return</span><span class="w"> </span><span class="s">&quot;Hello World&quot;</span><span class="p">;};</span></code>.</p>
