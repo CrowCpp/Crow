@@ -1,6 +1,6 @@
 Crow contains some middlewares that are ready to be used in your application.
 <br>
-Make sure you understand how to enable and use [middleware](../middleware/).
+Make sure you understand how to enable and use [middleware](middleware.md).
 
 ## Sessions
 Include: `crow/middlewares/session.h` <br>
