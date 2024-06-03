@@ -1676,7 +1676,9 @@ You can also download the <code>crow_all.h</code> file and simply include that i
 </div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>While building you can set the <code>CROW_FEATURES</code> variable (as a <code>;</code> separated list). You can use an argument such as <code>-DCROW_FEATURES="ssl;compression"</code>.</p>
+<p>While building you can set:
+  the <code>CROW_ENABLE_SSL</code> variable to enable the support for https
+  the <code>CROW_ENABLE_COMPRESSION</code> variable to enable the support for http compression</p>
 </div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -1712,7 +1714,9 @@ target_link_libraries(your_project PUBLIC Crow::Crow)
 From there CMake should handle compiling and linking your project.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>For optional features like HTTP Compression or HTTPS you can set the <code>CROW_FEATURES</code> variable using lines such as <code>set(CROW_FEATURES "ssl;compression")</code>, <code>set(CROW_FEATURES ssl compression)</code>, or <code>set(CROW_FEATURES ssl)</code>.</p>
+<p>For optional features like HTTP Compression or HTTPS you can set</p>
+<p>the <code>CROW_ENABLE_SSL</code> variable to enable the support for https
+  the <code>CROW_ENABLE_COMPRESSION</code> variable to enable the support for http compression</p>
 </div>
 <h3 id="directly-using-a-compiler">Directly using a compiler<a class="headerlink" href="#directly-using-a-compiler" title="Permanent link">&para;</a></h3>
 <p>All you need to do is run the following command:

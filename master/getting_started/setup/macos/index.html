@@ -1683,7 +1683,10 @@ This will generate a <code>crow_all.h</code> file which you can use in the follo
 </ol>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<div class="highlight"><pre><span></span><code>You can add options like `-DCROW_FEATURES=&quot;ssl;compression&quot;` or `-DCROW_AMALGAMATE` to `cmake ..` to build optional tests/examples for HTTP Compression or HTTPS.
+<div class="highlight"><pre><span></span><code>You can add options like `-DCROW_ENABLE_COMPRESSION=ON` 
+or `-DCROW_ENABLE_SSL=ON` 
+or `-DCROW_AMALGAMATE` 
+to `cmake ..` to build optional tests/examples for HTTP Compression or HTTPS.
 </code></pre></div>
 </div>
 <h2 id="compiling-using-a-compiler-directly">Compiling using a compiler directly<a class="headerlink" href="#compiling-using-a-compiler-directly" title="Permanent link">&para;</a></h2>
