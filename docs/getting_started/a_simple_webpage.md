@@ -1,7 +1,7 @@
 Hello World is a good start, but what if you want something a bit more fancy.. Something like an HTML document saying "Hello World". If that's what you want, follow along:
 
 ## Basic Webpage
-Let's start our webpage with.. well.. a webpage. But before we create a webpage we need to place it somewhere Crow recognizes, for now this directory is going to be called `templates`, but we can [change it later](../../guides/templating/#page).
+Let's start our webpage with.. well.. a webpage. But before we create a webpage we need to place it somewhere Crow recognizes, for now this directory is going to be called `templates`, but we can [change it later](../guides/templating.md#page).
 
 Once our `templates` folder is created, we can create our HTML document inside it, let's call it `fancypage.html`.
 
@@ -80,13 +80,17 @@ Once the code is done compiling, if we call `http://localhost:18080/` we get our
 
 !!! note
 
-    Compilation instructions are available for [Linux](../setup/linux#compiling-your-project), [MacOS](../setup/macos#compiling-using-a-compiler-directly), and [Windows](../setup/windows#getting-and-compiling-crow)
+    Compilation instructions are available for 
+	[Linux](setup/linux.md#compiling-your-project), 
+	[MacOS](setup/macos.md#compiling-using-a-compiler-directly), 
+	and 
+	[Windows](setup/windows.md#getting-and-compiling-crow)
 
 
 ## Template Webpage with a variable
 But we can make things even more exciting, we can greet a user by their name instead!!
 
-Let's start with our webpage, and modify it with a little bit of [mustache](../../guides/templating) syntax:
+Let's start with our webpage, and modify it with a little bit of [mustache](../guides/templating.md) syntax:
 ``` html title="templates/fancypage.html" hl_lines="4"
 <!DOCTYPE html>
 <html>
@@ -121,9 +125,9 @@ int main()
 
 1. We are adding a `string` variable to the URL and a counterpart (`std::string name`) to our route - this can be anything the user wants.
 2. We are using `load()` instead of `load_text()` since we have an actual variable now.
-3. We are creating a new [context](../../guides/templating/#context) containing the `person` variable from our template and the `name` we got from the URL.
+3. We are creating a new [context](../guides/templating.md#context) containing the `person` variable from our template and the `name` we got from the URL.
 4. We are using `render(ctx)` to apply our context to the template.
 
 Now (after compiling the code and running the executable a second time) calling `http://localhost:18080/Bob` should return a webpage containing "Hello Bob!". **We did it!**
 
-For more details on templates and HTML pages in Crow please go [here](../../guides/templating/)
+For more details on templates and HTML pages in Crow please go [here](../guides/templating.md)

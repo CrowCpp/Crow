@@ -1,8 +1,4 @@
-/* 
- *
- * TinySHA1 - a header only implementation of the SHA1 algorithm in C++. Based
- * on the implementation in boost::uuid::details.
- * 
+/*
  * SHA1 Wikipedia Page: http://en.wikipedia.org/wiki/SHA-1
  * 
  * Copyright (c) 2012-22 SAURAV MOHAPATRA <mohaps@gmail.com>
@@ -19,14 +15,35 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
+
+/** 
+ * \file TinySHA1.hpp
+ * \author SAURAV MOHAPATRA <mohaps@gmail.com>
+ * \date 2012-22
+ * \brief TinySHA1 - a header only implementation of the SHA1 algorithm in C++. Based
+ * on the implementation in boost::uuid::details.
+ *
+ * In this file are defined:
+ * - sha1::SHA1
+ */
 #ifndef _TINY_SHA1_HPP_
 #define _TINY_SHA1_HPP_
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
 #include <stdint.h>
+
+/**
+ * \namespace sha1
+ * \brief Here is defined the SHA1 class
+ */
 namespace sha1
 {
+	/**
+	 * \class SHA1
+	 * \brief A tiny SHA1 algorithm implementation used internally in the
+	 * Crow server (specifically in crow/websocket.h).
+	 */
 	class SHA1
 	{
 	public:

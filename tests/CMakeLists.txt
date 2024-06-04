@@ -7,6 +7,7 @@ enable_testing()
 
 set(TEST_SRCS
   unittest.cpp
+  query_string_tests.cpp
 )
 
 add_executable(unittest ${TEST_SRCS})
@@ -26,7 +27,7 @@ add_subdirectory(template)
 add_subdirectory(multi_file)
 add_subdirectory(external_definition)
 if(NOT MSVC)
-  if ("ssl" IN_LIST CROW_FEATURES)
+  if (CROW_ENABLE_SSL)
     add_subdirectory(ssl)
   endif()
 endif()
