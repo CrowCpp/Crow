@@ -346,7 +346,7 @@ namespace crow
         }
 
         /// \brief Disable tcp/ip and use unix domain socket instead
-        self_t& unix_path(std::string path)
+        self_t& local_socket_path(std::string path)
         {
             bindaddr_ = path;
             use_unix_ = true;
@@ -354,7 +354,7 @@ namespace crow
         }
 
         /// \brief Get the unix domain socket path
-        std::string unix_path()
+        std::string local_socket_path()
         {
             return bindaddr_;
         }

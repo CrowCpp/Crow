@@ -11,8 +11,8 @@ int main()
         return "Hello, world!";
     });
 
-    std::string unix_path = "example.sock";
-    unlink(unix_path.c_str());
-    app.unix_path(unix_path).run();
+    std::string local_socket_path = "example.sock";
+    unlink(local_socket_path.c_str());
+    app.local_socket_path(local_socket_path).run();
 
 }

@@ -3692,7 +3692,7 @@ TEST_CASE("unix_socket")
 
     constexpr const char* socket_path = "unittest.sock";
     unlink(socket_path);
-    auto _ = app.unix_path(socket_path).run_async();
+    auto _ = app.local_socket_path(socket_path).run_async();
     app.wait_for_server_start();
 
     std::string sendmsg = "GET / HTTP/1.0\r\n\r\n";
