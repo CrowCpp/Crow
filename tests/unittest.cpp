@@ -1,4 +1,3 @@
-#define CATCH_CONFIG_MAIN
 #define CROW_ENABLE_DEBUG
 #define CROW_LOG_LEVEL 0
 #include <sys/stat.h>
@@ -10,7 +9,7 @@
 #include <type_traits>
 #include <regex>
 
-#include "catch.hpp"
+#include "catch2/catch_all.hpp"
 #include "crow.h"
 #include "crow/middlewares/cookie_parser.h"
 #include "crow/middlewares/cors.h"

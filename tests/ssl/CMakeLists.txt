@@ -2,13 +2,16 @@ cmake_minimum_required(VERSION 3.15)
 project (crow_ssl_test)
 
 include(${CMAKE_SOURCE_DIR}/cmake/compiler_options.cmake)
+include(${CMAKE_SOURCE_DIR}/cmake/CPM.cmake)
+
+CPMAddPackage("gh:catchorg/Catch2@3.6.0")
 
 set(TEST_SRCS
   ssltest.cpp
 )
 
 add_executable(ssltest ${TEST_SRCS})
-target_link_libraries(ssltest Crow::Crow)
+target_link_libraries(ssltest Crow::Crow Catch2::Catch2WithMain)
 add_warnings_optimizations(ssltest)
 
 if("${CMAKE_SYSTEM_NAME}" STREQUAL "Android")

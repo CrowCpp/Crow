@@ -2,7 +2,7 @@
 #include <iostream>
 #include <vector>
 
-#include "catch.hpp"
+#include "catch2/catch_all.hpp"
 #include "crow/query_string.h"
 
 namespace
