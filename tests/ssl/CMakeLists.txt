@@ -2,7 +2,6 @@ cmake_minimum_required(VERSION 3.15)
 project (crow_ssl_test)
 
 include(${CMAKE_SOURCE_DIR}/cmake/compiler_options.cmake)
-include(${CMAKE_SOURCE_DIR}/cmake/CPM.cmake)
 
 CPMAddPackage("gh:catchorg/Catch2@3.6.0")
 
