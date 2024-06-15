@@ -1,13 +1,5 @@
 var NAVTREEINDEX3 =
 {
-"namespacecrow.html#afe3a72ef7c3edbf71d0bceacf02517c4af29973ceeff9e3672f9827d2b3615283":[0,0,0,56,9],
-"namespacecrow.html#afe3a72ef7c3edbf71d0bceacf02517c4af2a6c498fb90ee345d997f888fce3b18":[0,0,0,56,34],
-"namespacecrow.html#afe3a72ef7c3edbf71d0bceacf02517c4af31bbdd1b3e85bccd652680e16935819":[0,0,0,56,67],
-"namespacecrow.html#afe3a72ef7c3edbf71d0bceacf02517c4af510b97de4ace11844b85f23d0fc012f":[0,0,0,56,11],
-"namespacecrow.html#afe3a72ef7c3edbf71d0bceacf02517c4af7f93635f8e193a924ae4a691bb66b8f":[0,0,0,56,13],
-"namespacecrow.html#afe3a72ef7c3edbf71d0bceacf02517c4afd8731b039d3bcb16908de23a2932d9a":[0,0,0,56,64],
-"namespacecrow.html#afe3a72ef7c3edbf71d0bceacf02517c4afe20db8c57ee09e59fcc6ae857443e02":[0,0,0,56,15],
-"namespacecrow_1_1multipart.html":[0,0,0,3],
 "namespacecrow_1_1multipart.html#a071bb6d802c0edd823147fa6acaebb2b":[0,0,0,3,3],
 "namespacecrow_1_1multipart.html#a6a2722b508669592976047a34d6eba0c":[0,0,0,3,4],
 "namespacecrow_1_1multipart.html#a7abf735303db9e568bea5787e1a63b72":[0,0,0,3,7],
@@ -249,5 +241,13 @@ var NAVTREEINDEX3 =
 "structcrow_1_1detail_1_1routing__handler__call__helper_1_1call_3_01_f_00_01_n_int_00_01_n_uint_019b104fb9907823e3e218e8e95ffa9c8.html":[1,0,0,0,0,7],
 "structcrow_1_1detail_1_1routing__handler__call__helper_1_1call_3_01_f_00_01_n_int_00_01_n_uint_019b104fb9907823e3e218e8e95ffa9c8.html#aee7a6bfbe87eb8ebf9667a5e83f55e5c":[1,0,0,0,0,7,0],
 "structcrow_1_1detail_1_1routing__handler__call__helper_1_1call_3_01_f_00_01_n_int_00_01_n_uint_0ac50968f63df9484eeaa96bf94c67fc5.html":[1,0,0,0,0,5],
-"structcrow_1_1detail_1_1routing__handler__call__helper_1_1call_3_01_f_00_01_n_int_00_01_n_uint_0ac50968f63df9484eeaa96bf94c67fc5.html#a110cd27d7795734b30bfd723573c1a5f":[1,0,0,0,0,5,0]
+"structcrow_1_1detail_1_1routing__handler__call__helper_1_1call_3_01_f_00_01_n_int_00_01_n_uint_0ac50968f63df9484eeaa96bf94c67fc5.html#a110cd27d7795734b30bfd723573c1a5f":[1,0,0,0,0,5,0],
+"structcrow_1_1detail_1_1routing__handler__call__helper_1_1call_3_01_f_00_01_n_int_00_01_n_uint_0b63d09427b176e92959de8d063124ae4.html":[1,0,0,0,0,3],
+"structcrow_1_1detail_1_1routing__handler__call__helper_1_1call_3_01_f_00_01_n_int_00_01_n_uint_0b63d09427b176e92959de8d063124ae4.html#a238a40bdff8c5cefe74274551b993c9c":[1,0,0,0,0,3,0],
+"structcrow_1_1detail_1_1routing__handler__call__helper_1_1call_3_01_f_00_01_n_int_00_01_n_uint_0eca3da881de1118eaf3d106d8d88f2d4.html":[1,0,0,0,0,6],
+"structcrow_1_1detail_1_1routing__handler__call__helper_1_1call_3_01_f_00_01_n_int_00_01_n_uint_0eca3da881de1118eaf3d106d8d88f2d4.html#af7b27a90d5a598b841c0fc0af3f9d7bf":[1,0,0,0,0,6,0],
+"structcrow_1_1detail_1_1routing__handler__call__helper_1_1call__pair.html":[1,0,0,0,0,0],
+"structcrow_1_1detail_1_1routing__handler__call__helper_1_1call__pair.html#ac9c6c2efb5d7d0360e8950a314b336c5":[1,0,0,0,0,0,0],
+"structcrow_1_1detail_1_1routing__handler__call__helper_1_1call__params.html":[1,0,0,0,0,1],
+"structcrow_1_1detail_1_1routing__handler__call__helper_1_1call__params.html#a3b2d260f66b618ea4bf7f75f0bd739e1":[1,0,0,0,0,1,2]
 };
