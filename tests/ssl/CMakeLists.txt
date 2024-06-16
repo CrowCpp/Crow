@@ -3,8 +3,6 @@ project (crow_ssl_test)
 
 include(${CMAKE_SOURCE_DIR}/cmake/compiler_options.cmake)
 
-CPMAddPackage("gh:catchorg/Catch2@3.6.0")
-
 set(TEST_SRCS
   ssltest.cpp
 )
