@@ -2,6 +2,9 @@ cmake_minimum_required(VERSION 3.15)
 project(crow_test)
 
 include(${CMAKE_SOURCE_DIR}/cmake/compiler_options.cmake)
+include(${CMAKE_SOURCE_DIR}/cmake/CPM.cmake)
+
+CPMAddPackage("gh:catchorg/Catch2@3.6.0")
 
 enable_testing()
 
@@ -11,7 +14,7 @@ set(TEST_SRCS
 )
 
 add_executable(unittest ${TEST_SRCS})
-target_link_libraries(unittest Crow::Crow)
+target_link_libraries(unittest Crow::Crow Catch2::Catch2WithMain)
 add_warnings_optimizations(unittest)
 
 if("${CMAKE_SYSTEM_NAME}" STREQUAL "Android")
