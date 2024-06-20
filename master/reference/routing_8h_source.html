@@ -116,7 +116,7 @@ $(document).ready(function(){initNavTree('routing_8h_source.html',''); initResiz
 <div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="preprocessor">#include &quot;crow/utility.h&quot;</span></div>
 <div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="preprocessor">#include &quot;crow/logging.h&quot;</span></div>
 <div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="preprocessor">#include &quot;crow/websocket.h&quot;</span></div>
-<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="preprocessor">#include &quot;crow/mustache.h&quot;</span></div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="mustache_8h.html">crow/mustache.h</a>&quot;</span></div>
 <div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;<span class="preprocessor">#include &quot;crow/middleware.h&quot;</span></div>
 <div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160; </div>
 <div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespacecrow.html">crow</a> <span class="comment">// NOTE: Already documented in &quot;crow/app.h&quot;</span></div>
@@ -690,9 +690,9 @@ $(document).ready(function(){initNavTree('routing_8h_source.html',''); initResiz
 <div class="line"><a name="l00589"></a><span class="lineno">  589</span>&#160;        <span class="keywordtype">void</span> handle(<a class="code" href="structcrow_1_1request.html">request</a>&amp; req, <a class="code" href="structcrow_1_1response.html">response</a>&amp; res, <span class="keyword">const</span> routing_params&amp; params)<span class="keyword"> override</span></div>
 <div class="line"><a name="l00590"></a><span class="lineno">  590</span>&#160;<span class="keyword">        </span>{</div>
 <div class="line"><a name="l00591"></a><span class="lineno">  591</span>&#160;            <span class="keywordflow">if</span> (!custom_templates_base.empty())</div>
-<div class="line"><a name="l00592"></a><span class="lineno">  592</span>&#160;                mustache::set_base(custom_templates_base);</div>
+<div class="line"><a name="l00592"></a><span class="lineno">  592</span>&#160;                <a class="code" href="namespacecrow_1_1mustache.html#a88cf75099968de883a8e2bf14ce6d1cb">mustache::set_base</a>(custom_templates_base);</div>
 <div class="line"><a name="l00593"></a><span class="lineno">  593</span>&#160;            <span class="keywordflow">else</span> <span class="keywordflow">if</span> (mustache::detail::get_template_base_directory_ref() != <span class="stringliteral">&quot;templates&quot;</span>)</div>
-<div class="line"><a name="l00594"></a><span class="lineno">  594</span>&#160;                mustache::set_base(<span class="stringliteral">&quot;templates&quot;</span>);</div>
+<div class="line"><a name="l00594"></a><span class="lineno">  594</span>&#160;                <a class="code" href="namespacecrow_1_1mustache.html#a88cf75099968de883a8e2bf14ce6d1cb">mustache::set_base</a>(<span class="stringliteral">&quot;templates&quot;</span>);</div>
 <div class="line"><a name="l00595"></a><span class="lineno">  595</span>&#160;            erased_handler_(req, res, params);</div>
 <div class="line"><a name="l00596"></a><span class="lineno">  596</span>&#160;        }</div>
 <div class="line"><a name="l00597"></a><span class="lineno">  597</span>&#160; </div>
@@ -793,9 +793,9 @@ $(document).ready(function(){initNavTree('routing_8h_source.html',''); initResiz
 <div class="line"><a name="l00692"></a><span class="lineno">  692</span>&#160;        <span class="keywordtype">void</span> handle(<a class="code" href="structcrow_1_1request.html">request</a>&amp; req, <a class="code" href="structcrow_1_1response.html">response</a>&amp; res, <span class="keyword">const</span> routing_params&amp; params)<span class="keyword"> override</span></div>
 <div class="line"><a name="l00693"></a><span class="lineno">  693</span>&#160;<span class="keyword">        </span>{</div>
 <div class="line"><a name="l00694"></a><span class="lineno">  694</span>&#160;            <span class="keywordflow">if</span> (!custom_templates_base.empty())</div>
-<div class="line"><a name="l00695"></a><span class="lineno">  695</span>&#160;                mustache::set_base(custom_templates_base);</div>
+<div class="line"><a name="l00695"></a><span class="lineno">  695</span>&#160;                <a class="code" href="namespacecrow_1_1mustache.html#a88cf75099968de883a8e2bf14ce6d1cb">mustache::set_base</a>(custom_templates_base);</div>
 <div class="line"><a name="l00696"></a><span class="lineno">  696</span>&#160;            <span class="keywordflow">else</span> <span class="keywordflow">if</span> (mustache::detail::get_template_base_directory_ref() != mustache::detail::get_global_template_base_directory_ref())</div>
-<div class="line"><a name="l00697"></a><span class="lineno">  697</span>&#160;                mustache::set_base(mustache::detail::get_global_template_base_directory_ref());</div>
+<div class="line"><a name="l00697"></a><span class="lineno">  697</span>&#160;                <a class="code" href="namespacecrow_1_1mustache.html#a88cf75099968de883a8e2bf14ce6d1cb">mustache::set_base</a>(mustache::detail::get_global_template_base_directory_ref());</div>
 <div class="line"><a name="l00698"></a><span class="lineno">  698</span>&#160; </div>
 <div class="line"><a name="l00699"></a><span class="lineno">  699</span>&#160;            <a class="code" href="structcrow_1_1detail_1_1routing__handler__call__helper_1_1call.html">detail::routing_handler_call_helper::call</a>&lt;</div>
 <div class="line"><a name="l00700"></a><span class="lineno">  700</span>&#160;              <a class="code" href="structcrow_1_1detail_1_1routing__handler__call__helper_1_1call__params.html">detail::routing_handler_call_helper::call_params</a>&lt;decltype(handler_)&gt;,</div>
@@ -1940,6 +1940,8 @@ $(document).ready(function(){initNavTree('routing_8h_source.html',''); initResiz
 <div class="ttc" id="aclasscrow_1_1_web_socket_rule_html"><div class="ttname"><a href="classcrow_1_1_web_socket_rule.html">crow::WebSocketRule</a></div><div class="ttdoc">A rule dealing with websockets.</div><div class="ttdef"><b>Definition:</b> routing.h:442</div></div>
 <div class="ttc" id="aclasscrow_1_1_web_socket_rule_html_ad4d8b25025e767fbe9af7f7c4263c2cb"><div class="ttname"><a href="classcrow_1_1_web_socket_rule.html#ad4d8b25025e767fbe9af7f7c4263c2cb">crow::WebSocketRule::max_payload</a></div><div class="ttdeci">self_t &amp; max_payload(uint64_t max_payload)</div><div class="ttdoc">Override the global payload limit for this single WebSocket rule.</div><div class="ttdef"><b>Definition:</b> routing.h:474</div></div>
 <div class="ttc" id="aclasscrow_1_1websocket_1_1_connection_html"><div class="ttname"><a href="classcrow_1_1websocket_1_1_connection.html">crow::websocket::Connection</a></div><div class="ttdoc">A websocket connection.</div><div class="ttdef"><b>Definition:</b> websocket.h:81</div></div>
+<div class="ttc" id="amustache_8h_html"><div class="ttname"><a href="mustache_8h.html">mustache.h</a></div><div class="ttdoc">This file includes the definition of the crow::mustache namespace and its members.</div></div>
+<div class="ttc" id="anamespacecrow_1_1mustache_html_a88cf75099968de883a8e2bf14ce6d1cb"><div class="ttname"><a href="namespacecrow_1_1mustache.html#a88cf75099968de883a8e2bf14ce6d1cb">crow::mustache::set_base</a></div><div class="ttdeci">void set_base(const std::string &amp;path)</div><div class="ttdoc">Defines the templates directory path at route level. By default is templates/.</div><div class="ttdef"><b>Definition:</b> mustache.h:738</div></div>
 <div class="ttc" id="anamespacecrow_html"><div class="ttname"><a href="namespacecrow.html">crow</a></div><div class="ttdoc">The main namespace of the library. In this namespace is defined the most important classes and functi...</div></div>
 <div class="ttc" id="anamespacecrow_html_a153c1bf24903d1a8629ef6eaf045110b"><div class="ttname"><a href="namespacecrow.html#a153c1bf24903d1a8629ef6eaf045110b">crow::App</a></div><div class="ttdeci">Crow&lt; Middlewares... &gt; App</div><div class="ttdoc">Alias of Crow&lt;Middlewares...&gt;. Useful if you want a instance of an Crow application that require Midd...</div><div class="ttdef"><b>Definition:</b> app.h:771</div></div>
 <div class="ttc" id="astructcrow_1_1_rule_parameter_traits_html"><div class="ttname"><a href="structcrow_1_1_rule_parameter_traits.html">crow::RuleParameterTraits</a></div><div class="ttdoc">Allows the user to assign parameters using functions.</div><div class="ttdef"><b>Definition:</b> routing.h:533</div></div>
@@ -1971,7 +1973,7 @@ $(document).ready(function(){initNavTree('routing_8h_source.html',''); initResiz
 			<ul>
 				<li class="navelem"><a class="el" href="dir_d44c64559bbebec7f509842c48db8b23.html">include</a></li><li class="navelem"><a class="el" href="dir_d22c1cb87b72f01e1a7f207eb3bfd1ca.html">crow</a></li><li class="navelem"><b>routing.h</b></li>
 				<li class="footer">
-					Generated on Mon Jun 17 2024 for Crow by <a href="http://www.doxygen.org/index.html">
+					Generated on Thu Jun 20 2024 for Crow by <a href="http://www.doxygen.org/index.html">
 					<img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.9.1.
 					Dark theme by <a href="http://majerle.eu" target="_new">Tilen Majerle</a>. Edited by <a href="https://github.com/The-EDev" target="_new">Farook Al-Sammarraie</a>. All rights reserved.
 				</li>

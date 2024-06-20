@@ -128,9 +128,9 @@ $(document).ready(function(){initNavTree('json_8h_source.html',''); initResizabl
 <div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160; </div>
 <div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespacecrow.html">crow</a> <span class="comment">// NOTE: Already documented in &quot;crow/app.h&quot;</span></div>
 <div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;{</div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;    <span class="keyword">namespace </span>mustache</div>
+<div class="line"><a name="l00030"></a><span class="lineno"><a class="line" href="namespacecrow_1_1mustache.html">   30</a></span>&#160;    <span class="keyword">namespace </span>mustache</div>
 <div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;    {</div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;        <span class="keyword">class </span>template_t;</div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;        <span class="keyword">class </span><a class="code" href="classcrow_1_1mustache_1_1template__t.html">template_t</a>;</div>
 <div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;    }</div>
 <div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160; </div>
 <div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;    <span class="keyword">namespace </span>json</div>
@@ -212,7 +212,7 @@ $(document).ready(function(){initNavTree('json_8h_source.html',''); initResizabl
 <div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;        };</div>
 <div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160; </div>
 <div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;        <span class="keyword">class </span>rvalue;</div>
-<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;        rvalue load(<span class="keyword">const</span> <span class="keywordtype">char</span>* data, <span class="keywordtype">size_t</span> size);</div>
+<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;        rvalue <a class="code" href="namespacecrow_1_1mustache.html#abe44de50c382e0d39e7ef5b7d5057ca6">load</a>(<span class="keyword">const</span> <span class="keywordtype">char</span>* data, <span class="keywordtype">size_t</span> size);</div>
 <div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160; </div>
 <div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;        <span class="keyword">namespace </span>detail</div>
 <div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;        {<span class="comment"></span></div>
@@ -285,7 +285,7 @@ $(document).ready(function(){initNavTree('json_8h_source.html',''); initResizabl
 <div class="line"><a name="l00184"></a><span class="lineno">  184</span>&#160;                    <a class="code" href="structcrow_1_1json_1_1detail_1_1r__string.html#adeb368c4c0dfeb349bb32129e8dee23b">e_</a> = <a class="code" href="structcrow_1_1json_1_1detail_1_1r__string.html#a9a0a048fb2cb904e8336926817947448">s_</a> + length;</div>
 <div class="line"><a name="l00185"></a><span class="lineno">  185</span>&#160;                    owned_ = 1;</div>
 <div class="line"><a name="l00186"></a><span class="lineno">  186</span>&#160;                }</div>
-<div class="line"><a name="l00187"></a><span class="lineno">  187</span>&#160;                <span class="keyword">friend</span> rvalue crow::json::load(<span class="keyword">const</span> <span class="keywordtype">char</span>* data, <span class="keywordtype">size_t</span> size);</div>
+<div class="line"><a name="l00187"></a><span class="lineno">  187</span>&#160;                <span class="keyword">friend</span> rvalue <a class="code" href="namespacecrow_1_1mustache.html#abe44de50c382e0d39e7ef5b7d5057ca6">crow::json::load</a>(<span class="keyword">const</span> <span class="keywordtype">char</span>* data, <span class="keywordtype">size_t</span> size);</div>
 <div class="line"><a name="l00188"></a><span class="lineno">  188</span>&#160; </div>
 <div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160;                <span class="keyword">friend</span> <span class="keywordtype">bool</span> operator==(<span class="keyword">const</span> r_string&amp; l, <span class="keyword">const</span> r_string&amp; r);</div>
 <div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160;                <span class="keyword">friend</span> <span class="keywordtype">bool</span> operator==(<span class="keyword">const</span> std::string&amp; l, <span class="keyword">const</span> r_string&amp; r);</div>
@@ -1356,7 +1356,7 @@ $(document).ready(function(){initNavTree('json_8h_source.html',''); initResizabl
 <div class="line"><a name="l01255"></a><span class="lineno"> 1255</span>&#160;            };</div>
 <div class="line"><a name="l01256"></a><span class="lineno"> 1256</span>&#160;            <span class="keywordflow">return</span> Parser(data, size).parse();</div>
 <div class="line"><a name="l01257"></a><span class="lineno"> 1257</span>&#160;        }</div>
-<div class="line"><a name="l01258"></a><span class="lineno"> 1258</span>&#160;        <span class="keyword">inline</span> rvalue load(<span class="keyword">const</span> <span class="keywordtype">char</span>* data, <span class="keywordtype">size_t</span> size)</div>
+<div class="line"><a name="l01258"></a><span class="lineno"> 1258</span>&#160;        <span class="keyword">inline</span> rvalue <a class="code" href="namespacecrow_1_1mustache.html#abe44de50c382e0d39e7ef5b7d5057ca6">load</a>(<span class="keyword">const</span> <span class="keywordtype">char</span>* data, <span class="keywordtype">size_t</span> size)</div>
 <div class="line"><a name="l01259"></a><span class="lineno"> 1259</span>&#160;        {</div>
 <div class="line"><a name="l01260"></a><span class="lineno"> 1260</span>&#160;            <span class="keywordtype">char</span>* s = <span class="keyword">new</span> <span class="keywordtype">char</span>[size + 1];</div>
 <div class="line"><a name="l01261"></a><span class="lineno"> 1261</span>&#160;            memcpy(s, data, size);</div>
@@ -1369,14 +1369,14 @@ $(document).ready(function(){initNavTree('json_8h_source.html',''); initResizabl
 <div class="line"><a name="l01268"></a><span class="lineno"> 1268</span>&#160;            <span class="keywordflow">return</span> ret;</div>
 <div class="line"><a name="l01269"></a><span class="lineno"> 1269</span>&#160;        }</div>
 <div class="line"><a name="l01270"></a><span class="lineno"> 1270</span>&#160; </div>
-<div class="line"><a name="l01271"></a><span class="lineno"> 1271</span>&#160;        <span class="keyword">inline</span> rvalue load(<span class="keyword">const</span> <span class="keywordtype">char</span>* data)</div>
+<div class="line"><a name="l01271"></a><span class="lineno"> 1271</span>&#160;        <span class="keyword">inline</span> rvalue <a class="code" href="namespacecrow_1_1mustache.html#abe44de50c382e0d39e7ef5b7d5057ca6">load</a>(<span class="keyword">const</span> <span class="keywordtype">char</span>* data)</div>
 <div class="line"><a name="l01272"></a><span class="lineno"> 1272</span>&#160;        {</div>
-<div class="line"><a name="l01273"></a><span class="lineno"> 1273</span>&#160;            <span class="keywordflow">return</span> load(data, strlen(data));</div>
+<div class="line"><a name="l01273"></a><span class="lineno"> 1273</span>&#160;            <span class="keywordflow">return</span> <a class="code" href="namespacecrow_1_1mustache.html#abe44de50c382e0d39e7ef5b7d5057ca6">load</a>(data, strlen(data));</div>
 <div class="line"><a name="l01274"></a><span class="lineno"> 1274</span>&#160;        }</div>
 <div class="line"><a name="l01275"></a><span class="lineno"> 1275</span>&#160; </div>
-<div class="line"><a name="l01276"></a><span class="lineno"> 1276</span>&#160;        <span class="keyword">inline</span> rvalue load(<span class="keyword">const</span> std::string&amp; str)</div>
+<div class="line"><a name="l01276"></a><span class="lineno"> 1276</span>&#160;        <span class="keyword">inline</span> rvalue <a class="code" href="namespacecrow_1_1mustache.html#abe44de50c382e0d39e7ef5b7d5057ca6">load</a>(<span class="keyword">const</span> std::string&amp; str)</div>
 <div class="line"><a name="l01277"></a><span class="lineno"> 1277</span>&#160;        {</div>
-<div class="line"><a name="l01278"></a><span class="lineno"> 1278</span>&#160;            <span class="keywordflow">return</span> load(str.data(), str.size());</div>
+<div class="line"><a name="l01278"></a><span class="lineno"> 1278</span>&#160;            <span class="keywordflow">return</span> <a class="code" href="namespacecrow_1_1mustache.html#abe44de50c382e0d39e7ef5b7d5057ca6">load</a>(str.data(), str.size());</div>
 <div class="line"><a name="l01279"></a><span class="lineno"> 1279</span>&#160;        }</div>
 <div class="line"><a name="l01280"></a><span class="lineno"> 1280</span>&#160; </div>
 <div class="line"><a name="l01281"></a><span class="lineno"> 1281</span>&#160;        <span class="keyword">struct </span>wvalue_reader;</div>
@@ -2199,7 +2199,8 @@ $(document).ready(function(){initNavTree('json_8h_source.html',''); initResizabl
 <div class="ttc" id="aclasscrow_1_1json_1_1wvalue_html_a5af23d208ed3d066a0fb5339350978c6"><div class="ttname"><a href="classcrow_1_1json_1_1wvalue.html#a5af23d208ed3d066a0fb5339350978c6">crow::json::wvalue::estimate_length</a></div><div class="ttdeci">size_t estimate_length() const</div><div class="ttdoc">Returns an estimated size of the value in bytes.</div><div class="ttdef"><b>Definition:</b> json.h:1793</div></div>
 <div class="ttc" id="aclasscrow_1_1json_1_1wvalue_html_a8875c69038bd1a9c23485f099e471b96"><div class="ttname"><a href="classcrow_1_1json_1_1wvalue.html#a8875c69038bd1a9c23485f099e471b96">crow::json::wvalue::empty_object</a></div><div class="ttdeci">static crow::json::wvalue empty_object()</div><div class="ttdoc">Create an empty json value (outputs &quot;{}&quot; instead of a &quot;null&quot; string)</div><div class="ttdef"><b>Definition:</b> json.h:1306</div></div>
 <div class="ttc" id="aclasscrow_1_1json_1_1wvalue_html_af46596998d8e639a23b401e951297b63"><div class="ttname"><a href="classcrow_1_1json_1_1wvalue.html#af46596998d8e639a23b401e951297b63">crow::json::wvalue::clear</a></div><div class="ttdeci">void clear()</div><div class="ttdoc">Used for compatibility, same as reset()</div><div class="ttdef"><b>Definition:</b> json.h:1495</div></div>
-<div class="ttc" id="aclasscrow_1_1mustache_1_1template__t_html"><div class="ttname"><a href="classcrow_1_1mustache_1_1template__t.html">crow::mustache::template_t</a></div><div class="ttdoc">A mustache template object.</div><div class="ttdef"><b>Definition:</b> mustache.h:74</div></div>
+<div class="ttc" id="aclasscrow_1_1mustache_1_1template__t_html"><div class="ttname"><a href="classcrow_1_1mustache_1_1template__t.html">crow::mustache::template_t</a></div><div class="ttdoc">Compiled mustache template object.</div><div class="ttdef"><b>Definition:</b> mustache.h:134</div></div>
+<div class="ttc" id="anamespacecrow_1_1mustache_html_abe44de50c382e0d39e7ef5b7d5057ca6"><div class="ttname"><a href="namespacecrow_1_1mustache.html#abe44de50c382e0d39e7ef5b7d5057ca6">crow::mustache::load</a></div><div class="ttdeci">template_t load(const std::string &amp;filename)</div><div class="ttdoc">Open, read and renders a file using a mustache compiler. It also sanitize the input before compilatio...</div><div class="ttdef"><b>Definition:</b> mustache.h:812</div></div>
 <div class="ttc" id="anamespacecrow_html"><div class="ttname"><a href="namespacecrow.html">crow</a></div><div class="ttdoc">The main namespace of the library. In this namespace is defined the most important classes and functi...</div></div>
 <div class="ttc" id="astructcrow_1_1json_1_1detail_1_1r__string_html"><div class="ttname"><a href="structcrow_1_1json_1_1detail_1_1r__string.html">crow::json::detail::r_string</a></div><div class="ttdoc">A read string implementation with comparison functionality.</div><div class="ttdef"><b>Definition:</b> json.h:120</div></div>
 <div class="ttc" id="astructcrow_1_1json_1_1detail_1_1r__string_html_a9a0a048fb2cb904e8336926817947448"><div class="ttname"><a href="structcrow_1_1json_1_1detail_1_1r__string.html#a9a0a048fb2cb904e8336926817947448">crow::json::detail::r_string::s_</a></div><div class="ttdeci">char * s_</div><div class="ttdoc">Start.</div><div class="ttdef"><b>Definition:</b> json.h:171</div></div>
@@ -2213,7 +2214,7 @@ $(document).ready(function(){initNavTree('json_8h_source.html',''); initResizabl
 			<ul>
 				<li class="navelem"><a class="el" href="dir_d44c64559bbebec7f509842c48db8b23.html">include</a></li><li class="navelem"><a class="el" href="dir_d22c1cb87b72f01e1a7f207eb3bfd1ca.html">crow</a></li><li class="navelem"><b>json.h</b></li>
 				<li class="footer">
-					Generated on Mon Jun 17 2024 for Crow by <a href="http://www.doxygen.org/index.html">
+					Generated on Thu Jun 20 2024 for Crow by <a href="http://www.doxygen.org/index.html">
 					<img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.9.1.
 					Dark theme by <a href="http://majerle.eu" target="_new">Tilen Majerle</a>. Edited by <a href="https://github.com/The-EDev" target="_new">Farook Al-Sammarraie</a>. All rights reserved.
 				</li>

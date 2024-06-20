@@ -54,7 +54,7 @@ var annotated_dup =
         [ "part", "structcrow_1_1multipart_1_1part.html", "structcrow_1_1multipart_1_1part" ],
         [ "message", "structcrow_1_1multipart_1_1message.html", "structcrow_1_1multipart_1_1message" ]
       ] ],
-      [ "mustache", null, [
+      [ "mustache", "namespacecrow_1_1mustache.html", [
         [ "invalid_template_exception", "classcrow_1_1mustache_1_1invalid__template__exception.html", "classcrow_1_1mustache_1_1invalid__template__exception" ],
         [ "rendered_template", "structcrow_1_1mustache_1_1rendered__template.html", "structcrow_1_1mustache_1_1rendered__template" ],
         [ "Action", "structcrow_1_1mustache_1_1_action.html", "structcrow_1_1mustache_1_1_action" ],
