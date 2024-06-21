@@ -44,6 +44,7 @@ find_package(Python3)
 #####################################
 option(CROW_BUILD_EXAMPLES     "Build the examples in the project"      ${CROW_IS_MAIN_PROJECT})
 option(CROW_BUILD_TESTS        "Build the tests in the project"         ${CROW_IS_MAIN_PROJECT})
+option(CROW_BUILD_FUZZER       "Instrument and build Crow fuzzer"       OFF)
 option(CROW_AMALGAMATE         "Combine all headers into one"           OFF)
 option(CROW_INSTALL            "Add install step for Crow"              ON )
 option(CROW_USE_BOOST          "Use Boost.Asio for Crow"                OFF)
@@ -133,6 +134,11 @@ if(CROW_BUILD_TESTS)
       )
     endif()
   endif()
+endif()
+
+# Fuzzers
+if (CROW_BUILD_FUZZER)
+	add_subdirectory(tests/fuzz)
 endif()
 
 #####################################
