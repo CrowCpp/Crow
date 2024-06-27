@@ -640,9 +640,9 @@ namespace crow
                 size = (size / 4 * 3) + 2; // Not subtracting extra characters because they're truncated in int division
 
             // Padded
-            else if (data[size - 2] == '=') // padded with '=='
+            else if (size >= 2 && data[size - 2] == '=') // padded with '=='
                 size = (size / 4 * 3) - 2;  // == padding means the last block only has 1 character instead of 3, hence the '-2'
-            else if (data[size - 1] == '=') // padded with '='
+            else if (size >= 1 && data[size - 1] == '=') // padded with '='
                 size = (size / 4 * 3) - 1;  // = padding means the last block only has 2 character instead of 3, hence the '-1'
 
             // Padding not needed
