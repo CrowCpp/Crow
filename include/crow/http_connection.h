@@ -145,7 +145,7 @@ namespace crow
             req_.middleware_container = static_cast<void*>(middlewares_);
             req_.io_service = &adaptor_.get_io_service();
             
-            req_.remote_ip_address = adaptor_.remote_endpoint().address().to_string();
+            req_.remote_ip_address = adaptor_.address();
 
             add_keep_alive_ = req_.keep_alive;
             close_connection_ = req_.close_connection;

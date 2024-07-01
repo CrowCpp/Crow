@@ -232,7 +232,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
 
             std::string get_remote_ip() override
             {
-                return adaptor_.remote_endpoint().address().to_string();
+                return adaptor_.address();
             }
 
             void set_max_payload_size(uint64_t payload)
