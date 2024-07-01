@@ -45,6 +45,11 @@ The maximum payload size that a connection accepts can be adjusted either global
 
     By default, this limit is disabled. To disable the global setting in specific routes, you only need to call `#!cpp CROW_WEBSOCKET_ROUTE(app, "/url").max_payload(UINT64_MAX)`.
 
+## Subprotocols
+<span class="tag">[:octicons-feed-tag-16: master](https://github.com/CrowCpp/Crow)</span>
+
+Specifies the possible subprotocols that are available for the client. If specified, the first match with the client's requested subprotocols will be returned in the "Sec-WebSocket-Protocol" header of the handshake response. Otherwise, the connection will be closed. If no subprotocol are specified on both the client and the server side, the connection process will continue normally. It can be specified by using `#!cpp CROW_WEBSOCKET_ROUTE(app, "/url").subprotocols(<values>)`.
+
 
 For more info about websocket routes go [here](../reference/classcrow_1_1_web_socket_rule.html).
 
