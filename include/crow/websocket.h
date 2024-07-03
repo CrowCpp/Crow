@@ -90,7 +90,8 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                        std::function<void(crow::websocket::connection&, const std::string&, bool)> message_handler,
                        std::function<void(crow::websocket::connection&, const std::string&)> close_handler,
                        std::function<void(crow::websocket::connection&, const std::string&)> error_handler,
-                       std::function<bool(const crow::request&, void**)> accept_handler):
+                       std::function<bool(const crow::request&, void**)> accept_handler,
+                       bool mirror_protocols):
               adaptor_(std::move(adaptor)),
               handler_(handler),
               max_payload_bytes_(max_payload),
@@ -106,6 +107,15 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                     handler_->remove_websocket(this);
                     delete this;
                     return;
+                }
+
+                if (mirror_protocols)
+                {
+                    std::string requested_subprotocols_header = req.get_header_value("Sec-WebSocket-Protocol");
+                    if (!requested_subprotocols_header.empty())
+                    {
+                        subprotocol_ = requested_subprotocols_header;
+                    }
                 }
 
                 if (accept_handler_)
@@ -279,6 +289,12 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                 write_buffers_.emplace_back(header);
                 write_buffers_.emplace_back(std::move(hello));
                 write_buffers_.emplace_back(crlf);
+                if (!subprotocol_.empty())
+                {
+                    write_buffers_.emplace_back("Sec-WebSocket-Protocol: ");
+                    write_buffers_.emplace_back(subprotocol_);
+                    write_buffers_.emplace_back(crlf);
+                }
                 write_buffers_.emplace_back(crlf);
                 do_write();
                 if (open_handler_)
@@ -753,6 +769,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
             std::function<void(crow::websocket::connection&, const std::string&)> close_handler_;
             std::function<void(crow::websocket::connection&, const std::string&)> error_handler_;
             std::function<bool(const crow::request&, void**)> accept_handler_;
+            std::string subprotocol_;
         };
     } // namespace websocket
 } // namespace crow
