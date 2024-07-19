@@ -691,7 +691,7 @@ namespace crow
         {
             {
                 std::unique_lock<std::mutex> lock(start_mutex_);
-                if (!server_started_)
+                while (!server_started_)
                     cv_started_.wait(lock);
             }
             if (server_)
