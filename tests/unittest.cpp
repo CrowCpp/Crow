@@ -2853,6 +2853,7 @@ TEST_CASE("websocket_close")
       .onclose([&](websocket::connection& conn, const std::string&, uint16_t status_code) {
           // There should just be one connection
           CHECK(&conn == connection);
+          CHECK_FALSE(conn.get_remote_ip().empty());
           ++close_calls;
           last_status_code = status_code;
           CROW_LOG_INFO << "Closing websocket";

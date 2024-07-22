@@ -647,8 +647,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                         }
                         else
                         {
-                            adaptor_.shutdown_readwrite();
-                            adaptor_.close();
+
                             close_connection_ = true;
                             if (!is_close_handler_called_)
                             {
@@ -656,6 +655,8 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                                     close_handler_(*this, fragment_.substr(message_start), status_code);
                                 is_close_handler_called_ = true;
                             }
+                            adaptor_.shutdown_readwrite();
+                            adaptor_.close();
 
                             // Close handler must have been called at this point so code does not matter
                             check_destroy();
