@@ -456,8 +456,10 @@ namespace crow
 
             for (Blueprint* bp : router_.blueprints())
             {
-                if (bp->static_dir().empty()) continue;
-
+                if (bp->static_dir().empty()) {
+                    CROW_LOG_ERROR << "Blueprint " << bp->prefix() << " and its sub-blueprints ignored due to empty static directory.";
+                    continue;
+                }
                 auto static_dir_ = crow::utility::normalize_path(bp->static_dir());
 
                 bp->new_rule_tagged<crow::black_magic::get_parameter_tag(CROW_STATIC_ENDPOINT)>(CROW_STATIC_ENDPOINT)([static_dir_](crow::response& res, std::string file_path_partial) {
