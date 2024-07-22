@@ -107,7 +107,7 @@
  *     .onopen([&](crow::websocket::connection& conn){
  *                do_something();
  *            })
- *     .onclose([&](crow::websocket::connection& conn, const std::string& reason){
+ *     .onclose([&](crow::websocket::connection& conn, const std::string& reason, uint16_t){
  *                 do_something();
  *             })
  *     .onmessage([&](crow::websocket::connection&, const std::string& data, bool is_binary){
