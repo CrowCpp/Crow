@@ -1095,7 +1095,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         Node head_;
     };
 
-    /// A blueprint can be considered a smaller section of a Crow app, specifically where the router is conecerned.
+    /// A blueprint can be considered a smaller section of a Crow app, specifically where the router is concerned.
 
     ///
     /// You can use blueprints to assign a common prefix to rules' prefix, set custom static and template folders, and set a custom catchall route.
@@ -1103,8 +1103,11 @@ namespace crow // NOTE: Already documented in "crow/app.h"
     class Blueprint
     {
     public:
-        Blueprint(const std::string& prefix):
-          prefix_(prefix){};
+        Blueprint(const std::string& prefix)
+          : prefix_(prefix),
+            static_dir_(prefix),
+            templates_dir_(prefix)
+            {};
 
         Blueprint(const std::string& prefix, const std::string& static_dir):
           prefix_(prefix), static_dir_(static_dir){};
