@@ -2669,6 +2669,8 @@ TEST_CASE("websocket")
               conn.send_ping("");
           else if (!isbin && message == "Hello")
               conn.send_text("Hello back");
+          else if (!isbin && message.empty())
+              conn.send_text("");
           else if (isbin && message == "Hello bin")
               conn.send_binary("Hello back bin");
       })
@@ -2730,6 +2732,17 @@ TEST_CASE("websocket")
         std::this_thread::sleep_for(std::chrono::milliseconds(5));
         std::string checkstring(std::string(buf).substr(0, 12));
         CHECK(checkstring == "\x81\x0AHello back");
+    }
+    //----------Empty Text----------
+    {
+        std::fill_n(buf, 2048, 0);
+        char text_message[2 + 0 + 1]("\x81\x00");
+
+        c.send(asio::buffer(text_message, 2));
+        c.receive(asio::buffer(buf, 2048));
+        std::this_thread::sleep_for(std::chrono::milliseconds(5));
+        std::string checkstring(std::string(buf).substr(0, 2));
+        CHECK(checkstring == text_message);
     }
     //----------Binary----------
     {
