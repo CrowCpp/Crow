@@ -5,6 +5,7 @@
 namespace crow
 {
     const std::unordered_map<std::string, std::string> mime_types{
+      {"gz", "application/gzip"},
       {"shtml", "text/html"},
       {"htm", "text/html"},
       {"html", "text/html"},
