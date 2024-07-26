@@ -1,12 +1,5 @@
 var NAVTREEINDEX3 =
 {
-"namespacecrow.html#afe3a72ef7c3edbf71d0bceacf02517c4ae488f04180a5804feba48dbc87f0787d":[0,0,0,56,24],
-"namespacecrow.html#afe3a72ef7c3edbf71d0bceacf02517c4ae60b4854b44ccfb2d92aa6f035171bb4":[0,0,0,56,33],
-"namespacecrow.html#afe3a72ef7c3edbf71d0bceacf02517c4ae8606d021da140a92c7eba8d9b8af84f":[0,0,0,56,10],
-"namespacecrow.html#afe3a72ef7c3edbf71d0bceacf02517c4af29973ceeff9e3672f9827d2b3615283":[0,0,0,56,9],
-"namespacecrow.html#afe3a72ef7c3edbf71d0bceacf02517c4af2a6c498fb90ee345d997f888fce3b18":[0,0,0,56,34],
-"namespacecrow.html#afe3a72ef7c3edbf71d0bceacf02517c4af31bbdd1b3e85bccd652680e16935819":[0,0,0,56,67],
-"namespacecrow.html#afe3a72ef7c3edbf71d0bceacf02517c4af510b97de4ace11844b85f23d0fc012f":[0,0,0,56,11],
 "namespacecrow.html#afe3a72ef7c3edbf71d0bceacf02517c4af7f93635f8e193a924ae4a691bb66b8f":[0,0,0,56,13],
 "namespacecrow.html#afe3a72ef7c3edbf71d0bceacf02517c4afd8731b039d3bcb16908de23a2932d9a":[0,0,0,56,64],
 "namespacecrow.html#afe3a72ef7c3edbf71d0bceacf02517c4afe20db8c57ee09e59fcc6ae857443e02":[0,0,0,56,15],
@@ -249,5 +242,12 @@ var NAVTREEINDEX3 =
 "structcrow_1_1detail_1_1partial__context_3_4.html#a4c2945874debb1b522dd6f81ee5b7865":[1,0,0,0,14,0],
 "structcrow_1_1detail_1_1routing__handler__call__helper_1_1_wrapped.html":[1,0,0,0,0,8],
 "structcrow_1_1detail_1_1routing__handler__call__helper_1_1_wrapped.html#a7c6cb901c6ee98bc70ee42fe26b1e404":[1,0,0,0,0,8,4],
-"structcrow_1_1detail_1_1routing__handler__call__helper_1_1_wrapped.html#a7f3fd6ee05bf001b80694565fa1d3439":[1,0,0,0,0,8,7]
+"structcrow_1_1detail_1_1routing__handler__call__helper_1_1_wrapped.html#a7f3fd6ee05bf001b80694565fa1d3439":[1,0,0,0,0,8,7],
+"structcrow_1_1detail_1_1routing__handler__call__helper_1_1_wrapped.html#ab8030d2b00c5a3f90c269423e1d26efe":[1,0,0,0,0,8,8],
+"structcrow_1_1detail_1_1routing__handler__call__helper_1_1_wrapped.html#ac0b5953ef5f2de56e33b46c0b2d53d11":[1,0,0,0,0,8,5],
+"structcrow_1_1detail_1_1routing__handler__call__helper_1_1_wrapped.html#adb1db474bf72cfc2e4b2f8572dd83286":[1,0,0,0,0,8,6],
+"structcrow_1_1detail_1_1routing__handler__call__helper_1_1_wrapped_1_1handler__type__helper.html":[1,0,0,0,0,8,0],
+"structcrow_1_1detail_1_1routing__handler__call__helper_1_1_wrapped_1_1handler__type__helper.html#a4c2a9a1065506309bd9b8a37d6518e3e":[1,0,0,0,0,8,0,1],
+"structcrow_1_1detail_1_1routing__handler__call__helper_1_1_wrapped_1_1handler__type__helper.html#a9914a4b757ed58f4a938a45b26774055":[1,0,0,0,0,8,0,0],
+"structcrow_1_1detail_1_1routing__handler__call__helper_1_1_wrapped_1_1handler__type__helper_3_012f01fc0d25e96ed100e3017a66fd4b36.html":[1,0,0,0,0,8,1]
 };
