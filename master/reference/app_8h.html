@@ -386,7 +386,7 @@ using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="nam
 <div class="line">    .onopen([&amp;](<a class="code" href="structcrow_1_1websocket_1_1connection.html">crow::websocket::connection</a>&amp; conn){</div>
 <div class="line">               do_something();</div>
 <div class="line">           })</div>
-<div class="line">    .onclose([&amp;](<a class="code" href="structcrow_1_1websocket_1_1connection.html">crow::websocket::connection</a>&amp; conn, <span class="keyword">const</span> std::string&amp; reason){</div>
+<div class="line">    .onclose([&amp;](<a class="code" href="structcrow_1_1websocket_1_1connection.html">crow::websocket::connection</a>&amp; conn, <span class="keyword">const</span> std::string&amp; reason, uint16_t){</div>
 <div class="line">                do_something();</div>
 <div class="line">            })</div>
 <div class="line">    .onmessage([&amp;](<a class="code" href="structcrow_1_1websocket_1_1connection.html">crow::websocket::connection</a>&amp;, <span class="keyword">const</span> std::string&amp; data, <span class="keywordtype">bool</span> is_binary){</div>
@@ -396,7 +396,7 @@ using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="nam
 <div class="line">                      do_something_else(data);</div>
 <div class="line">              });</div>
 <div class="ttc" id="aapp_8h_html_a8deb011ba0eae4684d6c6bb13014c926"><div class="ttname"><a href="app_8h.html#a8deb011ba0eae4684d6c6bb13014c926">CROW_WEBSOCKET_ROUTE</a></div><div class="ttdeci">#define CROW_WEBSOCKET_ROUTE(app, url)</div><div class="ttdoc">Defines WebSocket route for app.</div><div class="ttdef"><b>Definition:</b> app.h:123</div></div>
-<div class="ttc" id="astructcrow_1_1websocket_1_1connection_html"><div class="ttname"><a href="structcrow_1_1websocket_1_1connection.html">crow::websocket::connection</a></div><div class="ttdoc">A base class for websocket connection.</div><div class="ttdef"><b>Definition:</b> websocket.h:38</div></div>
+<div class="ttc" id="astructcrow_1_1websocket_1_1connection_html"><div class="ttname"><a href="structcrow_1_1websocket_1_1connection.html">crow::websocket::connection</a></div><div class="ttdoc">A base class for websocket connection.</div><div class="ttdef"><b>Definition:</b> websocket.h:62</div></div>
 </div><!-- fragment --><dl class="section see"><dt>See also</dt><dd><a href="https://crowcpp.org/master/guides/websockets/">Page of the guide "WebSockets"</a>. </dd></dl>
 
 </div>
@@ -408,7 +408,7 @@ using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="nam
 			<ul>
 				<li class="navelem"><a class="el" href="dir_d44c64559bbebec7f509842c48db8b23.html">include</a></li><li class="navelem"><a class="el" href="dir_d22c1cb87b72f01e1a7f207eb3bfd1ca.html">crow</a></li><li class="navelem"><a class="el" href="app_8h.html">app.h</a></li>
 				<li class="footer">
-					Generated on Fri Jul 26 2024 for Crow by <a href="http://www.doxygen.org/index.html">
+					Generated on Mon Jul 29 2024 for Crow by <a href="http://www.doxygen.org/index.html">
 					<img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.9.1.
 					Dark theme by <a href="http://majerle.eu" target="_new">Tilen Majerle</a>. Edited by <a href="https://github.com/The-EDev" target="_new">Farook Al-Sammarraie</a>. All rights reserved.
 				</li>
