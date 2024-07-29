@@ -2669,10 +2669,12 @@ TEST_CASE("websocket")
               conn.send_ping("");
           else if (!isbin && message == "Hello")
               conn.send_text("Hello back");
+          else if (!isbin && message.empty())
+              conn.send_text("");
           else if (isbin && message == "Hello bin")
               conn.send_binary("Hello back bin");
       })
-      .onclose([&](websocket::connection&, const std::string&) {
+      .onclose([&](websocket::connection&, const std::string&, uint16_t) {
           CROW_LOG_INFO << "Closing websocket";
       });
 
@@ -2730,6 +2732,17 @@ TEST_CASE("websocket")
         std::this_thread::sleep_for(std::chrono::milliseconds(5));
         std::string checkstring(std::string(buf).substr(0, 12));
         CHECK(checkstring == "\x81\x0AHello back");
+    }
+    //----------Empty Text----------
+    {
+        std::fill_n(buf, 2048, 0);
+        char text_message[2 + 0 + 1]("\x81\x00");
+
+        c.send(asio::buffer(text_message, 2));
+        c.receive(asio::buffer(buf, 2048));
+        std::this_thread::sleep_for(std::chrono::milliseconds(5));
+        std::string checkstring(std::string(buf).substr(0, 2));
+        CHECK(checkstring == text_message);
     }
     //----------Binary----------
     {
@@ -2809,6 +2822,192 @@ TEST_CASE("websocket")
     app.stop();
 } // websocket
 
+TEST_CASE("websocket_close")
+{
+    static std::string http_message = "GET /ws HTTP/1.1\r\nConnection: keep-alive, Upgrade\r\nupgrade: websocket\r\nSec-WebSocket-Key: dGhlIHNhbXBsZSBub25jZQ==\r\nSec-WebSocket-Version: 13\r\nHost: localhost\r\n\r\n";
+
+    static bool connected{false};
+    websocket::connection* connection = nullptr;
+    uint32_t close_calls = 0;
+    uint16_t last_status_code = 0;
+    CROW_LOG_INFO << "Setting up app!\n";
+    SimpleApp app;
+
+    CROW_WEBSOCKET_ROUTE(app, "/ws")
+      .onaccept([&](const crow::request& req, void**) {
+          CROW_LOG_INFO << "Accepted websocket with URL " << req.url;
+          return true;
+      })
+      .onopen([&](websocket::connection& conn) {
+          connected = true;
+          connection = &conn;
+          CROW_LOG_INFO << "Connected websocket and value is " << connected;
+      })
+      .onmessage([&](websocket::connection& conn, const std::string& message, bool) {
+          CROW_LOG_INFO << "Message is \"" << message << '\"';
+          if (message == "quit-default")
+              conn.close();
+          else if (message == "quit-custom")
+              conn.close("custom", crow::websocket::StartStatusCodesForPrivateUse + 10u);
+      })
+      .onclose([&](websocket::connection& conn, const std::string&, uint16_t status_code) {
+          // There should just be one connection
+          CHECK(&conn == connection);
+          CHECK_FALSE(conn.get_remote_ip().empty());
+          ++close_calls;
+          last_status_code = status_code;
+          CROW_LOG_INFO << "Closing websocket";
+      });
+
+    app.validate();
+
+    CROW_LOG_WARNING << "Starting app!\n";
+    auto _ = app.bindaddr(LOCALHOST_ADDRESS).port(45453).run_async();
+    app.wait_for_server_start();
+    CROW_LOG_WARNING << "App started!\n";
+    asio::io_service is;
+
+    asio::ip::tcp::socket c(is);
+    c.connect(asio::ip::tcp::endpoint(
+      asio::ip::address::from_string(LOCALHOST_ADDRESS), 45453));
+
+    CROW_LOG_WARNING << "Connected!\n";
+
+    char buf[2048];
+
+    //----------Handshake----------
+    {
+        std::fill_n(buf, 2048, 0);
+        c.send(asio::buffer(http_message));
+
+        c.receive(asio::buffer(buf, 2048));
+        std::this_thread::sleep_for(std::chrono::milliseconds(5));
+        CHECK(connected);
+    }
+
+    CHECK(close_calls == 0);
+
+    SECTION("normal close from client")
+    {
+        std::fill_n(buf, 2048, 0);
+        // Close message with, len = 2, status code = 1000
+        char close_message[5]("\x88\x02\x03\xE8");
+        c.send(asio::buffer(close_message, 4));
+        c.receive(asio::buffer(buf, 2048));
+        std::this_thread::sleep_for(std::chrono::milliseconds(5));
+        CHECK((int)(unsigned char)buf[0] == 0x88);
+        CHECK((int)(unsigned char)buf[1] == 0x02);
+        CHECK((int)(unsigned char)buf[2] == 0x03);
+        CHECK((int)(unsigned char)buf[3] == 0xE8);
+
+        CHECK(close_calls == 1);
+        CHECK(last_status_code == 1000);
+    }
+
+    SECTION("empty close from client")
+    {
+        std::fill_n(buf, 2048, 0);
+        // Close message with, len = 0, status code = N/A -> To application give no status code present
+        char close_message[3]("\x88\x00");
+
+        c.send(asio::buffer(close_message, 2));
+        c.receive(asio::buffer(buf, 2048));
+        std::this_thread::sleep_for(std::chrono::milliseconds(5));
+        CHECK((int)(unsigned char)buf[0] == 0x88);
+
+        CHECK(close_calls == 1);
+        CHECK(last_status_code == crow::websocket::NoStatusCodePresent);
+    }
+
+    SECTION("close with message from client")
+    {
+        std::fill_n(buf, 2048, 0);
+        // Close message with, len = 2, status code = 1001
+        char close_message[9]("\x88\x06\x03\xE9" "fail");
+
+        c.send(asio::buffer(close_message, 8));
+        c.receive(asio::buffer(buf, 2048));
+        std::this_thread::sleep_for(std::chrono::milliseconds(5));
+        CHECK((int)(unsigned char)buf[0] == 0x88);
+        CHECK((int)(unsigned char)buf[1] == 0x06);
+        CHECK((int)(unsigned char)buf[2] == 0x03);
+        CHECK((int)(unsigned char)buf[3] == 0xE9);
+        std::string checkstring(std::string(buf).substr(4, 4));
+        CHECK(checkstring == "fail");
+
+        CHECK(close_calls == 1);
+        CHECK(last_status_code == 1001);
+    }
+
+    SECTION("normal close from server")
+    {
+        //----------Text----------
+        std::fill_n(buf, 2048, 0);
+        char text_message[2 + 12 + 1]("\x81\x0C"
+                                     "quit-default");
+
+        c.send(asio::buffer(text_message, 14));
+        c.receive(asio::buffer(buf, 2048));
+        std::this_thread::sleep_for(std::chrono::milliseconds(5));
+        CHECK((int)(unsigned char)buf[0] == 0x88);
+        // length is message + 2 for status code
+        CHECK((int)(unsigned char)buf[1] == 0x6);
+
+        uint16_t expected_code = websocket::NormalClosure;
+        CHECK((int)(unsigned char)buf[2] == expected_code >> 8);
+        CHECK((int)(unsigned char)buf[3] == (expected_code & 0xff));
+        std::string checkstring(std::string(buf).substr(4, 4));
+        CHECK(checkstring == "quit");
+
+        CHECK(close_calls == 0);
+
+        // Reply with client close
+        char client_close_response[9]("\x88\x06\x0\x0quit");
+        client_close_response[2] = buf[2];
+        client_close_response[3] = buf[3];
+
+        c.send(asio::buffer(client_close_response, 8));
+        std::this_thread::sleep_for(std::chrono::milliseconds(5));
+        CHECK(close_calls == 1);
+        CHECK(last_status_code == expected_code);
+    }
+
+    SECTION("custom close from server")
+    {
+        //----------Text----------
+        std::fill_n(buf, 2048, 0);
+        char text_message[2 + 11 + 1]("\x81\x0B"
+                                      "quit-custom");
+
+        c.send(asio::buffer(text_message, 13));
+        c.receive(asio::buffer(buf, 2048));
+        std::this_thread::sleep_for(std::chrono::milliseconds(5));
+        CHECK((int)(unsigned char)buf[0] == 0x88);
+        // length is message + 2 for status code
+        CHECK((int)(unsigned char)buf[1] == 0x8);
+        uint16_t expected_code = 4010;
+        CHECK((int)(unsigned char)buf[2] == expected_code >> 8);
+        CHECK((int)(unsigned char)buf[3] == (expected_code & 0xff));
+        std::string checkstring(std::string(buf).substr(4, 6));
+        CHECK(checkstring == "custom");
+
+        CHECK(close_calls == 0);
+
+        // Reply with client close
+        char client_close_response[11]("\x88\x08\x0\x0" "custom");
+        client_close_response[2] = buf[2];
+        client_close_response[3] = buf[3];
+
+        c.send(asio::buffer(client_close_response, 10));
+        std::this_thread::sleep_for(std::chrono::milliseconds(5));
+        CHECK(close_calls == 1);
+        CHECK(last_status_code == expected_code);
+    }
+
+    CROW_LOG_WARNING << "Stopping app!\n";
+    app.stop();
+}
+
 TEST_CASE("websocket_missing_host")
 {
     static std::string http_message = "GET /ws HTTP/1.1\r\nConnection: keep-alive, Upgrade\r\nupgrade: websocket\r\nSec-WebSocket-Key: dGhlIHNhbXBsZSBub25jZQ==\r\nSec-WebSocket-Version: 13\r\n\r\n";
@@ -2835,7 +3034,7 @@ TEST_CASE("websocket_missing_host")
           else if (isbin && message == "Hello bin")
               conn.send_binary("Hello back bin");
       })
-      .onclose([&](websocket::connection&, const std::string&) {
+      .onclose([&](websocket::connection&, const std::string&, uint16_t) {
           CROW_LOG_INFO << "Closing websocket";
       });
 
@@ -2887,7 +3086,7 @@ TEST_CASE("websocket_max_payload")
           else if (isbin && message == "Hello bin")
               conn.send_binary("Hello back bin");
       })
-      .onclose([&](websocket::connection&, const std::string&) {
+      .onclose([&](websocket::connection&, const std::string&, uint16_t) {
           CROW_LOG_INFO << "Closing websocket";
       });
 
