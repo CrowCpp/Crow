@@ -119,14 +119,14 @@ namespace crow
         /// The parsed multipart request/response
         struct message_view
         {
-            ci_map headers;               ///< The request/response headers
-            std::string boundary;         ///< The text boundary that separates different `parts`
-            std::vector<part_view> parts; ///< The individual parts of the message
-            mp_view_map part_map;         ///< The individual parts of the message, organized in a map with the `name` header parameter being the key
+            std::reference_wrapper<const ci_map> headers; ///< The request/response headers
+            std::string boundary;                         ///< The text boundary that separates different `parts`
+            std::vector<part_view> parts;                 ///< The individual parts of the message
+            mp_view_map part_map;                         ///< The individual parts of the message, organized in a map with the `name` header parameter being the key
 
             const std::string& get_header_value(const std::string& key) const
             {
-                return crow::get_header_value(headers, key);
+                return crow::get_header_value(headers.get(), key);
             }
 
             part_view get_part_by_name(const std::string_view name)
