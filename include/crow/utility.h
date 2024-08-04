@@ -8,6 +8,7 @@
 #include <cctype>
 #include <functional>
 #include <string>
+#include <string_view>
 #include <sstream>
 #include <unordered_map>
 #include <random>
@@ -826,7 +827,7 @@ namespace crow
          * Always returns false if strings differ in size.
          * Defaults to case-insensitive comparison.
          */
-        inline static bool string_equals(const std::string& l, const std::string& r, bool case_sensitive = false)
+        inline static bool string_equals(const std::string_view l, const std::string_view r, bool case_sensitive = false)
         {
             if (l.length() != r.length())
                 return false;

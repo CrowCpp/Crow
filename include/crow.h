@@ -16,6 +16,7 @@
 #include "crow/parser.h"
 #include "crow/http_response.h"
 #include "crow/multipart.h"
+#include "crow/multipart_view.h"
 #include "crow/routing.h"
 #include "crow/middleware.h"
 #include "crow/middleware_context.h"

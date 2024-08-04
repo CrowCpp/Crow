@@ -17,7 +17,7 @@ The structure of a multipart request is typically consistent of:<br>
 - `--<boundary>--`<br><br>
 
 ## Multipart messages in Crow
-Crow supports multipart requests and responses though `crow::multipart::message`.<br>
+Crow supports multipart requests and responses though `crow::multipart::message` and `crow::multipart::message_view`, where `crow::multipart::message` owns the contents of the message and `crow::multipart::message_view` stores views into its parts.<br>
 A message can be created either by defining the headers, boundary, and individual parts and using them to create the message. or simply by reading a `crow::request`.<br><br>
 
 Once a multipart message has been made, the individual parts can be accessed throughout `msg.parts`, `parts` is an `std::vector`.<br><br>
@@ -25,7 +25,7 @@ Once a multipart message has been made, the individual parts can be accessed thr
 <span class="tag">[:octicons-feed-tag-16: v1.0](https://github.com/CrowCpp/Crow/releases/v1.0)</span>
 
 
-Part headers are organized in a similar way to request and response headers, and can be retrieved via `crow::multipart::get_header_object("header-key")`. This function returns a `crow::multipart::header` object.<br><br>
+Part headers are organized in a similar way to request and response headers, and can be retrieved via `crow::multipart::get_header_object("header-key")`. This function returns a `crow::multipart::header` object for owning message and `crow::multipart::header_view` for non-owning message.<br><br>
 
 The message's individual body parts can be accessed by name using `msg.get_part_by_name("part-name")`.<br><br>
 
