@@ -8,7 +8,6 @@
 
 #include "crow/http_request.h"
 #include "crow/multipart.h" // for crow::multipart::dd
-#include "crow/returnable.h"
 #include "crow/ci_map.h"
 
 namespace crow
@@ -118,7 +117,7 @@ namespace crow
         using mp_view_map = std::unordered_multimap<std::string_view, part_view, ci_hash, ci_key_eq>;
 
         /// The parsed multipart request/response
-        struct message_view : public returnable
+        struct message_view
         {
             ci_map headers;               ///< The request/response headers
             std::string boundary;         ///< The text boundary that separates different `parts`
@@ -154,7 +153,7 @@ namespace crow
             }
 
             /// Represent all parts as a string (**does not include message headers**)
-            std::string dump() const override
+            std::string dump() const
             {
                 std::ostringstream str;
                 str << *this;
@@ -171,11 +170,9 @@ namespace crow
 
             /// Default constructor using default values
             message_view(const ci_map& headers, const std::string& boundary, const std::vector<part_view>& sections):
-              returnable("multipart/form-data; boundary=CROW-BOUNDARY"), headers(headers), boundary(boundary), parts(sections)
+              headers(headers), boundary(boundary), parts(sections)
             {
-                if (!boundary.empty())
-                    content_type = "multipart/form-data; boundary=" + boundary;
-                for (auto& item : parts)
+                for (const part_view& item : parts)
                 {
                     part_map.emplace(
                       (get_header_object(item.headers, "Content-Disposition").params.find("name")->second),
@@ -185,12 +182,9 @@ namespace crow
 
             /// Create a multipart message from a request data
             explicit message_view(const request& req):
-              returnable("multipart/form-data; boundary=CROW-BOUNDARY"),
               headers(req.headers),
               boundary(get_boundary(get_header_value("Content-Type")))
             {
-                if (!boundary.empty())
-                    content_type = "multipart/form-data; boundary=" + boundary;
                 parse_body(req.body, parts, part_map);
             }
 
