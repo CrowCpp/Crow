@@ -1,5 +1,12 @@
 var NAVTREEINDEX4 =
 {
+"structcrow_1_1detail_1_1middleware__indices.html#a3c23c2fd745612f1f126b63fbec1a547":[1,0,0,0,16,2],
+"structcrow_1_1detail_1_1middleware__indices.html#a539f94cc6a5bc5a34e1b04bca251b06e":[1,0,0,0,16,6],
+"structcrow_1_1detail_1_1middleware__indices.html#a651af159fea3392c2df7e7146079ad8e":[1,0,0,0,16,4],
+"structcrow_1_1detail_1_1middleware__indices.html#a736f04d2df37ccbee5650f58fb36d4fc":[1,0,0,0,16,7],
+"structcrow_1_1detail_1_1middleware__indices.html#aad27a0ce958bb8e27745074c981343bf":[1,0,0,0,16,0],
+"structcrow_1_1detail_1_1middleware__indices.html#acb908d4e9aa55225ff3e9f7de9463977":[1,0,0,0,16,5],
+"structcrow_1_1detail_1_1middleware__indices.html#ad18f7bb499a4f6f7164a9c606e6139eb":[1,0,0,0,16,3],
 "structcrow_1_1detail_1_1middleware__indices.html#af39a30d7ee959d091ff54ffe7cb0c953":[1,0,0,0,16,1],
 "structcrow_1_1detail_1_1partial__context.html":[1,0,0,0,13],
 "structcrow_1_1detail_1_1partial__context.html#a03e97f4c19ad975765f09af6e097ca46":[1,0,0,0,13,1],
@@ -242,12 +249,5 @@ var NAVTREEINDEX4 =
 "structcrow_1_1websocket_1_1_connection_1_1_weak_wrapped_message.html":[1,0,0,5,1,1],
 "structcrow_1_1websocket_1_1_connection_1_1_weak_wrapped_message.html#a63dd07fc4d3cff7ce8ce240fbdb713d8":[1,0,0,5,1,1,0],
 "structcrow_1_1websocket_1_1_connection_1_1_weak_wrapped_message.html#ad9fc0a2153553f39cd40ea1639e08179":[1,0,0,5,1,1,1],
-"structcrow_1_1websocket_1_1_connection_1_1_weak_wrapped_message.html#ae78a48466c5a8d1bf6effa67352a54c6":[1,0,0,5,1,1,2],
-"structcrow_1_1websocket_1_1connection.html":[1,0,0,5,0],
-"structcrow_1_1websocket_1_1connection.html#a0d405c61d1476dd3958acac216b148a3":[1,0,0,5,0,6],
-"structcrow_1_1websocket_1_1connection.html#a301af57187b6d7419d1825c8a15c22f6":[1,0,0,5,0,7],
-"structcrow_1_1websocket_1_1connection.html#a3980e17a609909a5e2140dd897fa704e":[1,0,0,5,0,2],
-"structcrow_1_1websocket_1_1connection.html#a3ed7b66fc6b722fa9f56fb63a1e24ad5":[1,0,0,5,0,5],
-"structcrow_1_1websocket_1_1connection.html#a75b25cfa1f5f8fd3bbae01b5637097f6":[1,0,0,5,0,8],
-"structcrow_1_1websocket_1_1connection.html#aab48a353ea946375993040ff318eb515":[1,0,0,5,0,1]
+"structcrow_1_1websocket_1_1_connection_1_1_weak_wrapped_message.html#ae78a48466c5a8d1bf6effa67352a54c6":[1,0,0,5,1,1,2]
 };
