@@ -312,7 +312,7 @@ namespace crow
         }
 
         /// \brief Get the port that Crow will handle requests on
-        std::uint16_t port()
+        std::uint16_t port() const
         {
             return port_;
         }
