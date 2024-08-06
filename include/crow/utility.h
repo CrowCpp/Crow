@@ -466,6 +466,19 @@ namespace crow
         struct contains_decayed<Tp> : std::false_type
         {};
 
+        template<typename... Tsuper>
+        struct type_pack
+        {
+            template<typename... Tsub>
+            struct is_superset_of : std::true_type
+            {};
+
+            template<typename T, typename... Tsub>
+            struct is_superset_of<T, Tsub...> :
+                std::conditional<contains_decayed<T, Tsuper...>::value, is_superset_of<Tsub...>, std::false_type>::type
+            {};
+        };
+
         template<typename T>
         struct empty_context
         {};
