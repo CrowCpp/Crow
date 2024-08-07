@@ -37,21 +37,20 @@ namespace crow // NOTE: Already documented in "crow/app.h"
     using error_code = asio::error_code;
 #endif
     using tcp = asio::ip::tcp;
+    using stream_protocol = asio::local::stream_protocol;
 
-    template<typename Handler, typename Adaptor = SocketAdaptor, typename... Middlewares>
+    template<typename Handler, typename Acceptor = TCPAcceptor, typename Adaptor = SocketAdaptor, typename... Middlewares>
     class Server
     {
     public:
-        Server(Handler* handler, std::string bindaddr, uint16_t port, std::string server_name = std::string("Crow/") + VERSION, std::tuple<Middlewares...>* middlewares = nullptr, uint16_t concurrency = 1, uint8_t timeout = 5, typename Adaptor::context* adaptor_ctx = nullptr):
-          acceptor_(io_service_, tcp::endpoint(asio::ip::address::from_string(bindaddr), port)),
+        Server(Handler* handler, typename Acceptor::endpoint endpoint, std::string server_name = std::string("Crow/") + VERSION, std::tuple<Middlewares...>* middlewares = nullptr, uint16_t concurrency = 1, uint8_t timeout = 5, typename Adaptor::context* adaptor_ctx = nullptr):
+          acceptor_(io_service_, endpoint),
           signals_(io_service_),
           tick_timer_(io_service_),
           handler_(handler),
           concurrency_(concurrency),
           timeout_(timeout),
           server_name_(server_name),
-          port_(port),
-          bindaddr_(bindaddr),
           task_queue_length_pool_(concurrency_ - 1),
           middlewares_(middlewares),
           adaptor_ctx_(adaptor_ctx)
@@ -150,11 +149,10 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                   });
             }
 
-            port_ = acceptor_.local_endpoint().port();
+            port_ = acceptor_.port();
             handler_->port(port_);
 
-
-            CROW_LOG_INFO << server_name_ << " server is running at " << (handler_->ssl_used() ? "https://" : "http://") << bindaddr_ << ":" << acceptor_.local_endpoint().port() << " using " << concurrency_ << " threads";
+            CROW_LOG_INFO << server_name_ << " server is running at " << acceptor_.url_display(handler_->ssl_used()) << " using " << concurrency_ << " threads";
             CROW_LOG_INFO << "Call `app.loglevel(crow::LogLevel::Warning)` to hide Info level logs.";
 
             signals_.async_wait(
@@ -240,7 +238,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                   is, handler_, server_name_, middlewares_,
                   get_cached_date_str_pool_[service_idx], *task_timer_pool_[service_idx], adaptor_ctx_, task_queue_length_pool_[service_idx]);
 
-                acceptor_.async_accept(
+                acceptor_.raw_acceptor().async_accept(
                   p->socket(),
                   [this, p, &is, service_idx](error_code ec) {
                       if (!ec)
@@ -273,7 +271,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         asio::io_service io_service_;
         std::vector<detail::task_timer*> task_timer_pool_;
         std::vector<std::function<std::string()>> get_cached_date_str_pool_;
-        tcp::acceptor acceptor_;
+        Acceptor acceptor_;
         bool shutting_down_ = false;
         bool server_started_{false};
         std::condition_variable cv_started_;
@@ -288,6 +286,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         std::string server_name_;
         uint16_t port_;
         std::string bindaddr_;
+        bool use_unix_;
         std::vector<std::atomic<unsigned int>> task_queue_length_pool_;
 
         std::chrono::milliseconds tick_interval_;

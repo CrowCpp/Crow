@@ -202,11 +202,12 @@ namespace crow
         using self_t = Crow;
 
         /// \brief The HTTP server
-        using server_t = Server<Crow, SocketAdaptor, Middlewares...>;
-
+        using server_t = Server<Crow, TCPAcceptor, SocketAdaptor, Middlewares...>;
+        /// \brief An HTTP server that runs on unix domain socket
+        using unix_server_t = Server<Crow, UnixSocketAcceptor, UnixSocketAdaptor, Middlewares...>;
 #ifdef CROW_ENABLE_SSL
         /// \brief An HTTP server that runs on SSL with an SSLAdaptor
-        using ssl_server_t = Server<Crow, SSLAdaptor, Middlewares...>;
+        using ssl_server_t = Server<Crow, TCPAcceptor, SSLAdaptor, Middlewares...>;
 #endif
         Crow()
         {}
@@ -340,6 +341,20 @@ namespace crow
 
         /// \brief Get the address that Crow will handle requests on
         std::string bindaddr()
+        {
+            return bindaddr_;
+        }
+
+        /// \brief Disable tcp/ip and use unix domain socket instead
+        self_t& local_socket_path(std::string path)
+        {
+            bindaddr_ = path;
+            use_unix_ = true;
+            return *this;
+        }
+
+        /// \brief Get the unix domain socket path
+        std::string local_socket_path()
         {
             return bindaddr_;
         }
@@ -504,7 +519,8 @@ namespace crow
 #ifdef CROW_ENABLE_SSL
             if (ssl_used_)
             {
-                ssl_server_ = std::move(std::unique_ptr<ssl_server_t>(new ssl_server_t(this, bindaddr_, port_, server_name_, &middlewares_, concurrency_, timeout_, &ssl_context_)));
+                TCPAcceptor::endpoint endpoint(asio::ip::address::from_string(bindaddr_), port_);
+                ssl_server_ = std::move(std::unique_ptr<ssl_server_t>(new ssl_server_t(this, endpoint, server_name_, &middlewares_, concurrency_, timeout_, &ssl_context_)));
                 ssl_server_->set_tick_function(tick_interval_, tick_function_);
                 ssl_server_->signal_clear();
                 for (auto snum : signals_)
@@ -517,14 +533,30 @@ namespace crow
             else
 #endif
             {
-                server_ = std::move(std::unique_ptr<server_t>(new server_t(this, bindaddr_, port_, server_name_, &middlewares_, concurrency_, timeout_, nullptr)));
-                server_->set_tick_function(tick_interval_, tick_function_);
-                for (auto snum : signals_)
+                if (use_unix_)
                 {
-                    server_->signal_add(snum);
+                    UnixSocketAcceptor::endpoint endpoint(bindaddr_);
+                    unix_server_ = std::move(std::unique_ptr<unix_server_t>(new unix_server_t(this, endpoint, server_name_, &middlewares_, concurrency_, timeout_, nullptr)));
+                    unix_server_->set_tick_function(tick_interval_, tick_function_);
+                    for (auto snum : signals_)
+                    {
+                        unix_server_->signal_add(snum);
+                    }
+                    notify_server_start();
+                    unix_server_->run();
                 }
-                notify_server_start();
-                server_->run();
+                else
+                {
+                    TCPAcceptor::endpoint endpoint(asio::ip::address::from_string(bindaddr_), port_);
+                    server_ = std::move(std::unique_ptr<server_t>(new server_t(this, endpoint, server_name_, &middlewares_, concurrency_, timeout_, nullptr)));
+                    server_->set_tick_function(tick_interval_, tick_function_);
+                    for (auto snum : signals_)
+                    {
+                        server_->signal_add(snum);
+                    }
+                    notify_server_start();
+                    server_->run();
+                }
             }
         }
 
@@ -558,6 +590,7 @@ namespace crow
                     websocket->close("Server Application Terminated");
                 }
                 if (server_) { server_->stop(); }
+                if (unix_server_) { unix_server_->stop(); }
             }
         }
 
@@ -698,6 +731,8 @@ namespace crow
             }
             if (server_)
                 server_->wait_for_start();
+            else if (unix_server_)
+                unix_server_->wait_for_start();
 #ifdef CROW_ENABLE_SSL
             else if (ssl_server_)
                 ssl_server_->wait_for_start();
@@ -737,6 +772,7 @@ namespace crow
         uint64_t max_payload_{UINT64_MAX};
         std::string server_name_ = std::string("Crow/") + VERSION;
         std::string bindaddr_ = "0.0.0.0";
+        bool use_unix_ = false;
         size_t res_stream_threshold_ = 1048576;
         Router router_;
         bool static_routes_added_{false};
@@ -758,6 +794,7 @@ namespace crow
 #endif
 
         std::unique_ptr<server_t> server_;
+        std::unique_ptr<unix_server_t> unix_server_;
 
         std::vector<int> signals_{SIGINT, SIGTERM};
 
