@@ -1,7 +1,9 @@
 #pragma once
 
+#include <string_view>
 #include <locale>
 #include <unordered_map>
+
 #include "crow/utility.h"
 
 namespace crow
@@ -9,7 +11,7 @@ namespace crow
     /// Hashing function for ci_map (unordered_multimap).
     struct ci_hash
     {
-        size_t operator()(const std::string& key) const
+        size_t operator()(const std::string_view key) const
         {
             std::size_t seed = 0;
             std::locale locale;
@@ -31,7 +33,7 @@ namespace crow
     /// Equals function for ci_map (unordered_multimap).
     struct ci_key_eq
     {
-        bool operator()(const std::string& l, const std::string& r) const
+        bool operator()(const std::string_view l, const std::string_view r) const
         {
             return utility::string_equals(l, r);
         }
