@@ -7,7 +7,8 @@
 #include <sstream>
 
 #include "crow/http_request.h"
-#include "crow/multipart.h" // for crow::multipart::dd
+// for crow::multipart::dd
+#include "crow/multipart.h"
 #include "crow/ci_map.h"
 
 namespace crow
