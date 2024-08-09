@@ -27,7 +27,7 @@ namespace crow
             operator int() const
             {
                 int result = 0;
-                std::from_chars(value.begin(), value.end(), result);
+                std::from_chars(value.data(), value.data() + value.size(), result);
                 return result;
             }
 
@@ -81,7 +81,7 @@ namespace crow
             operator int() const
             {
                 int result = 0;
-                std::from_chars(body.begin(), body.end(), result);
+                std::from_chars(body.data(), body.data() + body.size(), result);
                 return result;
             }
 
