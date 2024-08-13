@@ -95,12 +95,13 @@ if(CROW_ENABLE_SSL)
 endif()
 
 if(CROW_AMALGAMATE)
+	file(GLOB CROW_AMALGAMATED_HEADERS CONFIGURE_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/include/*.h ${CMAKE_CURRENT_SOURCE_DIR}/include/crow/*.h ${CMAKE_CURRENT_SOURCE_DIR}/include/crow/middlewares/*.h)
 	add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/crow_all.h
 		COMMAND python3 ${CMAKE_CURRENT_SOURCE_DIR}/scripts/merge_all.py
 		${CMAKE_CURRENT_SOURCE_DIR}/include
 		${CMAKE_CURRENT_BINARY_DIR}/crow_all.h
 		WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-		DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/include/*.h ${CMAKE_CURRENT_SOURCE_DIR}/include/crow/*.h ${CMAKE_CURRENT_SOURCE_DIR}/include/crow/middlewares/*.h
+		DEPENDS ${CROW_AMALGAMATED_HEADERS}
 	)
 
 	add_custom_target(crow_amalgamated ALL DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/crow_all.h)
