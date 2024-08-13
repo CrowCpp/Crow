@@ -165,7 +165,7 @@ namespace crow
             std::string dump(int part_) const
             {
                 std::ostringstream str;
-                str << parts[part_];
+                str << parts.at(part_);
                 return std::move(str).str();
             }
 
