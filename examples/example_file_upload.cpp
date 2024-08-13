@@ -6,7 +6,7 @@ int main()
 
     CROW_ROUTE(app, "/uploadfile")
       .methods(crow::HTTPMethod::Post)([](const crow::request& req) {
-          crow::multipart::message file_message(req);
+          crow::multipart::message_view file_message(req);
           for (const auto& part : file_message.part_map)
           {
               const auto& part_name = part.first;
@@ -27,7 +27,7 @@ int main()
                       CROW_LOG_ERROR << "Part with name \"InputFile\" should have a file";
                       return crow::response(400);
                   }
-                  const std::string outfile_name = params_it->second;
+                  const std::string outfile_name{params_it->second};
 
                   for (const auto& part_header : part_value.headers)
                   {
