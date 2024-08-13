@@ -52,7 +52,11 @@ var annotated_dup =
       [ "multipart", "namespacecrow_1_1multipart.html", [
         [ "header", "structcrow_1_1multipart_1_1header.html", "structcrow_1_1multipart_1_1header" ],
         [ "part", "structcrow_1_1multipart_1_1part.html", "structcrow_1_1multipart_1_1part" ],
-        [ "message", "structcrow_1_1multipart_1_1message.html", "structcrow_1_1multipart_1_1message" ]
+        [ "message", "structcrow_1_1multipart_1_1message.html", "structcrow_1_1multipart_1_1message" ],
+        [ "header_view", "structcrow_1_1multipart_1_1header__view.html", "structcrow_1_1multipart_1_1header__view" ],
+        [ "padded", "structcrow_1_1multipart_1_1padded.html", "structcrow_1_1multipart_1_1padded" ],
+        [ "part_view", "structcrow_1_1multipart_1_1part__view.html", "structcrow_1_1multipart_1_1part__view" ],
+        [ "message_view", "structcrow_1_1multipart_1_1message__view.html", "structcrow_1_1multipart_1_1message__view" ]
       ] ],
       [ "mustache", "namespacecrow_1_1mustache.html", [
         [ "invalid_template_exception", "classcrow_1_1mustache_1_1invalid__template__exception.html", "classcrow_1_1mustache_1_1invalid__template__exception" ],

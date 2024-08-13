@@ -119,6 +119,18 @@ Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structcrow_1_1multipart_1_1message.html">message</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">The parsed multipart request/response.  <a href="structcrow_1_1multipart_1_1message.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structcrow_1_1multipart_1_1header__view.html">header_view</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">The first part in a section, contains metadata about the part.  <a href="structcrow_1_1multipart_1_1header__view.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structcrow_1_1multipart_1_1padded.html">padded</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">String padded with the specified padding (double quotes by default)  <a href="structcrow_1_1multipart_1_1padded.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structcrow_1_1multipart_1_1part__view.html">part_view</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">One part of the multipart message.  <a href="structcrow_1_1multipart_1_1part__view.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structcrow_1_1multipart_1_1message__view.html">message_view</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">The parsed multipart request/response.  <a href="structcrow_1_1multipart_1_1message__view.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="typedef-members"></a>
 Typedefs</h2></td></tr>
@@ -130,6 +142,14 @@ using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="nam
 using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacecrow_1_1multipart.html#a071bb6d802c0edd823147fa6acaebb2b">mp_map</a> = std::unordered_multimap&lt; std::string, <a class="el" href="structcrow_1_1multipart_1_1part.html">part</a>, <a class="el" href="structcrow_1_1ci__hash.html">ci_hash</a>, <a class="el" href="structcrow_1_1ci__key__eq.html">ci_key_eq</a> &gt;</td></tr>
 <tr class="memdesc:a071bb6d802c0edd823147fa6acaebb2b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Multipart map (key is the name parameter). <br /></td></tr>
 <tr class="separator:a071bb6d802c0edd823147fa6acaebb2b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a560fd4c66cfa4114e644cade74e90960"><td class="memItemLeft" align="right" valign="top"><a id="a560fd4c66cfa4114e644cade74e90960"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacecrow_1_1multipart.html#a560fd4c66cfa4114e644cade74e90960">mph_view_map</a> = std::unordered_multimap&lt; std::string_view, <a class="el" href="structcrow_1_1multipart_1_1header__view.html">header_view</a>, <a class="el" href="structcrow_1_1ci__hash.html">ci_hash</a>, <a class="el" href="structcrow_1_1ci__key__eq.html">ci_key_eq</a> &gt;</td></tr>
+<tr class="memdesc:a560fd4c66cfa4114e644cade74e90960"><td class="mdescLeft">&#160;</td><td class="mdescRight">Multipart header map (key is header key). <br /></td></tr>
+<tr class="separator:a560fd4c66cfa4114e644cade74e90960"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a15fb03e1d837c1cc48cc990198924d23"><td class="memItemLeft" align="right" valign="top"><a id="a15fb03e1d837c1cc48cc990198924d23"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacecrow_1_1multipart.html#a15fb03e1d837c1cc48cc990198924d23">mp_view_map</a> = std::unordered_multimap&lt; std::string_view, <a class="el" href="structcrow_1_1multipart_1_1part__view.html">part_view</a>, <a class="el" href="structcrow_1_1ci__hash.html">ci_hash</a>, <a class="el" href="structcrow_1_1ci__key__eq.html">ci_key_eq</a> &gt;</td></tr>
+<tr class="memdesc:a15fb03e1d837c1cc48cc990198924d23"><td class="mdescLeft">&#160;</td><td class="mdescRight">Multipart map (key is the name parameter). <br /></td></tr>
+<tr class="separator:a15fb03e1d837c1cc48cc990198924d23"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
@@ -143,6 +163,10 @@ template&lt;typename T &gt; </td></tr>
 <tr class="memitem:acecc1d3d17777095c4439ce5159f035d"><td class="memTemplItemLeft" align="right" valign="top">const <a class="el" href="structcrow_1_1multipart_1_1header.html">header</a> &amp;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacecrow_1_1multipart.html#acecc1d3d17777095c4439ce5159f035d">get_header_object</a> (const T &amp;headers, const std::string &amp;key)</td></tr>
 <tr class="memdesc:acecc1d3d17777095c4439ce5159f035d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Same as <a class="el" href="namespacecrow_1_1multipart.html#adb2a619f5ebb5d00a19d3e96dc3b0433">get_header_value_object()</a> but for <a class="el" href="structcrow_1_1multipart_1_1header.html">multipart::header</a>. <br /></td></tr>
 <tr class="separator:acecc1d3d17777095c4439ce5159f035d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5c6db99bbe412db25de0ecd273e22439"><td class="memItemLeft" align="right" valign="top"><a id="a5c6db99bbe412db25de0ecd273e22439"></a>
+const <a class="el" href="structcrow_1_1multipart_1_1header__view.html">header_view</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacecrow_1_1multipart.html#a5c6db99bbe412db25de0ecd273e22439">get_header_object</a> (const <a class="el" href="namespacecrow_1_1multipart.html#a560fd4c66cfa4114e644cade74e90960">mph_view_map</a> &amp;headers, const std::string_view key)</td></tr>
+<tr class="memdesc:a5c6db99bbe412db25de0ecd273e22439"><td class="mdescLeft">&#160;</td><td class="mdescRight">Finds and returns the header with the specified key. (returns an empty header if nothing is found) <br /></td></tr>
+<tr class="separator:a5c6db99bbe412db25de0ecd273e22439"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="var-members"></a>
 Variables</h2></td></tr>
@@ -159,7 +183,7 @@ const std::string&#160;</td><td class="memItemRight" valign="bottom"><b>dd</b> =
 			<ul>
 				<li class="navelem"><a class="el" href="namespacecrow.html">crow</a></li><li class="navelem"><a class="el" href="namespacecrow_1_1multipart.html">multipart</a></li>
 				<li class="footer">
-					Generated on Wed Aug 7 2024 for Crow by <a href="http://www.doxygen.org/index.html">
+					Generated on Tue Aug 13 2024 for Crow by <a href="http://www.doxygen.org/index.html">
 					<img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.9.1.
 					Dark theme by <a href="http://majerle.eu" target="_new">Tilen Majerle</a>. Edited by <a href="https://github.com/The-EDev" target="_new">Farook Al-Sammarraie</a>. All rights reserved.
 				</li>
