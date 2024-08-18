@@ -129,6 +129,7 @@ if(CROW_AMALGAMATE)
 		include/crow/middlewares/session.h
 		include/crow/middlewares/cookie_parser.h
 	)
+
 	add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/crow_all.h
 		COMMAND python3 ${CMAKE_CURRENT_SOURCE_DIR}/scripts/merge_all.py
 		${CMAKE_CURRENT_SOURCE_DIR}/include
@@ -136,6 +137,7 @@ if(CROW_AMALGAMATE)
 		WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
 		DEPENDS ${CROW_AMALGAMATED_HEADERS}
 	)
+
 	add_custom_target(crow_amalgamated ALL DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/crow_all.h)
 endif()
 
