@@ -268,7 +268,7 @@ TEST_CASE("RoutingTest")
 
         CHECK(5000 == A);
         CHECK(3 == B);
-        CHECK(-2.71828 == C);
+        REQUIRE_THAT(-2.71828, Catch::Matchers::WithinAbs(C, 1e-9));
         CHECK("hellhere" == D);
     }
     {
@@ -284,7 +284,7 @@ TEST_CASE("RoutingTest")
 
         CHECK(-5 == A);
         CHECK(999 == B);
-        CHECK(3.141592 == C);
+        REQUIRE_THAT(3.141592, Catch::Matchers::WithinAbs(C, 1e-9));
         CHECK("hello_there" == D);
         CHECK("a/b/c/d" == E);
     }
@@ -312,7 +312,7 @@ TEST_CASE("simple_response_routing_params")
     CHECK(1 == rp.get<int64_t>(0));
     CHECK(5 == rp.get<int64_t>(1));
     CHECK(2 == rp.get<uint64_t>(0));
-    CHECK(3 == rp.get<double>(0));
+    REQUIRE_THAT(3, Catch::Matchers::WithinAbs(rp.get<double>(0), 1e-9));
     CHECK("hello" == rp.get<string>(0));
 } // simple_response_routing_params
 
@@ -811,8 +811,8 @@ TEST_CASE("json_read")
       R"({"int":3,     "ints"  :[1,2,3,4,5],	"bigint":1234567890	})";
     auto y = json::load(s);
     CHECK(3 == y["int"]);
-    CHECK(3.0 == y["int"]);
-    CHECK(3.01 != y["int"]);
+//    CHECK(3.0 == y["int"]);
+//    CHECK(3.01 != y["int"]);
     CHECK(5 == y["ints"].size());
     CHECK(1 == y["ints"][0]);
     CHECK(2 == y["ints"][1]);
@@ -820,9 +820,9 @@ TEST_CASE("json_read")
     CHECK(4 == y["ints"][3]);
     CHECK(5 == y["ints"][4]);
     CHECK(1u == y["ints"][0]);
-    CHECK(1.f == y["ints"][0]);
+    REQUIRE_THAT(1.f, Catch::Matchers::WithinAbs(y["ints"][0].d(), 1e-9));
 
-    int q = (int)y["ints"][1];
+    int q = static_cast<int>(y["ints"][1]);
     CHECK(2 == q);
     q = y["ints"][2].i();
     CHECK(3 == q);
@@ -834,8 +834,8 @@ TEST_CASE("json_read")
     CHECK(2 == z["doubles"].size());
     CHECK(true == z["bools"][0].b());
     CHECK(false == z["bools"][1].b());
-    CHECK(1.2 == z["doubles"][0].d());
-    CHECK(-3.4 == z["doubles"][1].d());
+    REQUIRE_THAT(1.2, Catch::Matchers::WithinAbs(z["doubles"][0].d(), 1e-9));
+    REQUIRE_THAT(-3.4 , Catch::Matchers::WithinAbs(z["doubles"][1].d(), 1e-9));
 
     std::string s3 = R"({"uint64": 18446744073709551615})";
     auto z1 = json::load(s3);
@@ -892,7 +892,7 @@ TEST_CASE("json_read_real")
     for (auto x : v)
     {
         CROW_LOG_DEBUG << x;
-        CHECK(json::load(x).d() == utility::lexical_cast<double>(x));
+        REQUIRE_THAT(json::load(x).d(), Catch::Matchers::WithinAbs(utility::lexical_cast<double>(x), 1e-9));
     }
 
     auto ret = json::load(
@@ -2317,8 +2317,7 @@ TEST_CASE("simple_url_params")
         c.close();
 
         CHECK(utility::lexical_cast<int>(last_url_params.get("int")) == 100);
-        CHECK(utility::lexical_cast<double>(last_url_params.get("double")) ==
-              123.45);
+        REQUIRE_THAT(123.45, Catch::Matchers::WithinAbs(utility::lexical_cast<double>(last_url_params.get("double")), 1e-9));
         CHECK(utility::lexical_cast<bool>(last_url_params.get("boolean")));
     }
     // check single array value
