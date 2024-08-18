@@ -47,7 +47,7 @@ namespace crow
             return GET_IO_CONTEXT(socket_);
         }
 
-        /// Get the TCP socket handling data trasfers, regardless of what layer is handling transfers on top of the socket.
+        /// Get the TCP socket handling data transfers, regardless of what layer is handling transfers on top of the socket.
         tcp::socket& raw_socket()
         {
             return socket_;
@@ -59,12 +59,12 @@ namespace crow
             return socket_;
         }
 
-        tcp::endpoint remote_endpoint()
+        tcp::endpoint remote_endpoint() const
         {
             return socket_.remote_endpoint();
         }
 
-        bool is_open()
+        bool is_open() const
         {
             return socket_.is_open();
         }
