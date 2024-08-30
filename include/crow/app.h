@@ -157,7 +157,7 @@
  * using this macro.
  *
  * \see [Page of the guide "Routes" (Catchall routes)](https://crowcpp.org/master/guides/routes/#catchall-routes).
- */ 
+ */
 #define CROW_CATCHALL_ROUTE(app) app.catchall_route()
 
 /**
@@ -169,7 +169,7 @@
  * undefined route in the blueprint.
  *
  * \see [Page of the guide "Blueprint" (Define a custom Catchall route)](https://crowcpp.org/master/guides/blueprints/#define-a-custom-catchall-route).
- */ 
+ */
 #define CROW_BP_CATCHALL_ROUTE(blueprint) blueprint.catchall_rule()
 
 
@@ -178,7 +178,7 @@
  * \brief The main namespace of the library. In this namespace
  * is defined the most important classes and functions of the
  * library.
- * 
+ *
  * Within this namespace, the Crow class, Router class, Connection
  * class, and other are defined.
  */
@@ -394,7 +394,7 @@ namespace crow
             return res_stream_threshold_;
         }
 
-        
+
         self_t& register_blueprint(Blueprint& blueprint)
         {
             router_.register_blueprint(blueprint);
@@ -428,7 +428,7 @@ namespace crow
         }
 
 #ifdef CROW_ENABLE_COMPRESSION
-        
+
         self_t& use_compression(compression::algorithm algorithm)
         {
             comp_algorithm_ = algorithm;
@@ -631,7 +631,7 @@ namespace crow
             return ssl_used_;
         }
 #else
-        
+
         template<typename T, typename... Remain>
         self_t& ssl_file(T&&, Remain&&...)
         {

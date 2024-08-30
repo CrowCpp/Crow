@@ -1885,7 +1885,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                                 sprintf_s(outbuf, sizeof(outbuf), "%f", v.num.d);
 #else
                                 snprintf(outbuf, sizeof(outbuf), "%f", v.num.d);
-#endif 
+#endif
                             }
                             char *p = &outbuf[0], *o = nullptr; // o is the position of the first trailing 0
                             f_state = start;
@@ -2046,7 +2046,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         {
             int64_t get(int64_t fallback)
             {
-                if (ref.t() != type::Number || ref.nt == num_type::Floating_point || 
+                if (ref.t() != type::Number || ref.nt == num_type::Floating_point ||
                     ref.nt == num_type::Double_precision_floating_point)
                     return fallback;
                 return ref.num.si;

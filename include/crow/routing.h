@@ -96,7 +96,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         {}
 
         virtual void validate() = 0;
-        
+
         void set_added() {
             added_ = true;
         }

@@ -551,7 +551,7 @@ TEST_CASE("validate can be called multiple times")
     try
     {
         CROW_ROUTE(app, "/")([]() { return "1"; });
-        app.validate();      
+        app.validate();
         FAIL_CHECK();
     }
     catch (std::exception& e)
@@ -1001,6 +1001,7 @@ TEST_CASE("json_write_with_indent")
 
     static constexpr char TabSeparator = '\t';
 
+    // Note: The following string needs to use tabs!
     CHECK(R"({
 	"scores": [
 		1,
