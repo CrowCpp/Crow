@@ -30,7 +30,7 @@ jobs:
               macos-13
             ]
             # ubuntu-18.04 does not work due to compile error on asio
-            # windows-2019 not included to spare free minutes   
+            # windows-2019 not included to spare free minutes
     steps:
     - uses: actions/checkout@v4
     - name: Prepare dependencies
@@ -115,8 +115,8 @@ jobs:
 
     #- name: Package
     #  working-directory: ${{github.workspace}}/build
-    #  run: | 
-    #    cmake --build . --target ALL_BUILD && \ 
+    #  run: |
+    #    cmake --build . --target ALL_BUILD && \
     #    cmake --build . --target doc && \
-    #    cmake --build . --target package && \ 
+    #    cmake --build . --target package && \
     #    cpack --config CPackSourceConfig.cmake

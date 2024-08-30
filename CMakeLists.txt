@@ -37,7 +37,7 @@ if (MSVC)
 endif ()
 
 include(FindPython3)
-find_package(Python3) 
+find_package(Python3)
 
 #####################################
 # Define Options

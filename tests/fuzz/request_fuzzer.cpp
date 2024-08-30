@@ -36,7 +36,7 @@ static void start_web_server()
 
 /**
  * Called once at fuzzer start-up, initializes the web-server
- * @return True, 
+ * @return True,
  */
 static bool initialize_web_server()
 {
