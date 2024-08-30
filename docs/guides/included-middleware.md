@@ -54,7 +54,7 @@ session.mutex().lock(); // manually lock session
 
 Expiration can happen either by the cookie expiring or the store deleting "old" data.
 
-* By default, cookies expire after 30 days. This can be changed with the cookie option in the Session constructor. 
+* By default, cookies expire after 30 days. This can be changed with the cookie option in the Session constructor.
 * `crow::FileStore` automatically supports deleting files that are expired (older than 30 days). The expiration age can also be changed in the constructor.
 
 The session expiration can be postponed. This will make the Session issue a new cookie and make the store acknowledge the new expiration time.

@@ -56,9 +56,9 @@ int main()
 }
 ```
 
-You then need to compile your code on your 
-[Linux](setup/linux.md#compiling-your-project), 
-[MacOS](setup/macos.md#compiling-using-a-compiler-directly), or 
+You then need to compile your code on your
+[Linux](setup/linux.md#compiling-your-project),
+[MacOS](setup/macos.md#compiling-using-a-compiler-directly), or
 [Windows](setup/windows.md#getting-and-compiling-crow) machine
 
 After building your `.cpp` file and running the resulting executable, you should be able to access your endpoint at [http://localhost:18080](http://localhost:18080). Opening this URL in your browser will show a white screen with "Hello world" typed on it.

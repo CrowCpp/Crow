@@ -80,10 +80,10 @@ Once the code is done compiling, if we call `http://localhost:18080/` we get our
 
 !!! note
 
-    Compilation instructions are available for 
-	[Linux](setup/linux.md#compiling-your-project), 
-	[MacOS](setup/macos.md#compiling-using-a-compiler-directly), 
-	and 
+    Compilation instructions are available for
+        [Linux](setup/linux.md#compiling-your-project),
+        [MacOS](setup/macos.md#compiling-using-a-compiler-directly),
+        and
 	[Windows](setup/windows.md#getting-and-compiling-crow)
 
 

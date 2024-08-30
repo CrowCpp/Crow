@@ -16,7 +16,7 @@ Basic HTTP authentication requires the client to send the Username and Password 
 We don't need to worry about creating the request, we only need to extract the credentials from the `Authorization` header and verify them.
 !!! note
 
-    There are multiple ways to verify the credentials. Most involve checking the username in a database, then checking a hash of the password against the stored password hash for that username. This tutorial will not go over them 
+    There are multiple ways to verify the credentials. Most involve checking the username in a database, then checking a hash of the password against the stored password hash for that username. This tutorial will not go over them
 
 <br>
 
