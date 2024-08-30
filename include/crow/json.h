@@ -2033,7 +2033,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                 return ret;
             }
 
-            std::string dump() const
+            std::string dump() const override
             {
                 static constexpr int DontIndent = -1;
 
