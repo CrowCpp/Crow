@@ -27,11 +27,8 @@ ProxyPassReverse / http://localhost:40080
 If you want crow to run in a subdirectory (such as `domain.abc/crow`) you can use the `location` tag:
 ```
 <Location "/crow">
-
 	ProxyPass http://localhost:40080
-	
 	ProxyPassReverse http://localhost:40080
-
 </Location>
 ```
 

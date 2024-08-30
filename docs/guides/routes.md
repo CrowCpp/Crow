@@ -98,7 +98,7 @@ Please note that in order to return a response defined as a parameter you'll nee
 Alternatively, you can define the response in the body and return it (`#!cpp ([](){return crow::response()})`).<br>
 
 For more information on `crow::response` go [here](../reference/structcrow_1_1response.html).<br><br>
-    
+
 Crow defines the following status codes:
 ```
 100 Continue
