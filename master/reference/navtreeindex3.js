@@ -1,5 +1,12 @@
 var NAVTREEINDEX3 =
 {
+"namespacecrow.html#afe3a72ef7c3edbf71d0bceacf02517c4add4ec0ac4e58f7c32a01244ae91150b1":[0,0,0,56,41],
+"namespacecrow.html#afe3a72ef7c3edbf71d0bceacf02517c4ae15e216fc1c639f787b1231ecdfa1bf8":[0,0,0,56,2],
+"namespacecrow.html#afe3a72ef7c3edbf71d0bceacf02517c4ae488f04180a5804feba48dbc87f0787d":[0,0,0,56,24],
+"namespacecrow.html#afe3a72ef7c3edbf71d0bceacf02517c4ae60b4854b44ccfb2d92aa6f035171bb4":[0,0,0,56,33],
+"namespacecrow.html#afe3a72ef7c3edbf71d0bceacf02517c4ae8606d021da140a92c7eba8d9b8af84f":[0,0,0,56,10],
+"namespacecrow.html#afe3a72ef7c3edbf71d0bceacf02517c4af29973ceeff9e3672f9827d2b3615283":[0,0,0,56,9],
+"namespacecrow.html#afe3a72ef7c3edbf71d0bceacf02517c4af2a6c498fb90ee345d997f888fce3b18":[0,0,0,56,34],
 "namespacecrow.html#afe3a72ef7c3edbf71d0bceacf02517c4af31bbdd1b3e85bccd652680e16935819":[0,0,0,56,67],
 "namespacecrow.html#afe3a72ef7c3edbf71d0bceacf02517c4af510b97de4ace11844b85f23d0fc012f":[0,0,0,56,11],
 "namespacecrow.html#afe3a72ef7c3edbf71d0bceacf02517c4af7f93635f8e193a924ae4a691bb66b8f":[0,0,0,56,13],
@@ -242,12 +249,5 @@ var NAVTREEINDEX3 =
 "structcrow_1_1detail_1_1middleware__call__criteria__dynamic_3_01false_01_4.html":[1,0,0,0,11],
 "structcrow_1_1detail_1_1middleware__call__criteria__dynamic_3_01false_01_4.html#a03d8f77d9bec07bf6cddce95adde8fc6":[1,0,0,0,11,1],
 "structcrow_1_1detail_1_1middleware__call__criteria__dynamic_3_01false_01_4.html#a975e9db833b37965e9113a44787de713":[1,0,0,0,11,0],
-"structcrow_1_1detail_1_1middleware__call__criteria__dynamic_3_01true_01_4.html":[1,0,0,0,12],
-"structcrow_1_1detail_1_1middleware__call__criteria__dynamic_3_01true_01_4.html#a6f5d720273c0de6ae01a138e0bb84cc6":[1,0,0,0,12,0],
-"structcrow_1_1detail_1_1middleware__call__criteria__dynamic_3_01true_01_4.html#abf5e13ed2e5057951fffb0ffa4c41ad5":[1,0,0,0,12,1],
-"structcrow_1_1detail_1_1middleware__call__criteria__only__global.html":[1,0,0,0,9],
-"structcrow_1_1detail_1_1middleware__call__criteria__only__global.html#a9f2185f986461f1c1cdc0e808107a0fe":[1,0,0,0,9,0],
-"structcrow_1_1detail_1_1middleware__indices.html":[1,0,0,0,16],
-"structcrow_1_1detail_1_1middleware__indices.html#a3c23c2fd745612f1f126b63fbec1a547":[1,0,0,0,16,2],
-"structcrow_1_1detail_1_1middleware__indices.html#a539f94cc6a5bc5a34e1b04bca251b06e":[1,0,0,0,16,6]
+"structcrow_1_1detail_1_1middleware__call__criteria__dynamic_3_01true_01_4.html":[1,0,0,0,12]
 };

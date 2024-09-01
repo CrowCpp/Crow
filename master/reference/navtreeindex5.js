@@ -1,5 +1,12 @@
 var NAVTREEINDEX5 =
 {
+"structcrow_1_1session_1_1_cached_session.html":[1,0,0,4,2],
+"structcrow_1_1session_1_1_cached_session.html#a557688ba5816d3d2b22c451fe4825625":[1,0,0,4,2,1],
+"structcrow_1_1session_1_1_cached_session.html#aad8990d246ebeaaf7053d476d7b0f330":[1,0,0,4,2,2],
+"structcrow_1_1session_1_1_cached_session.html#ab57226d045cff30e0e677f17cf6834c0":[1,0,0,4,2,0],
+"structcrow_1_1session_1_1_cached_session.html#abb405f32f447fea38b0b37f077a044e1":[1,0,0,4,2,3],
+"structcrow_1_1session_1_1_cached_session.html#acbbea79608b8cce857da26decd01c743":[1,0,0,4,2,6],
+"structcrow_1_1session_1_1_cached_session.html#ad32c4b8cb38d3003bdc9872b5abf6315":[1,0,0,4,2,4],
 "structcrow_1_1session_1_1_cached_session.html#af979ecc0cfa749da654e5a70e1c63793":[1,0,0,4,2,7],
 "structcrow_1_1session_1_1_cached_session.html#afcc184a4401405ad4da9e2df9cafd280":[1,0,0,4,2,5],
 "structcrow_1_1session_1_1_expiration_tracker.html":[1,0,0,4,1],
@@ -40,12 +47,5 @@ var NAVTREEINDEX5 =
 "utf-8_8h_source.html":[2,0,0,0,0,3],
 "utility_8h_source.html":[2,0,0,0,26],
 "version_8h_source.html":[2,0,0,0,27],
-"websocket_8h_source.html":[2,0,0,0,28],
-"":[0,0,0,0],
-"":[0,0,0,5],
-"":[0,0,0,1,0],
-"":[0,0,0,4,0],
-"":[0,0,0,1],
-"":[0,0,0,2,0],
-"":[0,0,0,2]
+"websocket_8h_source.html":[2,0,0,0,28]
 };

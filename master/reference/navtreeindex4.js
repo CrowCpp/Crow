@@ -1,5 +1,12 @@
 var NAVTREEINDEX4 =
 {
+"structcrow_1_1detail_1_1middleware__call__criteria__dynamic_3_01true_01_4.html#a6f5d720273c0de6ae01a138e0bb84cc6":[1,0,0,0,12,0],
+"structcrow_1_1detail_1_1middleware__call__criteria__dynamic_3_01true_01_4.html#abf5e13ed2e5057951fffb0ffa4c41ad5":[1,0,0,0,12,1],
+"structcrow_1_1detail_1_1middleware__call__criteria__only__global.html":[1,0,0,0,9],
+"structcrow_1_1detail_1_1middleware__call__criteria__only__global.html#a9f2185f986461f1c1cdc0e808107a0fe":[1,0,0,0,9,0],
+"structcrow_1_1detail_1_1middleware__indices.html":[1,0,0,0,16],
+"structcrow_1_1detail_1_1middleware__indices.html#a3c23c2fd745612f1f126b63fbec1a547":[1,0,0,0,16,2],
+"structcrow_1_1detail_1_1middleware__indices.html#a539f94cc6a5bc5a34e1b04bca251b06e":[1,0,0,0,16,6],
 "structcrow_1_1detail_1_1middleware__indices.html#a651af159fea3392c2df7e7146079ad8e":[1,0,0,0,16,4],
 "structcrow_1_1detail_1_1middleware__indices.html#a736f04d2df37ccbee5650f58fb36d4fc":[1,0,0,0,16,7],
 "structcrow_1_1detail_1_1middleware__indices.html#aad27a0ce958bb8e27745074c981343bf":[1,0,0,0,16,0],
@@ -242,12 +249,5 @@ var NAVTREEINDEX4 =
 "structcrow_1_1routing__handle__result.html#a8293d903ad88506f5f4386b5e20c4c7d":[1,0,0,9,5],
 "structcrow_1_1routing__handle__result.html#a88df90b26edc1976dfd32c76f3552b52":[1,0,0,9,3],
 "structcrow_1_1routing__handle__result.html#aa0eb5e5466006a627bb02d84382f7cf6":[1,0,0,9,2],
-"structcrow_1_1routing__handle__result.html#aefe27184ee08b616c2700854345b6cda":[1,0,0,9,6],
-"structcrow_1_1session_1_1_cached_session.html":[1,0,0,4,2],
-"structcrow_1_1session_1_1_cached_session.html#a557688ba5816d3d2b22c451fe4825625":[1,0,0,4,2,1],
-"structcrow_1_1session_1_1_cached_session.html#aad8990d246ebeaaf7053d476d7b0f330":[1,0,0,4,2,2],
-"structcrow_1_1session_1_1_cached_session.html#ab57226d045cff30e0e677f17cf6834c0":[1,0,0,4,2,0],
-"structcrow_1_1session_1_1_cached_session.html#abb405f32f447fea38b0b37f077a044e1":[1,0,0,4,2,3],
-"structcrow_1_1session_1_1_cached_session.html#acbbea79608b8cce857da26decd01c743":[1,0,0,4,2,6],
-"structcrow_1_1session_1_1_cached_session.html#ad32c4b8cb38d3003bdc9872b5abf6315":[1,0,0,4,2,4]
+"structcrow_1_1routing__handle__result.html#aefe27184ee08b616c2700854345b6cda":[1,0,0,9,6]
 };
