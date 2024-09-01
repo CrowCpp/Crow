@@ -802,7 +802,7 @@ $(document).ready(function(){initNavTree('http__parser__merged_8h_source.html','
 <div class="line"><a name="l00701"></a><span class="lineno">  701</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">char</span> *body_mark = 0;</div>
 <div class="line"><a name="l00702"></a><span class="lineno">  702</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> lenient = parser-&gt;lenient_http_headers;</div>
 <div class="line"><a name="l00703"></a><span class="lineno">  703</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> allow_chunked_length = parser-&gt;allow_chunked_length;</div>
-<div class="line"><a name="l00704"></a><span class="lineno">  704</span>&#160;  </div>
+<div class="line"><a name="l00704"></a><span class="lineno">  704</span>&#160; </div>
 <div class="line"><a name="l00705"></a><span class="lineno">  705</span>&#160;  uint32_t nread = parser-&gt;nread;</div>
 <div class="line"><a name="l00706"></a><span class="lineno">  706</span>&#160; </div>
 <div class="line"><a name="l00707"></a><span class="lineno">  707</span>&#160;  <span class="comment">/* We&#39;re in an error state. Don&#39;t bother doing anything. */</span></div>
@@ -1205,7 +1205,7 @@ $(document).ready(function(){initNavTree('http__parser__merged_8h_source.html','
 <div class="line"><a name="l01104"></a><span class="lineno"> 1104</span>&#160;      }</div>
 <div class="line"><a name="l01105"></a><span class="lineno"> 1105</span>&#160; </div>
 <div class="line"><a name="l01106"></a><span class="lineno"> 1106</span>&#160;      <span class="keywordflow">case</span> s_header_field:</div>
-<div class="line"><a name="l01107"></a><span class="lineno"> 1107</span>&#160;      {        </div>
+<div class="line"><a name="l01107"></a><span class="lineno"> 1107</span>&#160;      {</div>
 <div class="line"><a name="l01108"></a><span class="lineno"> 1108</span>&#160;        <span class="keyword">const</span> <span class="keywordtype">char</span>* start = p;</div>
 <div class="line"><a name="l01109"></a><span class="lineno"> 1109</span>&#160;        <span class="keywordflow">for</span> (; p != data + len; p++) {</div>
 <div class="line"><a name="l01110"></a><span class="lineno"> 1110</span>&#160;          ch = *p;</div>
@@ -1213,7 +1213,7 @@ $(document).ready(function(){initNavTree('http__parser__merged_8h_source.html','
 <div class="line"><a name="l01112"></a><span class="lineno"> 1112</span>&#160; </div>
 <div class="line"><a name="l01113"></a><span class="lineno"> 1113</span>&#160;          <span class="keywordflow">if</span> (!c)</div>
 <div class="line"><a name="l01114"></a><span class="lineno"> 1114</span>&#160;            <span class="keywordflow">break</span>;</div>
-<div class="line"><a name="l01115"></a><span class="lineno"> 1115</span>&#160;          </div>
+<div class="line"><a name="l01115"></a><span class="lineno"> 1115</span>&#160; </div>
 <div class="line"><a name="l01116"></a><span class="lineno"> 1116</span>&#160;          <span class="keywordflow">switch</span> (parser-&gt;header_state) {</div>
 <div class="line"><a name="l01117"></a><span class="lineno"> 1117</span>&#160;            <span class="keywordflow">case</span> h_general: {</div>
 <div class="line"><a name="l01118"></a><span class="lineno"> 1118</span>&#160;              <span class="keywordtype">size_t</span> left = data + len - p;</div>
@@ -1393,7 +1393,7 @@ $(document).ready(function(){initNavTree('http__parser__merged_8h_source.html','
 <div class="line"><a name="l01292"></a><span class="lineno"> 1292</span>&#160;              parser-&gt;header_state = h_matching_transfer_encoding_token;</div>
 <div class="line"><a name="l01293"></a><span class="lineno"> 1293</span>&#160;            }</div>
 <div class="line"><a name="l01294"></a><span class="lineno"> 1294</span>&#160;            <span class="keywordflow">break</span>;</div>
-<div class="line"><a name="l01295"></a><span class="lineno"> 1295</span>&#160;            </div>
+<div class="line"><a name="l01295"></a><span class="lineno"> 1295</span>&#160; </div>
 <div class="line"><a name="l01296"></a><span class="lineno"> 1296</span>&#160;          <span class="comment">/* Multi-value `Transfer-Encoding` header */</span></div>
 <div class="line"><a name="l01297"></a><span class="lineno"> 1297</span>&#160;          <span class="keywordflow">case</span> h_matching_transfer_encoding_token_start:</div>
 <div class="line"><a name="l01298"></a><span class="lineno"> 1298</span>&#160;            <span class="keywordflow">break</span>;</div>
@@ -1403,7 +1403,7 @@ $(document).ready(function(){initNavTree('http__parser__merged_8h_source.html','
 <div class="line"><a name="l01302"></a><span class="lineno"> 1302</span>&#160;              CROW_SET_ERRNO(CHPE_INVALID_CONTENT_LENGTH);</div>
 <div class="line"><a name="l01303"></a><span class="lineno"> 1303</span>&#160;              <span class="keywordflow">goto</span> error;</div>
 <div class="line"><a name="l01304"></a><span class="lineno"> 1304</span>&#160;            }</div>
-<div class="line"><a name="l01305"></a><span class="lineno"> 1305</span>&#160;            </div>
+<div class="line"><a name="l01305"></a><span class="lineno"> 1305</span>&#160; </div>
 <div class="line"><a name="l01306"></a><span class="lineno"> 1306</span>&#160;            <span class="keywordflow">if</span> (parser-&gt;flags &amp; F_CONTENTLENGTH) {</div>
 <div class="line"><a name="l01307"></a><span class="lineno"> 1307</span>&#160;              CROW_SET_ERRNO(CHPE_UNEXPECTED_CONTENT_LENGTH);</div>
 <div class="line"><a name="l01308"></a><span class="lineno"> 1308</span>&#160;              <span class="keywordflow">goto</span> error;</div>
@@ -1460,12 +1460,12 @@ $(document).ready(function(){initNavTree('http__parser__merged_8h_source.html','
 <div class="line"><a name="l01359"></a><span class="lineno"> 1359</span>&#160;            CROW_CALLBACK_DATA_NOADVANCE(header_value);</div>
 <div class="line"><a name="l01360"></a><span class="lineno"> 1360</span>&#160;            CROW_REEXECUTE();</div>
 <div class="line"><a name="l01361"></a><span class="lineno"> 1361</span>&#160;          }</div>
-<div class="line"><a name="l01362"></a><span class="lineno"> 1362</span>&#160;          </div>
+<div class="line"><a name="l01362"></a><span class="lineno"> 1362</span>&#160; </div>
 <div class="line"><a name="l01363"></a><span class="lineno"> 1363</span>&#160;          <span class="keywordflow">if</span> (!lenient &amp;&amp; !CROW_IS_HEADER_CHAR(ch)) {</div>
 <div class="line"><a name="l01364"></a><span class="lineno"> 1364</span>&#160;            CROW_SET_ERRNO(CHPE_INVALID_HEADER_TOKEN);</div>
 <div class="line"><a name="l01365"></a><span class="lineno"> 1365</span>&#160;            <span class="keywordflow">goto</span> error;</div>
 <div class="line"><a name="l01366"></a><span class="lineno"> 1366</span>&#160;          }</div>
-<div class="line"><a name="l01367"></a><span class="lineno"> 1367</span>&#160;          </div>
+<div class="line"><a name="l01367"></a><span class="lineno"> 1367</span>&#160; </div>
 <div class="line"><a name="l01368"></a><span class="lineno"> 1368</span>&#160;          c = CROW_LOWER(ch);</div>
 <div class="line"><a name="l01369"></a><span class="lineno"> 1369</span>&#160; </div>
 <div class="line"><a name="l01370"></a><span class="lineno"> 1370</span>&#160;          <span class="keywordflow">switch</span> (h_state) {</div>
@@ -1529,7 +1529,7 @@ $(document).ready(function(){initNavTree('http__parser__merged_8h_source.html','
 <div class="line"><a name="l01428"></a><span class="lineno"> 1428</span>&#160;              parser-&gt;content_length = t;</div>
 <div class="line"><a name="l01429"></a><span class="lineno"> 1429</span>&#160;              <span class="keywordflow">break</span>;</div>
 <div class="line"><a name="l01430"></a><span class="lineno"> 1430</span>&#160;            }</div>
-<div class="line"><a name="l01431"></a><span class="lineno"> 1431</span>&#160;            </div>
+<div class="line"><a name="l01431"></a><span class="lineno"> 1431</span>&#160; </div>
 <div class="line"><a name="l01432"></a><span class="lineno"> 1432</span>&#160;            <span class="keywordflow">case</span> h_content_length_ws:</div>
 <div class="line"><a name="l01433"></a><span class="lineno"> 1433</span>&#160;              <span class="keywordflow">if</span> (ch == <span class="charliteral">&#39; &#39;</span>) <span class="keywordflow">break</span>;</div>
 <div class="line"><a name="l01434"></a><span class="lineno"> 1434</span>&#160;              CROW_SET_ERRNO(CHPE_INVALID_CONTENT_LENGTH);</div>
@@ -1607,11 +1607,11 @@ $(document).ready(function(){initNavTree('http__parser__merged_8h_source.html','
 <div class="line"><a name="l01506"></a><span class="lineno"> 1506</span>&#160;          }</div>
 <div class="line"><a name="l01507"></a><span class="lineno"> 1507</span>&#160;        }</div>
 <div class="line"><a name="l01508"></a><span class="lineno"> 1508</span>&#160;        parser-&gt;header_state = h_state;</div>
-<div class="line"><a name="l01509"></a><span class="lineno"> 1509</span>&#160;        </div>
-<div class="line"><a name="l01510"></a><span class="lineno"> 1510</span>&#160;        </div>
+<div class="line"><a name="l01509"></a><span class="lineno"> 1509</span>&#160; </div>
+<div class="line"><a name="l01510"></a><span class="lineno"> 1510</span>&#160; </div>
 <div class="line"><a name="l01511"></a><span class="lineno"> 1511</span>&#160;        <span class="keywordflow">if</span> (p == data + len)</div>
 <div class="line"><a name="l01512"></a><span class="lineno"> 1512</span>&#160;          --p;</div>
-<div class="line"><a name="l01513"></a><span class="lineno"> 1513</span>&#160;        </div>
+<div class="line"><a name="l01513"></a><span class="lineno"> 1513</span>&#160; </div>
 <div class="line"><a name="l01514"></a><span class="lineno"> 1514</span>&#160;        CROW_COUNT_HEADER_SIZE(p - start);</div>
 <div class="line"><a name="l01515"></a><span class="lineno"> 1515</span>&#160;        <span class="keywordflow">break</span>;</div>
 <div class="line"><a name="l01516"></a><span class="lineno"> 1516</span>&#160;      }</div>
@@ -1687,7 +1687,7 @@ $(document).ready(function(){initNavTree('http__parser__merged_8h_source.html','
 <div class="line"><a name="l01586"></a><span class="lineno"> 1586</span>&#160;          CROW_CALLBACK_NOTIFY(message_complete);</div>
 <div class="line"><a name="l01587"></a><span class="lineno"> 1587</span>&#160;          <span class="keywordflow">break</span>;</div>
 <div class="line"><a name="l01588"></a><span class="lineno"> 1588</span>&#160;        }</div>
-<div class="line"><a name="l01589"></a><span class="lineno"> 1589</span>&#160;        </div>
+<div class="line"><a name="l01589"></a><span class="lineno"> 1589</span>&#160; </div>
 <div class="line"><a name="l01590"></a><span class="lineno"> 1590</span>&#160;        <span class="comment">/* Cannot use transfer-encoding and a content-length header together</span></div>
 <div class="line"><a name="l01591"></a><span class="lineno"> 1591</span>&#160;<span class="comment">           per the HTTP specification. (RFC 7230 Section 3.3.3) */</span></div>
 <div class="line"><a name="l01592"></a><span class="lineno"> 1592</span>&#160;        <span class="keywordflow">if</span> ((parser-&gt;uses_transfer_encoding == 1) &amp;&amp;</div>
@@ -1705,7 +1705,7 @@ $(document).ready(function(){initNavTree('http__parser__merged_8h_source.html','
 <div class="line"><a name="l01604"></a><span class="lineno"> 1604</span>&#160;            <span class="keywordflow">goto</span> error;</div>
 <div class="line"><a name="l01605"></a><span class="lineno"> 1605</span>&#160;          }</div>
 <div class="line"><a name="l01606"></a><span class="lineno"> 1606</span>&#160;        }</div>
-<div class="line"><a name="l01607"></a><span class="lineno"> 1607</span>&#160;        </div>
+<div class="line"><a name="l01607"></a><span class="lineno"> 1607</span>&#160; </div>
 <div class="line"><a name="l01608"></a><span class="lineno"> 1608</span>&#160;        parser-&gt;state = s_headers_done;</div>
 <div class="line"><a name="l01609"></a><span class="lineno"> 1609</span>&#160; </div>
 <div class="line"><a name="l01610"></a><span class="lineno"> 1610</span>&#160;        <span class="comment">/* Set this here so that on_headers_complete() callbacks can see it */</span></div>

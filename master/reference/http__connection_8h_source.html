@@ -245,7 +245,7 @@ $(document).ready(function(){initNavTree('http__connection_8h_source.html',''); 
 <div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160;            req_.middleware_context = <span class="keyword">static_cast&lt;</span><span class="keywordtype">void</span>*<span class="keyword">&gt;</span>(&amp;ctx_);</div>
 <div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160;            req_.middleware_container = <span class="keyword">static_cast&lt;</span><span class="keywordtype">void</span>*<span class="keyword">&gt;</span>(middlewares_);</div>
 <div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;            req_.io_service = &amp;adaptor_.get_io_service();</div>
-<div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;            </div>
+<div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160; </div>
 <div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;            req_.<a class="code" href="structcrow_1_1request.html#aa8a04e30e2249f04614f233d25ffaad7">remote_ip_address</a> = adaptor_.remote_endpoint().address().to_string();</div>
 <div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160; </div>
 <div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;            add_keep_alive_ = req_.<a class="code" href="structcrow_1_1request.html#a5148ce95969d261e50ee977c1dc7960c">keep_alive</a>;</div>
@@ -268,7 +268,7 @@ $(document).ready(function(){initNavTree('http__connection_8h_source.html',''); 
 <div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;                    }</div>
 <div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;                    <span class="keywordflow">else</span></div>
 <div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;                    {</div>
-<div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;                </div>
+<div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160; </div>
 <div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160;                        detail::middleware_call_helper&lt;detail::middleware_call_criteria_only_global,</div>
 <div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;                                                       0, decltype(ctx_), decltype(*middlewares_)&gt;({}, *middlewares_, req_, res, ctx_);</div>
 <div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160;                        close_connection_ = <span class="keyword">true</span>;</div>
@@ -289,7 +289,7 @@ $(document).ready(function(){initNavTree('http__connection_8h_source.html',''); 
 <div class="line"><a name="l00188"></a><span class="lineno">  188</span>&#160;                res.is_alive_helper_ = [<span class="keyword">self</span>]() -&gt; <span class="keywordtype">bool</span> {</div>
 <div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160;                    <span class="keywordflow">return</span> <span class="keyword">self</span>-&gt;adaptor_.is_open();</div>
 <div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160;                };</div>
-<div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160;                </div>
+<div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160; </div>
 <div class="line"><a name="l00192"></a><span class="lineno">  192</span>&#160;                detail::middleware_call_helper&lt;detail::middleware_call_criteria_only_global,</div>
 <div class="line"><a name="l00193"></a><span class="lineno">  193</span>&#160;                                               0, decltype(ctx_), decltype(*middlewares_)&gt;({}, *middlewares_, req_, res, ctx_);</div>
 <div class="line"><a name="l00194"></a><span class="lineno">  194</span>&#160; </div>
@@ -631,7 +631,7 @@ $(document).ready(function(){initNavTree('http__connection_8h_source.html',''); 
 <div class="line"><a name="l00530"></a><span class="lineno">  530</span>&#160;              adaptor_.socket(), buffers_,</div>
 <div class="line"><a name="l00531"></a><span class="lineno">  531</span>&#160;              [<span class="keyword">self</span>](<span class="keyword">const</span> error_code&amp; ec, std::size_t <span class="comment">/*bytes_transferred*/</span>) {</div>
 <div class="line"><a name="l00532"></a><span class="lineno">  532</span>&#160;                  self-&gt;res.clear();</div>
-<div class="line"><a name="l00533"></a><span class="lineno">  533</span>&#160;                  self-&gt;res_body_copy_.clear();                  </div>
+<div class="line"><a name="l00533"></a><span class="lineno">  533</span>&#160;                  self-&gt;res_body_copy_.clear();</div>
 <div class="line"><a name="l00534"></a><span class="lineno">  534</span>&#160;                  if (!self-&gt;continue_requested)</div>
 <div class="line"><a name="l00535"></a><span class="lineno">  535</span>&#160;                  {</div>
 <div class="line"><a name="l00536"></a><span class="lineno">  536</span>&#160;                      self-&gt;parser_.clear();</div>
@@ -640,7 +640,7 @@ $(document).ready(function(){initNavTree('http__connection_8h_source.html',''); 
 <div class="line"><a name="l00539"></a><span class="lineno">  539</span>&#160;                  {</div>
 <div class="line"><a name="l00540"></a><span class="lineno">  540</span>&#160;                      self-&gt;continue_requested = false;</div>
 <div class="line"><a name="l00541"></a><span class="lineno">  541</span>&#160;                  }</div>
-<div class="line"><a name="l00542"></a><span class="lineno">  542</span>&#160;                  </div>
+<div class="line"><a name="l00542"></a><span class="lineno">  542</span>&#160; </div>
 <div class="line"><a name="l00543"></a><span class="lineno">  543</span>&#160;                  if (!ec)</div>
 <div class="line"><a name="l00544"></a><span class="lineno">  544</span>&#160;                  {</div>
 <div class="line"><a name="l00545"></a><span class="lineno">  545</span>&#160;                      <span class="keywordflow">if</span> (self-&gt;close_connection_)</div>

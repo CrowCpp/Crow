@@ -241,11 +241,11 @@
 
     <!-- Button to open search modal -->
     
-    
+
     <div class="md-header__source">
-	<a class="md-source" href="https://opencollective.com/crow" style="padding-left:2.4rem;"><img style="border-radius: 5px" alt="Open Collective" src="https://img.shields.io/opencollective/all/crow?label=Support%20Crow&color=important&labelColor=122027&logo=opencollective&style=for-the-badge"></a>
-	</div>
-	
+        <a class="md-source" href="https://opencollective.com/crow" style="padding-left:2.4rem;"><img style="border-radius: 5px" alt="Open Collective" src="https://img.shields.io/opencollective/all/crow?label=Support%20Crow&color=important&labelColor=122027&logo=opencollective&style=for-the-badge"></a>
+        </div>
+
     <!-- Repository information -->
     
       <div class="md-header__source">
@@ -1334,7 +1334,7 @@ hidden
     display: block;
     margin-top: 1rem;
     padding-bottom: 0.5rem;
-    border-bottom: solid;    
+    border-bottom: solid;
     border-width: 0.1rem;
     border-image-slice: 1;
     border-image-source: var(--home-image-border);
@@ -1485,7 +1485,7 @@ code{
     </div>
 </section>
 
-<section class="ssection">    
+<section class="ssection">
     <div class="scontent">
        <div class="highlight"><pre id="__code_1"><span></span><button class="md-clipboard md-icon" title="Copy to clipboard" data-clipboard-target="#__code_1 > code"></button><code><span class="cp">CROW_ROUTE</span><span class="p">(</span><span class="n">app</span><span class="p">,</span> <span class="s">"/json"</span><span class="p">)</span>
 <span class="p">([]{</span>
@@ -1590,7 +1590,7 @@ code{
 <script>
 let text = "";
 
-function convertRemToPixels(rem) {    
+function convertRemToPixels(rem) {
     return rem * parseFloat(getComputedStyle(document.documentElement).fontSize);
 }
 
@@ -1643,7 +1643,7 @@ function GetColor(name)
   return "rgb(0,0,0)";
 }
 
-function AvatarImage(name) 
+function AvatarImage(name)
 {
   var letters = name.includes(' ') ? name[0] + name.split(' ').slice(-1)[0][0] : name.slice(0,2);
   var canvas = document.createElement('canvas');
@@ -1657,14 +1657,14 @@ function AvatarImage(name)
   // Setup background and front color
   context.fillStyle = color;
   context.fillRect(0, 0, canvas.width, canvas.height);
-  
+
   // Check the color brightness (0-255)
   color = color.match(/^rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*(\d+(?:\.\d+)?))?\)$/);
   r = color[1];
   g = color[2];
   b = color[3];
   hsp = Math.sqrt(0.299 * (r * r) + 0.587 * (g * g) + 0.114 * (b * b));
-  
+
   context.fillStyle = hsp > 150 ? "#333" : "#EEE"; // 150 was reached by trial and error
   context.fillText(letters, size / 2, size / 1.5);
   // Set image representation in default format (png)
@@ -1699,7 +1699,7 @@ async function getData()
 
   let x = await fetch("https://opencollective.com/crow/members/all.json");
   let y = await x.json();
-  
+
   for (var i = 0; i < y.length; i++)
   {
     let item = y[i];
@@ -1718,7 +1718,7 @@ async function getData()
       }
     }
   }
-  
+
   let ghx = await fetch("https://gh-sponsors-dsdpxxx9d-filiptronicek.vercel.app/sponsors/CrowCpp");
   let ghy = await fetch("https://gh-sponsors-dsdpxxx9d-filiptronicek.vercel.app/count/CrowCpp");
   let ghsponsors = await ghx.json();

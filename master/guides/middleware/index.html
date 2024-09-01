@@ -249,11 +249,11 @@
 
     <!-- Button to open search modal -->
     
-    
+
     <div class="md-header__source">
-	<a class="md-source" href="https://opencollective.com/crow" style="padding-left:2.4rem;"><img style="border-radius: 5px" alt="Open Collective" src="https://img.shields.io/opencollective/all/crow?label=Support%20Crow&color=important&labelColor=122027&logo=opencollective&style=for-the-badge"></a>
-	</div>
-	
+        <a class="md-source" href="https://opencollective.com/crow" style="padding-left:2.4rem;"><img style="border-radius: 5px" alt="Open Collective" src="https://img.shields.io/opencollective/all/crow?label=Support%20Crow&color=important&labelColor=122027&logo=opencollective&style=for-the-badge"></a>
+        </div>
+
     <!-- Repository information -->
     
       <div class="md-header__source">
@@ -1479,7 +1479,7 @@
 <li>
 <p>To get access to other middlewares context</p>
 <div class="highlight"><pre><span></span><code><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">AllContext</span><span class="o">&gt;</span>
-<span class="kt">void</span><span class="w"> </span><span class="n">before_handle</span><span class="p">(</span><span class="n">request</span><span class="o">&amp;</span><span class="w"> </span><span class="n">req</span><span class="p">,</span><span class="w"> </span><span class="n">response</span><span class="o">&amp;</span><span class="w"> </span><span class="n">res</span><span class="p">,</span><span class="w"> </span><span class="n">context</span><span class="o">&amp;</span><span class="w"> </span><span class="n">ctx</span><span class="p">,</span><span class="w"> </span><span class="n">AllContext</span><span class="o">&amp;</span><span class="w"> </span><span class="n">all_ctx</span><span class="p">)</span><span class="w"> </span>
+<span class="kt">void</span><span class="w"> </span><span class="n">before_handle</span><span class="p">(</span><span class="n">request</span><span class="o">&amp;</span><span class="w"> </span><span class="n">req</span><span class="p">,</span><span class="w"> </span><span class="n">response</span><span class="o">&amp;</span><span class="w"> </span><span class="n">res</span><span class="p">,</span><span class="w"> </span><span class="n">context</span><span class="o">&amp;</span><span class="w"> </span><span class="n">ctx</span><span class="p">,</span><span class="w"> </span><span class="n">AllContext</span><span class="o">&amp;</span><span class="w"> </span><span class="n">all_ctx</span><span class="p">)</span>
 <span class="p">{</span>
 <span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">other_ctx</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">all_ctx</span><span class="p">.</span><span class="k">template</span><span class="w"> </span><span class="n">get</span><span class="o">&lt;</span><span class="n">OtherMiddleware</span><span class="o">&gt;</span><span class="p">();</span>
 <span class="p">}</span>
@@ -1488,7 +1488,7 @@
 </ol>
 <h2 id="local-middleware">Local middleware<a class="headerlink" href="#local-middleware" title="Permanent link">&para;</a></h2>
 <p>By default, every middleware is called for each request. If you want to enable middleware for specific handlers or blueprints, you have to extend it from <code>crow::ILocalMiddleware</code></p>
-<div class="highlight"><pre><span></span><code><span class="k">struct</span><span class="w"> </span><span class="nc">LocalMiddleware</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">crow</span><span class="o">::</span><span class="n">ILocalMiddleware</span><span class="w"> </span>
+<div class="highlight"><pre><span></span><code><span class="k">struct</span><span class="w"> </span><span class="nc">LocalMiddleware</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">crow</span><span class="o">::</span><span class="n">ILocalMiddleware</span>
 <span class="p">{</span>
 </code></pre></div>
 <p>After this, you can enable it for specific handlers</p>
@@ -1638,7 +1638,7 @@ in the order listed in the Crow application.</p>
         
         
       </div>
-      
+
       <a style="margin: auto .6rem; font-size: .64rem;text-align: center;flex: 1;display: flex;justify-content: center;" href="/privacy_policy.html">Privacy Policy</a>
 
       <!-- Social links -->
