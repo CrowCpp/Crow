@@ -27,6 +27,30 @@ using asio_error_code = asio::error_code;
 
 #define LOCALHOST_ADDRESS "127.0.0.1"
 
+class HttpClient
+{
+public:
+    HttpClient(std::string const& adress, uint16_t port):
+      c(is)
+    {
+        c.connect(asio::ip::tcp::endpoint(
+          asio::ip::address::from_string(adress), port));
+    }
+
+    void send(const std::string& sendmsg)
+    {
+        c.send(asio::buffer(sendmsg));
+    }
+
+    size_t receive(char* buf, size_t buf_size)
+    {
+        return c.receive(asio::buffer(buf, buf_size));
+    }
+
+private:
+    asio::io_service is{};
+    asio::ip::tcp::socket c;
+};
 TEST_CASE("Rule")
 {
     TaggedRule<> r("/http/");
@@ -573,23 +597,17 @@ TEST_CASE("server_handling_error_request")
     auto _ = app.bindaddr(LOCALHOST_ADDRESS).port(45451).run_async();
     app.wait_for_server_start();
     std::string sendmsg = "POX";
-    asio::io_service is;
+    HttpClient c(LOCALHOST_ADDRESS, 45451);
+    c.send(sendmsg);
+
+    try
     {
-        asio::ip::tcp::socket c(is);
-        c.connect(asio::ip::tcp::endpoint(
-          asio::ip::address::from_string(LOCALHOST_ADDRESS), 45451));
-
-        c.send(asio::buffer(sendmsg));
-
-        try
-        {
-            c.receive(asio::buffer(buf, 2048));
-            FAIL_CHECK();
-        }
-        catch (std::exception& e)
-        {
-            CROW_LOG_DEBUG << e.what();
-        }
+        c.receive(buf, 2048);
+        FAIL_CHECK();
+    }
+    catch (std::exception& e)
+    {
+        CROW_LOG_DEBUG << e.what();
     }
     app.stop();
 } // server_handling_error_request
@@ -666,8 +684,8 @@ TEST_CASE("multi_server")
 
         for (auto ch : sendmsg)
         {
-            char buf[1] = {ch};
-            c.send(asio::buffer(buf));
+            char buff[1] = {ch};
+            c.send(asio::buffer(buff));
         }
 
         size_t recved = c.receive(asio::buffer(buf, 2048));
@@ -2662,7 +2680,7 @@ TEST_CASE("stream_response")
     std::thread runTest([&app, &key_response, key_response_size, keyword_]() {
         auto _ = app.bindaddr(LOCALHOST_ADDRESS).port(45451).run_async();
         app.wait_for_server_start();
-        asio::io_service is;
+        asio::io_service io_service;
         std::string sendmsg;
 
         //Total bytes received
@@ -2671,7 +2689,7 @@ TEST_CASE("stream_response")
         {
             asio::streambuf b;
 
-            asio::ip::tcp::socket c(is);
+            asio::ip::tcp::socket c(io_service);
             c.connect(asio::ip::tcp::endpoint(
               asio::ip::address::from_string(LOCALHOST_ADDRESS), 45451));
             c.send(asio::buffer(sendmsg));
