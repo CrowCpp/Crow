@@ -459,7 +459,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
             }
 
             /// The list or object value
-            std::vector<rvalue> lo()
+            std::vector<rvalue> lo() const
             {
 #ifndef CROW_JSON_NO_ERROR_CHECK
                 if (t() != type::Object && t() != type::List)
