@@ -2,6 +2,15 @@
 
 //#define CROW_JSON_NO_ERROR_CHECK
 //#define CROW_JSON_USE_MAP
+//#define CROW_JSON_FLOAT_PRECISION FLT_DIG
+//#define CROW_JSON_DOUBLE_PRECISION DBL_DIG
+
+#ifndef CROW_JSON_FLOAT_PRECISION
+#define CROW_JSON_FLOAT_PRECISION 6
+#endif
+#ifndef CROW_JSON_DOUBLE_PRECISION
+#define CROW_JSON_DOUBLE_PRECISION 6
+#endif
 
 #include <string>
 #ifdef CROW_JSON_USE_MAP
@@ -1874,17 +1883,17 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                             if (v.nt == num_type::Double_precision_floating_point)
                             {
 #ifdef _MSC_VER
-                                sprintf_s(outbuf, sizeof(outbuf), "%.*g", DECIMAL_DIG, v.num.d);
+                                sprintf_s(outbuf, sizeof(outbuf), "%.*g", CROW_JSON_DOUBLE_PRECISION, v.num.d);
 #else
-                                snprintf(outbuf, sizeof(outbuf), "%.*g", DECIMAL_DIG, v.num.d);
+                                snprintf(outbuf, sizeof(outbuf), "%.*g", CROW_JSON_DOUBLE_PRECISION, v.num.d);
 #endif
                             }
                             else
                             {
 #ifdef _MSC_VER
-                                sprintf_s(outbuf, sizeof(outbuf), "%f", v.num.d);
+                                sprintf_s(outbuf, sizeof(outbuf), "%.*g", CROW_JSON_FLOAT_PRECISION, v.num.d);
 #else
-                                snprintf(outbuf, sizeof(outbuf), "%f", v.num.d);
+                                snprintf(outbuf, sizeof(outbuf), "%.*g", CROW_JSON_FLOAT_PRECISION, v.num.d);
 #endif
                             }
                             char *p = &outbuf[0], *o = nullptr; // o is the position of the first trailing 0

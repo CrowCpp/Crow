@@ -1124,22 +1124,38 @@ TEST_CASE("json::wvalue::wvalue(std::int64_t)")
 
 TEST_CASE("json::wvalue::wvalue(float)")
 {
-    float f = 4.2;
-    json::wvalue value = f;
+    {
+        float f = 3.14159265359;
+        json::wvalue value = f;
 
-    CHECK(value.t() == json::type::Number);
-    CHECK(value.dump() == "4.2");
+        CHECK(value.t() == json::type::Number);
+        CHECK(value.dump() == "3.14159");
+    }
+    {
+        float f = 314159265.359;
+        json::wvalue value = f;
+
+        CHECK(value.t() == json::type::Number);
+        CHECK(value.dump() == "3.14159e+08");
+    }
 } // json::wvalue::wvalue(float)
 
 TEST_CASE("json::wvalue::wvalue(double)")
 {
-    double d = 0.036303908355795146;
-    json::wvalue value = d;
+    {
+        double d = 0.036303908355795146;
+        json::wvalue value = d;
 
-    CHECK(value.t() == json::type::Number);
-    auto dumped_value = value.dump();
-    CROW_LOG_DEBUG << dumped_value;
-    CHECK(std::abs(utility::lexical_cast<double>(dumped_value) - d) < numeric_limits<double>::epsilon());
+        CHECK(value.t() == json::type::Number);
+        CHECK(value.dump() == "0.0363039");
+    }
+    {
+        double d = 36303908355795.146;
+        json::wvalue value = d;
+
+        CHECK(value.t() == json::type::Number);
+        CHECK(value.dump() == "3.63039e+13");
+    }
 } // json::wvalue::wvalue(double)
 
 TEST_CASE("json::wvalue::wvalue(char const*)")

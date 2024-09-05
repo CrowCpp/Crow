@@ -35,6 +35,7 @@ A `wvalue` can be treated as an object or even a list (setting a value by using 
 
     JSON does not allow floating point values like `NaN` or `INF`, Crow will output `null` instead of `NaN` or `INF` when converting `wvalue` to a string. (`{"Key": NaN}` becomes `{"Key": null}`)
 
+To serialize `#!cpp float` and `#!cpp double` with a given number of significant digits, say 6 (the default), use the macros `#!cpp #define CROW_JSON_FLOAT_PRECISION 6` and `#!cpp #define CROW_JSON_DOUBLE_PRECISION 6`.
 <br><br>
 
 Additionally, a `wvalue` can be initialized as an object using an initializer list, an example object would be `wvalue x = {{"a", 1}, {"b", 2}}`. Or as a list using `wvalue x = json::wvalue::list({1, 2, 3})`, lists can include any type that `wvalue` supports.<br><br>
