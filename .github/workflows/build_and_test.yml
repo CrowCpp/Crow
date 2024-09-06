@@ -112,11 +112,10 @@ jobs:
         name: coveralls.json
         path: coveralls.json
 
-
     - name: Package
       working-directory: ${{github.workspace}}/build
-      run: |
-        cmake --build . --target ALL_BUILD && \
-        cmake --build . --target doc && \
-        cmake --build . --target package && \
-        cpack --config CPackSourceConfig.cmake
+      run: cmake --build . --target package
+
+    - name: Source package
+      working-directory: ${{github.workspace}}/build
+      run: cpack --config CPackSourceConfig.cmake
