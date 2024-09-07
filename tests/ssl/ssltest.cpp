@@ -1,9 +1,8 @@
-#define CATCH_CONFIG_MAIN
 #define CROW_LOG_LEVEL 0
 
 #include <thread>
 
-#include "../catch.hpp"
+#include "catch2/catch_all.hpp"
 #include "crow.h"
 
 #define LOCALHOST_ADDRESS "127.0.0.1"

@@ -1,16 +1,24 @@
 #pragma once
 
+#ifdef CROW_USE_BOOST
+#include <boost/asio.hpp>
+#else
 #ifndef ASIO_STANDALONE
 #define ASIO_STANDALONE
 #endif
 #include <asio.hpp>
+#endif
 
 #include "crow/common.h"
 #include "crow/ci_map.h"
 #include "crow/query_string.h"
 
-namespace crow
+namespace crow // NOTE: Already documented in "crow/app.h"
 {
+#ifdef CROW_USE_BOOST
+    namespace asio = boost::asio;
+#endif
+
     /// Find and return the value associated with the key. (returns an empty string if nothing is found)
     template<typename T>
     inline const std::string& get_header_value(const T& headers, const std::string& key)
