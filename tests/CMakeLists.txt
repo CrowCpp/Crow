@@ -1,11 +1,22 @@
-cmake_minimum_required(VERSION 3.15)
+cmake_minimum_required(VERSION 3.21)
 project(crow_test)
+
+set(CMAKE_POLICY_DEFAULT_CMP0077 new)
+set(CMAKE_POLICY_WARNING_CMP0126 new)
 
 include(${CMAKE_SOURCE_DIR}/cmake/compiler_options.cmake)
 include(${CMAKE_SOURCE_DIR}/cmake/CPM.cmake)
 
-CPMAddPackage("gh:catchorg/Catch2@3.6.0")
 
+CPMAddPackage(Catch2
+  VERSION 3.7.0
+  GITHUB_REPOSITORY catchorg/Catch2
+  OPTIONS
+  "CATCH_INSTALL_DOCS Off"
+  "CATCH_INSTALL_EXTRAS Off"
+  "CATCH_ENABLE_REPRODUCIBLE_BUILD Off"
+)
+  
 enable_testing()
 
 set(TEST_SRCS
