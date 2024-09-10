@@ -2,7 +2,7 @@ var classcrow_1_1websocket_1_1_connection =
 [
     [ "SendMessageType", "structcrow_1_1websocket_1_1_connection_1_1_send_message_type.html", "structcrow_1_1websocket_1_1_connection_1_1_send_message_type" ],
     [ "WeakWrappedMessage", "structcrow_1_1websocket_1_1_connection_1_1_weak_wrapped_message.html", "structcrow_1_1websocket_1_1_connection_1_1_weak_wrapped_message" ],
-    [ "Connection", "classcrow_1_1websocket_1_1_connection.html#a1e2301c75083cdb2856d72c23fa82ab8", null ],
+    [ "Connection", "classcrow_1_1websocket_1_1_connection.html#a12834b0aaac5b236a8784a1b131d1fa9", null ],
     [ "~Connection", "classcrow_1_1websocket_1_1_connection.html#a0f9b68f4ac5b2b1af3bf721383244863", null ],
     [ "build_header", "classcrow_1_1websocket_1_1_connection.html#a2fc995281b9452b56f743294baa7ed17", null ],
     [ "check_destroy", "classcrow_1_1websocket_1_1_connection.html#ad13e9b7b8a2a551056b34495cb334124", null ],
@@ -11,6 +11,7 @@ var classcrow_1_1websocket_1_1_connection =
     [ "do_read", "classcrow_1_1websocket_1_1_connection.html#a1049d7689f068379e98954bfb04bee5c", null ],
     [ "do_write", "classcrow_1_1websocket_1_1_connection.html#a787dde96965bf30d994bbc5fb3388281", null ],
     [ "get_remote_ip", "classcrow_1_1websocket_1_1_connection.html#ae6b8882caf42fc65295920e064e83ecc", null ],
+    [ "get_subprotocol", "classcrow_1_1websocket_1_1_connection.html#a5e2427132ac75808a9e38c6ccaeae94a", null ],
     [ "handle_fragment", "classcrow_1_1websocket_1_1_connection.html#a292002f44552e5eabd8dd65f476a4c28", null ],
     [ "is_FIN", "classcrow_1_1websocket_1_1_connection.html#a98f4af4eac4b807f970667b0147869a4", null ],
     [ "opcode", "classcrow_1_1websocket_1_1_connection.html#a6d74305323202dc7ebd07cbd3ee19f98", null ],

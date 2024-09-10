@@ -10,5 +10,6 @@ var searchData=
   ['get_5fheader_5fvalue_89',['get_header_value',['../namespacecrow.html#ac0940ae1e094df6107d3a2604537279a',1,'crow']]],
   ['get_5fheader_5fvalue_5fobject_90',['get_header_value_object',['../namespacecrow_1_1multipart.html#adb2a619f5ebb5d00a19d3e96dc3b0433',1,'crow::multipart']]],
   ['get_5flist_91',['get_list',['../classcrow_1_1query__string.html#a657e5fe435375cd31229944ed2ad5608',1,'crow::query_string']]],
-  ['global_92',['global',['../structcrow_1_1_c_o_r_s_rules.html#a1684428b8d96050e7dbb852b526ec5a2',1,'crow::CORSRules::global()'],['../structcrow_1_1_c_o_r_s_handler.html#a969edd2b3d6768d067147839a430a976',1,'crow::CORSHandler::global()']]]
+  ['get_5fsubprotocol_92',['get_subprotocol',['../classcrow_1_1websocket_1_1_connection.html#a5e2427132ac75808a9e38c6ccaeae94a',1,'crow::websocket::Connection']]],
+  ['global_93',['global',['../structcrow_1_1_c_o_r_s_rules.html#a1684428b8d96050e7dbb852b526ec5a2',1,'crow::CORSRules::global()'],['../structcrow_1_1_c_o_r_s_handler.html#a969edd2b3d6768d067147839a430a976',1,'crow::CORSHandler::global()']]]
 ];
