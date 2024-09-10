@@ -66,6 +66,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
             virtual void send_pong(std::string msg) = 0;
             virtual void close(std::string const& msg = "quit", uint16_t status_code = CloseStatusCode::NormalClosure) = 0;
             virtual std::string get_remote_ip() = 0;
+            virtual std::string get_subprotocol() const = 0;
             virtual ~connection() = default;
 
             void userdata(void* u) { userdata_ = u; }
@@ -109,7 +110,8 @@ namespace crow // NOTE: Already documented in "crow/app.h"
             ///
             /// Requires a request with an "Upgrade: websocket" header.<br>
             /// Automatically handles the handshake.
-            Connection(const crow::request& req, Adaptor&& adaptor, Handler* handler, uint64_t max_payload,
+            Connection(const crow::request& req, Adaptor&& adaptor, Handler* handler,
+                       uint64_t max_payload, const std::vector<std::string>& subprotocols,
                        std::function<void(crow::websocket::connection&)> open_handler,
                        std::function<void(crow::websocket::connection&, const std::string&, bool)> message_handler,
                        std::function<void(crow::websocket::connection&, const std::string&, uint16_t)> close_handler,
@@ -130,6 +132,17 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                     handler_->remove_websocket(this);
                     delete this;
                     return;
+                }
+
+                std::string requested_subprotocols_header = req.get_header_value("Sec-WebSocket-Protocol");
+                if (!subprotocols.empty() || !requested_subprotocols_header.empty())
+                {
+                    auto requested_subprotocols = utility::split(requested_subprotocols_header, ", ");
+                    auto subprotocol = utility::find_first_of(subprotocols.begin(), subprotocols.end(), requested_subprotocols.begin(), requested_subprotocols.end());
+                    if (subprotocol != subprotocols.end())
+                    {
+                        subprotocol_ = *subprotocol;
+                    }
                 }
 
                 if (accept_handler_)
@@ -268,6 +281,12 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                 max_payload_bytes_ = payload;
             }
 
+            /// Returns the matching client/server subprotocol, empty string if none matched. 
+            std::string get_subprotocol() const override
+            {
+                return subprotocol_;
+            }
+
         protected:
             /// Generate the websocket headers using an opcode and the message size (in bytes).
             std::string build_header(int opcode, size_t size)
@@ -307,6 +326,12 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                 write_buffers_.emplace_back(header);
                 write_buffers_.emplace_back(std::move(hello));
                 write_buffers_.emplace_back(crlf);
+                if (!subprotocol_.empty())
+                {
+                    write_buffers_.emplace_back("Sec-WebSocket-Protocol: ");
+                    write_buffers_.emplace_back(subprotocol_);
+                    write_buffers_.emplace_back(crlf);
+                }
                 write_buffers_.emplace_back(crlf);
                 do_write();
                 if (open_handler_)
@@ -779,6 +804,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
             uint16_t remaining_length16_{0};
             uint64_t remaining_length_{0};
             uint64_t max_payload_bytes_{UINT64_MAX};
+            std::string subprotocol_;
             bool close_connection_{false};
             bool is_reading{false};
             bool has_mask_{false};

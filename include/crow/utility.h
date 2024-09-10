@@ -907,5 +907,44 @@ namespace crow
 
             return v.substr(begin, end - begin);
         }
+
+        /**
+         * @brief splits a string based on a separator
+         */
+        inline static std::vector<std::string> split(const std::string& v, const std::string& separator)
+        {
+            std::vector<std::string> result;
+            size_t startPos = 0;
+
+            for (size_t foundPos = v.find(separator); foundPos != std::string::npos; foundPos = v.find(separator, startPos))
+            {
+                result.push_back(v.substr(startPos, foundPos - startPos));
+                startPos = foundPos + separator.size();
+            }
+
+            result.push_back(v.substr(startPos));
+            return result;
+        }
+
+        /**
+         * @brief Returns the first occurence that matches between two ranges of iterators
+         * @param first1 begin() iterator of the first range
+         * @param last1 end() iterator of the first range
+         * @param first2 begin() iterator of the second range
+         * @param last2 end() iterator of the second range
+         * @return first occurence that matches between two ranges of iterators 
+        */
+        template <typename Iter1, typename Iter2>
+        inline static Iter1 find_first_of(Iter1 first1, Iter1 last1, Iter2 first2, Iter2 last2)
+        {
+            for (; first1 != last1; ++first1)
+            {
+                if (std::find(first2, last2, *first1) != last2)
+                {
+                    return first1;
+                }
+            }
+            return last1;
+        }
     } // namespace utility
 } // namespace crow
