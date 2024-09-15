@@ -3839,26 +3839,25 @@ TEST_CASE("task_timer")
     bool a = false;
     bool b = false;
 
-    crow::detail::task_timer timer(io_service);
+    crow::detail::task_timer timer(io_service, std::chrono::milliseconds(100));
     CHECK(timer.get_default_timeout() == 5);
     timer.set_default_timeout(7);
     CHECK(timer.get_default_timeout() == 7);
 
     timer.schedule([&a]() {
         a = true;
-    },
-                   5);
+    }, 5);
     timer.schedule([&b]() {
         b = true;
     });
 
-    this_thread::sleep_for(chrono::seconds(4));
+    this_thread::sleep_for(4 * timer.get_tick_length());
     CHECK(a == false);
     CHECK(b == false);
-    this_thread::sleep_for(chrono::seconds(2));
+    this_thread::sleep_for(2 * timer.get_tick_length());
     CHECK(a == true);
     CHECK(b == false);
-    this_thread::sleep_for(chrono::seconds(2));
+    this_thread::sleep_for(2 * timer.get_tick_length());
     CHECK(a == true);
     CHECK(b == true);
 
