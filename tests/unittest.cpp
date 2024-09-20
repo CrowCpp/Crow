@@ -594,6 +594,24 @@ TEST_CASE("server_handling_error_request")
     app.stop();
 } // server_handling_error_request
 
+TEST_CASE("server_dynamic_port_allication")
+{
+    SimpleApp app;
+    CROW_ROUTE(app, "/")
+    ([] {
+        return "A";
+    });
+    auto _ = app.bindaddr(LOCALHOST_ADDRESS).port(0).run_async();
+    app.wait_for_server_start();
+    asio::io_service is;
+    {
+        asio::ip::tcp::socket c(is);
+        c.connect(asio::ip::tcp::endpoint(
+          asio::ip::address::from_string(LOCALHOST_ADDRESS), app.port()));
+    }
+    app.stop();
+} // server_dynamic_port_allication
+
 TEST_CASE("server_handling_error_request_http_version")
 {
     static char buf[2048];
