@@ -314,7 +314,20 @@ namespace crow
         /// \brief Get the port that Crow will handle requests on
         std::uint16_t port() const
         {
-            return port_;
+            if (!server_started_)
+            {
+                return port_;
+            }
+#ifdef CROW_ENABLE_SSL
+            if (ssl_used_)
+            {
+                return ssl_server_->port();
+            }
+            else
+#endif
+            {
+                return server_->port();
+            }
         }
 
         /// \brief Set the connection timeout in seconds (default is 5)
