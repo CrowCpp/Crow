@@ -118,9 +118,9 @@ namespace crow
 
         // clang-format off
         response() {}
-        explicit response(int code) : code(code) {}
-        response(std::string body) : body(std::move(body)) {}
-        response(int code, std::string body) : code(code), body(std::move(body)) {}
+        explicit response(int code_) : code(code_) {}
+        response(std::string body_) : body(std::move(body_)) {}
+        response(int code_, std::string body_) : code(code_), body(std::move(body_)) {}
         // clang-format on
         response(returnable&& value)
         {
@@ -132,14 +132,14 @@ namespace crow
             body = value.dump();
             set_header("Content-Type", value.content_type);
         }
-        response(int code, returnable& value):
-          code(code)
+        response(int code_, returnable& value):
+          code(code_)
         {
             body = value.dump();
             set_header("Content-Type", value.content_type);
         }
-        response(int code, returnable&& value):
-          code(code), body(value.dump())
+        response(int code_, returnable&& value):
+          code(code_), body(value.dump())
         {
             set_header("Content-Type", std::move(value.content_type));
         }
@@ -149,14 +149,14 @@ namespace crow
             *this = std::move(r);
         }
 
-        response(std::string contentType, std::string body):
-          body(std::move(body))
+        response(std::string contentType, std::string body_):
+          body(std::move(body_))
         {
             set_header("Content-Type", get_mime_type(contentType));
         }
 
-        response(int code, std::string contentType, std::string body):
-          code(code), body(std::move(body))
+        response(int code_, std::string contentType, std::string body_):
+          code(code_), body(std::move(body_))
         {
             set_header("Content-Type", get_mime_type(contentType));
         }

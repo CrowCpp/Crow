@@ -666,8 +666,8 @@ TEST_CASE("multi_server")
 
         for (auto ch : sendmsg)
         {
-            char buf[1] = {ch};
-            c.send(asio::buffer(buf));
+            char tmp[1] = {ch};
+            c.send(asio::buffer(tmp));
         }
 
         size_t recved = c.receive(asio::buffer(buf, 2048));
@@ -2701,9 +2701,9 @@ TEST_CASE("stream_response")
                 b.commit(n);
                 received += n;
 
-                std::istream is(&b);
+                std::istream istream(&b);
                 std::string s;
-                is >> s;
+                istream >> s;
 
                 CHECK(key_response.substr(received - n, n) == s);
             }

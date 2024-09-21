@@ -194,7 +194,6 @@ namespace crow
 
                 if (!res.completed_)
                 {
-                    auto self = this->shared_from_this();
                     res.complete_request_handler_ = [self] {
                         self->complete_request();
                     };

@@ -20,6 +20,7 @@ function(add_warnings_optimizations target_name)
         -Wextra
         -Wpedantic
         -Wsuggest-override
+        -Wshadow
         $<$<CONFIG:RELEASE>:-O2>
         $<$<CONFIG:DEBUG>:-O0 -g>
     )
@@ -31,6 +32,7 @@ function(add_warnings_optimizations target_name)
         -Wextra
         -Wpedantic
         -Wsuggest-override
+        -Wshadow
         $<$<CONFIG:RELEASE>:-O2>
         $<$<CONFIG:DEBUG>:-O0 -g -pg>
     )
@@ -41,6 +43,7 @@ function(add_warnings_optimizations target_name)
         -Wextra
         -Wpedantic
         -Wsuggest-override
+        -Wshadow
         $<$<CONFIG:RELEASE>:-O2>
         $<$<CONFIG:DEBUG>:-O0 -g -p -pg>
     )

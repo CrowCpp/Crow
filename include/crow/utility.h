@@ -724,7 +724,7 @@ namespace crow
             // Check for special device names. The Windows behavior is really odd here, it will consider both AUX and AUX.txt
             // a special device. Thus we search for the string (case-insensitive), and then check if the string ends or if
             // is has a dangerous follow up character (.:\/)
-            auto sanitizeSpecialFile = [](std::string& source, unsigned ofs, const char* pattern, bool includeNumber, char replacement) {
+            auto sanitizeSpecialFile = [](std::string& source, unsigned ofs, const char* pattern, bool includeNumber, char replacement_) {
                 unsigned i = ofs;
                 size_t len = source.length();
                 const char* p = pattern;
@@ -743,7 +743,7 @@ namespace crow
                 if ((i >= len) || (source[i] == '.') || (source[i] == ':') || (source[i] == '/') || (source[i] == '\\'))
                 {
                     source.erase(ofs + 1, (i - ofs) - 1);
-                    source[ofs] = replacement;
+                    source[ofs] = replacement_;
                 }
             };
             bool checkForSpecialEntries = true;

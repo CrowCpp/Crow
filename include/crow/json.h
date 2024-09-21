@@ -52,11 +52,12 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                         if (c >= 0 && c < 0x20)
                         {
                             ret += "\\u00";
-                            auto to_hex = [](char c) {
-                                c = c & 0xf;
-                                if (c < 10)
-                                    return '0' + c;
-                                return 'a' + c - 10;
+                            // TODO
+                            auto to_hex = [](char c_) {
+                                c_ = c_ & 0xf;
+                                if (c_ < 10)
+                                    return '0' + c_;
+                                return 'a' + c_ - 10;
                             };
                             ret += to_hex(c / 16);
                             ret += to_hex(c % 16);
@@ -878,8 +879,8 @@ namespace crow // NOTE: Already documented in "crow/app.h"
             //static const char* escaped = "\"\\/\b\f\n\r\t";
             struct Parser
             {
-                Parser(char* data, size_t /*size*/):
-                  data(data)
+                Parser(char* data_, size_t /*size*/):
+                  data(data_)
                 {
                 }
 
@@ -1887,7 +1888,8 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                                 snprintf(outbuf, sizeof(outbuf), "%f", v.num.d);
 #endif
                             }
-                            char *p = &outbuf[0], *o = nullptr; // o is the position of the first trailing 0
+                            char *p = &outbuf[0];
+                            char *pos_first_trailing_0 = nullptr;
                             f_state = start;
                             while (*p != '\0')
                             {
@@ -1909,22 +1911,22 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                                         if (ch == '0')
                                         {
                                             f_state = zero;
-                                            o = p;
+                                            pos_first_trailing_0 = p;
                                         }
                                         p++;
                                         break;
                                     case zero: // if a non 0 is found (e.g. 1.00004) remove the earlier recorded 0 position and look for more trailing 0s
                                         if (ch != '0')
                                         {
-                                            o = nullptr;
+                                            pos_first_trailing_0 = nullptr;
                                             f_state = decp;
                                         }
                                         p++;
                                         break;
                                 }
                             }
-                            if (o != nullptr) // if any trailing 0s are found, terminate the string where they begin
-                                *o = '\0';
+                            if (pos_first_trailing_0 != nullptr) // if any trailing 0s are found, terminate the string where they begin
+                                *pos_first_trailing_0 = '\0';
                             out += outbuf;
                         }
                         else if (v.nt == num_type::Signed_integer)
