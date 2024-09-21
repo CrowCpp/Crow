@@ -97,11 +97,13 @@ namespace crow // NOTE: Already documented in "crow/app.h"
 
         virtual void validate() = 0;
 
-        void set_added() {
+        void set_added()
+        {
             added_ = true;
         }
 
-        bool is_added() {
+        bool is_added()
+        {
             return added_;
         }
 
@@ -1110,11 +1112,10 @@ namespace crow // NOTE: Already documented in "crow/app.h"
     class Blueprint
     {
     public:
-        Blueprint(const std::string& prefix)
-          : prefix_(prefix),
-            static_dir_(prefix),
-            templates_dir_(prefix)
-            {};
+        Blueprint(const std::string& prefix):
+          prefix_(prefix),
+          static_dir_(prefix),
+          templates_dir_(prefix){};
 
         Blueprint(const std::string& prefix, const std::string& static_dir):
           prefix_(prefix), static_dir_(static_dir){};
@@ -1174,11 +1175,13 @@ namespace crow // NOTE: Already documented in "crow/app.h"
             return static_dir_;
         }
 
-        void set_added() {
+        void set_added()
+        {
             added_ = true;
         }
 
-        bool is_added() {
+        bool is_added()
+        {
             return added_;
         }
 
@@ -1355,7 +1358,8 @@ namespace crow // NOTE: Already documented in "crow/app.h"
             }
         }
 
-        void validate_bp() {
+        void validate_bp()
+        {
             //Take all the routes from the registered blueprints and add them to `all_rules_` to be processed.
             detail::middleware_indices blueprint_mw;
             validate_bp(blueprints_, blueprint_mw);

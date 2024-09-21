@@ -1889,8 +1889,8 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                                 snprintf(outbuf, sizeof(outbuf), "%f", v.num.d);
 #endif
                             }
-                            char *p = &outbuf[0];
-                            char *pos_first_trailing_0 = nullptr;
+                            char* p = &outbuf[0];
+                            char* pos_first_trailing_0 = nullptr;
                             f_state = start;
                             while (*p != '\0')
                             {

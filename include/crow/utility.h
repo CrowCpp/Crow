@@ -642,9 +642,9 @@ namespace crow
 
             // Padded
             else if (size >= 2 && data[size - 2] == '=') // padded with '=='
-                size = (size / 4 * 3) - 2;  // == padding means the last block only has 1 character instead of 3, hence the '-2'
+                size = (size / 4 * 3) - 2;               // == padding means the last block only has 1 character instead of 3, hence the '-2'
             else if (size >= 1 && data[size - 1] == '=') // padded with '='
-                size = (size / 4 * 3) - 1;  // = padding means the last block only has 2 character instead of 3, hence the '-1'
+                size = (size / 4 * 3) - 1;               // = padding means the last block only has 2 character instead of 3, hence the '-1'
 
             // Padding not needed
             else
@@ -934,7 +934,7 @@ namespace crow
          * @param last2 end() iterator of the second range
          * @return first occurence that matches between two ranges of iterators 
         */
-        template <typename Iter1, typename Iter2>
+        template<typename Iter1, typename Iter2>
         inline static Iter1 find_first_of(Iter1 first1, Iter1 last1, Iter2 first2, Iter2 last2)
         {
             for (; first1 != last1; ++first1)
