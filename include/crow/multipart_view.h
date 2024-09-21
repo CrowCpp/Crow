@@ -62,9 +62,9 @@ namespace crow
             const char padding = '"'; ///< Padding to use
 
             /// Outputs padded value to the stream
-            friend std::ostream& operator<<(std::ostream& stream, const padded value)
+            friend std::ostream& operator<<(std::ostream& stream, const padded value_)
             {
-                return stream << value.padding << value.value << value.padding;
+                return stream << value_.padding << value_.value << value_.padding;
             }
         };
 
