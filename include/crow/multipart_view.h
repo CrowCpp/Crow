@@ -186,7 +186,7 @@ namespace crow
               headers(req.headers),
               boundary(get_boundary(get_header_value("Content-Type")))
             {
-                parse_body(req.body, parts, part_map);
+                parse_body(req.body);
             }
 
         private:
@@ -207,8 +207,7 @@ namespace crow
                 return to_return;
             }
 
-            // TODO why not use parts and part_map directly?
-            void parse_body(std::string_view body, std::vector<part_view>& sections, mp_view_map& part_map_ref)
+            void parse_body(std::string_view body)
             {
                 const std::string delimiter = dd + boundary;
 
@@ -230,10 +229,10 @@ namespace crow
                     if (!section.empty())
                     {
                         part_view parsed_section = parse_section(section);
-                        part_map_ref.emplace(
+                        part_map.emplace(
                           (get_header_object(parsed_section.headers, "Content-Disposition").params.find("name")->second),
                           parsed_section);
-                        sections.push_back(std::move(parsed_section));
+                        parts.push_back(std::move(parsed_section));
                     }
                 }
             }

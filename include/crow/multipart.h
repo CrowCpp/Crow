@@ -148,7 +148,7 @@ namespace crow
             {
                 if (!boundary.empty())
                     content_type = "multipart/form-data; boundary=" + boundary;
-                parse_body(req.body, parts, part_map);
+                parse_body(req.body);
             }
 
         private:
@@ -168,10 +168,8 @@ namespace crow
                 return std::string();
             }
 
-            // TODO
-            void parse_body(std::string body, std::vector<part>& sections, mp_map& part_map_ref)
+            void parse_body(std::string body)
             {
-
                 std::string delimiter = dd + boundary;
 
                 // TODO(EDev): Exit on error
@@ -191,10 +189,10 @@ namespace crow
                     if (!section.empty())
                     {
                         part parsed_section(parse_section(section));
-                        part_map_ref.emplace(
+                        part_map.emplace(
                           (get_header_object(parsed_section.headers, "Content-Disposition").params.find("name")->second),
                           parsed_section);
-                        sections.push_back(std::move(parsed_section));
+                        parts.push_back(std::move(parsed_section));
                     }
                 }
             }
