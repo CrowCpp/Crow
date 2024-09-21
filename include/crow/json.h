@@ -34,6 +34,14 @@ namespace crow // NOTE: Already documented in "crow/app.h"
 
     namespace json
     {
+        static inline char to_hex(char c)
+        {
+            c = c & 0xf;
+            if (c < 10)
+                return '0' + c;
+            return 'a' + c - 10;
+        };
+
         inline void escape(const std::string& str, std::string& ret)
         {
             ret.reserve(ret.size() + str.size() + str.size() / 4);
@@ -52,13 +60,6 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                         if (c >= 0 && c < 0x20)
                         {
                             ret += "\\u00";
-                            // TODO
-                            auto to_hex = [](char c_) {
-                                c_ = c_ & 0xf;
-                                if (c_ < 10)
-                                    return '0' + c_;
-                                return 'a' + c_ - 10;
-                            };
                             ret += to_hex(c / 16);
                             ret += to_hex(c % 16);
                         }
