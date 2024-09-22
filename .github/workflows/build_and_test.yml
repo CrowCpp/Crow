@@ -1,0 +1,122 @@
+name: Build and test
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+env:
+  BUILD_TYPE: Release
+  COVERALLS_PULL_REQUEST: ${{ github.event.number }}
+
+jobs:
+  build:
+    # The CMake configure and build commands are platform agnostic and should work equally well on Windows or Mac.
+    # You can convert this to a matrix build if you need cross-platform coverage.
+    # See: https://docs.github.com/en/free-pro-team@latest/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: true
+      matrix:
+        os: [ ubuntu-latest,
+              windows-latest,
+              macos-latest,
+              ubuntu-20.04,
+              ubuntu-24.04,
+              macos-13
+            ]
+            # ubuntu-18.04 does not work due to compile error on asio
+            # windows-2019 not included to spare free minutes
+    steps:
+    - uses: actions/checkout@v4
+    - name: Prepare dependencies
+      run: |
+         if [ "$RUNNER_OS" == "Linux" ]; then
+              sudo apt-get update && \
+              sudo apt-get install -yq \
+                libasio-dev \
+                libssl-dev zlib1g-dev \
+                cmake \
+                g++ clang
+         elif [ "$RUNNER_OS" == "Windows" ]; then
+              VCPKG_DEFAULT_TRIPLET=x64-windows vcpkg install
+         elif [ "$RUNNER_OS" == "macOS" ]; then
+              brew install asio openssl zlib
+         else
+              echo "$RUNNER_OS not supported"
+              exit 1
+         fi
+      shell: bash
+
+    - name: Configure CMake
+      run: |
+         cmake_flags=""
+         if [ "$RUNNER_OS" == "Windows" ]; then
+              cmake_flags="-DCMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake"
+         elif [ "$RUNNER_OS" == "macOS" ]; then
+              export LDFLAGS="-L/usr/local/opt/openssl@1.1/lib"
+              export CPPFLAGS="-I/usr/local/opt/openssl@1.1/include"
+              if [ "${{ matrix.compiler }}" == "clang" ] && [ "${{ matrix.cxx_stdlib }}" == "libc++" ]; then
+                  cmake_flags="-DCMAKE_CXX_FLAGS='-stdlib=libc++'"
+              fi
+         elif [ "$RUNNER_OS" == "Linux" ]; then
+              if [ "${{ matrix.compiler }}" == "clang" ] && [ "${{ matrix.cxx_stdlib }}" == "libc++" ]; then
+                  cmake_flags="-DCMAKE_CXX_COMPILER=clang++ -DCMAKE_CXX_FLAGS='-stdlib=libc++'"
+                  sudo apt-get install libc++-dev libc++abi-dev -y
+              elif [ "${{ matrix.compiler }}" == "clang" ]; then
+                  cmake_flags="-DCMAKE_CXX_COMPILER=clang++ -DCMAKE_CXX_FLAGS='-stdlib=libstdc++'"
+              else
+                  cmake_flags="-DCMAKE_CXX_COMPILER=g++"
+              fi
+         fi
+
+         cmake \
+            ${cmake_flags} \
+            -DCROW_ENABLE_SSL=ON \
+            -DCROW_ENABLE_COMPRESSION=ON \
+            -DCROW_AMALGAMATE=ON \
+            -DCROW_BUILD_TESTS=ON \
+            -B build
+      shell: bash
+
+    - name: Build
+      # Build your program with the given configuration
+      run: cmake --build build --config ${{env.BUILD_TYPE}}
+      shell: bash
+
+    - name: Test
+      working-directory: ${{github.workspace}}/build
+      # Execute tests defined by the CMake configuration.
+      # See https://cmake.org/cmake/help/latest/manual/ctest.1.html for more detail
+      run: ctest --output-on-failure -C ${{env.BUILD_TYPE}}
+      shell: bash
+
+    - name: Generate coverage report
+      if: matrix.os == 'ubuntu-latest' && matrix.compiler == 'gcc' && matrix.cxx_stdlib == 'libstdc++'
+      run: |
+        export CI_BRANCH=${GITHUB_BASE_REF:-${GITHUB_REF#refs/heads/}}
+        echo "CI_BRANCH=$CI_BRANCH" >> $GITHUB_ENV && \
+        export TRAVIS_JOB_ID=$GITHUB_RUN_NUMBER && \
+        git clone https://github.com/CrowCpp/cpp-coveralls.git && \
+        cd cpp-coveralls && \
+        pip3 install . --no-input && \
+        cd .. && \
+        coveralls --verbose --exclude-pattern .*/http_parser_merged.h --exclude-pattern .*/TinySHA1.hpp --dump coveralls.json
+      shell: bash
+
+    - name: Save report
+      uses: actions/upload-artifact@v4
+      if: matrix.os == 'ubuntu-latest' && matrix.compiler == 'gcc' && matrix.cxx_stdlib == 'libstdc++'
+      with:
+        name: coveralls.json
+        path: coveralls.json
+
+
+    #- name: Package
+    #  working-directory: ${{github.workspace}}/build
+    #  run: |
+    #    cmake --build . --target ALL_BUILD && \
+    #    cmake --build . --target doc && \
+    #    cmake --build . --target package && \
+    #    cpack --config CPackSourceConfig.cmake

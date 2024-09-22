@@ -9,7 +9,7 @@
 #include <iostream>
 #include <utility>
 
-namespace crow
+namespace crow // NOTE: Already documented in "crow/app.h"
 {
 
     /// Local middleware should extend ILocalMiddleware

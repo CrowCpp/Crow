@@ -2,21 +2,20 @@
 
 <h4 align="center">A Fast and Easy to use microframework for the web.</h4>
 <p align="center">
-<a href="https://cloud.drone.io/CrowCpp/Crow"><img src="https://cloud.drone.io/api/badges/CrowCpp/Crow/status.svg" alt="Build Status"></a>
+<a href="https://github.com/CrowCpp/Crow/actions/workflows/build_and_test.yml"><img src="https://github.com/CrowCpp/Crow/actions/workflows/build_and_test.yml/badge.svg?branch=master" alt="Build Status"></a>
 <a href="https://coveralls.io/github/CrowCpp/Crow?branch=master"><img src="https://coveralls.io/repos/github/CrowCpp/Crow/badge.svg?branch=master" alt="Coverage Status"></a>
 <a href="https://crowcpp.org"><img src="https://img.shields.io/badge/-Documentation-informational" alt="Documentation"></a>
 <a href="https://gitter.im/crowfork/community?utm_source=badge&amp;utm_medium=badge&amp;utm_campaign=pr-badge"><img src="https://img.shields.io/gitter/room/crowfork/community?color=8DDEC5&logo=gitter" alt="Gitter"></a>
 <a href="https://opencollective.com/crow"><img alt="Open Collective" src="https://img.shields.io/opencollective/all/crow?label=Support%20Crow&logo=opencollective"></a>
 </p>
 
-
 ## Description
 
-Crow is a C++ framework for creating HTTP or Websocket web services. It uses routing similar to Python's Flask which makes it easy to use. It is also extremely fast, beating multiple existing C++ frameworks as well as non C++ frameworks.
+Crow is a C++ framework for creating HTTP or Websocket web services. It uses routing similar to Python's Flask which makes it easy to use. It is also extremely fast, beating multiple existing C++ frameworks as well as non-C++ frameworks.
 
 ### Features
- - Easy Routing (similar to flask).
- - Type-safe Handlers.
+ - Easy Routing (similar to Flask).
+ - Type-safe handlers.
  - Blazingly fast (see [this benchmark](https://github.com/ipkn/crow-benchmark) and [this benchmark](https://github.com/guteksan/REST-CPP-benchmark)).
  - Built in JSON support.
  - [Mustache](http://mustache.github.io/) based templating library (`crow::mustache`).
@@ -34,7 +33,7 @@ Crow is a C++ framework for creating HTTP or Websocket web services. It uses rou
 Available [here](https://crowcpp.org).
 
 > **Warning**
-> 
+>
 > If you are using Crow v0.3, then you have to put `#define CROW_MAIN` at the top of one and only one source file.
 
 ## Examples
@@ -78,7 +77,7 @@ CROW_ROUTE(app,"/hello/<int>")
 ```
 Handler arguments type check at compile time
 ```cpp
-// Compile error with message "Handler type is mismatched with URL paramters"
+// Compile error with message "Handler type is mismatched with URL parameters"
 CROW_ROUTE(app,"/another/<int>")
 ([](int a, int b){
     return crow::response(500);
@@ -137,10 +136,10 @@ Crow has incorporated the following libraries into its source.
     AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
     LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
-    IN THE SOFTWARE. 
+    IN THE SOFTWARE.
 
     ---------------------------------------------------------------------------
-    
+
 
     qs_parse (used for reading query string parameters)
 
@@ -157,7 +156,7 @@ Crow has incorporated the following libraries into its source.
     all copies or substantial portions of the Software.
 
     ---------------------------------------------------------------------------
-    
+
 
     TinySHA1 (used during the websocket handshake, not for security)
 
@@ -168,23 +167,23 @@ Crow has incorporated the following libraries into its source.
 
     Copyright (c) 2012-22 SAURAV MOHAPATRA mohaps@gmail.com
     Permission to use, copy, modify, and distribute this software for any purpose
-    with or without fee is hereby granted, provided that the above copyright 
+    with or without fee is hereby granted, provided that the above copyright
     notice and this permission notice appear in all copies.
     THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH
     REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY
-    AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT, 
-    INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM 
+    AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT,
+    INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM
     LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
     OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
     PERFORMANCE OF THIS SOFTWARE.
-    
+
     ---------------------------------------------------------------------------
-    
-    
+
+
     Catch2 (used only in unit tests, not part of the actual framework)
-    
+
     https://github.com/catchorg/Catch2
-    
+
     Boost Software License - Version 1.0 - August 17th, 2003
 
     Permission is hereby granted, free of charge, to any person or organization

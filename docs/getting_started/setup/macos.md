@@ -36,8 +36,11 @@ This will generate a `crow_all.h` file which you can use in the following steps
     === "Single Header"
 
         1. Place `crow_all.h` inside your project folder and add it to the project in XCode (you need to use File -> Add files to "project_name")
-        2. Add header search paths for asio's folder (`/usr/local/include`, and `/usr/local/Cellar/asio/include`)
-        3. Add linker flags (`-lpthread`)
+        2. Add header search paths for asio's folder:
+           1. `/usr/local/include`, and
+           2. **Silicon**: `/opt/homebrew/Cellar/asio/<asio_version>/include`
+           3. **Intel**: `/usr/local/Cellar/asio/<asio_version>/include`
+        3. Add linker flags (`-lpthread` for g++, `-pthread` for clang++)
 
 5. Write your Crow application in `main.cpp` (something like the Hello World example will work).
 6. Press `▶` to compile and run your Crow application.
@@ -58,7 +61,10 @@ This will generate a `crow_all.h` file which you can use in the following steps
     4. `make -j12`
 !!! note
 
-        You can add options like `-DCROW_FEATURES="ssl;compression"` or `-DCROW_AMALGAMATE` to `cmake ..` to build optional tests/examples for HTTP Compression or HTTPS.
+        You can add options like `-DCROW_ENABLE_COMPRESSION=ON`
+                or `-DCROW_ENABLE_SSL=ON`
+                or `-DCROW_AMALGAMATE`
+		to `cmake ..` to build optional tests/examples for HTTP Compression or HTTPS.
 
 ## Compiling using a compiler directly
 All you need to do is run the following command:
@@ -70,3 +76,5 @@ g++ main.cpp -lpthread
     You'll need to install GCC via `brew install gcc`. the Clang compiler should be part of XCode or XCode command line tools.
 
 You can use arguments like `-DCROW_ENABLE_DEBUG`, `-DCROW_ENABLE_COMPRESSION -lz` for HTTP Compression, or `-DCROW_ENABLE_SSL -lssl` for HTTPS support, or even replace g++ with clang++.
+
+If GCC throws errors and your program does not compile, you may be using C++03 instead of ≥C++11. Use the flag `-std=c++11`.

@@ -7,7 +7,7 @@ Crow comes with a simple and easy to use logging system.<br><br>
 ## Setting up logging level
 You can set up the level at which crow displays logs by using the app's `loglevel(crow::LogLevel)` method.<br><br>
 
-The available log levels are as follows (please not that setting a level will also display all logs below this level):
+The available log levels are as follows (please note that setting a level will also display all logs below this level):
 
 - Debug
 - Info

@@ -1,3 +1,9 @@
+/**
+ * \file crow/mustache.h
+ * \brief This file includes the definition of the crow::mustache
+ * namespace and its members.
+ */
+
 #pragma once
 #include <string>
 #include <vector>
@@ -9,27 +15,61 @@
 #include "crow/returnable.h"
 #include "crow/utility.h"
 
-namespace crow
+namespace crow // NOTE: Already documented in "crow/app.h"
 {
+    /**
+     * \namespace crow::mustache
+     * \brief In this namespace is defined most of the functions and
+     * classes related to template rendering.
+     *
+     * If you are here you might want to read these functions and
+     * classes:
+     *
+     * - \ref template_t
+     * - \ref load_text
+     * - \ref load_text_unsafe
+     * - \ref load
+     * - \ref load_unsafe
+     *
+     * As name suggest, crow uses [mustache](https://en.wikipedia.org/wiki/Mustache_(template_system))
+     * as main template rendering system.
+     *
+     * You may be interested in taking a look at the [Templating guide
+     * page](https://crowcpp.org/master/guides/templating/).
+     */
     namespace mustache
     {
         using context = json::wvalue;
 
         template_t load(const std::string& filename);
 
+        /**
+         * \class invalid_template_exception
+         * \brief Represents compilation error of an template. Throwed
+         * specially at mustache compile time.
+         */
         class invalid_template_exception : public std::exception
         {
         public:
             invalid_template_exception(const std::string& msg):
               msg("crow::mustache error: " + msg)
             {}
-            virtual const char* what() const throw()
+            virtual const char* what() const throw() override
             {
                 return msg.c_str();
             }
             std::string msg;
         };
 
+        /**
+         * \struct rendered_template
+         * \brief Returned object after call the
+         * \ref template_t::render() method. Its intended to be
+         * returned during a **rule declaration**.
+         *
+         * \see \ref CROW_ROUTE
+         * \see \ref CROW_BP_ROUTE
+         */
         struct rendered_template : returnable
         {
             rendered_template():
@@ -46,6 +86,13 @@ namespace crow
             }
         };
 
+        /**
+         * \enum ActionType
+         * \brief Used in \ref Action to represent different parsing
+         * behaviors.
+         *
+         * \see \ref Action
+         */
         enum class ActionType
         {
             Ignore,
@@ -57,6 +104,14 @@ namespace crow
             Partial,
         };
 
+        /**
+         * \struct Action
+         * \brief Used during mustache template compilation to
+         * represent parsing actions.
+         *
+         * \see \ref compile
+         * \see \ref template_t
+         */
         struct Action
         {
             int start;
@@ -69,7 +124,12 @@ namespace crow
             }
         };
 
-        /// A mustache template object.
+        /**
+         * \class template_t
+         * \brief Compiled mustache template object.
+         *
+         * \warning Use \ref compile instead.
+         */
         class template_t
         {
         public:
@@ -85,7 +145,7 @@ namespace crow
             {
                 return body_.substr(action.start, action.end - action.start);
             }
-            auto find_context(const std::string& name, const std::vector<context*>& stack, bool shouldUseOnlyFirstStackValue = false) const -> std::pair<bool, context&>
+            auto find_context(const std::string& name, const std::vector<const context*>& stack, bool shouldUseOnlyFirstStackValue = false) const -> std::pair<bool, const context&>
             {
                 if (name == ".")
                 {
@@ -123,7 +183,7 @@ namespace crow
 
                     for (auto it = stack.rbegin(); it != stack.rend(); ++it)
                     {
-                        context* view = *it;
+                        const context* view = *it;
                         bool found = true;
                         for (auto jt = names.begin(); jt != names.end(); ++jt)
                         {
@@ -170,13 +230,11 @@ namespace crow
                 }
             }
 
-            bool isTagInsideObjectBlock(const int& current, const std::vector<context*>& stack) const
+            bool isTagInsideObjectBlock(const int& current, const std::vector<const context*>& stack) const
             {
                 int openedBlock = 0;
-                int totalBlocksBefore = 0;
                 for (int i = current; i > 0; --i)
                 {
-                    ++totalBlocksBefore;
                     auto& action = actions_[i - 1];
 
                     if (action.t == ActionType::OpenBlock)
@@ -196,7 +254,7 @@ namespace crow
                 return false;
             }
 
-            void render_internal(int actionBegin, int actionEnd, std::vector<context*>& stack, std::string& out, int indent) const
+            void render_internal(int actionBegin, int actionEnd, std::vector<const context*>& stack, std::string& out, int indent) const
             {
                 int current = actionBegin;
 
@@ -233,6 +291,8 @@ namespace crow
                             auto& ctx = optional_ctx.second;
                             switch (ctx.t())
                             {
+                                case json::type::False:
+                                case json::type::True:
                                 case json::type::Number:
                                     out += ctx.dump();
                                     break;
@@ -360,7 +420,7 @@ namespace crow
             rendered_template render() const
             {
                 context empty_ctx;
-                std::vector<context*> stack;
+                std::vector<const context*> stack;
                 stack.emplace_back(&empty_ctx);
 
                 std::string ret;
@@ -369,9 +429,9 @@ namespace crow
             }
 
             /// Apply the values from the context provided and output a returnable template from this mustache template
-            rendered_template render(context& ctx) const
+            rendered_template render(const context& ctx) const
             {
-                std::vector<context*> stack;
+                std::vector<const context*> stack;
                 stack.emplace_back(&ctx);
 
                 std::string ret;
@@ -380,7 +440,7 @@ namespace crow
             }
 
             /// Apply the values from the context provided and output a returnable template from this mustache template
-            rendered_template render(context&& ctx) const
+            rendered_template render(const context&& ctx) const
             {
                 return render(ctx);
             }
@@ -389,7 +449,7 @@ namespace crow
             std::string render_string() const
             {
                 context empty_ctx;
-                std::vector<context*> stack;
+                std::vector<const context*> stack;
                 stack.emplace_back(&empty_ctx);
 
                 std::string ret;
@@ -398,9 +458,9 @@ namespace crow
             }
 
             /// Apply the values from the context provided and output a returnable template from this mustache template
-            std::string render_string(context& ctx) const
+            std::string render_string(const context& ctx) const
             {
-                std::vector<context*> stack;
+                std::vector<const context*> stack;
                 stack.emplace_back(&ctx);
 
                 std::string ret;
@@ -626,10 +686,13 @@ namespace crow
             std::string body_;
         };
 
+        /// \brief The function that compiles a source into a mustache
+        /// template.
         inline template_t compile(const std::string& body)
         {
             return template_t(body);
         }
+
         namespace detail
         {
             inline std::string& get_template_base_directory_ref()
@@ -646,6 +709,9 @@ namespace crow
             }
         } // namespace detail
 
+        /// \brief The default way that \ref load, \ref load_unsafe,
+        /// \ref load_text and \ref load_text_unsafe use to read the
+        /// contents of a file.
         inline std::string default_loader(const std::string& filename)
         {
             std::string path = detail::get_template_base_directory_ref();
@@ -667,6 +733,8 @@ namespace crow
             }
         } // namespace detail
 
+        /// \brief Defines the templates directory path at **route
+        /// level**. By default is `templates/`.
         inline void set_base(const std::string& path)
         {
             auto& base = detail::get_template_base_directory_ref();
@@ -678,6 +746,8 @@ namespace crow
             }
         }
 
+        /// \brief Defines the templates directory path at **global
+        /// level**. By default is `templates/`.
         inline void set_global_base(const std::string& path)
         {
             auto& base = detail::get_global_template_base_directory_ref();
@@ -689,11 +759,22 @@ namespace crow
             }
         }
 
+        /// \brief Change the way that \ref load, \ref load_unsafe,
+        /// \ref load_text and \ref load_text_unsafe reads a file.
+        ///
+        /// By default, the previously mentioned functions load files
+        /// using \ref default_loader, that only reads a file and
+        /// returns a std::string.
         inline void set_loader(std::function<std::string(std::string)> loader)
         {
             detail::get_loader_ref() = std::move(loader);
         }
 
+        /// \brief Open, read and sanitize a file but returns a
+        /// std::string without a previous rendering process.
+        ///
+        /// Except for the **sanitize process** this function does the
+        /// almost the same thing that \ref load_text_unsafe.
         inline std::string load_text(const std::string& filename)
         {
             std::string filename_sanitized(filename);
@@ -701,11 +782,33 @@ namespace crow
             return detail::get_loader_ref()(filename_sanitized);
         }
 
+        /// \brief Open and read a file but returns a std::string
+        /// without a previous rendering process.
+        ///
+        /// This function is more like a helper to reduce code like
+        /// this...
+        ///
+        /// ```cpp
+        /// std::ifstream file("home.html");
+        /// return std::string({std::istreambuf_iterator<char>(file), std::istreambuf_iterator<char>()});
+        /// ```
+        ///
+        /// ... Into this...
+        ///
+        /// ```cpp
+        /// return load("home.html");
+        /// ```
+        ///
+        /// \warning Usually \ref load_text is more recommended to use
+        /// instead because it may prevent some [XSS Attacks](https://en.wikipedia.org/wiki/Cross-site_scripting).
+        /// **Never blindly trust your users!**
         inline std::string load_text_unsafe(const std::string& filename)
         {
             return detail::get_loader_ref()(filename);
         }
 
+        /// \brief Open, read and renders a file using a mustache
+        /// compiler. It also sanitize the input before compilation.
         inline template_t load(const std::string& filename)
         {
             std::string filename_sanitized(filename);
@@ -713,6 +816,13 @@ namespace crow
             return compile(detail::get_loader_ref()(filename_sanitized));
         }
 
+        /// \brief Open, read and renders a file using a mustache
+        /// compiler. But it **do not** sanitize the input before
+        /// compilation.
+        ///
+        /// \warning Usually \ref load is more recommended to use
+        /// instead because it may prevent some [XSS Attacks](https://en.wikipedia.org/wiki/Cross-site_scripting).
+        /// **Never blindly trust your users!**
         inline template_t load_unsafe(const std::string& filename)
         {
             return compile(detail::get_loader_ref()(filename));

@@ -1,6 +1,6 @@
 Crow contains some middlewares that are ready to be used in your application.
 <br>
-Make sure you understand how to enable and use [middleware](../middleware/).
+Make sure you understand how to enable and use [middleware](middleware.md).
 
 ## Sessions
 Include: `crow/middlewares/session.h` <br>
@@ -54,7 +54,7 @@ session.mutex().lock(); // manually lock session
 
 Expiration can happen either by the cookie expiring or the store deleting "old" data.
 
-* By default, cookies expire after 30 days. This can be changed with the cookie option in the Session constructor. 
+* By default, cookies expire after 30 days. This can be changed with the cookie option in the Session constructor.
 * `crow::FileStore` automatically supports deleting files that are expired (older than 30 days). The expiration age can also be changed in the constructor.
 
 The session expiration can be postponed. This will make the Session issue a new cookie and make the store acknowledge the new expiration time.
@@ -88,9 +88,9 @@ Examples: `examples/middlewares/example_cors.cpp`
 
 This middleware allows to set CORS policies by using `CORSHandler`. Once enabled, it will apply the default CORS rules globally.
 
-The CORS rules can be modified by first getting the middleware via `#!cpp auto& cors = app.get_middleware<crow::CORSHandler>();`. The rules can be set per URL prefix using `prefix()`, per blueprint using `blueprint()`, or globally via `global()`. These will return a `CORSRules` object which contains the actual rules for the prefix, blueprint, or application. For more details go [here](../../reference/structcrow_1_1_c_o_r_s_handler.html).
+The CORS rules can be modified by first getting the middleware via `#!cpp auto& cors = app.get_middleware<crow::CORSHandler>();`. The rules can be set per URL prefix using `prefix()`, per blueprint using `blueprint()`, or globally via `global()`. These will return a `CORSRules` object which contains the actual rules for the prefix, blueprint, or application. For more details go [here](../reference/structcrow_1_1_c_o_r_s_handler.html).
 
-`CORSRules` can  be modified using the methods `origin()`, `methods()`, `headers()`, `max_age()`, `allow_credentials()`, or `ignore()`. For more details on these methods and what default values they take go [here](../../reference/structcrow_1_1_c_o_r_s_rules.html).
+`CORSRules` can  be modified using the methods `origin()`, `methods()`, `headers()`, `max_age()`, `allow_credentials()`, or `ignore()`. For more details on these methods and what default values they take go [here](../reference/structcrow_1_1_c_o_r_s_rules.html).
 
 ```cpp
 auto& cors = app.get_middleware<crow::CORSHandler>();

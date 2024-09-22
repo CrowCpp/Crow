@@ -18,7 +18,7 @@
 #include "crow/mustache.h"
 #include "crow/middleware.h"
 
-namespace crow
+namespace crow // NOTE: Already documented in "crow/app.h"
 {
 
     constexpr const uint16_t INVALID_BP_ID{((uint16_t)-1)};
@@ -96,6 +96,15 @@ namespace crow
         {}
 
         virtual void validate() = 0;
+
+        void set_added() {
+            added_ = true;
+        }
+
+        bool is_added() {
+            return added_;
+        }
+
         std::unique_ptr<BaseRule> upgrade()
         {
             if (rule_to_upgrade_)
@@ -141,6 +150,7 @@ namespace crow
 
         std::string rule_;
         std::string name_;
+        bool added_{false};
 
         std::unique_ptr<BaseRule> rule_to_upgrade_;
 
@@ -451,12 +461,12 @@ namespace crow
         void handle_upgrade(const request& req, response&, SocketAdaptor&& adaptor) override
         {
             max_payload_ = max_payload_override_ ? max_payload_ : app_->websocket_max_payload();
-            new crow::websocket::Connection<SocketAdaptor, App>(req, std::move(adaptor), app_, max_payload_, open_handler_, message_handler_, close_handler_, error_handler_, timeout_handler_, accept_handler_);
+            new crow::websocket::Connection<SocketAdaptor, App>(req, std::move(adaptor), app_, max_payload_, subprotocols_, open_handler_, message_handler_, close_handler_, error_handler_, accept_handler_);
         }
 #ifdef CROW_ENABLE_SSL
         void handle_upgrade(const request& req, response&, SSLAdaptor&& adaptor) override
         {
-            new crow::websocket::Connection<SSLAdaptor, App>(req, std::move(adaptor), app_, max_payload_, open_handler_, message_handler_, close_handler_, error_handler_, timeout_handler_, accept_handler_);
+            new crow::websocket::Connection<SSLAdaptor, App>(req, std::move(adaptor), app_, max_payload_, subprotocols_, open_handler_, message_handler_, close_handler_, error_handler_, accept_handler_);
         }
 #endif
 
@@ -465,6 +475,12 @@ namespace crow
         {
             max_payload_ = max_payload;
             max_payload_override_ = true;
+            return *this;
+        }
+
+        self_t& subprotocols(const std::vector<std::string>& subprotocols)
+        {
+            subprotocols_ = subprotocols;
             return *this;
         }
 
@@ -515,12 +531,13 @@ namespace crow
         App* app_;
         std::function<void(crow::websocket::connection&)> open_handler_;
         std::function<void(crow::websocket::connection&, const std::string&, bool)> message_handler_;
-        std::function<void(crow::websocket::connection&, const std::string&)> close_handler_;
+        std::function<void(crow::websocket::connection&, const std::string&, uint16_t)> close_handler_;
         std::function<void(crow::websocket::connection&, const std::string&)> error_handler_;
         std::pair<std::function<void(crow::websocket::connection&, const std::string&)>, uint64_t> timeout_handler_;
         std::function<bool(const crow::request&, void**)> accept_handler_;
         uint64_t max_payload_;
         bool max_payload_override_ = false;
+        std::vector<std::string> subprotocols_;
     };
 
     /// Allows the user to assign parameters using functions.
@@ -658,6 +675,9 @@ namespace crow
 
         void validate() override
         {
+            if (rule_.at(0) != '/')
+                throw std::runtime_error("Internal error: Routes must start with a '/'");
+
             if (!handler_)
             {
                 throw std::runtime_error(name_ + (!name_.empty() ? ": " : "") + "no handler for url " + rule_);
@@ -1091,7 +1111,7 @@ namespace crow
         Node head_;
     };
 
-    /// A blueprint can be considered a smaller section of a Crow app, specifically where the router is conecerned.
+    /// A blueprint can be considered a smaller section of a Crow app, specifically where the router is concerned.
 
     ///
     /// You can use blueprints to assign a common prefix to rules' prefix, set custom static and template folders, and set a custom catchall route.
@@ -1099,8 +1119,11 @@ namespace crow
     class Blueprint
     {
     public:
-        Blueprint(const std::string& prefix):
-          prefix_(prefix){};
+        Blueprint(const std::string& prefix)
+          : prefix_(prefix),
+            static_dir_(prefix),
+            templates_dir_(prefix)
+            {};
 
         Blueprint(const std::string& prefix, const std::string& static_dir):
           prefix_(prefix), static_dir_(static_dir){};
@@ -1131,8 +1154,12 @@ namespace crow
         Blueprint& operator=(Blueprint&& value) noexcept
         {
             prefix_ = std::move(value.prefix_);
+            static_dir_ = std::move(value.static_dir_);
+            templates_dir_ = std::move(value.templates_dir_);
             all_rules_ = std::move(value.all_rules_);
             catchall_rule_ = std::move(value.catchall_rule_);
+            blueprints_ = std::move(value.blueprints_);
+            mw_indices_ = std::move(value.mw_indices_);
             return *this;
         }
 
@@ -1156,11 +1183,18 @@ namespace crow
             return static_dir_;
         }
 
-        DynamicRule& new_rule_dynamic(std::string&& rule)
+        void set_added() {
+            added_ = true;
+        }
+
+        bool is_added() {
+            return added_;
+        }
+
+        DynamicRule& new_rule_dynamic(const std::string& rule)
         {
-            std::string new_rule = std::move(rule);
-            new_rule = '/' + prefix_ + new_rule;
-            auto ruleObject = new DynamicRule(new_rule);
+            std::string new_rule = '/' + prefix_ + rule;
+            auto ruleObject = new DynamicRule(std::move(new_rule));
             ruleObject->custom_templates_base = templates_dir_;
             all_rules_.emplace_back(ruleObject);
 
@@ -1168,13 +1202,12 @@ namespace crow
         }
 
         template<uint64_t N>
-        typename black_magic::arguments<N>::type::template rebind<TaggedRule>& new_rule_tagged(std::string&& rule)
+        typename black_magic::arguments<N>::type::template rebind<TaggedRule>& new_rule_tagged(const std::string& rule)
         {
-            std::string new_rule = std::move(rule);
-            new_rule = '/' + prefix_ + new_rule;
+            std::string new_rule = '/' + prefix_ + rule;
             using RuleT = typename black_magic::arguments<N>::type::template rebind<TaggedRule>;
 
-            auto ruleObject = new RuleT(new_rule);
+            auto ruleObject = new RuleT(std::move(new_rule));
             ruleObject->custom_templates_base = templates_dir_;
             all_rules_.emplace_back(ruleObject);
 
@@ -1230,6 +1263,7 @@ namespace crow
         CatchallRule catchall_rule_;
         std::vector<Blueprint*> blueprints_;
         detail::middleware_indices mw_indices_;
+        bool added_{false};
 
         friend class Router;
     };
@@ -1265,6 +1299,11 @@ namespace crow
             return catchall_rule_;
         }
 
+        void internal_add_rule_object(const std::string& rule, BaseRule* ruleObject)
+        {
+            internal_add_rule_object(rule, ruleObject, INVALID_BP_ID, blueprints_);
+        }
+
         void internal_add_rule_object(const std::string& rule, BaseRule* ruleObject, const uint16_t& BP_index, std::vector<Blueprint*>& blueprints)
         {
             bool has_trailing_slash = false;
@@ -1289,6 +1328,8 @@ namespace crow
                     per_methods_[method].trie.add(rule_without_trailing_slash, RULE_SPECIAL_REDIRECT_SLASH, BP_index != INVALID_BP_ID ? blueprints[BP_index]->prefix().length() : 0, BP_index);
                 }
             });
+
+            ruleObject->set_added();
         }
 
         void register_blueprint(Blueprint& blueprint)
@@ -1323,11 +1364,20 @@ namespace crow
             }
         }
 
+        void validate_bp() {
+            //Take all the routes from the registered blueprints and add them to `all_rules_` to be processed.
+            detail::middleware_indices blueprint_mw;
+            validate_bp(blueprints_, blueprint_mw);
+        }
+
         void validate_bp(std::vector<Blueprint*> blueprints, detail::middleware_indices& current_mw)
         {
             for (unsigned i = 0; i < blueprints.size(); i++)
             {
                 Blueprint* blueprint = blueprints[i];
+
+                if (blueprint->is_added()) continue;
+
                 if (blueprint->static_dir_ == "" && blueprint->all_rules_.empty())
                 {
                     std::vector<HTTPMethod> methods;
@@ -1342,7 +1392,7 @@ namespace crow
                 current_mw.merge_back(blueprint->mw_indices_);
                 for (auto& rule : blueprint->all_rules_)
                 {
-                    if (rule)
+                    if (rule && !rule->is_added())
                     {
                         auto upgraded = rule->upgrade();
                         if (upgraded)
@@ -1354,24 +1404,21 @@ namespace crow
                 }
                 validate_bp(blueprint->blueprints_, current_mw);
                 current_mw.pop_back(blueprint->mw_indices_);
+                blueprint->set_added();
             }
         }
 
         void validate()
         {
-            //Take all the routes from the registered blueprints and add them to `all_rules_` to be processed.
-            detail::middleware_indices blueprint_mw;
-            validate_bp(blueprints_, blueprint_mw);
-
             for (auto& rule : all_rules_)
             {
-                if (rule)
+                if (rule && !rule->is_added())
                 {
                     auto upgraded = rule->upgrade();
                     if (upgraded)
                         rule = std::move(upgraded);
                     rule->validate();
-                    internal_add_rule_object(rule->rule(), rule.get(), INVALID_BP_ID, blueprints_);
+                    internal_add_rule_object(rule->rule(), rule.get());
                 }
             }
             for (auto& per_method : per_methods_)
@@ -1433,22 +1480,13 @@ namespace crow
 
             CROW_LOG_DEBUG << "Matched rule (upgrade) '" << rules[rule_index]->rule_ << "' " << static_cast<uint32_t>(req.method) << " / " << rules[rule_index]->get_methods();
 
-            // any uncaught exceptions become 500s
             try
             {
                 rules[rule_index]->handle_upgrade(req, res, std::move(adaptor));
             }
-            catch (std::exception& e)
-            {
-                CROW_LOG_ERROR << "An uncaught exception occurred: " << e.what();
-                res = response(500);
-                res.end();
-                return;
-            }
             catch (...)
             {
-                CROW_LOG_ERROR << "An uncaught exception occurred. The type was unknown so no information was available.";
-                res = response(500);
+                exception_handler_(res);
                 res.end();
                 return;
             }
@@ -1506,7 +1544,14 @@ namespace crow
                 std::vector<uint16_t> bpi = found.blueprint_indices;
                 if (bps_found[i]->catchall_rule().has_handler())
                 {
-                    bps_found[i]->catchall_rule().handler_(req, res);
+                    try
+                    {
+                        bps_found[i]->catchall_rule().handler_(req, res);
+                    }
+                    catch (...)
+                    {
+                        exception_handler_(res);
+                    }
 #ifdef CROW_ENABLE_DEBUG
                     return std::string("Redirected to Blueprint \"" + bps_found[i]->prefix() + "\" Catchall rule");
 #else
@@ -1516,7 +1561,14 @@ namespace crow
             }
             if (catchall_rule_.has_handler())
             {
-                catchall_rule_.handler_(req, res);
+                try
+                {
+                    catchall_rule_.handler_(req, res);
+                }
+                catch (...)
+                {
+                    exception_handler_(res);
+                }
 #ifdef CROW_ENABLE_DEBUG
                 return std::string("Redirected to global Catchall rule");
 #else
@@ -1676,23 +1728,14 @@ namespace crow
 
             CROW_LOG_DEBUG << "Matched rule '" << rules[rule_index]->rule_ << "' " << static_cast<uint32_t>(req.method) << " / " << rules[rule_index]->get_methods();
 
-            // any uncaught exceptions become 500s
             try
             {
                 auto& rule = rules[rule_index];
                 handle_rule<App>(rule, req, res, found.r_params);
             }
-            catch (std::exception& e)
-            {
-                CROW_LOG_ERROR << "An uncaught exception occurred: " << e.what();
-                res = response(500);
-                res.end();
-                return;
-            }
             catch (...)
             {
-                CROW_LOG_ERROR << "An uncaught exception occurred. The type was unknown so no information was available.";
-                res = response(500);
+                exception_handler_(res);
                 res.end();
                 return;
             }
@@ -1720,7 +1763,7 @@ namespace crow
                     return;
                 }
 
-                res.complete_request_handler_ = [&rule, &ctx, &container, &req, &res, &glob_completion_handler] {
+                res.complete_request_handler_ = [&rule, &ctx, &container, &req, &res, glob_completion_handler] {
                     detail::middleware_call_criteria_dynamic<true> crit_bwd(rule->mw_indices_.indices());
 
                     detail::after_handlers_call_helper<
@@ -1759,6 +1802,30 @@ namespace crow
             return blueprints_;
         }
 
+        std::function<void(crow::response&)>& exception_handler()
+        {
+            return exception_handler_;
+        }
+
+        static void default_exception_handler(response& res)
+        {
+            // any uncaught exceptions become 500s
+            res = response(500);
+
+            try
+            {
+                throw;
+            }
+            catch (const std::exception& e)
+            {
+                CROW_LOG_ERROR << "An uncaught exception occurred: " << e.what();
+            }
+            catch (...)
+            {
+                CROW_LOG_ERROR << "An uncaught exception occurred. The type was unknown so no information was available.";
+            }
+        }
+
     private:
         CatchallRule catchall_rule_;
 
@@ -1774,5 +1841,6 @@ namespace crow
         std::array<PerMethod, static_cast<int>(HTTPMethod::InternalMethodCount)> per_methods_;
         std::vector<std::unique_ptr<BaseRule>> all_rules_;
         std::vector<Blueprint*> blueprints_;
+        std::function<void(crow::response&)> exception_handler_ = &default_exception_handler;
     };
 } // namespace crow

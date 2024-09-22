@@ -141,7 +141,7 @@ namespace crow
             }
 
             /// Create a multipart message from a request data
-            message(const request& req):
+            explicit message(const request& req):
               returnable("multipart/form-data; boundary=CROW-BOUNDARY"),
               headers(req.headers),
               boundary(get_boundary(get_header_value("Content-Type")))

@@ -20,7 +20,7 @@ JSON read value, used for taking a JSON string and parsing it into `crow::json`.
 You can read individual items of the rvalue, but you cannot add items to it.<br>
 To do that, you need to convert it to a `wvalue`, which can be done by simply writing `#!cpp crow::json::wvalue wval (rval);` (assuming `rval` is your `rvalue`).<br><br>
 
-For more info on read values go [here](../../reference/classcrow_1_1json_1_1rvalue.html).<br><br>
+For more info on read values go [here](../reference/classcrow_1_1json_1_1rvalue.html).<br><br>
 
 ## wvalue
 JSON write value, used for creating, editing and converting JSON to a string.<br><br>
@@ -40,10 +40,10 @@ A `wvalue` can be treated as an object or even a list (setting a value by using 
 Additionally, a `wvalue` can be initialized as an object using an initializer list, an example object would be `wvalue x = {{"a", 1}, {"b", 2}}`. Or as a list using `wvalue x = json::wvalue::list({1, 2, 3})`, lists can include any type that `wvalue` supports.<br><br>
 
 An object type `wvalue` uses `std::unordered_map` by default, if you want to have your returned `wvalue` key value pairs be sorted (using `std::map`) you can add `#!cpp #define CROW_JSON_USE_MAP` to the top of your program.<br><br>
-    
-A JSON `wvalue` can be returned directly inside a route handler, this will cause the `content-type` header to automatically be set to `Application/json` and the JSON value will be converted to string and placed in the response body. For more information go to [Routes](../routes).<br><br>
 
-For more info on write values go [here](../../reference/classcrow_1_1json_1_1wvalue.html).
+A JSON `wvalue` can be returned directly inside a route handler, this will cause the `content-type` header to automatically be set to `Application/json` and the JSON value will be converted to string and placed in the response body. For more information go to [Routes](routes.md).<br><br>
+
+For more info on write values go [here](../reference/classcrow_1_1json_1_1wvalue.html).
 
 !!! note
 

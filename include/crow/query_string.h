@@ -23,7 +23,7 @@ int qs_strncmp(const char* s, const char* qs, size_t n);
  *  Also decodes the value portion of the k/v pair *in-place*.  In a future
  *  enhancement it will also have a compile-time option of sorting qs_kv
  *  alphabetically by key.  */
-int qs_parse(char* qs, char* qs_kv[], int qs_kv_size, bool parse_url);
+size_t qs_parse(char* qs, char* qs_kv[], size_t qs_kv_size, bool parse_url);
 
 
 /*  Used by qs_parse to decode the value portion of a k/v pair  */
@@ -34,7 +34,7 @@ int qs_decode(char * qs);
  *  A future enhancement will be a compile-time option to look up the key
  *  in a pre-sorted qs_kv array via a binary search.  */
 //char * qs_k2v(const char * key, char * qs_kv[], int qs_kv_size);
- char * qs_k2v(const char * key, char * const * qs_kv, int qs_kv_size, int nth);
+ char * qs_k2v(const char * key, char * const * qs_kv, size_t qs_kv_size, int nth);
 
 
 /*  Non-destructive lookup of value, based on key.  User provides the
@@ -51,7 +51,6 @@ char * qs_scanvalue(const char * key, const char * qs, char * val, size_t val_le
 
 inline int qs_strncmp(const char * s, const char * qs, size_t n)
 {
-    int i=0;
     unsigned char u1, u2, unyb, lnyb;
 
     while(n-- > 0)
@@ -88,7 +87,6 @@ inline int qs_strncmp(const char * s, const char * qs, size_t n)
             return u1 - u2;
         if ( u1 == '\0' )
             return 0;
-        i++;
     }
     if ( CROW_QS_ISQSCHR(*qs) )
         return -1;
@@ -97,9 +95,9 @@ inline int qs_strncmp(const char * s, const char * qs, size_t n)
 }
 
 
-inline int qs_parse(char* qs, char* qs_kv[], int qs_kv_size, bool parse_url = true)
+inline size_t qs_parse(char* qs, char* qs_kv[], size_t qs_kv_size, bool parse_url = true)
 {
-    int i, j;
+    size_t i, j;
     char * substr_ptr;
 
     for(i=0; i<qs_kv_size; i++)  qs_kv[i] = NULL;
@@ -140,7 +138,7 @@ inline int qs_parse(char* qs, char* qs_kv[], int qs_kv_size, bool parse_url = tr
 #endif
 
     return i;
-    }
+}
 
 
 inline int qs_decode(char * qs)
@@ -172,9 +170,9 @@ inline int qs_decode(char * qs)
 }
 
 
-inline char * qs_k2v(const char * key, char * const * qs_kv, int qs_kv_size, int nth = 0)
+inline char * qs_k2v(const char * key, char * const * qs_kv, size_t qs_kv_size, int nth = 0)
 {
-    int i;
+    size_t i;
     size_t key_len, skip;
 
     key_len = strlen(key);
@@ -202,9 +200,9 @@ inline char * qs_k2v(const char * key, char * const * qs_kv, int qs_kv_size, int
     return nullptr;
 }
 
-inline std::unique_ptr<std::pair<std::string, std::string>> qs_dict_name2kv(const char * dict_name, char * const * qs_kv, int qs_kv_size, int nth = 0)
+inline std::unique_ptr<std::pair<std::string, std::string>> qs_dict_name2kv(const char * dict_name, char * const * qs_kv, size_t qs_kv_size, int nth = 0)
 {
-    int i;
+    size_t i;
     size_t name_len, skip_to_eq, skip_to_brace_open, skip_to_brace_close;
 
     name_len = strlen(dict_name);
@@ -297,9 +295,7 @@ namespace crow
     public:
         static const int MAX_KEY_VALUE_PAIRS_COUNT = 256;
 
-        query_string()
-        {
-        }
+        query_string() = default;
 
         query_string(const query_string& qs):
           url_(qs.url_)
@@ -321,7 +317,7 @@ namespace crow
             return *this;
         }
 
-        query_string& operator=(query_string&& qs)
+        query_string& operator=(query_string&& qs) noexcept
         {
             key_value_pairs_ = std::move(qs.key_value_pairs_);
             char* old_data = (char*)qs.url_.c_str();
@@ -341,9 +337,10 @@ namespace crow
                 return;
 
             key_value_pairs_.resize(MAX_KEY_VALUE_PAIRS_COUNT);
+            size_t count = qs_parse(&url_[0], &key_value_pairs_[0], MAX_KEY_VALUE_PAIRS_COUNT, url);
 
-            int count = qs_parse(&url_[0], &key_value_pairs_[0], MAX_KEY_VALUE_PAIRS_COUNT, url);
             key_value_pairs_.resize(count);
+            key_value_pairs_.shrink_to_fit();
         }
 
         void clear()
@@ -474,13 +471,19 @@ namespace crow
 
         std::vector<std::string> keys() const
         {
-            std::vector<std::string> ret;
-            for (auto element : key_value_pairs_)
+            std::vector<std::string> keys;
+            keys.reserve(key_value_pairs_.size());
+
+            for (const char* const element : key_value_pairs_)
             {
-                std::string str_element(element);
-                ret.emplace_back(str_element.substr(0, str_element.find('=')));
+                const char* delimiter = strchr(element, '=');
+                if (delimiter)
+                    keys.emplace_back(element, delimiter);
+                else
+                    keys.emplace_back(element);
             }
-            return ret;
+
+            return keys;
         }
 
     private:

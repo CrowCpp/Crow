@@ -8,8 +8,12 @@ set(TEST_SRCS
 )
 
 add_executable(ssltest ${TEST_SRCS})
-target_link_libraries(ssltest Crow::Crow)
+target_link_libraries(ssltest Crow::Crow Catch2::Catch2WithMain)
 add_warnings_optimizations(ssltest)
+
+if("${CMAKE_SYSTEM_NAME}" STREQUAL "Android")
+  target_link_libraries(ssltest log)
+endif()
 
 if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
   set_target_properties(ssltest PROPERTIES COMPILE_FLAGS "--coverage -fprofile-arcs -ftest-coverage")
