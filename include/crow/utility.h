@@ -5,11 +5,20 @@
 #include <tuple>
 #include <type_traits>
 #include <cstring>
+#include <cctype>
 #include <functional>
 #include <string>
+#include <string_view>
+#include <sstream>
 #include <unordered_map>
+#include <random>
+#include <algorithm>
 
 #include "crow/settings.h"
+
+#if defined(CROW_CAN_USE_CPP17) && !defined(CROW_FILESYSTEM_IS_EXPERIMENTAL)
+#include <filesystem>
+#endif
 
 // TODO(EDev): Adding C++20's [[likely]] and [[unlikely]] attributes might be useful
 #if defined(__GNUG__) || defined(__clang__)
@@ -22,6 +31,7 @@
 
 namespace crow
 {
+    /// @cond SKIP
     namespace black_magic
     {
 #ifndef CROW_MSVC_WORKAROUND
@@ -232,6 +242,8 @@ namespace crow
             template<template<typename... Args> class U>
             using rebind = U<T...>;
         };
+
+        // Check whether the template function can be called with specific arguments
         template<typename F, typename Set>
         struct CallHelper;
         template<typename F, typename... Args>
@@ -262,18 +274,45 @@ namespace crow
         struct has_type<T, std::tuple<T, Ts...>> : std::true_type
         {};
 
-        // Check F is callable with Args
-        template<typename F, typename... Args>
-        struct is_callable
+        // Find index of type in tuple
+        template<class T, class Tuple>
+        struct tuple_index;
+
+        template<class T, class... Types>
+        struct tuple_index<T, std::tuple<T, Types...>>
         {
-            template<typename F2, typename... Args2>
-            static std::true_type __test(decltype(std::declval<F2>()(std::declval<Args2>()...))*);
-
-            template<typename F2, typename... Args2>
-            static std::false_type __test(...);
-
-            static constexpr bool value = decltype(__test<F, Args...>(nullptr))::value;
+            static const int value = 0;
         };
+
+        template<class T, class U, class... Types>
+        struct tuple_index<T, std::tuple<U, Types...>>
+        {
+            static const int value = 1 + tuple_index<T, std::tuple<Types...>>::value;
+        };
+
+        // Extract element from forward tuple or get default
+#ifdef CROW_CAN_USE_CPP14
+        template<typename T, typename Tup>
+        typename std::enable_if<has_type<T&, Tup>::value, typename std::decay<T>::type&&>::type
+          tuple_extract(Tup& tup)
+        {
+            return std::move(std::get<T&>(tup));
+        }
+#else
+        template<typename T, typename Tup>
+        typename std::enable_if<has_type<T&, Tup>::value, T&&>::type
+          tuple_extract(Tup& tup)
+        {
+            return std::move(std::get<tuple_index<T&, Tup>::value>(tup));
+        }
+#endif
+
+        template<typename T, typename Tup>
+        typename std::enable_if<!has_type<T&, Tup>::value, T>::type
+          tuple_extract(Tup&)
+        {
+            return T{};
+        }
 
         // Kind of fold expressions in C++11
         template<bool...>
@@ -470,7 +509,6 @@ namespace crow
         {
             static constexpr auto value = get_index_of_element_from_tuple_by_type_impl<T, N + 1, Args...>::value;
         };
-
     } // namespace detail
 
     namespace utility
@@ -528,6 +566,7 @@ namespace crow
             template<size_t i>
             using arg = typename std::tuple_element<i, std::tuple<Args...>>::type;
         };
+        /// @endcond
 
         inline static std::string base64encode(const unsigned char* data, size_t size, const char* key = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/")
         {
@@ -602,9 +641,9 @@ namespace crow
                 size = (size / 4 * 3) + 2; // Not subtracting extra characters because they're truncated in int division
 
             // Padded
-            else if (data[size - 2] == '=') // padded with '=='
+            else if (size >= 2 && data[size - 2] == '=') // padded with '=='
                 size = (size / 4 * 3) - 2;  // == padding means the last block only has 1 character instead of 3, hence the '-2'
-            else if (data[size - 1] == '=') // padded with '='
+            else if (size >= 1 && data[size - 1] == '=') // padded with '='
                 size = (size / 4 * 3) - 1;  // = padding means the last block only has 2 character instead of 3, hence the '-1'
 
             // Padding not needed
@@ -665,6 +704,14 @@ namespace crow
             return base64decode(data.data(), data.length());
         }
 
+        inline static std::string normalize_path(const std::string& directoryPath)
+        {
+            std::string normalizedPath = directoryPath;
+            std::replace(normalizedPath.begin(), normalizedPath.end(), '\\', '/');
+            if (!normalizedPath.empty() && normalizedPath.back() != '/')
+                normalizedPath += '/';
+            return normalizedPath;
+        }
 
         inline static void sanitize_filename(std::string& data, char replacement = '_')
         {
@@ -678,7 +725,8 @@ namespace crow
             // a special device. Thus we search for the string (case-insensitive), and then check if the string ends or if
             // is has a dangerous follow up character (.:\/)
             auto sanitizeSpecialFile = [](std::string& source, unsigned ofs, const char* pattern, bool includeNumber, char replacement) {
-                unsigned i = ofs, len = source.length();
+                unsigned i = ofs;
+                size_t len = source.length();
                 const char* p = pattern;
                 while (*p)
                 {
@@ -749,5 +797,154 @@ namespace crow
             }
         }
 
+        inline static std::string random_alphanum(std::size_t size)
+        {
+            static const char alphabet[] = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            std::random_device dev;
+            std::mt19937 rng(dev());
+            std::uniform_int_distribution<std::mt19937::result_type> dist(0, sizeof(alphabet) - 2);
+            std::string out;
+            out.reserve(size);
+            for (std::size_t i = 0; i < size; i++)
+                out.push_back(alphabet[dist(rng)]);
+            return out;
+        }
+
+        inline static std::string join_path(std::string path, const std::string& fname)
+        {
+#if defined(CROW_CAN_USE_CPP17) && !defined(CROW_FILESYSTEM_IS_EXPERIMENTAL)
+            return (std::filesystem::path(path) / fname).string();
+#else
+            if (!(path.back() == '/' || path.back() == '\\'))
+                path += '/';
+            path += fname;
+            return path;
+#endif
+        }
+
+        /**
+         * @brief Checks two string for equality.
+         * Always returns false if strings differ in size.
+         * Defaults to case-insensitive comparison.
+         */
+        inline static bool string_equals(const std::string_view l, const std::string_view r, bool case_sensitive = false)
+        {
+            if (l.length() != r.length())
+                return false;
+
+            for (size_t i = 0; i < l.length(); i++)
+            {
+                if (case_sensitive)
+                {
+                    if (l[i] != r[i])
+                        return false;
+                }
+                else
+                {
+                    if (std::toupper(l[i]) != std::toupper(r[i]))
+                        return false;
+                }
+            }
+
+            return true;
+        }
+
+        template<typename T, typename U>
+        inline static T lexical_cast(const U& v)
+        {
+            std::stringstream stream;
+            T res;
+
+            stream << v;
+            stream >> res;
+
+            return res;
+        }
+
+        template<typename T>
+        inline static T lexical_cast(const char* v, size_t count)
+        {
+            std::stringstream stream;
+            T res;
+
+            stream.write(v, count);
+            stream >> res;
+
+            return res;
+        }
+
+
+        /// Return a copy of the given string with its
+        /// leading and trailing whitespaces removed.
+        inline static std::string trim(const std::string& v)
+        {
+            if (v.empty())
+                return "";
+
+            size_t begin = 0, end = v.length();
+
+            size_t i;
+            for (i = 0; i < v.length(); i++)
+            {
+                if (!std::isspace(v[i]))
+                {
+                    begin = i;
+                    break;
+                }
+            }
+
+            if (i == v.length())
+                return "";
+
+            for (i = v.length(); i > 0; i--)
+            {
+                if (!std::isspace(v[i - 1]))
+                {
+                    end = i;
+                    break;
+                }
+            }
+
+            return v.substr(begin, end - begin);
+        }
+
+        /**
+         * @brief splits a string based on a separator
+         */
+        inline static std::vector<std::string> split(const std::string& v, const std::string& separator)
+        {
+            std::vector<std::string> result;
+            size_t startPos = 0;
+
+            for (size_t foundPos = v.find(separator); foundPos != std::string::npos; foundPos = v.find(separator, startPos))
+            {
+                result.push_back(v.substr(startPos, foundPos - startPos));
+                startPos = foundPos + separator.size();
+            }
+
+            result.push_back(v.substr(startPos));
+            return result;
+        }
+
+        /**
+         * @brief Returns the first occurence that matches between two ranges of iterators
+         * @param first1 begin() iterator of the first range
+         * @param last1 end() iterator of the first range
+         * @param first2 begin() iterator of the second range
+         * @param last2 end() iterator of the second range
+         * @return first occurence that matches between two ranges of iterators 
+        */
+        template <typename Iter1, typename Iter2>
+        inline static Iter1 find_first_of(Iter1 first1, Iter1 last1, Iter2 first2, Iter2 last2)
+        {
+            for (; first1 != last1; ++first1)
+            {
+                if (std::find(first2, last2, *first1) != last2)
+                {
+                    return first1;
+                }
+            }
+            return last1;
+        }
     } // namespace utility
 } // namespace crow

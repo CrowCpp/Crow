@@ -25,7 +25,7 @@ steps:
   - export TRAVIS_JOB_ID=$DRONE_BUILD_NUMBER
   - export COVERALLS_PULL_REQUEST=$DRONE_PULL_REQUEST
   - apt-get -y update
-  - apt-get -y install libboost-all-dev doxygen mkdocs graphviz zlib1g-dev gcc clang clang-format make cmake python3 python3-pip git openssl libssl-dev jq wget curl
+  - apt-get -y install libasio-dev doxygen mkdocs graphviz zlib1g-dev gcc clang clang-format make cmake python3 python3-pip git openssl libssl-dev jq wget curl
   - git clone https://github.com/CrowCpp/cpp-coveralls.git
   - cd cpp-coveralls
   - pip3 install . --no-input
@@ -34,7 +34,7 @@ steps:
   - export CXX=/usr/bin/g++
   - mkdir build
   - cd build
-  - cmake .. -DCROW_ENABLE_COMPRESSION=ON -DCROW_ENABLE_SSL=ON -DCROW_AMALGAMATE=ON
+  - cmake .. -DCROW_FEATURES="ssl;compression" -DCROW_AMALGAMATE=ON
   - make -j4
   - ctest -V -j4
   - cd ..
@@ -48,7 +48,7 @@ steps:
   - export CXX=/usr/bin/clang++
   - mkdir build-clang
   - cd build-clang
-  - cmake .. -DCROW_ENABLE_COMPRESSION=ON -DCROW_ENABLE_SSL=ON -DCROW_AMALGAMATE=ON
+  - cmake .. -DCROW_FEATURES="ssl;compression" -DCROW_AMALGAMATE=ON
   - make -j4
   - ctest -V -j4
 
@@ -73,11 +73,11 @@ steps:
   commands:
   - export DEBIAN_FRONTEND=noninteractive
   - apt-get -y update
-  - apt-get -y install libboost-all-dev zlib1g-dev gcc clang make cmake python3 openssl libssl-dev
+  - apt-get -y install libasio-dev zlib1g-dev gcc clang make cmake python3 openssl libssl-dev
   - mkdir build
   - cd build
   - cmake --version
-  - cmake .. -DCROW_ENABLE_COMPRESSION=ON -DCROW_ENABLE_SSL=ON -DCROW_AMALGAMATE=ON
+  - cmake .. -DCROW_FEATURES="ssl;compression" -DCROW_AMALGAMATE=ON
   - make -j4
   - ctest -V -j4
   - cd ..
@@ -85,7 +85,7 @@ steps:
   - export CXX=/usr/bin/clang++
   - mkdir build-clang
   - cd build-clang
-  - cmake .. -DCROW_ENABLE_COMPRESSION=ON -DCROW_ENABLE_SSL=ON -DCROW_AMALGAMATE=ON
+  - cmake .. -DCROW_FEATURES="ssl;compression" -DCROW_AMALGAMATE=ON
   - make -j4
   - ctest -V -j4
 
@@ -123,7 +123,7 @@ steps:
   - export TRAVIS_BRANCH=$DRONE_REPO_BRANCH
   - export TRAVIS_JOB_ID=$DRONE_BUILD_NUMBER
   - apt-get -y update
-  - apt-get -y install libboost-all-dev doxygen mkdocs graphviz zlib1g-dev gcc clang make cmake python3 python3-pip git openssl libssl-dev
+  - apt-get -y install libasio-dev doxygen mkdocs graphviz zlib1g-dev gcc clang make cmake python3 python3-pip git openssl libssl-dev
   - pip3 install mkdocs-material mkdocs-redirects pyyaml mkdocs-meta-descriptions-plugin --no-input
   - git clone https://github.com/CrowCpp/cpp-coveralls.git
   - cd cpp-coveralls
@@ -133,7 +133,7 @@ steps:
   - export CXX=/usr/bin/g++
   - mkdir build
   - cd build
-  - cmake .. -DCROW_ENABLE_COMPRESSION=ON -DCROW_ENABLE_SSL=ON -DCROW_AMALGAMATE=ON
+  - cmake .. -DCROW_FEATURES="ssl;compression" -DCROW_AMALGAMATE=ON
   - make -j4
   - ctest -V -j4
   - cd ..
@@ -142,7 +142,7 @@ steps:
   - export CXX=/usr/bin/clang++
   - mkdir build-clang
   - cd build-clang
-  - cmake .. -DCROW_ENABLE_COMPRESSION=ON -DCROW_ENABLE_SSL=ON -DCROW_AMALGAMATE=ON
+  - cmake .. -DCROW_FEATURES="ssl;compression" -DCROW_AMALGAMATE=ON
   - make -j4
   - ctest -V -j4
   - cd ..
@@ -170,11 +170,11 @@ steps:
   commands:
   - export DEBIAN_FRONTEND=noninteractive
   - apt-get -y update
-  - apt-get -y install libboost-all-dev zlib1g-dev gcc clang make cmake python3 openssl libssl-dev
+  - apt-get -y install libasio-dev zlib1g-dev gcc clang make cmake python3 openssl libssl-dev
   - mkdir build
   - cd build
   - cmake --version
-  - cmake .. -DCROW_ENABLE_COMPRESSION=ON -DCROW_ENABLE_SSL=ON -DCROW_AMALGAMATE=ON
+  - cmake .. -DCROW_FEATURES="ssl;compression" -DCROW_AMALGAMATE=ON
   - make -j4
   - ctest -V -j4
   - cd ..
@@ -182,7 +182,7 @@ steps:
   - export CXX=/usr/bin/clang++
   - mkdir build-clang
   - cd build-clang
-  - cmake .. -DCROW_ENABLE_COMPRESSION=ON -DCROW_ENABLE_SSL=ON -DCROW_AMALGAMATE=ON
+  - cmake .. -DCROW_FEATURES="ssl;compression" -DCROW_AMALGAMATE=ON
   - make -j4
   - ctest -V -j4
 

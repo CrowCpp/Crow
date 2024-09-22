@@ -13,11 +13,7 @@
 
 // clang-format off
 #pragma once
-#include "crow/common.h"
-namespace crow
-{
 extern "C" {
-
 #include <stddef.h>
 #if defined(_WIN32) && !defined(__MINGW32__) && \
   (!defined(_MSC_VER) || _MSC_VER<1600) && !defined(__WINE__)
@@ -35,9 +31,15 @@ typedef unsigned __int64 uint64_t;
 #else
 #include <stdint.h>
 #endif
+#include <assert.h>
+#include <ctype.h>
+#include <string.h>
+#include <limits.h>
+}
 
-
-
+#include "crow/common.h"
+namespace crow
+{
 /* Maximium header size allowed. If the macro is not defined
  * before including this header then the default is used. To
  * change the maximum header size, define the macro in the build
@@ -96,6 +98,7 @@ enum http_connection_flags // This is basically 7 booleans placed into 1 integer
                                                                                         \
   /* Callback-related errors */                                                         \
   CROW_XX(CB_message_begin, "the on_message_begin callback failed")                     \
+  CROW_XX(CB_method, "the on_method callback failed")                                   \
   CROW_XX(CB_url, "the \"on_url\" callback failed")                                     \
   CROW_XX(CB_header_field, "the \"on_header_field\" callback failed")                   \
   CROW_XX(CB_header_value, "the \"on_header_value\" callback failed")                   \
@@ -177,6 +180,7 @@ enum http_errno {
     struct http_parser_settings
     {
         http_cb on_message_begin;
+        http_cb on_method;
         http_data_cb on_url;
         http_data_cb on_header_field;
         http_data_cb on_header_value;
@@ -188,12 +192,6 @@ enum http_errno {
 
 
 // SOURCE (.c) CODE
-#include <assert.h>
-#include <stddef.h>
-#include <ctype.h>
-#include <string.h>
-#include <limits.h>
-
 static uint32_t max_header_size = CROW_HTTP_MAX_HEADER_SIZE;
 
 #ifndef CROW_ULLONG_MAX
@@ -703,7 +701,7 @@ static const int8_t unhex[256] =
   const char *body_mark = 0;
   const unsigned int lenient = parser->lenient_http_headers;
   const unsigned int allow_chunked_length = parser->allow_chunked_length;
-  
+
   uint32_t nread = parser->nread;
 
   /* We're in an error state. Don't bother doing anything. */
@@ -784,21 +782,21 @@ reexecute:
         parser->method = 0;
         parser->index = 1;
         switch (ch) {
-          case 'A': parser->method = (unsigned)HTTPMethod::ACL;                                                              break;
-          case 'B': parser->method = (unsigned)HTTPMethod::BIND;                                                             break;
-          case 'C': parser->method = (unsigned)HTTPMethod::CONNECT;   /* or COPY, CHECKOUT */                                break;
-          case 'D': parser->method = (unsigned)HTTPMethod::DELETE;                                                           break;
-          case 'G': parser->method = (unsigned)HTTPMethod::GET;                                                              break;
-          case 'H': parser->method = (unsigned)HTTPMethod::HEAD;                                                             break;
-          case 'L': parser->method = (unsigned)HTTPMethod::LOCK;      /* or LINK */                                          break;
-          case 'M': parser->method = (unsigned)HTTPMethod::MKCOL;     /* or MOVE, MKACTIVITY, MERGE, M-SEARCH, MKCALENDAR */ break;
-          case 'N': parser->method = (unsigned)HTTPMethod::NOTIFY;                                                           break;
-          case 'O': parser->method = (unsigned)HTTPMethod::OPTIONS;                                                          break;
-          case 'P': parser->method = (unsigned)HTTPMethod::POST;      /* or PROPFIND|PROPPATCH|PUT|PATCH|PURGE */            break;
-          case 'R': parser->method = (unsigned)HTTPMethod::REPORT;    /* or REBIND */                                        break;
-          case 'S': parser->method = (unsigned)HTTPMethod::SUBSCRIBE; /* or SEARCH, SOURCE */                                break;
-          case 'T': parser->method = (unsigned)HTTPMethod::TRACE;                                                            break;
-          case 'U': parser->method = (unsigned)HTTPMethod::UNLOCK;    /* or UNSUBSCRIBE, UNBIND, UNLINK */                   break;
+          case 'A': parser->method = (unsigned)HTTPMethod::Acl;                                                              break;
+          case 'B': parser->method = (unsigned)HTTPMethod::Bind;                                                             break;
+          case 'C': parser->method = (unsigned)HTTPMethod::Connect;   /* or COPY, CHECKOUT */                                break;
+          case 'D': parser->method = (unsigned)HTTPMethod::Delete;                                                           break;
+          case 'G': parser->method = (unsigned)HTTPMethod::Get;                                                              break;
+          case 'H': parser->method = (unsigned)HTTPMethod::Head;                                                             break;
+          case 'L': parser->method = (unsigned)HTTPMethod::Lock;      /* or LINK */                                          break;
+          case 'M': parser->method = (unsigned)HTTPMethod::MkCol;     /* or MOVE, MKACTIVITY, MERGE, M-SEARCH, MKCALENDAR */ break;
+          case 'N': parser->method = (unsigned)HTTPMethod::Notify;                                                           break;
+          case 'O': parser->method = (unsigned)HTTPMethod::Options;                                                          break;
+          case 'P': parser->method = (unsigned)HTTPMethod::Post;      /* or PROPFIND|PROPPATCH|PUT|PATCH|PURGE */            break;
+          case 'R': parser->method = (unsigned)HTTPMethod::Report;    /* or REBIND */                                        break;
+          case 'S': parser->method = (unsigned)HTTPMethod::Subscribe; /* or SEARCH, SOURCE */                                break;
+          case 'T': parser->method = (unsigned)HTTPMethod::Trace;                                                            break;
+          case 'U': parser->method = (unsigned)HTTPMethod::Unlock;    /* or UNSUBSCRIBE, UNBIND, UNLINK */                   break;
           default:
             CROW_SET_ERRNO(CHPE_INVALID_METHOD);
             goto error;
@@ -830,25 +828,25 @@ reexecute:
             case ((unsigned)HTTPMethod::meth << 16 | pos << 8 | ch): \
               parser->method = (unsigned)HTTPMethod::new_meth; break;
 
-            CROW_XX(POST,      1, 'U', PUT)
-            CROW_XX(POST,      1, 'A', PATCH)
-            CROW_XX(POST,      1, 'R', PROPFIND)
-            CROW_XX(PUT,       2, 'R', PURGE)
-            CROW_XX(CONNECT,   1, 'H', CHECKOUT)
-            CROW_XX(CONNECT,   2, 'P', COPY)
-            CROW_XX(MKCOL,     1, 'O', MOVE)
-            CROW_XX(MKCOL,     1, 'E', MERGE)
-            CROW_XX(MKCOL,     1, '-', MSEARCH)
-            CROW_XX(MKCOL,     2, 'A', MKACTIVITY)
-            CROW_XX(MKCOL,     3, 'A', MKCALENDAR)
-            CROW_XX(SUBSCRIBE, 1, 'E', SEARCH)
-            CROW_XX(SUBSCRIBE, 1, 'O', SOURCE)
-            CROW_XX(REPORT,    2, 'B', REBIND)
-            CROW_XX(PROPFIND,  4, 'P', PROPPATCH)
-            CROW_XX(LOCK,      1, 'I', LINK)
-            CROW_XX(UNLOCK,    2, 'S', UNSUBSCRIBE)
-            CROW_XX(UNLOCK,    2, 'B', UNBIND)
-            CROW_XX(UNLOCK,    3, 'I', UNLINK)
+            CROW_XX(Post,      1, 'U', Put)
+            CROW_XX(Post,      1, 'A', Patch)
+            CROW_XX(Post,      1, 'R', Propfind)
+            CROW_XX(Put,       2, 'R', Purge)
+            CROW_XX(Connect,   1, 'H', Checkout)
+            CROW_XX(Connect,   2, 'P', Copy)
+            CROW_XX(MkCol,     1, 'O', Move)
+            CROW_XX(MkCol,     1, 'E', Merge)
+            CROW_XX(MkCol,     1, '-', MSearch)
+            CROW_XX(MkCol,     2, 'A', MkActivity)
+            CROW_XX(MkCol,     3, 'A', MkCalendar)
+            CROW_XX(Subscribe, 1, 'E', Search)
+            CROW_XX(Subscribe, 1, 'O', Source)
+            CROW_XX(Report,    2, 'B', Rebind)
+            CROW_XX(Propfind,  4, 'P', Proppatch)
+            CROW_XX(Lock,      1, 'I', Link)
+            CROW_XX(Unlock,    2, 'S', Unsubscribe)
+            CROW_XX(Unlock,    2, 'B', Unbind)
+            CROW_XX(Unlock,    3, 'I', Unlink)
 #undef CROW_XX
             default:
               CROW_SET_ERRNO(CHPE_INVALID_METHOD);
@@ -858,6 +856,8 @@ reexecute:
           CROW_SET_ERRNO(CHPE_INVALID_METHOD);
           goto error;
         }
+
+        CROW_CALLBACK_NOTIFY_NOADVANCE(method);
 
         ++parser->index;
         break;
@@ -869,7 +869,7 @@ reexecute:
 
         CROW_MARK(url);
         CROW_MARK(url_start);
-        if (parser->method == (unsigned)HTTPMethod::CONNECT) {
+        if (parser->method == (unsigned)HTTPMethod::Connect) {
           parser->state = s_req_server_start;
         }
 
@@ -918,7 +918,7 @@ reexecute:
             break;
           case cr: // No space after URL means no HTTP version. Which means the request is using HTTP/0.9
           case lf:
-            if (CROW_UNLIKELY(parser->method != (unsigned)HTTPMethod::GET)) // HTTP/0.9 doesn't define any method other than GET
+            if (CROW_UNLIKELY(parser->method != (unsigned)HTTPMethod::Get)) // HTTP/0.9 doesn't define any method other than GET
             {
               parser->state = s_dead;
               CROW_SET_ERRNO(CHPE_INVALID_VERSION);
@@ -949,7 +949,7 @@ reexecute:
             parser->state = s_req_http_H;
             break;
           case 'I':
-            if (parser->method == (unsigned)HTTPMethod::SOURCE) {
+            if (parser->method == (unsigned)HTTPMethod::Source) {
               parser->state = s_req_http_I;
               break;
             }
@@ -1104,7 +1104,7 @@ reexecute:
       }
 
       case s_header_field:
-      {        
+      {
         const char* start = p;
         for (; p != data + len; p++) {
           ch = *p;
@@ -1112,7 +1112,7 @@ reexecute:
 
           if (!c)
             break;
-          
+
           switch (parser->header_state) {
             case h_general: {
               size_t left = data + len - p;
@@ -1273,7 +1273,14 @@ reexecute:
 
         switch (parser->header_state) {
           case h_upgrade:
-            parser->flags |= F_UPGRADE;
+            // Crow does not support HTTP/2 at the moment.
+            // According to the RFC https://datatracker.ietf.org/doc/html/rfc7540#section-3.2
+            // "A server that does not support HTTP/2 can respond to the request as though the Upgrade header field were absent"
+            // => `F_UPGRADE` is not set if the header starts by "h2".
+            // This prevents the parser from skipping the request body.
+            if (ch != 'h' || p+1 == (data + len) || *(p+1) != '2') {
+              parser->flags |= F_UPGRADE;
+            }
             parser->header_state = h_general;
             break;
 
@@ -1285,7 +1292,7 @@ reexecute:
               parser->header_state = h_matching_transfer_encoding_token;
             }
             break;
-            
+
           /* Multi-value `Transfer-Encoding` header */
           case h_matching_transfer_encoding_token_start:
             break;
@@ -1295,7 +1302,7 @@ reexecute:
               CROW_SET_ERRNO(CHPE_INVALID_CONTENT_LENGTH);
               goto error;
             }
-            
+
             if (parser->flags & F_CONTENTLENGTH) {
               CROW_SET_ERRNO(CHPE_UNEXPECTED_CONTENT_LENGTH);
               goto error;
@@ -1352,12 +1359,12 @@ reexecute:
             CROW_CALLBACK_DATA_NOADVANCE(header_value);
             CROW_REEXECUTE();
           }
-          
+
           if (!lenient && !CROW_IS_HEADER_CHAR(ch)) {
             CROW_SET_ERRNO(CHPE_INVALID_HEADER_TOKEN);
             goto error;
           }
-          
+
           c = CROW_LOWER(ch);
 
           switch (h_state) {
@@ -1421,7 +1428,7 @@ reexecute:
               parser->content_length = t;
               break;
             }
-            
+
             case h_content_length_ws:
               if (ch == ' ') break;
               CROW_SET_ERRNO(CHPE_INVALID_CONTENT_LENGTH);
@@ -1499,11 +1506,11 @@ reexecute:
           }
         }
         parser->header_state = h_state;
-        
-        
+
+
         if (p == data + len)
           --p;
-        
+
         CROW_COUNT_HEADER_SIZE(p - start);
         break;
       }
@@ -1576,11 +1583,10 @@ reexecute:
 
         if (parser->flags & F_TRAILING) {
           /* End of a chunked request */
-          parser->state = CROW_NEW_MESSAGE();
           CROW_CALLBACK_NOTIFY(message_complete);
           break;
         }
-        
+
         /* Cannot use transfer-encoding and a content-length header together
            per the HTTP specification. (RFC 7230 Section 3.3.3) */
         if ((parser->uses_transfer_encoding == 1) &&
@@ -1598,12 +1604,12 @@ reexecute:
             goto error;
           }
         }
-        
+
         parser->state = s_headers_done;
 
         /* Set this here so that on_headers_complete() callbacks can see it */
         parser->upgrade =
-          (parser->flags & F_UPGRADE || parser->method == (unsigned)HTTPMethod::CONNECT);
+          (parser->flags & F_UPGRADE || parser->method == (unsigned)HTTPMethod::Connect);
 
         /* Here we call the headers_complete callback. This is somewhat
          * different than other callbacks because if the user returns 1, we
@@ -1652,14 +1658,12 @@ reexecute:
 
         /* Exit, the rest of the connect is in a different protocol. */
         if (parser->upgrade) {
-          parser->state = CROW_NEW_MESSAGE();
           CROW_CALLBACK_NOTIFY(message_complete);
           parser->nread = nread;
           return (p - data) + 1;
         }
 
         if (parser->flags & F_SKIPBODY) {
-          parser->state = CROW_NEW_MESSAGE();
           CROW_CALLBACK_NOTIFY(message_complete);
         } else if (parser->flags & F_CHUNKED) {
           /* chunked encoding - ignore Content-Length header,
@@ -1699,7 +1703,6 @@ reexecute:
             if (parser->content_length == 0)
             {
                 /* Content-Length header given but zero: Content-Length: 0\r\n */
-                parser->state = CROW_NEW_MESSAGE();
                 CROW_CALLBACK_NOTIFY(message_complete);
             }
             else if (parser->content_length != CROW_ULLONG_MAX)
@@ -1710,7 +1713,6 @@ reexecute:
             else
             {
                 /* Assume content-length 0 - read the next */
-                parser->state = CROW_NEW_MESSAGE();
                 CROW_CALLBACK_NOTIFY(message_complete);
             }
         }
@@ -1762,7 +1764,6 @@ reexecute:
         break;
 
       case s_message_done:
-        parser->state = CROW_NEW_MESSAGE();
         CROW_CALLBACK_NOTIFY(message_complete);
         break;
 
@@ -2007,11 +2008,8 @@ http_parser_set_max_header_size(uint32_t size) {
 #undef CROW_TOKEN
 #undef CROW_IS_URL_CHAR
 //#undef CROW_IS_HOST_CHAR
-#undef CROW_start_state
 #undef CROW_STRICT_CHECK
-#undef CROW_NEW_MESSAGE
 
-}
 }
 
 // clang-format on

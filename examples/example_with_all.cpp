@@ -1,7 +1,5 @@
 #include "crow_all.h"
 
-#include <sstream>
-
 class ExampleLogHandler : public crow::ILogHandler
 {
 public:
@@ -35,18 +33,19 @@ int main()
 
     CROW_ROUTE(app, "/json-initializer-list-constructor")
     ([] {
-        return crow::json::wvalue({
+      crow::json::wvalue r({
           {"first", "Hello world!"},                     /* stores a char const* hence a json::type::String */
           {"second", std::string("How are you today?")}, /* stores a std::string hence a json::type::String. */
           {"third", 54},                                 /* stores an int (as 54 is an int literal) hence a std::int64_t. */
-          {"fourth", 54l},                               /* stores a long (as 54l is a long literal) hence a std::int64_t. */
+          {"fourth", (int64_t)54l},                               /* stores a long (as 54l is a long literal) hence a std::int64_t. */
           {"fifth", 54u},                                /* stores an unsigned int (as 54u is a unsigned int literal) hence a std::uint64_t. */
-          {"sixth", 54ul},                               /* stores an unsigned long (as 54ul is an unsigned long literal) hence a std::uint64_t. */
+          {"sixth", (uint64_t)54ul},                               /* stores an unsigned long (as 54ul is an unsigned long literal) hence a std::uint64_t. */
           {"seventh", 2.f},                              /* stores a float (as 2.f is a float literal) hence a double. */
           {"eighth", 2.},                                /* stores a double (as 2. is a double literal) hence a double. */
           {"ninth", nullptr},                            /* stores a std::nullptr hence json::type::Null . */
           {"tenth", true}                                /* stores a bool hence json::type::True . */
         });
+        return r;
     });
 
     // json list response
@@ -83,15 +82,15 @@ int main()
 
     // more json example
     CROW_ROUTE(app, "/add_json")
-    ([](const crow::request& req) {
-        auto x = crow::json::load(req.body);
-        if (!x)
-            return crow::response(400);
-        int sum = x["a"].i() + x["b"].i();
-        std::ostringstream os;
-        os << sum;
-        return crow::response{os.str()};
-    });
+      .methods("POST"_method)([](const crow::request& req) {
+          auto x = crow::json::load(req.body);
+          if (!x)
+              return crow::response(400);
+          int sum = x["a"].i() + x["b"].i();
+          std::ostringstream os;
+          os << sum;
+          return crow::response{os.str()};
+      });
 
     CROW_ROUTE(app, "/params")
     ([](const crow::request& req) {
@@ -100,7 +99,7 @@ int main()
         os << "The key 'foo' was " << (req.url_params.get("foo") == nullptr ? "not " : "") << "found.\n";
         if (req.url_params.get("pew") != nullptr)
         {
-            double countD = boost::lexical_cast<double>(req.url_params.get("pew"));
+            double countD = crow::utility::lexical_cast<double>(req.url_params.get("pew"));
             os << "The value of 'pew' is " << countD << '\n';
         }
         auto count = req.url_params.get_list("count");

@@ -1,14 +1,11 @@
-#define CATCH_CONFIG_MAIN
 #define CROW_LOG_LEVEL 0
 
 #include <thread>
 
-#include "../catch.hpp"
+#include "catch2/catch_all.hpp"
 #include "crow.h"
 
 #define LOCALHOST_ADDRESS "127.0.0.1"
-
-using namespace boost;
 
 // TODO(EDev): SSL test with .pem file
 TEST_CASE("SSL")
@@ -55,6 +52,7 @@ TEST_CASE("SSL")
 
         size_t x = 0;
         size_t y = 0;
+        long z = 0;
 
         while (x < 121)
         {
@@ -63,7 +61,20 @@ TEST_CASE("SSL")
             buf[y] = '\0';
         }
 
-        CHECK(std::string("Hello world, I'm keycrt.") == std::string(buf));
+        std::string to_test(buf);
+
+        if ((z = to_test.length() - 24) >= 0)
+        {
+
+            CHECK(std::string("Hello world, I'm keycrt.") == to_test.substr(z));
+        }
+        else
+        {
+            CHECK(std::string("Hello world, I'm keycrt.").substr((z * -1)) == to_test);
+        }
+
+        asio::error_code ec;
+        c.lowest_layer().shutdown(asio::socket_base::shutdown_type::shutdown_both, ec);
     }
 
     /*

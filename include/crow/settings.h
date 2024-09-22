@@ -8,9 +8,6 @@
 /* #ifdef - enables logging */
 #define CROW_ENABLE_LOGGING
 
-/* #ifdef - enables ssl */
-//#define CROW_ENABLE_SSL
-
 /* #ifdef - enforces section 5.2 and 6.1 of RFC6455 (only accepting masked messages from clients) */
 //#define CROW_ENFORCE_WS_SPEC
 
@@ -48,6 +45,9 @@
 #endif
 #if __cplusplus >= 201703L
 #define CROW_CAN_USE_CPP17
+#if defined(__GNUC__) && __GNUC__ < 8
+#define CROW_FILESYSTEM_IS_EXPERIMENTAL
+#endif
 #endif
 
 #if defined(_MSC_VER)
@@ -62,6 +62,6 @@
 #if __cplusplus > 201103L
 #define CROW_GCC83_WORKAROUND
 #else
-#error "GCC 8.1 - 8.3 has a bug that prevents crow from compiling with C++11. Please update GCC to > 8.3 or use C++ > 11."
+#error "GCC 8.1 - 8.3 has a bug that prevents Crow from compiling with C++11. Please update GCC to > 8.3 or use C++ > 11."
 #endif
 #endif

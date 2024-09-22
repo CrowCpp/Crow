@@ -10,7 +10,7 @@ We advise that you set crow up behind some form of reverse proxy if you plan on 
 
 ## Apache2
 
-Assuming you have both Apache2 and the modules [proxy](https://httpd.apache.org/docs/2.4/mod/mod_proxy.html), [proxy_http](https://httpd.apache.org/docs/2.4/mod/mod_proxy_http.html), [proxy_html](https://httpd.apache.org/docs/2.4/mod/mod_proxy_html.html) (if you plan on serving html pages), and [proxy_wstunnel](https://httpd.apache.org/docs/2.4/mod/mod_proxy_wstunnel.html) (if you plan on using websockets). You will need to enable those modules, which you can do using the following commands:
+Assuming you have both Apache2 and the modules [proxy](https://httpd.apache.org/docs/2.4/mod/mod_proxy.html), [proxy_http](https://httpd.apache.org/docs/2.4/mod/mod_proxy_http.html), [proxy_html](https://httpd.apache.org/docs/2.4/mod/mod_proxy_html.html) (if you plan on serving HTML pages), and [proxy_wstunnel](https://httpd.apache.org/docs/2.4/mod/mod_proxy_wstunnel.html) (if you plan on using websockets). You will need to enable those modules, which you can do using the following commands:
 
 ```sh
 a2enmod proxy
@@ -27,11 +27,8 @@ ProxyPassReverse / http://localhost:40080
 If you want crow to run in a subdirectory (such as `domain.abc/crow`) you can use the `location` tag:
 ```
 <Location "/crow">
-
 	ProxyPass http://localhost:40080
-	
 	ProxyPassReverse http://localhost:40080
-
 </Location>
 ```
 

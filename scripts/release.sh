@@ -1,14 +1,14 @@
 #!/bin/bash
 
 ##### Different color outputs (to distinguish errors from standard output) #####
-prGreen() { 
-echo -e "\e[36m-->\e[92m $1\e[00m" 
+prGreen() {
+echo -e "\e[36m-->\e[92m $1\e[00m"
 }
-prRed() { 
-echo -e "\e[36m-->\e[91m $1\e[00m" 
+prRed() {
+echo -e "\e[36m-->\e[91m $1\e[00m"
 }
-prYellow() { 
-echo -e "\e[36m-->\e[93m $1\e[00m" 
+prYellow() {
+echo -e "\e[36m-->\e[93m $1\e[00m"
 }
 
 ##### Check whether the script is called properly #####

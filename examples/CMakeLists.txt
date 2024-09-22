@@ -8,7 +8,7 @@ add_warnings_optimizations(helloworld)
 target_link_libraries(helloworld PUBLIC Crow::Crow)
 
 # If compression is enabled, the example will be built
-if(CROW_ENABLE_COMPRESSION)
+if("compression" IN_LIST CROW_FEATURES)
   add_executable(example_compression example_compression.cpp)
   add_warnings_optimizations(example_compression)
   target_link_libraries(example_compression Crow::Crow)
@@ -17,7 +17,7 @@ else()
 endif()
 
 # If SSL is enabled, the example will be built
-if(CROW_ENABLE_SSL)
+if("ssl" IN_LIST CROW_FEATURES)
   add_executable(example_ssl ssl/example_ssl.cpp)
   add_warnings_optimizations(example_ssl)
   target_link_libraries(example_ssl PUBLIC Crow::Crow)
@@ -38,12 +38,6 @@ add_custom_target(example_ws_copy ALL DEPENDS ws.html)
 add_executable(basic_example example.cpp)
 add_warnings_optimizations(basic_example)
 target_link_libraries(basic_example PUBLIC Crow::Crow)
-add_custom_command(OUTPUT example_test.py
-  COMMAND ${CMAKE_COMMAND} -E
-  copy ${PROJECT_SOURCE_DIR}/example_test.py ${CMAKE_CURRENT_BINARY_DIR}/example_test.py
-  DEPENDS ${PROJECT_SOURCE_DIR}/example_test.py
-)
-add_custom_target(example_copy ALL DEPENDS example_test.py)
 
 if(CROW_AMALGAMATE)
   add_executable(example_with_all example_with_all.cpp)
@@ -82,6 +76,22 @@ target_link_libraries(example_blueprint PUBLIC Crow::Crow)
 add_executable(example_middleware example_middleware.cpp)
 add_warnings_optimizations(example_middleware)
 target_link_libraries(example_middleware PUBLIC Crow::Crow)
+
+add_executable(example_cors middlewares/example_cors.cpp)
+add_warnings_optimizations(example_cors)
+target_link_libraries(example_cors PUBLIC Crow::Crow)
+
+add_executable(example_cookies middlewares/example_cookies.cpp)
+add_warnings_optimizations(example_cookies)
+target_link_libraries(example_cookies PUBLIC Crow::Crow)
+
+add_executable(example_session middlewares/example_session.cpp)
+add_warnings_optimizations(example_session)
+target_link_libraries(example_session PUBLIC Crow::Crow)
+
+add_executable(example_file_upload example_file_upload.cpp)
+add_warnings_optimizations(example_file_upload)
+target_link_libraries(example_file_upload PUBLIC Crow::Crow)
 
 if(MSVC)
   add_executable(example_vs example_vs.cpp)

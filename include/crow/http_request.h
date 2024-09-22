@@ -1,13 +1,24 @@
 #pragma once
 
+#ifdef CROW_USE_BOOST
 #include <boost/asio.hpp>
+#else
+#ifndef ASIO_STANDALONE
+#define ASIO_STANDALONE
+#endif
+#include <asio.hpp>
+#endif
 
 #include "crow/common.h"
 #include "crow/ci_map.h"
 #include "crow/query_string.h"
 
-namespace crow
+namespace crow // NOTE: Already documented in "crow/app.h"
 {
+#ifdef CROW_USE_BOOST
+    namespace asio = boost::asio;
+#endif
+
     /// Find and return the value associated with the key. (returns an empty string if nothing is found)
     template<typename T>
     inline const std::string& get_header_value(const T& headers, const std::string& key)
@@ -26,16 +37,18 @@ namespace crow
         HTTPMethod method;
         std::string raw_url;     ///< The full URL containing the `?` and URL parameters.
         std::string url;         ///< The endpoint without any parameters.
-        query_string url_params; ///< The parameters associated with the request. (everything after the `?`)
+        query_string url_params; ///< The parameters associated with the request. (everything after the `?` in the URL)
         ci_map headers;
         std::string body;
         std::string remote_ip_address; ///< The IP address from which the request was sent.
         unsigned char http_ver_major, http_ver_minor;
-        bool keep_alive, close_connection, upgrade;
+        bool keep_alive,    ///< Whether or not the server should send a `connection: Keep-Alive` header to the client.
+          close_connection, ///< Whether or not the server should shut down the TCP connection once a response is sent.
+          upgrade;          ///< Whether or noth the server should change the HTTP connection to a different connection.
 
         void* middleware_context{};
         void* middleware_container{};
-        boost::asio::io_service* io_service{};
+        asio::io_service* io_service{};
 
         /// Construct an empty request. (sets the method to `GET`)
         request():
@@ -60,6 +73,15 @@ namespace crow
         bool check_version(unsigned char major, unsigned char minor) const
         {
             return http_ver_major == major && http_ver_minor == minor;
+        }
+
+        /// Get the body as parameters in QS format.
+
+        ///
+        /// This is meant to be used with requests of type "application/x-www-form-urlencoded"
+        const query_string get_body_params() const
+        {
+            return query_string(body, false);
         }
 
         /// Send data to whoever made this request with a completion handler and return immediately.

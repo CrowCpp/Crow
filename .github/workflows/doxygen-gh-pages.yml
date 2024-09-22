@@ -1,0 +1,39 @@
+name: Deploy Doxygen results to Github Pages
+
+#on: push
+on:
+  push:
+    branches:
+      - master
+
+permissions:
+  contents: write
+jobs:
+  build-and-deploy:
+    concurrency: ci-${{ github.ref }} # Recommended if you intend to make multiple deployments in quick succession.
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout 🛎️
+        uses: actions/checkout@v4
+      - name: Prepare dependencies
+        run: sudo apt-get update && sudo apt-get -yq install libasio-dev doxygen mkdocs graphviz zlib1g-dev gcc clang make cmake python3 python3-pip git openssl libssl-dev
+      - name: prepate pip dependencies
+        run: pip3 install mkdocs-material mkdocs-redirects pyyaml mkdocs-meta-descriptions-plugin mike --no-input
+      - name: configure
+        run: cmake -B build -DCROW_AMALGAMATE=ON
+      - name: clean generated docs dir
+        run: rm -rf site docs/reference
+      - name: clone doxygen theme
+        run: git clone https://github.com/CrowCpp/darxygen.git
+      - name: run doxygen
+        run: doxygen
+      - name: run mkdocs
+        run: mkdocs build
+      - name: Setup doc deploy
+        run: |
+          git config --global user.name Docs deploy
+          git config --global user.email docs@dummy.bot.com
+      - name: run mike (Deploy 🚀)
+        run: |
+          git fetch origin gh-pages --depth=1
+          mike deploy master --push

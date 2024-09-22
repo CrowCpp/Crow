@@ -1,7 +1,5 @@
 #include "crow.h"
 
-#include <sstream>
-
 class ExampleLogHandler : public crow::ILogHandler
 {
 public:
@@ -179,7 +177,7 @@ int main()
         // To see in action submit something like '/params?pew=42'
         if (req.url_params.get("pew") != nullptr)
         {
-            double countD = boost::lexical_cast<double>(req.url_params.get("pew"));
+            double countD = crow::utility::lexical_cast<double>(req.url_params.get("pew"));
             os << "The value of 'pew' is " << countD << '\n';
         }
 
@@ -212,7 +210,7 @@ int main()
     // Take a multipart/form-data request and print out its body
     CROW_ROUTE(app, "/multipart")
     ([](const crow::request& req) {
-        crow::multipart::message msg(req);
+        crow::multipart::message_view msg(req);
         CROW_LOG_INFO << "body of the first part " << msg.parts[0].body;
         return "it works!";
     });

@@ -4,7 +4,15 @@
 #include <ios>
 #include <fstream>
 #include <sstream>
+// S_ISREG is not defined for windows
+// This defines it like suggested in https://stackoverflow.com/a/62371749
+#if defined(_MSC_VER)
+#define _CRT_INTERNAL_NONSTDC_NAMES 1
+#endif
 #include <sys/stat.h>
+#if !defined(S_ISREG) && defined(S_IFMT) && defined(S_IFREG)
+#define S_ISREG(m) (((m)&S_IFMT) == S_IFREG)
+#endif
 
 #include "crow/http_request.h"
 #include "crow/ci_map.h"
@@ -19,11 +27,7 @@ namespace crow
     template<typename Adaptor, typename Handler, typename... Middlewares>
     class Connection;
 
-    namespace detail
-    {
-        template<typename F, typename App, typename... Middlewares>
-        struct handler_middleware_wrapper;
-    } // namespace detail
+    class Router;
 
     /// HTTP response
     struct response
@@ -31,8 +35,7 @@ namespace crow
         template<typename Adaptor, typename Handler, typename... Middlewares>
         friend class crow::Connection;
 
-        template<typename F, typename App, typename... Middlewares>
-        friend struct crow::detail::handler_middleware_wrapper;
+        friend class Router;
 
         int code{200};    ///< The Status code for the response.
         std::string body; ///< The actual payload containing the response data.
@@ -62,6 +65,57 @@ namespace crow
             return crow::get_header_value(headers, key);
         }
 
+        // naive validation of a mime-type string
+        static bool validate_mime_type(const std::string& candidate) noexcept
+        {
+            // Here we simply check that the candidate type starts with
+            // a valid parent type, and has at least one character afterwards.
+            std::array<std::string, 10> valid_parent_types = {
+              "application/", "audio/", "font/", "example/",
+              "image/", "message/", "model/", "multipart/",
+              "text/", "video/"};
+            for (const std::string& parent : valid_parent_types)
+            {
+                // ensure the candidate is *longer* than the parent,
+                // to avoid unnecessary string comparison and to
+                // reject zero-length subtypes.
+                if (candidate.size() <= parent.size())
+                {
+                    continue;
+                }
+                // strncmp is used rather than substr to avoid allocation,
+                // but a string_view approach would be better if Crow
+                // migrates to C++17.
+                if (strncmp(parent.c_str(), candidate.c_str(), parent.size()) == 0)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        // Find the mime type from the content type either by lookup,
+        // or by the content type itself, if it is a valid a mime type.
+        // Defaults to text/plain.
+        static std::string get_mime_type(const std::string& contentType)
+        {
+            const auto mimeTypeIterator = mime_types.find(contentType);
+            if (mimeTypeIterator != mime_types.end())
+            {
+                return mimeTypeIterator->second;
+            }
+            else if (validate_mime_type(contentType))
+            {
+                return contentType;
+            }
+            else
+            {
+                CROW_LOG_WARNING << "Unable to interpret mime type for content type '" << contentType << "'. Defaulting to text/plain.";
+                return "text/plain";
+            }
+        }
+
+
         // clang-format off
         response() {}
         explicit response(int code) : code(code) {}
@@ -84,6 +138,11 @@ namespace crow
             body = value.dump();
             set_header("Content-Type", value.content_type);
         }
+        response(int code, returnable&& value):
+          code(code), body(value.dump())
+        {
+            set_header("Content-Type", std::move(value.content_type));
+        }
 
         response(response&& r)
         {
@@ -93,13 +152,13 @@ namespace crow
         response(std::string contentType, std::string body):
           body(std::move(body))
         {
-            set_header("Content-Type", mime_types.at(contentType));
+            set_header("Content-Type", get_mime_type(contentType));
         }
 
         response(int code, std::string contentType, std::string body):
           code(code), body(std::move(body))
         {
-            set_header("Content-Type", mime_types.at(contentType));
+            set_header("Content-Type", get_mime_type(contentType));
         }
 
         response& operator=(const response& r) = delete;
@@ -189,6 +248,8 @@ namespace crow
                 if (complete_request_handler_)
                 {
                     complete_request_handler_();
+                    manual_length_header = false;
+                    skip_body = false;
                 }
             }
         }
@@ -238,28 +299,22 @@ namespace crow
 #ifdef CROW_ENABLE_COMPRESSION
             compressed = false;
 #endif
-            if (file_info.statResult == 0)
+            if (file_info.statResult == 0 && S_ISREG(file_info.statbuf.st_mode))
             {
                 std::size_t last_dot = path.find_last_of(".");
                 std::string extension = path.substr(last_dot + 1);
-                std::string mimeType = "";
                 code = 200;
-                this->add_header("Content-length", std::to_string(file_info.statbuf.st_size));
+                this->add_header("Content-Length", std::to_string(file_info.statbuf.st_size));
 
-                if (extension != "")
+                if (!extension.empty())
                 {
-                    mimeType = mime_types.at(extension);
-                    if (mimeType != "")
-                        this->add_header("Content-Type", mimeType);
-                    else
-                        this->add_header("content-Type", "text/plain");
+                    this->add_header("Content-Type", get_mime_type(extension));
                 }
             }
             else
             {
                 code = 404;
                 file_info.path.clear();
-                this->end();
             }
         }
 
