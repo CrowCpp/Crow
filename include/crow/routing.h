@@ -513,6 +513,14 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         }
 
         template<typename Func>
+        self_t& ontimeout(Func f, uint64_t timeout_in_seconds = 5)
+        {
+            timeout_handler_.first = f;
+            timeout_handler_.second = timeout_in_seconds;
+            return *this;
+        }
+
+        template<typename Func>
         self_t& onaccept(Func f)
         {
             accept_handler_ = f;
@@ -525,6 +533,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         std::function<void(crow::websocket::connection&, const std::string&, bool)> message_handler_;
         std::function<void(crow::websocket::connection&, const std::string&, uint16_t)> close_handler_;
         std::function<void(crow::websocket::connection&, const std::string&)> error_handler_;
+        std::pair<std::function<void(crow::websocket::connection&, const std::string&)>, uint64_t> timeout_handler_;
         std::function<bool(const crow::request&, void**)> accept_handler_;
         uint64_t max_payload_;
         bool max_payload_override_ = false;
