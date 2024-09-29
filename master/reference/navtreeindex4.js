@@ -1,5 +1,6 @@
 var NAVTREEINDEX4 =
 {
+"structcrow_1_1detail_1_1middleware__call__criteria__only__global.html":[1,0,0,0,9],
 "structcrow_1_1detail_1_1middleware__call__criteria__only__global.html#a9f2185f986461f1c1cdc0e808107a0fe":[1,0,0,0,9,0],
 "structcrow_1_1detail_1_1middleware__indices.html":[1,0,0,0,16],
 "structcrow_1_1detail_1_1middleware__indices.html#a3c23c2fd745612f1f126b63fbec1a547":[1,0,0,0,16,2],
@@ -248,6 +249,5 @@ var NAVTREEINDEX4 =
 "structcrow_1_1routing__handle__result.html#aa0eb5e5466006a627bb02d84382f7cf6":[1,0,0,9,2],
 "structcrow_1_1routing__handle__result.html#aefe27184ee08b616c2700854345b6cda":[1,0,0,9,6],
 "structcrow_1_1session_1_1_cached_session.html":[1,0,0,4,2],
-"structcrow_1_1session_1_1_cached_session.html#a557688ba5816d3d2b22c451fe4825625":[1,0,0,4,2,1],
-"structcrow_1_1session_1_1_cached_session.html#aad8990d246ebeaaf7053d476d7b0f330":[1,0,0,4,2,2]
+"structcrow_1_1session_1_1_cached_session.html#a557688ba5816d3d2b22c451fe4825625":[1,0,0,4,2,1]
 };
