@@ -101,8 +101,9 @@ namespace crow
             /// (Default: 5)
 
             ///
-            /// \param timeout The amount of ticks (seconds) to wait before
-            /// execution.
+            /// \param timeout The amount of ticks to wait before
+            /// execution. 
+            /// For tick length \see tick_length_ms_ 
             void set_default_timeout(uint8_t timeout) {
                 default_timeout_ = timeout;
             }
@@ -112,6 +113,7 @@ namespace crow
                 return default_timeout_;
             }
 
+            /// returns the length of one tick.
             std::chrono::milliseconds get_tick_length() const {
                 return tick_length_ms_;
             }
