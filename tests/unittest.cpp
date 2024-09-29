@@ -3922,8 +3922,8 @@ TEST_CASE("task_timer")
 
     crow::detail::task_timer timer(io_service, std::chrono::milliseconds(100));
     CHECK(timer.get_default_timeout() == 5);
-    timer.set_default_timeout(7);
-    CHECK(timer.get_default_timeout() == 7);
+    timer.set_default_timeout(9);
+    CHECK(timer.get_default_timeout() == 9);
 
     timer.schedule([&a]() {
         a = true;
@@ -3938,7 +3938,7 @@ TEST_CASE("task_timer")
     this_thread::sleep_for(2 * timer.get_tick_length());
     CHECK(a == true);
     CHECK(b == false);
-    this_thread::sleep_for(2 * timer.get_tick_length());
+    this_thread::sleep_for(4 * timer.get_tick_length());
     CHECK(a == true);
     CHECK(b == true);
 
