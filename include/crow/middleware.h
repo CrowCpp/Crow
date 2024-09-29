@@ -286,8 +286,8 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         template<>
         struct middleware_call_criteria_dynamic<false>
         {
-            middleware_call_criteria_dynamic(const std::vector<int>& indices):
-              indices(indices), slider(0) {}
+            middleware_call_criteria_dynamic(const std::vector<int>& indices_):
+              indices(indices_), slider(0) {}
 
             template<typename>
             bool enabled(int mw_index) const
@@ -308,8 +308,8 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         template<>
         struct middleware_call_criteria_dynamic<true>
         {
-            middleware_call_criteria_dynamic(const std::vector<int>& indices):
-              indices(indices), slider(int(indices.size()) - 1) {}
+            middleware_call_criteria_dynamic(const std::vector<int>& indices_):
+              indices(indices_), slider(int(indices_.size()) - 1) {}
 
             template<typename>
             bool enabled(int mw_index) const

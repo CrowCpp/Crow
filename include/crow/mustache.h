@@ -51,8 +51,8 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         class invalid_template_exception : public std::exception
         {
         public:
-            invalid_template_exception(const std::string& msg):
-              msg("crow::mustache error: " + msg)
+            invalid_template_exception(const std::string& msg_):
+              msg("crow::mustache error: " + msg_)
             {}
             virtual const char* what() const throw() override
             {
@@ -118,8 +118,8 @@ namespace crow // NOTE: Already documented in "crow/app.h"
             int end;
             int pos;
             ActionType t;
-            Action(ActionType t, size_t start, size_t end, size_t pos = 0):
-              start(static_cast<int>(start)), end(static_cast<int>(end)), pos(static_cast<int>(pos)), t(t)
+            Action(ActionType t_, size_t start_, size_t end_, size_t pos_ = 0):
+              start(static_cast<int>(start_)), end(static_cast<int>(end_)), pos(static_cast<int>(pos_)), t(t_)
             {
             }
         };

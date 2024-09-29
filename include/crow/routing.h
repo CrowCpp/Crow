@@ -97,11 +97,13 @@ namespace crow // NOTE: Already documented in "crow/app.h"
 
         virtual void validate() = 0;
 
-        void set_added() {
+        void set_added()
+        {
             added_ = true;
         }
 
-        bool is_added() {
+        bool is_added()
+        {
             return added_;
         }
 
@@ -260,8 +262,8 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                 template<typename Req, typename... Args>
                 struct req_handler_wrapper
                 {
-                    req_handler_wrapper(Func f):
-                      f(std::move(f))
+                    req_handler_wrapper(Func fun):
+                      f(std::move(fun))
                     {
                     }
 
@@ -1110,11 +1112,10 @@ namespace crow // NOTE: Already documented in "crow/app.h"
     class Blueprint
     {
     public:
-        Blueprint(const std::string& prefix)
-          : prefix_(prefix),
-            static_dir_(prefix),
-            templates_dir_(prefix)
-            {};
+        Blueprint(const std::string& prefix):
+          prefix_(prefix),
+          static_dir_(prefix),
+          templates_dir_(prefix){};
 
         Blueprint(const std::string& prefix, const std::string& static_dir):
           prefix_(prefix), static_dir_(static_dir){};
@@ -1174,11 +1175,13 @@ namespace crow // NOTE: Already documented in "crow/app.h"
             return static_dir_;
         }
 
-        void set_added() {
+        void set_added()
+        {
             added_ = true;
         }
 
-        bool is_added() {
+        bool is_added()
+        {
             return added_;
         }
 
@@ -1355,7 +1358,8 @@ namespace crow // NOTE: Already documented in "crow/app.h"
             }
         }
 
-        void validate_bp() {
+        void validate_bp()
+        {
             //Take all the routes from the registered blueprints and add them to `all_rules_` to be processed.
             detail::middleware_indices blueprint_mw;
             validate_bp(blueprints_, blueprint_mw);
@@ -1375,8 +1379,8 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                     get_recursive_child_methods(blueprint, methods);
                     for (HTTPMethod x : methods)
                     {
-                        int i = static_cast<int>(x);
-                        per_methods_[i].trie.add(blueprint->prefix(), 0, blueprint->prefix().length(), i);
+                        int method_index = static_cast<int>(x);
+                        per_methods_[method_index].trie.add(blueprint->prefix(), 0, blueprint->prefix().length(), method_index);
                     }
                 }
 
@@ -1431,9 +1435,9 @@ namespace crow // NOTE: Already documented in "crow/app.h"
 
             if (!rule_index)
             {
-                for (auto& per_method : per_methods_)
+                for (auto& method : per_methods_)
                 {
-                    if (per_method.trie.find(req.url).rule_index)
+                    if (method.trie.find(req.url).rule_index)
                     {
                         CROW_LOG_DEBUG << "Cannot match method " << req.url << " " << method_name(req.method);
                         res = response(405);
