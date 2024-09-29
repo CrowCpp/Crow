@@ -30,7 +30,8 @@ namespace crow
     {
 
         /// A class for scheduling functions to be called after a specific
-        /// amount of ticks. A tick is equal to 1 second.
+        /// amount of ticks. Ther tick length can  be handed over in constructor, 
+        /// the default tick length is equal to 1 second.
         class task_timer
         {
         public:
@@ -55,10 +56,13 @@ namespace crow
 
             ~task_timer() { timer_.cancel(); }
 
+            /// Cancel the scheduling of the given task 
+            ///
+            /// \param identifier_type task identifier of the task to cancel.
             void cancel(identifier_type id)
             {
                 tasks_.erase(id);
-                CROW_LOG_DEBUG << "task_timer cancelled: " << this << ' ' << id;
+                CROW_LOG_DEBUG << "task_timer task cancelled: " << this << ' ' << id;
             }
 
             /// Schedule the given task to be executed after the default amount
