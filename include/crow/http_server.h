@@ -42,7 +42,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
     class Server
     {
     public:
-        Server(Handler* handler, std::string bindaddr, uint16_t port, std::string server_name = std::string("Crow/") + VERSION, std::tuple<Middlewares...>* middlewares = nullptr, uint16_t concurrency = 1, uint8_t timeout = 5, typename Adaptor::context* adaptor_ctx = nullptr):
+        Server(Handler* handler, std::string bindaddr, uint16_t port, std::string server_name = std::string("Crow/") + VERSION, std::tuple<Middlewares...>* middlewares = nullptr, unsigned int concurrency = 1, uint8_t timeout = 5, typename Adaptor::context* adaptor_ctx = nullptr):
           acceptor_(io_service_, tcp::endpoint(asio::ip::address::from_string(bindaddr), port)),
           signals_(io_service_),
           tick_timer_(io_service_),
@@ -215,9 +215,9 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         }
 
     private:
-        uint16_t pick_io_service_idx()
+        size_t pick_io_service_idx()
         {
-            uint16_t min_queue_idx = 0;
+            size_t min_queue_idx = 0;
 
             // TODO improve load balancing
             // size_t is used here to avoid the security issue https://codeql.github.com/codeql-query-help/cpp/cpp-comparison-with-wider-type/
@@ -235,7 +235,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         {
             if (!shutting_down_)
             {
-                uint16_t service_idx = pick_io_service_idx();
+                size_t service_idx = pick_io_service_idx();
                 asio::io_service& is = *io_service_pool_[service_idx];
                 task_queue_length_pool_[service_idx]++;
                 CROW_LOG_DEBUG << &is << " {" << service_idx << "} queue length: " << task_queue_length_pool_[service_idx];
@@ -287,7 +287,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         asio::basic_waitable_timer<std::chrono::high_resolution_clock> tick_timer_;
 
         Handler* handler_;
-        uint16_t concurrency_{2};
+        unsigned int concurrency_{2};
         std::uint8_t timeout_;
         std::string server_name_;
         uint16_t port_;
