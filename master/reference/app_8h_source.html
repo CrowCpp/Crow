@@ -415,509 +415,522 @@ $(document).ready(function(){initNavTree('app_8h_source.html',''); initResizable
 <div class="line"><a name="l00314"></a><span class="lineno">  314</span>&#160;<span class="comment">        /// \brief Get the port that Crow will handle requests on</span></div>
 <div class="line"><a name="l00315"></a><span class="lineno"><a class="line" href="classcrow_1_1_crow.html#a9cf5fac292b94d93ad09032a02ab0b62">  315</a></span>&#160;<span class="comment"></span>        std::uint16_t <a class="code" href="classcrow_1_1_crow.html#a9cf5fac292b94d93ad09032a02ab0b62">port</a>()<span class="keyword"> const</span></div>
 <div class="line"><a name="l00316"></a><span class="lineno">  316</span>&#160;<span class="keyword">        </span>{</div>
-<div class="line"><a name="l00317"></a><span class="lineno">  317</span>&#160;            <span class="keywordflow">return</span> port_;</div>
-<div class="line"><a name="l00318"></a><span class="lineno">  318</span>&#160;        }</div>
-<div class="line"><a name="l00319"></a><span class="lineno">  319</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00320"></a><span class="lineno">  320</span>&#160;<span class="comment">        /// \brief Set the connection timeout in seconds (default is 5)</span></div>
-<div class="line"><a name="l00321"></a><span class="lineno"><a class="line" href="classcrow_1_1_crow.html#a47ed9a118820f6e6ba0b2bc37f0997fb">  321</a></span>&#160;<span class="comment"></span>        <a class="code" href="classcrow_1_1_crow.html">self_t</a>&amp; <a class="code" href="classcrow_1_1_crow.html#a47ed9a118820f6e6ba0b2bc37f0997fb">timeout</a>(std::uint8_t <a class="code" href="classcrow_1_1_crow.html#a47ed9a118820f6e6ba0b2bc37f0997fb">timeout</a>)</div>
-<div class="line"><a name="l00322"></a><span class="lineno">  322</span>&#160;        {</div>
-<div class="line"><a name="l00323"></a><span class="lineno">  323</span>&#160;            timeout_ = <a class="code" href="classcrow_1_1_crow.html#a47ed9a118820f6e6ba0b2bc37f0997fb">timeout</a>;</div>
-<div class="line"><a name="l00324"></a><span class="lineno">  324</span>&#160;            <span class="keywordflow">return</span> *<span class="keyword">this</span>;</div>
-<div class="line"><a name="l00325"></a><span class="lineno">  325</span>&#160;        }</div>
-<div class="line"><a name="l00326"></a><span class="lineno">  326</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00327"></a><span class="lineno">  327</span>&#160;<span class="comment">        /// \brief Set the server name</span></div>
-<div class="line"><a name="l00328"></a><span class="lineno"><a class="line" href="classcrow_1_1_crow.html#ae0e400a1757bd68f716b82753a5a1a73">  328</a></span>&#160;<span class="comment"></span>        <a class="code" href="classcrow_1_1_crow.html">self_t</a>&amp; <a class="code" href="classcrow_1_1_crow.html#ae0e400a1757bd68f716b82753a5a1a73">server_name</a>(std::string <a class="code" href="classcrow_1_1_crow.html#ae0e400a1757bd68f716b82753a5a1a73">server_name</a>)</div>
-<div class="line"><a name="l00329"></a><span class="lineno">  329</span>&#160;        {</div>
-<div class="line"><a name="l00330"></a><span class="lineno">  330</span>&#160;            server_name_ = <a class="code" href="classcrow_1_1_crow.html#ae0e400a1757bd68f716b82753a5a1a73">server_name</a>;</div>
-<div class="line"><a name="l00331"></a><span class="lineno">  331</span>&#160;            <span class="keywordflow">return</span> *<span class="keyword">this</span>;</div>
-<div class="line"><a name="l00332"></a><span class="lineno">  332</span>&#160;        }</div>
-<div class="line"><a name="l00333"></a><span class="lineno">  333</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00334"></a><span class="lineno">  334</span>&#160;<span class="comment">        /// \brief The IP address that Crow will handle requests on (default is 0.0.0.0)</span></div>
-<div class="line"><a name="l00335"></a><span class="lineno"><a class="line" href="classcrow_1_1_crow.html#a75777f82b6519c86d71446eb9285d774">  335</a></span>&#160;<span class="comment"></span>        <a class="code" href="classcrow_1_1_crow.html">self_t</a>&amp; <a class="code" href="classcrow_1_1_crow.html#a75777f82b6519c86d71446eb9285d774">bindaddr</a>(std::string <a class="code" href="classcrow_1_1_crow.html#a8c816534804e7bd351ca692005bf3343">bindaddr</a>)</div>
-<div class="line"><a name="l00336"></a><span class="lineno">  336</span>&#160;        {</div>
-<div class="line"><a name="l00337"></a><span class="lineno">  337</span>&#160;            bindaddr_ = <a class="code" href="classcrow_1_1_crow.html#a8c816534804e7bd351ca692005bf3343">bindaddr</a>;</div>
-<div class="line"><a name="l00338"></a><span class="lineno">  338</span>&#160;            <span class="keywordflow">return</span> *<span class="keyword">this</span>;</div>
-<div class="line"><a name="l00339"></a><span class="lineno">  339</span>&#160;        }</div>
-<div class="line"><a name="l00340"></a><span class="lineno">  340</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00341"></a><span class="lineno">  341</span>&#160;<span class="comment">        /// \brief Get the address that Crow will handle requests on</span></div>
-<div class="line"><a name="l00342"></a><span class="lineno"><a class="line" href="classcrow_1_1_crow.html#a8c816534804e7bd351ca692005bf3343">  342</a></span>&#160;<span class="comment"></span>        std::string <a class="code" href="classcrow_1_1_crow.html#a8c816534804e7bd351ca692005bf3343">bindaddr</a>()</div>
-<div class="line"><a name="l00343"></a><span class="lineno">  343</span>&#160;        {</div>
-<div class="line"><a name="l00344"></a><span class="lineno">  344</span>&#160;            <span class="keywordflow">return</span> bindaddr_;</div>
+<div class="line"><a name="l00317"></a><span class="lineno">  317</span>&#160;            <span class="keywordflow">if</span> (!server_started_)</div>
+<div class="line"><a name="l00318"></a><span class="lineno">  318</span>&#160;            {</div>
+<div class="line"><a name="l00319"></a><span class="lineno">  319</span>&#160;                <span class="keywordflow">return</span> port_;</div>
+<div class="line"><a name="l00320"></a><span class="lineno">  320</span>&#160;            }</div>
+<div class="line"><a name="l00321"></a><span class="lineno">  321</span>&#160;<span class="preprocessor">#ifdef CROW_ENABLE_SSL</span></div>
+<div class="line"><a name="l00322"></a><span class="lineno">  322</span>&#160;            <span class="keywordflow">if</span> (ssl_used_)</div>
+<div class="line"><a name="l00323"></a><span class="lineno">  323</span>&#160;            {</div>
+<div class="line"><a name="l00324"></a><span class="lineno">  324</span>&#160;                <span class="keywordflow">return</span> ssl_server_-&gt;port();</div>
+<div class="line"><a name="l00325"></a><span class="lineno">  325</span>&#160;            }</div>
+<div class="line"><a name="l00326"></a><span class="lineno">  326</span>&#160;            <span class="keywordflow">else</span></div>
+<div class="line"><a name="l00327"></a><span class="lineno">  327</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00328"></a><span class="lineno">  328</span>&#160;            {</div>
+<div class="line"><a name="l00329"></a><span class="lineno">  329</span>&#160;                <span class="keywordflow">return</span> server_-&gt;port();</div>
+<div class="line"><a name="l00330"></a><span class="lineno">  330</span>&#160;            }</div>
+<div class="line"><a name="l00331"></a><span class="lineno">  331</span>&#160;        }</div>
+<div class="line"><a name="l00332"></a><span class="lineno">  332</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00333"></a><span class="lineno">  333</span>&#160;<span class="comment">        /// \brief Set the connection timeout in seconds (default is 5)</span></div>
+<div class="line"><a name="l00334"></a><span class="lineno"><a class="line" href="classcrow_1_1_crow.html#a47ed9a118820f6e6ba0b2bc37f0997fb">  334</a></span>&#160;<span class="comment"></span>        <a class="code" href="classcrow_1_1_crow.html">self_t</a>&amp; <a class="code" href="classcrow_1_1_crow.html#a47ed9a118820f6e6ba0b2bc37f0997fb">timeout</a>(std::uint8_t <a class="code" href="classcrow_1_1_crow.html#a47ed9a118820f6e6ba0b2bc37f0997fb">timeout</a>)</div>
+<div class="line"><a name="l00335"></a><span class="lineno">  335</span>&#160;        {</div>
+<div class="line"><a name="l00336"></a><span class="lineno">  336</span>&#160;            timeout_ = <a class="code" href="classcrow_1_1_crow.html#a47ed9a118820f6e6ba0b2bc37f0997fb">timeout</a>;</div>
+<div class="line"><a name="l00337"></a><span class="lineno">  337</span>&#160;            <span class="keywordflow">return</span> *<span class="keyword">this</span>;</div>
+<div class="line"><a name="l00338"></a><span class="lineno">  338</span>&#160;        }</div>
+<div class="line"><a name="l00339"></a><span class="lineno">  339</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00340"></a><span class="lineno">  340</span>&#160;<span class="comment">        /// \brief Set the server name</span></div>
+<div class="line"><a name="l00341"></a><span class="lineno"><a class="line" href="classcrow_1_1_crow.html#ae0e400a1757bd68f716b82753a5a1a73">  341</a></span>&#160;<span class="comment"></span>        <a class="code" href="classcrow_1_1_crow.html">self_t</a>&amp; <a class="code" href="classcrow_1_1_crow.html#ae0e400a1757bd68f716b82753a5a1a73">server_name</a>(std::string <a class="code" href="classcrow_1_1_crow.html#ae0e400a1757bd68f716b82753a5a1a73">server_name</a>)</div>
+<div class="line"><a name="l00342"></a><span class="lineno">  342</span>&#160;        {</div>
+<div class="line"><a name="l00343"></a><span class="lineno">  343</span>&#160;            server_name_ = <a class="code" href="classcrow_1_1_crow.html#ae0e400a1757bd68f716b82753a5a1a73">server_name</a>;</div>
+<div class="line"><a name="l00344"></a><span class="lineno">  344</span>&#160;            <span class="keywordflow">return</span> *<span class="keyword">this</span>;</div>
 <div class="line"><a name="l00345"></a><span class="lineno">  345</span>&#160;        }</div>
 <div class="line"><a name="l00346"></a><span class="lineno">  346</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00347"></a><span class="lineno">  347</span>&#160;<span class="comment">        /// \brief Run the server on multiple threads using all available threads</span></div>
-<div class="line"><a name="l00348"></a><span class="lineno"><a class="line" href="classcrow_1_1_crow.html#a0149b20b7f6c0123292286f54638d456">  348</a></span>&#160;<span class="comment"></span>        <a class="code" href="classcrow_1_1_crow.html">self_t</a>&amp; <a class="code" href="classcrow_1_1_crow.html#a0149b20b7f6c0123292286f54638d456">multithreaded</a>()</div>
+<div class="line"><a name="l00347"></a><span class="lineno">  347</span>&#160;<span class="comment">        /// \brief The IP address that Crow will handle requests on (default is 0.0.0.0)</span></div>
+<div class="line"><a name="l00348"></a><span class="lineno"><a class="line" href="classcrow_1_1_crow.html#a75777f82b6519c86d71446eb9285d774">  348</a></span>&#160;<span class="comment"></span>        <a class="code" href="classcrow_1_1_crow.html">self_t</a>&amp; <a class="code" href="classcrow_1_1_crow.html#a75777f82b6519c86d71446eb9285d774">bindaddr</a>(std::string <a class="code" href="classcrow_1_1_crow.html#a8c816534804e7bd351ca692005bf3343">bindaddr</a>)</div>
 <div class="line"><a name="l00349"></a><span class="lineno">  349</span>&#160;        {</div>
-<div class="line"><a name="l00350"></a><span class="lineno">  350</span>&#160;            <span class="keywordflow">return</span> <a class="code" href="classcrow_1_1_crow.html#abd824d73fdd02ba810b8dd37e2900240">concurrency</a>(std::thread::hardware_concurrency());</div>
-<div class="line"><a name="l00351"></a><span class="lineno">  351</span>&#160;        }</div>
-<div class="line"><a name="l00352"></a><span class="lineno">  352</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00353"></a><span class="lineno">  353</span>&#160;<span class="comment">        /// \brief Run the server on multiple threads using a specific number</span></div>
-<div class="line"><a name="l00354"></a><span class="lineno"><a class="line" href="classcrow_1_1_crow.html#a41686e6025705c1ab379b5ec71bbf983">  354</a></span>&#160;<span class="comment"></span>        <a class="code" href="classcrow_1_1_crow.html">self_t</a>&amp; <a class="code" href="classcrow_1_1_crow.html#a41686e6025705c1ab379b5ec71bbf983">concurrency</a>(std::uint16_t <a class="code" href="classcrow_1_1_crow.html#abd824d73fdd02ba810b8dd37e2900240">concurrency</a>)</div>
-<div class="line"><a name="l00355"></a><span class="lineno">  355</span>&#160;        {</div>
-<div class="line"><a name="l00356"></a><span class="lineno">  356</span>&#160;            <span class="keywordflow">if</span> (<a class="code" href="classcrow_1_1_crow.html#abd824d73fdd02ba810b8dd37e2900240">concurrency</a> &lt; 2) <span class="comment">// Crow can have a minimum of 2 threads running</span></div>
-<div class="line"><a name="l00357"></a><span class="lineno">  357</span>&#160;                <a class="code" href="classcrow_1_1_crow.html#abd824d73fdd02ba810b8dd37e2900240">concurrency</a> = 2;</div>
-<div class="line"><a name="l00358"></a><span class="lineno">  358</span>&#160;            concurrency_ = <a class="code" href="classcrow_1_1_crow.html#abd824d73fdd02ba810b8dd37e2900240">concurrency</a>;</div>
-<div class="line"><a name="l00359"></a><span class="lineno">  359</span>&#160;            <span class="keywordflow">return</span> *<span class="keyword">this</span>;</div>
-<div class="line"><a name="l00360"></a><span class="lineno">  360</span>&#160;        }</div>
-<div class="line"><a name="l00361"></a><span class="lineno">  361</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00362"></a><span class="lineno">  362</span>&#160;<span class="comment">        /// \brief Get the number of threads that server is using</span></div>
-<div class="line"><a name="l00363"></a><span class="lineno"><a class="line" href="classcrow_1_1_crow.html#abd824d73fdd02ba810b8dd37e2900240">  363</a></span>&#160;<span class="comment"></span>        std::uint16_t <a class="code" href="classcrow_1_1_crow.html#abd824d73fdd02ba810b8dd37e2900240">concurrency</a>()</div>
-<div class="line"><a name="l00364"></a><span class="lineno">  364</span>&#160;        {</div>
-<div class="line"><a name="l00365"></a><span class="lineno">  365</span>&#160;            <span class="keywordflow">return</span> concurrency_;</div>
-<div class="line"><a name="l00366"></a><span class="lineno">  366</span>&#160;        }</div>
-<div class="line"><a name="l00367"></a><span class="lineno">  367</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00368"></a><span class="lineno">  368</span>&#160;<span class="comment">        /// \brief Set the server&#39;s log level</span></div>
-<div class="line"><a name="l00369"></a><span class="lineno">  369</span>&#160;<span class="comment">        ///</span></div>
-<div class="line"><a name="l00370"></a><span class="lineno">  370</span>&#160;<span class="comment">        /// Possible values are:</span></div>
-<div class="line"><a name="l00371"></a><span class="lineno">  371</span>&#160;<span class="comment">        /// - crow::LogLevel::Debug       (0)</span></div>
-<div class="line"><a name="l00372"></a><span class="lineno">  372</span>&#160;<span class="comment">        /// - crow::LogLevel::Info        (1)</span></div>
-<div class="line"><a name="l00373"></a><span class="lineno">  373</span>&#160;<span class="comment">        /// - crow::LogLevel::Warning     (2)</span></div>
-<div class="line"><a name="l00374"></a><span class="lineno">  374</span>&#160;<span class="comment">        /// - crow::LogLevel::Error       (3)</span></div>
-<div class="line"><a name="l00375"></a><span class="lineno">  375</span>&#160;<span class="comment">        /// - crow::LogLevel::Critical    (4)</span></div>
-<div class="line"><a name="l00376"></a><span class="lineno"><a class="line" href="classcrow_1_1_crow.html#a7b6c225d3bba772eeadad89ebde68d21">  376</a></span>&#160;<span class="comment"></span>        <a class="code" href="classcrow_1_1_crow.html">self_t</a>&amp; <a class="code" href="classcrow_1_1_crow.html#a7b6c225d3bba772eeadad89ebde68d21">loglevel</a>(LogLevel level)</div>
+<div class="line"><a name="l00350"></a><span class="lineno">  350</span>&#160;            bindaddr_ = <a class="code" href="classcrow_1_1_crow.html#a8c816534804e7bd351ca692005bf3343">bindaddr</a>;</div>
+<div class="line"><a name="l00351"></a><span class="lineno">  351</span>&#160;            <span class="keywordflow">return</span> *<span class="keyword">this</span>;</div>
+<div class="line"><a name="l00352"></a><span class="lineno">  352</span>&#160;        }</div>
+<div class="line"><a name="l00353"></a><span class="lineno">  353</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00354"></a><span class="lineno">  354</span>&#160;<span class="comment">        /// \brief Get the address that Crow will handle requests on</span></div>
+<div class="line"><a name="l00355"></a><span class="lineno"><a class="line" href="classcrow_1_1_crow.html#a8c816534804e7bd351ca692005bf3343">  355</a></span>&#160;<span class="comment"></span>        std::string <a class="code" href="classcrow_1_1_crow.html#a8c816534804e7bd351ca692005bf3343">bindaddr</a>()</div>
+<div class="line"><a name="l00356"></a><span class="lineno">  356</span>&#160;        {</div>
+<div class="line"><a name="l00357"></a><span class="lineno">  357</span>&#160;            <span class="keywordflow">return</span> bindaddr_;</div>
+<div class="line"><a name="l00358"></a><span class="lineno">  358</span>&#160;        }</div>
+<div class="line"><a name="l00359"></a><span class="lineno">  359</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00360"></a><span class="lineno">  360</span>&#160;<span class="comment">        /// \brief Run the server on multiple threads using all available threads</span></div>
+<div class="line"><a name="l00361"></a><span class="lineno"><a class="line" href="classcrow_1_1_crow.html#a0149b20b7f6c0123292286f54638d456">  361</a></span>&#160;<span class="comment"></span>        <a class="code" href="classcrow_1_1_crow.html">self_t</a>&amp; <a class="code" href="classcrow_1_1_crow.html#a0149b20b7f6c0123292286f54638d456">multithreaded</a>()</div>
+<div class="line"><a name="l00362"></a><span class="lineno">  362</span>&#160;        {</div>
+<div class="line"><a name="l00363"></a><span class="lineno">  363</span>&#160;            <span class="keywordflow">return</span> <a class="code" href="classcrow_1_1_crow.html#abd824d73fdd02ba810b8dd37e2900240">concurrency</a>(std::thread::hardware_concurrency());</div>
+<div class="line"><a name="l00364"></a><span class="lineno">  364</span>&#160;        }</div>
+<div class="line"><a name="l00365"></a><span class="lineno">  365</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00366"></a><span class="lineno">  366</span>&#160;<span class="comment">        /// \brief Run the server on multiple threads using a specific number</span></div>
+<div class="line"><a name="l00367"></a><span class="lineno"><a class="line" href="classcrow_1_1_crow.html#a41686e6025705c1ab379b5ec71bbf983">  367</a></span>&#160;<span class="comment"></span>        <a class="code" href="classcrow_1_1_crow.html">self_t</a>&amp; <a class="code" href="classcrow_1_1_crow.html#a41686e6025705c1ab379b5ec71bbf983">concurrency</a>(std::uint16_t <a class="code" href="classcrow_1_1_crow.html#abd824d73fdd02ba810b8dd37e2900240">concurrency</a>)</div>
+<div class="line"><a name="l00368"></a><span class="lineno">  368</span>&#160;        {</div>
+<div class="line"><a name="l00369"></a><span class="lineno">  369</span>&#160;            <span class="keywordflow">if</span> (<a class="code" href="classcrow_1_1_crow.html#abd824d73fdd02ba810b8dd37e2900240">concurrency</a> &lt; 2) <span class="comment">// Crow can have a minimum of 2 threads running</span></div>
+<div class="line"><a name="l00370"></a><span class="lineno">  370</span>&#160;                <a class="code" href="classcrow_1_1_crow.html#abd824d73fdd02ba810b8dd37e2900240">concurrency</a> = 2;</div>
+<div class="line"><a name="l00371"></a><span class="lineno">  371</span>&#160;            concurrency_ = <a class="code" href="classcrow_1_1_crow.html#abd824d73fdd02ba810b8dd37e2900240">concurrency</a>;</div>
+<div class="line"><a name="l00372"></a><span class="lineno">  372</span>&#160;            <span class="keywordflow">return</span> *<span class="keyword">this</span>;</div>
+<div class="line"><a name="l00373"></a><span class="lineno">  373</span>&#160;        }</div>
+<div class="line"><a name="l00374"></a><span class="lineno">  374</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00375"></a><span class="lineno">  375</span>&#160;<span class="comment">        /// \brief Get the number of threads that server is using</span></div>
+<div class="line"><a name="l00376"></a><span class="lineno"><a class="line" href="classcrow_1_1_crow.html#abd824d73fdd02ba810b8dd37e2900240">  376</a></span>&#160;<span class="comment"></span>        std::uint16_t <a class="code" href="classcrow_1_1_crow.html#abd824d73fdd02ba810b8dd37e2900240">concurrency</a>()</div>
 <div class="line"><a name="l00377"></a><span class="lineno">  377</span>&#160;        {</div>
-<div class="line"><a name="l00378"></a><span class="lineno">  378</span>&#160;            crow::logger::setLogLevel(level);</div>
-<div class="line"><a name="l00379"></a><span class="lineno">  379</span>&#160;            <span class="keywordflow">return</span> *<span class="keyword">this</span>;</div>
-<div class="line"><a name="l00380"></a><span class="lineno">  380</span>&#160;        }</div>
-<div class="line"><a name="l00381"></a><span class="lineno">  381</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00382"></a><span class="lineno">  382</span>&#160;<span class="comment">        /// \brief Set the response body size (in bytes) beyond which Crow automatically streams responses (Default is 1MiB)</span></div>
-<div class="line"><a name="l00383"></a><span class="lineno">  383</span>&#160;<span class="comment">        ///</span></div>
-<div class="line"><a name="l00384"></a><span class="lineno">  384</span>&#160;<span class="comment">        /// Any streamed response is unaffected by Crow&#39;s timer, and therefore won&#39;t timeout before a response is fully sent.</span></div>
-<div class="line"><a name="l00385"></a><span class="lineno"><a class="line" href="classcrow_1_1_crow.html#ae92390d22f6fc99987c41a617be71d64">  385</a></span>&#160;<span class="comment"></span>        <a class="code" href="classcrow_1_1_crow.html">self_t</a>&amp; <a class="code" href="classcrow_1_1_crow.html#ae92390d22f6fc99987c41a617be71d64">stream_threshold</a>(<span class="keywordtype">size_t</span> threshold)</div>
-<div class="line"><a name="l00386"></a><span class="lineno">  386</span>&#160;        {</div>
-<div class="line"><a name="l00387"></a><span class="lineno">  387</span>&#160;            res_stream_threshold_ = threshold;</div>
-<div class="line"><a name="l00388"></a><span class="lineno">  388</span>&#160;            <span class="keywordflow">return</span> *<span class="keyword">this</span>;</div>
-<div class="line"><a name="l00389"></a><span class="lineno">  389</span>&#160;        }</div>
-<div class="line"><a name="l00390"></a><span class="lineno">  390</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00391"></a><span class="lineno">  391</span>&#160;<span class="comment">        /// \brief Get the response body size (in bytes) beyond which Crow automatically streams responses</span></div>
-<div class="line"><a name="l00392"></a><span class="lineno"><a class="line" href="classcrow_1_1_crow.html#a0a7b45c935e58d199eb1bcba86003232">  392</a></span>&#160;<span class="comment"></span>        <span class="keywordtype">size_t</span>&amp; <a class="code" href="classcrow_1_1_crow.html#a0a7b45c935e58d199eb1bcba86003232">stream_threshold</a>()</div>
-<div class="line"><a name="l00393"></a><span class="lineno">  393</span>&#160;        {</div>
-<div class="line"><a name="l00394"></a><span class="lineno">  394</span>&#160;            <span class="keywordflow">return</span> res_stream_threshold_;</div>
-<div class="line"><a name="l00395"></a><span class="lineno">  395</span>&#160;        }</div>
-<div class="line"><a name="l00396"></a><span class="lineno">  396</span>&#160; </div>
-<div class="line"><a name="l00397"></a><span class="lineno">  397</span>&#160; </div>
-<div class="line"><a name="l00398"></a><span class="lineno">  398</span>&#160;        <a class="code" href="classcrow_1_1_crow.html#a5b0a203a6f9070ea8010227dcdbcec60">self_t</a>&amp; register_blueprint(<a class="code" href="classcrow_1_1_blueprint.html">Blueprint</a>&amp; blueprint)</div>
+<div class="line"><a name="l00378"></a><span class="lineno">  378</span>&#160;            <span class="keywordflow">return</span> concurrency_;</div>
+<div class="line"><a name="l00379"></a><span class="lineno">  379</span>&#160;        }</div>
+<div class="line"><a name="l00380"></a><span class="lineno">  380</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00381"></a><span class="lineno">  381</span>&#160;<span class="comment">        /// \brief Set the server&#39;s log level</span></div>
+<div class="line"><a name="l00382"></a><span class="lineno">  382</span>&#160;<span class="comment">        ///</span></div>
+<div class="line"><a name="l00383"></a><span class="lineno">  383</span>&#160;<span class="comment">        /// Possible values are:</span></div>
+<div class="line"><a name="l00384"></a><span class="lineno">  384</span>&#160;<span class="comment">        /// - crow::LogLevel::Debug       (0)</span></div>
+<div class="line"><a name="l00385"></a><span class="lineno">  385</span>&#160;<span class="comment">        /// - crow::LogLevel::Info        (1)</span></div>
+<div class="line"><a name="l00386"></a><span class="lineno">  386</span>&#160;<span class="comment">        /// - crow::LogLevel::Warning     (2)</span></div>
+<div class="line"><a name="l00387"></a><span class="lineno">  387</span>&#160;<span class="comment">        /// - crow::LogLevel::Error       (3)</span></div>
+<div class="line"><a name="l00388"></a><span class="lineno">  388</span>&#160;<span class="comment">        /// - crow::LogLevel::Critical    (4)</span></div>
+<div class="line"><a name="l00389"></a><span class="lineno"><a class="line" href="classcrow_1_1_crow.html#a7b6c225d3bba772eeadad89ebde68d21">  389</a></span>&#160;<span class="comment"></span>        <a class="code" href="classcrow_1_1_crow.html">self_t</a>&amp; <a class="code" href="classcrow_1_1_crow.html#a7b6c225d3bba772eeadad89ebde68d21">loglevel</a>(LogLevel level)</div>
+<div class="line"><a name="l00390"></a><span class="lineno">  390</span>&#160;        {</div>
+<div class="line"><a name="l00391"></a><span class="lineno">  391</span>&#160;            crow::logger::setLogLevel(level);</div>
+<div class="line"><a name="l00392"></a><span class="lineno">  392</span>&#160;            <span class="keywordflow">return</span> *<span class="keyword">this</span>;</div>
+<div class="line"><a name="l00393"></a><span class="lineno">  393</span>&#160;        }</div>
+<div class="line"><a name="l00394"></a><span class="lineno">  394</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00395"></a><span class="lineno">  395</span>&#160;<span class="comment">        /// \brief Set the response body size (in bytes) beyond which Crow automatically streams responses (Default is 1MiB)</span></div>
+<div class="line"><a name="l00396"></a><span class="lineno">  396</span>&#160;<span class="comment">        ///</span></div>
+<div class="line"><a name="l00397"></a><span class="lineno">  397</span>&#160;<span class="comment">        /// Any streamed response is unaffected by Crow&#39;s timer, and therefore won&#39;t timeout before a response is fully sent.</span></div>
+<div class="line"><a name="l00398"></a><span class="lineno"><a class="line" href="classcrow_1_1_crow.html#ae92390d22f6fc99987c41a617be71d64">  398</a></span>&#160;<span class="comment"></span>        <a class="code" href="classcrow_1_1_crow.html">self_t</a>&amp; <a class="code" href="classcrow_1_1_crow.html#ae92390d22f6fc99987c41a617be71d64">stream_threshold</a>(<span class="keywordtype">size_t</span> threshold)</div>
 <div class="line"><a name="l00399"></a><span class="lineno">  399</span>&#160;        {</div>
-<div class="line"><a name="l00400"></a><span class="lineno">  400</span>&#160;            router_.register_blueprint(blueprint);</div>
+<div class="line"><a name="l00400"></a><span class="lineno">  400</span>&#160;            res_stream_threshold_ = threshold;</div>
 <div class="line"><a name="l00401"></a><span class="lineno">  401</span>&#160;            <span class="keywordflow">return</span> *<span class="keyword">this</span>;</div>
 <div class="line"><a name="l00402"></a><span class="lineno">  402</span>&#160;        }</div>
 <div class="line"><a name="l00403"></a><span class="lineno">  403</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00404"></a><span class="lineno">  404</span>&#160;<span class="comment">        /// \brief Set the function to call to handle uncaught exceptions generated in routes (Default generates error 500).</span></div>
-<div class="line"><a name="l00405"></a><span class="lineno">  405</span>&#160;<span class="comment">        ///</span></div>
-<div class="line"><a name="l00406"></a><span class="lineno">  406</span>&#160;<span class="comment">        /// The function must have the following signature: void(crow::response&amp;).</span></div>
-<div class="line"><a name="l00407"></a><span class="lineno">  407</span>&#160;<span class="comment">        /// It must set the response passed in argument to the function, which will be sent back to the client.</span></div>
-<div class="line"><a name="l00408"></a><span class="lineno">  408</span>&#160;<span class="comment">        /// See Router::default_exception_handler() for the default implementation.</span></div>
-<div class="line"><a name="l00409"></a><span class="lineno">  409</span>&#160;<span class="comment"></span>        <span class="keyword">template</span>&lt;<span class="keyword">typename</span> Func&gt;</div>
-<div class="line"><a name="l00410"></a><span class="lineno"><a class="line" href="classcrow_1_1_crow.html#a872d39321015ac4f48ec8a6659dda99b">  410</a></span>&#160;        <a class="code" href="classcrow_1_1_crow.html">self_t</a>&amp; <a class="code" href="classcrow_1_1_crow.html#a872d39321015ac4f48ec8a6659dda99b">exception_handler</a>(Func&amp;&amp; f)</div>
-<div class="line"><a name="l00411"></a><span class="lineno">  411</span>&#160;        {</div>
-<div class="line"><a name="l00412"></a><span class="lineno">  412</span>&#160;            router_.exception_handler() = std::forward&lt;Func&gt;(f);</div>
-<div class="line"><a name="l00413"></a><span class="lineno">  413</span>&#160;            <span class="keywordflow">return</span> *<span class="keyword">this</span>;</div>
-<div class="line"><a name="l00414"></a><span class="lineno">  414</span>&#160;        }</div>
-<div class="line"><a name="l00415"></a><span class="lineno">  415</span>&#160; </div>
-<div class="line"><a name="l00416"></a><span class="lineno">  416</span>&#160;        std::function&lt;void(<a class="code" href="structcrow_1_1response.html">crow::response</a>&amp;)&gt;&amp; exception_handler()</div>
-<div class="line"><a name="l00417"></a><span class="lineno">  417</span>&#160;        {</div>
-<div class="line"><a name="l00418"></a><span class="lineno">  418</span>&#160;            <span class="keywordflow">return</span> router_.exception_handler();</div>
-<div class="line"><a name="l00419"></a><span class="lineno">  419</span>&#160;        }</div>
-<div class="line"><a name="l00420"></a><span class="lineno">  420</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00421"></a><span class="lineno">  421</span>&#160;<span class="comment">        /// \brief Set a custom duration and function to run on every tick</span></div>
-<div class="line"><a name="l00422"></a><span class="lineno">  422</span>&#160;<span class="comment"></span>        <span class="keyword">template</span>&lt;<span class="keyword">typename</span> Duration, <span class="keyword">typename</span> Func&gt;</div>
-<div class="line"><a name="l00423"></a><span class="lineno"><a class="line" href="classcrow_1_1_crow.html#a068042431b0be5911ee1689a285f4693">  423</a></span>&#160;        <a class="code" href="classcrow_1_1_crow.html">self_t</a>&amp; <a class="code" href="classcrow_1_1_crow.html#a068042431b0be5911ee1689a285f4693">tick</a>(Duration d, Func f)</div>
+<div class="line"><a name="l00404"></a><span class="lineno">  404</span>&#160;<span class="comment">        /// \brief Get the response body size (in bytes) beyond which Crow automatically streams responses</span></div>
+<div class="line"><a name="l00405"></a><span class="lineno"><a class="line" href="classcrow_1_1_crow.html#a0a7b45c935e58d199eb1bcba86003232">  405</a></span>&#160;<span class="comment"></span>        <span class="keywordtype">size_t</span>&amp; <a class="code" href="classcrow_1_1_crow.html#a0a7b45c935e58d199eb1bcba86003232">stream_threshold</a>()</div>
+<div class="line"><a name="l00406"></a><span class="lineno">  406</span>&#160;        {</div>
+<div class="line"><a name="l00407"></a><span class="lineno">  407</span>&#160;            <span class="keywordflow">return</span> res_stream_threshold_;</div>
+<div class="line"><a name="l00408"></a><span class="lineno">  408</span>&#160;        }</div>
+<div class="line"><a name="l00409"></a><span class="lineno">  409</span>&#160; </div>
+<div class="line"><a name="l00410"></a><span class="lineno">  410</span>&#160; </div>
+<div class="line"><a name="l00411"></a><span class="lineno">  411</span>&#160;        <a class="code" href="classcrow_1_1_crow.html#a5b0a203a6f9070ea8010227dcdbcec60">self_t</a>&amp; register_blueprint(<a class="code" href="classcrow_1_1_blueprint.html">Blueprint</a>&amp; blueprint)</div>
+<div class="line"><a name="l00412"></a><span class="lineno">  412</span>&#160;        {</div>
+<div class="line"><a name="l00413"></a><span class="lineno">  413</span>&#160;            router_.register_blueprint(blueprint);</div>
+<div class="line"><a name="l00414"></a><span class="lineno">  414</span>&#160;            <span class="keywordflow">return</span> *<span class="keyword">this</span>;</div>
+<div class="line"><a name="l00415"></a><span class="lineno">  415</span>&#160;        }</div>
+<div class="line"><a name="l00416"></a><span class="lineno">  416</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00417"></a><span class="lineno">  417</span>&#160;<span class="comment">        /// \brief Set the function to call to handle uncaught exceptions generated in routes (Default generates error 500).</span></div>
+<div class="line"><a name="l00418"></a><span class="lineno">  418</span>&#160;<span class="comment">        ///</span></div>
+<div class="line"><a name="l00419"></a><span class="lineno">  419</span>&#160;<span class="comment">        /// The function must have the following signature: void(crow::response&amp;).</span></div>
+<div class="line"><a name="l00420"></a><span class="lineno">  420</span>&#160;<span class="comment">        /// It must set the response passed in argument to the function, which will be sent back to the client.</span></div>
+<div class="line"><a name="l00421"></a><span class="lineno">  421</span>&#160;<span class="comment">        /// See Router::default_exception_handler() for the default implementation.</span></div>
+<div class="line"><a name="l00422"></a><span class="lineno">  422</span>&#160;<span class="comment"></span>        <span class="keyword">template</span>&lt;<span class="keyword">typename</span> Func&gt;</div>
+<div class="line"><a name="l00423"></a><span class="lineno"><a class="line" href="classcrow_1_1_crow.html#a872d39321015ac4f48ec8a6659dda99b">  423</a></span>&#160;        <a class="code" href="classcrow_1_1_crow.html">self_t</a>&amp; <a class="code" href="classcrow_1_1_crow.html#a872d39321015ac4f48ec8a6659dda99b">exception_handler</a>(Func&amp;&amp; f)</div>
 <div class="line"><a name="l00424"></a><span class="lineno">  424</span>&#160;        {</div>
-<div class="line"><a name="l00425"></a><span class="lineno">  425</span>&#160;            tick_interval_ = std::chrono::duration_cast&lt;std::chrono::milliseconds&gt;(d);</div>
-<div class="line"><a name="l00426"></a><span class="lineno">  426</span>&#160;            tick_function_ = f;</div>
-<div class="line"><a name="l00427"></a><span class="lineno">  427</span>&#160;            <span class="keywordflow">return</span> *<span class="keyword">this</span>;</div>
-<div class="line"><a name="l00428"></a><span class="lineno">  428</span>&#160;        }</div>
-<div class="line"><a name="l00429"></a><span class="lineno">  429</span>&#160; </div>
-<div class="line"><a name="l00430"></a><span class="lineno">  430</span>&#160;<span class="preprocessor">#ifdef CROW_ENABLE_COMPRESSION</span></div>
-<div class="line"><a name="l00431"></a><span class="lineno">  431</span>&#160; </div>
-<div class="line"><a name="l00432"></a><span class="lineno">  432</span>&#160;        <a class="code" href="classcrow_1_1_crow.html#a5b0a203a6f9070ea8010227dcdbcec60">self_t</a>&amp; use_compression(compression::algorithm algorithm)</div>
-<div class="line"><a name="l00433"></a><span class="lineno">  433</span>&#160;        {</div>
-<div class="line"><a name="l00434"></a><span class="lineno">  434</span>&#160;            comp_algorithm_ = algorithm;</div>
-<div class="line"><a name="l00435"></a><span class="lineno">  435</span>&#160;            compression_used_ = <span class="keyword">true</span>;</div>
-<div class="line"><a name="l00436"></a><span class="lineno">  436</span>&#160;            <span class="keywordflow">return</span> *<span class="keyword">this</span>;</div>
-<div class="line"><a name="l00437"></a><span class="lineno">  437</span>&#160;        }</div>
-<div class="line"><a name="l00438"></a><span class="lineno">  438</span>&#160; </div>
-<div class="line"><a name="l00439"></a><span class="lineno">  439</span>&#160;        compression::algorithm compression_algorithm()</div>
-<div class="line"><a name="l00440"></a><span class="lineno">  440</span>&#160;        {</div>
-<div class="line"><a name="l00441"></a><span class="lineno">  441</span>&#160;            <span class="keywordflow">return</span> comp_algorithm_;</div>
-<div class="line"><a name="l00442"></a><span class="lineno">  442</span>&#160;        }</div>
-<div class="line"><a name="l00443"></a><span class="lineno">  443</span>&#160; </div>
-<div class="line"><a name="l00444"></a><span class="lineno">  444</span>&#160;        <span class="keywordtype">bool</span> compression_used()<span class="keyword"> const</span></div>
-<div class="line"><a name="l00445"></a><span class="lineno">  445</span>&#160;<span class="keyword">        </span>{</div>
-<div class="line"><a name="l00446"></a><span class="lineno">  446</span>&#160;            <span class="keywordflow">return</span> compression_used_;</div>
-<div class="line"><a name="l00447"></a><span class="lineno">  447</span>&#160;        }</div>
-<div class="line"><a name="l00448"></a><span class="lineno">  448</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00449"></a><span class="lineno">  449</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00450"></a><span class="lineno">  450</span>&#160;<span class="comment">        /// \brief Apply blueprints</span></div>
-<div class="line"><a name="l00451"></a><span class="lineno"><a class="line" href="classcrow_1_1_crow.html#af0d01b97da7d4d20844a80fd31b74f46">  451</a></span>&#160;<span class="comment"></span>        <span class="keywordtype">void</span> <a class="code" href="classcrow_1_1_crow.html#af0d01b97da7d4d20844a80fd31b74f46">add_blueprint</a>()</div>
-<div class="line"><a name="l00452"></a><span class="lineno">  452</span>&#160;        {</div>
-<div class="line"><a name="l00453"></a><span class="lineno">  453</span>&#160;<span class="preprocessor">#if defined(__APPLE__) || defined(__MACH__)</span></div>
-<div class="line"><a name="l00454"></a><span class="lineno">  454</span>&#160;            <span class="keywordflow">if</span> (router_.blueprints().empty()) <span class="keywordflow">return</span>;</div>
-<div class="line"><a name="l00455"></a><span class="lineno">  455</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00425"></a><span class="lineno">  425</span>&#160;            router_.exception_handler() = std::forward&lt;Func&gt;(f);</div>
+<div class="line"><a name="l00426"></a><span class="lineno">  426</span>&#160;            <span class="keywordflow">return</span> *<span class="keyword">this</span>;</div>
+<div class="line"><a name="l00427"></a><span class="lineno">  427</span>&#160;        }</div>
+<div class="line"><a name="l00428"></a><span class="lineno">  428</span>&#160; </div>
+<div class="line"><a name="l00429"></a><span class="lineno">  429</span>&#160;        std::function&lt;void(<a class="code" href="structcrow_1_1response.html">crow::response</a>&amp;)&gt;&amp; exception_handler()</div>
+<div class="line"><a name="l00430"></a><span class="lineno">  430</span>&#160;        {</div>
+<div class="line"><a name="l00431"></a><span class="lineno">  431</span>&#160;            <span class="keywordflow">return</span> router_.exception_handler();</div>
+<div class="line"><a name="l00432"></a><span class="lineno">  432</span>&#160;        }</div>
+<div class="line"><a name="l00433"></a><span class="lineno">  433</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00434"></a><span class="lineno">  434</span>&#160;<span class="comment">        /// \brief Set a custom duration and function to run on every tick</span></div>
+<div class="line"><a name="l00435"></a><span class="lineno">  435</span>&#160;<span class="comment"></span>        <span class="keyword">template</span>&lt;<span class="keyword">typename</span> Duration, <span class="keyword">typename</span> Func&gt;</div>
+<div class="line"><a name="l00436"></a><span class="lineno"><a class="line" href="classcrow_1_1_crow.html#a068042431b0be5911ee1689a285f4693">  436</a></span>&#160;        <a class="code" href="classcrow_1_1_crow.html">self_t</a>&amp; <a class="code" href="classcrow_1_1_crow.html#a068042431b0be5911ee1689a285f4693">tick</a>(Duration d, Func f)</div>
+<div class="line"><a name="l00437"></a><span class="lineno">  437</span>&#160;        {</div>
+<div class="line"><a name="l00438"></a><span class="lineno">  438</span>&#160;            tick_interval_ = std::chrono::duration_cast&lt;std::chrono::milliseconds&gt;(d);</div>
+<div class="line"><a name="l00439"></a><span class="lineno">  439</span>&#160;            tick_function_ = f;</div>
+<div class="line"><a name="l00440"></a><span class="lineno">  440</span>&#160;            <span class="keywordflow">return</span> *<span class="keyword">this</span>;</div>
+<div class="line"><a name="l00441"></a><span class="lineno">  441</span>&#160;        }</div>
+<div class="line"><a name="l00442"></a><span class="lineno">  442</span>&#160; </div>
+<div class="line"><a name="l00443"></a><span class="lineno">  443</span>&#160;<span class="preprocessor">#ifdef CROW_ENABLE_COMPRESSION</span></div>
+<div class="line"><a name="l00444"></a><span class="lineno">  444</span>&#160; </div>
+<div class="line"><a name="l00445"></a><span class="lineno">  445</span>&#160;        <a class="code" href="classcrow_1_1_crow.html#a5b0a203a6f9070ea8010227dcdbcec60">self_t</a>&amp; use_compression(compression::algorithm algorithm)</div>
+<div class="line"><a name="l00446"></a><span class="lineno">  446</span>&#160;        {</div>
+<div class="line"><a name="l00447"></a><span class="lineno">  447</span>&#160;            comp_algorithm_ = algorithm;</div>
+<div class="line"><a name="l00448"></a><span class="lineno">  448</span>&#160;            compression_used_ = <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00449"></a><span class="lineno">  449</span>&#160;            <span class="keywordflow">return</span> *<span class="keyword">this</span>;</div>
+<div class="line"><a name="l00450"></a><span class="lineno">  450</span>&#160;        }</div>
+<div class="line"><a name="l00451"></a><span class="lineno">  451</span>&#160; </div>
+<div class="line"><a name="l00452"></a><span class="lineno">  452</span>&#160;        compression::algorithm compression_algorithm()</div>
+<div class="line"><a name="l00453"></a><span class="lineno">  453</span>&#160;        {</div>
+<div class="line"><a name="l00454"></a><span class="lineno">  454</span>&#160;            <span class="keywordflow">return</span> comp_algorithm_;</div>
+<div class="line"><a name="l00455"></a><span class="lineno">  455</span>&#160;        }</div>
 <div class="line"><a name="l00456"></a><span class="lineno">  456</span>&#160; </div>
-<div class="line"><a name="l00457"></a><span class="lineno">  457</span>&#160;            <span class="keywordflow">for</span> (<a class="code" href="classcrow_1_1_blueprint.html">Blueprint</a>* bp : router_.blueprints())</div>
-<div class="line"><a name="l00458"></a><span class="lineno">  458</span>&#160;            {</div>
-<div class="line"><a name="l00459"></a><span class="lineno">  459</span>&#160;                <span class="keywordflow">if</span> (bp-&gt;static_dir().empty()) {</div>
-<div class="line"><a name="l00460"></a><span class="lineno">  460</span>&#160;                    CROW_LOG_ERROR &lt;&lt; <span class="stringliteral">&quot;Blueprint &quot;</span> &lt;&lt; bp-&gt;prefix() &lt;&lt; <span class="stringliteral">&quot; and its sub-blueprints ignored due to empty static directory.&quot;</span>;</div>
-<div class="line"><a name="l00461"></a><span class="lineno">  461</span>&#160;                    <span class="keywordflow">continue</span>;</div>
-<div class="line"><a name="l00462"></a><span class="lineno">  462</span>&#160;                }</div>
-<div class="line"><a name="l00463"></a><span class="lineno">  463</span>&#160;                <span class="keyword">auto</span> static_dir_ = crow::utility::normalize_path(bp-&gt;static_dir());</div>
-<div class="line"><a name="l00464"></a><span class="lineno">  464</span>&#160; </div>
-<div class="line"><a name="l00465"></a><span class="lineno">  465</span>&#160;                bp-&gt;new_rule_tagged&lt;crow::black_magic::get_parameter_tag(CROW_STATIC_ENDPOINT)&gt;(CROW_STATIC_ENDPOINT)([static_dir_](<a class="code" href="structcrow_1_1response.html">crow::response</a>&amp; res, std::string file_path_partial) {</div>
-<div class="line"><a name="l00466"></a><span class="lineno">  466</span>&#160;                    utility::sanitize_filename(file_path_partial);</div>
-<div class="line"><a name="l00467"></a><span class="lineno">  467</span>&#160;                    res.<a class="code" href="structcrow_1_1response.html#adaaa1a62451d41e6f3831463296b4c08">set_static_file_info_unsafe</a>(static_dir_ + file_path_partial);</div>
-<div class="line"><a name="l00468"></a><span class="lineno">  468</span>&#160;                    res.<a class="code" href="structcrow_1_1response.html#abef42200eca49c70dc1f5140ee3603ab">end</a>();</div>
-<div class="line"><a name="l00469"></a><span class="lineno">  469</span>&#160;                });</div>
-<div class="line"><a name="l00470"></a><span class="lineno">  470</span>&#160;            }</div>
-<div class="line"><a name="l00471"></a><span class="lineno">  471</span>&#160; </div>
-<div class="line"><a name="l00472"></a><span class="lineno">  472</span>&#160;            router_.validate_bp();</div>
-<div class="line"><a name="l00473"></a><span class="lineno">  473</span>&#160;        }</div>
-<div class="line"><a name="l00474"></a><span class="lineno">  474</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00475"></a><span class="lineno">  475</span>&#160;<span class="comment">        /// \brief Go through the rules, upgrade them if possible, and add them to the list of rules</span></div>
-<div class="line"><a name="l00476"></a><span class="lineno"><a class="line" href="classcrow_1_1_crow.html#a3cbe89120e47d2bd3d05376b9129adfa">  476</a></span>&#160;<span class="comment"></span>        <span class="keywordtype">void</span> <a class="code" href="classcrow_1_1_crow.html#a3cbe89120e47d2bd3d05376b9129adfa">add_static_dir</a>()</div>
-<div class="line"><a name="l00477"></a><span class="lineno">  477</span>&#160;        {</div>
-<div class="line"><a name="l00478"></a><span class="lineno">  478</span>&#160;            <span class="keywordflow">if</span> (are_static_routes_added()) <span class="keywordflow">return</span>;</div>
-<div class="line"><a name="l00479"></a><span class="lineno">  479</span>&#160;            <span class="keyword">auto</span> static_dir_ = crow::utility::normalize_path(CROW_STATIC_DIRECTORY);</div>
-<div class="line"><a name="l00480"></a><span class="lineno">  480</span>&#160; </div>
-<div class="line"><a name="l00481"></a><span class="lineno">  481</span>&#160;            route&lt;crow::black_magic::get_parameter_tag(CROW_STATIC_ENDPOINT)&gt;(CROW_STATIC_ENDPOINT)([static_dir_](<a class="code" href="structcrow_1_1response.html">crow::response</a>&amp; res, std::string file_path_partial) {</div>
-<div class="line"><a name="l00482"></a><span class="lineno">  482</span>&#160;                utility::sanitize_filename(file_path_partial);</div>
-<div class="line"><a name="l00483"></a><span class="lineno">  483</span>&#160;                res.<a class="code" href="structcrow_1_1response.html#adaaa1a62451d41e6f3831463296b4c08">set_static_file_info_unsafe</a>(static_dir_ + file_path_partial);</div>
-<div class="line"><a name="l00484"></a><span class="lineno">  484</span>&#160;                res.<a class="code" href="structcrow_1_1response.html#abef42200eca49c70dc1f5140ee3603ab">end</a>();</div>
-<div class="line"><a name="l00485"></a><span class="lineno">  485</span>&#160;            });</div>
-<div class="line"><a name="l00486"></a><span class="lineno">  486</span>&#160;            set_static_routes_added();</div>
-<div class="line"><a name="l00487"></a><span class="lineno">  487</span>&#160;        }</div>
-<div class="line"><a name="l00488"></a><span class="lineno">  488</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00489"></a><span class="lineno">  489</span>&#160;<span class="comment">        /// \brief A wrapper for `validate()` in the router</span></div>
-<div class="line"><a name="l00490"></a><span class="lineno"><a class="line" href="classcrow_1_1_crow.html#ab9a22c981e0afec0d55ee234683a6d38">  490</a></span>&#160;<span class="comment"></span>        <span class="keywordtype">void</span> <a class="code" href="classcrow_1_1_crow.html#ab9a22c981e0afec0d55ee234683a6d38">validate</a>()</div>
-<div class="line"><a name="l00491"></a><span class="lineno">  491</span>&#160;        {</div>
-<div class="line"><a name="l00492"></a><span class="lineno">  492</span>&#160;            router_.validate();</div>
-<div class="line"><a name="l00493"></a><span class="lineno">  493</span>&#160;        }</div>
-<div class="line"><a name="l00494"></a><span class="lineno">  494</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00495"></a><span class="lineno">  495</span>&#160;<span class="comment">        /// \brief Run the server</span></div>
-<div class="line"><a name="l00496"></a><span class="lineno"><a class="line" href="classcrow_1_1_crow.html#a193d8b03f717234a841cd92f72c6b4b5">  496</a></span>&#160;<span class="comment"></span>        <span class="keywordtype">void</span> <a class="code" href="classcrow_1_1_crow.html#a193d8b03f717234a841cd92f72c6b4b5">run</a>()</div>
-<div class="line"><a name="l00497"></a><span class="lineno">  497</span>&#160;        {</div>
-<div class="line"><a name="l00498"></a><span class="lineno">  498</span>&#160;<span class="preprocessor">#ifndef CROW_DISABLE_STATIC_DIR</span></div>
-<div class="line"><a name="l00499"></a><span class="lineno">  499</span>&#160;            <a class="code" href="classcrow_1_1_crow.html#af0d01b97da7d4d20844a80fd31b74f46">add_blueprint</a>();</div>
-<div class="line"><a name="l00500"></a><span class="lineno">  500</span>&#160;            <a class="code" href="classcrow_1_1_crow.html#a3cbe89120e47d2bd3d05376b9129adfa">add_static_dir</a>();</div>
-<div class="line"><a name="l00501"></a><span class="lineno">  501</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00502"></a><span class="lineno">  502</span>&#160;            <a class="code" href="classcrow_1_1_crow.html#ab9a22c981e0afec0d55ee234683a6d38">validate</a>();</div>
-<div class="line"><a name="l00503"></a><span class="lineno">  503</span>&#160; </div>
-<div class="line"><a name="l00504"></a><span class="lineno">  504</span>&#160;<span class="preprocessor">#ifdef CROW_ENABLE_SSL</span></div>
-<div class="line"><a name="l00505"></a><span class="lineno">  505</span>&#160;            <span class="keywordflow">if</span> (ssl_used_)</div>
-<div class="line"><a name="l00506"></a><span class="lineno">  506</span>&#160;            {</div>
-<div class="line"><a name="l00507"></a><span class="lineno">  507</span>&#160;                ssl_server_ = std::move(std::unique_ptr&lt;ssl_server_t&gt;(<span class="keyword">new</span> <a class="code" href="classcrow_1_1_crow.html#aac04f81d0bc897267d092bb8af1513d4">ssl_server_t</a>(<span class="keyword">this</span>, bindaddr_, port_, server_name_, &amp;middlewares_, concurrency_, timeout_, &amp;ssl_context_)));</div>
-<div class="line"><a name="l00508"></a><span class="lineno">  508</span>&#160;                ssl_server_-&gt;set_tick_function(tick_interval_, tick_function_);</div>
-<div class="line"><a name="l00509"></a><span class="lineno">  509</span>&#160;                ssl_server_-&gt;signal_clear();</div>
-<div class="line"><a name="l00510"></a><span class="lineno">  510</span>&#160;                <span class="keywordflow">for</span> (<span class="keyword">auto</span> snum : signals_)</div>
-<div class="line"><a name="l00511"></a><span class="lineno">  511</span>&#160;                {</div>
-<div class="line"><a name="l00512"></a><span class="lineno">  512</span>&#160;                    ssl_server_-&gt;signal_add(snum);</div>
-<div class="line"><a name="l00513"></a><span class="lineno">  513</span>&#160;                }</div>
-<div class="line"><a name="l00514"></a><span class="lineno">  514</span>&#160;                notify_server_start();</div>
-<div class="line"><a name="l00515"></a><span class="lineno">  515</span>&#160;                ssl_server_-&gt;run();</div>
-<div class="line"><a name="l00516"></a><span class="lineno">  516</span>&#160;            }</div>
-<div class="line"><a name="l00517"></a><span class="lineno">  517</span>&#160;            <span class="keywordflow">else</span></div>
-<div class="line"><a name="l00518"></a><span class="lineno">  518</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00457"></a><span class="lineno">  457</span>&#160;        <span class="keywordtype">bool</span> compression_used()<span class="keyword"> const</span></div>
+<div class="line"><a name="l00458"></a><span class="lineno">  458</span>&#160;<span class="keyword">        </span>{</div>
+<div class="line"><a name="l00459"></a><span class="lineno">  459</span>&#160;            <span class="keywordflow">return</span> compression_used_;</div>
+<div class="line"><a name="l00460"></a><span class="lineno">  460</span>&#160;        }</div>
+<div class="line"><a name="l00461"></a><span class="lineno">  461</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00462"></a><span class="lineno">  462</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00463"></a><span class="lineno">  463</span>&#160;<span class="comment">        /// \brief Apply blueprints</span></div>
+<div class="line"><a name="l00464"></a><span class="lineno"><a class="line" href="classcrow_1_1_crow.html#af0d01b97da7d4d20844a80fd31b74f46">  464</a></span>&#160;<span class="comment"></span>        <span class="keywordtype">void</span> <a class="code" href="classcrow_1_1_crow.html#af0d01b97da7d4d20844a80fd31b74f46">add_blueprint</a>()</div>
+<div class="line"><a name="l00465"></a><span class="lineno">  465</span>&#160;        {</div>
+<div class="line"><a name="l00466"></a><span class="lineno">  466</span>&#160;<span class="preprocessor">#if defined(__APPLE__) || defined(__MACH__)</span></div>
+<div class="line"><a name="l00467"></a><span class="lineno">  467</span>&#160;            <span class="keywordflow">if</span> (router_.blueprints().empty()) <span class="keywordflow">return</span>;</div>
+<div class="line"><a name="l00468"></a><span class="lineno">  468</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00469"></a><span class="lineno">  469</span>&#160; </div>
+<div class="line"><a name="l00470"></a><span class="lineno">  470</span>&#160;            <span class="keywordflow">for</span> (<a class="code" href="classcrow_1_1_blueprint.html">Blueprint</a>* bp : router_.blueprints())</div>
+<div class="line"><a name="l00471"></a><span class="lineno">  471</span>&#160;            {</div>
+<div class="line"><a name="l00472"></a><span class="lineno">  472</span>&#160;                <span class="keywordflow">if</span> (bp-&gt;static_dir().empty()) {</div>
+<div class="line"><a name="l00473"></a><span class="lineno">  473</span>&#160;                    CROW_LOG_ERROR &lt;&lt; <span class="stringliteral">&quot;Blueprint &quot;</span> &lt;&lt; bp-&gt;prefix() &lt;&lt; <span class="stringliteral">&quot; and its sub-blueprints ignored due to empty static directory.&quot;</span>;</div>
+<div class="line"><a name="l00474"></a><span class="lineno">  474</span>&#160;                    <span class="keywordflow">continue</span>;</div>
+<div class="line"><a name="l00475"></a><span class="lineno">  475</span>&#160;                }</div>
+<div class="line"><a name="l00476"></a><span class="lineno">  476</span>&#160;                <span class="keyword">auto</span> static_dir_ = crow::utility::normalize_path(bp-&gt;static_dir());</div>
+<div class="line"><a name="l00477"></a><span class="lineno">  477</span>&#160; </div>
+<div class="line"><a name="l00478"></a><span class="lineno">  478</span>&#160;                bp-&gt;new_rule_tagged&lt;crow::black_magic::get_parameter_tag(CROW_STATIC_ENDPOINT)&gt;(CROW_STATIC_ENDPOINT)([static_dir_](<a class="code" href="structcrow_1_1response.html">crow::response</a>&amp; res, std::string file_path_partial) {</div>
+<div class="line"><a name="l00479"></a><span class="lineno">  479</span>&#160;                    utility::sanitize_filename(file_path_partial);</div>
+<div class="line"><a name="l00480"></a><span class="lineno">  480</span>&#160;                    res.<a class="code" href="structcrow_1_1response.html#adaaa1a62451d41e6f3831463296b4c08">set_static_file_info_unsafe</a>(static_dir_ + file_path_partial);</div>
+<div class="line"><a name="l00481"></a><span class="lineno">  481</span>&#160;                    res.<a class="code" href="structcrow_1_1response.html#abef42200eca49c70dc1f5140ee3603ab">end</a>();</div>
+<div class="line"><a name="l00482"></a><span class="lineno">  482</span>&#160;                });</div>
+<div class="line"><a name="l00483"></a><span class="lineno">  483</span>&#160;            }</div>
+<div class="line"><a name="l00484"></a><span class="lineno">  484</span>&#160; </div>
+<div class="line"><a name="l00485"></a><span class="lineno">  485</span>&#160;            router_.validate_bp();</div>
+<div class="line"><a name="l00486"></a><span class="lineno">  486</span>&#160;        }</div>
+<div class="line"><a name="l00487"></a><span class="lineno">  487</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00488"></a><span class="lineno">  488</span>&#160;<span class="comment">        /// \brief Go through the rules, upgrade them if possible, and add them to the list of rules</span></div>
+<div class="line"><a name="l00489"></a><span class="lineno"><a class="line" href="classcrow_1_1_crow.html#a3cbe89120e47d2bd3d05376b9129adfa">  489</a></span>&#160;<span class="comment"></span>        <span class="keywordtype">void</span> <a class="code" href="classcrow_1_1_crow.html#a3cbe89120e47d2bd3d05376b9129adfa">add_static_dir</a>()</div>
+<div class="line"><a name="l00490"></a><span class="lineno">  490</span>&#160;        {</div>
+<div class="line"><a name="l00491"></a><span class="lineno">  491</span>&#160;            <span class="keywordflow">if</span> (are_static_routes_added()) <span class="keywordflow">return</span>;</div>
+<div class="line"><a name="l00492"></a><span class="lineno">  492</span>&#160;            <span class="keyword">auto</span> static_dir_ = crow::utility::normalize_path(CROW_STATIC_DIRECTORY);</div>
+<div class="line"><a name="l00493"></a><span class="lineno">  493</span>&#160; </div>
+<div class="line"><a name="l00494"></a><span class="lineno">  494</span>&#160;            route&lt;crow::black_magic::get_parameter_tag(CROW_STATIC_ENDPOINT)&gt;(CROW_STATIC_ENDPOINT)([static_dir_](<a class="code" href="structcrow_1_1response.html">crow::response</a>&amp; res, std::string file_path_partial) {</div>
+<div class="line"><a name="l00495"></a><span class="lineno">  495</span>&#160;                utility::sanitize_filename(file_path_partial);</div>
+<div class="line"><a name="l00496"></a><span class="lineno">  496</span>&#160;                res.<a class="code" href="structcrow_1_1response.html#adaaa1a62451d41e6f3831463296b4c08">set_static_file_info_unsafe</a>(static_dir_ + file_path_partial);</div>
+<div class="line"><a name="l00497"></a><span class="lineno">  497</span>&#160;                res.<a class="code" href="structcrow_1_1response.html#abef42200eca49c70dc1f5140ee3603ab">end</a>();</div>
+<div class="line"><a name="l00498"></a><span class="lineno">  498</span>&#160;            });</div>
+<div class="line"><a name="l00499"></a><span class="lineno">  499</span>&#160;            set_static_routes_added();</div>
+<div class="line"><a name="l00500"></a><span class="lineno">  500</span>&#160;        }</div>
+<div class="line"><a name="l00501"></a><span class="lineno">  501</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00502"></a><span class="lineno">  502</span>&#160;<span class="comment">        /// \brief A wrapper for `validate()` in the router</span></div>
+<div class="line"><a name="l00503"></a><span class="lineno"><a class="line" href="classcrow_1_1_crow.html#ab9a22c981e0afec0d55ee234683a6d38">  503</a></span>&#160;<span class="comment"></span>        <span class="keywordtype">void</span> <a class="code" href="classcrow_1_1_crow.html#ab9a22c981e0afec0d55ee234683a6d38">validate</a>()</div>
+<div class="line"><a name="l00504"></a><span class="lineno">  504</span>&#160;        {</div>
+<div class="line"><a name="l00505"></a><span class="lineno">  505</span>&#160;            router_.validate();</div>
+<div class="line"><a name="l00506"></a><span class="lineno">  506</span>&#160;        }</div>
+<div class="line"><a name="l00507"></a><span class="lineno">  507</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00508"></a><span class="lineno">  508</span>&#160;<span class="comment">        /// \brief Run the server</span></div>
+<div class="line"><a name="l00509"></a><span class="lineno"><a class="line" href="classcrow_1_1_crow.html#a193d8b03f717234a841cd92f72c6b4b5">  509</a></span>&#160;<span class="comment"></span>        <span class="keywordtype">void</span> <a class="code" href="classcrow_1_1_crow.html#a193d8b03f717234a841cd92f72c6b4b5">run</a>()</div>
+<div class="line"><a name="l00510"></a><span class="lineno">  510</span>&#160;        {</div>
+<div class="line"><a name="l00511"></a><span class="lineno">  511</span>&#160;<span class="preprocessor">#ifndef CROW_DISABLE_STATIC_DIR</span></div>
+<div class="line"><a name="l00512"></a><span class="lineno">  512</span>&#160;            <a class="code" href="classcrow_1_1_crow.html#af0d01b97da7d4d20844a80fd31b74f46">add_blueprint</a>();</div>
+<div class="line"><a name="l00513"></a><span class="lineno">  513</span>&#160;            <a class="code" href="classcrow_1_1_crow.html#a3cbe89120e47d2bd3d05376b9129adfa">add_static_dir</a>();</div>
+<div class="line"><a name="l00514"></a><span class="lineno">  514</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00515"></a><span class="lineno">  515</span>&#160;            <a class="code" href="classcrow_1_1_crow.html#ab9a22c981e0afec0d55ee234683a6d38">validate</a>();</div>
+<div class="line"><a name="l00516"></a><span class="lineno">  516</span>&#160; </div>
+<div class="line"><a name="l00517"></a><span class="lineno">  517</span>&#160;<span class="preprocessor">#ifdef CROW_ENABLE_SSL</span></div>
+<div class="line"><a name="l00518"></a><span class="lineno">  518</span>&#160;            <span class="keywordflow">if</span> (ssl_used_)</div>
 <div class="line"><a name="l00519"></a><span class="lineno">  519</span>&#160;            {</div>
-<div class="line"><a name="l00520"></a><span class="lineno">  520</span>&#160;                server_ = std::move(std::unique_ptr&lt;server_t&gt;(<span class="keyword">new</span> <a class="code" href="classcrow_1_1_crow.html#a5df810d2619e31c2f024cc4e45898997">server_t</a>(<span class="keyword">this</span>, bindaddr_, port_, server_name_, &amp;middlewares_, concurrency_, timeout_, <span class="keyword">nullptr</span>)));</div>
-<div class="line"><a name="l00521"></a><span class="lineno">  521</span>&#160;                server_-&gt;set_tick_function(tick_interval_, tick_function_);</div>
-<div class="line"><a name="l00522"></a><span class="lineno">  522</span>&#160;                <span class="keywordflow">for</span> (<span class="keyword">auto</span> snum : signals_)</div>
-<div class="line"><a name="l00523"></a><span class="lineno">  523</span>&#160;                {</div>
-<div class="line"><a name="l00524"></a><span class="lineno">  524</span>&#160;                    server_-&gt;signal_add(snum);</div>
-<div class="line"><a name="l00525"></a><span class="lineno">  525</span>&#160;                }</div>
-<div class="line"><a name="l00526"></a><span class="lineno">  526</span>&#160;                notify_server_start();</div>
-<div class="line"><a name="l00527"></a><span class="lineno">  527</span>&#160;                server_-&gt;run();</div>
-<div class="line"><a name="l00528"></a><span class="lineno">  528</span>&#160;            }</div>
-<div class="line"><a name="l00529"></a><span class="lineno">  529</span>&#160;        }</div>
-<div class="line"><a name="l00530"></a><span class="lineno">  530</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00531"></a><span class="lineno">  531</span>&#160;<span class="comment">        /// \brief Non-blocking version of \ref run()</span></div>
-<div class="line"><a name="l00532"></a><span class="lineno">  532</span>&#160;<span class="comment">        ///</span></div>
-<div class="line"><a name="l00533"></a><span class="lineno">  533</span>&#160;<span class="comment">        /// The output from this method needs to be saved into a variable!</span></div>
-<div class="line"><a name="l00534"></a><span class="lineno">  534</span>&#160;<span class="comment">        /// Otherwise the call will be made on the same thread.</span></div>
-<div class="line"><a name="l00535"></a><span class="lineno"><a class="line" href="classcrow_1_1_crow.html#aac4f72d944fb35caaf2d82cd21287269">  535</a></span>&#160;<span class="comment"></span>        std::future&lt;void&gt; <a class="code" href="classcrow_1_1_crow.html#aac4f72d944fb35caaf2d82cd21287269">run_async</a>()</div>
-<div class="line"><a name="l00536"></a><span class="lineno">  536</span>&#160;        {</div>
-<div class="line"><a name="l00537"></a><span class="lineno">  537</span>&#160;            <span class="keywordflow">return</span> std::async(std::launch::async, [&amp;] {</div>
-<div class="line"><a name="l00538"></a><span class="lineno">  538</span>&#160;                this-&gt;<a class="code" href="classcrow_1_1_crow.html#a193d8b03f717234a841cd92f72c6b4b5">run</a>();</div>
-<div class="line"><a name="l00539"></a><span class="lineno">  539</span>&#160;            });</div>
-<div class="line"><a name="l00540"></a><span class="lineno">  540</span>&#160;        }</div>
-<div class="line"><a name="l00541"></a><span class="lineno">  541</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00542"></a><span class="lineno">  542</span>&#160;<span class="comment">        /// \brief Stop the server</span></div>
-<div class="line"><a name="l00543"></a><span class="lineno"><a class="line" href="classcrow_1_1_crow.html#a0266672657128919ab9a067d93f3868f">  543</a></span>&#160;<span class="comment"></span>        <span class="keywordtype">void</span> <a class="code" href="classcrow_1_1_crow.html#a0266672657128919ab9a067d93f3868f">stop</a>()</div>
-<div class="line"><a name="l00544"></a><span class="lineno">  544</span>&#160;        {</div>
-<div class="line"><a name="l00545"></a><span class="lineno">  545</span>&#160;<span class="preprocessor">#ifdef CROW_ENABLE_SSL</span></div>
-<div class="line"><a name="l00546"></a><span class="lineno">  546</span>&#160;            <span class="keywordflow">if</span> (ssl_used_)</div>
-<div class="line"><a name="l00547"></a><span class="lineno">  547</span>&#160;            {</div>
-<div class="line"><a name="l00548"></a><span class="lineno">  548</span>&#160;                <span class="keywordflow">if</span> (ssl_server_) { ssl_server_-&gt;stop(); }</div>
-<div class="line"><a name="l00549"></a><span class="lineno">  549</span>&#160;            }</div>
-<div class="line"><a name="l00550"></a><span class="lineno">  550</span>&#160;            <span class="keywordflow">else</span></div>
-<div class="line"><a name="l00551"></a><span class="lineno">  551</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00552"></a><span class="lineno">  552</span>&#160;            {</div>
-<div class="line"><a name="l00553"></a><span class="lineno">  553</span>&#160;                <span class="comment">// TODO(EDev): Move these 6 lines to a method in http_server.</span></div>
-<div class="line"><a name="l00554"></a><span class="lineno">  554</span>&#160;                std::vector&lt;crow::websocket::connection*&gt; websockets_to_close = websockets_;</div>
-<div class="line"><a name="l00555"></a><span class="lineno">  555</span>&#160;                <span class="keywordflow">for</span> (<span class="keyword">auto</span> websocket : websockets_to_close)</div>
-<div class="line"><a name="l00556"></a><span class="lineno">  556</span>&#160;                {</div>
-<div class="line"><a name="l00557"></a><span class="lineno">  557</span>&#160;                    CROW_LOG_INFO &lt;&lt; <span class="stringliteral">&quot;Quitting Websocket: &quot;</span> &lt;&lt; websocket;</div>
-<div class="line"><a name="l00558"></a><span class="lineno">  558</span>&#160;                    websocket-&gt;close(<span class="stringliteral">&quot;Server Application Terminated&quot;</span>);</div>
-<div class="line"><a name="l00559"></a><span class="lineno">  559</span>&#160;                }</div>
-<div class="line"><a name="l00560"></a><span class="lineno">  560</span>&#160;                <span class="keywordflow">if</span> (server_) { server_-&gt;stop(); }</div>
-<div class="line"><a name="l00561"></a><span class="lineno">  561</span>&#160;            }</div>
-<div class="line"><a name="l00562"></a><span class="lineno">  562</span>&#160;        }</div>
-<div class="line"><a name="l00563"></a><span class="lineno">  563</span>&#160; </div>
-<div class="line"><a name="l00564"></a><span class="lineno">  564</span>&#160;        <span class="keywordtype">void</span> add_websocket(<a class="code" href="structcrow_1_1websocket_1_1connection.html">crow::websocket::connection</a>* conn)</div>
-<div class="line"><a name="l00565"></a><span class="lineno">  565</span>&#160;        {</div>
-<div class="line"><a name="l00566"></a><span class="lineno">  566</span>&#160;            websockets_.push_back(conn);</div>
-<div class="line"><a name="l00567"></a><span class="lineno">  567</span>&#160;        }</div>
-<div class="line"><a name="l00568"></a><span class="lineno">  568</span>&#160; </div>
-<div class="line"><a name="l00569"></a><span class="lineno">  569</span>&#160;        <span class="keywordtype">void</span> remove_websocket(<a class="code" href="structcrow_1_1websocket_1_1connection.html">crow::websocket::connection</a>* conn)</div>
-<div class="line"><a name="l00570"></a><span class="lineno">  570</span>&#160;        {</div>
-<div class="line"><a name="l00571"></a><span class="lineno">  571</span>&#160;            websockets_.erase(std::remove(websockets_.begin(), websockets_.end(), conn), websockets_.end());</div>
-<div class="line"><a name="l00572"></a><span class="lineno">  572</span>&#160;        }</div>
-<div class="line"><a name="l00573"></a><span class="lineno">  573</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00574"></a><span class="lineno">  574</span>&#160;<span class="comment">        /// \brief Print the routing paths defined for each HTTP method</span></div>
-<div class="line"><a name="l00575"></a><span class="lineno"><a class="line" href="classcrow_1_1_crow.html#a839c1e6f82d577308eb6f0d4948a4fbb">  575</a></span>&#160;<span class="comment"></span>        <span class="keywordtype">void</span> <a class="code" href="classcrow_1_1_crow.html#a839c1e6f82d577308eb6f0d4948a4fbb">debug_print</a>()</div>
-<div class="line"><a name="l00576"></a><span class="lineno">  576</span>&#160;        {</div>
-<div class="line"><a name="l00577"></a><span class="lineno">  577</span>&#160;            CROW_LOG_DEBUG &lt;&lt; <span class="stringliteral">&quot;Routing:&quot;</span>;</div>
-<div class="line"><a name="l00578"></a><span class="lineno">  578</span>&#160;            router_.debug_print();</div>
-<div class="line"><a name="l00579"></a><span class="lineno">  579</span>&#160;        }</div>
-<div class="line"><a name="l00580"></a><span class="lineno">  580</span>&#160; </div>
+<div class="line"><a name="l00520"></a><span class="lineno">  520</span>&#160;                ssl_server_ = std::move(std::unique_ptr&lt;ssl_server_t&gt;(<span class="keyword">new</span> <a class="code" href="classcrow_1_1_crow.html#aac04f81d0bc897267d092bb8af1513d4">ssl_server_t</a>(<span class="keyword">this</span>, bindaddr_, port_, server_name_, &amp;middlewares_, concurrency_, timeout_, &amp;ssl_context_)));</div>
+<div class="line"><a name="l00521"></a><span class="lineno">  521</span>&#160;                ssl_server_-&gt;set_tick_function(tick_interval_, tick_function_);</div>
+<div class="line"><a name="l00522"></a><span class="lineno">  522</span>&#160;                ssl_server_-&gt;signal_clear();</div>
+<div class="line"><a name="l00523"></a><span class="lineno">  523</span>&#160;                <span class="keywordflow">for</span> (<span class="keyword">auto</span> snum : signals_)</div>
+<div class="line"><a name="l00524"></a><span class="lineno">  524</span>&#160;                {</div>
+<div class="line"><a name="l00525"></a><span class="lineno">  525</span>&#160;                    ssl_server_-&gt;signal_add(snum);</div>
+<div class="line"><a name="l00526"></a><span class="lineno">  526</span>&#160;                }</div>
+<div class="line"><a name="l00527"></a><span class="lineno">  527</span>&#160;                notify_server_start();</div>
+<div class="line"><a name="l00528"></a><span class="lineno">  528</span>&#160;                ssl_server_-&gt;run();</div>
+<div class="line"><a name="l00529"></a><span class="lineno">  529</span>&#160;            }</div>
+<div class="line"><a name="l00530"></a><span class="lineno">  530</span>&#160;            <span class="keywordflow">else</span></div>
+<div class="line"><a name="l00531"></a><span class="lineno">  531</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00532"></a><span class="lineno">  532</span>&#160;            {</div>
+<div class="line"><a name="l00533"></a><span class="lineno">  533</span>&#160;                server_ = std::move(std::unique_ptr&lt;server_t&gt;(<span class="keyword">new</span> <a class="code" href="classcrow_1_1_crow.html#a5df810d2619e31c2f024cc4e45898997">server_t</a>(<span class="keyword">this</span>, bindaddr_, port_, server_name_, &amp;middlewares_, concurrency_, timeout_, <span class="keyword">nullptr</span>)));</div>
+<div class="line"><a name="l00534"></a><span class="lineno">  534</span>&#160;                server_-&gt;set_tick_function(tick_interval_, tick_function_);</div>
+<div class="line"><a name="l00535"></a><span class="lineno">  535</span>&#160;                <span class="keywordflow">for</span> (<span class="keyword">auto</span> snum : signals_)</div>
+<div class="line"><a name="l00536"></a><span class="lineno">  536</span>&#160;                {</div>
+<div class="line"><a name="l00537"></a><span class="lineno">  537</span>&#160;                    server_-&gt;signal_add(snum);</div>
+<div class="line"><a name="l00538"></a><span class="lineno">  538</span>&#160;                }</div>
+<div class="line"><a name="l00539"></a><span class="lineno">  539</span>&#160;                notify_server_start();</div>
+<div class="line"><a name="l00540"></a><span class="lineno">  540</span>&#160;                server_-&gt;run();</div>
+<div class="line"><a name="l00541"></a><span class="lineno">  541</span>&#160;            }</div>
+<div class="line"><a name="l00542"></a><span class="lineno">  542</span>&#160;        }</div>
+<div class="line"><a name="l00543"></a><span class="lineno">  543</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00544"></a><span class="lineno">  544</span>&#160;<span class="comment">        /// \brief Non-blocking version of \ref run()</span></div>
+<div class="line"><a name="l00545"></a><span class="lineno">  545</span>&#160;<span class="comment">        ///</span></div>
+<div class="line"><a name="l00546"></a><span class="lineno">  546</span>&#160;<span class="comment">        /// The output from this method needs to be saved into a variable!</span></div>
+<div class="line"><a name="l00547"></a><span class="lineno">  547</span>&#160;<span class="comment">        /// Otherwise the call will be made on the same thread.</span></div>
+<div class="line"><a name="l00548"></a><span class="lineno"><a class="line" href="classcrow_1_1_crow.html#aac4f72d944fb35caaf2d82cd21287269">  548</a></span>&#160;<span class="comment"></span>        std::future&lt;void&gt; <a class="code" href="classcrow_1_1_crow.html#aac4f72d944fb35caaf2d82cd21287269">run_async</a>()</div>
+<div class="line"><a name="l00549"></a><span class="lineno">  549</span>&#160;        {</div>
+<div class="line"><a name="l00550"></a><span class="lineno">  550</span>&#160;            <span class="keywordflow">return</span> std::async(std::launch::async, [&amp;] {</div>
+<div class="line"><a name="l00551"></a><span class="lineno">  551</span>&#160;                this-&gt;<a class="code" href="classcrow_1_1_crow.html#a193d8b03f717234a841cd92f72c6b4b5">run</a>();</div>
+<div class="line"><a name="l00552"></a><span class="lineno">  552</span>&#160;            });</div>
+<div class="line"><a name="l00553"></a><span class="lineno">  553</span>&#160;        }</div>
+<div class="line"><a name="l00554"></a><span class="lineno">  554</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00555"></a><span class="lineno">  555</span>&#160;<span class="comment">        /// \brief Stop the server</span></div>
+<div class="line"><a name="l00556"></a><span class="lineno"><a class="line" href="classcrow_1_1_crow.html#a0266672657128919ab9a067d93f3868f">  556</a></span>&#160;<span class="comment"></span>        <span class="keywordtype">void</span> <a class="code" href="classcrow_1_1_crow.html#a0266672657128919ab9a067d93f3868f">stop</a>()</div>
+<div class="line"><a name="l00557"></a><span class="lineno">  557</span>&#160;        {</div>
+<div class="line"><a name="l00558"></a><span class="lineno">  558</span>&#160;<span class="preprocessor">#ifdef CROW_ENABLE_SSL</span></div>
+<div class="line"><a name="l00559"></a><span class="lineno">  559</span>&#160;            <span class="keywordflow">if</span> (ssl_used_)</div>
+<div class="line"><a name="l00560"></a><span class="lineno">  560</span>&#160;            {</div>
+<div class="line"><a name="l00561"></a><span class="lineno">  561</span>&#160;                <span class="keywordflow">if</span> (ssl_server_) { ssl_server_-&gt;stop(); }</div>
+<div class="line"><a name="l00562"></a><span class="lineno">  562</span>&#160;            }</div>
+<div class="line"><a name="l00563"></a><span class="lineno">  563</span>&#160;            <span class="keywordflow">else</span></div>
+<div class="line"><a name="l00564"></a><span class="lineno">  564</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00565"></a><span class="lineno">  565</span>&#160;            {</div>
+<div class="line"><a name="l00566"></a><span class="lineno">  566</span>&#160;                <span class="comment">// TODO(EDev): Move these 6 lines to a method in http_server.</span></div>
+<div class="line"><a name="l00567"></a><span class="lineno">  567</span>&#160;                std::vector&lt;crow::websocket::connection*&gt; websockets_to_close = websockets_;</div>
+<div class="line"><a name="l00568"></a><span class="lineno">  568</span>&#160;                <span class="keywordflow">for</span> (<span class="keyword">auto</span> websocket : websockets_to_close)</div>
+<div class="line"><a name="l00569"></a><span class="lineno">  569</span>&#160;                {</div>
+<div class="line"><a name="l00570"></a><span class="lineno">  570</span>&#160;                    CROW_LOG_INFO &lt;&lt; <span class="stringliteral">&quot;Quitting Websocket: &quot;</span> &lt;&lt; websocket;</div>
+<div class="line"><a name="l00571"></a><span class="lineno">  571</span>&#160;                    websocket-&gt;close(<span class="stringliteral">&quot;Server Application Terminated&quot;</span>);</div>
+<div class="line"><a name="l00572"></a><span class="lineno">  572</span>&#160;                }</div>
+<div class="line"><a name="l00573"></a><span class="lineno">  573</span>&#160;                <span class="keywordflow">if</span> (server_) { server_-&gt;stop(); }</div>
+<div class="line"><a name="l00574"></a><span class="lineno">  574</span>&#160;            }</div>
+<div class="line"><a name="l00575"></a><span class="lineno">  575</span>&#160;        }</div>
+<div class="line"><a name="l00576"></a><span class="lineno">  576</span>&#160; </div>
+<div class="line"><a name="l00577"></a><span class="lineno">  577</span>&#160;        <span class="keywordtype">void</span> add_websocket(<a class="code" href="structcrow_1_1websocket_1_1connection.html">crow::websocket::connection</a>* conn)</div>
+<div class="line"><a name="l00578"></a><span class="lineno">  578</span>&#160;        {</div>
+<div class="line"><a name="l00579"></a><span class="lineno">  579</span>&#160;            websockets_.push_back(conn);</div>
+<div class="line"><a name="l00580"></a><span class="lineno">  580</span>&#160;        }</div>
 <div class="line"><a name="l00581"></a><span class="lineno">  581</span>&#160; </div>
-<div class="line"><a name="l00582"></a><span class="lineno">  582</span>&#160;<span class="preprocessor">#ifdef CROW_ENABLE_SSL</span></div>
-<div class="line"><a name="l00583"></a><span class="lineno">  583</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00584"></a><span class="lineno">  584</span>&#160;<span class="comment">        /// \brief Use certificate and key files for SSL</span></div>
-<div class="line"><a name="l00585"></a><span class="lineno"><a class="line" href="classcrow_1_1_crow.html#a987e909347f0563f7b3dd97bbe271cea">  585</a></span>&#160;<span class="comment"></span>        <a class="code" href="classcrow_1_1_crow.html">self_t</a>&amp; <a class="code" href="classcrow_1_1_crow.html#a987e909347f0563f7b3dd97bbe271cea">ssl_file</a>(<span class="keyword">const</span> std::string&amp; crt_filename, <span class="keyword">const</span> std::string&amp; key_filename)</div>
-<div class="line"><a name="l00586"></a><span class="lineno">  586</span>&#160;        {</div>
-<div class="line"><a name="l00587"></a><span class="lineno">  587</span>&#160;            ssl_used_ = <span class="keyword">true</span>;</div>
-<div class="line"><a name="l00588"></a><span class="lineno">  588</span>&#160;            ssl_context_.set_verify_mode(asio::ssl::verify_peer);</div>
-<div class="line"><a name="l00589"></a><span class="lineno">  589</span>&#160;            ssl_context_.set_verify_mode(asio::ssl::verify_client_once);</div>
-<div class="line"><a name="l00590"></a><span class="lineno">  590</span>&#160;            ssl_context_.use_certificate_file(crt_filename, ssl_context_t::pem);</div>
-<div class="line"><a name="l00591"></a><span class="lineno">  591</span>&#160;            ssl_context_.use_private_key_file(key_filename, ssl_context_t::pem);</div>
-<div class="line"><a name="l00592"></a><span class="lineno">  592</span>&#160;            ssl_context_.set_options(</div>
-<div class="line"><a name="l00593"></a><span class="lineno">  593</span>&#160;              asio::ssl::context::default_workarounds | asio::ssl::context::no_sslv2 | asio::ssl::context::no_sslv3);</div>
-<div class="line"><a name="l00594"></a><span class="lineno">  594</span>&#160;            <span class="keywordflow">return</span> *<span class="keyword">this</span>;</div>
-<div class="line"><a name="l00595"></a><span class="lineno">  595</span>&#160;        }</div>
+<div class="line"><a name="l00582"></a><span class="lineno">  582</span>&#160;        <span class="keywordtype">void</span> remove_websocket(<a class="code" href="structcrow_1_1websocket_1_1connection.html">crow::websocket::connection</a>* conn)</div>
+<div class="line"><a name="l00583"></a><span class="lineno">  583</span>&#160;        {</div>
+<div class="line"><a name="l00584"></a><span class="lineno">  584</span>&#160;            websockets_.erase(std::remove(websockets_.begin(), websockets_.end(), conn), websockets_.end());</div>
+<div class="line"><a name="l00585"></a><span class="lineno">  585</span>&#160;        }</div>
+<div class="line"><a name="l00586"></a><span class="lineno">  586</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00587"></a><span class="lineno">  587</span>&#160;<span class="comment">        /// \brief Print the routing paths defined for each HTTP method</span></div>
+<div class="line"><a name="l00588"></a><span class="lineno"><a class="line" href="classcrow_1_1_crow.html#a839c1e6f82d577308eb6f0d4948a4fbb">  588</a></span>&#160;<span class="comment"></span>        <span class="keywordtype">void</span> <a class="code" href="classcrow_1_1_crow.html#a839c1e6f82d577308eb6f0d4948a4fbb">debug_print</a>()</div>
+<div class="line"><a name="l00589"></a><span class="lineno">  589</span>&#160;        {</div>
+<div class="line"><a name="l00590"></a><span class="lineno">  590</span>&#160;            CROW_LOG_DEBUG &lt;&lt; <span class="stringliteral">&quot;Routing:&quot;</span>;</div>
+<div class="line"><a name="l00591"></a><span class="lineno">  591</span>&#160;            router_.debug_print();</div>
+<div class="line"><a name="l00592"></a><span class="lineno">  592</span>&#160;        }</div>
+<div class="line"><a name="l00593"></a><span class="lineno">  593</span>&#160; </div>
+<div class="line"><a name="l00594"></a><span class="lineno">  594</span>&#160; </div>
+<div class="line"><a name="l00595"></a><span class="lineno">  595</span>&#160;<span class="preprocessor">#ifdef CROW_ENABLE_SSL</span></div>
 <div class="line"><a name="l00596"></a><span class="lineno">  596</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00597"></a><span class="lineno">  597</span>&#160;<span class="comment">        /// \brief Use `.pem` file for SSL</span></div>
-<div class="line"><a name="l00598"></a><span class="lineno"><a class="line" href="classcrow_1_1_crow.html#a3e5aa337025914852fcbfd1aebbd3241">  598</a></span>&#160;<span class="comment"></span>        <a class="code" href="classcrow_1_1_crow.html">self_t</a>&amp; <a class="code" href="classcrow_1_1_crow.html#a3e5aa337025914852fcbfd1aebbd3241">ssl_file</a>(<span class="keyword">const</span> std::string&amp; pem_filename)</div>
+<div class="line"><a name="l00597"></a><span class="lineno">  597</span>&#160;<span class="comment">        /// \brief Use certificate and key files for SSL</span></div>
+<div class="line"><a name="l00598"></a><span class="lineno"><a class="line" href="classcrow_1_1_crow.html#a987e909347f0563f7b3dd97bbe271cea">  598</a></span>&#160;<span class="comment"></span>        <a class="code" href="classcrow_1_1_crow.html">self_t</a>&amp; <a class="code" href="classcrow_1_1_crow.html#a987e909347f0563f7b3dd97bbe271cea">ssl_file</a>(<span class="keyword">const</span> std::string&amp; crt_filename, <span class="keyword">const</span> std::string&amp; key_filename)</div>
 <div class="line"><a name="l00599"></a><span class="lineno">  599</span>&#160;        {</div>
 <div class="line"><a name="l00600"></a><span class="lineno">  600</span>&#160;            ssl_used_ = <span class="keyword">true</span>;</div>
 <div class="line"><a name="l00601"></a><span class="lineno">  601</span>&#160;            ssl_context_.set_verify_mode(asio::ssl::verify_peer);</div>
 <div class="line"><a name="l00602"></a><span class="lineno">  602</span>&#160;            ssl_context_.set_verify_mode(asio::ssl::verify_client_once);</div>
-<div class="line"><a name="l00603"></a><span class="lineno">  603</span>&#160;            ssl_context_.load_verify_file(pem_filename);</div>
-<div class="line"><a name="l00604"></a><span class="lineno">  604</span>&#160;            ssl_context_.set_options(</div>
-<div class="line"><a name="l00605"></a><span class="lineno">  605</span>&#160;              asio::ssl::context::default_workarounds | asio::ssl::context::no_sslv2 | asio::ssl::context::no_sslv3);</div>
-<div class="line"><a name="l00606"></a><span class="lineno">  606</span>&#160;            <span class="keywordflow">return</span> *<span class="keyword">this</span>;</div>
-<div class="line"><a name="l00607"></a><span class="lineno">  607</span>&#160;        }</div>
-<div class="line"><a name="l00608"></a><span class="lineno">  608</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00609"></a><span class="lineno">  609</span>&#160;<span class="comment">        /// \brief Use certificate chain and key files for SSL</span></div>
-<div class="line"><a name="l00610"></a><span class="lineno"><a class="line" href="classcrow_1_1_crow.html#ade6bf7e56805c1112532807581293448">  610</a></span>&#160;<span class="comment"></span>        <a class="code" href="classcrow_1_1_crow.html">self_t</a>&amp; <a class="code" href="classcrow_1_1_crow.html#ade6bf7e56805c1112532807581293448">ssl_chainfile</a>(<span class="keyword">const</span> std::string&amp; crt_filename, <span class="keyword">const</span> std::string&amp; key_filename)</div>
-<div class="line"><a name="l00611"></a><span class="lineno">  611</span>&#160;        {</div>
-<div class="line"><a name="l00612"></a><span class="lineno">  612</span>&#160;            ssl_used_ = <span class="keyword">true</span>;</div>
-<div class="line"><a name="l00613"></a><span class="lineno">  613</span>&#160;            ssl_context_.set_verify_mode(asio::ssl::verify_peer);</div>
-<div class="line"><a name="l00614"></a><span class="lineno">  614</span>&#160;            ssl_context_.set_verify_mode(asio::ssl::verify_client_once);</div>
-<div class="line"><a name="l00615"></a><span class="lineno">  615</span>&#160;            ssl_context_.use_certificate_chain_file(crt_filename);</div>
-<div class="line"><a name="l00616"></a><span class="lineno">  616</span>&#160;            ssl_context_.use_private_key_file(key_filename, ssl_context_t::pem);</div>
+<div class="line"><a name="l00603"></a><span class="lineno">  603</span>&#160;            ssl_context_.use_certificate_file(crt_filename, ssl_context_t::pem);</div>
+<div class="line"><a name="l00604"></a><span class="lineno">  604</span>&#160;            ssl_context_.use_private_key_file(key_filename, ssl_context_t::pem);</div>
+<div class="line"><a name="l00605"></a><span class="lineno">  605</span>&#160;            ssl_context_.set_options(</div>
+<div class="line"><a name="l00606"></a><span class="lineno">  606</span>&#160;              asio::ssl::context::default_workarounds | asio::ssl::context::no_sslv2 | asio::ssl::context::no_sslv3);</div>
+<div class="line"><a name="l00607"></a><span class="lineno">  607</span>&#160;            <span class="keywordflow">return</span> *<span class="keyword">this</span>;</div>
+<div class="line"><a name="l00608"></a><span class="lineno">  608</span>&#160;        }</div>
+<div class="line"><a name="l00609"></a><span class="lineno">  609</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00610"></a><span class="lineno">  610</span>&#160;<span class="comment">        /// \brief Use `.pem` file for SSL</span></div>
+<div class="line"><a name="l00611"></a><span class="lineno"><a class="line" href="classcrow_1_1_crow.html#a3e5aa337025914852fcbfd1aebbd3241">  611</a></span>&#160;<span class="comment"></span>        <a class="code" href="classcrow_1_1_crow.html">self_t</a>&amp; <a class="code" href="classcrow_1_1_crow.html#a3e5aa337025914852fcbfd1aebbd3241">ssl_file</a>(<span class="keyword">const</span> std::string&amp; pem_filename)</div>
+<div class="line"><a name="l00612"></a><span class="lineno">  612</span>&#160;        {</div>
+<div class="line"><a name="l00613"></a><span class="lineno">  613</span>&#160;            ssl_used_ = <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00614"></a><span class="lineno">  614</span>&#160;            ssl_context_.set_verify_mode(asio::ssl::verify_peer);</div>
+<div class="line"><a name="l00615"></a><span class="lineno">  615</span>&#160;            ssl_context_.set_verify_mode(asio::ssl::verify_client_once);</div>
+<div class="line"><a name="l00616"></a><span class="lineno">  616</span>&#160;            ssl_context_.load_verify_file(pem_filename);</div>
 <div class="line"><a name="l00617"></a><span class="lineno">  617</span>&#160;            ssl_context_.set_options(</div>
 <div class="line"><a name="l00618"></a><span class="lineno">  618</span>&#160;              asio::ssl::context::default_workarounds | asio::ssl::context::no_sslv2 | asio::ssl::context::no_sslv3);</div>
 <div class="line"><a name="l00619"></a><span class="lineno">  619</span>&#160;            <span class="keywordflow">return</span> *<span class="keyword">this</span>;</div>
 <div class="line"><a name="l00620"></a><span class="lineno">  620</span>&#160;        }</div>
-<div class="line"><a name="l00621"></a><span class="lineno">  621</span>&#160; </div>
-<div class="line"><a name="l00622"></a><span class="lineno">  622</span>&#160;        <a class="code" href="classcrow_1_1_crow.html#a5b0a203a6f9070ea8010227dcdbcec60">self_t</a>&amp; ssl(asio::ssl::context&amp;&amp; ctx)</div>
-<div class="line"><a name="l00623"></a><span class="lineno">  623</span>&#160;        {</div>
-<div class="line"><a name="l00624"></a><span class="lineno">  624</span>&#160;            ssl_used_ = <span class="keyword">true</span>;</div>
-<div class="line"><a name="l00625"></a><span class="lineno">  625</span>&#160;            ssl_context_ = std::move(ctx);</div>
-<div class="line"><a name="l00626"></a><span class="lineno">  626</span>&#160;            <span class="keywordflow">return</span> *<span class="keyword">this</span>;</div>
-<div class="line"><a name="l00627"></a><span class="lineno">  627</span>&#160;        }</div>
-<div class="line"><a name="l00628"></a><span class="lineno">  628</span>&#160; </div>
-<div class="line"><a name="l00629"></a><span class="lineno">  629</span>&#160;        <span class="keywordtype">bool</span> ssl_used()<span class="keyword"> const</span></div>
-<div class="line"><a name="l00630"></a><span class="lineno">  630</span>&#160;<span class="keyword">        </span>{</div>
-<div class="line"><a name="l00631"></a><span class="lineno">  631</span>&#160;            <span class="keywordflow">return</span> ssl_used_;</div>
-<div class="line"><a name="l00632"></a><span class="lineno">  632</span>&#160;        }</div>
-<div class="line"><a name="l00633"></a><span class="lineno">  633</span>&#160;<span class="preprocessor">#else</span></div>
+<div class="line"><a name="l00621"></a><span class="lineno">  621</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00622"></a><span class="lineno">  622</span>&#160;<span class="comment">        /// \brief Use certificate chain and key files for SSL</span></div>
+<div class="line"><a name="l00623"></a><span class="lineno"><a class="line" href="classcrow_1_1_crow.html#ade6bf7e56805c1112532807581293448">  623</a></span>&#160;<span class="comment"></span>        <a class="code" href="classcrow_1_1_crow.html">self_t</a>&amp; <a class="code" href="classcrow_1_1_crow.html#ade6bf7e56805c1112532807581293448">ssl_chainfile</a>(<span class="keyword">const</span> std::string&amp; crt_filename, <span class="keyword">const</span> std::string&amp; key_filename)</div>
+<div class="line"><a name="l00624"></a><span class="lineno">  624</span>&#160;        {</div>
+<div class="line"><a name="l00625"></a><span class="lineno">  625</span>&#160;            ssl_used_ = <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00626"></a><span class="lineno">  626</span>&#160;            ssl_context_.set_verify_mode(asio::ssl::verify_peer);</div>
+<div class="line"><a name="l00627"></a><span class="lineno">  627</span>&#160;            ssl_context_.set_verify_mode(asio::ssl::verify_client_once);</div>
+<div class="line"><a name="l00628"></a><span class="lineno">  628</span>&#160;            ssl_context_.use_certificate_chain_file(crt_filename);</div>
+<div class="line"><a name="l00629"></a><span class="lineno">  629</span>&#160;            ssl_context_.use_private_key_file(key_filename, ssl_context_t::pem);</div>
+<div class="line"><a name="l00630"></a><span class="lineno">  630</span>&#160;            ssl_context_.set_options(</div>
+<div class="line"><a name="l00631"></a><span class="lineno">  631</span>&#160;              asio::ssl::context::default_workarounds | asio::ssl::context::no_sslv2 | asio::ssl::context::no_sslv3);</div>
+<div class="line"><a name="l00632"></a><span class="lineno">  632</span>&#160;            <span class="keywordflow">return</span> *<span class="keyword">this</span>;</div>
+<div class="line"><a name="l00633"></a><span class="lineno">  633</span>&#160;        }</div>
 <div class="line"><a name="l00634"></a><span class="lineno">  634</span>&#160; </div>
-<div class="line"><a name="l00635"></a><span class="lineno">  635</span>&#160;        <span class="keyword">template</span>&lt;<span class="keyword">typename</span> T, <span class="keyword">typename</span>... Remain&gt;</div>
-<div class="line"><a name="l00636"></a><span class="lineno">  636</span>&#160;        <a class="code" href="classcrow_1_1_crow.html#a5b0a203a6f9070ea8010227dcdbcec60">self_t</a>&amp; <a class="code" href="classcrow_1_1_crow.html#a987e909347f0563f7b3dd97bbe271cea">ssl_file</a>(T&amp;&amp;, Remain&amp;&amp;...)</div>
-<div class="line"><a name="l00637"></a><span class="lineno">  637</span>&#160;        {</div>
-<div class="line"><a name="l00638"></a><span class="lineno">  638</span>&#160;            <span class="comment">// We can&#39;t call .ssl() member function unless CROW_ENABLE_SSL is defined.</span></div>
-<div class="line"><a name="l00639"></a><span class="lineno">  639</span>&#160;            static_assert(</div>
-<div class="line"><a name="l00640"></a><span class="lineno">  640</span>&#160;              <span class="comment">// make static_assert dependent to T; always false</span></div>
-<div class="line"><a name="l00641"></a><span class="lineno">  641</span>&#160;              std::is_base_of&lt;T, void&gt;::value,</div>
-<div class="line"><a name="l00642"></a><span class="lineno">  642</span>&#160;              <span class="stringliteral">&quot;Define CROW_ENABLE_SSL to enable ssl support.&quot;</span>);</div>
-<div class="line"><a name="l00643"></a><span class="lineno">  643</span>&#160;            <span class="keywordflow">return</span> *<span class="keyword">this</span>;</div>
-<div class="line"><a name="l00644"></a><span class="lineno">  644</span>&#160;        }</div>
-<div class="line"><a name="l00645"></a><span class="lineno">  645</span>&#160; </div>
-<div class="line"><a name="l00646"></a><span class="lineno">  646</span>&#160;        <span class="keyword">template</span>&lt;<span class="keyword">typename</span> T, <span class="keyword">typename</span>... Remain&gt;</div>
-<div class="line"><a name="l00647"></a><span class="lineno">  647</span>&#160;        <a class="code" href="classcrow_1_1_crow.html#a5b0a203a6f9070ea8010227dcdbcec60">self_t</a>&amp; <a class="code" href="classcrow_1_1_crow.html#ade6bf7e56805c1112532807581293448">ssl_chainfile</a>(T&amp;&amp;, Remain&amp;&amp;...)</div>
-<div class="line"><a name="l00648"></a><span class="lineno">  648</span>&#160;        {</div>
-<div class="line"><a name="l00649"></a><span class="lineno">  649</span>&#160;            <span class="comment">// We can&#39;t call .ssl() member function unless CROW_ENABLE_SSL is defined.</span></div>
-<div class="line"><a name="l00650"></a><span class="lineno">  650</span>&#160;            static_assert(</div>
-<div class="line"><a name="l00651"></a><span class="lineno">  651</span>&#160;              <span class="comment">// make static_assert dependent to T; always false</span></div>
-<div class="line"><a name="l00652"></a><span class="lineno">  652</span>&#160;              std::is_base_of&lt;T, void&gt;::value,</div>
-<div class="line"><a name="l00653"></a><span class="lineno">  653</span>&#160;              <span class="stringliteral">&quot;Define CROW_ENABLE_SSL to enable ssl support.&quot;</span>);</div>
-<div class="line"><a name="l00654"></a><span class="lineno">  654</span>&#160;            <span class="keywordflow">return</span> *<span class="keyword">this</span>;</div>
-<div class="line"><a name="l00655"></a><span class="lineno">  655</span>&#160;        }</div>
-<div class="line"><a name="l00656"></a><span class="lineno">  656</span>&#160; </div>
-<div class="line"><a name="l00657"></a><span class="lineno">  657</span>&#160;        <span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</div>
-<div class="line"><a name="l00658"></a><span class="lineno">  658</span>&#160;        <a class="code" href="classcrow_1_1_crow.html#a5b0a203a6f9070ea8010227dcdbcec60">self_t</a>&amp; ssl(T&amp;&amp;)</div>
-<div class="line"><a name="l00659"></a><span class="lineno">  659</span>&#160;        {</div>
-<div class="line"><a name="l00660"></a><span class="lineno">  660</span>&#160;            <span class="comment">// We can&#39;t call .ssl() member function unless CROW_ENABLE_SSL is defined.</span></div>
-<div class="line"><a name="l00661"></a><span class="lineno">  661</span>&#160;            static_assert(</div>
-<div class="line"><a name="l00662"></a><span class="lineno">  662</span>&#160;              <span class="comment">// make static_assert dependent to T; always false</span></div>
-<div class="line"><a name="l00663"></a><span class="lineno">  663</span>&#160;              std::is_base_of&lt;T, void&gt;::value,</div>
-<div class="line"><a name="l00664"></a><span class="lineno">  664</span>&#160;              <span class="stringliteral">&quot;Define CROW_ENABLE_SSL to enable ssl support.&quot;</span>);</div>
-<div class="line"><a name="l00665"></a><span class="lineno">  665</span>&#160;            <span class="keywordflow">return</span> *<span class="keyword">this</span>;</div>
-<div class="line"><a name="l00666"></a><span class="lineno">  666</span>&#160;        }</div>
-<div class="line"><a name="l00667"></a><span class="lineno">  667</span>&#160; </div>
-<div class="line"><a name="l00668"></a><span class="lineno">  668</span>&#160;        <span class="keywordtype">bool</span> ssl_used()<span class="keyword"> const</span></div>
-<div class="line"><a name="l00669"></a><span class="lineno">  669</span>&#160;<span class="keyword">        </span>{</div>
-<div class="line"><a name="l00670"></a><span class="lineno">  670</span>&#160;            <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
-<div class="line"><a name="l00671"></a><span class="lineno">  671</span>&#160;        }</div>
-<div class="line"><a name="l00672"></a><span class="lineno">  672</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00673"></a><span class="lineno">  673</span>&#160; </div>
-<div class="line"><a name="l00674"></a><span class="lineno">  674</span>&#160;        <span class="comment">// middleware</span></div>
-<div class="line"><a name="l00675"></a><span class="lineno">  675</span>&#160;        <span class="keyword">using</span> context_t = detail::context&lt;Middlewares...&gt;;</div>
-<div class="line"><a name="l00676"></a><span class="lineno">  676</span>&#160;        <span class="keyword">using</span> mw_container_t = std::tuple&lt;Middlewares...&gt;;</div>
-<div class="line"><a name="l00677"></a><span class="lineno">  677</span>&#160;        <span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</div>
-<div class="line"><a name="l00678"></a><span class="lineno">  678</span>&#160;        <span class="keyword">typename</span> T::context&amp; get_context(<span class="keyword">const</span> request&amp; req)</div>
-<div class="line"><a name="l00679"></a><span class="lineno">  679</span>&#160;        {</div>
-<div class="line"><a name="l00680"></a><span class="lineno">  680</span>&#160;            static_assert(black_magic::contains&lt;T, Middlewares...&gt;::value, <span class="stringliteral">&quot;App doesn&#39;t have the specified middleware type.&quot;</span>);</div>
-<div class="line"><a name="l00681"></a><span class="lineno">  681</span>&#160;            <span class="keyword">auto</span>&amp; ctx = *<span class="keyword">reinterpret_cast&lt;</span>context_t*<span class="keyword">&gt;</span>(req.middleware_context);</div>
-<div class="line"><a name="l00682"></a><span class="lineno">  682</span>&#160;            <span class="keywordflow">return</span> ctx.template get&lt;T&gt;();</div>
-<div class="line"><a name="l00683"></a><span class="lineno">  683</span>&#160;        }</div>
-<div class="line"><a name="l00684"></a><span class="lineno">  684</span>&#160; </div>
-<div class="line"><a name="l00685"></a><span class="lineno">  685</span>&#160;        <span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</div>
-<div class="line"><a name="l00686"></a><span class="lineno">  686</span>&#160;        T&amp; get_middleware()</div>
-<div class="line"><a name="l00687"></a><span class="lineno">  687</span>&#160;        {</div>
-<div class="line"><a name="l00688"></a><span class="lineno">  688</span>&#160;            <span class="keywordflow">return</span> utility::get_element_by_type&lt;T, Middlewares...&gt;(middlewares_);</div>
-<div class="line"><a name="l00689"></a><span class="lineno">  689</span>&#160;        }</div>
-<div class="line"><a name="l00690"></a><span class="lineno">  690</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00691"></a><span class="lineno">  691</span>&#160;<span class="comment">        /// \brief Wait until the server has properly started</span></div>
-<div class="line"><a name="l00692"></a><span class="lineno"><a class="line" href="classcrow_1_1_crow.html#a5e39821ccc9cbf8c6400fd86fc406c21">  692</a></span>&#160;<span class="comment"></span>        <span class="keywordtype">void</span> <a class="code" href="classcrow_1_1_crow.html#a5e39821ccc9cbf8c6400fd86fc406c21">wait_for_server_start</a>()</div>
-<div class="line"><a name="l00693"></a><span class="lineno">  693</span>&#160;        {</div>
-<div class="line"><a name="l00694"></a><span class="lineno">  694</span>&#160;            {</div>
-<div class="line"><a name="l00695"></a><span class="lineno">  695</span>&#160;                std::unique_lock&lt;std::mutex&gt; lock(start_mutex_);</div>
-<div class="line"><a name="l00696"></a><span class="lineno">  696</span>&#160;                <span class="keywordflow">while</span> (!server_started_)</div>
-<div class="line"><a name="l00697"></a><span class="lineno">  697</span>&#160;                    cv_started_.wait(lock);</div>
-<div class="line"><a name="l00698"></a><span class="lineno">  698</span>&#160;            }</div>
-<div class="line"><a name="l00699"></a><span class="lineno">  699</span>&#160;            <span class="keywordflow">if</span> (server_)</div>
-<div class="line"><a name="l00700"></a><span class="lineno">  700</span>&#160;                server_-&gt;wait_for_start();</div>
-<div class="line"><a name="l00701"></a><span class="lineno">  701</span>&#160;<span class="preprocessor">#ifdef CROW_ENABLE_SSL</span></div>
-<div class="line"><a name="l00702"></a><span class="lineno">  702</span>&#160;            <span class="keywordflow">else</span> <span class="keywordflow">if</span> (ssl_server_)</div>
-<div class="line"><a name="l00703"></a><span class="lineno">  703</span>&#160;                ssl_server_-&gt;wait_for_start();</div>
-<div class="line"><a name="l00704"></a><span class="lineno">  704</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00705"></a><span class="lineno">  705</span>&#160;        }</div>
-<div class="line"><a name="l00706"></a><span class="lineno">  706</span>&#160; </div>
-<div class="line"><a name="l00707"></a><span class="lineno">  707</span>&#160;    <span class="keyword">private</span>:</div>
-<div class="line"><a name="l00708"></a><span class="lineno">  708</span>&#160;        <span class="keyword">template</span>&lt;<span class="keyword">typename</span>... Ts&gt;</div>
-<div class="line"><a name="l00709"></a><span class="lineno">  709</span>&#160;        std::tuple&lt;Middlewares...&gt; make_middleware_tuple(Ts&amp;&amp;... ts)</div>
-<div class="line"><a name="l00710"></a><span class="lineno">  710</span>&#160;        {</div>
-<div class="line"><a name="l00711"></a><span class="lineno">  711</span>&#160;            <span class="keyword">auto</span> fwd = std::forward_as_tuple((ts)...);</div>
-<div class="line"><a name="l00712"></a><span class="lineno">  712</span>&#160;            <span class="keywordflow">return</span> std::make_tuple(</div>
-<div class="line"><a name="l00713"></a><span class="lineno">  713</span>&#160;              std::forward&lt;Middlewares&gt;(</div>
-<div class="line"><a name="l00714"></a><span class="lineno">  714</span>&#160;                black_magic::tuple_extract&lt;Middlewares, decltype(fwd)&gt;(fwd))...);</div>
-<div class="line"><a name="l00715"></a><span class="lineno">  715</span>&#160;        }</div>
-<div class="line"><a name="l00716"></a><span class="lineno">  716</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00717"></a><span class="lineno">  717</span>&#160;<span class="comment">        /// \brief Notify anything using \ref wait_for_server_start() to proceed</span></div>
-<div class="line"><a name="l00718"></a><span class="lineno">  718</span>&#160;<span class="comment"></span>        <span class="keywordtype">void</span> notify_server_start()</div>
-<div class="line"><a name="l00719"></a><span class="lineno">  719</span>&#160;        {</div>
-<div class="line"><a name="l00720"></a><span class="lineno">  720</span>&#160;            std::unique_lock&lt;std::mutex&gt; lock(start_mutex_);</div>
-<div class="line"><a name="l00721"></a><span class="lineno">  721</span>&#160;            server_started_ = <span class="keyword">true</span>;</div>
-<div class="line"><a name="l00722"></a><span class="lineno">  722</span>&#160;            cv_started_.notify_all();</div>
-<div class="line"><a name="l00723"></a><span class="lineno">  723</span>&#160;        }</div>
-<div class="line"><a name="l00724"></a><span class="lineno">  724</span>&#160; </div>
-<div class="line"><a name="l00725"></a><span class="lineno">  725</span>&#160;        <span class="keywordtype">void</span> set_static_routes_added() {</div>
-<div class="line"><a name="l00726"></a><span class="lineno">  726</span>&#160;            static_routes_added_ = <span class="keyword">true</span>;</div>
-<div class="line"><a name="l00727"></a><span class="lineno">  727</span>&#160;        }</div>
-<div class="line"><a name="l00728"></a><span class="lineno">  728</span>&#160; </div>
-<div class="line"><a name="l00729"></a><span class="lineno">  729</span>&#160;        <span class="keywordtype">bool</span> are_static_routes_added() {</div>
-<div class="line"><a name="l00730"></a><span class="lineno">  730</span>&#160;            <span class="keywordflow">return</span> static_routes_added_;</div>
-<div class="line"><a name="l00731"></a><span class="lineno">  731</span>&#160;        }</div>
-<div class="line"><a name="l00732"></a><span class="lineno">  732</span>&#160; </div>
-<div class="line"><a name="l00733"></a><span class="lineno">  733</span>&#160;    <span class="keyword">private</span>:</div>
-<div class="line"><a name="l00734"></a><span class="lineno">  734</span>&#160;        std::uint8_t timeout_{5};</div>
-<div class="line"><a name="l00735"></a><span class="lineno">  735</span>&#160;        uint16_t port_ = 80;</div>
-<div class="line"><a name="l00736"></a><span class="lineno">  736</span>&#160;        uint16_t concurrency_ = 2;</div>
-<div class="line"><a name="l00737"></a><span class="lineno">  737</span>&#160;        uint64_t max_payload_{UINT64_MAX};</div>
-<div class="line"><a name="l00738"></a><span class="lineno">  738</span>&#160;        std::string server_name_ = std::string(<span class="stringliteral">&quot;Crow/&quot;</span>) + VERSION;</div>
-<div class="line"><a name="l00739"></a><span class="lineno">  739</span>&#160;        std::string bindaddr_ = <span class="stringliteral">&quot;0.0.0.0&quot;</span>;</div>
-<div class="line"><a name="l00740"></a><span class="lineno">  740</span>&#160;        <span class="keywordtype">size_t</span> res_stream_threshold_ = 1048576;</div>
-<div class="line"><a name="l00741"></a><span class="lineno">  741</span>&#160;        Router router_;</div>
-<div class="line"><a name="l00742"></a><span class="lineno">  742</span>&#160;        <span class="keywordtype">bool</span> static_routes_added_{<span class="keyword">false</span>};</div>
-<div class="line"><a name="l00743"></a><span class="lineno">  743</span>&#160; </div>
-<div class="line"><a name="l00744"></a><span class="lineno">  744</span>&#160;<span class="preprocessor">#ifdef CROW_ENABLE_COMPRESSION</span></div>
-<div class="line"><a name="l00745"></a><span class="lineno">  745</span>&#160;        compression::algorithm comp_algorithm_;</div>
-<div class="line"><a name="l00746"></a><span class="lineno">  746</span>&#160;        <span class="keywordtype">bool</span> compression_used_{<span class="keyword">false</span>};</div>
-<div class="line"><a name="l00747"></a><span class="lineno">  747</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00748"></a><span class="lineno">  748</span>&#160; </div>
-<div class="line"><a name="l00749"></a><span class="lineno">  749</span>&#160;        std::chrono::milliseconds tick_interval_;</div>
-<div class="line"><a name="l00750"></a><span class="lineno">  750</span>&#160;        std::function&lt;void()&gt; tick_function_;</div>
-<div class="line"><a name="l00751"></a><span class="lineno">  751</span>&#160; </div>
-<div class="line"><a name="l00752"></a><span class="lineno">  752</span>&#160;        std::tuple&lt;Middlewares...&gt; middlewares_;</div>
-<div class="line"><a name="l00753"></a><span class="lineno">  753</span>&#160; </div>
-<div class="line"><a name="l00754"></a><span class="lineno">  754</span>&#160;<span class="preprocessor">#ifdef CROW_ENABLE_SSL</span></div>
-<div class="line"><a name="l00755"></a><span class="lineno">  755</span>&#160;        std::unique_ptr&lt;ssl_server_t&gt; ssl_server_;</div>
-<div class="line"><a name="l00756"></a><span class="lineno">  756</span>&#160;        <span class="keywordtype">bool</span> ssl_used_{<span class="keyword">false</span>};</div>
-<div class="line"><a name="l00757"></a><span class="lineno">  757</span>&#160;        ssl_context_t ssl_context_{asio::ssl::context::sslv23};</div>
-<div class="line"><a name="l00758"></a><span class="lineno">  758</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00759"></a><span class="lineno">  759</span>&#160; </div>
-<div class="line"><a name="l00760"></a><span class="lineno">  760</span>&#160;        std::unique_ptr&lt;server_t&gt; server_;</div>
+<div class="line"><a name="l00635"></a><span class="lineno">  635</span>&#160;        <a class="code" href="classcrow_1_1_crow.html#a5b0a203a6f9070ea8010227dcdbcec60">self_t</a>&amp; ssl(asio::ssl::context&amp;&amp; ctx)</div>
+<div class="line"><a name="l00636"></a><span class="lineno">  636</span>&#160;        {</div>
+<div class="line"><a name="l00637"></a><span class="lineno">  637</span>&#160;            ssl_used_ = <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00638"></a><span class="lineno">  638</span>&#160;            ssl_context_ = std::move(ctx);</div>
+<div class="line"><a name="l00639"></a><span class="lineno">  639</span>&#160;            <span class="keywordflow">return</span> *<span class="keyword">this</span>;</div>
+<div class="line"><a name="l00640"></a><span class="lineno">  640</span>&#160;        }</div>
+<div class="line"><a name="l00641"></a><span class="lineno">  641</span>&#160; </div>
+<div class="line"><a name="l00642"></a><span class="lineno">  642</span>&#160;        <span class="keywordtype">bool</span> ssl_used()<span class="keyword"> const</span></div>
+<div class="line"><a name="l00643"></a><span class="lineno">  643</span>&#160;<span class="keyword">        </span>{</div>
+<div class="line"><a name="l00644"></a><span class="lineno">  644</span>&#160;            <span class="keywordflow">return</span> ssl_used_;</div>
+<div class="line"><a name="l00645"></a><span class="lineno">  645</span>&#160;        }</div>
+<div class="line"><a name="l00646"></a><span class="lineno">  646</span>&#160;<span class="preprocessor">#else</span></div>
+<div class="line"><a name="l00647"></a><span class="lineno">  647</span>&#160; </div>
+<div class="line"><a name="l00648"></a><span class="lineno">  648</span>&#160;        <span class="keyword">template</span>&lt;<span class="keyword">typename</span> T, <span class="keyword">typename</span>... Remain&gt;</div>
+<div class="line"><a name="l00649"></a><span class="lineno">  649</span>&#160;        <a class="code" href="classcrow_1_1_crow.html#a5b0a203a6f9070ea8010227dcdbcec60">self_t</a>&amp; <a class="code" href="classcrow_1_1_crow.html#a987e909347f0563f7b3dd97bbe271cea">ssl_file</a>(T&amp;&amp;, Remain&amp;&amp;...)</div>
+<div class="line"><a name="l00650"></a><span class="lineno">  650</span>&#160;        {</div>
+<div class="line"><a name="l00651"></a><span class="lineno">  651</span>&#160;            <span class="comment">// We can&#39;t call .ssl() member function unless CROW_ENABLE_SSL is defined.</span></div>
+<div class="line"><a name="l00652"></a><span class="lineno">  652</span>&#160;            static_assert(</div>
+<div class="line"><a name="l00653"></a><span class="lineno">  653</span>&#160;              <span class="comment">// make static_assert dependent to T; always false</span></div>
+<div class="line"><a name="l00654"></a><span class="lineno">  654</span>&#160;              std::is_base_of&lt;T, void&gt;::value,</div>
+<div class="line"><a name="l00655"></a><span class="lineno">  655</span>&#160;              <span class="stringliteral">&quot;Define CROW_ENABLE_SSL to enable ssl support.&quot;</span>);</div>
+<div class="line"><a name="l00656"></a><span class="lineno">  656</span>&#160;            <span class="keywordflow">return</span> *<span class="keyword">this</span>;</div>
+<div class="line"><a name="l00657"></a><span class="lineno">  657</span>&#160;        }</div>
+<div class="line"><a name="l00658"></a><span class="lineno">  658</span>&#160; </div>
+<div class="line"><a name="l00659"></a><span class="lineno">  659</span>&#160;        <span class="keyword">template</span>&lt;<span class="keyword">typename</span> T, <span class="keyword">typename</span>... Remain&gt;</div>
+<div class="line"><a name="l00660"></a><span class="lineno">  660</span>&#160;        <a class="code" href="classcrow_1_1_crow.html#a5b0a203a6f9070ea8010227dcdbcec60">self_t</a>&amp; <a class="code" href="classcrow_1_1_crow.html#ade6bf7e56805c1112532807581293448">ssl_chainfile</a>(T&amp;&amp;, Remain&amp;&amp;...)</div>
+<div class="line"><a name="l00661"></a><span class="lineno">  661</span>&#160;        {</div>
+<div class="line"><a name="l00662"></a><span class="lineno">  662</span>&#160;            <span class="comment">// We can&#39;t call .ssl() member function unless CROW_ENABLE_SSL is defined.</span></div>
+<div class="line"><a name="l00663"></a><span class="lineno">  663</span>&#160;            static_assert(</div>
+<div class="line"><a name="l00664"></a><span class="lineno">  664</span>&#160;              <span class="comment">// make static_assert dependent to T; always false</span></div>
+<div class="line"><a name="l00665"></a><span class="lineno">  665</span>&#160;              std::is_base_of&lt;T, void&gt;::value,</div>
+<div class="line"><a name="l00666"></a><span class="lineno">  666</span>&#160;              <span class="stringliteral">&quot;Define CROW_ENABLE_SSL to enable ssl support.&quot;</span>);</div>
+<div class="line"><a name="l00667"></a><span class="lineno">  667</span>&#160;            <span class="keywordflow">return</span> *<span class="keyword">this</span>;</div>
+<div class="line"><a name="l00668"></a><span class="lineno">  668</span>&#160;        }</div>
+<div class="line"><a name="l00669"></a><span class="lineno">  669</span>&#160; </div>
+<div class="line"><a name="l00670"></a><span class="lineno">  670</span>&#160;        <span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</div>
+<div class="line"><a name="l00671"></a><span class="lineno">  671</span>&#160;        <a class="code" href="classcrow_1_1_crow.html#a5b0a203a6f9070ea8010227dcdbcec60">self_t</a>&amp; ssl(T&amp;&amp;)</div>
+<div class="line"><a name="l00672"></a><span class="lineno">  672</span>&#160;        {</div>
+<div class="line"><a name="l00673"></a><span class="lineno">  673</span>&#160;            <span class="comment">// We can&#39;t call .ssl() member function unless CROW_ENABLE_SSL is defined.</span></div>
+<div class="line"><a name="l00674"></a><span class="lineno">  674</span>&#160;            static_assert(</div>
+<div class="line"><a name="l00675"></a><span class="lineno">  675</span>&#160;              <span class="comment">// make static_assert dependent to T; always false</span></div>
+<div class="line"><a name="l00676"></a><span class="lineno">  676</span>&#160;              std::is_base_of&lt;T, void&gt;::value,</div>
+<div class="line"><a name="l00677"></a><span class="lineno">  677</span>&#160;              <span class="stringliteral">&quot;Define CROW_ENABLE_SSL to enable ssl support.&quot;</span>);</div>
+<div class="line"><a name="l00678"></a><span class="lineno">  678</span>&#160;            <span class="keywordflow">return</span> *<span class="keyword">this</span>;</div>
+<div class="line"><a name="l00679"></a><span class="lineno">  679</span>&#160;        }</div>
+<div class="line"><a name="l00680"></a><span class="lineno">  680</span>&#160; </div>
+<div class="line"><a name="l00681"></a><span class="lineno">  681</span>&#160;        <span class="keywordtype">bool</span> ssl_used()<span class="keyword"> const</span></div>
+<div class="line"><a name="l00682"></a><span class="lineno">  682</span>&#160;<span class="keyword">        </span>{</div>
+<div class="line"><a name="l00683"></a><span class="lineno">  683</span>&#160;            <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00684"></a><span class="lineno">  684</span>&#160;        }</div>
+<div class="line"><a name="l00685"></a><span class="lineno">  685</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00686"></a><span class="lineno">  686</span>&#160; </div>
+<div class="line"><a name="l00687"></a><span class="lineno">  687</span>&#160;        <span class="comment">// middleware</span></div>
+<div class="line"><a name="l00688"></a><span class="lineno">  688</span>&#160;        <span class="keyword">using</span> context_t = detail::context&lt;Middlewares...&gt;;</div>
+<div class="line"><a name="l00689"></a><span class="lineno">  689</span>&#160;        <span class="keyword">using</span> mw_container_t = std::tuple&lt;Middlewares...&gt;;</div>
+<div class="line"><a name="l00690"></a><span class="lineno">  690</span>&#160;        <span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</div>
+<div class="line"><a name="l00691"></a><span class="lineno">  691</span>&#160;        <span class="keyword">typename</span> T::context&amp; get_context(<span class="keyword">const</span> request&amp; req)</div>
+<div class="line"><a name="l00692"></a><span class="lineno">  692</span>&#160;        {</div>
+<div class="line"><a name="l00693"></a><span class="lineno">  693</span>&#160;            static_assert(black_magic::contains&lt;T, Middlewares...&gt;::value, <span class="stringliteral">&quot;App doesn&#39;t have the specified middleware type.&quot;</span>);</div>
+<div class="line"><a name="l00694"></a><span class="lineno">  694</span>&#160;            <span class="keyword">auto</span>&amp; ctx = *<span class="keyword">reinterpret_cast&lt;</span>context_t*<span class="keyword">&gt;</span>(req.middleware_context);</div>
+<div class="line"><a name="l00695"></a><span class="lineno">  695</span>&#160;            <span class="keywordflow">return</span> ctx.template get&lt;T&gt;();</div>
+<div class="line"><a name="l00696"></a><span class="lineno">  696</span>&#160;        }</div>
+<div class="line"><a name="l00697"></a><span class="lineno">  697</span>&#160; </div>
+<div class="line"><a name="l00698"></a><span class="lineno">  698</span>&#160;        <span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</div>
+<div class="line"><a name="l00699"></a><span class="lineno">  699</span>&#160;        T&amp; get_middleware()</div>
+<div class="line"><a name="l00700"></a><span class="lineno">  700</span>&#160;        {</div>
+<div class="line"><a name="l00701"></a><span class="lineno">  701</span>&#160;            <span class="keywordflow">return</span> utility::get_element_by_type&lt;T, Middlewares...&gt;(middlewares_);</div>
+<div class="line"><a name="l00702"></a><span class="lineno">  702</span>&#160;        }</div>
+<div class="line"><a name="l00703"></a><span class="lineno">  703</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00704"></a><span class="lineno">  704</span>&#160;<span class="comment">        /// \brief Wait until the server has properly started</span></div>
+<div class="line"><a name="l00705"></a><span class="lineno"><a class="line" href="classcrow_1_1_crow.html#a5e39821ccc9cbf8c6400fd86fc406c21">  705</a></span>&#160;<span class="comment"></span>        <span class="keywordtype">void</span> <a class="code" href="classcrow_1_1_crow.html#a5e39821ccc9cbf8c6400fd86fc406c21">wait_for_server_start</a>()</div>
+<div class="line"><a name="l00706"></a><span class="lineno">  706</span>&#160;        {</div>
+<div class="line"><a name="l00707"></a><span class="lineno">  707</span>&#160;            {</div>
+<div class="line"><a name="l00708"></a><span class="lineno">  708</span>&#160;                std::unique_lock&lt;std::mutex&gt; lock(start_mutex_);</div>
+<div class="line"><a name="l00709"></a><span class="lineno">  709</span>&#160;                <span class="keywordflow">while</span> (!server_started_)</div>
+<div class="line"><a name="l00710"></a><span class="lineno">  710</span>&#160;                    cv_started_.wait(lock);</div>
+<div class="line"><a name="l00711"></a><span class="lineno">  711</span>&#160;            }</div>
+<div class="line"><a name="l00712"></a><span class="lineno">  712</span>&#160;            <span class="keywordflow">if</span> (server_)</div>
+<div class="line"><a name="l00713"></a><span class="lineno">  713</span>&#160;                server_-&gt;wait_for_start();</div>
+<div class="line"><a name="l00714"></a><span class="lineno">  714</span>&#160;<span class="preprocessor">#ifdef CROW_ENABLE_SSL</span></div>
+<div class="line"><a name="l00715"></a><span class="lineno">  715</span>&#160;            <span class="keywordflow">else</span> <span class="keywordflow">if</span> (ssl_server_)</div>
+<div class="line"><a name="l00716"></a><span class="lineno">  716</span>&#160;                ssl_server_-&gt;wait_for_start();</div>
+<div class="line"><a name="l00717"></a><span class="lineno">  717</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00718"></a><span class="lineno">  718</span>&#160;        }</div>
+<div class="line"><a name="l00719"></a><span class="lineno">  719</span>&#160; </div>
+<div class="line"><a name="l00720"></a><span class="lineno">  720</span>&#160;    <span class="keyword">private</span>:</div>
+<div class="line"><a name="l00721"></a><span class="lineno">  721</span>&#160;        <span class="keyword">template</span>&lt;<span class="keyword">typename</span>... Ts&gt;</div>
+<div class="line"><a name="l00722"></a><span class="lineno">  722</span>&#160;        std::tuple&lt;Middlewares...&gt; make_middleware_tuple(Ts&amp;&amp;... ts)</div>
+<div class="line"><a name="l00723"></a><span class="lineno">  723</span>&#160;        {</div>
+<div class="line"><a name="l00724"></a><span class="lineno">  724</span>&#160;            <span class="keyword">auto</span> fwd = std::forward_as_tuple((ts)...);</div>
+<div class="line"><a name="l00725"></a><span class="lineno">  725</span>&#160;            <span class="keywordflow">return</span> std::make_tuple(</div>
+<div class="line"><a name="l00726"></a><span class="lineno">  726</span>&#160;              std::forward&lt;Middlewares&gt;(</div>
+<div class="line"><a name="l00727"></a><span class="lineno">  727</span>&#160;                black_magic::tuple_extract&lt;Middlewares, decltype(fwd)&gt;(fwd))...);</div>
+<div class="line"><a name="l00728"></a><span class="lineno">  728</span>&#160;        }</div>
+<div class="line"><a name="l00729"></a><span class="lineno">  729</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00730"></a><span class="lineno">  730</span>&#160;<span class="comment">        /// \brief Notify anything using \ref wait_for_server_start() to proceed</span></div>
+<div class="line"><a name="l00731"></a><span class="lineno">  731</span>&#160;<span class="comment"></span>        <span class="keywordtype">void</span> notify_server_start()</div>
+<div class="line"><a name="l00732"></a><span class="lineno">  732</span>&#160;        {</div>
+<div class="line"><a name="l00733"></a><span class="lineno">  733</span>&#160;            std::unique_lock&lt;std::mutex&gt; lock(start_mutex_);</div>
+<div class="line"><a name="l00734"></a><span class="lineno">  734</span>&#160;            server_started_ = <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00735"></a><span class="lineno">  735</span>&#160;            cv_started_.notify_all();</div>
+<div class="line"><a name="l00736"></a><span class="lineno">  736</span>&#160;        }</div>
+<div class="line"><a name="l00737"></a><span class="lineno">  737</span>&#160; </div>
+<div class="line"><a name="l00738"></a><span class="lineno">  738</span>&#160;        <span class="keywordtype">void</span> set_static_routes_added() {</div>
+<div class="line"><a name="l00739"></a><span class="lineno">  739</span>&#160;            static_routes_added_ = <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00740"></a><span class="lineno">  740</span>&#160;        }</div>
+<div class="line"><a name="l00741"></a><span class="lineno">  741</span>&#160; </div>
+<div class="line"><a name="l00742"></a><span class="lineno">  742</span>&#160;        <span class="keywordtype">bool</span> are_static_routes_added() {</div>
+<div class="line"><a name="l00743"></a><span class="lineno">  743</span>&#160;            <span class="keywordflow">return</span> static_routes_added_;</div>
+<div class="line"><a name="l00744"></a><span class="lineno">  744</span>&#160;        }</div>
+<div class="line"><a name="l00745"></a><span class="lineno">  745</span>&#160; </div>
+<div class="line"><a name="l00746"></a><span class="lineno">  746</span>&#160;    <span class="keyword">private</span>:</div>
+<div class="line"><a name="l00747"></a><span class="lineno">  747</span>&#160;        std::uint8_t timeout_{5};</div>
+<div class="line"><a name="l00748"></a><span class="lineno">  748</span>&#160;        uint16_t port_ = 80;</div>
+<div class="line"><a name="l00749"></a><span class="lineno">  749</span>&#160;        uint16_t concurrency_ = 2;</div>
+<div class="line"><a name="l00750"></a><span class="lineno">  750</span>&#160;        uint64_t max_payload_{UINT64_MAX};</div>
+<div class="line"><a name="l00751"></a><span class="lineno">  751</span>&#160;        std::string server_name_ = std::string(<span class="stringliteral">&quot;Crow/&quot;</span>) + VERSION;</div>
+<div class="line"><a name="l00752"></a><span class="lineno">  752</span>&#160;        std::string bindaddr_ = <span class="stringliteral">&quot;0.0.0.0&quot;</span>;</div>
+<div class="line"><a name="l00753"></a><span class="lineno">  753</span>&#160;        <span class="keywordtype">size_t</span> res_stream_threshold_ = 1048576;</div>
+<div class="line"><a name="l00754"></a><span class="lineno">  754</span>&#160;        Router router_;</div>
+<div class="line"><a name="l00755"></a><span class="lineno">  755</span>&#160;        <span class="keywordtype">bool</span> static_routes_added_{<span class="keyword">false</span>};</div>
+<div class="line"><a name="l00756"></a><span class="lineno">  756</span>&#160; </div>
+<div class="line"><a name="l00757"></a><span class="lineno">  757</span>&#160;<span class="preprocessor">#ifdef CROW_ENABLE_COMPRESSION</span></div>
+<div class="line"><a name="l00758"></a><span class="lineno">  758</span>&#160;        compression::algorithm comp_algorithm_;</div>
+<div class="line"><a name="l00759"></a><span class="lineno">  759</span>&#160;        <span class="keywordtype">bool</span> compression_used_{<span class="keyword">false</span>};</div>
+<div class="line"><a name="l00760"></a><span class="lineno">  760</span>&#160;<span class="preprocessor">#endif</span></div>
 <div class="line"><a name="l00761"></a><span class="lineno">  761</span>&#160; </div>
-<div class="line"><a name="l00762"></a><span class="lineno">  762</span>&#160;        std::vector&lt;int&gt; signals_{SIGINT, SIGTERM};</div>
-<div class="line"><a name="l00763"></a><span class="lineno">  763</span>&#160; </div>
-<div class="line"><a name="l00764"></a><span class="lineno">  764</span>&#160;        <span class="keywordtype">bool</span> server_started_{<span class="keyword">false</span>};</div>
-<div class="line"><a name="l00765"></a><span class="lineno">  765</span>&#160;        std::condition_variable cv_started_;</div>
-<div class="line"><a name="l00766"></a><span class="lineno">  766</span>&#160;        std::mutex start_mutex_;</div>
-<div class="line"><a name="l00767"></a><span class="lineno">  767</span>&#160;        std::vector&lt;crow::websocket::connection*&gt; websockets_;</div>
-<div class="line"><a name="l00768"></a><span class="lineno">  768</span>&#160;    };</div>
-<div class="line"><a name="l00769"></a><span class="lineno">  769</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00770"></a><span class="lineno">  770</span>&#160;<span class="comment">    /// \brief Alias of Crow&lt;Middlewares...&gt;. Useful if you want</span></div>
-<div class="line"><a name="l00771"></a><span class="lineno">  771</span>&#160;<span class="comment">    /// a instance of an Crow application that require Middlewares</span></div>
-<div class="line"><a name="l00772"></a><span class="lineno">  772</span>&#160;<span class="comment"></span>    <span class="keyword">template</span>&lt;<span class="keyword">typename</span>... Middlewares&gt;</div>
-<div class="line"><a name="l00773"></a><span class="lineno"><a class="line" href="namespacecrow.html#a153c1bf24903d1a8629ef6eaf045110b">  773</a></span>&#160;    <span class="keyword">using</span> <a class="code" href="classcrow_1_1_crow.html">App</a> = <a class="code" href="classcrow_1_1_crow.html">Crow</a>&lt;Middlewares...&gt;;</div>
-<div class="line"><a name="l00774"></a><span class="lineno">  774</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00775"></a><span class="lineno">  775</span>&#160;<span class="comment">    /// \brief Alias of Crow&lt;&gt;. Useful if you want a instance of</span></div>
-<div class="line"><a name="l00776"></a><span class="lineno">  776</span>&#160;<span class="comment">    /// an Crow application that doesn&#39;t require of Middlewares</span></div>
-<div class="line"><a name="l00777"></a><span class="lineno"><a class="line" href="namespacecrow.html#a3603179c9794548cac2c9990685178b4">  777</a></span>&#160;<span class="comment"></span>    <span class="keyword">using</span> <a class="code" href="classcrow_1_1_crow.html">SimpleApp</a> = <a class="code" href="classcrow_1_1_crow.html">Crow&lt;&gt;</a>;</div>
-<div class="line"><a name="l00778"></a><span class="lineno">  778</span>&#160;} <span class="comment">// namespace crow</span></div>
+<div class="line"><a name="l00762"></a><span class="lineno">  762</span>&#160;        std::chrono::milliseconds tick_interval_;</div>
+<div class="line"><a name="l00763"></a><span class="lineno">  763</span>&#160;        std::function&lt;void()&gt; tick_function_;</div>
+<div class="line"><a name="l00764"></a><span class="lineno">  764</span>&#160; </div>
+<div class="line"><a name="l00765"></a><span class="lineno">  765</span>&#160;        std::tuple&lt;Middlewares...&gt; middlewares_;</div>
+<div class="line"><a name="l00766"></a><span class="lineno">  766</span>&#160; </div>
+<div class="line"><a name="l00767"></a><span class="lineno">  767</span>&#160;<span class="preprocessor">#ifdef CROW_ENABLE_SSL</span></div>
+<div class="line"><a name="l00768"></a><span class="lineno">  768</span>&#160;        std::unique_ptr&lt;ssl_server_t&gt; ssl_server_;</div>
+<div class="line"><a name="l00769"></a><span class="lineno">  769</span>&#160;        <span class="keywordtype">bool</span> ssl_used_{<span class="keyword">false</span>};</div>
+<div class="line"><a name="l00770"></a><span class="lineno">  770</span>&#160;        ssl_context_t ssl_context_{asio::ssl::context::sslv23};</div>
+<div class="line"><a name="l00771"></a><span class="lineno">  771</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00772"></a><span class="lineno">  772</span>&#160; </div>
+<div class="line"><a name="l00773"></a><span class="lineno">  773</span>&#160;        std::unique_ptr&lt;server_t&gt; server_;</div>
+<div class="line"><a name="l00774"></a><span class="lineno">  774</span>&#160; </div>
+<div class="line"><a name="l00775"></a><span class="lineno">  775</span>&#160;        std::vector&lt;int&gt; signals_{SIGINT, SIGTERM};</div>
+<div class="line"><a name="l00776"></a><span class="lineno">  776</span>&#160; </div>
+<div class="line"><a name="l00777"></a><span class="lineno">  777</span>&#160;        <span class="keywordtype">bool</span> server_started_{<span class="keyword">false</span>};</div>
+<div class="line"><a name="l00778"></a><span class="lineno">  778</span>&#160;        std::condition_variable cv_started_;</div>
+<div class="line"><a name="l00779"></a><span class="lineno">  779</span>&#160;        std::mutex start_mutex_;</div>
+<div class="line"><a name="l00780"></a><span class="lineno">  780</span>&#160;        std::vector&lt;crow::websocket::connection*&gt; websockets_;</div>
+<div class="line"><a name="l00781"></a><span class="lineno">  781</span>&#160;    };</div>
+<div class="line"><a name="l00782"></a><span class="lineno">  782</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00783"></a><span class="lineno">  783</span>&#160;<span class="comment">    /// \brief Alias of Crow&lt;Middlewares...&gt;. Useful if you want</span></div>
+<div class="line"><a name="l00784"></a><span class="lineno">  784</span>&#160;<span class="comment">    /// a instance of an Crow application that require Middlewares</span></div>
+<div class="line"><a name="l00785"></a><span class="lineno">  785</span>&#160;<span class="comment"></span>    <span class="keyword">template</span>&lt;<span class="keyword">typename</span>... Middlewares&gt;</div>
+<div class="line"><a name="l00786"></a><span class="lineno"><a class="line" href="namespacecrow.html#a153c1bf24903d1a8629ef6eaf045110b">  786</a></span>&#160;    <span class="keyword">using</span> <a class="code" href="classcrow_1_1_crow.html">App</a> = <a class="code" href="classcrow_1_1_crow.html">Crow</a>&lt;Middlewares...&gt;;</div>
+<div class="line"><a name="l00787"></a><span class="lineno">  787</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00788"></a><span class="lineno">  788</span>&#160;<span class="comment">    /// \brief Alias of Crow&lt;&gt;. Useful if you want a instance of</span></div>
+<div class="line"><a name="l00789"></a><span class="lineno">  789</span>&#160;<span class="comment">    /// an Crow application that doesn&#39;t require of Middlewares</span></div>
+<div class="line"><a name="l00790"></a><span class="lineno"><a class="line" href="namespacecrow.html#a3603179c9794548cac2c9990685178b4">  790</a></span>&#160;<span class="comment"></span>    <span class="keyword">using</span> <a class="code" href="classcrow_1_1_crow.html">SimpleApp</a> = <a class="code" href="classcrow_1_1_crow.html">Crow&lt;&gt;</a>;</div>
+<div class="line"><a name="l00791"></a><span class="lineno">  791</span>&#160;} <span class="comment">// namespace crow</span></div>
 <div class="ttc" id="aclasscrow_1_1_blueprint_html"><div class="ttname"><a href="classcrow_1_1_blueprint.html">crow::Blueprint</a></div><div class="ttdoc">A blueprint can be considered a smaller section of a Crow app, specifically where the router is conce...</div><div class="ttdef"><b>Definition:</b> routing.h:1111</div></div>
 <div class="ttc" id="aclasscrow_1_1_catchall_rule_html"><div class="ttname"><a href="classcrow_1_1_catchall_rule.html">crow::CatchallRule</a></div><div class="ttdef"><b>Definition:</b> routing.h:342</div></div>
 <div class="ttc" id="aclasscrow_1_1_crow_html"><div class="ttname"><a href="classcrow_1_1_crow.html">crow::Crow</a></div><div class="ttdoc">The main server application class.</div><div class="ttdef"><b>Definition:</b> app.h:199</div></div>
-<div class="ttc" id="aclasscrow_1_1_crow_html_a0149b20b7f6c0123292286f54638d456"><div class="ttname"><a href="classcrow_1_1_crow.html#a0149b20b7f6c0123292286f54638d456">crow::Crow::multithreaded</a></div><div class="ttdeci">self_t &amp; multithreaded()</div><div class="ttdoc">Run the server on multiple threads using all available threads.</div><div class="ttdef"><b>Definition:</b> app.h:348</div></div>
-<div class="ttc" id="aclasscrow_1_1_crow_html_a0266672657128919ab9a067d93f3868f"><div class="ttname"><a href="classcrow_1_1_crow.html#a0266672657128919ab9a067d93f3868f">crow::Crow::stop</a></div><div class="ttdeci">void stop()</div><div class="ttdoc">Stop the server.</div><div class="ttdef"><b>Definition:</b> app.h:543</div></div>
-<div class="ttc" id="aclasscrow_1_1_crow_html_a068042431b0be5911ee1689a285f4693"><div class="ttname"><a href="classcrow_1_1_crow.html#a068042431b0be5911ee1689a285f4693">crow::Crow::tick</a></div><div class="ttdeci">self_t &amp; tick(Duration d, Func f)</div><div class="ttdoc">Set a custom duration and function to run on every tick.</div><div class="ttdef"><b>Definition:</b> app.h:423</div></div>
+<div class="ttc" id="aclasscrow_1_1_crow_html_a0149b20b7f6c0123292286f54638d456"><div class="ttname"><a href="classcrow_1_1_crow.html#a0149b20b7f6c0123292286f54638d456">crow::Crow::multithreaded</a></div><div class="ttdeci">self_t &amp; multithreaded()</div><div class="ttdoc">Run the server on multiple threads using all available threads.</div><div class="ttdef"><b>Definition:</b> app.h:361</div></div>
+<div class="ttc" id="aclasscrow_1_1_crow_html_a0266672657128919ab9a067d93f3868f"><div class="ttname"><a href="classcrow_1_1_crow.html#a0266672657128919ab9a067d93f3868f">crow::Crow::stop</a></div><div class="ttdeci">void stop()</div><div class="ttdoc">Stop the server.</div><div class="ttdef"><b>Definition:</b> app.h:556</div></div>
+<div class="ttc" id="aclasscrow_1_1_crow_html_a068042431b0be5911ee1689a285f4693"><div class="ttname"><a href="classcrow_1_1_crow.html#a068042431b0be5911ee1689a285f4693">crow::Crow::tick</a></div><div class="ttdeci">self_t &amp; tick(Duration d, Func f)</div><div class="ttdoc">Set a custom duration and function to run on every tick.</div><div class="ttdef"><b>Definition:</b> app.h:436</div></div>
 <div class="ttc" id="aclasscrow_1_1_crow_html_a0822a573ed653c3218f06c819a773ec2"><div class="ttname"><a href="classcrow_1_1_crow.html#a0822a573ed653c3218f06c819a773ec2">crow::Crow::route_dynamic</a></div><div class="ttdeci">DynamicRule &amp; route_dynamic(const std::string &amp;rule)</div><div class="ttdoc">Create a dynamic route using a rule (Use CROW_ROUTE instead)</div><div class="ttdef"><b>Definition:</b> app.h:250</div></div>
-<div class="ttc" id="aclasscrow_1_1_crow_html_a0a7b45c935e58d199eb1bcba86003232"><div class="ttname"><a href="classcrow_1_1_crow.html#a0a7b45c935e58d199eb1bcba86003232">crow::Crow::stream_threshold</a></div><div class="ttdeci">size_t &amp; stream_threshold()</div><div class="ttdoc">Get the response body size (in bytes) beyond which Crow automatically streams responses.</div><div class="ttdef"><b>Definition:</b> app.h:392</div></div>
-<div class="ttc" id="aclasscrow_1_1_crow_html_a193d8b03f717234a841cd92f72c6b4b5"><div class="ttname"><a href="classcrow_1_1_crow.html#a193d8b03f717234a841cd92f72c6b4b5">crow::Crow::run</a></div><div class="ttdeci">void run()</div><div class="ttdoc">Run the server.</div><div class="ttdef"><b>Definition:</b> app.h:496</div></div>
+<div class="ttc" id="aclasscrow_1_1_crow_html_a0a7b45c935e58d199eb1bcba86003232"><div class="ttname"><a href="classcrow_1_1_crow.html#a0a7b45c935e58d199eb1bcba86003232">crow::Crow::stream_threshold</a></div><div class="ttdeci">size_t &amp; stream_threshold()</div><div class="ttdoc">Get the response body size (in bytes) beyond which Crow automatically streams responses.</div><div class="ttdef"><b>Definition:</b> app.h:405</div></div>
+<div class="ttc" id="aclasscrow_1_1_crow_html_a193d8b03f717234a841cd92f72c6b4b5"><div class="ttname"><a href="classcrow_1_1_crow.html#a193d8b03f717234a841cd92f72c6b4b5">crow::Crow::run</a></div><div class="ttdeci">void run()</div><div class="ttdoc">Run the server.</div><div class="ttdef"><b>Definition:</b> app.h:509</div></div>
 <div class="ttc" id="aclasscrow_1_1_crow_html_a30d9cbcaa6aa3c3e44a8a3c4479fd7cf"><div class="ttname"><a href="classcrow_1_1_crow.html#a30d9cbcaa6aa3c3e44a8a3c4479fd7cf">crow::Crow::websocket_max_payload</a></div><div class="ttdeci">self_t &amp; websocket_max_payload(uint64_t max_payload)</div><div class="ttdoc">Set the default max payload size for websockets.</div><div class="ttdef"><b>Definition:</b> app.h:278</div></div>
 <div class="ttc" id="aclasscrow_1_1_crow_html_a365f9c95fc2bd8bb583967f499c1f4a1"><div class="ttname"><a href="classcrow_1_1_crow.html#a365f9c95fc2bd8bb583967f499c1f4a1">crow::Crow::port</a></div><div class="ttdeci">self_t &amp; port(std::uint16_t port)</div><div class="ttdoc">Set the port that Crow will handle requests on.</div><div class="ttdef"><b>Definition:</b> app.h:308</div></div>
 <div class="ttc" id="aclasscrow_1_1_crow_html_a391a488c01ce53c0ccfd502c7ad15640"><div class="ttname"><a href="classcrow_1_1_crow.html#a391a488c01ce53c0ccfd502c7ad15640">crow::Crow::websocket_max_payload</a></div><div class="ttdeci">uint64_t websocket_max_payload()</div><div class="ttdoc">Get the default max payload size for websockets.</div><div class="ttdef"><b>Definition:</b> app.h:285</div></div>
-<div class="ttc" id="aclasscrow_1_1_crow_html_a3cbe89120e47d2bd3d05376b9129adfa"><div class="ttname"><a href="classcrow_1_1_crow.html#a3cbe89120e47d2bd3d05376b9129adfa">crow::Crow::add_static_dir</a></div><div class="ttdeci">void add_static_dir()</div><div class="ttdoc">Go through the rules, upgrade them if possible, and add them to the list of rules.</div><div class="ttdef"><b>Definition:</b> app.h:476</div></div>
-<div class="ttc" id="aclasscrow_1_1_crow_html_a3e5aa337025914852fcbfd1aebbd3241"><div class="ttname"><a href="classcrow_1_1_crow.html#a3e5aa337025914852fcbfd1aebbd3241">crow::Crow::ssl_file</a></div><div class="ttdeci">self_t &amp; ssl_file(const std::string &amp;pem_filename)</div><div class="ttdoc">Use .pem file for SSL.</div><div class="ttdef"><b>Definition:</b> app.h:598</div></div>
-<div class="ttc" id="aclasscrow_1_1_crow_html_a41686e6025705c1ab379b5ec71bbf983"><div class="ttname"><a href="classcrow_1_1_crow.html#a41686e6025705c1ab379b5ec71bbf983">crow::Crow::concurrency</a></div><div class="ttdeci">self_t &amp; concurrency(std::uint16_t concurrency)</div><div class="ttdoc">Run the server on multiple threads using a specific number.</div><div class="ttdef"><b>Definition:</b> app.h:354</div></div>
-<div class="ttc" id="aclasscrow_1_1_crow_html_a47ed9a118820f6e6ba0b2bc37f0997fb"><div class="ttname"><a href="classcrow_1_1_crow.html#a47ed9a118820f6e6ba0b2bc37f0997fb">crow::Crow::timeout</a></div><div class="ttdeci">self_t &amp; timeout(std::uint8_t timeout)</div><div class="ttdoc">Set the connection timeout in seconds (default is 5)</div><div class="ttdef"><b>Definition:</b> app.h:321</div></div>
+<div class="ttc" id="aclasscrow_1_1_crow_html_a3cbe89120e47d2bd3d05376b9129adfa"><div class="ttname"><a href="classcrow_1_1_crow.html#a3cbe89120e47d2bd3d05376b9129adfa">crow::Crow::add_static_dir</a></div><div class="ttdeci">void add_static_dir()</div><div class="ttdoc">Go through the rules, upgrade them if possible, and add them to the list of rules.</div><div class="ttdef"><b>Definition:</b> app.h:489</div></div>
+<div class="ttc" id="aclasscrow_1_1_crow_html_a3e5aa337025914852fcbfd1aebbd3241"><div class="ttname"><a href="classcrow_1_1_crow.html#a3e5aa337025914852fcbfd1aebbd3241">crow::Crow::ssl_file</a></div><div class="ttdeci">self_t &amp; ssl_file(const std::string &amp;pem_filename)</div><div class="ttdoc">Use .pem file for SSL.</div><div class="ttdef"><b>Definition:</b> app.h:611</div></div>
+<div class="ttc" id="aclasscrow_1_1_crow_html_a41686e6025705c1ab379b5ec71bbf983"><div class="ttname"><a href="classcrow_1_1_crow.html#a41686e6025705c1ab379b5ec71bbf983">crow::Crow::concurrency</a></div><div class="ttdeci">self_t &amp; concurrency(std::uint16_t concurrency)</div><div class="ttdoc">Run the server on multiple threads using a specific number.</div><div class="ttdef"><b>Definition:</b> app.h:367</div></div>
+<div class="ttc" id="aclasscrow_1_1_crow_html_a47ed9a118820f6e6ba0b2bc37f0997fb"><div class="ttname"><a href="classcrow_1_1_crow.html#a47ed9a118820f6e6ba0b2bc37f0997fb">crow::Crow::timeout</a></div><div class="ttdeci">self_t &amp; timeout(std::uint8_t timeout)</div><div class="ttdoc">Set the connection timeout in seconds (default is 5)</div><div class="ttdef"><b>Definition:</b> app.h:334</div></div>
 <div class="ttc" id="aclasscrow_1_1_crow_html_a5b0a203a6f9070ea8010227dcdbcec60"><div class="ttname"><a href="classcrow_1_1_crow.html#a5b0a203a6f9070ea8010227dcdbcec60">crow::Crow::self_t</a></div><div class="ttdeci">Crow self_t</div><div class="ttdoc">This is the crow application.</div><div class="ttdef"><b>Definition:</b> app.h:202</div></div>
 <div class="ttc" id="aclasscrow_1_1_crow_html_a5df810d2619e31c2f024cc4e45898997"><div class="ttname"><a href="classcrow_1_1_crow.html#a5df810d2619e31c2f024cc4e45898997">crow::Crow::server_t</a></div><div class="ttdeci">Server&lt; Crow, SocketAdaptor, Middlewares... &gt; server_t</div><div class="ttdoc">The HTTP server.</div><div class="ttdef"><b>Definition:</b> app.h:205</div></div>
 <div class="ttc" id="aclasscrow_1_1_crow_html_a5e1e54d49ff3015fd08f545b574ab44f"><div class="ttname"><a href="classcrow_1_1_crow.html#a5e1e54d49ff3015fd08f545b574ab44f">crow::Crow::route</a></div><div class="ttdeci">auto route(const std::string &amp;rule) -&gt; typename std::result_of&lt; decltype(&amp;Router::new_rule_tagged&lt; Tag &gt;)(Router, const std::string &amp;)&gt;::type</div><div class="ttdoc">Create a route using a rule (Use CROW_ROUTE instead)</div><div class="ttdef"><b>Definition:</b> app.h:260</div></div>
-<div class="ttc" id="aclasscrow_1_1_crow_html_a5e39821ccc9cbf8c6400fd86fc406c21"><div class="ttname"><a href="classcrow_1_1_crow.html#a5e39821ccc9cbf8c6400fd86fc406c21">crow::Crow::wait_for_server_start</a></div><div class="ttdeci">void wait_for_server_start()</div><div class="ttdoc">Wait until the server has properly started.</div><div class="ttdef"><b>Definition:</b> app.h:692</div></div>
+<div class="ttc" id="aclasscrow_1_1_crow_html_a5e39821ccc9cbf8c6400fd86fc406c21"><div class="ttname"><a href="classcrow_1_1_crow.html#a5e39821ccc9cbf8c6400fd86fc406c21">crow::Crow::wait_for_server_start</a></div><div class="ttdeci">void wait_for_server_start()</div><div class="ttdoc">Wait until the server has properly started.</div><div class="ttdef"><b>Definition:</b> app.h:705</div></div>
 <div class="ttc" id="aclasscrow_1_1_crow_html_a6e435bf5275735effd32647772bdbd04"><div class="ttname"><a href="classcrow_1_1_crow.html#a6e435bf5275735effd32647772bdbd04">crow::Crow::handle_upgrade</a></div><div class="ttdeci">void handle_upgrade(const request &amp;req, response &amp;res, Adaptor &amp;&amp;adaptor)</div><div class="ttdoc">Process an Upgrade request.</div><div class="ttdef"><b>Definition:</b> app.h:224</div></div>
-<div class="ttc" id="aclasscrow_1_1_crow_html_a75777f82b6519c86d71446eb9285d774"><div class="ttname"><a href="classcrow_1_1_crow.html#a75777f82b6519c86d71446eb9285d774">crow::Crow::bindaddr</a></div><div class="ttdeci">self_t &amp; bindaddr(std::string bindaddr)</div><div class="ttdoc">The IP address that Crow will handle requests on (default is 0.0.0.0)</div><div class="ttdef"><b>Definition:</b> app.h:335</div></div>
+<div class="ttc" id="aclasscrow_1_1_crow_html_a75777f82b6519c86d71446eb9285d774"><div class="ttname"><a href="classcrow_1_1_crow.html#a75777f82b6519c86d71446eb9285d774">crow::Crow::bindaddr</a></div><div class="ttdeci">self_t &amp; bindaddr(std::string bindaddr)</div><div class="ttdoc">The IP address that Crow will handle requests on (default is 0.0.0.0)</div><div class="ttdef"><b>Definition:</b> app.h:348</div></div>
 <div class="ttc" id="aclasscrow_1_1_crow_html_a761ebd8c33ae35a3c61c7a160ad40789"><div class="ttname"><a href="classcrow_1_1_crow.html#a761ebd8c33ae35a3c61c7a160ad40789">crow::Crow::handle_initial</a></div><div class="ttdeci">std::unique_ptr&lt; routing_handle_result &gt; handle_initial(request &amp;req, response &amp;res)</div><div class="ttdoc">Process only the method and URL of a request and provide a route (or an error response)</div><div class="ttdef"><b>Definition:</b> app.h:230</div></div>
-<div class="ttc" id="aclasscrow_1_1_crow_html_a7b6c225d3bba772eeadad89ebde68d21"><div class="ttname"><a href="classcrow_1_1_crow.html#a7b6c225d3bba772eeadad89ebde68d21">crow::Crow::loglevel</a></div><div class="ttdeci">self_t &amp; loglevel(LogLevel level)</div><div class="ttdoc">Set the server's log level.</div><div class="ttdef"><b>Definition:</b> app.h:376</div></div>
-<div class="ttc" id="aclasscrow_1_1_crow_html_a839c1e6f82d577308eb6f0d4948a4fbb"><div class="ttname"><a href="classcrow_1_1_crow.html#a839c1e6f82d577308eb6f0d4948a4fbb">crow::Crow::debug_print</a></div><div class="ttdeci">void debug_print()</div><div class="ttdoc">Print the routing paths defined for each HTTP method.</div><div class="ttdef"><b>Definition:</b> app.h:575</div></div>
+<div class="ttc" id="aclasscrow_1_1_crow_html_a7b6c225d3bba772eeadad89ebde68d21"><div class="ttname"><a href="classcrow_1_1_crow.html#a7b6c225d3bba772eeadad89ebde68d21">crow::Crow::loglevel</a></div><div class="ttdeci">self_t &amp; loglevel(LogLevel level)</div><div class="ttdoc">Set the server's log level.</div><div class="ttdef"><b>Definition:</b> app.h:389</div></div>
+<div class="ttc" id="aclasscrow_1_1_crow_html_a839c1e6f82d577308eb6f0d4948a4fbb"><div class="ttname"><a href="classcrow_1_1_crow.html#a839c1e6f82d577308eb6f0d4948a4fbb">crow::Crow::debug_print</a></div><div class="ttdeci">void debug_print()</div><div class="ttdoc">Print the routing paths defined for each HTTP method.</div><div class="ttdef"><b>Definition:</b> app.h:588</div></div>
 <div class="ttc" id="aclasscrow_1_1_crow_html_a866cb219bb77c19326f39f431424e1c7"><div class="ttname"><a href="classcrow_1_1_crow.html#a866cb219bb77c19326f39f431424e1c7">crow::Crow::handle</a></div><div class="ttdeci">void handle(request &amp;req, response &amp;res, std::unique_ptr&lt; routing_handle_result &gt; &amp;found)</div><div class="ttdoc">Process the fully parsed request and generate a response for it.</div><div class="ttdef"><b>Definition:</b> app.h:236</div></div>
-<div class="ttc" id="aclasscrow_1_1_crow_html_a872d39321015ac4f48ec8a6659dda99b"><div class="ttname"><a href="classcrow_1_1_crow.html#a872d39321015ac4f48ec8a6659dda99b">crow::Crow::exception_handler</a></div><div class="ttdeci">self_t &amp; exception_handler(Func &amp;&amp;f)</div><div class="ttdoc">Set the function to call to handle uncaught exceptions generated in routes (Default generates error 5...</div><div class="ttdef"><b>Definition:</b> app.h:410</div></div>
-<div class="ttc" id="aclasscrow_1_1_crow_html_a8c816534804e7bd351ca692005bf3343"><div class="ttname"><a href="classcrow_1_1_crow.html#a8c816534804e7bd351ca692005bf3343">crow::Crow::bindaddr</a></div><div class="ttdeci">std::string bindaddr()</div><div class="ttdoc">Get the address that Crow will handle requests on.</div><div class="ttdef"><b>Definition:</b> app.h:342</div></div>
-<div class="ttc" id="aclasscrow_1_1_crow_html_a987e909347f0563f7b3dd97bbe271cea"><div class="ttname"><a href="classcrow_1_1_crow.html#a987e909347f0563f7b3dd97bbe271cea">crow::Crow::ssl_file</a></div><div class="ttdeci">self_t &amp; ssl_file(const std::string &amp;crt_filename, const std::string &amp;key_filename)</div><div class="ttdoc">Use certificate and key files for SSL.</div><div class="ttdef"><b>Definition:</b> app.h:585</div></div>
+<div class="ttc" id="aclasscrow_1_1_crow_html_a872d39321015ac4f48ec8a6659dda99b"><div class="ttname"><a href="classcrow_1_1_crow.html#a872d39321015ac4f48ec8a6659dda99b">crow::Crow::exception_handler</a></div><div class="ttdeci">self_t &amp; exception_handler(Func &amp;&amp;f)</div><div class="ttdoc">Set the function to call to handle uncaught exceptions generated in routes (Default generates error 5...</div><div class="ttdef"><b>Definition:</b> app.h:423</div></div>
+<div class="ttc" id="aclasscrow_1_1_crow_html_a8c816534804e7bd351ca692005bf3343"><div class="ttname"><a href="classcrow_1_1_crow.html#a8c816534804e7bd351ca692005bf3343">crow::Crow::bindaddr</a></div><div class="ttdeci">std::string bindaddr()</div><div class="ttdoc">Get the address that Crow will handle requests on.</div><div class="ttdef"><b>Definition:</b> app.h:355</div></div>
+<div class="ttc" id="aclasscrow_1_1_crow_html_a987e909347f0563f7b3dd97bbe271cea"><div class="ttname"><a href="classcrow_1_1_crow.html#a987e909347f0563f7b3dd97bbe271cea">crow::Crow::ssl_file</a></div><div class="ttdeci">self_t &amp; ssl_file(const std::string &amp;crt_filename, const std::string &amp;key_filename)</div><div class="ttdoc">Use certificate and key files for SSL.</div><div class="ttdef"><b>Definition:</b> app.h:598</div></div>
 <div class="ttc" id="aclasscrow_1_1_crow_html_a9cf5fac292b94d93ad09032a02ab0b62"><div class="ttname"><a href="classcrow_1_1_crow.html#a9cf5fac292b94d93ad09032a02ab0b62">crow::Crow::port</a></div><div class="ttdeci">std::uint16_t port() const</div><div class="ttdoc">Get the port that Crow will handle requests on.</div><div class="ttdef"><b>Definition:</b> app.h:315</div></div>
 <div class="ttc" id="aclasscrow_1_1_crow_html_aac04f81d0bc897267d092bb8af1513d4"><div class="ttname"><a href="classcrow_1_1_crow.html#aac04f81d0bc897267d092bb8af1513d4">crow::Crow::ssl_server_t</a></div><div class="ttdeci">Server&lt; Crow, SSLAdaptor, Middlewares... &gt; ssl_server_t</div><div class="ttdoc">An HTTP server that runs on SSL with an SSLAdaptor.</div><div class="ttdef"><b>Definition:</b> app.h:209</div></div>
-<div class="ttc" id="aclasscrow_1_1_crow_html_aac4f72d944fb35caaf2d82cd21287269"><div class="ttname"><a href="classcrow_1_1_crow.html#aac4f72d944fb35caaf2d82cd21287269">crow::Crow::run_async</a></div><div class="ttdeci">std::future&lt; void &gt; run_async()</div><div class="ttdoc">Non-blocking version of run()</div><div class="ttdef"><b>Definition:</b> app.h:535</div></div>
+<div class="ttc" id="aclasscrow_1_1_crow_html_aac4f72d944fb35caaf2d82cd21287269"><div class="ttname"><a href="classcrow_1_1_crow.html#aac4f72d944fb35caaf2d82cd21287269">crow::Crow::run_async</a></div><div class="ttdeci">std::future&lt; void &gt; run_async()</div><div class="ttdoc">Non-blocking version of run()</div><div class="ttdef"><b>Definition:</b> app.h:548</div></div>
 <div class="ttc" id="aclasscrow_1_1_crow_html_ab1beefb0c6fc3c534160ba3bbc615069"><div class="ttname"><a href="classcrow_1_1_crow.html#ab1beefb0c6fc3c534160ba3bbc615069">crow::Crow::catchall_route</a></div><div class="ttdeci">CatchallRule &amp; catchall_route()</div><div class="ttdoc">Create a route for any requests without a proper route (Use CROW_CATCHALL_ROUTE instead)</div><div class="ttdef"><b>Definition:</b> app.h:272</div></div>
-<div class="ttc" id="aclasscrow_1_1_crow_html_ab9a22c981e0afec0d55ee234683a6d38"><div class="ttname"><a href="classcrow_1_1_crow.html#ab9a22c981e0afec0d55ee234683a6d38">crow::Crow::validate</a></div><div class="ttdeci">void validate()</div><div class="ttdoc">A wrapper for validate() in the router.</div><div class="ttdef"><b>Definition:</b> app.h:490</div></div>
+<div class="ttc" id="aclasscrow_1_1_crow_html_ab9a22c981e0afec0d55ee234683a6d38"><div class="ttname"><a href="classcrow_1_1_crow.html#ab9a22c981e0afec0d55ee234683a6d38">crow::Crow::validate</a></div><div class="ttdeci">void validate()</div><div class="ttdoc">A wrapper for validate() in the router.</div><div class="ttdef"><b>Definition:</b> app.h:503</div></div>
 <div class="ttc" id="aclasscrow_1_1_crow_html_abb69a7bf5d4a791a398c838d37086d94"><div class="ttname"><a href="classcrow_1_1_crow.html#abb69a7bf5d4a791a398c838d37086d94">crow::Crow::Crow</a></div><div class="ttdeci">Crow(Ts &amp;&amp;... ts)</div><div class="ttdoc">Construct Crow with a subset of middleware.</div><div class="ttdef"><b>Definition:</b> app.h:216</div></div>
-<div class="ttc" id="aclasscrow_1_1_crow_html_abd824d73fdd02ba810b8dd37e2900240"><div class="ttname"><a href="classcrow_1_1_crow.html#abd824d73fdd02ba810b8dd37e2900240">crow::Crow::concurrency</a></div><div class="ttdeci">std::uint16_t concurrency()</div><div class="ttdoc">Get the number of threads that server is using.</div><div class="ttdef"><b>Definition:</b> app.h:363</div></div>
+<div class="ttc" id="aclasscrow_1_1_crow_html_abd824d73fdd02ba810b8dd37e2900240"><div class="ttname"><a href="classcrow_1_1_crow.html#abd824d73fdd02ba810b8dd37e2900240">crow::Crow::concurrency</a></div><div class="ttdeci">std::uint16_t concurrency()</div><div class="ttdoc">Get the number of threads that server is using.</div><div class="ttdef"><b>Definition:</b> app.h:376</div></div>
 <div class="ttc" id="aclasscrow_1_1_crow_html_accf00be55c273297b758fa243f107018"><div class="ttname"><a href="classcrow_1_1_crow.html#accf00be55c273297b758fa243f107018">crow::Crow::handle_full</a></div><div class="ttdeci">void handle_full(request &amp;req, response &amp;res)</div><div class="ttdoc">Process a fully parsed request from start to finish (primarily used for debugging)</div><div class="ttdef"><b>Definition:</b> app.h:242</div></div>
-<div class="ttc" id="aclasscrow_1_1_crow_html_ade6bf7e56805c1112532807581293448"><div class="ttname"><a href="classcrow_1_1_crow.html#ade6bf7e56805c1112532807581293448">crow::Crow::ssl_chainfile</a></div><div class="ttdeci">self_t &amp; ssl_chainfile(const std::string &amp;crt_filename, const std::string &amp;key_filename)</div><div class="ttdoc">Use certificate chain and key files for SSL.</div><div class="ttdef"><b>Definition:</b> app.h:610</div></div>
-<div class="ttc" id="aclasscrow_1_1_crow_html_ae0e400a1757bd68f716b82753a5a1a73"><div class="ttname"><a href="classcrow_1_1_crow.html#ae0e400a1757bd68f716b82753a5a1a73">crow::Crow::server_name</a></div><div class="ttdeci">self_t &amp; server_name(std::string server_name)</div><div class="ttdoc">Set the server name.</div><div class="ttdef"><b>Definition:</b> app.h:328</div></div>
-<div class="ttc" id="aclasscrow_1_1_crow_html_ae92390d22f6fc99987c41a617be71d64"><div class="ttname"><a href="classcrow_1_1_crow.html#ae92390d22f6fc99987c41a617be71d64">crow::Crow::stream_threshold</a></div><div class="ttdeci">self_t &amp; stream_threshold(size_t threshold)</div><div class="ttdoc">Set the response body size (in bytes) beyond which Crow automatically streams responses (Default is 1...</div><div class="ttdef"><b>Definition:</b> app.h:385</div></div>
-<div class="ttc" id="aclasscrow_1_1_crow_html_af0d01b97da7d4d20844a80fd31b74f46"><div class="ttname"><a href="classcrow_1_1_crow.html#af0d01b97da7d4d20844a80fd31b74f46">crow::Crow::add_blueprint</a></div><div class="ttdeci">void add_blueprint()</div><div class="ttdoc">Apply blueprints.</div><div class="ttdef"><b>Definition:</b> app.h:451</div></div>
+<div class="ttc" id="aclasscrow_1_1_crow_html_ade6bf7e56805c1112532807581293448"><div class="ttname"><a href="classcrow_1_1_crow.html#ade6bf7e56805c1112532807581293448">crow::Crow::ssl_chainfile</a></div><div class="ttdeci">self_t &amp; ssl_chainfile(const std::string &amp;crt_filename, const std::string &amp;key_filename)</div><div class="ttdoc">Use certificate chain and key files for SSL.</div><div class="ttdef"><b>Definition:</b> app.h:623</div></div>
+<div class="ttc" id="aclasscrow_1_1_crow_html_ae0e400a1757bd68f716b82753a5a1a73"><div class="ttname"><a href="classcrow_1_1_crow.html#ae0e400a1757bd68f716b82753a5a1a73">crow::Crow::server_name</a></div><div class="ttdeci">self_t &amp; server_name(std::string server_name)</div><div class="ttdoc">Set the server name.</div><div class="ttdef"><b>Definition:</b> app.h:341</div></div>
+<div class="ttc" id="aclasscrow_1_1_crow_html_ae92390d22f6fc99987c41a617be71d64"><div class="ttname"><a href="classcrow_1_1_crow.html#ae92390d22f6fc99987c41a617be71d64">crow::Crow::stream_threshold</a></div><div class="ttdeci">self_t &amp; stream_threshold(size_t threshold)</div><div class="ttdoc">Set the response body size (in bytes) beyond which Crow automatically streams responses (Default is 1...</div><div class="ttdef"><b>Definition:</b> app.h:398</div></div>
+<div class="ttc" id="aclasscrow_1_1_crow_html_af0d01b97da7d4d20844a80fd31b74f46"><div class="ttname"><a href="classcrow_1_1_crow.html#af0d01b97da7d4d20844a80fd31b74f46">crow::Crow::add_blueprint</a></div><div class="ttdeci">void add_blueprint()</div><div class="ttdoc">Apply blueprints.</div><div class="ttdef"><b>Definition:</b> app.h:464</div></div>
 <div class="ttc" id="aclasscrow_1_1_dynamic_rule_html"><div class="ttname"><a href="classcrow_1_1_dynamic_rule.html">crow::DynamicRule</a></div><div class="ttdoc">A rule that can change its parameters during runtime.</div><div class="ttdef"><b>Definition:</b> routing.h:582</div></div>
 <div class="ttc" id="aclasscrow_1_1_router_html"><div class="ttname"><a href="classcrow_1_1_router.html">crow::Router</a></div><div class="ttdoc">Handles matching requests to existing rules and upgrade requests.</div><div class="ttdef"><b>Definition:</b> routing.h:1264</div></div>
 <div class="ttc" id="aclasscrow_1_1_server_html"><div class="ttname"><a href="classcrow_1_1_server.html">crow::Server</a></div><div class="ttdef"><b>Definition:</b> http_server.h:43</div></div>
@@ -936,7 +949,7 @@ $(document).ready(function(){initNavTree('app_8h_source.html',''); initResizable
 			<ul>
 				<li class="navelem"><a class="el" href="dir_d44c64559bbebec7f509842c48db8b23.html">include</a></li><li class="navelem"><a class="el" href="dir_d22c1cb87b72f01e1a7f207eb3bfd1ca.html">crow</a></li><li class="navelem"><a class="el" href="app_8h.html">app.h</a></li>
 				<li class="footer">
-					Generated on Tue Sep 10 2024 for Crow by <a href="http://www.doxygen.org/index.html">
+					Generated on Sun Sep 29 2024 for Crow by <a href="http://www.doxygen.org/index.html">
 					<img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.9.1.
 					Dark theme by <a href="http://majerle.eu" target="_new">Tilen Majerle</a>. Edited by <a href="https://github.com/The-EDev" target="_new">Farook Al-Sammarraie</a>. All rights reserved.
 				</li>
