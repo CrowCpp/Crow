@@ -743,9 +743,9 @@ $(document).ready(function(){initNavTree('utility_8h_source.html',''); initResiz
 <div class="line"><a name="l00642"></a><span class="lineno">  642</span>&#160; </div>
 <div class="line"><a name="l00643"></a><span class="lineno">  643</span>&#160;            <span class="comment">// Padded</span></div>
 <div class="line"><a name="l00644"></a><span class="lineno">  644</span>&#160;            <span class="keywordflow">else</span> <span class="keywordflow">if</span> (size &gt;= 2 &amp;&amp; data[size - 2] == <span class="charliteral">&#39;=&#39;</span>) <span class="comment">// padded with &#39;==&#39;</span></div>
-<div class="line"><a name="l00645"></a><span class="lineno">  645</span>&#160;                size = (size / 4 * 3) - 2;  <span class="comment">// == padding means the last block only has 1 character instead of 3, hence the &#39;-2&#39;</span></div>
+<div class="line"><a name="l00645"></a><span class="lineno">  645</span>&#160;                size = (size / 4 * 3) - 2;               <span class="comment">// == padding means the last block only has 1 character instead of 3, hence the &#39;-2&#39;</span></div>
 <div class="line"><a name="l00646"></a><span class="lineno">  646</span>&#160;            <span class="keywordflow">else</span> <span class="keywordflow">if</span> (size &gt;= 1 &amp;&amp; data[size - 1] == <span class="charliteral">&#39;=&#39;</span>) <span class="comment">// padded with &#39;=&#39;</span></div>
-<div class="line"><a name="l00647"></a><span class="lineno">  647</span>&#160;                size = (size / 4 * 3) - 1;  <span class="comment">// = padding means the last block only has 2 character instead of 3, hence the &#39;-1&#39;</span></div>
+<div class="line"><a name="l00647"></a><span class="lineno">  647</span>&#160;                size = (size / 4 * 3) - 1;               <span class="comment">// = padding means the last block only has 2 character instead of 3, hence the &#39;-1&#39;</span></div>
 <div class="line"><a name="l00648"></a><span class="lineno">  648</span>&#160; </div>
 <div class="line"><a name="l00649"></a><span class="lineno">  649</span>&#160;            <span class="comment">// Padding not needed</span></div>
 <div class="line"><a name="l00650"></a><span class="lineno">  650</span>&#160;            <span class="keywordflow">else</span></div>
@@ -825,7 +825,7 @@ $(document).ready(function(){initNavTree('utility_8h_source.html',''); initResiz
 <div class="line"><a name="l00724"></a><span class="lineno">  724</span>&#160;            <span class="comment">// Check for special device names. The Windows behavior is really odd here, it will consider both AUX and AUX.txt</span></div>
 <div class="line"><a name="l00725"></a><span class="lineno">  725</span>&#160;            <span class="comment">// a special device. Thus we search for the string (case-insensitive), and then check if the string ends or if</span></div>
 <div class="line"><a name="l00726"></a><span class="lineno">  726</span>&#160;            <span class="comment">// is has a dangerous follow up character (.:\/)</span></div>
-<div class="line"><a name="l00727"></a><span class="lineno">  727</span>&#160;            <span class="keyword">auto</span> sanitizeSpecialFile = [](std::string&amp; source, <span class="keywordtype">unsigned</span> ofs, <span class="keyword">const</span> <span class="keywordtype">char</span>* pattern, <span class="keywordtype">bool</span> includeNumber, <span class="keywordtype">char</span> replacement) {</div>
+<div class="line"><a name="l00727"></a><span class="lineno">  727</span>&#160;            <span class="keyword">auto</span> sanitizeSpecialFile = [](std::string&amp; source, <span class="keywordtype">unsigned</span> ofs, <span class="keyword">const</span> <span class="keywordtype">char</span>* pattern, <span class="keywordtype">bool</span> includeNumber, <span class="keywordtype">char</span> replacement_) {</div>
 <div class="line"><a name="l00728"></a><span class="lineno">  728</span>&#160;                <span class="keywordtype">unsigned</span> i = ofs;</div>
 <div class="line"><a name="l00729"></a><span class="lineno">  729</span>&#160;                <span class="keywordtype">size_t</span> len = source.length();</div>
 <div class="line"><a name="l00730"></a><span class="lineno">  730</span>&#160;                <span class="keyword">const</span> <span class="keywordtype">char</span>* p = pattern;</div>
@@ -844,7 +844,7 @@ $(document).ready(function(){initNavTree('utility_8h_source.html',''); initResiz
 <div class="line"><a name="l00743"></a><span class="lineno">  743</span>&#160;                <span class="keywordflow">if</span> ((i &gt;= len) || (source[i] == <span class="charliteral">&#39;.&#39;</span>) || (source[i] == <span class="charliteral">&#39;:&#39;</span>) || (source[i] == <span class="charliteral">&#39;/&#39;</span>) || (source[i] == <span class="charliteral">&#39;\\&#39;</span>))</div>
 <div class="line"><a name="l00744"></a><span class="lineno">  744</span>&#160;                {</div>
 <div class="line"><a name="l00745"></a><span class="lineno">  745</span>&#160;                    source.erase(ofs + 1, (i - ofs) - 1);</div>
-<div class="line"><a name="l00746"></a><span class="lineno">  746</span>&#160;                    source[ofs] = replacement;</div>
+<div class="line"><a name="l00746"></a><span class="lineno">  746</span>&#160;                    source[ofs] = replacement_;</div>
 <div class="line"><a name="l00747"></a><span class="lineno">  747</span>&#160;                }</div>
 <div class="line"><a name="l00748"></a><span class="lineno">  748</span>&#160;            };</div>
 <div class="line"><a name="l00749"></a><span class="lineno">  749</span>&#160;            <span class="keywordtype">bool</span> checkForSpecialEntries = <span class="keyword">true</span>;</div>
@@ -1035,7 +1035,7 @@ $(document).ready(function(){initNavTree('utility_8h_source.html',''); initResiz
 <div class="line"><a name="l00934"></a><span class="lineno">  934</span>&#160;<span class="comment">         * @param last2 end() iterator of the second range</span></div>
 <div class="line"><a name="l00935"></a><span class="lineno">  935</span>&#160;<span class="comment">         * @return first occurence that matches between two ranges of iterators </span></div>
 <div class="line"><a name="l00936"></a><span class="lineno">  936</span>&#160;<span class="comment">        */</span></div>
-<div class="line"><a name="l00937"></a><span class="lineno">  937</span>&#160;        <span class="keyword">template</span> &lt;<span class="keyword">typename</span> Iter1, <span class="keyword">typename</span> Iter2&gt;</div>
+<div class="line"><a name="l00937"></a><span class="lineno">  937</span>&#160;        <span class="keyword">template</span>&lt;<span class="keyword">typename</span> Iter1, <span class="keyword">typename</span> Iter2&gt;</div>
 <div class="line"><a name="l00938"></a><span class="lineno">  938</span>&#160;        <span class="keyword">inline</span> <span class="keyword">static</span> Iter1 find_first_of(Iter1 first1, Iter1 last1, Iter2 first2, Iter2 last2)</div>
 <div class="line"><a name="l00939"></a><span class="lineno">  939</span>&#160;        {</div>
 <div class="line"><a name="l00940"></a><span class="lineno">  940</span>&#160;            <span class="keywordflow">for</span> (; first1 != last1; ++first1)</div>

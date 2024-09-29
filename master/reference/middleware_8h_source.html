@@ -387,8 +387,8 @@ $(document).ready(function(){initNavTree('middleware_8h_source.html',''); initRe
 <div class="line"><a name="l00286"></a><span class="lineno">  286</span>&#160;        <span class="keyword">template</span>&lt;&gt;</div>
 <div class="line"><a name="l00287"></a><span class="lineno"><a class="line" href="structcrow_1_1detail_1_1middleware__call__criteria__dynamic_3_01false_01_4.html">  287</a></span>&#160;        <span class="keyword">struct </span><a class="code" href="structcrow_1_1detail_1_1middleware__call__criteria__dynamic.html">middleware_call_criteria_dynamic</a>&lt;false&gt;</div>
 <div class="line"><a name="l00288"></a><span class="lineno">  288</span>&#160;        {</div>
-<div class="line"><a name="l00289"></a><span class="lineno">  289</span>&#160;            <a class="code" href="structcrow_1_1detail_1_1middleware__call__criteria__dynamic.html">middleware_call_criteria_dynamic</a>(<span class="keyword">const</span> std::vector&lt;int&gt;&amp; indices):</div>
-<div class="line"><a name="l00290"></a><span class="lineno">  290</span>&#160;              indices(indices), slider(0) {}</div>
+<div class="line"><a name="l00289"></a><span class="lineno">  289</span>&#160;            <a class="code" href="structcrow_1_1detail_1_1middleware__call__criteria__dynamic.html">middleware_call_criteria_dynamic</a>(<span class="keyword">const</span> std::vector&lt;int&gt;&amp; indices_):</div>
+<div class="line"><a name="l00290"></a><span class="lineno">  290</span>&#160;              indices(indices_), slider(0) {}</div>
 <div class="line"><a name="l00291"></a><span class="lineno">  291</span>&#160; </div>
 <div class="line"><a name="l00292"></a><span class="lineno">  292</span>&#160;            <span class="keyword">template</span>&lt;<span class="keyword">typename</span>&gt;</div>
 <div class="line"><a name="l00293"></a><span class="lineno">  293</span>&#160;            <span class="keywordtype">bool</span> enabled(<span class="keywordtype">int</span> mw_index)<span class="keyword"> const</span></div>
@@ -409,8 +409,8 @@ $(document).ready(function(){initNavTree('middleware_8h_source.html',''); initRe
 <div class="line"><a name="l00308"></a><span class="lineno">  308</span>&#160;        <span class="keyword">template</span>&lt;&gt;</div>
 <div class="line"><a name="l00309"></a><span class="lineno"><a class="line" href="structcrow_1_1detail_1_1middleware__call__criteria__dynamic_3_01true_01_4.html">  309</a></span>&#160;        <span class="keyword">struct </span><a class="code" href="structcrow_1_1detail_1_1middleware__call__criteria__dynamic.html">middleware_call_criteria_dynamic</a>&lt;true&gt;</div>
 <div class="line"><a name="l00310"></a><span class="lineno">  310</span>&#160;        {</div>
-<div class="line"><a name="l00311"></a><span class="lineno">  311</span>&#160;            <a class="code" href="structcrow_1_1detail_1_1middleware__call__criteria__dynamic.html">middleware_call_criteria_dynamic</a>(<span class="keyword">const</span> std::vector&lt;int&gt;&amp; indices):</div>
-<div class="line"><a name="l00312"></a><span class="lineno">  312</span>&#160;              indices(indices), slider(<span class="keywordtype">int</span>(indices.size()) - 1) {}</div>
+<div class="line"><a name="l00311"></a><span class="lineno">  311</span>&#160;            <a class="code" href="structcrow_1_1detail_1_1middleware__call__criteria__dynamic.html">middleware_call_criteria_dynamic</a>(<span class="keyword">const</span> std::vector&lt;int&gt;&amp; indices_):</div>
+<div class="line"><a name="l00312"></a><span class="lineno">  312</span>&#160;              indices(indices_), slider(<span class="keywordtype">int</span>(indices_.size()) - 1) {}</div>
 <div class="line"><a name="l00313"></a><span class="lineno">  313</span>&#160; </div>
 <div class="line"><a name="l00314"></a><span class="lineno">  314</span>&#160;            <span class="keyword">template</span>&lt;<span class="keyword">typename</span>&gt;</div>
 <div class="line"><a name="l00315"></a><span class="lineno">  315</span>&#160;            <span class="keywordtype">bool</span> enabled(<span class="keywordtype">int</span> mw_index)<span class="keyword"> const</span></div>

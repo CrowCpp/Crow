@@ -11,7 +11,7 @@ var searchData=
   ['rendered_5ftemplate_191',['rendered_template',['../structcrow_1_1mustache_1_1rendered__template.html',1,'crow::mustache']]],
   ['req_192',['req',['../structcrow_1_1_h_t_t_p_parser.html#a56ce939040d6c582a62cea766e489d53',1,'crow::HTTPParser']]],
   ['req_5fhandler_5fwrapper_193',['req_handler_wrapper',['../structcrow_1_1detail_1_1routing__handler__call__helper_1_1_wrapped_1_1req__handler__wrapper.html',1,'crow::detail::routing_handler_call_helper::Wrapped']]],
-  ['request_194',['request',['../structcrow_1_1request.html',1,'crow::request'],['../structcrow_1_1request.html#a838c9a8c9a5eb2283d57e66f3630b5a6',1,'crow::request::request()'],['../structcrow_1_1request.html#a111b70ddb2a100a79415b539e152e145',1,'crow::request::request(HTTPMethod method, std::string raw_url, std::string url, query_string url_params, ci_map headers, std::string body, unsigned char http_major, unsigned char http_minor, bool has_keep_alive, bool has_close_connection, bool is_upgrade)']]],
+  ['request_194',['request',['../structcrow_1_1request.html',1,'crow::request'],['../structcrow_1_1request.html#a838c9a8c9a5eb2283d57e66f3630b5a6',1,'crow::request::request()'],['../structcrow_1_1request.html#ab90c2762f152a7d58a1ab8ea55e0afd0',1,'crow::request::request(HTTPMethod method_, std::string raw_url_, std::string url_, query_string url_params_, ci_map headers_, std::string body_, unsigned char http_major, unsigned char http_minor, bool has_keep_alive, bool has_close_connection, bool is_upgrade)']]],
   ['response_195',['response',['../structcrow_1_1response.html',1,'crow']]],
   ['returnable_196',['returnable',['../structcrow_1_1returnable.html',1,'crow']]],
   ['route_197',['route',['../classcrow_1_1_crow.html#a5e1e54d49ff3015fd08f545b574ab44f',1,'crow::Crow']]],
