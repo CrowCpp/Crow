@@ -668,7 +668,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                 if (it != end() && it->key_ == str)
                     return *it;
 #ifndef CROW_JSON_NO_ERROR_CHECK
-                throw std::runtime_error("cannot find key");
+                throw std::runtime_error("cannot find key: " + str);
 #else
                 static rvalue nullValue;
                 return nullValue;
