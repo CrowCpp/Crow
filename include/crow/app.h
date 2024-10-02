@@ -543,7 +543,7 @@ namespace crow
 #ifdef CROW_ENABLE_SSL
             if (ssl_used_)
             {
-                if (ssl_server_) { ssl_server_->stop(); }
+                if (ssl_server_) { ssl_server_->stop(); _ssl_server.reset(); }
             }
             else
 #endif
@@ -555,7 +555,7 @@ namespace crow
                     CROW_LOG_INFO << "Quitting Websocket: " << websocket;
                     websocket->close("Server Application Terminated");
                 }
-                if (server_) { server_->stop(); }
+                if (server_) { server_->stop(); server_.reset(); }
             }
         }
 
