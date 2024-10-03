@@ -40,7 +40,10 @@ jobs:
                 cmake \
                 g++ clang
          elif [ "$RUNNER_OS" == "Windows" ]; then
-              VCPKG_DEFAULT_TRIPLET=x64-windows vcpkg install
+           export SystemDrive="$SYSTEMDRIVE" \
+           export SystemRoot="$SYSTEMROOT" \
+           export windir="$WINDIR" \
+           VCPKG_DEFAULT_TRIPLET=x64-windows vcpkg install
          elif [ "$RUNNER_OS" == "macOS" ]; then
               brew install asio openssl zlib
          else
@@ -53,7 +56,10 @@ jobs:
       run: |
          cmake_flags=""
          if [ "$RUNNER_OS" == "Windows" ]; then
-              cmake_flags="-DCMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake"
+               export SystemDrive="$SYSTEMDRIVE" \
+               export SystemRoot="$SYSTEMROOT" \
+               export windir="$WINDIR" \
+               cmake_flags="-DCMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake"
          elif [ "$RUNNER_OS" == "macOS" ]; then
               export LDFLAGS="-L/usr/local/opt/openssl@1.1/lib"
               export CPPFLAGS="-I/usr/local/opt/openssl@1.1/include"
