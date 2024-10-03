@@ -769,7 +769,7 @@ $(document).ready(function(){initNavTree('json_8h_source.html',''); initResizabl
 <div class="line"><a name="l00668"></a><span class="lineno">  668</span>&#160;                <span class="keywordflow">if</span> (it != end() &amp;&amp; it-&gt;key_ == str)</div>
 <div class="line"><a name="l00669"></a><span class="lineno">  669</span>&#160;                    <span class="keywordflow">return</span> *it;</div>
 <div class="line"><a name="l00670"></a><span class="lineno">  670</span>&#160;<span class="preprocessor">#ifndef CROW_JSON_NO_ERROR_CHECK</span></div>
-<div class="line"><a name="l00671"></a><span class="lineno">  671</span>&#160;                <span class="keywordflow">throw</span> std::runtime_error(<span class="stringliteral">&quot;cannot find key&quot;</span>);</div>
+<div class="line"><a name="l00671"></a><span class="lineno">  671</span>&#160;                <span class="keywordflow">throw</span> std::runtime_error(<span class="stringliteral">&quot;cannot find key: &quot;</span> + str);</div>
 <div class="line"><a name="l00672"></a><span class="lineno">  672</span>&#160;<span class="preprocessor">#else</span></div>
 <div class="line"><a name="l00673"></a><span class="lineno">  673</span>&#160;                <span class="keyword">static</span> rvalue nullValue;</div>
 <div class="line"><a name="l00674"></a><span class="lineno">  674</span>&#160;                <span class="keywordflow">return</span> nullValue;</div>
@@ -2217,7 +2217,7 @@ $(document).ready(function(){initNavTree('json_8h_source.html',''); initResizabl
 			<ul>
 				<li class="navelem"><a class="el" href="dir_d44c64559bbebec7f509842c48db8b23.html">include</a></li><li class="navelem"><a class="el" href="dir_d22c1cb87b72f01e1a7f207eb3bfd1ca.html">crow</a></li><li class="navelem"><b>json.h</b></li>
 				<li class="footer">
-					Generated on Sun Sep 29 2024 for Crow by <a href="http://www.doxygen.org/index.html">
+					Generated on Thu Oct 3 2024 for Crow by <a href="http://www.doxygen.org/index.html">
 					<img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.9.1.
 					Dark theme by <a href="http://majerle.eu" target="_new">Tilen Majerle</a>. Edited by <a href="https://github.com/The-EDev" target="_new">Farook Al-Sammarraie</a>. All rights reserved.
 				</li>
