@@ -40,7 +40,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
             if (c < 10)
                 return '0' + c;
             return 'a' + c - 10;
-        };
+        }
 
         inline void escape(const std::string& str, std::string& ret)
         {
@@ -573,7 +573,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                 return it != end() && it->key_ == str;
             }
 
-            int count(const std::string& str)
+            int count(const std::string& str) const
             {
                 return has(str) ? 1 : 0;
             }
