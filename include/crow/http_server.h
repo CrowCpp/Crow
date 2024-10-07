@@ -197,11 +197,11 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         }
 
         /// Wait until the server has properly started
-        void wait_for_start()
+        void wait_for_start(std::chrono::milliseconds wait_for_milliseconds)
         {
             std::unique_lock<std::mutex> lock(start_mutex_);
             while (!server_started_)
-                cv_started_.wait(lock);
+                cv_started_.wait_for(lock,wait_for_milliseconds);
         }
 
         void signal_clear()
