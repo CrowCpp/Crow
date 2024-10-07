@@ -77,6 +77,9 @@ jobs:
               fi
          fi
 
+         export SystemDrive="$SYSTEMDRIVE" \
+         export SystemRoot="$SYSTEMROOT" \
+         export windir="$WINDIR" \
          cmake \
             ${cmake_flags} \
             -DCROW_ENABLE_SSL=ON \
