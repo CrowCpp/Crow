@@ -7,7 +7,7 @@ var classcrow_1_1json_1_1rvalue =
     [ "rvalue", "classcrow_1_1json_1_1rvalue.html#ab37b37402eb83aed531868b6a1763f66", null ],
     [ "b", "classcrow_1_1json_1_1rvalue.html#a61a5f98c6b0257d53c60a70eeff15490", null ],
     [ "begin", "classcrow_1_1json_1_1rvalue.html#ae8305a3db489b6bda4e25072c46a3297", null ],
-    [ "count", "classcrow_1_1json_1_1rvalue.html#a36b626fa33f7471c184b9b63a01ec9b6", null ],
+    [ "count", "classcrow_1_1json_1_1rvalue.html#a578d83d2cd4c8f2281bf779c96c2ec14", null ],
     [ "d", "classcrow_1_1json_1_1rvalue.html#a4a3e33d65b812ed583814a7ac2e1f448", null ],
     [ "end", "classcrow_1_1json_1_1rvalue.html#a562de6469b3b68185cc0c1d6972a0909", null ],
     [ "error", "classcrow_1_1json_1_1rvalue.html#a4435f7aff4220d5b141b04e559cb964b", null ],

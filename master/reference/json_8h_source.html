@@ -141,7 +141,7 @@ $(document).ready(function(){initNavTree('json_8h_source.html',''); initResizabl
 <div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;            <span class="keywordflow">if</span> (c &lt; 10)</div>
 <div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;                <span class="keywordflow">return</span> <span class="charliteral">&#39;0&#39;</span> + c;</div>
 <div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;            <span class="keywordflow">return</span> <span class="charliteral">&#39;a&#39;</span> + c - 10;</div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;        };</div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;        }</div>
 <div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160; </div>
 <div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;        <span class="keyword">inline</span> <span class="keywordtype">void</span> escape(<span class="keyword">const</span> std::string&amp; str, std::string&amp; ret)</div>
 <div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;        {</div>
@@ -674,8 +674,8 @@ $(document).ready(function(){initNavTree('json_8h_source.html',''); initResizabl
 <div class="line"><a name="l00573"></a><span class="lineno">  573</span>&#160;                <span class="keywordflow">return</span> it != end() &amp;&amp; it-&gt;key_ == str;</div>
 <div class="line"><a name="l00574"></a><span class="lineno">  574</span>&#160;            }</div>
 <div class="line"><a name="l00575"></a><span class="lineno">  575</span>&#160; </div>
-<div class="line"><a name="l00576"></a><span class="lineno">  576</span>&#160;            <span class="keywordtype">int</span> count(<span class="keyword">const</span> std::string&amp; str)</div>
-<div class="line"><a name="l00577"></a><span class="lineno">  577</span>&#160;            {</div>
+<div class="line"><a name="l00576"></a><span class="lineno">  576</span>&#160;            <span class="keywordtype">int</span> count(<span class="keyword">const</span> std::string&amp; str)<span class="keyword"> const</span></div>
+<div class="line"><a name="l00577"></a><span class="lineno">  577</span>&#160;<span class="keyword">            </span>{</div>
 <div class="line"><a name="l00578"></a><span class="lineno">  578</span>&#160;                <span class="keywordflow">return</span> <a class="code" href="classcrow_1_1json_1_1rvalue.html#a48ac4fff801f365fb2b82f1ed7ebe983">has</a>(str) ? 1 : 0;</div>
 <div class="line"><a name="l00579"></a><span class="lineno">  579</span>&#160;            }</div>
 <div class="line"><a name="l00580"></a><span class="lineno">  580</span>&#160; </div>
@@ -2217,7 +2217,7 @@ $(document).ready(function(){initNavTree('json_8h_source.html',''); initResizabl
 			<ul>
 				<li class="navelem"><a class="el" href="dir_d44c64559bbebec7f509842c48db8b23.html">include</a></li><li class="navelem"><a class="el" href="dir_d22c1cb87b72f01e1a7f207eb3bfd1ca.html">crow</a></li><li class="navelem"><b>json.h</b></li>
 				<li class="footer">
-					Generated on Thu Oct 3 2024 for Crow by <a href="http://www.doxygen.org/index.html">
+					Generated on Wed Oct 9 2024 for Crow by <a href="http://www.doxygen.org/index.html">
 					<img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.9.1.
 					Dark theme by <a href="http://majerle.eu" target="_new">Tilen Majerle</a>. Edited by <a href="https://github.com/The-EDev" target="_new">Farook Al-Sammarraie</a>. All rights reserved.
 				</li>
