@@ -695,19 +695,32 @@ namespace crow
         }
 
         /// \brief Wait until the server has properly started
-        void wait_for_server_start()
+        std::cv_status wait_for_server_start(std::chrono::milliseconds wait_timeout = std::chrono::milliseconds(3000))
         {
+            std::cv_status status = std::cv_status::no_timeout;
+            auto wait_until = std::chrono::steady_clock::now() + wait_timeout;
             {
                 std::unique_lock<std::mutex> lock(start_mutex_);
-                while (!server_started_)
-                    cv_started_.wait(lock);
+                while (!server_started_ && (status == std::cv_status::no_timeout))
+                {
+                    status = cv_started_.wait_until(lock, wait_until);
+                }
             }
-            if (server_)
-                server_->wait_for_start();
+            
+            if (status == std::cv_status::no_timeout)
+            {
+                if (server_)
+                {
+                    status = server_->wait_for_start(wait_until);
+                }
 #ifdef CROW_ENABLE_SSL
-            else if (ssl_server_)
-                ssl_server_->wait_for_start();
+                else if (ssl_server_)
+                {
+                    status = ssl_server_->wait_for_start(wait_until);
+                }
 #endif
+            }
+            return status;
         }
 
     private:
