@@ -196,12 +196,15 @@ namespace crow // NOTE: Already documented in "crow/app.h"
             return acceptor_.local_endpoint().port();
         }
 
-        /// Wait until the server has properly started
-        void wait_for_start()
+        /// Wait until the server has properly started or until timeout
+        std::cv_status wait_for_start(std::chrono::steady_clock::time_point wait_until)
         {
             std::unique_lock<std::mutex> lock(start_mutex_);
-            while (!server_started_)
-                cv_started_.wait(lock);
+            
+            std::cv_status status = std::cv_status::no_timeout;
+            while (!server_started_ && ( status==std::cv_status::no_timeout ))
+                status = cv_started_.wait_until(lock,wait_until);
+            return status;
         }
 
         void signal_clear()
