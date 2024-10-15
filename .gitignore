@@ -54,3 +54,5 @@ html/
 
 #VS-Code
 .vscode
+/vcpkg_installed/vcpkg/blds/asio/src/sio-1-29-0-772787661e.clean/asio/src/tests/unit/ip
+/.vs

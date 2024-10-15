@@ -2,13 +2,13 @@ Here we collect samples and applications.
 
 # Template projects 
 
-+ [https://github.com/gittiver/crow_template](https://github.com/gittiver/crow_template)
+## [https://github.com/gittiver/crow_template](https://github.com/gittiver/crow_template)
   - Features: 
     - github template repository
     - uses CPM for including crow into project
     - catch2 for testing
 
-+ [https://github.com/seobryn/corax-template](https://github.com/seobryn/corax-template)
+## [https://github.com/seobryn/corax-template](https://github.com/seobryn/corax-template)
 
 	- Features
 		- `Scripts` to Make, Compile and Clean the build
