@@ -118,8 +118,12 @@ namespace crow // NOTE: Already documented in "crow/app.h"
             int end;
             int pos;
             ActionType t;
-            Action(ActionType t_, size_t start_, size_t end_, size_t pos_ = 0):
-              start(static_cast<int>(start_)), end(static_cast<int>(end_)), pos(static_cast<int>(pos_)), t(t_)
+            bool was_matched() const { return pos >= 0; }
+
+            // note: pos is only needed for start/end tags. for regular tags, set pos=0,
+            // so we can check if any start tags were not matched to an end tag.
+            Action(ActionType t_, size_t start_, size_t end_, int pos_ = -1):
+              start(static_cast<int>(start_)), end(static_cast<int>(end_)), pos(pos_), t(t_)
             {
             }
         };
@@ -483,7 +487,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                     if (idx == body_.npos)
                     {
                         fragments_.emplace_back(static_cast<int>(current), static_cast<int>(body_.size()));
-                        actions_.emplace_back(ActionType::Ignore, 0, 0);
+                        actions_.emplace_back(ActionType::Ignore, 0, 0, 0);
                         break;
                     }
                     fragments_.emplace_back(static_cast<int>(current), static_cast<int>(idx));
@@ -565,7 +569,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                                 idx++;
                             while (body_[endIdx - 1] == ' ')
                                 endIdx--;
-                            actions_.emplace_back(ActionType::UnescapeTag, idx, endIdx);
+                            actions_.emplace_back(ActionType::UnescapeTag, idx, endIdx, 0);
                             current++;
                             break;
                         case '&':
@@ -620,9 +624,19 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                                 idx++;
                             while (body_[endIdx - 1] == ' ')
                                 endIdx--;
-                            actions_.emplace_back(ActionType::Tag, idx, endIdx);
+                            actions_.emplace_back(ActionType::Tag, idx, endIdx, 0);
                             break;
                     }
+                }
+
+                // ensure no unmatched tags
+                for (int i = 0; i < actions_.size(); i++)
+                {
+                   if (!actions_[i].was_matched())
+                   {
+                     throw invalid_template_exception("not matched {{# {{/ pair: " +
+                                                   body_.substr(actions_[i].start, actions_[i].end - actions_[i].start));
+                   }
                 }
 
                 // removing standalones
