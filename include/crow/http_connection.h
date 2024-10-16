@@ -231,7 +231,7 @@ namespace crow
                   decltype(*middlewares_)>({}, *middlewares_, ctx_, req_, res);
             }
 #ifdef CROW_ENABLE_COMPRESSION
-            if (handler_->compression_used())
+            if (!res.body.empty() && handler_->compression_used())
             {
                 std::string accept_encoding = req_.get_header_value("Accept-Encoding");
                 if (!accept_encoding.empty() && res.compressed)
