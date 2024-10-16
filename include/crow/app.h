@@ -517,6 +517,7 @@ namespace crow
 #ifdef CROW_ENABLE_SSL
             if (ssl_used_)
             {
+                router_.using_ssl = true;
                 ssl_server_ = std::move(std::unique_ptr<ssl_server_t>(new ssl_server_t(this, bindaddr_, port_, server_name_, &middlewares_, concurrency_, timeout_, &ssl_context_)));
                 ssl_server_->set_tick_function(tick_interval_, tick_function_);
                 ssl_server_->signal_clear();

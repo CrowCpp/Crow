@@ -1266,7 +1266,9 @@ namespace crow // NOTE: Already documented in "crow/app.h"
     class Router
     {
     public:
-        Router()
+        bool using_ssl;
+
+        Router() : using_ssl(false)
         {}
 
         DynamicRule& new_rule_dynamic(const std::string& rule)
@@ -1467,7 +1469,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                 }
                 else
                 {
-                    res.add_header("Location", "http://" + req.get_header_value("Host") + req.url + "/");
+                    res.add_header("Location", (using_ssl ? "https://" : "http://") + req.get_header_value("Host") + req.url + "/");
                 }
                 res.end();
                 return;
@@ -1715,7 +1717,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                 }
                 else
                 {
-                    res.add_header("Location", "http://" + req.get_header_value("Host") + req.url + "/");
+                    res.add_header("Location", (using_ssl ? "https://" : "http://") + req.get_header_value("Host") + req.url + "/");
                 }
                 res.end();
                 return;
