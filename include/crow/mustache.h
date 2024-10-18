@@ -526,7 +526,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                                                                      body_.substr(matched.start, matched.end - matched.start) + ", " +
                                                                      body_.substr(idx, endIdx - idx));
                                 }
-                                matched.pos = actions_.size();
+                                matched.pos = static_cast<int>(actions_.size());
                             }
                             actions_.emplace_back(ActionType::CloseBlock, idx, endIdx, blockPositions.back());
                             blockPositions.pop_back();
@@ -626,7 +626,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                 }
 
                 // removing standalones
-                for (int i = actions_.size() - 2; i >= 0; i--)
+                for (int i = static_cast<int>(actions_.size()) - 2; i >= 0; i--)
                 {
                     if (actions_[i].t == ActionType::Tag || actions_[i].t == ActionType::UnescapeTag)
                         continue;
