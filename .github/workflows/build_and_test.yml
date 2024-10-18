@@ -116,6 +116,12 @@ jobs:
       working-directory: ${{github.workspace}}/build
       run: cmake --build . --target package
 
-    - name: Source package
-      working-directory: ${{github.workspace}}/build
-      run: cpack --config CPackSourceConfig.cmake
+    - uses: actions/upload-artifact@v4
+      if: matrix.os == 'ubuntu-latest' && matrix.compiler == 'gcc' && matrix.cxx_stdlib == 'libstdc++'
+      with: 
+        name: packages
+        path: ${{github.workspace}}/build/Crow-*
+    
+    #- name: Source package
+    #  working-directory: ${{github.workspace}}/build
+    #  run: cpack --config CPackSourceConfig.cmake
