@@ -30,7 +30,7 @@ for testfile in glob.glob("*.json"):
             print('Data: ', json.dumps(test["data"]))
             print('Template: ', test["template"])
             print('Expected:', repr(test["expected"]))
-            print('Actual:', repr(ret))
+            print('Actual:  ', repr(ret))
         assert ret == test["expected"]
 
         os.unlink('data')
