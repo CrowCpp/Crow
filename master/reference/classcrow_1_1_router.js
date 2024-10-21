@@ -20,5 +20,6 @@ var classcrow_1_1_router =
     [ "register_blueprint", "classcrow_1_1_router.html#a303e99f0109524b148d8d0a032367e8e", null ],
     [ "validate", "classcrow_1_1_router.html#a7916aa9620d6c6af2389af0d877ea9d9", null ],
     [ "validate_bp", "classcrow_1_1_router.html#a8e286f22cb96519b15b962470387e724", null ],
-    [ "validate_bp", "classcrow_1_1_router.html#aac8617b861a3f936334a1d502425e759", null ]
+    [ "validate_bp", "classcrow_1_1_router.html#aac8617b861a3f936334a1d502425e759", null ],
+    [ "using_ssl", "classcrow_1_1_router.html#a446ae6a77f1a425a724489d9812aa0f7", null ]
 ];
