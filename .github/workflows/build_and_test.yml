@@ -112,11 +112,16 @@ jobs:
         name: coveralls.json
         path: coveralls.json
 
+    - name: Package
+      working-directory: ${{github.workspace}}/build
+      run: cmake --build . --target package
 
-    #- name: Package
+    - uses: actions/upload-artifact@v4
+      if: matrix.os == 'ubuntu-24.04'
+      with: 
+        name: packages
+        path: ${{github.workspace}}/build/Crow-*
+    
+    #- name: Source package
     #  working-directory: ${{github.workspace}}/build
-    #  run: |
-    #    cmake --build . --target ALL_BUILD && \
-    #    cmake --build . --target doc && \
-    #    cmake --build . --target package && \
-    #    cpack --config CPackSourceConfig.cmake
+    #  run: cpack --config CPackSourceConfig.cmake
