@@ -1,13 +1,5 @@
 var NAVTREEINDEX4 =
 {
-"structcrow_1_1detail_1_1routing__handler__call__helper_1_1call_3_01_f_00_01_n_int_00_01_n_uint_0b63d09427b176e92959de8d063124ae4.html":[1,0,0,0,0,3],
-"structcrow_1_1detail_1_1routing__handler__call__helper_1_1call_3_01_f_00_01_n_int_00_01_n_uint_0b63d09427b176e92959de8d063124ae4.html#a238a40bdff8c5cefe74274551b993c9c":[1,0,0,0,0,3,0],
-"structcrow_1_1detail_1_1routing__handler__call__helper_1_1call_3_01_f_00_01_n_int_00_01_n_uint_0eca3da881de1118eaf3d106d8d88f2d4.html":[1,0,0,0,0,6],
-"structcrow_1_1detail_1_1routing__handler__call__helper_1_1call_3_01_f_00_01_n_int_00_01_n_uint_0eca3da881de1118eaf3d106d8d88f2d4.html#af7b27a90d5a598b841c0fc0af3f9d7bf":[1,0,0,0,0,6,0],
-"structcrow_1_1detail_1_1routing__handler__call__helper_1_1call__pair.html":[1,0,0,0,0,0],
-"structcrow_1_1detail_1_1routing__handler__call__helper_1_1call__pair.html#ac9c6c2efb5d7d0360e8950a314b336c5":[1,0,0,0,0,0,0],
-"structcrow_1_1detail_1_1routing__handler__call__helper_1_1call__params.html":[1,0,0,0,0,1],
-"structcrow_1_1detail_1_1routing__handler__call__helper_1_1call__params.html#a3b2d260f66b618ea4bf7f75f0bd739e1":[1,0,0,0,0,1,2],
 "structcrow_1_1detail_1_1routing__handler__call__helper_1_1call__params.html#a3e6c2066cd82b91d35550db36513d4bc":[1,0,0,0,0,1,1],
 "structcrow_1_1detail_1_1routing__handler__call__helper_1_1call__params.html#a4ce1d7e1b3b191aaaea19bbc3ad61e0d":[1,0,0,0,0,1,0],
 "structcrow_1_1detail_1_1routing__handler__call__helper_1_1call__params.html#ad63d6c1902dab21178b1b2644ec0d407":[1,0,0,0,0,1,3],
@@ -224,5 +216,13 @@ var NAVTREEINDEX4 =
 "utf-8_8h_source.html":[2,0,0,0,0,3],
 "utility_8h_source.html":[2,0,0,0,25],
 "version_8h_source.html":[2,0,0,0,26],
-"websocket_8h_source.html":[2,0,0,0,27]
+"websocket_8h_source.html":[2,0,0,0,27],
+"":[0,0,0,2],
+"":[0,0,0,5],
+"":[0,0,0,4],
+"":[0,0,0,1,0],
+"":[0,0,0,1],
+"":[0,0,0,2,0],
+"":[0,0,0,0],
+"":[0,0,0,4,0]
 };
