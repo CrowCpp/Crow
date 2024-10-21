@@ -54,6 +54,7 @@ nav:
       - Linux: getting_started/setup/linux.md
       - MacOS: getting_started/setup/macos.md
       - Windows: getting_started/setup/windows.md
+    - Project templates and applications: getting_started/project_templates_and_applications.md    
     - Your First Application: getting_started/your_first_application.md
     - A Simple Webpage: getting_started/a_simple_webpage.md
   - Guides:
