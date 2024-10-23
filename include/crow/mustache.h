@@ -114,13 +114,36 @@ namespace crow // NOTE: Already documented in "crow/app.h"
          */
         struct Action
         {
+            bool has_end_match;
+            char tag_char;
             int start;
             int end;
             int pos;
             ActionType t;
-            Action(ActionType t_, size_t start_, size_t end_, size_t pos_ = 0):
-              start(static_cast<int>(start_)), end(static_cast<int>(end_)), pos(static_cast<int>(pos_)), t(t_)
+
+            Action(char tag_char_, ActionType t_, size_t start_, size_t end_, size_t pos_ = 0):
+              has_end_match(false), tag_char(tag_char_), start(static_cast<int>(start_)), end(static_cast<int>(end_)), pos(static_cast<int>(pos_)), t(t_)
             {
+            }
+
+            bool missing_end_pair() const {
+                switch (t)
+                {
+                    case ActionType::Ignore:
+                    case ActionType::Tag:
+                    case ActionType::UnescapeTag:
+                    case ActionType::CloseBlock:
+                    case ActionType::Partial:
+                        return false;
+
+                    // requires a match
+                    case ActionType::OpenBlock:
+                    case ActionType::ElseBlock:
+                        return !has_end_match;
+
+                    default:
+                        throw std::logic_error("invalid type");
+                }
             }
         };
 
@@ -483,7 +506,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                     if (idx == body_.npos)
                     {
                         fragments_.emplace_back(static_cast<int>(current), static_cast<int>(body_.size()));
-                        actions_.emplace_back(ActionType::Ignore, 0, 0);
+                        actions_.emplace_back('!', ActionType::Ignore, 0, 0);
                         break;
                     }
                     fragments_.emplace_back(static_cast<int>(current), static_cast<int>(idx));
@@ -500,7 +523,8 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                         throw invalid_template_exception("not matched opening tag");
                     }
                     current = endIdx + tag_close.size();
-                    switch (body_[idx])
+                    char tag_char = body_[idx];
+                    switch (tag_char)
                     {
                         case '#':
                             idx++;
@@ -509,7 +533,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                             while (body_[endIdx - 1] == ' ')
                                 endIdx--;
                             blockPositions.emplace_back(static_cast<int>(actions_.size()));
-                            actions_.emplace_back(ActionType::OpenBlock, idx, endIdx);
+                            actions_.emplace_back(tag_char, ActionType::OpenBlock, idx, endIdx);
                             break;
                         case '/':
                             idx++;
@@ -522,13 +546,18 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                                 if (body_.compare(idx, endIdx - idx,
                                                   body_, matched.start, matched.end - matched.start) != 0)
                                 {
-                                    throw invalid_template_exception("not matched {{# {{/ pair: " +
-                                                                     body_.substr(matched.start, matched.end - matched.start) + ", " +
-                                                                     body_.substr(idx, endIdx - idx));
+                                     throw invalid_template_exception(
+                                             std::string("not matched {{")
+                                             + matched.tag_char
+                                             + "{{/ pair: "
+                                             + body_.substr(matched.start, matched.end - matched.start) + ", "
+                                             + body_.substr(idx, endIdx - idx)
+                                             );
                                 }
-                                matched.pos = actions_.size();
+                                matched.pos = static_cast<int>(actions_.size());
+                                matched.has_end_match = true;
                             }
-                            actions_.emplace_back(ActionType::CloseBlock, idx, endIdx, blockPositions.back());
+                            actions_.emplace_back(tag_char, ActionType::CloseBlock, idx, endIdx, blockPositions.back());
                             blockPositions.pop_back();
                             break;
                         case '^':
@@ -538,11 +567,11 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                             while (body_[endIdx - 1] == ' ')
                                 endIdx--;
                             blockPositions.emplace_back(static_cast<int>(actions_.size()));
-                            actions_.emplace_back(ActionType::ElseBlock, idx, endIdx);
+                            actions_.emplace_back(tag_char, ActionType::ElseBlock, idx, endIdx);
                             break;
                         case '!':
                             // do nothing action
-                            actions_.emplace_back(ActionType::Ignore, idx + 1, endIdx);
+                            actions_.emplace_back(tag_char, ActionType::Ignore, idx + 1, endIdx);
                             break;
                         case '>': // partial
                             idx++;
@@ -550,7 +579,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                                 idx++;
                             while (body_[endIdx - 1] == ' ')
                                 endIdx--;
-                            actions_.emplace_back(ActionType::Partial, idx, endIdx);
+                            actions_.emplace_back(tag_char, ActionType::Partial, idx, endIdx);
                             break;
                         case '{':
                             if (tag_open != "{{" || tag_close != "}}")
@@ -565,7 +594,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                                 idx++;
                             while (body_[endIdx - 1] == ' ')
                                 endIdx--;
-                            actions_.emplace_back(ActionType::UnescapeTag, idx, endIdx);
+                            actions_.emplace_back(tag_char, ActionType::UnescapeTag, idx, endIdx);
                             current++;
                             break;
                         case '&':
@@ -574,12 +603,12 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                                 idx++;
                             while (body_[endIdx - 1] == ' ')
                                 endIdx--;
-                            actions_.emplace_back(ActionType::UnescapeTag, idx, endIdx);
+                            actions_.emplace_back(tag_char, ActionType::UnescapeTag, idx, endIdx);
                             break;
                         case '=':
                             // tag itself is no-op
                             idx++;
-                            actions_.emplace_back(ActionType::Ignore, idx, endIdx);
+                            actions_.emplace_back(tag_char, ActionType::Ignore, idx, endIdx);
                             endIdx--;
                             if (body_[endIdx] != '=')
                                 throw invalid_template_exception("{{=: not matching = tag: " + body_.substr(idx, endIdx - idx));
@@ -620,13 +649,27 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                                 idx++;
                             while (body_[endIdx - 1] == ' ')
                                 endIdx--;
-                            actions_.emplace_back(ActionType::Tag, idx, endIdx);
+                            actions_.emplace_back(tag_char, ActionType::Tag, idx, endIdx);
                             break;
                     }
                 }
 
+                // ensure no unmatched tags
+                for (int i = 0; i < static_cast<int>(actions_.size()); i++)
+                {
+                    if (actions_[i].missing_end_pair())
+                    {
+                        throw invalid_template_exception(
+                                std::string("open tag has no matching end tag {{")
+                                + actions_[i].tag_char
+                                + " {{/ pair: "
+                                + body_.substr(actions_[i].start, actions_[i].end - actions_[i].start)
+                                );
+                    }
+                }
+
                 // removing standalones
-                for (int i = actions_.size() - 2; i >= 0; i--)
+                for (int i = static_cast<int>(actions_.size()) - 2; i >= 0; i--)
                 {
                     if (actions_[i].t == ActionType::Tag || actions_[i].t == ActionType::UnescapeTag)
                         continue;
