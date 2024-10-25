@@ -127,8 +127,8 @@ namespace crow
             }
 
             /// Default constructor using default values
-            message(const ci_map& headers, const std::string& boundary, const std::vector<part>& sections):
-              returnable("multipart/form-data; boundary=CROW-BOUNDARY"), headers(headers), boundary(boundary), parts(sections)
+            message(const ci_map& headers_, const std::string& boundary_, const std::vector<part>& sections):
+              returnable("multipart/form-data; boundary=CROW-BOUNDARY"), headers(headers_), boundary(boundary_), parts(sections)
             {
                 if (!boundary.empty())
                     content_type = "multipart/form-data; boundary=" + boundary;
@@ -141,14 +141,14 @@ namespace crow
             }
 
             /// Create a multipart message from a request data
-            message(const request& req):
+            explicit message(const request& req):
               returnable("multipart/form-data; boundary=CROW-BOUNDARY"),
               headers(req.headers),
               boundary(get_boundary(get_header_value("Content-Type")))
             {
                 if (!boundary.empty())
                     content_type = "multipart/form-data; boundary=" + boundary;
-                parse_body(req.body, parts, part_map);
+                parse_body(req.body);
             }
 
         private:
@@ -168,9 +168,8 @@ namespace crow
                 return std::string();
             }
 
-            void parse_body(std::string body, std::vector<part>& sections, mp_map& part_map)
+            void parse_body(std::string body)
             {
-
                 std::string delimiter = dd + boundary;
 
                 // TODO(EDev): Exit on error
@@ -193,7 +192,7 @@ namespace crow
                         part_map.emplace(
                           (get_header_object(parsed_section.headers, "Content-Disposition").params.find("name")->second),
                           parsed_section);
-                        sections.push_back(std::move(parsed_section));
+                        parts.push_back(std::move(parsed_section));
                     }
                 }
             }
@@ -217,17 +216,17 @@ namespace crow
                 {
                     header to_add;
 
-                    size_t found = lines.find(crlf);
-                    std::string line = lines.substr(0, found);
+                    const size_t found_crlf = lines.find(crlf);
+                    std::string line = lines.substr(0, found_crlf);
                     std::string key;
-                    lines.erase(0, found + 2);
+                    lines.erase(0, found_crlf + 2);
                     // Add the header if available
                     if (!line.empty())
                     {
-                        size_t found = line.find("; ");
-                        std::string header = line.substr(0, found);
-                        if (found != std::string::npos)
-                            line.erase(0, found + 2);
+                        const size_t found_semicolon = line.find("; ");
+                        std::string header = line.substr(0, found_semicolon);
+                        if (found_semicolon != std::string::npos)
+                            line.erase(0, found_semicolon + 2);
                         else
                             line = std::string();
 
@@ -240,10 +239,10 @@ namespace crow
                     // Add the parameters
                     while (!line.empty())
                     {
-                        size_t found = line.find("; ");
-                        std::string param = line.substr(0, found);
-                        if (found != std::string::npos)
-                            line.erase(0, found + 2);
+                        const size_t found_semicolon = line.find("; ");
+                        std::string param = line.substr(0, found_semicolon);
+                        if (found_semicolon != std::string::npos)
+                            line.erase(0, found_semicolon + 2);
                         else
                             line = std::string();
 

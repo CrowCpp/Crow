@@ -96,12 +96,14 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         {}
 
         virtual void validate() = 0;
-        
-        void set_added() {
+
+        void set_added()
+        {
             added_ = true;
         }
 
-        bool is_added() {
+        bool is_added()
+        {
             return added_;
         }
 
@@ -265,8 +267,8 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                 template<typename Req, typename... Args>
                 struct req_handler_wrapper
                 {
-                    req_handler_wrapper(Func f):
-                      f(std::move(f))
+                    req_handler_wrapper(Func fun):
+                      f(std::move(fun))
                     {
                     }
 
@@ -466,7 +468,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         void handle_upgrade(const request& req, response&, SocketAdaptor&& adaptor) override
         {
             max_payload_ = max_payload_override_ ? max_payload_ : app_->websocket_max_payload();
-            new crow::websocket::Connection<SocketAdaptor, App>(req, std::move(adaptor), app_, max_payload_, open_handler_, message_handler_, close_handler_, error_handler_, accept_handler_);
+            new crow::websocket::Connection<SocketAdaptor, App>(req, std::move(adaptor), app_, max_payload_, subprotocols_, open_handler_, message_handler_, close_handler_, error_handler_, accept_handler_);
         }
         void handle_upgrade(const request& req, response&, UnixSocketAdaptor&& adaptor) override
         {
@@ -476,7 +478,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
 #ifdef CROW_ENABLE_SSL
         void handle_upgrade(const request& req, response&, SSLAdaptor&& adaptor) override
         {
-            new crow::websocket::Connection<SSLAdaptor, App>(req, std::move(adaptor), app_, max_payload_, open_handler_, message_handler_, close_handler_, error_handler_, accept_handler_);
+            new crow::websocket::Connection<SSLAdaptor, App>(req, std::move(adaptor), app_, max_payload_, subprotocols_, open_handler_, message_handler_, close_handler_, error_handler_, accept_handler_);
         }
 #endif
 
@@ -485,6 +487,12 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         {
             max_payload_ = max_payload;
             max_payload_override_ = true;
+            return *this;
+        }
+
+        self_t& subprotocols(const std::vector<std::string>& subprotocols)
+        {
+            subprotocols_ = subprotocols;
             return *this;
         }
 
@@ -527,11 +535,12 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         App* app_;
         std::function<void(crow::websocket::connection&)> open_handler_;
         std::function<void(crow::websocket::connection&, const std::string&, bool)> message_handler_;
-        std::function<void(crow::websocket::connection&, const std::string&)> close_handler_;
+        std::function<void(crow::websocket::connection&, const std::string&, uint16_t)> close_handler_;
         std::function<void(crow::websocket::connection&, const std::string&)> error_handler_;
         std::function<bool(const crow::request&, void**)> accept_handler_;
         uint64_t max_payload_;
         bool max_payload_override_ = false;
+        std::vector<std::string> subprotocols_;
     };
 
     /// Allows the user to assign parameters using functions.
@@ -1105,7 +1114,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         Node head_;
     };
 
-    /// A blueprint can be considered a smaller section of a Crow app, specifically where the router is conecerned.
+    /// A blueprint can be considered a smaller section of a Crow app, specifically where the router is concerned.
 
     ///
     /// You can use blueprints to assign a common prefix to rules' prefix, set custom static and template folders, and set a custom catchall route.
@@ -1114,7 +1123,9 @@ namespace crow // NOTE: Already documented in "crow/app.h"
     {
     public:
         Blueprint(const std::string& prefix):
-          prefix_(prefix){};
+          prefix_(prefix),
+          static_dir_(prefix),
+          templates_dir_(prefix){};
 
         Blueprint(const std::string& prefix, const std::string& static_dir):
           prefix_(prefix), static_dir_(static_dir){};
@@ -1174,11 +1185,13 @@ namespace crow // NOTE: Already documented in "crow/app.h"
             return static_dir_;
         }
 
-        void set_added() {
+        void set_added()
+        {
             added_ = true;
         }
 
-        bool is_added() {
+        bool is_added()
+        {
             return added_;
         }
 
@@ -1263,7 +1276,9 @@ namespace crow // NOTE: Already documented in "crow/app.h"
     class Router
     {
     public:
-        Router()
+        bool using_ssl;
+
+        Router() : using_ssl(false)
         {}
 
         DynamicRule& new_rule_dynamic(const std::string& rule)
@@ -1355,7 +1370,8 @@ namespace crow // NOTE: Already documented in "crow/app.h"
             }
         }
 
-        void validate_bp() {
+        void validate_bp()
+        {
             //Take all the routes from the registered blueprints and add them to `all_rules_` to be processed.
             detail::middleware_indices blueprint_mw;
             validate_bp(blueprints_, blueprint_mw);
@@ -1375,8 +1391,8 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                     get_recursive_child_methods(blueprint, methods);
                     for (HTTPMethod x : methods)
                     {
-                        int i = static_cast<int>(x);
-                        per_methods_[i].trie.add(blueprint->prefix(), 0, blueprint->prefix().length(), i);
+                        int method_index = static_cast<int>(x);
+                        per_methods_[method_index].trie.add(blueprint->prefix(), 0, blueprint->prefix().length(), method_index);
                     }
                 }
 
@@ -1431,9 +1447,9 @@ namespace crow // NOTE: Already documented in "crow/app.h"
 
             if (!rule_index)
             {
-                for (auto& per_method : per_methods_)
+                for (auto& method : per_methods_)
                 {
-                    if (per_method.trie.find(req.url).rule_index)
+                    if (method.trie.find(req.url).rule_index)
                     {
                         CROW_LOG_DEBUG << "Cannot match method " << req.url << " " << method_name(req.method);
                         res = response(405);
@@ -1463,7 +1479,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                 }
                 else
                 {
-                    res.add_header("Location", "http://" + req.get_header_value("Host") + req.url + "/");
+                    res.add_header("Location", (using_ssl ? "https://" : "http://") + req.get_header_value("Host") + req.url + "/");
                 }
                 res.end();
                 return;
@@ -1711,7 +1727,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                 }
                 else
                 {
-                    res.add_header("Location", "http://" + req.get_header_value("Host") + req.url + "/");
+                    res.add_header("Location", (using_ssl ? "https://" : "http://") + req.get_header_value("Host") + req.url + "/");
                 }
                 res.end();
                 return;

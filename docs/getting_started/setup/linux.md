@@ -86,7 +86,7 @@ From there CMake should handle compiling and linking your project.
 !!! note
 
     For optional features like HTTP Compression or HTTPS you can set
-	
+
 	  the `CROW_ENABLE_SSL` variable to enable the support for https
 	  the `CROW_ENABLE_COMPRESSION` variable to enable the support for http compression
 

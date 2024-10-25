@@ -1,0 +1,4 @@
+GET /test/?string_param=exampleString&integer_param=12345 HTTP/1.1
+Host: example.com
+User-Agent: Fuzzer/1.0
+Accept: */*

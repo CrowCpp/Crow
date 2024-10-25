@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>User Profile</title>
+</head>
+<body>
+    <h1>{{name}}'s Profile</h1>
+    <p>{{bio}}</p>
+    <p>Favorite Programming Language: {{favoriteLanguage}}</p>
+</body>
+</html>

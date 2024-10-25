@@ -1,4 +1,3 @@
-#define CATCH_CONFIG_MAIN
 #define CROW_ENABLE_DEBUG
 #define CROW_LOG_LEVEL 0
 #include <sys/stat.h>
@@ -10,7 +9,7 @@
 #include <type_traits>
 #include <regex>
 
-#include "catch.hpp"
+#include "catch2/catch_all.hpp"
 #include "crow.h"
 #include "crow/middlewares/cookie_parser.h"
 #include "crow/middlewares/cors.h"
@@ -542,17 +541,26 @@ TEST_CASE("http_method")
 TEST_CASE("validate can be called multiple times")
 {
     SimpleApp app;
-    CROW_ROUTE(app, "/")([]() { return "1"; });
+    CROW_ROUTE(app, "/")
+    ([]() {
+        return "1";
+    });
     app.validate();
     app.validate();
 
-    CROW_ROUTE(app, "/test")([]() { return "1"; });
+    CROW_ROUTE(app, "/test")
+    ([]() {
+        return "1";
+    });
     app.validate();
 
     try
     {
-        CROW_ROUTE(app, "/")([]() { return "1"; });
-        app.validate();      
+        CROW_ROUTE(app, "/")
+        ([]() {
+            return "1";
+        });
+        app.validate();
         FAIL_CHECK();
     }
     catch (std::exception& e)
@@ -594,6 +602,24 @@ TEST_CASE("server_handling_error_request")
     }
     app.stop();
 } // server_handling_error_request
+
+TEST_CASE("server_dynamic_port_allication")
+{
+    SimpleApp app;
+    CROW_ROUTE(app, "/")
+    ([] {
+        return "A";
+    });
+    auto _ = app.bindaddr(LOCALHOST_ADDRESS).port(0).run_async();
+    app.wait_for_server_start();
+    asio::io_service is;
+    {
+        asio::ip::tcp::socket c(is);
+        c.connect(asio::ip::tcp::endpoint(
+          asio::ip::address::from_string(LOCALHOST_ADDRESS), app.port()));
+    }
+    app.stop();
+} // server_dynamic_port_allication
 
 TEST_CASE("server_handling_error_request_http_version")
 {
@@ -667,8 +693,8 @@ TEST_CASE("multi_server")
 
         for (auto ch : sendmsg)
         {
-            char buf[1] = {ch};
-            c.send(asio::buffer(buf));
+            char tmp[1] = {ch};
+            c.send(asio::buffer(tmp));
         }
 
         size_t recved = c.receive(asio::buffer(buf, 2048));
@@ -1002,6 +1028,7 @@ TEST_CASE("json_write_with_indent")
 
     static constexpr char TabSeparator = '\t';
 
+    // Note: The following string needs to use tabs!
     CHECK(R"({
 	"scores": [
 		1,
@@ -2486,6 +2513,72 @@ TEST_CASE("multipart")
     }
 } // multipart
 
+TEST_CASE("multipart_view")
+{
+    //
+    //--CROW-BOUNDARY
+    //Content-Disposition: form-data; name=\"hello\"
+    //
+    //world
+    //--CROW-BOUNDARY
+    //Content-Disposition: form-data; name=\"world\"
+    //
+    //hello
+    //--CROW-BOUNDARY
+    //Content-Disposition: form-data; name=\"multiline\"
+    //
+    //text
+    //text
+    //text
+    //--CROW-BOUNDARY--
+    //
+
+    std::string test_string = "--CROW-BOUNDARY\r\nContent-Disposition: form-data; name=\"hello\"\r\n\r\nworld\r\n--CROW-BOUNDARY\r\nContent-Disposition: form-data; name=\"world\"\r\n\r\nhello\r\n--CROW-BOUNDARY\r\nContent-Disposition: form-data; name=\"multiline\"\r\n\r\ntext\ntext\ntext\r\n--CROW-BOUNDARY--\r\n";
+
+    SimpleApp app;
+
+    CROW_ROUTE(app, "/multipart")
+    ([](const crow::request& req, crow::response& res) {
+        multipart::message_view msg(req);
+        res.body = msg.dump();
+        res.end();
+    });
+
+    app.validate();
+
+    {
+        request req;
+        response res;
+
+        req.url = "/multipart";
+        req.add_header("Content-Type", "multipart/form-data; boundary=CROW-BOUNDARY");
+        req.body = test_string;
+
+        app.handle_full(req, res);
+
+        CHECK(test_string == res.body);
+
+
+        multipart::message_view msg(req);
+        CHECK("hello" == msg.get_part_by_name("world").body);
+        CHECK("form-data" == msg.get_part_by_name("hello").get_header_object("Content-Disposition").value);
+    }
+
+    // Check with `"` encapsulating the boundary (.NET clients do this)
+    {
+        request req;
+        response res;
+
+        req.url = "/multipart";
+        req.add_header("Content-Type", "multipart/form-data; boundary=\"CROW-BOUNDARY\"");
+        req.body = test_string;
+
+        app.handle_full(req, res);
+
+        CHECK(test_string == res.body);
+    }
+} // multipart_view
+
 TEST_CASE("send_file")
 {
 
@@ -2636,9 +2729,9 @@ TEST_CASE("stream_response")
                 b.commit(n);
                 received += n;
 
-                std::istream is(&b);
+                std::istream istream(&b);
                 std::string s;
-                is >> s;
+                istream >> s;
 
                 CHECK(key_response.substr(received - n, n) == s);
             }
@@ -2671,10 +2764,12 @@ TEST_CASE("websocket")
               conn.send_ping("");
           else if (!isbin && message == "Hello")
               conn.send_text("Hello back");
+          else if (!isbin && message.empty())
+              conn.send_text("");
           else if (isbin && message == "Hello bin")
               conn.send_binary("Hello back bin");
       })
-      .onclose([&](websocket::connection&, const std::string&) {
+      .onclose([&](websocket::connection&, const std::string&, uint16_t) {
           CROW_LOG_INFO << "Closing websocket";
       });
 
@@ -2732,6 +2827,17 @@ TEST_CASE("websocket")
         std::this_thread::sleep_for(std::chrono::milliseconds(5));
         std::string checkstring(std::string(buf).substr(0, 12));
         CHECK(checkstring == "\x81\x0AHello back");
+    }
+    //----------Empty Text----------
+    {
+        std::fill_n(buf, 2048, 0);
+        char text_message[2 + 0 + 1]("\x81\x00");
+
+        c.send(asio::buffer(text_message, 2));
+        c.receive(asio::buffer(buf, 2048));
+        std::this_thread::sleep_for(std::chrono::milliseconds(5));
+        std::string checkstring(std::string(buf).substr(0, 2));
+        CHECK(checkstring == text_message);
     }
     //----------Binary----------
     {
@@ -2811,6 +2917,194 @@ TEST_CASE("websocket")
     app.stop();
 } // websocket
 
+TEST_CASE("websocket_close")
+{
+    static std::string http_message = "GET /ws HTTP/1.1\r\nConnection: keep-alive, Upgrade\r\nupgrade: websocket\r\nSec-WebSocket-Key: dGhlIHNhbXBsZSBub25jZQ==\r\nSec-WebSocket-Version: 13\r\nHost: localhost\r\n\r\n";
+
+    static bool connected{false};
+    websocket::connection* connection = nullptr;
+    uint32_t close_calls = 0;
+    uint16_t last_status_code = 0;
+    CROW_LOG_INFO << "Setting up app!\n";
+    SimpleApp app;
+
+    CROW_WEBSOCKET_ROUTE(app, "/ws")
+      .onaccept([&](const crow::request& req, void**) {
+          CROW_LOG_INFO << "Accepted websocket with URL " << req.url;
+          return true;
+      })
+      .onopen([&](websocket::connection& conn) {
+          connected = true;
+          connection = &conn;
+          CROW_LOG_INFO << "Connected websocket and value is " << connected;
+      })
+      .onmessage([&](websocket::connection& conn, const std::string& message, bool) {
+          CROW_LOG_INFO << "Message is \"" << message << '\"';
+          if (message == "quit-default")
+              conn.close();
+          else if (message == "quit-custom")
+              conn.close("custom", crow::websocket::StartStatusCodesForPrivateUse + 10u);
+      })
+      .onclose([&](websocket::connection& conn, const std::string&, uint16_t status_code) {
+          // There should just be one connection
+          CHECK(&conn == connection);
+          CHECK_FALSE(conn.get_remote_ip().empty());
+          ++close_calls;
+          last_status_code = status_code;
+          CROW_LOG_INFO << "Closing websocket";
+      });
+
+    app.validate();
+
+    CROW_LOG_WARNING << "Starting app!\n";
+    auto _ = app.bindaddr(LOCALHOST_ADDRESS).port(45453).run_async();
+    app.wait_for_server_start();
+    CROW_LOG_WARNING << "App started!\n";
+    asio::io_service is;
+
+    asio::ip::tcp::socket c(is);
+    c.connect(asio::ip::tcp::endpoint(
+      asio::ip::address::from_string(LOCALHOST_ADDRESS), 45453));
+
+    CROW_LOG_WARNING << "Connected!\n";
+
+    char buf[2048];
+
+    //----------Handshake----------
+    {
+        std::fill_n(buf, 2048, 0);
+        c.send(asio::buffer(http_message));
+
+        c.receive(asio::buffer(buf, 2048));
+        std::this_thread::sleep_for(std::chrono::milliseconds(5));
+        CHECK(connected);
+    }
+
+    CHECK(close_calls == 0);
+
+    SECTION("normal close from client")
+    {
+        std::fill_n(buf, 2048, 0);
+        // Close message with, len = 2, status code = 1000
+        char close_message[5]("\x88\x02\x03\xE8");
+        c.send(asio::buffer(close_message, 4));
+        c.receive(asio::buffer(buf, 2048));
+        std::this_thread::sleep_for(std::chrono::milliseconds(5));
+        CHECK((int)(unsigned char)buf[0] == 0x88);
+        CHECK((int)(unsigned char)buf[1] == 0x02);
+        CHECK((int)(unsigned char)buf[2] == 0x03);
+        CHECK((int)(unsigned char)buf[3] == 0xE8);
+
+        CHECK(close_calls == 1);
+        CHECK(last_status_code == 1000);
+    }
+
+    SECTION("empty close from client")
+    {
+        std::fill_n(buf, 2048, 0);
+        // Close message with, len = 0, status code = N/A -> To application give no status code present
+        char close_message[3]("\x88\x00");
+
+        c.send(asio::buffer(close_message, 2));
+        c.receive(asio::buffer(buf, 2048));
+        std::this_thread::sleep_for(std::chrono::milliseconds(5));
+        CHECK((int)(unsigned char)buf[0] == 0x88);
+
+        CHECK(close_calls == 1);
+        CHECK(last_status_code == crow::websocket::NoStatusCodePresent);
+    }
+
+    SECTION("close with message from client")
+    {
+        std::fill_n(buf, 2048, 0);
+        // Close message with, len = 2, status code = 1001
+        char close_message[9]("\x88\x06\x03\xE9"
+                              "fail");
+
+        c.send(asio::buffer(close_message, 8));
+        c.receive(asio::buffer(buf, 2048));
+        std::this_thread::sleep_for(std::chrono::milliseconds(5));
+        CHECK((int)(unsigned char)buf[0] == 0x88);
+        CHECK((int)(unsigned char)buf[1] == 0x06);
+        CHECK((int)(unsigned char)buf[2] == 0x03);
+        CHECK((int)(unsigned char)buf[3] == 0xE9);
+        std::string checkstring(std::string(buf).substr(4, 4));
+        CHECK(checkstring == "fail");
+
+        CHECK(close_calls == 1);
+        CHECK(last_status_code == 1001);
+    }
+
+    SECTION("normal close from server")
+    {
+        //----------Text----------
+        std::fill_n(buf, 2048, 0);
+        char text_message[2 + 12 + 1]("\x81\x0C"
+                                      "quit-default");
+
+        c.send(asio::buffer(text_message, 14));
+        c.receive(asio::buffer(buf, 2048));
+        std::this_thread::sleep_for(std::chrono::milliseconds(5));
+        CHECK((int)(unsigned char)buf[0] == 0x88);
+        // length is message + 2 for status code
+        CHECK((int)(unsigned char)buf[1] == 0x6);
+
+        uint16_t expected_code = websocket::NormalClosure;
+        CHECK((int)(unsigned char)buf[2] == expected_code >> 8);
+        CHECK((int)(unsigned char)buf[3] == (expected_code & 0xff));
+        std::string checkstring(std::string(buf).substr(4, 4));
+        CHECK(checkstring == "quit");
+
+        CHECK(close_calls == 0);
+
+        // Reply with client close
+        char client_close_response[9]("\x88\x06\x0\x0quit");
+        client_close_response[2] = buf[2];
+        client_close_response[3] = buf[3];
+
+        c.send(asio::buffer(client_close_response, 8));
+        std::this_thread::sleep_for(std::chrono::milliseconds(5));
+        CHECK(close_calls == 1);
+        CHECK(last_status_code == expected_code);
+    }
+
+    SECTION("custom close from server")
+    {
+        //----------Text----------
+        std::fill_n(buf, 2048, 0);
+        char text_message[2 + 11 + 1]("\x81\x0B"
+                                      "quit-custom");
+
+        c.send(asio::buffer(text_message, 13));
+        c.receive(asio::buffer(buf, 2048));
+        std::this_thread::sleep_for(std::chrono::milliseconds(5));
+        CHECK((int)(unsigned char)buf[0] == 0x88);
+        // length is message + 2 for status code
+        CHECK((int)(unsigned char)buf[1] == 0x8);
+        uint16_t expected_code = 4010;
+        CHECK((int)(unsigned char)buf[2] == expected_code >> 8);
+        CHECK((int)(unsigned char)buf[3] == (expected_code & 0xff));
+        std::string checkstring(std::string(buf).substr(4, 6));
+        CHECK(checkstring == "custom");
+
+        CHECK(close_calls == 0);
+
+        // Reply with client close
+        char client_close_response[11]("\x88\x08\x0\x0"
+                                       "custom");
+        client_close_response[2] = buf[2];
+        client_close_response[3] = buf[3];
+
+        c.send(asio::buffer(client_close_response, 10));
+        std::this_thread::sleep_for(std::chrono::milliseconds(5));
+        CHECK(close_calls == 1);
+        CHECK(last_status_code == expected_code);
+    }
+
+    CROW_LOG_WARNING << "Stopping app!\n";
+    app.stop();
+}
+
 TEST_CASE("websocket_missing_host")
 {
     static std::string http_message = "GET /ws HTTP/1.1\r\nConnection: keep-alive, Upgrade\r\nupgrade: websocket\r\nSec-WebSocket-Key: dGhlIHNhbXBsZSBub25jZQ==\r\nSec-WebSocket-Version: 13\r\n\r\n";
@@ -2837,7 +3131,7 @@ TEST_CASE("websocket_missing_host")
           else if (isbin && message == "Hello bin")
               conn.send_binary("Hello back bin");
       })
-      .onclose([&](websocket::connection&, const std::string&) {
+      .onclose([&](websocket::connection&, const std::string&, uint16_t) {
           CROW_LOG_INFO << "Closing websocket";
       });
 
@@ -2889,7 +3183,7 @@ TEST_CASE("websocket_max_payload")
           else if (isbin && message == "Hello bin")
               conn.send_binary("Hello back bin");
       })
-      .onclose([&](websocket::connection&, const std::string&) {
+      .onclose([&](websocket::connection&, const std::string&, uint16_t) {
           CROW_LOG_INFO << "Closing websocket";
       });
 
@@ -2938,6 +3232,57 @@ TEST_CASE("websocket_max_payload")
 
     app.stop();
 } // websocket_max_payload
+
+TEST_CASE("websocket_subprotocols")
+{
+    static std::string http_message = "GET /ws HTTP/1.1\r\nConnection: keep-alive, Upgrade\r\nupgrade: websocket\r\nSec-WebSocket-Key: dGhlIHNhbXBsZSBub25jZQ==\r\nSec-WebSocket-Protocol: myprotocol\r\nSec-WebSocket-Version: 13\r\nHost: localhost\r\n\r\n";
+
+    static websocket::connection* connection = nullptr;
+    static bool connected{false};
+
+    SimpleApp app;
+
+    CROW_WEBSOCKET_ROUTE(app, "/ws")
+      .subprotocols({"anotherprotocol", "myprotocol"})
+      .onaccept([&](const crow::request& req, void**) {
+          CROW_LOG_INFO << "Accepted websocket with URL " << req.url;
+          return true;
+      })
+      .onopen([&](websocket::connection& con) {
+          connected = true;
+          connection = &con;
+          CROW_LOG_INFO << "Connected websocket and subprotocol is " << con.get_subprotocol();
+      })
+      .onclose([&](websocket::connection&, const std::string&, uint16_t) {
+          CROW_LOG_INFO << "Closing websocket";
+      });
+
+    app.validate();
+
+    auto _ = app.bindaddr(LOCALHOST_ADDRESS).port(45451).run_async();
+    app.wait_for_server_start();
+    asio::io_service is;
+
+    asio::ip::tcp::socket c(is);
+    c.connect(asio::ip::tcp::endpoint(
+      asio::ip::address::from_string(LOCALHOST_ADDRESS), 45451));
+
+
+    char buf[2048];
+
+    //----------Handshake----------
+    {
+        std::fill_n(buf, 2048, 0);
+        c.send(asio::buffer(http_message));
+
+        c.receive(asio::buffer(buf, 2048));
+        std::this_thread::sleep_for(std::chrono::milliseconds(5));
+        CHECK(connected);
+        CHECK(connection->get_subprotocol() == "myprotocol");
+    }
+
+    app.stop();
+}
 
 #ifdef CROW_ENABLE_COMPRESSION
 TEST_CASE("zlib_compression")
@@ -3445,7 +3790,8 @@ TEST_CASE("base64")
     CHECK(crow::utility::base64decode(sample_bin2_enc_np, 6) == sample_bin2_str);
 } // base64
 
-TEST_CASE("normalize_path") {
+TEST_CASE("normalize_path")
+{
     CHECK(crow::utility::normalize_path("/abc/def") == "/abc/def/");
     CHECK(crow::utility::normalize_path("path\\to\\directory") == "path/to/directory/");
 } // normalize_path
@@ -3575,26 +3921,25 @@ TEST_CASE("task_timer")
     bool a = false;
     bool b = false;
 
-    crow::detail::task_timer timer(io_service);
+    crow::detail::task_timer timer(io_service, std::chrono::milliseconds(100));
     CHECK(timer.get_default_timeout() == 5);
-    timer.set_default_timeout(7);
-    CHECK(timer.get_default_timeout() == 7);
+    timer.set_default_timeout(9);
+    CHECK(timer.get_default_timeout() == 9);
 
     timer.schedule([&a]() {
         a = true;
-    },
-                   5);
+    }, 5);
     timer.schedule([&b]() {
         b = true;
     });
 
-    this_thread::sleep_for(chrono::seconds(4));
+    this_thread::sleep_for(4 * timer.get_tick_length());
     CHECK(a == false);
     CHECK(b == false);
-    this_thread::sleep_for(chrono::seconds(2));
+    this_thread::sleep_for(2 * timer.get_tick_length());
     CHECK(a == true);
     CHECK(b == false);
-    this_thread::sleep_for(chrono::seconds(2));
+    this_thread::sleep_for(4 * timer.get_tick_length());
     CHECK(a == true);
     CHECK(b == true);
 
@@ -3646,8 +3991,7 @@ TEST_CASE("http2_upgrade_is_ignored")
     static char buf[5012];
 
     SimpleApp app;
-    CROW_ROUTE(app, "/echo").methods("POST"_method)
-    ([](crow::request const& req) {
+    CROW_ROUTE(app, "/echo").methods("POST"_method)([](crow::request const& req) {
         return req.body;
     });
 
@@ -3667,15 +4011,15 @@ TEST_CASE("http2_upgrade_is_ignored")
     };
 
     std::string request =
-        "POST /echo HTTP/1.1\r\n"
-        "user-agent: unittest.cpp\r\n"
-        "host: " LOCALHOST_ADDRESS ":45451\r\n"
-        "content-length: 48\r\n"
-        "connection: upgrade\r\n"
-        "upgrade: h2c\r\n"
-        "\r\n"
-        "http2 upgrade is not supported so body is parsed\r\n"
-        "\r\n";
+      "POST /echo HTTP/1.1\r\n"
+      "user-agent: unittest.cpp\r\n"
+      "host: " LOCALHOST_ADDRESS ":45451\r\n"
+      "content-length: 48\r\n"
+      "connection: upgrade\r\n"
+      "upgrade: h2c\r\n"
+      "\r\n"
+      "http2 upgrade is not supported so body is parsed\r\n"
+      "\r\n";
 
     auto res = make_request(request);
     CHECK(res.find("http2 upgrade is not supported so body is parsed") != std::string::npos);

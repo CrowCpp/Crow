@@ -34,6 +34,14 @@ namespace crow // NOTE: Already documented in "crow/app.h"
 
     namespace json
     {
+        static inline char to_hex(char c)
+        {
+            c = c & 0xf;
+            if (c < 10)
+                return '0' + c;
+            return 'a' + c - 10;
+        }
+
         inline void escape(const std::string& str, std::string& ret)
         {
             ret.reserve(ret.size() + str.size() + str.size() / 4);
@@ -52,12 +60,6 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                         if (c >= 0 && c < 0x20)
                         {
                             ret += "\\u00";
-                            auto to_hex = [](char c) {
-                                c = c & 0xf;
-                                if (c < 10)
-                                    return '0' + c;
-                                return 'a' + c - 10;
-                            };
                             ret += to_hex(c / 16);
                             ret += to_hex(c % 16);
                         }
@@ -459,7 +461,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
             }
 
             /// The list or object value
-            std::vector<rvalue> lo()
+            std::vector<rvalue> lo() const
             {
 #ifndef CROW_JSON_NO_ERROR_CHECK
                 if (t() != type::Object && t() != type::List)
@@ -571,7 +573,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                 return it != end() && it->key_ == str;
             }
 
-            int count(const std::string& str)
+            int count(const std::string& str) const
             {
                 return has(str) ? 1 : 0;
             }
@@ -666,7 +668,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                 if (it != end() && it->key_ == str)
                     return *it;
 #ifndef CROW_JSON_NO_ERROR_CHECK
-                throw std::runtime_error("cannot find key");
+                throw std::runtime_error("cannot find key: " + str);
 #else
                 static rvalue nullValue;
                 return nullValue;
@@ -878,8 +880,8 @@ namespace crow // NOTE: Already documented in "crow/app.h"
             //static const char* escaped = "\"\\/\b\f\n\r\t";
             struct Parser
             {
-                Parser(char* data, size_t /*size*/):
-                  data(data)
+                Parser(char* data_, size_t /*size*/):
+                  data(data_)
                 {
                 }
 
@@ -1885,9 +1887,10 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                                 sprintf_s(outbuf, sizeof(outbuf), "%f", v.num.d);
 #else
                                 snprintf(outbuf, sizeof(outbuf), "%f", v.num.d);
-#endif 
+#endif
                             }
-                            char *p = &outbuf[0], *o = nullptr; // o is the position of the first trailing 0
+                            char* p = &outbuf[0];
+                            char* pos_first_trailing_0 = nullptr;
                             f_state = start;
                             while (*p != '\0')
                             {
@@ -1909,22 +1912,22 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                                         if (ch == '0')
                                         {
                                             f_state = zero;
-                                            o = p;
+                                            pos_first_trailing_0 = p;
                                         }
                                         p++;
                                         break;
                                     case zero: // if a non 0 is found (e.g. 1.00004) remove the earlier recorded 0 position and look for more trailing 0s
                                         if (ch != '0')
                                         {
-                                            o = nullptr;
+                                            pos_first_trailing_0 = nullptr;
                                             f_state = decp;
                                         }
                                         p++;
                                         break;
                                 }
                             }
-                            if (o != nullptr) // if any trailing 0s are found, terminate the string where they begin
-                                *o = '\0';
+                            if (pos_first_trailing_0 != nullptr) // if any trailing 0s are found, terminate the string where they begin
+                                *pos_first_trailing_0 = '\0';
                             out += outbuf;
                         }
                         else if (v.nt == num_type::Signed_integer)
@@ -2033,7 +2036,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                 return ret;
             }
 
-            std::string dump() const
+            std::string dump() const override
             {
                 static constexpr int DontIndent = -1;
 
@@ -2046,7 +2049,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         {
             int64_t get(int64_t fallback)
             {
-                if (ref.t() != type::Number || ref.nt == num_type::Floating_point || 
+                if (ref.t() != type::Number || ref.nt == num_type::Floating_point ||
                     ref.nt == num_type::Double_precision_floating_point)
                     return fallback;
                 return ref.num.si;

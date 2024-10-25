@@ -18,5 +18,5 @@ The following guide will use `example_with_all.cpp` as the Crow application for 
 8. Add `crow_all.h` to `Header Files` and `example_with_all.cpp` to `Source Files`.
 9. In solution explorer, right click the name of your project then click `Properties`.
 10. Under `vcpkg`, set `Use Vcpkg Manifest` to `Yes` and `Additional Options` to `--feature-flags="versions"`.
-11. Set `Debug/Release` and `x64/x86`. 
+11. Set `Debug/Release` and `x64/x86`.
 12. Run.

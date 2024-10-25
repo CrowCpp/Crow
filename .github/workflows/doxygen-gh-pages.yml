@@ -20,7 +20,7 @@ jobs:
       - name: prepate pip dependencies
         run: pip3 install mkdocs-material mkdocs-redirects pyyaml mkdocs-meta-descriptions-plugin mike --no-input
       - name: configure
-        run: cmake -B build -DCROW_AMALGAMATE=ON 
+        run: cmake -B build -DCROW_AMALGAMATE=ON
       - name: clean generated docs dir
         run: rm -rf site docs/reference
       - name: clone doxygen theme

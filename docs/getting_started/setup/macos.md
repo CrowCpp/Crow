@@ -61,9 +61,9 @@ This will generate a `crow_all.h` file which you can use in the following steps
     4. `make -j12`
 !!! note
 
-        You can add options like `-DCROW_ENABLE_COMPRESSION=ON` 
-		or `-DCROW_ENABLE_SSL=ON` 
-		or `-DCROW_AMALGAMATE` 
+        You can add options like `-DCROW_ENABLE_COMPRESSION=ON`
+                or `-DCROW_ENABLE_SSL=ON`
+                or `-DCROW_AMALGAMATE`
 		to `cmake ..` to build optional tests/examples for HTTP Compression or HTTPS.
 
 ## Compiling using a compiler directly

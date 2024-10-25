@@ -107,7 +107,7 @@
  *     .onopen([&](crow::websocket::connection& conn){
  *                do_something();
  *            })
- *     .onclose([&](crow::websocket::connection& conn, const std::string& reason){
+ *     .onclose([&](crow::websocket::connection& conn, const std::string& reason, uint16_t){
  *                 do_something();
  *             })
  *     .onmessage([&](crow::websocket::connection&, const std::string& data, bool is_binary){
@@ -157,7 +157,7 @@
  * using this macro.
  *
  * \see [Page of the guide "Routes" (Catchall routes)](https://crowcpp.org/master/guides/routes/#catchall-routes).
- */ 
+ */
 #define CROW_CATCHALL_ROUTE(app) app.catchall_route()
 
 /**
@@ -169,7 +169,7 @@
  * undefined route in the blueprint.
  *
  * \see [Page of the guide "Blueprint" (Define a custom Catchall route)](https://crowcpp.org/master/guides/blueprints/#define-a-custom-catchall-route).
- */ 
+ */
 #define CROW_BP_CATCHALL_ROUTE(blueprint) blueprint.catchall_rule()
 
 
@@ -178,7 +178,7 @@
  * \brief The main namespace of the library. In this namespace
  * is defined the most important classes and functions of the
  * library.
- * 
+ *
  * Within this namespace, the Crow class, Router class, Connection
  * class, and other are defined.
  */
@@ -313,9 +313,22 @@ namespace crow
         }
 
         /// \brief Get the port that Crow will handle requests on
-        std::uint16_t port()
+        std::uint16_t port() const
         {
-            return port_;
+            if (!server_started_)
+            {
+                return port_;
+            }
+#ifdef CROW_ENABLE_SSL
+            if (ssl_used_)
+            {
+                return ssl_server_->port();
+            }
+            else
+#endif
+            {
+                return server_->port();
+            }
         }
 
         /// \brief Set the connection timeout in seconds (default is 5)
@@ -409,7 +422,7 @@ namespace crow
             return res_stream_threshold_;
         }
 
-        
+
         self_t& register_blueprint(Blueprint& blueprint)
         {
             router_.register_blueprint(blueprint);
@@ -443,7 +456,7 @@ namespace crow
         }
 
 #ifdef CROW_ENABLE_COMPRESSION
-        
+
         self_t& use_compression(compression::algorithm algorithm)
         {
             comp_algorithm_ = algorithm;
@@ -471,8 +484,10 @@ namespace crow
 
             for (Blueprint* bp : router_.blueprints())
             {
-                if (bp->static_dir().empty()) continue;
-
+                if (bp->static_dir().empty()) {
+                    CROW_LOG_ERROR << "Blueprint " << bp->prefix() << " and its sub-blueprints ignored due to empty static directory.";
+                    continue;
+                }
                 auto static_dir_ = crow::utility::normalize_path(bp->static_dir());
 
                 bp->new_rule_tagged<crow::black_magic::get_parameter_tag(CROW_STATIC_ENDPOINT)>(CROW_STATIC_ENDPOINT)([static_dir_](crow::response& res, std::string file_path_partial) {
@@ -517,6 +532,8 @@ namespace crow
 #ifdef CROW_ENABLE_SSL
             if (ssl_used_)
             {
+
+                router_.using_ssl = true;
                 TCPAcceptor::endpoint endpoint(asio::ip::address::from_string(bindaddr_), port_);
                 ssl_server_ = std::move(std::unique_ptr<ssl_server_t>(new ssl_server_t(this, endpoint, server_name_, &middlewares_, concurrency_, timeout_, &ssl_context_)));
                 ssl_server_->set_tick_function(tick_interval_, tick_function_);
@@ -662,7 +679,7 @@ namespace crow
             return ssl_used_;
         }
 #else
-        
+
         template<typename T, typename... Remain>
         self_t& ssl_file(T&&, Remain&&...)
         {
@@ -724,7 +741,7 @@ namespace crow
         {
             {
                 std::unique_lock<std::mutex> lock(start_mutex_);
-                if (!server_started_)
+                while (!server_started_)
                     cv_started_.wait(lock);
             }
             if (server_)

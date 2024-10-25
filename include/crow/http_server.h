@@ -190,11 +190,15 @@ namespace crow // NOTE: Already documented in "crow/app.h"
             io_service_.stop(); // Close main io_service
         }
 
+        uint16_t port(){
+            return acceptor_.local_endpoint().port();
+        }
+
         /// Wait until the server has properly started
         void wait_for_start()
         {
             std::unique_lock<std::mutex> lock(start_mutex_);
-            if (!server_started_)
+            while (!server_started_)
                 cv_started_.wait(lock);
         }
 

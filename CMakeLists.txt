@@ -19,7 +19,7 @@ if (CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
 endif()
 
 # Set required C++ standard
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
 
 # Default to build type "Release" unless tests are being built
@@ -37,13 +37,14 @@ if (MSVC)
 endif ()
 
 include(FindPython3)
-find_package(Python3) 
+find_package(Python3)
 
 #####################################
 # Define Options
 #####################################
 option(CROW_BUILD_EXAMPLES     "Build the examples in the project"      ${CROW_IS_MAIN_PROJECT})
 option(CROW_BUILD_TESTS        "Build the tests in the project"         ${CROW_IS_MAIN_PROJECT})
+option(CROW_BUILD_FUZZER       "Instrument and build Crow fuzzer"       OFF)
 option(CROW_AMALGAMATE         "Combine all headers into one"           OFF)
 option(CROW_INSTALL            "Add install step for Crow"              ON )
 option(CROW_USE_BOOST          "Use Boost.Asio for Crow"                OFF)
@@ -94,12 +95,47 @@ if(CROW_ENABLE_SSL)
 endif()
 
 if(CROW_AMALGAMATE)
+	set(CROW_AMALGAMATED_HEADERS
+		include/crow.h
+		include/crow/app.h
+		include/crow/ci_map.h
+		include/crow/common.h
+		include/crow/compression.h
+		include/crow/http_connection.h
+		include/crow/http_parser_merged.h
+		include/crow/http_request.h
+		include/crow/http_response.h
+		include/crow/http_server.h
+		include/crow/json.h
+		include/crow/logging.h
+		include/crow/middleware.h
+		include/crow/middleware_context.h
+		include/crow/mime_types.h
+		include/crow/multipart.h
+		include/crow/multipart_view.h
+		include/crow/mustache.h
+		include/crow/parser.h
+		include/crow/query_string.h
+		include/crow/returnable.h
+		include/crow/routing.h
+		include/crow/settings.h
+		include/crow/socket_adaptors.h
+		include/crow/task_timer.h
+		include/crow/utility.h
+		include/crow/version.h
+		include/crow/websocket.h
+		include/crow/middlewares/cookie_parser.h
+		include/crow/middlewares/cors.h
+		include/crow/middlewares/session.h
+		include/crow/middlewares/utf-8.h
+	)
+
 	add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/crow_all.h
 		COMMAND python3 ${CMAKE_CURRENT_SOURCE_DIR}/scripts/merge_all.py
 		${CMAKE_CURRENT_SOURCE_DIR}/include
 		${CMAKE_CURRENT_BINARY_DIR}/crow_all.h
 		WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-		DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/include/*.h ${CMAKE_CURRENT_SOURCE_DIR}/include/crow/*.h ${CMAKE_CURRENT_SOURCE_DIR}/include/crow/middlewares/*.h
+		DEPENDS ${CROW_AMALGAMATED_HEADERS}
 	)
 
 	add_custom_target(crow_amalgamated ALL DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/crow_all.h)
@@ -133,6 +169,11 @@ if(CROW_BUILD_TESTS)
       )
     endif()
   endif()
+endif()
+
+# Fuzzers
+if (CROW_BUILD_FUZZER)
+	add_subdirectory(tests/fuzz)
 endif()
 
 #####################################
