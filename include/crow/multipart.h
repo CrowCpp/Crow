@@ -147,8 +147,14 @@ namespace crow
               boundary(get_boundary(get_header_value("Content-Type")))
             {
                 if (!boundary.empty())
+                {
                     content_type = "multipart/form-data; boundary=" + boundary;
-                parse_body(req.body);
+                    parse_body(req.body);
+                }
+                else
+                {
+                    throw std::runtime_error("Empty boundary in multipart message");
+                }
             }
 
         private:
@@ -178,8 +184,8 @@ namespace crow
                     size_t found = body.find(delimiter);
                     if (found == std::string::npos)
                     {
-                        // did not find delimiter; probably an ill-formed body; ignore the rest
-                        break;
+                        // did not find delimiter; probably an ill-formed body; throw to indicate the issue to user
+                        throw std::runtime_error("Unable to find delimiter. Probably ill-formed body");
                     }
                     std::string section = body.substr(0, found);
 
