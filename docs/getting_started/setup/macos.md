@@ -1,5 +1,10 @@
 Here's how you can install Crow on your Mac.
 ## Getting Crow
+
+### From Homebrew
+1. Download and install [Homebrew](https://brew.sh).
+2. Run `brew install crow` in your terminal.
+
 ### From a [release](https://github.com/CrowCpp/Crow/releases)
 #### Archive
 Crow provides an archive containing the framework and CMake files, You will only need the `include` folder inside that archive.
@@ -22,6 +27,10 @@ This will generate a `crow_all.h` file which you can use in the following steps
 
 
 ## Setting up your Crow project
+!!! note
+
+    You can skip steps 1 and 2 if you've installed Crow via Homebrew
+
 ### Using XCode
 1. Download and install [Homebrew](https://brew.sh).
 2. Run `brew install asio` in your terminal.
@@ -50,6 +59,10 @@ This will generate a `crow_all.h` file which you can use in the following steps
 !!! note
 
     This tutorial can be used for Crow projects built with CMake as well
+
+!!! note
+
+    You can skip steps 1 and 2 if you've installed Crow via Homebrew
 
 1. Download and install [Homebrew](https://brew.sh).
 2. Run `brew install cmake asio` in your terminal.
