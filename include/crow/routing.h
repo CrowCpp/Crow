@@ -1813,6 +1813,11 @@ namespace crow // NOTE: Already documented in "crow/app.h"
             {
                 throw;
             }
+            catch (const bad_request& e)
+            {
+                res = response (400);
+                res.body = e.what();
+            }
             catch (const std::exception& e)
             {
                 CROW_LOG_ERROR << "An uncaught exception occurred: " << e.what();

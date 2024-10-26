@@ -2514,20 +2514,15 @@ TEST_CASE("multipart")
     //Test against empty boundary
     {
         request req;
-
+        response res;
         req.url = "/multipart";
         req.add_header("Content-Type", "multipart/form-data; boundary=");
         req.body = test_string;
 
-        try
-        {
-            multipart::message msg(req);
-            CHECK(false);
-        }
-        catch(const std::exception& e)
-        {
-            CHECK(std::string(e.what()) == "Empty boundary in multipart message");
-        }
+        app.handle_full(req, res);
+
+        CHECK(res.code == 400);
+        CHECK(res.body == "Empty boundary in multipart message");
 
     }
 
@@ -2551,20 +2546,16 @@ TEST_CASE("multipart")
         for (const auto& boundary : test_boundaries)
         {
             request req;
+            response res;
 
             req.url = "/multipart";
             req.add_header("Content-Type", "multipart/form-data; boundary=" + boundary);
             req.body = test_string;
 
-            try
-            {
-                multipart::message msg(req);
-                CHECK(false);
-            }
-            catch(const std::exception& e)
-            {
-                CHECK(std::string(e.what()) == "Unable to find delimiter. Probably ill-formed body");
-            }
+            app.handle_full(req, res);
+
+            CHECK(res.code == 400);
+            CHECK(res.body == "Unable to find delimiter in multipart message. Probably ill-formed body");
         }
     }
 } // multipart

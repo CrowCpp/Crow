@@ -153,7 +153,7 @@ namespace crow
                 }
                 else
                 {
-                    throw std::runtime_error("Empty boundary in multipart message");
+                    throw bad_request("Empty boundary in multipart message");
                 }
             }
 
@@ -185,7 +185,7 @@ namespace crow
                     if (found == std::string::npos)
                     {
                         // did not find delimiter; probably an ill-formed body; throw to indicate the issue to user
-                        throw std::runtime_error("Unable to find delimiter. Probably ill-formed body");
+                        throw bad_request("Unable to find delimiter in multipart message. Probably ill-formed body");
                     }
                     std::string section = body.substr(0, found);
 
