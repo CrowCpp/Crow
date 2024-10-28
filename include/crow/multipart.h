@@ -7,6 +7,7 @@
 #include "crow/http_request.h"
 #include "crow/returnable.h"
 #include "crow/ci_map.h"
+#include "crow/exceptions.h"
 
 namespace crow
 {
