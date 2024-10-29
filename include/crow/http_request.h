@@ -1,6 +1,5 @@
 #pragma once
 
-#include <stdexcept>
 #ifdef CROW_USE_BOOST
 #include <boost/asio.hpp>
 #else

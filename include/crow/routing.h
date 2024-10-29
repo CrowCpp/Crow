@@ -14,6 +14,7 @@
 #include "crow/http_request.h"
 #include "crow/utility.h"
 #include "crow/logging.h"
+#include "crow/exceptions.h"
 #include "crow/websocket.h"
 #include "crow/mustache.h"
 #include "crow/middleware.h"
