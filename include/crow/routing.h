@@ -14,6 +14,7 @@
 #include "crow/http_request.h"
 #include "crow/utility.h"
 #include "crow/logging.h"
+#include "crow/exceptions.h"
 #include "crow/websocket.h"
 #include "crow/mustache.h"
 #include "crow/middleware.h"
@@ -1812,6 +1813,11 @@ namespace crow // NOTE: Already documented in "crow/app.h"
             try
             {
                 throw;
+            }
+            catch (const bad_request& e)
+            {
+                res = response (400);
+                res.body = e.what();
             }
             catch (const std::exception& e)
             {

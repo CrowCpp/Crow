@@ -101,6 +101,7 @@ if(CROW_AMALGAMATE)
 		include/crow/ci_map.h
 		include/crow/common.h
 		include/crow/compression.h
+		include/crow/exceptions.h
 		include/crow/http_connection.h
 		include/crow/http_parser_merged.h
 		include/crow/http_request.h

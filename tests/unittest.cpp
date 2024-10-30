@@ -2510,6 +2510,54 @@ TEST_CASE("multipart")
 
         CHECK(test_string == res.body);
     }
+
+    //Test against empty boundary
+    {
+        request req;
+        response res;
+        req.url = "/multipart";
+        req.add_header("Content-Type", "multipart/form-data; boundary=");
+        req.body = test_string;
+
+        app.handle_full(req, res);
+
+        CHECK(res.code == 400);
+        CHECK(res.body == "Empty boundary in multipart message");
+
+    }
+
+    //Boundary that differs from actual boundary
+    {
+        const char alphabet[] = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        std::random_device dev;
+        std::mt19937 rng(dev());
+        std::uniform_int_distribution<std::mt19937::result_type> dist(0, sizeof(alphabet) - 2);
+        std::uniform_int_distribution<std::mt19937::result_type> boundary_sizes(1, 50);
+        std::array<std::string, 100> test_boundaries;
+
+        for (auto& boundary : test_boundaries)
+        {
+            const size_t boundary_size = boundary_sizes(rng);
+            boundary.reserve(boundary_size);
+            for (size_t idx = 0; idx < boundary_size; idx++)
+                boundary.push_back(alphabet[dist(rng)]);
+        }
+
+        for (const auto& boundary : test_boundaries)
+        {
+            request req;
+            response res;
+
+            req.url = "/multipart";
+            req.add_header("Content-Type", "multipart/form-data; boundary=" + boundary);
+            req.body = test_string;
+
+            app.handle_full(req, res);
+
+            CHECK(res.code == 400);
+            CHECK(res.body == "Unable to find delimiter in multipart message. Probably ill-formed body");
+        }
+    }
 } // multipart
 
 TEST_CASE("multipart_view")
