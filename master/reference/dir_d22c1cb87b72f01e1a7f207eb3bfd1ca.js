@@ -5,6 +5,7 @@ var dir_d22c1cb87b72f01e1a7f207eb3bfd1ca =
     [ "ci_map.h", "ci__map_8h_source.html", null ],
     [ "common.h", "common_8h_source.html", null ],
     [ "compression.h", "compression_8h_source.html", null ],
+    [ "exceptions.h", "exceptions_8h_source.html", null ],
     [ "http_connection.h", "http__connection_8h_source.html", null ],
     [ "http_parser_merged.h", "http__parser__merged_8h_source.html", null ],
     [ "http_request.h", "http__request_8h_source.html", null ],

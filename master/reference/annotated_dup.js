@@ -77,6 +77,7 @@ var annotated_dup =
       [ "ci_hash", "structcrow_1_1ci__hash.html", "structcrow_1_1ci__hash" ],
       [ "ci_key_eq", "structcrow_1_1ci__key__eq.html", "structcrow_1_1ci__key__eq" ],
       [ "routing_handle_result", "structcrow_1_1routing__handle__result.html", "structcrow_1_1routing__handle__result" ],
+      [ "bad_request", "structcrow_1_1bad__request.html", "structcrow_1_1bad__request" ],
       [ "Connection", "classcrow_1_1_connection.html", "classcrow_1_1_connection" ],
       [ "http_parser", "structcrow_1_1http__parser.html", "structcrow_1_1http__parser" ],
       [ "http_parser_settings", "structcrow_1_1http__parser__settings.html", "structcrow_1_1http__parser__settings" ],

@@ -47,7 +47,10 @@ var hierarchy =
       [ "crow::Connection< Adaptor, Handler, Middlewares >", "classcrow_1_1_connection.html", null ]
     ] ],
     [ "std::exception", null, [
-      [ "crow::mustache::invalid_template_exception", "classcrow_1_1mustache_1_1invalid__template__exception.html", null ]
+      [ "crow::mustache::invalid_template_exception", "classcrow_1_1mustache_1_1invalid__template__exception.html", null ],
+      [ "std::runtime_error", null, [
+        [ "crow::bad_request", "structcrow_1_1bad__request.html", null ]
+      ] ]
     ] ],
     [ "crow::session::ExpirationTracker", "structcrow_1_1session_1_1_expiration_tracker.html", null ],
     [ "crow::FileStore", "structcrow_1_1_file_store.html", null ],
