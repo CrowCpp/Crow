@@ -100,6 +100,7 @@ namespace crow
             return 0;
         }
         HTTPParser(Handler* handler):
+          http_parser(),
           handler_(handler)
         {
             http_parser_init(this);
