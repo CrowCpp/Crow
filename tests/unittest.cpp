@@ -3643,7 +3643,7 @@ TEST_CASE("blueprint")
     bp.register_blueprint(sub_bp);
     sub_bp.register_blueprint(sub_sub_bp);
 
-    app.add_blueprint();
+    app.add_blueprint_static_dirs();
     app.add_static_dir();
     app.validate();
 
