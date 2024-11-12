@@ -500,8 +500,8 @@ namespace crow
         /// \brief A wrapper for `validate()` in the router
         void validate()
         {
-            router_.validate();
-            router_.validate_bp();
+            router_.validate_bp();  
+            router_.validate();            
         }
 
         /// \brief Run the server
