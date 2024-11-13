@@ -158,7 +158,18 @@ namespace crow // NOTE: Already documented in "crow/app.h"
             CROW_LOG_INFO << "Call `app.loglevel(crow::LogLevel::Warning)` to hide Info level logs.";
 
             signals_.async_wait(
-              [&](const error_code& /*error*/, int /*signal_number*/) {
+              [&](const error_code& /*error*/, int signal_number) {
+                  const auto it = signals_handlers_.find(signal_number);
+                  if (it != signals_handlers_.end())
+                  {
+                      for (auto& h : it->second)
+                      {
+                          if (h)
+                          {
+                              h();
+                          }
+                      }
+                  }
                   stop();
               });
 
@@ -207,11 +218,25 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         void signal_clear()
         {
             signals_.clear();
+            signals_handlers_.clear();
         }
 
         void signal_add(int signal_number)
         {
             signals_.add(signal_number);
+            signals_handlers_.insert(std::make_pair(signal_number, std::vector<std::function<void()>>()));
+        }
+
+        void signal_add(int signal_number, const std::function<void()>& handler)
+        {
+            signals_.add(signal_number);
+            signals_handlers_[signal_number].push_back(handler);
+        }
+
+        void signal_add(int signal_number, const std::vector<std::function<void()>>& handlers)
+        {
+            signals_.add(signal_number);
+            signals_handlers_[signal_number] = handlers;
         }
 
     private:
@@ -283,6 +308,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         std::condition_variable cv_started_;
         std::mutex start_mutex_;
         asio::signal_set signals_;
+        std::unordered_map<int, std::vector<std::function<void()>>> signals_handlers_;
 
         asio::basic_waitable_timer<std::chrono::high_resolution_clock> tick_timer_;
 

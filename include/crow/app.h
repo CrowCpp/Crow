@@ -295,13 +295,24 @@ namespace crow
 
         self_t& signal_add(int signal_number)
         {
-            signals_.push_back(signal_number);
+            signals_.insert(std::make_pair(signal_number, std::vector<std::function<void()>>()));
+            return *this;
+        }
+
+        self_t& signal_add(int signal_number, std::function<void()>&& handler)
+        {
+            signals_[signal_number].push_back(std::move(handler));
             return *this;
         }
 
         std::vector<int> signals()
         {
-            return signals_;
+            std::vector<int> ret;
+            for (const auto& pair : signals_)
+            {
+                ret.push_back(pair.first);
+            }
+            return ret;
         }
 
         /// \brief Set the port that Crow will handle requests on
@@ -521,9 +532,9 @@ namespace crow
                 ssl_server_ = std::move(std::unique_ptr<ssl_server_t>(new ssl_server_t(this, bindaddr_, port_, server_name_, &middlewares_, concurrency_, timeout_, &ssl_context_)));
                 ssl_server_->set_tick_function(tick_interval_, tick_function_);
                 ssl_server_->signal_clear();
-                for (auto snum : signals_)
+                for (auto& pair : signals_)
                 {
-                    ssl_server_->signal_add(snum);
+                    ssl_server_->signal_add(pair.first, pair.second);
                 }
                 notify_server_start();
                 ssl_server_->run();
@@ -533,9 +544,9 @@ namespace crow
             {
                 server_ = std::move(std::unique_ptr<server_t>(new server_t(this, bindaddr_, port_, server_name_, &middlewares_, concurrency_, timeout_, nullptr)));
                 server_->set_tick_function(tick_interval_, tick_function_);
-                for (auto snum : signals_)
+                for (auto& pair : signals_)
                 {
-                    server_->signal_add(snum);
+                    server_->signal_add(pair.first, pair.second);
                 }
                 notify_server_start();
                 server_->run();
@@ -773,7 +784,10 @@ namespace crow
 
         std::unique_ptr<server_t> server_;
 
-        std::vector<int> signals_{SIGINT, SIGTERM};
+        std::unordered_map<int, std::vector<std::function<void()>>> signals_{
+            {SIGINT, {}},
+            {SIGTERM, {}},
+        };
 
         bool server_started_{false};
         std::condition_variable cv_started_;
