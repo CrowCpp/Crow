@@ -1462,16 +1462,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
             {
                 CROW_LOG_INFO << "Redirecting to a url with trailing slash: " << req.url;
                 res = response(301);
-
-                // TODO(ipkn) absolute url building
-                if (req.get_header_value("Host").empty())
-                {
-                    res.add_header("Location", req.url + "/");
-                }
-                else
-                {
-                    res.add_header("Location", (using_ssl ? "https://" : "http://") + req.get_header_value("Host") + req.url + "/");
-                }
+                res.add_header("Location", req.url + "/");
                 res.end();
                 return;
             }
@@ -1710,16 +1701,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
             {
                 CROW_LOG_INFO << "Redirecting to a url with trailing slash: " << req.url;
                 res = response(301);
-
-                // TODO(ipkn) absolute url building
-                if (req.get_header_value("Host").empty())
-                {
-                    res.add_header("Location", req.url + "/");
-                }
-                else
-                {
-                    res.add_header("Location", (using_ssl ? "https://" : "http://") + req.get_header_value("Host") + req.url + "/");
-                }
+                res.add_header("Location", req.url + "/");
                 res.end();
                 return;
             }

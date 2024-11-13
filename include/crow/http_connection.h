@@ -258,18 +258,6 @@ namespace crow
                 }
             }
 #endif
-            //if there is a redirection with a partial URL, treat the URL as a route.
-            std::string location = res.get_header_value("Location");
-            if (!location.empty() && location.find("://", 0) == std::string::npos)
-            {
-#ifdef CROW_ENABLE_SSL
-                if (handler_->ssl_used())
-                    location.insert(0, "https://" + req_.get_header_value("Host"));
-                else
-#endif
-                    location.insert(0, "http://" + req_.get_header_value("Host"));
-                res.set_header("location", location);
-            }
 
             prepare_buffers();
 
