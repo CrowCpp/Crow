@@ -56,6 +56,7 @@ nav:
       - Windows: getting_started/setup/windows.md
     - Your First Application: getting_started/your_first_application.md
     - A Simple Webpage: getting_started/a_simple_webpage.md
+    - Simple Api Using Corax Template: getting_started/simple_api_using_corax_template.md
   - Guides:
     - Different parts of Crow:
       - App: guides/app.md
