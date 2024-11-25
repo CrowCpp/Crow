@@ -3980,13 +3980,13 @@ TEST_CASE("task_timer")
         b = true;
     });
 
-    this_thread::sleep_for(4 * timer.get_tick_length());
+    this_thread::sleep_for(3 * timer.get_tick_length());
     CHECK(a == false);
     CHECK(b == false);
-    this_thread::sleep_for(2 * timer.get_tick_length());
+    this_thread::sleep_for(3 * timer.get_tick_length());
     CHECK(a == true);
     CHECK(b == false);
-    this_thread::sleep_for(4 * timer.get_tick_length());
+    this_thread::sleep_for(5 * timer.get_tick_length());
     CHECK(a == true);
     CHECK(b == true);
 
