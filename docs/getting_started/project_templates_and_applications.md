@@ -1,4 +1,6 @@
-Here we collect samples and applications.
+Here we collect samples and applications. 
+
+The repositories mentioned here are 3rd party owned and are not supported or managed by the CrowCpp Project.
 
 # Template projects 
 
