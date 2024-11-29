@@ -1811,7 +1811,7 @@ $(document).ready(function(){initNavTree('routing_8h_source.html',''); initResiz
 <div class="line"><a name="l01710"></a><span class="lineno"> 1710</span>&#160; </div>
 <div class="line"><a name="l01711"></a><span class="lineno"> 1711</span>&#160;            <span class="keywordflow">try</span></div>
 <div class="line"><a name="l01712"></a><span class="lineno"> 1712</span>&#160;            {</div>
-<div class="line"><a name="l01713"></a><span class="lineno"> 1713</span>&#160;                <span class="keyword">auto</span>&amp; rule = rules[rule_index];</div>
+<div class="line"><a name="l01713"></a><span class="lineno"> 1713</span>&#160;                BaseRule&amp; rule = *rules[rule_index];</div>
 <div class="line"><a name="l01714"></a><span class="lineno"> 1714</span>&#160;                handle_rule&lt;App&gt;(rule, req, res, found.r_params);</div>
 <div class="line"><a name="l01715"></a><span class="lineno"> 1715</span>&#160;            }</div>
 <div class="line"><a name="l01716"></a><span class="lineno"> 1716</span>&#160;            <span class="keywordflow">catch</span> (...)</div>
@@ -1824,13 +1824,13 @@ $(document).ready(function(){initNavTree('routing_8h_source.html',''); initResiz
 <div class="line"><a name="l01723"></a><span class="lineno"> 1723</span>&#160; </div>
 <div class="line"><a name="l01724"></a><span class="lineno"> 1724</span>&#160;        <span class="keyword">template</span>&lt;<span class="keyword">typename</span> App&gt;</div>
 <div class="line"><a name="l01725"></a><span class="lineno"> 1725</span>&#160;        <span class="keyword">typename</span> std::enable_if&lt;std::tuple_size&lt;typename App::mw_container_t&gt;::value != 0, <span class="keywordtype">void</span>&gt;::type</div>
-<div class="line"><a name="l01726"></a><span class="lineno"> 1726</span>&#160;          handle_rule(BaseRule* rule, <a class="code" href="structcrow_1_1request.html">crow::request</a>&amp; req, <a class="code" href="structcrow_1_1response.html">crow::response</a>&amp; res, <span class="keyword">const</span> crow::routing_params&amp; rp)</div>
+<div class="line"><a name="l01726"></a><span class="lineno"> 1726</span>&#160;          handle_rule(BaseRule&amp; rule, <a class="code" href="structcrow_1_1request.html">crow::request</a>&amp; req, <a class="code" href="structcrow_1_1response.html">crow::response</a>&amp; res, <span class="keyword">const</span> crow::routing_params&amp; rp)</div>
 <div class="line"><a name="l01727"></a><span class="lineno"> 1727</span>&#160;        {</div>
-<div class="line"><a name="l01728"></a><span class="lineno"> 1728</span>&#160;            <span class="keywordflow">if</span> (!rule-&gt;mw_indices_.empty())</div>
+<div class="line"><a name="l01728"></a><span class="lineno"> 1728</span>&#160;            <span class="keywordflow">if</span> (!rule.mw_indices_.empty())</div>
 <div class="line"><a name="l01729"></a><span class="lineno"> 1729</span>&#160;            {</div>
 <div class="line"><a name="l01730"></a><span class="lineno"> 1730</span>&#160;                <span class="keyword">auto</span>&amp; ctx = *<span class="keyword">reinterpret_cast&lt;</span>typename App::context_t*<span class="keyword">&gt;</span>(req.middleware_context);</div>
 <div class="line"><a name="l01731"></a><span class="lineno"> 1731</span>&#160;                <span class="keyword">auto</span>&amp; container = *<span class="keyword">reinterpret_cast&lt;</span>typename App::mw_container_t*<span class="keyword">&gt;</span>(req.middleware_container);</div>
-<div class="line"><a name="l01732"></a><span class="lineno"> 1732</span>&#160;                detail::middleware_call_criteria_dynamic&lt;false&gt; crit_fwd(rule-&gt;mw_indices_.indices());</div>
+<div class="line"><a name="l01732"></a><span class="lineno"> 1732</span>&#160;                detail::middleware_call_criteria_dynamic&lt;false&gt; crit_fwd(rule.mw_indices_.indices());</div>
 <div class="line"><a name="l01733"></a><span class="lineno"> 1733</span>&#160; </div>
 <div class="line"><a name="l01734"></a><span class="lineno"> 1734</span>&#160;                <span class="keyword">auto</span> glob_completion_handler = std::move(res.complete_request_handler_);</div>
 <div class="line"><a name="l01735"></a><span class="lineno"> 1735</span>&#160;                res.complete_request_handler_ = [] {};</div>
@@ -1845,7 +1845,7 @@ $(document).ready(function(){initNavTree('routing_8h_source.html',''); initResiz
 <div class="line"><a name="l01744"></a><span class="lineno"> 1744</span>&#160;                }</div>
 <div class="line"><a name="l01745"></a><span class="lineno"> 1745</span>&#160; </div>
 <div class="line"><a name="l01746"></a><span class="lineno"> 1746</span>&#160;                res.complete_request_handler_ = [&amp;rule, &amp;ctx, &amp;container, &amp;req, &amp;res, glob_completion_handler] {</div>
-<div class="line"><a name="l01747"></a><span class="lineno"> 1747</span>&#160;                    detail::middleware_call_criteria_dynamic&lt;true&gt; crit_bwd(rule-&gt;mw_indices_.indices());</div>
+<div class="line"><a name="l01747"></a><span class="lineno"> 1747</span>&#160;                    detail::middleware_call_criteria_dynamic&lt;true&gt; crit_bwd(rule.mw_indices_.indices());</div>
 <div class="line"><a name="l01748"></a><span class="lineno"> 1748</span>&#160; </div>
 <div class="line"><a name="l01749"></a><span class="lineno"> 1749</span>&#160;                    detail::after_handlers_call_helper&lt;</div>
 <div class="line"><a name="l01750"></a><span class="lineno"> 1750</span>&#160;                      decltype(crit_bwd),</div>
@@ -1855,14 +1855,14 @@ $(document).ready(function(){initNavTree('routing_8h_source.html',''); initResiz
 <div class="line"><a name="l01754"></a><span class="lineno"> 1754</span>&#160;                    glob_completion_handler();</div>
 <div class="line"><a name="l01755"></a><span class="lineno"> 1755</span>&#160;                };</div>
 <div class="line"><a name="l01756"></a><span class="lineno"> 1756</span>&#160;            }</div>
-<div class="line"><a name="l01757"></a><span class="lineno"> 1757</span>&#160;            rule-&gt;handle(req, res, rp);</div>
+<div class="line"><a name="l01757"></a><span class="lineno"> 1757</span>&#160;            rule.handle(req, res, rp);</div>
 <div class="line"><a name="l01758"></a><span class="lineno"> 1758</span>&#160;        }</div>
 <div class="line"><a name="l01759"></a><span class="lineno"> 1759</span>&#160; </div>
 <div class="line"><a name="l01760"></a><span class="lineno"> 1760</span>&#160;        <span class="keyword">template</span>&lt;<span class="keyword">typename</span> App&gt;</div>
 <div class="line"><a name="l01761"></a><span class="lineno"> 1761</span>&#160;        <span class="keyword">typename</span> std::enable_if&lt;std::tuple_size&lt;typename App::mw_container_t&gt;::value == 0, <span class="keywordtype">void</span>&gt;::type</div>
-<div class="line"><a name="l01762"></a><span class="lineno"> 1762</span>&#160;          handle_rule(BaseRule* rule, <a class="code" href="structcrow_1_1request.html">crow::request</a>&amp; req, <a class="code" href="structcrow_1_1response.html">crow::response</a>&amp; res, <span class="keyword">const</span> crow::routing_params&amp; rp)</div>
+<div class="line"><a name="l01762"></a><span class="lineno"> 1762</span>&#160;          handle_rule(BaseRule&amp; rule, <a class="code" href="structcrow_1_1request.html">crow::request</a>&amp; req, <a class="code" href="structcrow_1_1response.html">crow::response</a>&amp; res, <span class="keyword">const</span> crow::routing_params&amp; rp)</div>
 <div class="line"><a name="l01763"></a><span class="lineno"> 1763</span>&#160;        {</div>
-<div class="line"><a name="l01764"></a><span class="lineno"> 1764</span>&#160;            rule-&gt;handle(req, res, rp);</div>
+<div class="line"><a name="l01764"></a><span class="lineno"> 1764</span>&#160;            rule.handle(req, res, rp);</div>
 <div class="line"><a name="l01765"></a><span class="lineno"> 1765</span>&#160;        }</div>
 <div class="line"><a name="l01766"></a><span class="lineno"> 1766</span>&#160; </div>
 <div class="line"><a name="l01767"></a><span class="lineno"> 1767</span>&#160;        <span class="keywordtype">void</span> debug_print()</div>
