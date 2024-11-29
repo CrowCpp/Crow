@@ -93,7 +93,7 @@ jobs:
       shell: bash
 
     - name: Generate coverage report
-      if: matrix.os == 'ubuntu-latest' && matrix.compiler == 'gcc' && matrix.cxx_stdlib == 'libstdc++'
+      if: matrix.os == 'ubuntu-latest'
       run: |
         export CI_BRANCH=${GITHUB_BASE_REF:-${GITHUB_REF#refs/heads/}}
         echo "CI_BRANCH=$CI_BRANCH" >> $GITHUB_ENV && \
