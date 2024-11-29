@@ -2,102 +2,102 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://crowcpp.org/master/</loc>
-         <lastmod>2024-11-25</lastmod>
+         <lastmod>2024-11-29</lastmod>
     </url>
     <url>
          <loc>https://crowcpp.org/master/getting_started/a_simple_webpage/</loc>
-         <lastmod>2024-11-25</lastmod>
+         <lastmod>2024-11-29</lastmod>
     </url>
     <url>
          <loc>https://crowcpp.org/master/getting_started/your_first_application/</loc>
-         <lastmod>2024-11-25</lastmod>
+         <lastmod>2024-11-29</lastmod>
     </url>
     <url>
          <loc>https://crowcpp.org/master/getting_started/setup/linux/</loc>
-         <lastmod>2024-11-25</lastmod>
+         <lastmod>2024-11-29</lastmod>
     </url>
     <url>
          <loc>https://crowcpp.org/master/getting_started/setup/macos/</loc>
-         <lastmod>2024-11-25</lastmod>
+         <lastmod>2024-11-29</lastmod>
     </url>
     <url>
          <loc>https://crowcpp.org/master/getting_started/setup/windows/</loc>
-         <lastmod>2024-11-25</lastmod>
+         <lastmod>2024-11-29</lastmod>
     </url>
     <url>
          <loc>https://crowcpp.org/master/guides/app/</loc>
-         <lastmod>2024-11-25</lastmod>
+         <lastmod>2024-11-29</lastmod>
     </url>
     <url>
          <loc>https://crowcpp.org/master/guides/auth/</loc>
-         <lastmod>2024-11-25</lastmod>
+         <lastmod>2024-11-29</lastmod>
     </url>
     <url>
          <loc>https://crowcpp.org/master/guides/base64/</loc>
-         <lastmod>2024-11-25</lastmod>
+         <lastmod>2024-11-29</lastmod>
     </url>
     <url>
          <loc>https://crowcpp.org/master/guides/blueprints/</loc>
-         <lastmod>2024-11-25</lastmod>
+         <lastmod>2024-11-29</lastmod>
     </url>
     <url>
          <loc>https://crowcpp.org/master/guides/compression/</loc>
-         <lastmod>2024-11-25</lastmod>
+         <lastmod>2024-11-29</lastmod>
     </url>
     <url>
          <loc>https://crowcpp.org/master/guides/included-middleware/</loc>
-         <lastmod>2024-11-25</lastmod>
+         <lastmod>2024-11-29</lastmod>
     </url>
     <url>
          <loc>https://crowcpp.org/master/guides/json/</loc>
-         <lastmod>2024-11-25</lastmod>
+         <lastmod>2024-11-29</lastmod>
     </url>
     <url>
          <loc>https://crowcpp.org/master/guides/logging/</loc>
-         <lastmod>2024-11-25</lastmod>
+         <lastmod>2024-11-29</lastmod>
     </url>
     <url>
          <loc>https://crowcpp.org/master/guides/middleware/</loc>
-         <lastmod>2024-11-25</lastmod>
+         <lastmod>2024-11-29</lastmod>
     </url>
     <url>
          <loc>https://crowcpp.org/master/guides/multipart/</loc>
-         <lastmod>2024-11-25</lastmod>
+         <lastmod>2024-11-29</lastmod>
     </url>
     <url>
          <loc>https://crowcpp.org/master/guides/proxies/</loc>
-         <lastmod>2024-11-25</lastmod>
+         <lastmod>2024-11-29</lastmod>
     </url>
     <url>
          <loc>https://crowcpp.org/master/guides/query-string/</loc>
-         <lastmod>2024-11-25</lastmod>
+         <lastmod>2024-11-29</lastmod>
     </url>
     <url>
          <loc>https://crowcpp.org/master/guides/routes/</loc>
-         <lastmod>2024-11-25</lastmod>
+         <lastmod>2024-11-29</lastmod>
     </url>
     <url>
          <loc>https://crowcpp.org/master/guides/ssl/</loc>
-         <lastmod>2024-11-25</lastmod>
+         <lastmod>2024-11-29</lastmod>
     </url>
     <url>
          <loc>https://crowcpp.org/master/guides/static/</loc>
-         <lastmod>2024-11-25</lastmod>
+         <lastmod>2024-11-29</lastmod>
     </url>
     <url>
          <loc>https://crowcpp.org/master/guides/syste/</loc>
-         <lastmod>2024-11-25</lastmod>
+         <lastmod>2024-11-29</lastmod>
     </url>
     <url>
          <loc>https://crowcpp.org/master/guides/templating/</loc>
-         <lastmod>2024-11-25</lastmod>
+         <lastmod>2024-11-29</lastmod>
     </url>
     <url>
          <loc>https://crowcpp.org/master/guides/testing/</loc>
-         <lastmod>2024-11-25</lastmod>
+         <lastmod>2024-11-29</lastmod>
     </url>
     <url>
          <loc>https://crowcpp.org/master/guides/websockets/</loc>
-         <lastmod>2024-11-25</lastmod>
+         <lastmod>2024-11-29</lastmod>
     </url>
 </urlset>
