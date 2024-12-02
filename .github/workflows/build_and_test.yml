@@ -107,7 +107,7 @@ jobs:
 
     - name: Save report
       uses: actions/upload-artifact@v4
-      if: matrix.os == 'ubuntu-latest' && matrix.compiler == 'gcc' && matrix.cxx_stdlib == 'libstdc++'
+      if: matrix.os == 'ubuntu-latest'
       with:
         name: coveralls.json
         path: coveralls.json
