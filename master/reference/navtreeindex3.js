@@ -1,5 +1,12 @@
 var NAVTREEINDEX3 =
 {
+"namespacecrow.html#afe3a72ef7c3edbf71d0bceacf02517c4ac1a39b6a60f8b2f87e23d60ab649d994":[0,0,0,57,66],
+"namespacecrow.html#afe3a72ef7c3edbf71d0bceacf02517c4ac55582518cba2c464f29f5bae1c68def":[0,0,0,57,35],
+"namespacecrow.html#afe3a72ef7c3edbf71d0bceacf02517c4ad02a38d7ff75e9aed743437fd9539a44":[0,0,0,57,22],
+"namespacecrow.html#afe3a72ef7c3edbf71d0bceacf02517c4ad0bf1810982e9728fcf3ac444a015373":[0,0,0,57,38],
+"namespacecrow.html#afe3a72ef7c3edbf71d0bceacf02517c4ad67c704564d7976991e2f23e4315ccfd":[0,0,0,57,43],
+"namespacecrow.html#afe3a72ef7c3edbf71d0bceacf02517c4ad740ec45faa5dde148d59cf627722130":[0,0,0,57,55],
+"namespacecrow.html#afe3a72ef7c3edbf71d0bceacf02517c4adae8ace18bdcbcc6ae5aece263e14fe8":[0,0,0,57,40],
 "namespacecrow.html#afe3a72ef7c3edbf71d0bceacf02517c4add4ec0ac4e58f7c32a01244ae91150b1":[0,0,0,57,41],
 "namespacecrow.html#afe3a72ef7c3edbf71d0bceacf02517c4ae15e216fc1c639f787b1231ecdfa1bf8":[0,0,0,57,2],
 "namespacecrow.html#afe3a72ef7c3edbf71d0bceacf02517c4ae488f04180a5804feba48dbc87f0787d":[0,0,0,57,24],
@@ -242,12 +249,5 @@ var NAVTREEINDEX3 =
 "structcrow_1_1detail_1_1context.html":[1,0,0,0,15],
 "structcrow_1_1detail_1_1context.html#a23ca581449831a76869224fa7b3075a0":[1,0,0,0,15,2],
 "structcrow_1_1detail_1_1context.html#a475aca83ac34e0fe0667deb51972aaa5":[1,0,0,0,15,4],
-"structcrow_1_1detail_1_1context.html#a4ff9c692bee1dd7e005f2c4a2926d621":[1,0,0,0,15,3],
-"structcrow_1_1detail_1_1context.html#a836ff37a47e92e44b7f937687bfb06e5":[1,0,0,0,15,1],
-"structcrow_1_1detail_1_1context.html#aed24bba34e07bac2e533be71003ce1f1":[1,0,0,0,15,0],
-"structcrow_1_1detail_1_1is__after__handle__arity__3__impl.html":[1,0,0,0,7],
-"structcrow_1_1detail_1_1is__before__handle__arity__3__impl.html":[1,0,0,0,6],
-"structcrow_1_1detail_1_1is__middleware__global.html":[1,0,0,0,8],
-"structcrow_1_1detail_1_1middleware__call__criteria__dynamic.html":[1,0,0,0,10],
-"structcrow_1_1detail_1_1middleware__call__criteria__dynamic_3_01false_01_4.html":[1,0,0,0,11]
+"structcrow_1_1detail_1_1context.html#a4ff9c692bee1dd7e005f2c4a2926d621":[1,0,0,0,15,3]
 };
