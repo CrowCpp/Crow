@@ -643,7 +643,22 @@ TEST_CASE("server_handling_error_request")
     app.stop();
 } // server_handling_error_request
 
-TEST_CASE("server_dynamic_port_allication")
+TEST_CASE("server_invalid_ip_address")
+{
+    SimpleApp app;
+    CROW_ROUTE(app, "/")
+    ([] {
+        return "A";
+    });
+    auto _ = app.bindaddr("192.").port(45451).run_async();
+    auto state = app.wait_for_server_start();
+
+    // we should run into a timeout as the server will not started
+    CHECK(state==cv_status::timeout);
+} // server_invalid_ip_address
+
+
+TEST_CASE("server_dynamic_port_allocation")
 {
     SimpleApp app;
     CROW_ROUTE(app, "/")
@@ -659,7 +674,7 @@ TEST_CASE("server_dynamic_port_allication")
           asio::ip::address::from_string(LOCALHOST_ADDRESS), app.port()));
     }
     app.stop();
-} // server_dynamic_port_allication
+} // server_dynamic_port_allocation
 
 TEST_CASE("server_handling_error_request_http_version")
 {
@@ -1520,7 +1535,9 @@ struct NullSimpleMiddleware
 TEST_CASE("middleware_simple")
 {
     App<NullMiddleware, NullSimpleMiddleware> app;
-    decltype(app)::server_t server(&app, LOCALHOST_ADDRESS, 45451);
+    asio::ip::address adr = asio::ip::make_address(LOCALHOST_ADDRESS);
+    tcp::endpoint ep(adr,45451);
+    decltype(app)::server_t server(&app, ep);
     CROW_ROUTE(app, "/")
     ([&](const crow::request& req) {
         app.get_context<NullMiddleware>(req);
