@@ -13,8 +13,8 @@ namespace crow
     {
         using endpoint = tcp::endpoint;
         tcp::acceptor acceptor_;
-        TCPAcceptor(asio::io_service& io_service, const endpoint& endpoint):
-          acceptor_(io_service, endpoint) {}
+        TCPAcceptor(asio::io_service& io_service, const endpoint& endpoint_):
+          acceptor_(io_service, endpoint_) {}
 
         int16_t port() const
         {
@@ -28,14 +28,18 @@ namespace crow
         {
             return acceptor_;
         }
+        endpoint local_endpoint() const
+        {
+            return acceptor_.local_endpoint();
+        }
     };
 
     struct UnixSocketAcceptor
     {
         using endpoint = stream_protocol::endpoint;
         stream_protocol::acceptor acceptor_;
-        UnixSocketAcceptor(asio::io_service& io_service, const endpoint& endpoint):
-          acceptor_(io_service, endpoint, false) {}
+        UnixSocketAcceptor(asio::io_service& io_service, const endpoint& endpoint_):
+          acceptor_(io_service, endpoint_, false) {}
         // reuse addr must be false (https://github.com/chriskohlhoff/asio/issues/622)
 
         int16_t port() const
@@ -49,6 +53,10 @@ namespace crow
         stream_protocol::acceptor& raw_acceptor()
         {
             return acceptor_;
+        }
+        endpoint local_endpoint() const
+        {
+            return acceptor_.local_endpoint();
         }
     };
 } // namespace crow
