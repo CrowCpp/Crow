@@ -183,12 +183,12 @@ namespace crow // NOTE: Already documented in "crow/app.h"
             {
                 if (io_context != nullptr)
                 {
-                    CROW_LOG_INFO << "Closing IO service " << &io_context;
+                    CROW_LOG_INFO << "Closing IO context " << &io_context;
                     io_context->stop(); // Close all io_contexts (and HTTP connections)
                 }
             }
 
-            CROW_LOG_INFO << "Closing main IO service (" << &io_context_ << ')';
+            CROW_LOG_INFO << "Closing main IO context (" << &io_context_ << ')';
             io_context_.stop(); // Close main io_context
         }
 
