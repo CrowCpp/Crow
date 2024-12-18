@@ -42,10 +42,10 @@ TEST_CASE("SSL")
 
     asio::ssl::context ctx(asio::ssl::context::sslv23);
 
-    asio::io_service is;
+    asio::io_context ic;
     {
         asio::ssl::stream<asio::ip::tcp::socket> c(is, ctx);
-        c.lowest_layer().connect(asio::ip::tcp::endpoint(asio::ip::address::from_string(LOCALHOST_ADDRESS), 45460));
+        c.lowest_layer().connect(asio::ip::tcp::endpoint(asio::ip::make_address(LOCALHOST_ADDRESS), 45460));
 
         c.handshake(asio::ssl::stream_base::client);
         c.write_some(asio::buffer(sendmsg));
@@ -78,13 +78,13 @@ TEST_CASE("SSL")
     }
 
     /*
-    asio::io_service is2;
+    asio::io_context is2;
     {
         std::cout << "started second one" << std::endl;
 
       asio::ssl::stream<asio::ip::tcp::socket> c(is2, ctx);
       c.lowest_layer().connect(asio::ip::tcp::endpoint(
-          asio::ip::address::from_string(LOCALHOST_ADDRESS), 45461));
+          asio::ip::make_address(LOCALHOST_ADDRESS), 45461));
 
       c.handshake(asio::ssl::stream_base::client);
 

@@ -41,10 +41,10 @@ This method involves creating a simple [ASIO](https://think-async.com/Asio/) cli
   app.wait_for_server_start();
 
   std::string sendmsg = "GET /\r\nContent-Length:3\r\nX-HeaderTest: 123\r\n\r\nA=B\r\n";
-  asio::io_service is;
+  asio::io_context ic;
   {
-    asio::ip::tcp::socket c(is);
-    c.connect(asio::ip::tcp::endpoint(asio::ip::address::from_string("127.0.0.1"), 45451));
+    asio::ip::tcp::socket c(ic);
+    c.connect(asio::ip::tcp::endpoint(asio::ip::make_address("127.0.0.1"), 45451));
 
     c.send(asio::buffer(sendmsg));
 
@@ -68,7 +68,7 @@ header2:value2
 BODY
 
 ```
-Next an `io_service` is created, then a TCP socket is created with the `io_service` and is connected to the application.<br>
+Next an `io_context` is created, then a TCP socket is created with the `io_context` and is connected to the application.<br>
 Then send the HTTP request string through the socket inside a buffer, and read the result into the buffer in `line 1`.<br>
 Finally check the result against the expected one.
 

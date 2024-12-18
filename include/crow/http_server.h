@@ -43,9 +43,9 @@ namespace crow // NOTE: Already documented in "crow/app.h"
     {
     public:
         Server(Handler* handler, std::string bindaddr, uint16_t port, std::string server_name = std::string("Crow/") + VERSION, std::tuple<Middlewares...>* middlewares = nullptr, uint16_t concurrency = 1, uint8_t timeout = 5, typename Adaptor::context* adaptor_ctx = nullptr):
-          acceptor_(io_service_, tcp::endpoint(asio::ip::address::from_string(bindaddr), port)),
-          signals_(io_service_),
-          tick_timer_(io_service_),
+          acceptor_(io_context_, tcp::endpoint(asio::ip::make_address(bindaddr), port)),
+          signals_(io_context_),
+          tick_timer_(io_context_),
           handler_(handler),
           concurrency_(concurrency),
           timeout_(timeout),
@@ -78,7 +78,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         {
             uint16_t worker_thread_count = concurrency_ - 1;
             for (int i = 0; i < worker_thread_count; i++)
-                io_service_pool_.emplace_back(new asio::io_service());
+                io_context_pool_.emplace_back(new asio::io_context());
             get_cached_date_str_pool_.resize(worker_thread_count);
             task_timer_pool_.resize(worker_thread_count);
 
@@ -116,7 +116,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                         };
 
                         // initializing task timers
-                        detail::task_timer task_timer(*io_service_pool_[i]);
+                        detail::task_timer task_timer(*io_context_pool_[i]);
                         task_timer.set_default_timeout(timeout_);
                         task_timer_pool_[i] = &task_timer;
                         task_queue_length_pool_[i] = 0;
@@ -126,9 +126,9 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                         {
                             try
                             {
-                                if (io_service_pool_[i]->run() == 0)
+                                if (io_context_pool_[i]->run() == 0)
                                 {
-                                    // when io_service.run returns 0, there are no more works to do.
+                                    // when io_context.run returns 0, there are no more works to do.
                                     break;
                                 }
                             }
@@ -170,7 +170,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
             std::thread(
               [this] {
                   notify_start();
-                  io_service_.run();
+                  io_context_.run();
                   CROW_LOG_INFO << "Exiting.";
               })
               .join();
@@ -179,17 +179,17 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         void stop()
         {
             shutting_down_ = true; // Prevent the acceptor from taking new connections
-            for (auto& io_service : io_service_pool_)
+            for (auto& io_context : io_context_pool_)
             {
-                if (io_service != nullptr)
+                if (io_context != nullptr)
                 {
-                    CROW_LOG_INFO << "Closing IO service " << &io_service;
-                    io_service->stop(); // Close all io_services (and HTTP connections)
+                    CROW_LOG_INFO << "Closing IO service " << &io_context;
+                    io_context->stop(); // Close all io_contexts (and HTTP connections)
                 }
             }
 
-            CROW_LOG_INFO << "Closing main IO service (" << &io_service_ << ')';
-            io_service_.stop(); // Close main io_service
+            CROW_LOG_INFO << "Closing main IO service (" << &io_context_ << ')';
+            io_context_.stop(); // Close main io_context
         }
 
         uint16_t port(){
@@ -215,7 +215,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         }
 
     private:
-        uint16_t pick_io_service_idx()
+        uint16_t pick_io_context_idx()
         {
             uint16_t min_queue_idx = 0;
 
@@ -223,7 +223,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
             // size_t is used here to avoid the security issue https://codeql.github.com/codeql-query-help/cpp/cpp-comparison-with-wider-type/
             // even though the max value of this can be only uint16_t as concurrency is uint16_t.
             for (size_t i = 1; i < task_queue_length_pool_.size() && task_queue_length_pool_[min_queue_idx] > 0; i++)
-            // No need to check other io_services if the current one has no tasks
+            // No need to check other io_contexts if the current one has no tasks
             {
                 if (task_queue_length_pool_[i] < task_queue_length_pool_[min_queue_idx])
                     min_queue_idx = i;
@@ -235,8 +235,8 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         {
             if (!shutting_down_)
             {
-                uint16_t service_idx = pick_io_service_idx();
-                asio::io_service& is = *io_service_pool_[service_idx];
+                uint16_t service_idx = pick_io_context_idx();
+                asio::io_context& is = *io_context_pool_[service_idx];
                 task_queue_length_pool_[service_idx]++;
                 CROW_LOG_DEBUG << &is << " {" << service_idx << "} queue length: " << task_queue_length_pool_[service_idx];
 
@@ -249,7 +249,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                   [this, p, &is, service_idx](error_code ec) {
                       if (!ec)
                       {
-                          is.post(
+                          asio::post(is,
                             [p] {
                                 p->start();
                             });
@@ -273,8 +273,8 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         }
 
     private:
-        std::vector<std::unique_ptr<asio::io_service>> io_service_pool_;
-        asio::io_service io_service_;
+        std::vector<std::unique_ptr<asio::io_context>> io_context_pool_;
+        asio::io_context io_context_;
         std::vector<detail::task_timer*> task_timer_pool_;
         std::vector<std::function<std::string()>> get_cached_date_str_pool_;
         tcp::acceptor acceptor_;
