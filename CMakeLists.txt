@@ -66,6 +66,10 @@ target_include_directories(Crow
 )
 
 if(CROW_USE_BOOST)
+	if(POLICY CMP0167)
+		# Use Boost CMake module from Boost instead of the one from CMake
+		cmake_policy(SET CMP0167 NEW)
+	endif()
 	find_package(Boost 1.64 COMPONENTS system date_time REQUIRED)
 	target_link_libraries(Crow
 		INTERFACE
