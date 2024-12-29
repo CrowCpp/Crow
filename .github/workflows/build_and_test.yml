@@ -23,7 +23,7 @@ jobs:
               windows-latest,
               macos-latest,
               ubuntu-20.04,
-              ubuntu-24.04,
+              ubuntu-22.04,
               macos-13
             ]
             # ubuntu-18.04 does not work due to compile error on asio
