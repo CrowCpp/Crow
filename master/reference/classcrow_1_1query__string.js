@@ -1,17 +1,9 @@
 var classcrow_1_1query__string =
 [
-    [ "query_string", "classcrow_1_1query__string.html#a34567d87bd0889fab4089241bad6fce5", null ],
-    [ "query_string", "classcrow_1_1query__string.html#a37aa44f47830f12290364cc0afd94ad2", null ],
-    [ "query_string", "classcrow_1_1query__string.html#a22b3133693d0daa5cb9647f4a5908f62", null ],
-    [ "clear", "classcrow_1_1query__string.html#a19138a2e29bba49996bf67e7403da405", null ],
-    [ "get", "classcrow_1_1query__string.html#a7db05380bed403b88cb2fe6a5fdd8d75", null ],
-    [ "get_dict", "classcrow_1_1query__string.html#af56add12ca6a7f0222956e353d1d40bb", null ],
-    [ "get_list", "classcrow_1_1query__string.html#a657e5fe435375cd31229944ed2ad5608", null ],
-    [ "keys", "classcrow_1_1query__string.html#ad83b800ef5b122d361061d9d5f889dd9", null ],
-    [ "operator=", "classcrow_1_1query__string.html#a649427bd73c23963eaa29dc230a5cde0", null ],
-    [ "operator=", "classcrow_1_1query__string.html#aec8c83455de1a146999d8e8d2ecbe3bf", null ],
-    [ "pop", "classcrow_1_1query__string.html#ab0a81b08a5531b98c08b1a6a268ebea1", null ],
-    [ "pop_dict", "classcrow_1_1query__string.html#a0744b06ff0709ebbe7c2a1646564508b", null ],
-    [ "pop_list", "classcrow_1_1query__string.html#a8ef1a91122dc53e1235919e107fd1a9c", null ],
-    [ "operator<<", "classcrow_1_1query__string.html#a43f85a8b06660b61cd05226504559768", null ]
+    [ "get", "classcrow_1_1query__string.html#ae50bd5497dea0d22a46c2e47630bfd16", null ],
+    [ "get_dict", "classcrow_1_1query__string.html#a790795a2524ca99fcab929794d9108f1", null ],
+    [ "get_list", "classcrow_1_1query__string.html#abf0bd4e7c262f52ab79b97f6217bb2b3", null ],
+    [ "pop", "classcrow_1_1query__string.html#a7504e4119946f0b9d8e73ae4e24a65a6", null ],
+    [ "pop_dict", "classcrow_1_1query__string.html#a6eb0ac5b1e62ee90474fc0cf59269f3f", null ],
+    [ "pop_list", "classcrow_1_1query__string.html#acf03ae2418770b450d7c4a9c4f5aff3f", null ]
 ];
