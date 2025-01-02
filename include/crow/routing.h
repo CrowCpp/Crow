@@ -1581,7 +1581,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
             }
             else if (req.method == HTTPMethod::Options)
             {
-                std::string allow = "OPTIONS, HEAD, ";
+                std::string allow = "OPTIONS, HEAD";
 
                 if (req.url == "/*")
                 {
@@ -1592,10 +1592,10 @@ namespace crow // NOTE: Already documented in "crow/app.h"
 
                         if (!per_methods_[i].trie.is_empty())
                         {
-                            allow += method_name(static_cast<HTTPMethod>(i)) + ", ";
+                            allow.append(", ");
+                            allow.append(method_name(static_cast<HTTPMethod>(i)));
                         }
                     }
-                    allow = allow.substr(0, allow.size() - 2);
                     res = response(204);
                     res.set_header("Allow", allow);
                     res.end();
@@ -1614,12 +1614,12 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                             if (static_cast<int>(HTTPMethod::Head) == i)
                                 continue; // HEAD is always allowed
 
-                            allow += method_name(static_cast<HTTPMethod>(i)) + ", ";
+                            allow.append(", ");
+                            allow.append(method_name(static_cast<HTTPMethod>(i)));
                         }
                     }
                     if (rules_matched)
                     {
-                        allow = allow.substr(0, allow.size() - 2);
                         res = response(204);
                         res.set_header("Allow", allow);
                         res.end();
