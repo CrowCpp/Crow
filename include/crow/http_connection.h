@@ -349,13 +349,15 @@ namespace crow
             if (res.code >= 400 && res.body.empty())
                 res.body = statusCodes[res.code].substr(9);
 
+            headers_.clear();
             for (auto& kv : res.headers)
             {
-                buffers_.emplace_back(kv.first.data(), kv.first.size());
-                buffers_.emplace_back(seperator.data(), seperator.size());
-                buffers_.emplace_back(kv.second.data(), kv.second.size());
-                buffers_.emplace_back(crlf.data(), crlf.size());
+                headers_ += kv.first;
+                headers_ += seperator;
+                headers_ += kv.second;
+                headers_ += crlf;
             }
+            buffers_.emplace_back(headers_.data(), headers_.size());
 
             if (!res.manual_length_header && !res.headers.count("content-length"))
             {
@@ -600,6 +602,7 @@ namespace crow
 
         std::string content_length_;
         std::string date_str_;
+        std::string headers_;
         std::string res_body_copy_;
 
         detail::task_timer::identifier_type task_id_{};
