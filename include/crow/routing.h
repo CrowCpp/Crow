@@ -248,16 +248,10 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                 template<typename... Args>
                 void set_(Func f, typename std::enable_if<!std::is_same<typename std::tuple_element<0, std::tuple<Args..., void>>::type, const request&>::value, int>::type = 0)
                 {
-                    handler_ = (
-#ifdef CROW_CAN_USE_CPP14
-                      [f = std::move(f)]
-#else
-                      [f]
-#endif
-                      (const request&, response& res, Args... args) {
-                          res = response(f(args...));
-                          res.end();
-                      });
+                    handler_ = ([f = std::move(f)](const request&, response& res, Args... args) {
+                        res = response(f(args...));
+                        res.end();
+                    });
                 }
 
                 template<typename Req, typename... Args>
@@ -354,16 +348,10 @@ namespace crow // NOTE: Already documented in "crow/app.h"
             static_assert(!std::is_same<void, decltype(f())>::value,
                           "Handler function cannot have void return type; valid return types: string, int, crow::response, crow::returnable");
 
-            handler_ = (
-#ifdef CROW_CAN_USE_CPP14
-              [f = std::move(f)]
-#else
-              [f]
-#endif
-              (const request&, response& res) {
-                  res = response(f());
-                  res.end();
-              });
+            handler_ = ([f = std::move(f)](const request&, response& res) {
+                res = response(f());
+                res.end();
+            });
         }
 
         template<typename Func>
@@ -376,16 +364,10 @@ namespace crow // NOTE: Already documented in "crow/app.h"
             static_assert(!std::is_same<void, decltype(f(std::declval<crow::request>()))>::value,
                           "Handler function cannot have void return type; valid return types: string, int, crow::response, crow::returnable");
 
-            handler_ = (
-#ifdef CROW_CAN_USE_CPP14
-              [f = std::move(f)]
-#else
-              [f]
-#endif
-              (const crow::request& req, crow::response& res) {
-                  res = response(f(req));
-                  res.end();
-              });
+            handler_ = ([f = std::move(f)](const request& req, response& res) {
+                res = response(f(req));
+                res.end();
+            });
         }
 
         template<typename Func>
@@ -398,15 +380,9 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         {
             static_assert(std::is_same<void, decltype(f(std::declval<crow::response&>()))>::value,
                           "Handler function with response argument should have void return type");
-            handler_ = (
-#ifdef CROW_CAN_USE_CPP14
-              [f = std::move(f)]
-#else
-              [f]
-#endif
-              (const crow::request&, crow::response& res) {
-                  f(res);
-              });
+            handler_ = ([f = std::move(f)](const request&, response& res) {
+                f(res);
+            });
         }
 
         template<typename Func>
@@ -681,15 +657,9 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         template<typename Func>
         void operator()(Func&& f)
         {
-            handler_ = (
-#ifdef CROW_CAN_USE_CPP14
-              [f = std::move(f)]
-#else
-              [f]
-#endif
-              (crow::request& req, crow::response& res, Args... args) {
-                  detail::wrapped_handler_call(req, res, f, std::forward<Args>(args)...);
-              });
+            handler_ = ([f = std::move(f)](request& req, response& res, Args... args) {
+                detail::wrapped_handler_call(req, res, f, std::forward<Args>(args)...);
+            });
         }
 
         template<typename Func>

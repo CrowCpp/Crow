@@ -254,16 +254,8 @@ namespace crow
 
         /// \brief Create a route using a rule (**Use CROW_ROUTE instead**)
         template<uint64_t Tag>
-#ifdef CROW_GCC83_WORKAROUND
-        auto& route(const std::string& rule)
-#else
         auto route(const std::string& rule)
-#endif
-#if defined CROW_CAN_USE_CPP17 && !defined CROW_GCC83_WORKAROUND
           -> typename std::invoke_result<decltype(&Router::new_rule_tagged<Tag>), Router, const std::string&>::type
-#elif !defined CROW_GCC83_WORKAROUND
-          -> typename std::result_of<decltype (&Router::new_rule_tagged<Tag>)(Router, const std::string&)>::type
-#endif
         {
             return router_.new_rule_tagged<Tag>(rule);
         }
