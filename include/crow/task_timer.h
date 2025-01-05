@@ -42,10 +42,10 @@ namespace crow
             using clock_type = std::chrono::steady_clock;
             using time_type = clock_type::time_point;
         public:
-            task_timer(asio::io_service& io_service,
+            task_timer(asio::io_context& io_context,
                        const std::chrono::milliseconds tick_length =
                             std::chrono::seconds(1)) :
-              io_service_(io_service), timer_(io_service_),
+              io_context_(io_context), timer_(io_context_),
               tick_length_ms_(tick_length)
             {
                 timer_.expires_after(tick_length_ms_);
@@ -155,7 +155,7 @@ namespace crow
             }
 
         private:
-            asio::io_service& io_service_;
+            asio::io_context& io_context_;
             asio::basic_waitable_timer<clock_type> timer_;
             std::map<identifier_type, std::pair<time_type, task_type>> tasks_;
 
