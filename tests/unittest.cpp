@@ -3930,8 +3930,8 @@ TEST_CASE("task_timer")
         b = true;
     });
 
-    asio::steady_timer t(io_service);
-    asio::error_code ec;
+    asio::steady_timer t(io_context);
+    asio_error_code ec;
 
     t.expires_from_now(3 * timer.get_tick_length());
     t.wait(ec);
