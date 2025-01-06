@@ -19,9 +19,9 @@
 #include "crow/settings.h"
 
 #if (CROW_USE_BOOST && BOOST_VERSION >= 107000) || (ASIO_VERSION >= 101300)
-#define GET_IO_SERVICE(s) ((asio::io_context&)(s).get_executor().context())
+#define GET_IO_CONTEXT(s) ((asio::io_context&)(s).get_executor().context())
 #else
-#define GET_IO_SERVICE(s) ((s).get_io_service())
+#define GET_IO_CONTEXT(s) ((s).get_io_service())
 #endif
 
 namespace crow
@@ -38,13 +38,13 @@ namespace crow
     struct SocketAdaptor
     {
         using context = void;
-        SocketAdaptor(asio::io_service& io_service, context*):
-          socket_(io_service)
+        SocketAdaptor(asio::io_context& io_context, context*):
+          socket_(io_context)
         {}
 
-        asio::io_service& get_io_service()
+        asio::io_context& get_io_context()
         {
-            return GET_IO_SERVICE(socket_);
+            return GET_IO_CONTEXT(socket_);
         }
 
         /// Get the TCP socket handling data trasfers, regardless of what layer is handling transfers on top of the socket.
@@ -107,8 +107,8 @@ namespace crow
     {
         using context = asio::ssl::context;
         using ssl_socket_t = asio::ssl::stream<tcp::socket>;
-        SSLAdaptor(asio::io_service& io_service, context* ctx):
-          ssl_socket_(new ssl_socket_t(io_service, *ctx))
+        SSLAdaptor(asio::io_context& io_context, context* ctx):
+          ssl_socket_(new ssl_socket_t(io_context, *ctx))
         {}
 
         asio::ssl::stream<tcp::socket>& socket()
@@ -168,9 +168,9 @@ namespace crow
             }
         }
 
-        asio::io_service& get_io_service()
+        asio::io_context& get_io_context()
         {
-            return GET_IO_SERVICE(raw_socket());
+            return GET_IO_CONTEXT(raw_socket());
         }
 
         template<typename F>
