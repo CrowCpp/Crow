@@ -21,7 +21,7 @@ var classcrow_1_1_crow =
     [ "multithreaded", "classcrow_1_1_crow.html#a7a6277aa9a88b2ecf301e98e8cbf9c33", null ],
     [ "port", "classcrow_1_1_crow.html#a9cf5fac292b94d93ad09032a02ab0b62", null ],
     [ "port", "classcrow_1_1_crow.html#a97cc98d99417f21f757fa09e1bf1f0ca", null ],
-    [ "route", "classcrow_1_1_crow.html#a5e1e54d49ff3015fd08f545b574ab44f", null ],
+    [ "route", "classcrow_1_1_crow.html#af2a46207b71be452e8514146a83a9868", null ],
     [ "route_dynamic", "classcrow_1_1_crow.html#ad6c106ad129820885a51a05ef6e92f63", null ],
     [ "run", "classcrow_1_1_crow.html#a193d8b03f717234a841cd92f72c6b4b5", null ],
     [ "run_async", "classcrow_1_1_crow.html#afd29cf4e11557abfd7bce88b84af9b99", null ],

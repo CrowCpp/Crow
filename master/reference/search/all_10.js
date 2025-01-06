@@ -14,7 +14,7 @@ var searchData=
   ['request_11',['request',['../structcrow_1_1request.html',1,'crow::request'],['../structcrow_1_1request.html#a838c9a8c9a5eb2283d57e66f3630b5a6',1,'crow::request::request()'],['../structcrow_1_1request.html#ab90c2762f152a7d58a1ab8ea55e0afd0',1,'crow::request::request(HTTPMethod method_, std::string raw_url_, std::string url_, query_string url_params_, ci_map headers_, std::string body_, unsigned char http_major, unsigned char http_minor, bool has_keep_alive, bool has_close_connection, bool is_upgrade)']]],
   ['response_12',['response',['../structcrow_1_1response.html',1,'crow']]],
   ['returnable_13',['returnable',['../structcrow_1_1returnable.html',1,'crow']]],
-  ['route_14',['route',['../classcrow_1_1_crow.html#a5e1e54d49ff3015fd08f545b574ab44f',1,'crow::Crow']]],
+  ['route_14',['route',['../classcrow_1_1_crow.html#af2a46207b71be452e8514146a83a9868',1,'crow::Crow']]],
   ['route_5fdynamic_15',['route_dynamic',['../classcrow_1_1_crow.html#ad6c106ad129820885a51a05ef6e92f63',1,'crow::Crow']]],
   ['router_16',['Router',['../classcrow_1_1_router.html',1,'crow']]],
   ['routing_5fhandle_5fresult_17',['routing_handle_result',['../structcrow_1_1routing__handle__result.html',1,'crow']]],
