@@ -23,9 +23,7 @@
 #include <functional>
 #include <chrono>
 
-#ifdef CROW_CAN_USE_CPP17
 #include <variant>
-#endif
 
 namespace
 {
@@ -53,7 +51,6 @@ namespace crow
     namespace session
     {
 
-#ifdef CROW_CAN_USE_CPP17
         using multi_value_types = black_magic::S<bool, int64_t, double, std::string>;
 
         /// A multi_value is a safe variant wrapper with json conversion support
@@ -118,38 +115,6 @@ namespace crow
                 default: return multi_value{false};
             }
         }
-#else
-        // Fallback for C++11/14 that uses a raw json::wvalue internally.
-        // This implementation consumes significantly more memory
-        // than the variant-based version
-        struct multi_value
-        {
-            json::wvalue json() const { return v_; }
-
-            static multi_value from_json(const json::rvalue&);
-
-            std::string string() const { return v_.dump(); }
-
-            template<typename T, typename RT = wrap_mv_t<T>>
-            RT get(const T& fallback)
-            {
-                return json::wvalue_reader{v_}.get((const RT&)(fallback));
-            }
-
-            template<typename T, typename RT = wrap_mv_t<T>>
-            void set(T val)
-            {
-                v_ = RT(std::move(val));
-            }
-
-            json::wvalue v_;
-        };
-
-        inline multi_value multi_value::from_json(const json::rvalue& rv)
-        {
-            return {rv};
-        }
-#endif
 
         /// Expiration tracker keeps track of soonest-to-expire keys
         struct ExpirationTracker
@@ -226,13 +191,8 @@ namespace crow
     template<typename Store>
     struct SessionMiddleware
     {
-#ifdef CROW_CAN_USE_CPP17
         using lock = std::scoped_lock<std::mutex>;
         using rc_lock = std::scoped_lock<std::recursive_mutex>;
-#else
-        using lock = std::lock_guard<std::mutex>;
-        using rc_lock = std::lock_guard<std::recursive_mutex>;
-#endif
 
         struct context
         {
