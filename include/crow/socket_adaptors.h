@@ -19,9 +19,9 @@
 #include "crow/settings.h"
 
 #if (CROW_USE_BOOST && BOOST_VERSION >= 107000) || (ASIO_VERSION >= 101300)
-#define GET_IO_SERVICE(s) ((asio::io_context&)(s).get_executor().context())
+#define GET_IO_CONTEXT(s) ((asio::io_context&)(s).get_executor().context())
 #else
-#define GET_IO_SERVICE(s) ((s).get_io_service())
+#define GET_IO_CONTEXT(s) ((s).get_io_service())
 #endif
 
 namespace crow
@@ -42,9 +42,9 @@ namespace crow
           socket_(io_context)
         {}
 
-        asio::io_context& get_io_service()
+        asio::io_context& get_io_context()
         {
-            return GET_IO_SERVICE(socket_);
+            return GET_IO_CONTEXT(socket_);
         }
 
         /// Get the TCP socket handling data trasfers, regardless of what layer is handling transfers on top of the socket.
@@ -168,9 +168,9 @@ namespace crow
             }
         }
 
-        asio::io_context& get_io_service()
+        asio::io_context& get_io_context()
         {
-            return GET_IO_SERVICE(raw_socket());
+            return GET_IO_CONTEXT(raw_socket());
         }
 
         template<typename F>

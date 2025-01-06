@@ -202,7 +202,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
             template<typename CompletionHandler>
             void dispatch(CompletionHandler&& handler)
             {
-                asio::dispatch(adaptor_.get_io_service(),
+                asio::dispatch(adaptor_.get_io_context(),
                                WeakWrappedMessage<typename std::decay<CompletionHandler>::type>{
                                  std::forward<CompletionHandler>(handler), anchor_});
             }
@@ -211,7 +211,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
             template<typename CompletionHandler>
             void post(CompletionHandler&& handler)
             {
-                asio::post(adaptor_.get_io_service(),
+                asio::post(adaptor_.get_io_context(),
                            WeakWrappedMessage<typename std::decay<CompletionHandler>::type>{
                              std::forward<CompletionHandler>(handler), anchor_});
             }
