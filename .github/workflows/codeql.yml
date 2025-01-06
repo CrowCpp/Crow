@@ -60,6 +60,17 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
 
+    # Install dependencies
+    - name: Prepare dependencies
+      run: |
+         sudo apt-get update && \
+              sudo apt-get install -yq \
+                libasio-dev \
+                libssl-dev zlib1g-dev \
+                cmake \
+                g++ clang
+      shell: bash
+
     # Initializes the CodeQL tools for scanning.
     - name: Initialize CodeQL
       uses: github/codeql-action/init@v3
