@@ -542,6 +542,13 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                             while (body_[endIdx - 1] == ' ')
                                 endIdx--;
                             {
+                                if (blockPositions.empty())
+                                {
+                                    throw invalid_template_exception(
+                                             std::string("unexpected closing tag: ")
+                                             + body_.substr(idx, endIdx - idx)
+                                             );
+                                }
                                 auto& matched = actions_[blockPositions.back()];
                                 if (body_.compare(idx, endIdx - idx,
                                                   body_, matched.start, matched.end - matched.start) != 0)
