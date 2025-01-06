@@ -123,9 +123,9 @@ $(document).ready(function(){initNavTree('socket__adaptors_8h_source.html',''); 
 <div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span><span class="preprocessor">#include &quot;crow/settings.h&quot;</span></div>
 <div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span> </div>
 <div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span><span class="preprocessor">#if (CROW_USE_BOOST &amp;&amp; BOOST_VERSION &gt;= 107000) || (ASIO_VERSION &gt;= 101300)</span></div>
-<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span><span class="preprocessor">#define GET_IO_SERVICE(s) ((asio::io_context&amp;)(s).get_executor().context())</span></div>
+<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span><span class="preprocessor">#define GET_IO_CONTEXT(s) ((asio::io_context&amp;)(s).get_executor().context())</span></div>
 <div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span><span class="preprocessor">#else</span></div>
-<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span><span class="preprocessor">#define GET_IO_SERVICE(s) ((s).get_io_service())</span></div>
+<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span><span class="preprocessor">#define GET_IO_CONTEXT(s) ((s).get_io_service())</span></div>
 <div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span><span class="preprocessor">#endif</span></div>
 <div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span> </div>
 <div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespacecrow.html">crow</a></div>
@@ -143,13 +143,13 @@ $(document).ready(function(){initNavTree('socket__adaptors_8h_source.html',''); 
 <div class="line"><a id="l00038" name="l00038"></a><span class="lineno"><a class="line" href="structcrow_1_1_socket_adaptor.html">   38</a></span><span class="comment"></span>    <span class="keyword">struct </span><a class="code hl_struct" href="structcrow_1_1_socket_adaptor.html">SocketAdaptor</a></div>
 <div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>    {</div>
 <div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>        <span class="keyword">using </span>context = void;</div>
-<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>        <a class="code hl_struct" href="structcrow_1_1_socket_adaptor.html">SocketAdaptor</a>(asio::io_service&amp; io_service, context*):</div>
-<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>          socket_(io_service)</div>
+<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>        <a class="code hl_struct" href="structcrow_1_1_socket_adaptor.html">SocketAdaptor</a>(asio::io_context&amp; io_context, context*):</div>
+<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>          socket_(io_context)</div>
 <div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>        {}</div>
 <div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span> </div>
-<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>        asio::io_service&amp; get_io_service()</div>
+<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>        asio::io_context&amp; get_io_context()</div>
 <div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>        {</div>
-<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>            <span class="keywordflow">return</span> GET_IO_SERVICE(socket_);</div>
+<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>            <span class="keywordflow">return</span> GET_IO_CONTEXT(socket_);</div>
 <div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>        }</div>
 <div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span><span class="comment"></span> </div>
 <div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span><span class="comment">        /// Get the TCP socket handling data trasfers, regardless of what layer is handling transfers on top of the socket.</span></div>
@@ -218,8 +218,8 @@ $(document).ready(function(){initNavTree('socket__adaptors_8h_source.html',''); 
 <div class="line"><a id="l00107" name="l00107"></a><span class="lineno">  107</span>    {</div>
 <div class="line"><a id="l00108" name="l00108"></a><span class="lineno">  108</span>        <span class="keyword">using </span>context = asio::ssl::context;</div>
 <div class="line"><a id="l00109" name="l00109"></a><span class="lineno">  109</span>        <span class="keyword">using </span>ssl_socket_t = asio::ssl::stream&lt;tcp::socket&gt;;</div>
-<div class="line"><a id="l00110" name="l00110"></a><span class="lineno">  110</span>        <a class="code hl_struct" href="structcrow_1_1_s_s_l_adaptor.html">SSLAdaptor</a>(asio::io_service&amp; io_service, context* ctx):</div>
-<div class="line"><a id="l00111" name="l00111"></a><span class="lineno">  111</span>          ssl_socket_(<span class="keyword">new</span> ssl_socket_t(io_service, *ctx))</div>
+<div class="line"><a id="l00110" name="l00110"></a><span class="lineno">  110</span>        <a class="code hl_struct" href="structcrow_1_1_s_s_l_adaptor.html">SSLAdaptor</a>(asio::io_context&amp; io_context, context* ctx):</div>
+<div class="line"><a id="l00111" name="l00111"></a><span class="lineno">  111</span>          ssl_socket_(<span class="keyword">new</span> ssl_socket_t(io_context, *ctx))</div>
 <div class="line"><a id="l00112" name="l00112"></a><span class="lineno">  112</span>        {}</div>
 <div class="line"><a id="l00113" name="l00113"></a><span class="lineno">  113</span> </div>
 <div class="line"><a id="l00114" name="l00114"></a><span class="lineno">  114</span>        asio::ssl::stream&lt;tcp::socket&gt;&amp; socket()</div>
@@ -279,9 +279,9 @@ $(document).ready(function(){initNavTree('socket__adaptors_8h_source.html',''); 
 <div class="line"><a id="l00168" name="l00168"></a><span class="lineno">  168</span>            }</div>
 <div class="line"><a id="l00169" name="l00169"></a><span class="lineno">  169</span>        }</div>
 <div class="line"><a id="l00170" name="l00170"></a><span class="lineno">  170</span> </div>
-<div class="line"><a id="l00171" name="l00171"></a><span class="lineno">  171</span>        asio::io_service&amp; get_io_service()</div>
+<div class="line"><a id="l00171" name="l00171"></a><span class="lineno">  171</span>        asio::io_context&amp; get_io_context()</div>
 <div class="line"><a id="l00172" name="l00172"></a><span class="lineno">  172</span>        {</div>
-<div class="line"><a id="l00173" name="l00173"></a><span class="lineno">  173</span>            <span class="keywordflow">return</span> GET_IO_SERVICE(raw_socket());</div>
+<div class="line"><a id="l00173" name="l00173"></a><span class="lineno">  173</span>            <span class="keywordflow">return</span> GET_IO_CONTEXT(raw_socket());</div>
 <div class="line"><a id="l00174" name="l00174"></a><span class="lineno">  174</span>        }</div>
 <div class="line"><a id="l00175" name="l00175"></a><span class="lineno">  175</span> </div>
 <div class="line"><a id="l00176" name="l00176"></a><span class="lineno">  176</span>        <span class="keyword">template</span>&lt;<span class="keyword">typename</span> F&gt;</div>

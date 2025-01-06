@@ -120,9 +120,9 @@ Inheritance diagram for crow::Connection&lt; Adaptor, Handler, Middlewares &gt;:
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:ad83a6948c16db75e51dcf7514f298983" id="r_ad83a6948c16db75e51dcf7514f298983"><td class="memItemLeft" align="right" valign="top"><a id="ad83a6948c16db75e51dcf7514f298983" name="ad83a6948c16db75e51dcf7514f298983"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>Connection</b> (asio::io_service &amp;io_service, Handler *handler, const std::string &amp;server_name, std::tuple&lt; Middlewares... &gt; *middlewares, std::function&lt; std::string()&gt; &amp;get_cached_date_str_f, <a class="el" href="classcrow_1_1detail_1_1task__timer.html">detail::task_timer</a> &amp;task_timer, typename Adaptor::context *adaptor_ctx_, std::atomic&lt; unsigned int &gt; &amp;queue_length)</td></tr>
-<tr class="separator:ad83a6948c16db75e51dcf7514f298983"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6d5f8a8ab5182d028911a9e94428d81d" id="r_a6d5f8a8ab5182d028911a9e94428d81d"><td class="memItemLeft" align="right" valign="top"><a id="a6d5f8a8ab5182d028911a9e94428d81d" name="a6d5f8a8ab5182d028911a9e94428d81d"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>Connection</b> (asio::io_context &amp;io_context, Handler *handler, const std::string &amp;server_name, std::tuple&lt; Middlewares... &gt; *middlewares, std::function&lt; std::string()&gt; &amp;get_cached_date_str_f, <a class="el" href="classcrow_1_1detail_1_1task__timer.html">detail::task_timer</a> &amp;task_timer, typename Adaptor::context *adaptor_ctx_, std::atomic&lt; unsigned int &gt; &amp;queue_length)</td></tr>
+<tr class="separator:a6d5f8a8ab5182d028911a9e94428d81d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4e1e6e41ec0fbf059c93fae2b9738a19" id="r_a4e1e6e41ec0fbf059c93fae2b9738a19"><td class="memItemLeft" align="right" valign="top"><a id="a4e1e6e41ec0fbf059c93fae2b9738a19" name="a4e1e6e41ec0fbf059c93fae2b9738a19"></a>
 decltype(std::declval&lt; Adaptor &gt;().raw_socket()) &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>socket</b> ()</td></tr>
 <tr class="memdesc:a4e1e6e41ec0fbf059c93fae2b9738a19"><td class="mdescLeft">&#160;</td><td class="mdescRight">The TCP socket on top of which the connection is established. <br /></td></tr>

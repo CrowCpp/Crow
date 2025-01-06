@@ -147,10 +147,10 @@ $(document).ready(function(){initNavTree('task__timer_8h_source.html',''); initR
 <div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>            <span class="keyword">using </span>clock_type = std::chrono::steady_clock;</div>
 <div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>            <span class="keyword">using </span>time_type = clock_type::time_point;</div>
 <div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>        <span class="keyword">public</span>:</div>
-<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>            <a class="code hl_class" href="classcrow_1_1detail_1_1task__timer.html">task_timer</a>(asio::io_service&amp; io_service,</div>
+<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>            <a class="code hl_class" href="classcrow_1_1detail_1_1task__timer.html">task_timer</a>(asio::io_context&amp; io_context,</div>
 <div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>                       <span class="keyword">const</span> std::chrono::milliseconds tick_length =</div>
 <div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>                            std::chrono::seconds(1)) :</div>
-<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>              io_service_(io_service), timer_(io_service_),</div>
+<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>              io_context_(io_context), timer_(io_context_),</div>
 <div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>              tick_length_ms_(tick_length)</div>
 <div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>            {</div>
 <div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>                timer_.expires_after(tick_length_ms_);</div>
@@ -272,7 +272,7 @@ $(document).ready(function(){initNavTree('task__timer_8h_source.html',''); initR
 <div class="line"><a id="l00155" name="l00155"></a><span class="lineno">  155</span>            }</div>
 <div class="line"><a id="l00156" name="l00156"></a><span class="lineno">  156</span> </div>
 <div class="line"><a id="l00157" name="l00157"></a><span class="lineno">  157</span>        <span class="keyword">private</span>:</div>
-<div class="line"><a id="l00158" name="l00158"></a><span class="lineno">  158</span>            asio::io_service&amp; io_service_;</div>
+<div class="line"><a id="l00158" name="l00158"></a><span class="lineno">  158</span>            asio::io_context&amp; io_context_;</div>
 <div class="line"><a id="l00159" name="l00159"></a><span class="lineno">  159</span>            asio::basic_waitable_timer&lt;clock_type&gt; timer_;</div>
 <div class="line"><a id="l00160" name="l00160"></a><span class="lineno">  160</span>            std::map&lt;identifier_type, std::pair&lt;time_type, task_type&gt;&gt; tasks_;</div>
 <div class="line"><a id="l00161" name="l00161"></a><span class="lineno">  161</span> </div>

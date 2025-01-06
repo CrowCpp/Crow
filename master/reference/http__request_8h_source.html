@@ -155,7 +155,7 @@ $(document).ready(function(){initNavTree('http__request_8h_source.html',''); ini
 <div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span> </div>
 <div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>        <span class="keywordtype">void</span>* middleware_context{};</div>
 <div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>        <span class="keywordtype">void</span>* middleware_container{};</div>
-<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>        asio::io_service* io_service{};</div>
+<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>        asio::io_context* io_context{};</div>
 <div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span><span class="comment"></span> </div>
 <div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span><span class="comment">        /// Construct an empty request. (sets the method to `GET`)</span></div>
 <div class="foldopen" id="foldopen00054" data-start="{" data-end="}">
@@ -202,7 +202,7 @@ $(document).ready(function(){initNavTree('http__request_8h_source.html',''); ini
 <div class="foldopen" id="foldopen00089" data-start="{" data-end="}">
 <div class="line"><a id="l00089" name="l00089"></a><span class="lineno"><a class="line" href="structcrow_1_1request.html#a33aa146a3914864ce82ef22136451601">   89</a></span>        <span class="keywordtype">void</span> <a class="code hl_function" href="structcrow_1_1request.html#a33aa146a3914864ce82ef22136451601">post</a>(CompletionHandler handler)</div>
 <div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span>        {</div>
-<div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span>            io_service-&gt;post(handler);</div>
+<div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span>            asio::post(io_context, handler);</div>
 <div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span>        }</div>
 </div>
 <div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span><span class="comment"></span> </div>
@@ -211,7 +211,7 @@ $(document).ready(function(){initNavTree('http__request_8h_source.html',''); ini
 <div class="foldopen" id="foldopen00096" data-start="{" data-end="}">
 <div class="line"><a id="l00096" name="l00096"></a><span class="lineno"><a class="line" href="structcrow_1_1request.html#ac3e72e3fe415c68618dee999e3984160">   96</a></span>        <span class="keywordtype">void</span> <a class="code hl_function" href="structcrow_1_1request.html#ac3e72e3fe415c68618dee999e3984160">dispatch</a>(CompletionHandler handler)</div>
 <div class="line"><a id="l00097" name="l00097"></a><span class="lineno">   97</span>        {</div>
-<div class="line"><a id="l00098" name="l00098"></a><span class="lineno">   98</span>            io_service-&gt;dispatch(handler);</div>
+<div class="line"><a id="l00098" name="l00098"></a><span class="lineno">   98</span>            asio::dispatch(io_context, handler);</div>
 <div class="line"><a id="l00099" name="l00099"></a><span class="lineno">   99</span>        }</div>
 </div>
 <div class="line"><a id="l00100" name="l00100"></a><span class="lineno">  100</span>    };</div>
