@@ -3929,13 +3929,26 @@ TEST_CASE("task_timer")
         b = true;
     });
 
-    this_thread::sleep_for(3 * timer.get_tick_length());
+    asio::steady_timer t(io_service);
+    asio::error_code ec;
+
+    t.expires_from_now(3 * timer.get_tick_length());
+    t.wait(ec);
+    // we are at 3 ticks, nothing be changed yet
+    CHECK(!ec);
     CHECK(a == false);
     CHECK(b == false);
-    this_thread::sleep_for(3 * timer.get_tick_length());
+    t.expires_from_now(3 * timer.get_tick_length());
+    t.wait(ec);
+    // we are at 3+3 = 6 ticks, so first task_timer handler should have runned
+    CHECK(!ec);
     CHECK(a == true);
     CHECK(b == false);
-    this_thread::sleep_for(5 * timer.get_tick_length());
+
+    t.expires_from_now(5 * timer.get_tick_length());
+    t.wait(ec);
+    //we are at 3+3 +5 = 11 ticks, both task_timer handlers shoudl have run now
+    CHECK(!ec);
     CHECK(a == true);
     CHECK(b == true);
 
