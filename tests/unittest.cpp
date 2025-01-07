@@ -1930,7 +1930,6 @@ TEST_CASE("middleware_cookieparser_format")
 
 TEST_CASE("middleware_cors")
 {
-
     App<crow::CORSHandler> app;
 
     auto& cors = app.get_middleware<crow::CORSHandler>();
@@ -1938,6 +1937,8 @@ TEST_CASE("middleware_cors")
     cors
       .prefix("/origin")
         .origin("test.test")
+      .prefix("/expose")
+        .expose("exposed-header")
       .prefix("/nocors")
         .ignore();
     // clang-format on
@@ -1948,6 +1949,11 @@ TEST_CASE("middleware_cors")
     });
 
     CROW_ROUTE(app, "/origin")
+    ([&](const request&) {
+        return "-";
+    });
+
+    CROW_ROUTE(app, "/expose")
     ([&](const request&) {
         return "-";
     });
@@ -1972,6 +1978,10 @@ TEST_CASE("middleware_cors")
     resp = HttpClient::request(LOCALHOST_ADDRESS, port,
                                "GET /origin\r\n\r\n");
     CHECK(resp.find("Access-Control-Allow-Origin: test.test") != std::string::npos);
+
+    resp = HttpClient::request(LOCALHOST_ADDRESS, port,
+                               "GET /expose\r\n\r\n");
+    CHECK(resp.find("Access-Control-Expose-Headers: exposed-header") != std::string::npos);
 
     resp = HttpClient::request(LOCALHOST_ADDRESS, port,
                                "GET /nocors/path\r\n\r\n");
