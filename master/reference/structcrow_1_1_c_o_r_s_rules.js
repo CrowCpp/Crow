@@ -2,6 +2,8 @@ var structcrow_1_1_c_o_r_s_rules =
 [
     [ "allow_credentials", "structcrow_1_1_c_o_r_s_rules.html#ace25d18b26ecffe10c7485f30c449186", null ],
     [ "blueprint", "structcrow_1_1_c_o_r_s_rules.html#ac26c50868a334cdd3601c7cd2f2a5248", null ],
+    [ "expose", "structcrow_1_1_c_o_r_s_rules.html#a65e408efb33a812e956c0f3db520c39f", null ],
+    [ "expose", "structcrow_1_1_c_o_r_s_rules.html#a94ddcf05fd3370b3bde4dc611759864b", null ],
     [ "global", "structcrow_1_1_c_o_r_s_rules.html#a1684428b8d96050e7dbb852b526ec5a2", null ],
     [ "headers", "structcrow_1_1_c_o_r_s_rules.html#a620acf998b3a61aa3fb5a3d8313b7abf", null ],
     [ "headers", "structcrow_1_1_c_o_r_s_rules.html#a82aaf8b6be872d7e6dbc91996a832636", null ],
