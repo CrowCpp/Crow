@@ -1937,6 +1937,8 @@ TEST_CASE("middleware_cors")
     cors
       .prefix("/origin")
         .origin("test.test")
+      .prefix("/auth-origin")
+        .allow_credentials()
       .prefix("/expose")
         .expose("exposed-header")
       .prefix("/nocors")
@@ -1949,6 +1951,11 @@ TEST_CASE("middleware_cors")
     });
 
     CROW_ROUTE(app, "/origin")
+    ([&](const request&) {
+        return "-";
+    });
+
+    CROW_ROUTE(app, "/auth-origin")
     ([&](const request&) {
         return "-";
     });
@@ -1978,6 +1985,10 @@ TEST_CASE("middleware_cors")
     resp = HttpClient::request(LOCALHOST_ADDRESS, port,
                                "GET /origin\r\n\r\n");
     CHECK(resp.find("Access-Control-Allow-Origin: test.test") != std::string::npos);
+
+    resp = HttpClient::request(LOCALHOST_ADDRESS, port,
+                                    "GET /auth-origin\r\nOrigin: test-client\r\n\r\n");
+    CHECK(resp.find("Access-Control-Allow-Origin: test-client") != std::string::npos);
 
     resp = HttpClient::request(LOCALHOST_ADDRESS, port,
                                "GET /expose\r\n\r\n");
