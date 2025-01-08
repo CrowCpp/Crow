@@ -1,0 +1,61 @@
+.md-header__source {
+    margin-left: 0px;
+    width: autho;
+    min-width: 9.6rem;
+}
+
+.md-typeset code {
+    border-radius: .25rem !important;
+}
+
+.code {
+    border-radius: .25rem !important;
+}
+
+.tag
+{
+    background-color: var(--md-primary-fg-color);
+    color: var(--md-default-tag-bg-color);
+    border-radius: 50px;
+    padding-left: 0.15em;
+    padding-right: 0.35em;
+    padding-top: 0.45em;
+    padding-bottom: 0.35em;
+}
+
+.tag a
+{
+    color: var(--md-default-tag-bg-color);
+}
+
+.tag a:hover
+{
+    color: var(--md-default-tag-bg-color);
+}
+
+.md-typeset :is(.emojione, .twemoji, .gemoji)
+{
+    vertical-align: text-bottom;
+}
+
+.md-typeset :is(.emojione, .twemoji, .gemoji) svg
+{
+    width: 1.25em;
+}
+
+[data-md-color-scheme="crow-dark"] img[src$="#only-dark"]
+{
+        display: block;
+}
+[data-md-color-scheme="crow-light"] img[src$="#only-light"]
+{
+        display: block;
+}
+[data-md-color-scheme="crow-light"] img[src$="#only-dark"]
+{
+        display: none;
+}
+[data-md-color-scheme="crow-dark"] img[src$="#only-light"]
+{
+        display: none;
+}
