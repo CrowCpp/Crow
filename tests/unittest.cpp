@@ -3204,8 +3204,8 @@ TEST_CASE("mirror_websocket_subprotocols")
 {
     static std::string http_message = "GET /ws HTTP/1.1\r\nConnection: keep-alive, Upgrade\r\nupgrade: websocket\r\nSec-WebSocket-Key: dGhlIHNhbXBsZSBub25jZQ==\r\nSec-WebSocket-Protocol: protocol1, protocol2\r\nSec-WebSocket-Version: 13\r\nHost: localhost\r\n\r\n";
 
-    static websocket::connection* connection = nullptr;
-    static bool connected{false};
+    websocket::connection* connection = nullptr;
+    bool connected{false};
 
     SimpleApp app;
 
