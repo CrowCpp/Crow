@@ -2,6 +2,7 @@
 #define CROW_LOG_LEVEL 0
 #include <sys/stat.h>
 
+#include <exception>
 #include <iostream>
 #include <vector>
 #include <thread>
@@ -4019,5 +4020,67 @@ TEST_CASE("http2_upgrade_is_ignored")
 
     auto res = make_request(request);
     CHECK(res.find("http2 upgrade is not supported so body is parsed") != std::string::npos);
+    app.stop();
+}
+
+TEST_CASE("option_header_passed_in_full")
+{
+    const std::string ServerName = "AN_EXTREMELY_UNIQUE_SERVER_NAME";
+
+    crow::App<crow::CORSHandler>
+      app;
+
+    app.get_middleware<crow::CORSHandler>() //
+      .global()
+      .allow_credentials()
+      .expose("X-Total-Pages", "X-Total-Entries", "Content-Disposition");
+
+    app.server_name(ServerName);
+
+
+    CROW_ROUTE(app, "/echo").methods(crow::HTTPMethod::Options)([]() {
+        crow::response response{};
+        response.add_header("Key", "Value");
+        return response;
+    });
+
+    auto _ = app.bindaddr(LOCALHOST_ADDRESS).port(45451).run_async();
+
+    app.wait_for_server_start();
+
+    asio::io_service is;
+
+    auto make_request = [&](const std::string& rq) {
+        asio::ip::tcp::socket c(is);
+        c.connect(asio::ip::tcp::endpoint(
+          asio::ip::address::from_string(LOCALHOST_ADDRESS), 45451));
+        c.send(asio::buffer(rq));
+        std::string fullString{};
+        asio::error_code error;
+        char buffer[1024];
+        while (true)
+        {
+            size_t len = c.read_some(asio::buffer(buffer), error);
+
+            if (error == asio::error::eof)
+            {
+                break;
+            }
+            else if (error)
+            {
+                throw system_error(error);
+            }
+
+            fullString.append(buffer, len);
+        }
+        c.close();
+        return fullString;
+    };
+
+    std::string request =
+      "OPTIONS /echo HTTP/1.1\r\n";
+
+    auto res = make_request(request);
+    CHECK(res.find(ServerName) != std::string::npos);
     app.stop();
 }
