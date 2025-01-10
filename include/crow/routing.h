@@ -498,9 +498,9 @@ namespace crow // NOTE: Already documented in "crow/app.h"
             return *this;
         }
 
-        self_t& mirrorprotocols()
+        self_t& mirrorprotocols(bool mirror_protocols = true)
         {
-            mirror_protocols_ = true;
+            mirror_protocols_ = mirror_protocols;
             return *this;
         }
 
