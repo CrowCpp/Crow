@@ -48,7 +48,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
 
         void* middleware_context{};
         void* middleware_container{};
-        asio::io_service* io_service{};
+        asio::io_context* io_context{};
 
         /// Construct an empty request. (sets the method to `GET`)
         request():
@@ -88,14 +88,14 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         template<typename CompletionHandler>
         void post(CompletionHandler handler)
         {
-            io_service->post(handler);
+            asio::post(io_context, handler);
         }
 
         /// Send data to whoever made this request with a completion handler.
         template<typename CompletionHandler>
         void dispatch(CompletionHandler handler)
         {
-            io_service->dispatch(handler);
+            asio::dispatch(io_context, handler);
         }
     };
 } // namespace crow

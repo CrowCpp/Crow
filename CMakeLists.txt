@@ -66,6 +66,10 @@ target_include_directories(Crow
 )
 
 if(CROW_USE_BOOST)
+	if(POLICY CMP0167)
+		# Use Boost CMake module from Boost instead of the one from CMake
+		cmake_policy(SET CMP0167 NEW)
+	endif()
 	find_package(Boost 1.64 COMPONENTS system date_time REQUIRED)
 	target_link_libraries(Crow
 		INTERFACE
@@ -101,6 +105,7 @@ if(CROW_AMALGAMATE)
 		include/crow/ci_map.h
 		include/crow/common.h
 		include/crow/compression.h
+		include/crow/exceptions.h
 		include/crow/http_connection.h
 		include/crow/http_parser_merged.h
 		include/crow/http_request.h
@@ -205,7 +210,16 @@ if(CROW_INSTALL)
 	)
 endif()
 
-set(CPACK_GENERATOR "ZIP")
+if(WIN32 AND NOT CYGWIN)
+	set(CPACK_GENERATOR NSIS ZIP)
+endif(WIN32 AND NOT CYGWIN)
+if(APPLE)
+	set(CPACK_GENERATOR DragNDrop TGZ)
+endif(APPLE)
+if (UNIX AND NOT APPLE AND NOT WIN32)
+	set(CPACK_GENERATOR DEB TGZ)
+endif (UNIX AND NOT APPLE AND NOT WIN32)
+
 set(CPACK_PACKAGE_NAME "Crow")
 set(CPACK_DEBIAN_PACKAGE_MAINTAINER "CrowCpp")
 set(CPACK_PACKAGE_VENDOR "CrowCpp")

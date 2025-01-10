@@ -5,7 +5,6 @@
 #include <iostream>
 #include <vector>
 #include <thread>
-#include <chrono>
 #include <type_traits>
 #include <regex>
 
@@ -26,6 +25,57 @@ using asio_error_code = asio::error_code;
 #endif
 
 #define LOCALHOST_ADDRESS "127.0.0.1"
+
+/** simple http client class for making client requests */
+class HttpClient
+{
+private:
+    asio::io_context ic{};
+    asio::ip::tcp::socket c;
+
+public:
+    /** construct an instance by address and port */
+    HttpClient(std::string const& address, uint16_t port):
+      c(ic)
+    {
+        c.connect(asio::ip::tcp::endpoint( asio::ip::make_address(address),
+                                           port));
+    }
+
+    /** sends a request string through the socket */
+    void send(const std::string& msg)
+    {
+        c.send(asio::buffer(msg));
+    }
+
+    /** sends a request string through the socket */
+    void send(const char* const msg, size_t msg_size)
+    {
+        c.send(asio::buffer(msg, msg_size));
+    }
+
+
+    /** method shall be called after sending a request with send
+     * @returns the received response string */
+    std::string receive()
+    {
+        char buf[2048];
+        auto received = c.receive(asio::buffer(buf, sizeof(buf)));
+        std::string rval(buf, received);
+        return rval;
+    }
+
+    /** static method for making a request
+     * @returns the received response string */
+    static std::string request(const std::string& address,
+                               uint16_t port,
+                               const std::string& sendmsg)
+    {
+        HttpClient c(address, port);
+        c.send(sendmsg);
+        return c.receive();
+    }
+};
 
 TEST_CASE("Rule")
 {
@@ -571,7 +621,6 @@ TEST_CASE("validate can be called multiple times")
 
 TEST_CASE("server_handling_error_request")
 {
-    static char buf[2048];
     SimpleApp app;
     CROW_ROUTE(app, "/")
     ([] {
@@ -581,24 +630,15 @@ TEST_CASE("server_handling_error_request")
     // auto _ = async(launch::async, [&]{server.run();});
     auto _ = app.bindaddr(LOCALHOST_ADDRESS).port(45451).run_async();
     app.wait_for_server_start();
-    std::string sendmsg = "POX";
-    asio::io_service is;
+
+    try
     {
-        asio::ip::tcp::socket c(is);
-        c.connect(asio::ip::tcp::endpoint(
-          asio::ip::address::from_string(LOCALHOST_ADDRESS), 45451));
-
-        c.send(asio::buffer(sendmsg));
-
-        try
-        {
-            c.receive(asio::buffer(buf, 2048));
-            FAIL_CHECK();
-        }
-        catch (std::exception& e)
-        {
-            CROW_LOG_DEBUG << e.what();
-        }
+        auto resp = HttpClient::request(LOCALHOST_ADDRESS, 45451, "POX");
+        FAIL_CHECK();
+    }
+    catch (std::exception& e)
+    {
+        CROW_LOG_DEBUG << e.what();
     }
     app.stop();
 } // server_handling_error_request
@@ -612,18 +652,17 @@ TEST_CASE("server_dynamic_port_allication")
     });
     auto _ = app.bindaddr(LOCALHOST_ADDRESS).port(0).run_async();
     app.wait_for_server_start();
-    asio::io_service is;
+    asio::io_context ic;
     {
-        asio::ip::tcp::socket c(is);
+        asio::ip::tcp::socket c(ic);
         c.connect(asio::ip::tcp::endpoint(
-          asio::ip::address::from_string(LOCALHOST_ADDRESS), app.port()));
+          asio::ip::make_address(LOCALHOST_ADDRESS), app.port()));
     }
     app.stop();
 } // server_dynamic_port_allication
 
 TEST_CASE("server_handling_error_request_http_version")
 {
-    static char buf[2048];
     SimpleApp app;
     CROW_ROUTE(app, "/")
     ([] {
@@ -631,18 +670,12 @@ TEST_CASE("server_handling_error_request_http_version")
     });
     auto _ = app.bindaddr(LOCALHOST_ADDRESS).port(45451).run_async();
     app.wait_for_server_start();
-    std::string sendmsg = "POST /\r\nContent-Length:3\r\nX-HeaderTest: 123\r\n\r\nA=B\r\n";
-    asio::io_service is;
     {
-        asio::ip::tcp::socket c(is);
-        c.connect(asio::ip::tcp::endpoint(
-          asio::ip::address::from_string(LOCALHOST_ADDRESS), 45451));
-
-        c.send(asio::buffer(sendmsg));
-
         try
         {
-            c.receive(asio::buffer(buf, 2048));
+            auto resp = HttpClient::request(LOCALHOST_ADDRESS,
+                                                   45451,
+                                                   "POST /\r\nContent-Length:3\r\nX-HeaderTest: 123\r\n\r\nA=B\r\n");
             FAIL_CHECK();
         }
         catch (std::exception& e)
@@ -655,7 +688,6 @@ TEST_CASE("server_handling_error_request_http_version")
 
 TEST_CASE("multi_server")
 {
-    static char buf[2048];
     SimpleApp app1, app2;
     CROW_ROUTE(app1, "/").methods("GET"_method,
                                   "POST"_method)([] {
@@ -674,31 +706,21 @@ TEST_CASE("multi_server")
     std::string sendmsg =
       "POST / HTTP/1.0\r\nContent-Length:3\r\nX-HeaderTest: 123\r\n\r\nA=B\r\n";
     {
-        asio::io_service is;
-        asio::ip::tcp::socket c(is);
-        c.connect(asio::ip::tcp::endpoint(
-          asio::ip::address::from_string(LOCALHOST_ADDRESS), 45451));
-
-        c.send(asio::buffer(sendmsg));
-
-        size_t recved = c.receive(asio::buffer(buf, 2048));
-        CHECK('A' == buf[recved - 1]);
+        auto resp = HttpClient::request(LOCALHOST_ADDRESS, 45451,
+                                        "POST / HTTP/1.0\r\nContent-Length:3\r\nX-HeaderTest: 123\r\n\r\nA=B\r\n");
+        CHECK('A' == resp.at(resp.length() - 1));
     }
 
     {
-        asio::io_service is;
-        asio::ip::tcp::socket c(is);
-        c.connect(asio::ip::tcp::endpoint(
-          asio::ip::address::from_string(LOCALHOST_ADDRESS), 45452));
-
+        HttpClient c(LOCALHOST_ADDRESS, 45452);
         for (auto ch : sendmsg)
         {
-            char tmp[1] = {ch};
-            c.send(asio::buffer(tmp));
+            char buff[1] = {ch};
+            c.send(buff, 1);
         }
 
-        size_t recved = c.receive(asio::buffer(buf, 2048));
-        CHECK('B' == buf[recved - 1]);
+        auto resp = c.receive();
+        CHECK('B' == resp.at(resp.length() - 1));
     }
 
     app1.stop();
@@ -711,7 +733,7 @@ TEST_CASE("undefined_status_code")
     SimpleApp app;
     CROW_ROUTE(app, "/get123")
     ([] {
-        //this status does not exists statusCodes map defined in include/crow/http_connection.h
+        //this status does not exist statusCodes map defined in include/crow/http_connection.h
         const int undefinedStatusCode = 123;
         return response(undefinedStatusCode, "this should return 500");
     });
@@ -724,10 +746,10 @@ TEST_CASE("undefined_status_code")
     auto _ = app.bindaddr(LOCALHOST_ADDRESS).port(45471).run_async();
     app.wait_for_server_start();
 
-    asio::io_service is;
+    asio::io_context ic;
     auto sendRequestAndGetStatusCode = [&](const std::string& route) -> unsigned {
-        asio::ip::tcp::socket socket(is);
-        socket.connect(asio::ip::tcp::endpoint(asio::ip::address::from_string(LOCALHOST_ADDRESS), app.port()));
+        asio::ip::tcp::socket socket(ic);
+        socket.connect(asio::ip::tcp::endpoint(asio::ip::make_address(LOCALHOST_ADDRESS), app.port()));
 
         asio::streambuf request;
         std::ostream request_stream(&request);
@@ -1592,7 +1614,6 @@ struct ThirdMW : public std::conditional<Local, crow::ILocalMiddleware, empty_ty
 
 TEST_CASE("middleware_context")
 {
-    static char buf[2048];
     // SecondMW depends on FirstMW (it uses all_ctx.get<FirstMW>)
     // so it leads to compile error if we remove FirstMW from definition
     // App<IntSettingMiddleware, SecondMW> app;
@@ -1627,17 +1648,9 @@ TEST_CASE("middleware_context")
 
     auto _ = app.bindaddr(LOCALHOST_ADDRESS).port(45451).run_async();
     app.wait_for_server_start();
-    std::string sendmsg = "GET /\r\n\r\n";
-    asio::io_service is;
     {
-        asio::ip::tcp::socket c(is);
-        c.connect(asio::ip::tcp::endpoint(
-          asio::ip::address::from_string(LOCALHOST_ADDRESS), 45451));
-
-        c.send(asio::buffer(sendmsg));
-
-        c.receive(asio::buffer(buf, 2048));
-        c.close();
+        auto resp = HttpClient::request(LOCALHOST_ADDRESS, 45451,
+                                        "GET /\r\n\r\n");
     }
     {
         auto& out = test_middleware_context_vector;
@@ -1657,14 +1670,8 @@ TEST_CASE("middleware_context")
     }
     std::string sendmsg2 = "GET /break\r\n\r\n";
     {
-        asio::ip::tcp::socket c(is);
-        c.connect(asio::ip::tcp::endpoint(
-          asio::ip::address::from_string(LOCALHOST_ADDRESS), 45451));
-
-        c.send(asio::buffer(sendmsg2));
-
-        c.receive(asio::buffer(buf, 2048));
-        c.close();
+        auto resp = HttpClient::request(LOCALHOST_ADDRESS, 45451,
+                                        sendmsg2);
     }
     {
         auto& out = test_middleware_context_vector;
@@ -1698,7 +1705,6 @@ struct LocalSecretMiddleware : crow::ILocalMiddleware
 
 TEST_CASE("local_middleware")
 {
-    static char buf[2048];
 
     App<LocalSecretMiddleware> app;
 
@@ -1716,28 +1722,19 @@ TEST_CASE("local_middleware")
 
     auto _ = app.bindaddr(LOCALHOST_ADDRESS).port(45451).run_async();
     app.wait_for_server_start();
-    asio::io_service is;
 
     {
-        asio::ip::tcp::socket c(is);
-        c.connect(asio::ip::tcp::endpoint(
-          asio::ip::address::from_string(LOCALHOST_ADDRESS), 45451));
-        c.send(asio::buffer("GET /\r\n\r\n"));
-        c.receive(asio::buffer(buf, 2048));
-        c.close();
+        auto resp = HttpClient::request(LOCALHOST_ADDRESS, 45451,
+                                        "GET /\r\n\r\n");
 
-        CHECK(std::string(buf).find("200") != std::string::npos);
+        CHECK(resp.find("200") != std::string::npos);
     }
 
     {
-        asio::ip::tcp::socket c(is);
-        c.connect(asio::ip::tcp::endpoint(
-          asio::ip::address::from_string(LOCALHOST_ADDRESS), 45451));
-        c.send(asio::buffer("GET /secret\r\n\r\n"));
-        c.receive(asio::buffer(buf, 2048));
-        c.close();
+        auto resp = HttpClient::request(LOCALHOST_ADDRESS, 45451,
+                                        "GET /secret\r\n\r\n");
 
-        CHECK(std::string(buf).find("403") != std::string::npos);
+        CHECK(resp.find("403") != std::string::npos);
     }
 
     app.stop();
@@ -1761,8 +1758,6 @@ TEST_CASE("app_constructor")
 TEST_CASE("middleware_blueprint")
 {
     // Same logic as middleware_context, but middleware is added with blueprints
-    static char buf[2048];
-
     App<FirstMW<true>, SecondMW<true>, ThirdMW<true>> app;
 
     Blueprint bp1("a", "c1", "c1");
@@ -1798,16 +1793,9 @@ TEST_CASE("middleware_blueprint")
     auto _ = app.bindaddr(LOCALHOST_ADDRESS).port(45451).run_async();
     app.wait_for_server_start();
 
-    asio::io_service is;
     {
-        asio::ip::tcp::socket c(is);
-        c.connect(asio::ip::tcp::endpoint(
-          asio::ip::address::from_string(LOCALHOST_ADDRESS), 45451));
-
-        c.send(asio::buffer("GET /a/b/\r\n\r\n"));
-
-        c.receive(asio::buffer(buf, 2048));
-        c.close();
+        auto resp = HttpClient::request(LOCALHOST_ADDRESS, 45451,
+                                        "GET /a/b/\r\n\r\n");
     }
     {
         auto& out = test_middleware_context_vector;
@@ -1825,14 +1813,8 @@ TEST_CASE("middleware_blueprint")
         }
     }
     {
-        asio::ip::tcp::socket c(is);
-        c.connect(asio::ip::tcp::endpoint(
-          asio::ip::address::from_string(LOCALHOST_ADDRESS), 45451));
-
-        c.send(asio::buffer("GET /a/c/break\r\n\r\n"));
-
-        c.receive(asio::buffer(buf, 2048));
-        c.close();
+        auto resp = HttpClient::request(LOCALHOST_ADDRESS, 45451,
+                                        "GET /a/c/break\r\n\r\n");
     }
     {
         auto& out = test_middleware_context_vector;
@@ -1853,8 +1835,6 @@ TEST_CASE("middleware_blueprint")
 
 TEST_CASE("middleware_cookieparser_parse")
 {
-    static char buf[2048];
-
     App<CookieParser> app;
 
     std::string value1;
@@ -1877,26 +1857,13 @@ TEST_CASE("middleware_cookieparser_parse")
 
     auto _ = app.bindaddr(LOCALHOST_ADDRESS).port(45451).run_async();
     app.wait_for_server_start();
-    std::string sendmsg =
-      "GET /\r\nCookie: key1=value1; key2=\"val=ue2\"; key3=\"val\"ue3\"; "
-      "key4=\"val\"ue4\"\r\n\r\n";
-    asio::io_service is;
-    {
-        asio::ip::tcp::socket c(is);
-        c.connect(asio::ip::tcp::endpoint(
-          asio::ip::address::from_string(LOCALHOST_ADDRESS), 45451));
-
-        c.send(asio::buffer(sendmsg));
-
-        c.receive(asio::buffer(buf, 2048));
-        c.close();
-    }
-    {
-        CHECK("value1" == value1);
-        CHECK("val=ue2" == value2);
-        CHECK("val\"ue3" == value3);
-        CHECK("val\"ue4" == value4);
-    }
+    auto resp = HttpClient::request(LOCALHOST_ADDRESS, 45451,
+                                    "GET /\r\nCookie: key1=value1; key2=\"val=ue2\"; key3=\"val\"ue3\"; "
+                                    "key4=\"val\"ue4\"\r\n\r\n");
+    CHECK("value1" == value1);
+    CHECK("val=ue2" == value2);
+    CHECK("val\"ue3" == value3);
+    CHECK("val\"ue4" == value4);
     app.stop();
 } // middleware_cookieparser_parse
 
@@ -1964,8 +1931,6 @@ TEST_CASE("middleware_cookieparser_format")
 
 TEST_CASE("middleware_cors")
 {
-    static char buf[5012];
-
     App<crow::CORSHandler> app;
 
     auto& cors = app.get_middleware<crow::CORSHandler>();
@@ -1973,6 +1938,10 @@ TEST_CASE("middleware_cors")
     cors
       .prefix("/origin")
         .origin("test.test")
+      .prefix("/auth-origin")
+        .allow_credentials()
+      .prefix("/expose")
+        .expose("exposed-header")
       .prefix("/nocors")
         .ignore();
     // clang-format on
@@ -1987,6 +1956,16 @@ TEST_CASE("middleware_cors")
         return "-";
     });
 
+    CROW_ROUTE(app, "/auth-origin")
+    ([&](const request&) {
+        return "-";
+    });
+
+    CROW_ROUTE(app, "/expose")
+    ([&](const request&) {
+        return "-";
+    });
+
     CROW_ROUTE(app, "/nocors/path")
     ([&](const request&) {
         return "-";
@@ -1994,61 +1973,32 @@ TEST_CASE("middleware_cors")
 
     const auto port = 33333;
     auto _ = app.bindaddr(LOCALHOST_ADDRESS).port(port).run_async();
-
     app.wait_for_server_start();
-    asio::io_service is;
+    auto resp = HttpClient::request(LOCALHOST_ADDRESS, port,
+                                    "OPTIONS / HTTP/1.1\r\n\r\n");
 
-    {
-        asio::ip::tcp::socket c(is);
-        c.connect(asio::ip::tcp::endpoint(
-          asio::ip::address::from_string(LOCALHOST_ADDRESS), port));
+    CHECK(resp.find("Access-Control-Allow-Origin: *") != std::string::npos);
 
-        c.send(asio::buffer("OPTIONS / HTTP/1.1\r\n\r\n"));
+    resp = HttpClient::request(LOCALHOST_ADDRESS, port,
+                               "GET /\r\n\r\n");
+    CHECK(resp.find("Access-Control-Allow-Origin: *") != std::string::npos);
 
-        c.receive(asio::buffer(buf, 2048));
-        c.close();
+    resp = HttpClient::request(LOCALHOST_ADDRESS, port,
+                               "GET /origin\r\n\r\n");
+    CHECK(resp.find("Access-Control-Allow-Origin: test.test") != std::string::npos);
 
-        CHECK(std::string(buf).find("Access-Control-Allow-Origin: *") != std::string::npos);
-    }
+    resp = HttpClient::request(LOCALHOST_ADDRESS, port,
+                                    "GET /auth-origin\r\nOrigin: test-client\r\n\r\n");
+    CHECK(resp.find("Access-Control-Allow-Origin: test-client") != std::string::npos);
 
-    {
-        asio::ip::tcp::socket c(is);
-        c.connect(asio::ip::tcp::endpoint(
-          asio::ip::address::from_string(LOCALHOST_ADDRESS), port));
+    resp = HttpClient::request(LOCALHOST_ADDRESS, port,
+                               "GET /expose\r\n\r\n");
+    CHECK(resp.find("Access-Control-Expose-Headers: exposed-header") != std::string::npos);
 
-        c.send(asio::buffer("GET /\r\n\r\n"));
+    resp = HttpClient::request(LOCALHOST_ADDRESS, port,
+                               "GET /nocors/path\r\n\r\n");
 
-        c.receive(asio::buffer(buf, 2048));
-        c.close();
-
-        CHECK(std::string(buf).find("Access-Control-Allow-Origin: *") != std::string::npos);
-    }
-
-    {
-        asio::ip::tcp::socket c(is);
-        c.connect(asio::ip::tcp::endpoint(
-          asio::ip::address::from_string(LOCALHOST_ADDRESS), port));
-
-        c.send(asio::buffer("GET /origin\r\n\r\n"));
-
-        c.receive(asio::buffer(buf, 2048));
-        c.close();
-
-        CHECK(std::string(buf).find("Access-Control-Allow-Origin: test.test") != std::string::npos);
-    }
-
-    {
-        asio::ip::tcp::socket c(is);
-        c.connect(asio::ip::tcp::endpoint(
-          asio::ip::address::from_string(LOCALHOST_ADDRESS), port));
-
-        c.send(asio::buffer("GET /nocors/path\r\n\r\n"));
-
-        c.receive(asio::buffer(buf, 2048));
-        c.close();
-
-        CHECK(std::string(buf).find("Access-Control-Allow-Origin:") == std::string::npos);
-    }
+    CHECK(resp.find("Access-Control-Allow-Origin:") == std::string::npos);
 
     app.stop();
 } // middleware_cors
@@ -2111,12 +2061,12 @@ TEST_CASE("middleware_session")
     auto _ = app.bindaddr(LOCALHOST_ADDRESS).port(45451).run_async();
 
     app.wait_for_server_start();
-    asio::io_service is;
+    asio::io_context ic;
 
     auto make_request = [&](const std::string& rq) {
-        asio::ip::tcp::socket c(is);
+        asio::ip::tcp::socket c(ic);
         c.connect(asio::ip::tcp::endpoint(
-          asio::ip::address::from_string(LOCALHOST_ADDRESS), 45451));
+          asio::ip::make_address(LOCALHOST_ADDRESS), 45451));
         c.send(asio::buffer(rq));
         c.receive(asio::buffer(buf, 2048));
         c.close();
@@ -2156,9 +2106,9 @@ TEST_CASE("middleware_session")
 
     // lock
     {
-        asio::ip::tcp::socket c_lock(is);
+        asio::ip::tcp::socket c_lock(ic);
         c_lock.connect(asio::ip::tcp::endpoint(
-          asio::ip::address::from_string(LOCALHOST_ADDRESS), 45451));
+          asio::ip::make_address(LOCALHOST_ADDRESS), 45451));
         c_lock.send(asio::buffer("GET /lock\r\n" + cookie + "\r\n\r\n"));
 
         auto res = make_request("GET /check_lock\r\n" + cookie + "\r\n\r\n");
@@ -2174,8 +2124,6 @@ TEST_CASE("middleware_session")
 
 TEST_CASE("bug_quick_repeated_request")
 {
-    static char buf[2048];
-
     SimpleApp app;
 
     CROW_ROUTE(app, "/")
@@ -2186,24 +2134,21 @@ TEST_CASE("bug_quick_repeated_request")
     auto _ = app.bindaddr(LOCALHOST_ADDRESS).port(45451).run_async();
     app.wait_for_server_start();
     std::string sendmsg = "GET / HTTP/1.1\r\nHost: localhost\r\n\r\n";
-    asio::io_service is;
+    asio::io_context ic;
     {
         std::vector<std::future<void>> v;
         for (int i = 0; i < 5; i++)
         {
             v.push_back(async(launch::async, [&] {
-                asio::ip::tcp::socket c(is);
-                c.connect(asio::ip::tcp::endpoint(
-                  asio::ip::address::from_string(LOCALHOST_ADDRESS), 45451));
+                HttpClient c(LOCALHOST_ADDRESS, 45451);
 
                 for (int j = 0; j < 5; j++)
                 {
-                    c.send(asio::buffer(sendmsg));
+                    c.send(sendmsg);
 
-                    size_t received = c.receive(asio::buffer(buf, 2048));
-                    CHECK("hello" == std::string(buf + received - 5, buf + received));
+                    auto resp = c.receive();
+                    CHECK("hello" == resp.substr(resp.length() - 5));
                 }
-                c.close();
             }));
         }
     }
@@ -2212,8 +2157,6 @@ TEST_CASE("bug_quick_repeated_request")
 
 TEST_CASE("simple_url_params")
 {
-    static char buf[2048];
-
     SimpleApp app;
 
     query_string last_url_params;
@@ -2228,150 +2171,87 @@ TEST_CASE("simple_url_params")
 
     auto _ = app.bindaddr(LOCALHOST_ADDRESS).port(45451).run_async();
     app.wait_for_server_start();
-    asio::io_service is;
-    std::string sendmsg;
+    asio::io_context ic;
 
     // check empty params
-    sendmsg = "GET /params\r\n\r\n";
-    {
-        asio::ip::tcp::socket c(is);
-        c.connect(asio::ip::tcp::endpoint(
-          asio::ip::address::from_string(LOCALHOST_ADDRESS), 45451));
-        c.send(asio::buffer(sendmsg));
-        c.receive(asio::buffer(buf, 2048));
-        c.close();
+    HttpClient::request(LOCALHOST_ADDRESS, 45451,
+                        "GET /params\r\n\r\n");
 
-        stringstream ss;
-        ss << last_url_params;
+    stringstream ss;
+    ss << last_url_params;
 
-        CHECK("[  ]" == ss.str());
-    }
+    CHECK("[  ]" == ss.str());
+
     // check single presence
-    sendmsg = "GET /params?foobar\r\n\r\n";
-    {
-        asio::ip::tcp::socket c(is);
-        c.connect(asio::ip::tcp::endpoint(
-          asio::ip::address::from_string(LOCALHOST_ADDRESS), 45451));
-        c.send(asio::buffer(sendmsg));
-        c.receive(asio::buffer(buf, 2048));
-        c.close();
+    HttpClient::request(LOCALHOST_ADDRESS, 45451,
+                        "GET /params?foobar\r\n\r\n");
+    CHECK(last_url_params.get("missing") == nullptr);
+    CHECK(last_url_params.get("foobar") != nullptr);
+    CHECK(last_url_params.get_list("missing").empty());
 
-        CHECK(last_url_params.get("missing") == nullptr);
-        CHECK(last_url_params.get("foobar") != nullptr);
-        CHECK(last_url_params.get_list("missing").empty());
-    }
     // check multiple presence
-    sendmsg = "GET /params?foo&bar&baz\r\n\r\n";
-    {
-        asio::ip::tcp::socket c(is);
-        c.connect(asio::ip::tcp::endpoint(
-          asio::ip::address::from_string(LOCALHOST_ADDRESS), 45451));
-        c.send(asio::buffer(sendmsg));
-        c.receive(asio::buffer(buf, 2048));
-        c.close();
+    HttpClient::request(LOCALHOST_ADDRESS, 45451,
+                        "GET /params?foo&bar&baz\r\n\r\n");
 
-        CHECK(last_url_params.get("missing") == nullptr);
-        CHECK(last_url_params.get("foo") != nullptr);
-        CHECK(last_url_params.get("bar") != nullptr);
-        CHECK(last_url_params.get("baz") != nullptr);
-    }
+    CHECK(last_url_params.get("missing") == nullptr);
+    CHECK(last_url_params.get("foo") != nullptr);
+    CHECK(last_url_params.get("bar") != nullptr);
+    CHECK(last_url_params.get("baz") != nullptr);
+
     // check single value
-    sendmsg = "GET /params?hello=world\r\n\r\n";
-    {
-        asio::ip::tcp::socket c(is);
-        c.connect(asio::ip::tcp::endpoint(
-          asio::ip::address::from_string(LOCALHOST_ADDRESS), 45451));
-        c.send(asio::buffer(sendmsg));
-        c.receive(asio::buffer(buf, 2048));
-        c.close();
+    HttpClient::request(LOCALHOST_ADDRESS, 45451,
+                        "GET /params?hello=world\r\n\r\n");
+    CHECK(string(last_url_params.get("hello")) == "world");
 
-        CHECK(string(last_url_params.get("hello")) == "world");
-    }
     // check multiple value
-    sendmsg = "GET /params?hello=world&left=right&up=down\r\n\r\n";
-    {
-        asio::ip::tcp::socket c(is);
-        c.connect(asio::ip::tcp::endpoint(
-          asio::ip::address::from_string(LOCALHOST_ADDRESS), 45451));
-        c.send(asio::buffer(sendmsg));
-        c.receive(asio::buffer(buf, 2048));
-        c.close();
+    HttpClient::request(LOCALHOST_ADDRESS, 45451,
+                        "GET /params?hello=world&left=right&up=down\r\n\r\n");
+    query_string mutable_params(last_url_params);
 
-        query_string mutable_params(last_url_params);
+    CHECK(string(mutable_params.get("hello")) == "world");
+    CHECK(string(mutable_params.get("left")) == "right");
+    CHECK(string(mutable_params.get("up")) == "down");
 
-        CHECK(string(mutable_params.get("hello")) == "world");
-        CHECK(string(mutable_params.get("left")) == "right");
-        CHECK(string(mutable_params.get("up")) == "down");
+    std::string z = mutable_params.pop("left");
+    CHECK(z == "right");
+    CHECK(mutable_params.get("left") == nullptr);
 
-        std::string z = mutable_params.pop("left");
-        CHECK(z == "right");
-        CHECK(mutable_params.get("left") == nullptr);
-    }
     // check multiple value, multiple types
-    sendmsg = "GET /params?int=100&double=123.45&boolean=1\r\n\r\n";
-    {
-        asio::ip::tcp::socket c(is);
-        c.connect(asio::ip::tcp::endpoint(
-          asio::ip::address::from_string(LOCALHOST_ADDRESS), 45451));
-        c.send(asio::buffer(sendmsg));
-        c.receive(asio::buffer(buf, 2048));
-        c.close();
+    HttpClient::request(LOCALHOST_ADDRESS, 45451,
+                        "GET /params?int=100&double=123.45&boolean=1\r\n\r\n");
+    CHECK(utility::lexical_cast<int>(last_url_params.get("int")) == 100);
+    CHECK(utility::lexical_cast<double>(last_url_params.get("double")) ==
+          123.45);
+    CHECK(utility::lexical_cast<bool>(last_url_params.get("boolean")));
 
-        CHECK(utility::lexical_cast<int>(last_url_params.get("int")) == 100);
-        CHECK(utility::lexical_cast<double>(last_url_params.get("double")) ==
-              123.45);
-        CHECK(utility::lexical_cast<bool>(last_url_params.get("boolean")));
-    }
     // check single array value
-    sendmsg = "GET /params?tmnt[]=leonardo\r\n\r\n";
-    {
-        asio::ip::tcp::socket c(is);
+    HttpClient::request(LOCALHOST_ADDRESS, 45451,
+                        "GET /params?tmnt[]=leonardo\r\n\r\n");
+    CHECK(last_url_params.get("tmnt") == nullptr);
+    CHECK(last_url_params.get_list("tmnt").size() == 1);
+    CHECK(string(last_url_params.get_list("tmnt")[0]) == "leonardo");
 
-        c.connect(asio::ip::tcp::endpoint(
-          asio::ip::address::from_string(LOCALHOST_ADDRESS), 45451));
-        c.send(asio::buffer(sendmsg));
-        c.receive(asio::buffer(buf, 2048));
-        c.close();
-
-        CHECK(last_url_params.get("tmnt") == nullptr);
-        CHECK(last_url_params.get_list("tmnt").size() == 1);
-        CHECK(string(last_url_params.get_list("tmnt")[0]) == "leonardo");
-    }
     // check multiple array value
-    sendmsg = "GET /params?tmnt[]=leonardo&tmnt[]=donatello&tmnt[]=raphael\r\n\r\n";
-    {
-        asio::ip::tcp::socket c(is);
+    HttpClient::request(LOCALHOST_ADDRESS, 45451,
+                        "GET /params?tmnt[]=leonardo&tmnt[]=donatello&tmnt[]=raphael\r\n\r\n");
 
-        c.connect(asio::ip::tcp::endpoint(
-          asio::ip::address::from_string(LOCALHOST_ADDRESS), 45451));
-        c.send(asio::buffer(sendmsg));
-        c.receive(asio::buffer(buf, 2048));
-        c.close();
+    CHECK(last_url_params.get_list("tmnt").size() == 3);
+    CHECK(string(last_url_params.get_list("tmnt")[0]) == "leonardo");
+    CHECK(string(last_url_params.get_list("tmnt")[1]) == "donatello");
+    CHECK(string(last_url_params.get_list("tmnt")[2]) == "raphael");
+    CHECK(last_url_params.pop_list("tmnt").size() == 3);
+    CHECK(last_url_params.get_list("tmnt").size() == 0);
 
-        CHECK(last_url_params.get_list("tmnt").size() == 3);
-        CHECK(string(last_url_params.get_list("tmnt")[0]) == "leonardo");
-        CHECK(string(last_url_params.get_list("tmnt")[1]) == "donatello");
-        CHECK(string(last_url_params.get_list("tmnt")[2]) == "raphael");
-        CHECK(last_url_params.pop_list("tmnt").size() == 3);
-        CHECK(last_url_params.get_list("tmnt").size() == 0);
-    }
     // check dictionary value
-    sendmsg = "GET /params?kees[one]=vee1&kees[two]=vee2&kees[three]=vee3\r\n\r\n";
-    {
-        asio::ip::tcp::socket c(is);
+    HttpClient::request(LOCALHOST_ADDRESS, 45451,
+                        "GET /params?kees[one]=vee1&kees[two]=vee2&kees[three]=vee3\r\n\r\n");
+    CHECK(last_url_params.get_dict("kees").size() == 3);
+    CHECK(string(last_url_params.get_dict("kees")["one"]) == "vee1");
+    CHECK(string(last_url_params.get_dict("kees")["two"]) == "vee2");
+    CHECK(string(last_url_params.get_dict("kees")["three"]) == "vee3");
+    CHECK(last_url_params.pop_dict("kees").size() == 3);
+    CHECK(last_url_params.get_dict("kees").size() == 0);
 
-        c.connect(asio::ip::tcp::endpoint(asio::ip::address::from_string(LOCALHOST_ADDRESS), 45451));
-        c.send(asio::buffer(sendmsg));
-        c.receive(asio::buffer(buf, 2048));
-        c.close();
-
-        CHECK(last_url_params.get_dict("kees").size() == 3);
-        CHECK(string(last_url_params.get_dict("kees")["one"]) == "vee1");
-        CHECK(string(last_url_params.get_dict("kees")["two"]) == "vee2");
-        CHECK(string(last_url_params.get_dict("kees")["three"]) == "vee3");
-        CHECK(last_url_params.pop_dict("kees").size() == 3);
-        CHECK(last_url_params.get_dict("kees").size() == 0);
-    }
     app.stop();
 } // simple_url_params
 
@@ -2510,6 +2390,54 @@ TEST_CASE("multipart")
         app.handle_full(req, res);
 
         CHECK(test_string == res.body);
+    }
+
+    //Test against empty boundary
+    {
+        request req;
+        response res;
+        req.url = "/multipart";
+        req.add_header("Content-Type", "multipart/form-data; boundary=");
+        req.body = test_string;
+
+        app.handle_full(req, res);
+
+        CHECK(res.code == 400);
+        CHECK(res.body == "Empty boundary in multipart message");
+
+    }
+
+    //Boundary that differs from actual boundary
+    {
+        const char alphabet[] = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        std::random_device dev;
+        std::mt19937 rng(dev());
+        std::uniform_int_distribution<std::mt19937::result_type> dist(0, sizeof(alphabet) - 2);
+        std::uniform_int_distribution<std::mt19937::result_type> boundary_sizes(1, 50);
+        std::array<std::string, 100> test_boundaries;
+
+        for (auto& boundary : test_boundaries)
+        {
+            const size_t boundary_size = boundary_sizes(rng);
+            boundary.reserve(boundary_size);
+            for (size_t idx = 0; idx < boundary_size; idx++)
+                boundary.push_back(alphabet[dist(rng)]);
+        }
+
+        for (const auto& boundary : test_boundaries)
+        {
+            request req;
+            response res;
+
+            req.url = "/multipart";
+            req.add_header("Content-Type", "multipart/form-data; boundary=" + boundary);
+            req.body = test_string;
+
+            app.handle_full(req, res);
+
+            CHECK(res.code == 400);
+            CHECK(res.body == "Unable to find delimiter in multipart message. Probably ill-formed body");
+        }
     }
 } // multipart
 
@@ -2690,7 +2618,7 @@ TEST_CASE("stream_response")
     std::thread runTest([&app, &key_response, key_response_size, keyword_]() {
         auto _ = app.bindaddr(LOCALHOST_ADDRESS).port(45451).run_async();
         app.wait_for_server_start();
-        asio::io_service is;
+        asio::io_context io_context;
         std::string sendmsg;
 
         //Total bytes received
@@ -2699,9 +2627,9 @@ TEST_CASE("stream_response")
         {
             asio::streambuf b;
 
-            asio::ip::tcp::socket c(is);
+            asio::ip::tcp::socket c(io_context);
             c.connect(asio::ip::tcp::endpoint(
-              asio::ip::address::from_string(LOCALHOST_ADDRESS), 45451));
+              asio::ip::make_address(LOCALHOST_ADDRESS), 45451));
             c.send(asio::buffer(sendmsg));
 
             // consuming the headers, since we don't need those for the test
@@ -2777,11 +2705,11 @@ TEST_CASE("websocket")
 
     auto _ = app.bindaddr(LOCALHOST_ADDRESS).port(45451).run_async();
     app.wait_for_server_start();
-    asio::io_service is;
+    asio::io_context ic;
 
-    asio::ip::tcp::socket c(is);
+    asio::ip::tcp::socket c(ic);
     c.connect(asio::ip::tcp::endpoint(
-      asio::ip::address::from_string(LOCALHOST_ADDRESS), 45451));
+      asio::ip::make_address(LOCALHOST_ADDRESS), 45451));
 
 
     char buf[2048];
@@ -2960,11 +2888,11 @@ TEST_CASE("websocket_close")
     auto _ = app.bindaddr(LOCALHOST_ADDRESS).port(45453).run_async();
     app.wait_for_server_start();
     CROW_LOG_WARNING << "App started!\n";
-    asio::io_service is;
+    asio::io_context ic;
 
-    asio::ip::tcp::socket c(is);
+    asio::ip::tcp::socket c(ic);
     c.connect(asio::ip::tcp::endpoint(
-      asio::ip::address::from_string(LOCALHOST_ADDRESS), 45453));
+      asio::ip::make_address(LOCALHOST_ADDRESS), 45453));
 
     CROW_LOG_WARNING << "Connected!\n";
 
@@ -3139,11 +3067,11 @@ TEST_CASE("websocket_missing_host")
 
     auto _ = app.bindaddr(LOCALHOST_ADDRESS).port(45471).run_async();
     app.wait_for_server_start();
-    asio::io_service is;
+    asio::io_context ic;
 
-    asio::ip::tcp::socket c(is);
+    asio::ip::tcp::socket c(ic);
     c.connect(asio::ip::tcp::endpoint(
-      asio::ip::address::from_string(LOCALHOST_ADDRESS), 45471));
+      asio::ip::make_address(LOCALHOST_ADDRESS), 45471));
 
 
     char buf[2048];
@@ -3191,11 +3119,11 @@ TEST_CASE("websocket_max_payload")
 
     auto _ = app.websocket_max_payload(3).bindaddr(LOCALHOST_ADDRESS).port(45461).run_async();
     app.wait_for_server_start();
-    asio::io_service is;
+    asio::io_context ic;
 
-    asio::ip::tcp::socket c(is);
+    asio::ip::tcp::socket c(ic);
     c.connect(asio::ip::tcp::endpoint(
-      asio::ip::address::from_string(LOCALHOST_ADDRESS), 45461));
+      asio::ip::make_address(LOCALHOST_ADDRESS), 45461));
 
 
     char buf[2048];
@@ -3261,11 +3189,11 @@ TEST_CASE("websocket_subprotocols")
 
     auto _ = app.bindaddr(LOCALHOST_ADDRESS).port(45451).run_async();
     app.wait_for_server_start();
-    asio::io_service is;
+    asio::io_context ic;
 
-    asio::ip::tcp::socket c(is);
+    asio::ip::tcp::socket c(ic);
     c.connect(asio::ip::tcp::endpoint(
-      asio::ip::address::from_string(LOCALHOST_ADDRESS), 45451));
+      asio::ip::make_address(LOCALHOST_ADDRESS), 45451));
 
 
     char buf[2048];
@@ -3372,13 +3300,13 @@ TEST_CASE("zlib_compression")
         return inflated_string;
     };
 
-    asio::io_service is;
+    asio::io_context ic;
     {
         // Compression
         {
-            asio::ip::tcp::socket socket[2] = {asio::ip::tcp::socket(is), asio::ip::tcp::socket(is)};
-            socket[0].connect(asio::ip::tcp::endpoint(asio::ip::address::from_string(LOCALHOST_ADDRESS), 45451));
-            socket[1].connect(asio::ip::tcp::endpoint(asio::ip::address::from_string(LOCALHOST_ADDRESS), 45452));
+            asio::ip::tcp::socket socket[2] = {asio::ip::tcp::socket(ic), asio::ip::tcp::socket(ic)};
+            socket[0].connect(asio::ip::tcp::endpoint(asio::ip::make_address(LOCALHOST_ADDRESS), 45451));
+            socket[1].connect(asio::ip::tcp::endpoint(asio::ip::make_address(LOCALHOST_ADDRESS), 45452));
 
             socket[0].send(asio::buffer(test_compress_msg));
             socket[1].send(asio::buffer(test_compress_msg));
@@ -3445,9 +3373,9 @@ TEST_CASE("zlib_compression")
         }
         // No Header (thus no compression)
         {
-            asio::ip::tcp::socket socket[2] = {asio::ip::tcp::socket(is), asio::ip::tcp::socket(is)};
-            socket[0].connect(asio::ip::tcp::endpoint(asio::ip::address::from_string(LOCALHOST_ADDRESS), 45451));
-            socket[1].connect(asio::ip::tcp::endpoint(asio::ip::address::from_string(LOCALHOST_ADDRESS), 45452));
+            asio::ip::tcp::socket socket[2] = {asio::ip::tcp::socket(ic), asio::ip::tcp::socket(ic)};
+            socket[0].connect(asio::ip::tcp::endpoint(asio::ip::make_address(LOCALHOST_ADDRESS), 45451));
+            socket[1].connect(asio::ip::tcp::endpoint(asio::ip::make_address(LOCALHOST_ADDRESS), 45452));
 
             socket[0].send(asio::buffer(test_compress_no_header_msg));
             socket[1].send(asio::buffer(test_compress_no_header_msg));
@@ -3467,9 +3395,9 @@ TEST_CASE("zlib_compression")
         }
         // No compression
         {
-            asio::ip::tcp::socket socket[2] = {asio::ip::tcp::socket(is), asio::ip::tcp::socket(is)};
-            socket[0].connect(asio::ip::tcp::endpoint(asio::ip::address::from_string(LOCALHOST_ADDRESS), 45451));
-            socket[1].connect(asio::ip::tcp::endpoint(asio::ip::address::from_string(LOCALHOST_ADDRESS), 45452));
+            asio::ip::tcp::socket socket[2] = {asio::ip::tcp::socket(ic), asio::ip::tcp::socket(ic)};
+            socket[0].connect(asio::ip::tcp::endpoint(asio::ip::make_address(LOCALHOST_ADDRESS), 45451));
+            socket[1].connect(asio::ip::tcp::endpoint(asio::ip::make_address(LOCALHOST_ADDRESS), 45452));
 
             socket[0].send(asio::buffer(test_none_msg));
             socket[1].send(asio::buffer(test_none_msg));
@@ -3829,7 +3757,7 @@ TEST_CASE("get_port")
 {
     SimpleApp app;
 
-    const std::uint16_t port = 12345;
+    constexpr std::uint16_t port = 12345;
 
     auto _ = app.port(port).run_async();
 
@@ -3854,14 +3782,14 @@ TEST_CASE("timeout")
         auto _ = app.bindaddr(LOCALHOST_ADDRESS).timeout(timeout).port(45451).run_async();
 
         app.wait_for_server_start();
-        asio::io_service is;
+        asio::io_context ic;
         std::string sendmsg = "GET /\r\n\r\n";
         future_status status;
 
         {
-            asio::ip::tcp::socket c(is);
+            asio::ip::tcp::socket c(ic);
             c.connect(asio::ip::tcp::endpoint(
-              asio::ip::address::from_string(LOCALHOST_ADDRESS), 45451));
+              asio::ip::make_address(LOCALHOST_ADDRESS), 45451));
 
             auto receive_future = async(launch::async, [&]() {
                 asio_error_code ec;
@@ -3878,9 +3806,9 @@ TEST_CASE("timeout")
             c.close();
         }
         {
-            asio::ip::tcp::socket c(is);
+            asio::ip::tcp::socket c(ic);
             c.connect(asio::ip::tcp::endpoint(
-              asio::ip::address::from_string(LOCALHOST_ADDRESS), 45451));
+              asio::ip::make_address(LOCALHOST_ADDRESS), 45451));
 
             size_t received;
             auto receive_future = async(launch::async, [&]() {
@@ -3910,40 +3838,41 @@ TEST_CASE("timeout")
 
 TEST_CASE("task_timer")
 {
-    using work_guard_type = asio::executor_work_guard<asio::io_service::executor_type>;
+    using work_guard_type = asio::executor_work_guard<asio::io_context::executor_type>;
 
-    asio::io_service io_service;
-    work_guard_type work_guard(io_service.get_executor());
-    thread io_thread([&io_service]() {
-        io_service.run();
+    asio::io_context io_context;
+    work_guard_type work_guard(io_context.get_executor());
+    thread io_thread([&io_context]() {
+        io_context.run();
     });
 
     bool a = false;
     bool b = false;
 
-    crow::detail::task_timer timer(io_service, std::chrono::milliseconds(100));
+    crow::detail::task_timer timer(io_context, std::chrono::milliseconds(100));
     CHECK(timer.get_default_timeout() == 5);
     timer.set_default_timeout(9);
     CHECK(timer.get_default_timeout() == 9);
 
     timer.schedule([&a]() {
         a = true;
-    }, 5);
+    },
+                   5);
     timer.schedule([&b]() {
         b = true;
     });
 
-    this_thread::sleep_for(4 * timer.get_tick_length());
+    this_thread::sleep_for(3 * timer.get_tick_length());
     CHECK(a == false);
     CHECK(b == false);
-    this_thread::sleep_for(2 * timer.get_tick_length());
+    this_thread::sleep_for(3 * timer.get_tick_length());
     CHECK(a == true);
     CHECK(b == false);
-    this_thread::sleep_for(4 * timer.get_tick_length());
+    this_thread::sleep_for(5 * timer.get_tick_length());
     CHECK(a == true);
     CHECK(b == true);
 
-    io_service.stop();
+    io_context.stop();
     io_thread.join();
 } // task_timer
 
@@ -3998,12 +3927,12 @@ TEST_CASE("http2_upgrade_is_ignored")
     auto _ = app.bindaddr(LOCALHOST_ADDRESS).port(45451).run_async();
 
     app.wait_for_server_start();
-    asio::io_service is;
+    asio::io_context ic;
 
     auto make_request = [&](const std::string& rq) {
-        asio::ip::tcp::socket c(is);
+        asio::ip::tcp::socket c(ic);
         c.connect(asio::ip::tcp::endpoint(
-          asio::ip::address::from_string(LOCALHOST_ADDRESS), 45451));
+          asio::ip::make_address(LOCALHOST_ADDRESS), 45451));
         c.send(asio::buffer(rq));
         c.receive(asio::buffer(buf, 2048));
         c.close();

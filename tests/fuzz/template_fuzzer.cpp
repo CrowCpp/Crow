@@ -24,9 +24,9 @@ extern "C" int LLVMFuzzerTestOneInput(const std::uint8_t* data, const std::size_
         auto ctx = build_context_object(fdp);
         page.render_string(ctx);
     }
-    catch (const crow::mustache::invalid_template_exception& e)
+    catch (const std::exception& e)
     {
-        return -1;
+        // No special handling for invalid inputs or rendering errors
     }
 
     return 0;

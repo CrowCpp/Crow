@@ -50,7 +50,7 @@ namespace crow
 
     public:
         Connection(
-          asio::io_service& io_service,
+          asio::io_context& io_context,
           Handler* handler,
           const std::string& server_name,
           std::tuple<Middlewares...>* middlewares,
@@ -58,7 +58,7 @@ namespace crow
           detail::task_timer& task_timer,
           typename Adaptor::context* adaptor_ctx_,
           std::atomic<unsigned int>& queue_length):
-          adaptor_(io_service, adaptor_ctx_),
+          adaptor_(io_context, adaptor_ctx_),
           handler_(handler),
           parser_(this),
           req_(parser_.req),
@@ -143,8 +143,8 @@ namespace crow
             ctx_ = detail::context<Middlewares...>();
             req_.middleware_context = static_cast<void*>(&ctx_);
             req_.middleware_container = static_cast<void*>(middlewares_);
-            req_.io_service = &adaptor_.get_io_service();
-            req_.remote_ip_address = adaptor_.address();
+            req_.io_context = &adaptor_.get_io_context();
+            req_.remote_ip_address = adaptor_.remote_endpoint().address().to_string();
             add_keep_alive_ = req_.keep_alive;
             close_connection_ = req_.close_connection;
 
@@ -256,18 +256,6 @@ namespace crow
                 }
             }
 #endif
-            //if there is a redirection with a partial URL, treat the URL as a route.
-            std::string location = res.get_header_value("Location");
-            if (!location.empty() && location.find("://", 0) == std::string::npos)
-            {
-#ifdef CROW_ENABLE_SSL
-                if (handler_->ssl_used())
-                    location.insert(0, "https://" + req_.get_header_value("Host"));
-                else
-#endif
-                    location.insert(0, "http://" + req_.get_header_value("Host"));
-                res.set_header("location", location);
-            }
 
             prepare_buffers();
 

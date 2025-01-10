@@ -1,0 +1,24 @@
+{
+  "overview": "Check Crow's behaviour when given invalid mustache templates",
+  "tests": [
+    {
+      "name": "Missing end-tags",
+      "desc": "Missing end-tags should fail to render ... and not enter infinite loops or other undefined behaviour",
+      "data": {
+        "boolean": true
+      },
+      "template": "\"{{#boolean}}{{^boolean}}\"",
+      "expected": "COMPILE EXCEPTION: crow::mustache error: open tag has no matching end tag {{# {{/ pair: boolean"
+    },
+    {
+      "name": "Unexpected end-tags",
+      "desc": "Unexpected end-tags should fail to render ... and not enter infinite loops or other undefined behaviour",
+      "data": {
+        "boolean": true
+      },
+      "template": "\"{{/unexpected}}\"",
+      "expected": "COMPILE EXCEPTION: crow::mustache error: unexpected closing tag: unexpected"
+    }
+  ],
+  "__ATTN__": "This file was hand-written"
+}

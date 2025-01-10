@@ -51,6 +51,22 @@ namespace crow
             return *this;
         }
 
+        /// Set Access-Control-Expose-Headers. Default is none
+        CORSRules& expose(const std::string& header)
+        {
+            add_list_item(exposed_headers_, header);
+            return *this;
+        }
+
+        /// Set Access-Control-Expose-Headers. Default is none
+        template<typename... Headers>
+        CORSRules& expose(const std::string& header, Headers... header_list)
+        {
+            add_list_item(exposed_headers_, header);
+            expose(header_list...);
+            return *this;
+        }
+
         /// Set Access-Control-Max-Age. Default is none
         CORSRules& max_age(int max_age)
         {
@@ -102,14 +118,20 @@ namespace crow
         }
 
         /// Set response headers
-        void apply(crow::response& res)
+        void apply(const request& req, response& res)
         {
             if (ignore_) return;
-            set_header_no_override("Access-Control-Allow-Origin", origin_, res);
+
             set_header_no_override("Access-Control-Allow-Methods", methods_, res);
             set_header_no_override("Access-Control-Allow-Headers", headers_, res);
+            set_header_no_override("Access-Control-Expose-Headers", exposed_headers_, res);
             set_header_no_override("Access-Control-Max-Age", max_age_, res);
             if (allow_credentials_) set_header_no_override("Access-Control-Allow-Credentials", "true", res);
+
+            if (allow_credentials_ && origin_ == "*")
+                set_header_no_override("Access-Control-Allow-Origin", req.get_header_value("Origin"), res);
+            else
+                set_header_no_override("Access-Control-Allow-Origin", origin_, res);
         }
 
         bool ignore_ = false;
@@ -117,6 +139,7 @@ namespace crow
         std::string origin_ = "*";
         std::string methods_ = "*";
         std::string headers_ = "*";
+        std::string exposed_headers_;
         std::string max_age_;
         bool allow_credentials_ = false;
 
@@ -140,7 +163,7 @@ namespace crow
         void after_handle(crow::request& req, crow::response& res, context& /*ctx*/)
         {
             auto& rule = find_rule(req.url);
-            rule.apply(res);
+            rule.apply(req, res);
         }
 
         /// Handle CORS on a specific prefix path

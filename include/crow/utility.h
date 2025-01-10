@@ -16,9 +16,7 @@
 
 #include "crow/settings.h"
 
-#if defined(CROW_CAN_USE_CPP17) && !defined(CROW_FILESYSTEM_IS_EXPERIMENTAL)
 #include <filesystem>
-#endif
 
 // TODO(EDev): Adding C++20's [[likely]] and [[unlikely]] attributes might be useful
 #if defined(__GNUG__) || defined(__clang__)
@@ -291,21 +289,12 @@ namespace crow
         };
 
         // Extract element from forward tuple or get default
-#ifdef CROW_CAN_USE_CPP14
         template<typename T, typename Tup>
         typename std::enable_if<has_type<T&, Tup>::value, typename std::decay<T>::type&&>::type
           tuple_extract(Tup& tup)
         {
             return std::move(std::get<T&>(tup));
         }
-#else
-        template<typename T, typename Tup>
-        typename std::enable_if<has_type<T&, Tup>::value, T&&>::type
-          tuple_extract(Tup& tup)
-        {
-            return std::move(std::get<tuple_index<T&, Tup>::value>(tup));
-        }
-#endif
 
         template<typename T, typename Tup>
         typename std::enable_if<!has_type<T&, Tup>::value, T>::type
@@ -812,14 +801,7 @@ namespace crow
 
         inline static std::string join_path(std::string path, const std::string& fname)
         {
-#if defined(CROW_CAN_USE_CPP17) && !defined(CROW_FILESYSTEM_IS_EXPERIMENTAL)
             return (std::filesystem::path(path) / fname).string();
-#else
-            if (!(path.back() == '/' || path.back() == '\\'))
-                path += '/';
-            path += fname;
-            return path;
-#endif
         }
 
         /**
