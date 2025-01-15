@@ -365,7 +365,7 @@ namespace crow
         }
 
         /// \brief Get the number of threads that server is using
-        std::uint16_t concurrency()
+        std::uint16_t concurrency() const
         {
             return concurrency_;
         }
@@ -506,11 +506,18 @@ namespace crow
 #endif
             validate();
 
+            error_code ec;
+            asio::ip::address addr = asio::ip::make_address(bindaddr_,ec);
+            if (ec){
+                CROW_LOG_ERROR << ec.message() << " - Can not create valid ip address from string: \"" << bindaddr_ << "\"";
+                return;
+            }
+            tcp::endpoint endpoint(addr, port_);
 #ifdef CROW_ENABLE_SSL
             if (ssl_used_)
             {
                 router_.using_ssl = true;
-                ssl_server_ = std::move(std::unique_ptr<ssl_server_t>(new ssl_server_t(this, bindaddr_, port_, server_name_, &middlewares_, concurrency_, timeout_, &ssl_context_)));
+                ssl_server_ = std::move(std::unique_ptr<ssl_server_t>(new ssl_server_t(this, endpoint, server_name_, &middlewares_, concurrency_, timeout_, &ssl_context_)));
                 ssl_server_->set_tick_function(tick_interval_, tick_function_);
                 ssl_server_->signal_clear();
                 for (auto snum : signals_)
@@ -523,7 +530,7 @@ namespace crow
             else
 #endif
             {
-                server_ = std::move(std::unique_ptr<server_t>(new server_t(this, bindaddr_, port_, server_name_, &middlewares_, concurrency_, timeout_, nullptr)));
+                server_ = std::move(std::unique_ptr<server_t>(new server_t(this, endpoint, server_name_, &middlewares_, concurrency_, timeout_, nullptr)));
                 server_->set_tick_function(tick_interval_, tick_function_);
                 for (auto snum : signals_)
                 {
@@ -695,19 +702,32 @@ namespace crow
         }
 
         /// \brief Wait until the server has properly started
-        void wait_for_server_start()
+        std::cv_status wait_for_server_start(std::chrono::milliseconds wait_timeout = std::chrono::milliseconds(3000))
         {
+            std::cv_status status = std::cv_status::no_timeout;
+            auto wait_until = std::chrono::steady_clock::now() + wait_timeout;
             {
                 std::unique_lock<std::mutex> lock(start_mutex_);
-                while (!server_started_)
-                    cv_started_.wait(lock);
+                while (!server_started_ && (status == std::cv_status::no_timeout))
+                {
+                    status = cv_started_.wait_until(lock, wait_until);
+                }
             }
-            if (server_)
-                server_->wait_for_start();
+            
+            if (status == std::cv_status::no_timeout)
+            {
+                if (server_)
+                {
+                    status = server_->wait_for_start(wait_until);
+                }
 #ifdef CROW_ENABLE_SSL
-            else if (ssl_server_)
-                ssl_server_->wait_for_start();
+                else if (ssl_server_)
+                {
+                    status = ssl_server_->wait_for_start(wait_until);
+                }
 #endif
+            }
+            return status;
         }
 
     private:
