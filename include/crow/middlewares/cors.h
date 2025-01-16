@@ -1,4 +1,5 @@
 #pragma once
+#include "crow/common.h"
 #include "crow/http_request.h"
 #include "crow/http_response.h"
 #include "crow/routing.h"
@@ -126,10 +127,14 @@ namespace crow
             set_header_no_override("Access-Control-Allow-Headers", headers_, res);
             set_header_no_override("Access-Control-Expose-Headers", exposed_headers_, res);
             set_header_no_override("Access-Control-Max-Age", max_age_, res);
-            if (allow_credentials_) set_header_no_override("Access-Control-Allow-Credentials", "true", res);
-
-            if (allow_credentials_ && origin_ == "*")
-                set_header_no_override("Access-Control-Allow-Origin", req.get_header_value("Origin"), res);
+            if (req.method != HTTPMethod::OPTIONS)
+            {
+                if (allow_credentials_) set_header_no_override("Access-Control-Allow-Credentials", "true", res);
+                if (allow_credentials_ && origin_ == "*")
+                    set_header_no_override("Access-Control-Allow-Origin", req.get_header_value("Origin"), res);
+                else
+                    set_header_no_override("Access-Control-Allow-Origin", origin_, res);
+            }
             else
                 set_header_no_override("Access-Control-Allow-Origin", origin_, res);
         }
