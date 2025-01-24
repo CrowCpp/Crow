@@ -160,7 +160,7 @@ namespace crow
                 else if (req_.upgrade)
                 {
                     // h2 or h2c headers
-                    if (req_.get_header_value("upgrade").substr(0, 2) == "h2")
+                    if (req_.get_header_value("upgrade").find("h2")==0)
                     {
                         // TODO(ipkn): HTTP/2
                         // currently, ignore upgrade header
