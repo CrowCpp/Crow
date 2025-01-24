@@ -15,7 +15,10 @@ Crow allows users to handle requests that may not come from the network. This is
 
     req.url = "/place";
 
-    app.handle(req, res); //res will contain a code of 200, and a response body of "hi"
+    app.handle_full(req, res);
+    // res will contain:
+    // res.code == 200
+    // res.body == "hi"
   }
 ```
 
