@@ -1596,7 +1596,12 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                         }
                     }
                     allow = allow.substr(0, allow.size() - 2);
-                    res = response(204);
+#ifdef CROW_RETURNS_OK_ON_HTTP_OPTIONS_REQUEST
+                    res = response(crow::status::OK);
+#else
+                    res = response(crow::status::NO_CONTENT);
+#endif
+
                     res.set_header("Allow", allow);
                     res.end();
                     found->method = method_actual;
@@ -1619,8 +1624,12 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                     }
                     if (rules_matched)
                     {
+#ifdef CROW_RETURNS_OK_ON_HTTP_OPTIONS_REQUEST
+                        res = response(crow::status::OK);
+#else
+                        res = response(crow::status::NO_CONTENT);
+#endif
                         allow = allow.substr(0, allow.size() - 2);
-                        res = response(204);
                         res.set_header("Allow", allow);
                         res.end();
                         found->method = method_actual;
