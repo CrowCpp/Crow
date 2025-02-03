@@ -37,13 +37,14 @@ namespace crow // NOTE: Already documented in "crow/app.h"
     using error_code = asio::error_code;
 #endif
     using tcp = asio::ip::tcp;
+    using stream_protocol = asio::local::stream_protocol;
 
-    template<typename Handler, typename Adaptor = SocketAdaptor, typename... Middlewares>
+    template<typename Handler, typename Acceptor = TCPAcceptor, typename Adaptor = SocketAdaptor, typename... Middlewares>
     class Server
     {
     public:
       Server(Handler* handler,
-             const tcp::endpoint& endpoint,
+             typename Acceptor::endpoint endpoint, 
              std::string server_name = std::string("Crow/") + VERSION,
              std::tuple<Middlewares...>* middlewares = nullptr,
              uint16_t concurrency = 1,
@@ -153,13 +154,10 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                       on_tick();
                   });
             }
-
             handler_->port(acceptor_.local_endpoint().port());
-
-
-            CROW_LOG_INFO << server_name_
-                          << " server is running at " << (handler_->ssl_used() ? "https://" : "http://")
-                          << acceptor_.local_endpoint().address() << ":" << acceptor_.local_endpoint().port() << " using " << concurrency_ << " threads";
+            CROW_LOG_INFO << server_name_ 
+                          << " server is running at " << acceptor_.url_display(handler_->ssl_used()) 
+                          << " using " << concurrency_ << " threads";
             CROW_LOG_INFO << "Call `app.loglevel(crow::LogLevel::Warning)` to hide Info level logs.";
 
             signals_.async_wait(
@@ -252,7 +250,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                   ic, handler_, server_name_, middlewares_,
                   get_cached_date_str_pool_[context_idx], *task_timer_pool_[context_idx], adaptor_ctx_, task_queue_length_pool_[context_idx]);
 
-                acceptor_.async_accept(
+                acceptor_.raw_acceptor().async_accept(
                   p->socket(),
                   [this, p, &ic, context_idx](error_code ec) {
                       if (!ec)
@@ -285,7 +283,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         asio::io_context io_context_;
         std::vector<detail::task_timer*> task_timer_pool_;
         std::vector<std::function<std::string()>> get_cached_date_str_pool_;
-        tcp::acceptor acceptor_;
+        Acceptor acceptor_;
         bool shutting_down_ = false;
         bool server_started_{false};
         std::condition_variable cv_started_;
@@ -298,6 +296,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         uint16_t concurrency_{2};
         std::uint8_t timeout_;
         std::string server_name_;
+        bool use_unix_;
         std::vector<std::atomic<unsigned int>> task_queue_length_pool_;
 
         std::chrono::milliseconds tick_interval_;
