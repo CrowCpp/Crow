@@ -147,271 +147,277 @@ $(document).ready(function(){initNavTree('http__server_8h_source.html',''); init
 <div class="line"><a id="l00042" name="l00042"></a><span class="lineno"><a class="line" href="classcrow_1_1_server.html">   42</a></span>    <span class="keyword">class </span><a class="code hl_class" href="classcrow_1_1_server.html">Server</a></div>
 <div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>    {</div>
 <div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>    <span class="keyword">public</span>:</div>
-<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>        <a class="code hl_class" href="classcrow_1_1_server.html">Server</a>(Handler* handler, std::string bindaddr, uint16_t port, std::string server_name = std::string(<span class="stringliteral">&quot;Crow/&quot;</span>) + VERSION, std::tuple&lt;Middlewares...&gt;* middlewares = <span class="keyword">nullptr</span>, uint16_t concurrency = 1, uint8_t timeout = 5, <span class="keyword">typename</span> Adaptor::context* adaptor_ctx = <span class="keyword">nullptr</span>):</div>
-<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>          acceptor_(io_context_, tcp::endpoint(asio::ip::make_address(bindaddr), port)),</div>
-<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>          signals_(io_context_),</div>
-<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>          tick_timer_(io_context_),</div>
-<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>          handler_(handler),</div>
-<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>          concurrency_(concurrency),</div>
-<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>          timeout_(timeout),</div>
-<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>          server_name_(server_name),</div>
-<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>          port_(port),</div>
-<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>          bindaddr_(bindaddr),</div>
-<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span>          task_queue_length_pool_(concurrency_ - 1),</div>
-<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>          middlewares_(middlewares),</div>
-<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>          adaptor_ctx_(adaptor_ctx)</div>
-<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>        {}</div>
-<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span> </div>
-<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>        <span class="keywordtype">void</span> set_tick_function(std::chrono::milliseconds d, std::function&lt;<span class="keywordtype">void</span>()&gt; f)</div>
-<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>        {</div>
-<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>            tick_interval_ = d;</div>
-<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span>            tick_function_ = f;</div>
-<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span>        }</div>
-<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span> </div>
-<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>        <span class="keywordtype">void</span> on_tick()</div>
-<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span>        {</div>
-<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span>            tick_function_();</div>
-<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span>            tick_timer_.expires_after(std::chrono::milliseconds(tick_interval_.count()));</div>
-<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span>            tick_timer_.async_wait([<span class="keyword">this</span>](<span class="keyword">const</span> error_code&amp; ec) {</div>
-<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span>                <span class="keywordflow">if</span> (ec)</div>
-<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span>                    <span class="keywordflow">return</span>;</div>
-<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span>                on_tick();</div>
-<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span>            });</div>
-<div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span>        }</div>
-<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span> </div>
-<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span>        <span class="keywordtype">void</span> run()</div>
-<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span>        {</div>
-<div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span>            uint16_t worker_thread_count = concurrency_ - 1;</div>
-<div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span>            <span class="keywordflow">for</span> (<span class="keywordtype">int</span> i = 0; i &lt; worker_thread_count; i++)</div>
-<div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span>                io_context_pool_.emplace_back(<span class="keyword">new</span> asio::io_context());</div>
-<div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span>            get_cached_date_str_pool_.resize(worker_thread_count);</div>
-<div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span>            task_timer_pool_.resize(worker_thread_count);</div>
-<div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span> </div>
-<div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span>            std::vector&lt;std::future&lt;void&gt;&gt; v;</div>
-<div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span>            std::atomic&lt;int&gt; init_count(0);</div>
-<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span>            <span class="keywordflow">for</span> (uint16_t i = 0; i &lt; worker_thread_count; i++)</div>
-<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span>                v.push_back(</div>
-<div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span>                  std::async(</div>
-<div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span>                    std::launch::async, [<span class="keyword">this</span>, i, &amp;init_count] {</div>
-<div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span>                        <span class="comment">// thread local date string get function</span></div>
-<div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span>                        auto last = std::chrono::steady_clock::now();</div>
-<div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span> </div>
-<div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span>                        std::string date_str;</div>
-<div class="line"><a id="l00095" name="l00095"></a><span class="lineno">   95</span>                        auto update_date_str = [&amp;] {</div>
-<div class="line"><a id="l00096" name="l00096"></a><span class="lineno">   96</span>                            auto last_time_t = time(0);</div>
-<div class="line"><a id="l00097" name="l00097"></a><span class="lineno">   97</span>                            tm my_tm;</div>
-<div class="line"><a id="l00098" name="l00098"></a><span class="lineno">   98</span> </div>
-<div class="line"><a id="l00099" name="l00099"></a><span class="lineno">   99</span>#if defined(_MSC_VER) || defined(__MINGW32__)</div>
-<div class="line"><a id="l00100" name="l00100"></a><span class="lineno">  100</span>                            gmtime_s(&amp;my_tm, &amp;last_time_t);</div>
-<div class="line"><a id="l00101" name="l00101"></a><span class="lineno">  101</span>#else</div>
-<div class="line"><a id="l00102" name="l00102"></a><span class="lineno">  102</span>                            gmtime_r(&amp;last_time_t, &amp;my_tm);</div>
-<div class="line"><a id="l00103" name="l00103"></a><span class="lineno">  103</span>#endif</div>
-<div class="line"><a id="l00104" name="l00104"></a><span class="lineno">  104</span>                            date_str.resize(100);</div>
-<div class="line"><a id="l00105" name="l00105"></a><span class="lineno">  105</span>                            size_t date_str_sz = strftime(&amp;date_str[0], 99, <span class="stringliteral">&quot;%a, %d %b %Y %H:%M:%S GMT&quot;</span>, &amp;my_tm);</div>
-<div class="line"><a id="l00106" name="l00106"></a><span class="lineno">  106</span>                            date_str.resize(date_str_sz);</div>
-<div class="line"><a id="l00107" name="l00107"></a><span class="lineno">  107</span>                        };</div>
-<div class="line"><a id="l00108" name="l00108"></a><span class="lineno">  108</span>                        update_date_str();</div>
-<div class="line"><a id="l00109" name="l00109"></a><span class="lineno">  109</span>                        get_cached_date_str_pool_[i] = [&amp;]() -&gt; std::string {</div>
-<div class="line"><a id="l00110" name="l00110"></a><span class="lineno">  110</span>                            <span class="keywordflow">if</span> (std::chrono::steady_clock::now() - last &gt;= std::chrono::seconds(1))</div>
-<div class="line"><a id="l00111" name="l00111"></a><span class="lineno">  111</span>                            {</div>
-<div class="line"><a id="l00112" name="l00112"></a><span class="lineno">  112</span>                                last = std::chrono::steady_clock::now();</div>
-<div class="line"><a id="l00113" name="l00113"></a><span class="lineno">  113</span>                                update_date_str();</div>
-<div class="line"><a id="l00114" name="l00114"></a><span class="lineno">  114</span>                            }</div>
-<div class="line"><a id="l00115" name="l00115"></a><span class="lineno">  115</span>                            <span class="keywordflow">return</span> date_str;</div>
-<div class="line"><a id="l00116" name="l00116"></a><span class="lineno">  116</span>                        };</div>
-<div class="line"><a id="l00117" name="l00117"></a><span class="lineno">  117</span> </div>
-<div class="line"><a id="l00118" name="l00118"></a><span class="lineno">  118</span>                        <span class="comment">// initializing task timers</span></div>
-<div class="line"><a id="l00119" name="l00119"></a><span class="lineno">  119</span>                        <a class="code hl_class" href="classcrow_1_1detail_1_1task__timer.html">detail::task_timer</a> task_timer(*io_context_pool_[i]);</div>
-<div class="line"><a id="l00120" name="l00120"></a><span class="lineno">  120</span>                        task_timer.<a class="code hl_function" href="classcrow_1_1detail_1_1task__timer.html#a7a1851ddf3d42b65c674a8984557cbb0">set_default_timeout</a>(timeout_);</div>
-<div class="line"><a id="l00121" name="l00121"></a><span class="lineno">  121</span>                        task_timer_pool_[i] = &amp;task_timer;</div>
-<div class="line"><a id="l00122" name="l00122"></a><span class="lineno">  122</span>                        task_queue_length_pool_[i] = 0;</div>
-<div class="line"><a id="l00123" name="l00123"></a><span class="lineno">  123</span> </div>
-<div class="line"><a id="l00124" name="l00124"></a><span class="lineno">  124</span>                        init_count++;</div>
-<div class="line"><a id="l00125" name="l00125"></a><span class="lineno">  125</span>                        <span class="keywordflow">while</span> (1)</div>
-<div class="line"><a id="l00126" name="l00126"></a><span class="lineno">  126</span>                        {</div>
-<div class="line"><a id="l00127" name="l00127"></a><span class="lineno">  127</span>                            <span class="keywordflow">try</span></div>
-<div class="line"><a id="l00128" name="l00128"></a><span class="lineno">  128</span>                            {</div>
-<div class="line"><a id="l00129" name="l00129"></a><span class="lineno">  129</span>                                <span class="keywordflow">if</span> (io_context_pool_[i]-&gt;run() == 0)</div>
-<div class="line"><a id="l00130" name="l00130"></a><span class="lineno">  130</span>                                {</div>
-<div class="line"><a id="l00131" name="l00131"></a><span class="lineno">  131</span>                                    <span class="comment">// when io_service.run returns 0, there are no more works to do.</span></div>
-<div class="line"><a id="l00132" name="l00132"></a><span class="lineno">  132</span>                                    <span class="keywordflow">break</span>;</div>
-<div class="line"><a id="l00133" name="l00133"></a><span class="lineno">  133</span>                                }</div>
-<div class="line"><a id="l00134" name="l00134"></a><span class="lineno">  134</span>                            }</div>
-<div class="line"><a id="l00135" name="l00135"></a><span class="lineno">  135</span>                            <span class="keywordflow">catch</span> (std::exception&amp; e)</div>
-<div class="line"><a id="l00136" name="l00136"></a><span class="lineno">  136</span>                            {</div>
-<div class="line"><a id="l00137" name="l00137"></a><span class="lineno">  137</span>                                CROW_LOG_ERROR &lt;&lt; <span class="stringliteral">&quot;Worker Crash: An uncaught exception occurred: &quot;</span> &lt;&lt; e.what();</div>
+<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>      <a class="code hl_class" href="classcrow_1_1_server.html">Server</a>(Handler* handler,</div>
+<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>             <span class="keyword">const</span> tcp::endpoint&amp; endpoint,</div>
+<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>             std::string server_name = std::string(<span class="stringliteral">&quot;Crow/&quot;</span>) + VERSION,</div>
+<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>             std::tuple&lt;Middlewares...&gt;* middlewares = <span class="keyword">nullptr</span>,</div>
+<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>             uint16_t concurrency = 1,</div>
+<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>             uint8_t timeout = 5,</div>
+<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>             <span class="keyword">typename</span> Adaptor::context* adaptor_ctx = <span class="keyword">nullptr</span>):</div>
+<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>          acceptor_(io_context_,endpoint),</div>
+<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>          signals_(io_context_),</div>
+<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>          tick_timer_(io_context_),</div>
+<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span>          handler_(handler),</div>
+<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>          concurrency_(concurrency),</div>
+<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>          timeout_(timeout),</div>
+<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>          server_name_(server_name),</div>
+<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>          task_queue_length_pool_(concurrency_ - 1),</div>
+<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>          middlewares_(middlewares),</div>
+<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>          adaptor_ctx_(adaptor_ctx)</div>
+<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>        {}</div>
+<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span> </div>
+<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span>        <span class="keywordtype">void</span> set_tick_function(std::chrono::milliseconds d, std::function&lt;<span class="keywordtype">void</span>()&gt; f)</div>
+<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span>        {</div>
+<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>            tick_interval_ = d;</div>
+<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span>            tick_function_ = f;</div>
+<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span>        }</div>
+<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span> </div>
+<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span>        <span class="keywordtype">void</span> on_tick()</div>
+<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span>        {</div>
+<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span>            tick_function_();</div>
+<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span>            tick_timer_.expires_after(std::chrono::milliseconds(tick_interval_.count()));</div>
+<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span>            tick_timer_.async_wait([<span class="keyword">this</span>](<span class="keyword">const</span> error_code&amp; ec) {</div>
+<div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span>                <span class="keywordflow">if</span> (ec)</div>
+<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span>                    <span class="keywordflow">return</span>;</div>
+<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span>                on_tick();</div>
+<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span>            });</div>
+<div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span>        }</div>
+<div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span> </div>
+<div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span>        <span class="keywordtype">void</span> run()</div>
+<div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span>        {</div>
+<div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span>            uint16_t worker_thread_count = concurrency_ - 1;</div>
+<div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span>            <span class="keywordflow">for</span> (<span class="keywordtype">int</span> i = 0; i &lt; worker_thread_count; i++)</div>
+<div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span>                io_context_pool_.emplace_back(<span class="keyword">new</span> asio::io_context());</div>
+<div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span>            get_cached_date_str_pool_.resize(worker_thread_count);</div>
+<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span>            task_timer_pool_.resize(worker_thread_count);</div>
+<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span> </div>
+<div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span>            std::vector&lt;std::future&lt;void&gt;&gt; v;</div>
+<div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span>            std::atomic&lt;int&gt; init_count(0);</div>
+<div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span>            <span class="keywordflow">for</span> (uint16_t i = 0; i &lt; worker_thread_count; i++)</div>
+<div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span>                v.push_back(</div>
+<div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span>                  std::async(</div>
+<div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span>                    std::launch::async, [<span class="keyword">this</span>, i, &amp;init_count] {</div>
+<div class="line"><a id="l00095" name="l00095"></a><span class="lineno">   95</span>                        <span class="comment">// thread local date string get function</span></div>
+<div class="line"><a id="l00096" name="l00096"></a><span class="lineno">   96</span>                        auto last = std::chrono::steady_clock::now();</div>
+<div class="line"><a id="l00097" name="l00097"></a><span class="lineno">   97</span> </div>
+<div class="line"><a id="l00098" name="l00098"></a><span class="lineno">   98</span>                        std::string date_str;</div>
+<div class="line"><a id="l00099" name="l00099"></a><span class="lineno">   99</span>                        auto update_date_str = [&amp;] {</div>
+<div class="line"><a id="l00100" name="l00100"></a><span class="lineno">  100</span>                            auto last_time_t = time(0);</div>
+<div class="line"><a id="l00101" name="l00101"></a><span class="lineno">  101</span>                            tm my_tm;</div>
+<div class="line"><a id="l00102" name="l00102"></a><span class="lineno">  102</span> </div>
+<div class="line"><a id="l00103" name="l00103"></a><span class="lineno">  103</span>#if defined(_MSC_VER) || defined(__MINGW32__)</div>
+<div class="line"><a id="l00104" name="l00104"></a><span class="lineno">  104</span>                            gmtime_s(&amp;my_tm, &amp;last_time_t);</div>
+<div class="line"><a id="l00105" name="l00105"></a><span class="lineno">  105</span>#else</div>
+<div class="line"><a id="l00106" name="l00106"></a><span class="lineno">  106</span>                            gmtime_r(&amp;last_time_t, &amp;my_tm);</div>
+<div class="line"><a id="l00107" name="l00107"></a><span class="lineno">  107</span>#endif</div>
+<div class="line"><a id="l00108" name="l00108"></a><span class="lineno">  108</span>                            date_str.resize(100);</div>
+<div class="line"><a id="l00109" name="l00109"></a><span class="lineno">  109</span>                            size_t date_str_sz = strftime(&amp;date_str[0], 99, <span class="stringliteral">&quot;%a, %d %b %Y %H:%M:%S GMT&quot;</span>, &amp;my_tm);</div>
+<div class="line"><a id="l00110" name="l00110"></a><span class="lineno">  110</span>                            date_str.resize(date_str_sz);</div>
+<div class="line"><a id="l00111" name="l00111"></a><span class="lineno">  111</span>                        };</div>
+<div class="line"><a id="l00112" name="l00112"></a><span class="lineno">  112</span>                        update_date_str();</div>
+<div class="line"><a id="l00113" name="l00113"></a><span class="lineno">  113</span>                        get_cached_date_str_pool_[i] = [&amp;]() -&gt; std::string {</div>
+<div class="line"><a id="l00114" name="l00114"></a><span class="lineno">  114</span>                            <span class="keywordflow">if</span> (std::chrono::steady_clock::now() - last &gt;= std::chrono::seconds(1))</div>
+<div class="line"><a id="l00115" name="l00115"></a><span class="lineno">  115</span>                            {</div>
+<div class="line"><a id="l00116" name="l00116"></a><span class="lineno">  116</span>                                last = std::chrono::steady_clock::now();</div>
+<div class="line"><a id="l00117" name="l00117"></a><span class="lineno">  117</span>                                update_date_str();</div>
+<div class="line"><a id="l00118" name="l00118"></a><span class="lineno">  118</span>                            }</div>
+<div class="line"><a id="l00119" name="l00119"></a><span class="lineno">  119</span>                            <span class="keywordflow">return</span> date_str;</div>
+<div class="line"><a id="l00120" name="l00120"></a><span class="lineno">  120</span>                        };</div>
+<div class="line"><a id="l00121" name="l00121"></a><span class="lineno">  121</span> </div>
+<div class="line"><a id="l00122" name="l00122"></a><span class="lineno">  122</span>                        <span class="comment">// initializing task timers</span></div>
+<div class="line"><a id="l00123" name="l00123"></a><span class="lineno">  123</span>                        <a class="code hl_class" href="classcrow_1_1detail_1_1task__timer.html">detail::task_timer</a> task_timer(*io_context_pool_[i]);</div>
+<div class="line"><a id="l00124" name="l00124"></a><span class="lineno">  124</span>                        task_timer.<a class="code hl_function" href="classcrow_1_1detail_1_1task__timer.html#a7a1851ddf3d42b65c674a8984557cbb0">set_default_timeout</a>(timeout_);</div>
+<div class="line"><a id="l00125" name="l00125"></a><span class="lineno">  125</span>                        task_timer_pool_[i] = &amp;task_timer;</div>
+<div class="line"><a id="l00126" name="l00126"></a><span class="lineno">  126</span>                        task_queue_length_pool_[i] = 0;</div>
+<div class="line"><a id="l00127" name="l00127"></a><span class="lineno">  127</span> </div>
+<div class="line"><a id="l00128" name="l00128"></a><span class="lineno">  128</span>                        init_count++;</div>
+<div class="line"><a id="l00129" name="l00129"></a><span class="lineno">  129</span>                        <span class="keywordflow">while</span> (1)</div>
+<div class="line"><a id="l00130" name="l00130"></a><span class="lineno">  130</span>                        {</div>
+<div class="line"><a id="l00131" name="l00131"></a><span class="lineno">  131</span>                            <span class="keywordflow">try</span></div>
+<div class="line"><a id="l00132" name="l00132"></a><span class="lineno">  132</span>                            {</div>
+<div class="line"><a id="l00133" name="l00133"></a><span class="lineno">  133</span>                                <span class="keywordflow">if</span> (io_context_pool_[i]-&gt;run() == 0)</div>
+<div class="line"><a id="l00134" name="l00134"></a><span class="lineno">  134</span>                                {</div>
+<div class="line"><a id="l00135" name="l00135"></a><span class="lineno">  135</span>                                    <span class="comment">// when io_service.run returns 0, there are no more works to do.</span></div>
+<div class="line"><a id="l00136" name="l00136"></a><span class="lineno">  136</span>                                    <span class="keywordflow">break</span>;</div>
+<div class="line"><a id="l00137" name="l00137"></a><span class="lineno">  137</span>                                }</div>
 <div class="line"><a id="l00138" name="l00138"></a><span class="lineno">  138</span>                            }</div>
-<div class="line"><a id="l00139" name="l00139"></a><span class="lineno">  139</span>                        }</div>
-<div class="line"><a id="l00140" name="l00140"></a><span class="lineno">  140</span>                    }));</div>
-<div class="line"><a id="l00141" name="l00141"></a><span class="lineno">  141</span> </div>
-<div class="line"><a id="l00142" name="l00142"></a><span class="lineno">  142</span>            <span class="keywordflow">if</span> (tick_function_ &amp;&amp; tick_interval_.count() &gt; 0)</div>
-<div class="line"><a id="l00143" name="l00143"></a><span class="lineno">  143</span>            {</div>
-<div class="line"><a id="l00144" name="l00144"></a><span class="lineno">  144</span>                tick_timer_.expires_after(std::chrono::milliseconds(tick_interval_.count()));</div>
-<div class="line"><a id="l00145" name="l00145"></a><span class="lineno">  145</span>                tick_timer_.async_wait(</div>
-<div class="line"><a id="l00146" name="l00146"></a><span class="lineno">  146</span>                  [<span class="keyword">this</span>](<span class="keyword">const</span> error_code&amp; ec) {</div>
-<div class="line"><a id="l00147" name="l00147"></a><span class="lineno">  147</span>                      <span class="keywordflow">if</span> (ec)</div>
-<div class="line"><a id="l00148" name="l00148"></a><span class="lineno">  148</span>                          <span class="keywordflow">return</span>;</div>
-<div class="line"><a id="l00149" name="l00149"></a><span class="lineno">  149</span>                      on_tick();</div>
-<div class="line"><a id="l00150" name="l00150"></a><span class="lineno">  150</span>                  });</div>
-<div class="line"><a id="l00151" name="l00151"></a><span class="lineno">  151</span>            }</div>
-<div class="line"><a id="l00152" name="l00152"></a><span class="lineno">  152</span> </div>
-<div class="line"><a id="l00153" name="l00153"></a><span class="lineno">  153</span>            port_ = acceptor_.local_endpoint().port();</div>
-<div class="line"><a id="l00154" name="l00154"></a><span class="lineno">  154</span>            handler_-&gt;port(port_);</div>
-<div class="line"><a id="l00155" name="l00155"></a><span class="lineno">  155</span> </div>
+<div class="line"><a id="l00139" name="l00139"></a><span class="lineno">  139</span>                            <span class="keywordflow">catch</span> (std::exception&amp; e)</div>
+<div class="line"><a id="l00140" name="l00140"></a><span class="lineno">  140</span>                            {</div>
+<div class="line"><a id="l00141" name="l00141"></a><span class="lineno">  141</span>                                CROW_LOG_ERROR &lt;&lt; <span class="stringliteral">&quot;Worker Crash: An uncaught exception occurred: &quot;</span> &lt;&lt; e.what();</div>
+<div class="line"><a id="l00142" name="l00142"></a><span class="lineno">  142</span>                            }</div>
+<div class="line"><a id="l00143" name="l00143"></a><span class="lineno">  143</span>                        }</div>
+<div class="line"><a id="l00144" name="l00144"></a><span class="lineno">  144</span>                    }));</div>
+<div class="line"><a id="l00145" name="l00145"></a><span class="lineno">  145</span> </div>
+<div class="line"><a id="l00146" name="l00146"></a><span class="lineno">  146</span>            <span class="keywordflow">if</span> (tick_function_ &amp;&amp; tick_interval_.count() &gt; 0)</div>
+<div class="line"><a id="l00147" name="l00147"></a><span class="lineno">  147</span>            {</div>
+<div class="line"><a id="l00148" name="l00148"></a><span class="lineno">  148</span>                tick_timer_.expires_after(std::chrono::milliseconds(tick_interval_.count()));</div>
+<div class="line"><a id="l00149" name="l00149"></a><span class="lineno">  149</span>                tick_timer_.async_wait(</div>
+<div class="line"><a id="l00150" name="l00150"></a><span class="lineno">  150</span>                  [<span class="keyword">this</span>](<span class="keyword">const</span> error_code&amp; ec) {</div>
+<div class="line"><a id="l00151" name="l00151"></a><span class="lineno">  151</span>                      <span class="keywordflow">if</span> (ec)</div>
+<div class="line"><a id="l00152" name="l00152"></a><span class="lineno">  152</span>                          <span class="keywordflow">return</span>;</div>
+<div class="line"><a id="l00153" name="l00153"></a><span class="lineno">  153</span>                      on_tick();</div>
+<div class="line"><a id="l00154" name="l00154"></a><span class="lineno">  154</span>                  });</div>
+<div class="line"><a id="l00155" name="l00155"></a><span class="lineno">  155</span>            }</div>
 <div class="line"><a id="l00156" name="l00156"></a><span class="lineno">  156</span> </div>
-<div class="line"><a id="l00157" name="l00157"></a><span class="lineno">  157</span>            CROW_LOG_INFO &lt;&lt; server_name_ &lt;&lt; <span class="stringliteral">&quot; server is running at &quot;</span> &lt;&lt; (handler_-&gt;ssl_used() ? <span class="stringliteral">&quot;https://&quot;</span> : <span class="stringliteral">&quot;http://&quot;</span>) &lt;&lt; bindaddr_ &lt;&lt; <span class="stringliteral">&quot;:&quot;</span> &lt;&lt; acceptor_.local_endpoint().port() &lt;&lt; <span class="stringliteral">&quot; using &quot;</span> &lt;&lt; concurrency_ &lt;&lt; <span class="stringliteral">&quot; threads&quot;</span>;</div>
-<div class="line"><a id="l00158" name="l00158"></a><span class="lineno">  158</span>            CROW_LOG_INFO &lt;&lt; <span class="stringliteral">&quot;Call `app.loglevel(crow::LogLevel::Warning)` to hide Info level logs.&quot;</span>;</div>
+<div class="line"><a id="l00157" name="l00157"></a><span class="lineno">  157</span>            handler_-&gt;port(acceptor_.local_endpoint().port());</div>
+<div class="line"><a id="l00158" name="l00158"></a><span class="lineno">  158</span> </div>
 <div class="line"><a id="l00159" name="l00159"></a><span class="lineno">  159</span> </div>
-<div class="line"><a id="l00160" name="l00160"></a><span class="lineno">  160</span>            signals_.async_wait(</div>
-<div class="line"><a id="l00161" name="l00161"></a><span class="lineno">  161</span>              [&amp;](<span class="keyword">const</span> error_code&amp; <span class="comment">/*error*/</span>, <span class="keywordtype">int</span> <span class="comment">/*signal_number*/</span>) {</div>
-<div class="line"><a id="l00162" name="l00162"></a><span class="lineno">  162</span>                  stop();</div>
-<div class="line"><a id="l00163" name="l00163"></a><span class="lineno">  163</span>              });</div>
+<div class="line"><a id="l00160" name="l00160"></a><span class="lineno">  160</span>            CROW_LOG_INFO &lt;&lt; server_name_</div>
+<div class="line"><a id="l00161" name="l00161"></a><span class="lineno">  161</span>                          &lt;&lt; <span class="stringliteral">&quot; server is running at &quot;</span> &lt;&lt; (handler_-&gt;ssl_used() ? <span class="stringliteral">&quot;https://&quot;</span> : <span class="stringliteral">&quot;http://&quot;</span>)</div>
+<div class="line"><a id="l00162" name="l00162"></a><span class="lineno">  162</span>                          &lt;&lt; acceptor_.local_endpoint().address() &lt;&lt; <span class="stringliteral">&quot;:&quot;</span> &lt;&lt; acceptor_.local_endpoint().port() &lt;&lt; <span class="stringliteral">&quot; using &quot;</span> &lt;&lt; concurrency_ &lt;&lt; <span class="stringliteral">&quot; threads&quot;</span>;</div>
+<div class="line"><a id="l00163" name="l00163"></a><span class="lineno">  163</span>            CROW_LOG_INFO &lt;&lt; <span class="stringliteral">&quot;Call `app.loglevel(crow::LogLevel::Warning)` to hide Info level logs.&quot;</span>;</div>
 <div class="line"><a id="l00164" name="l00164"></a><span class="lineno">  164</span> </div>
-<div class="line"><a id="l00165" name="l00165"></a><span class="lineno">  165</span>            <span class="keywordflow">while</span> (worker_thread_count != init_count)</div>
-<div class="line"><a id="l00166" name="l00166"></a><span class="lineno">  166</span>                std::this_thread::yield();</div>
-<div class="line"><a id="l00167" name="l00167"></a><span class="lineno">  167</span> </div>
-<div class="line"><a id="l00168" name="l00168"></a><span class="lineno">  168</span>            do_accept();</div>
+<div class="line"><a id="l00165" name="l00165"></a><span class="lineno">  165</span>            signals_.async_wait(</div>
+<div class="line"><a id="l00166" name="l00166"></a><span class="lineno">  166</span>              [&amp;](<span class="keyword">const</span> error_code&amp; <span class="comment">/*error*/</span>, <span class="keywordtype">int</span> <span class="comment">/*signal_number*/</span>) {</div>
+<div class="line"><a id="l00167" name="l00167"></a><span class="lineno">  167</span>                  stop();</div>
+<div class="line"><a id="l00168" name="l00168"></a><span class="lineno">  168</span>              });</div>
 <div class="line"><a id="l00169" name="l00169"></a><span class="lineno">  169</span> </div>
-<div class="line"><a id="l00170" name="l00170"></a><span class="lineno">  170</span>            std::thread(</div>
-<div class="line"><a id="l00171" name="l00171"></a><span class="lineno">  171</span>              [<span class="keyword">this</span>] {</div>
-<div class="line"><a id="l00172" name="l00172"></a><span class="lineno">  172</span>                  notify_start();</div>
-<div class="line"><a id="l00173" name="l00173"></a><span class="lineno">  173</span>                  io_context_.run();</div>
-<div class="line"><a id="l00174" name="l00174"></a><span class="lineno">  174</span>                  CROW_LOG_INFO &lt;&lt; <span class="stringliteral">&quot;Exiting.&quot;</span>;</div>
-<div class="line"><a id="l00175" name="l00175"></a><span class="lineno">  175</span>              })</div>
-<div class="line"><a id="l00176" name="l00176"></a><span class="lineno">  176</span>              .join();</div>
-<div class="line"><a id="l00177" name="l00177"></a><span class="lineno">  177</span>        }</div>
-<div class="line"><a id="l00178" name="l00178"></a><span class="lineno">  178</span> </div>
-<div class="line"><a id="l00179" name="l00179"></a><span class="lineno">  179</span>        <span class="keywordtype">void</span> stop()</div>
-<div class="line"><a id="l00180" name="l00180"></a><span class="lineno">  180</span>        {</div>
-<div class="line"><a id="l00181" name="l00181"></a><span class="lineno">  181</span>            shutting_down_ = <span class="keyword">true</span>; <span class="comment">// Prevent the acceptor from taking new connections</span></div>
-<div class="line"><a id="l00182" name="l00182"></a><span class="lineno">  182</span>            <span class="keywordflow">for</span> (<span class="keyword">auto</span>&amp; io_context : io_context_pool_)</div>
-<div class="line"><a id="l00183" name="l00183"></a><span class="lineno">  183</span>            {</div>
-<div class="line"><a id="l00184" name="l00184"></a><span class="lineno">  184</span>                <span class="keywordflow">if</span> (io_context != <span class="keyword">nullptr</span>)</div>
-<div class="line"><a id="l00185" name="l00185"></a><span class="lineno">  185</span>                {</div>
-<div class="line"><a id="l00186" name="l00186"></a><span class="lineno">  186</span>                    CROW_LOG_INFO &lt;&lt; <span class="stringliteral">&quot;Closing IO service &quot;</span> &lt;&lt; &amp;io_context;</div>
-<div class="line"><a id="l00187" name="l00187"></a><span class="lineno">  187</span>                    io_context-&gt;stop(); <span class="comment">// Close all io_services (and HTTP connections)</span></div>
-<div class="line"><a id="l00188" name="l00188"></a><span class="lineno">  188</span>                }</div>
-<div class="line"><a id="l00189" name="l00189"></a><span class="lineno">  189</span>            }</div>
-<div class="line"><a id="l00190" name="l00190"></a><span class="lineno">  190</span> </div>
-<div class="line"><a id="l00191" name="l00191"></a><span class="lineno">  191</span>            CROW_LOG_INFO &lt;&lt; <span class="stringliteral">&quot;Closing main IO service (&quot;</span> &lt;&lt; &amp;io_context_ &lt;&lt; <span class="charliteral">&#39;)&#39;</span>;</div>
-<div class="line"><a id="l00192" name="l00192"></a><span class="lineno">  192</span>            io_context_.stop(); <span class="comment">// Close main io_service</span></div>
-<div class="line"><a id="l00193" name="l00193"></a><span class="lineno">  193</span>        }</div>
-<div class="line"><a id="l00194" name="l00194"></a><span class="lineno">  194</span> </div>
-<div class="line"><a id="l00195" name="l00195"></a><span class="lineno">  195</span>        uint16_t port(){</div>
-<div class="line"><a id="l00196" name="l00196"></a><span class="lineno">  196</span>            <span class="keywordflow">return</span> acceptor_.local_endpoint().port();</div>
-<div class="line"><a id="l00197" name="l00197"></a><span class="lineno">  197</span>        }</div>
-<div class="line"><a id="l00198" name="l00198"></a><span class="lineno">  198</span><span class="comment"></span> </div>
-<div class="line"><a id="l00199" name="l00199"></a><span class="lineno">  199</span><span class="comment">        /// Wait until the server has properly started</span></div>
-<div class="foldopen" id="foldopen00200" data-start="{" data-end="}">
-<div class="line"><a id="l00200" name="l00200"></a><span class="lineno"><a class="line" href="classcrow_1_1_server.html#a0b63b4a3da3acbb2a1870db19279f580">  200</a></span><span class="comment"></span>        <span class="keywordtype">void</span> <a class="code hl_function" href="classcrow_1_1_server.html#a0b63b4a3da3acbb2a1870db19279f580">wait_for_start</a>()</div>
-<div class="line"><a id="l00201" name="l00201"></a><span class="lineno">  201</span>        {</div>
-<div class="line"><a id="l00202" name="l00202"></a><span class="lineno">  202</span>            std::unique_lock&lt;std::mutex&gt; lock(start_mutex_);</div>
-<div class="line"><a id="l00203" name="l00203"></a><span class="lineno">  203</span>            <span class="keywordflow">while</span> (!server_started_)</div>
-<div class="line"><a id="l00204" name="l00204"></a><span class="lineno">  204</span>                cv_started_.wait(lock);</div>
-<div class="line"><a id="l00205" name="l00205"></a><span class="lineno">  205</span>        }</div>
+<div class="line"><a id="l00170" name="l00170"></a><span class="lineno">  170</span>            <span class="keywordflow">while</span> (worker_thread_count != init_count)</div>
+<div class="line"><a id="l00171" name="l00171"></a><span class="lineno">  171</span>                std::this_thread::yield();</div>
+<div class="line"><a id="l00172" name="l00172"></a><span class="lineno">  172</span> </div>
+<div class="line"><a id="l00173" name="l00173"></a><span class="lineno">  173</span>            do_accept();</div>
+<div class="line"><a id="l00174" name="l00174"></a><span class="lineno">  174</span> </div>
+<div class="line"><a id="l00175" name="l00175"></a><span class="lineno">  175</span>            std::thread(</div>
+<div class="line"><a id="l00176" name="l00176"></a><span class="lineno">  176</span>              [<span class="keyword">this</span>] {</div>
+<div class="line"><a id="l00177" name="l00177"></a><span class="lineno">  177</span>                  notify_start();</div>
+<div class="line"><a id="l00178" name="l00178"></a><span class="lineno">  178</span>                  io_context_.run();</div>
+<div class="line"><a id="l00179" name="l00179"></a><span class="lineno">  179</span>                  CROW_LOG_INFO &lt;&lt; <span class="stringliteral">&quot;Exiting.&quot;</span>;</div>
+<div class="line"><a id="l00180" name="l00180"></a><span class="lineno">  180</span>              })</div>
+<div class="line"><a id="l00181" name="l00181"></a><span class="lineno">  181</span>              .join();</div>
+<div class="line"><a id="l00182" name="l00182"></a><span class="lineno">  182</span>        }</div>
+<div class="line"><a id="l00183" name="l00183"></a><span class="lineno">  183</span> </div>
+<div class="line"><a id="l00184" name="l00184"></a><span class="lineno">  184</span>        <span class="keywordtype">void</span> stop()</div>
+<div class="line"><a id="l00185" name="l00185"></a><span class="lineno">  185</span>        {</div>
+<div class="line"><a id="l00186" name="l00186"></a><span class="lineno">  186</span>            shutting_down_ = <span class="keyword">true</span>; <span class="comment">// Prevent the acceptor from taking new connections</span></div>
+<div class="line"><a id="l00187" name="l00187"></a><span class="lineno">  187</span>            <span class="keywordflow">for</span> (<span class="keyword">auto</span>&amp; io_context : io_context_pool_)</div>
+<div class="line"><a id="l00188" name="l00188"></a><span class="lineno">  188</span>            {</div>
+<div class="line"><a id="l00189" name="l00189"></a><span class="lineno">  189</span>                <span class="keywordflow">if</span> (io_context != <span class="keyword">nullptr</span>)</div>
+<div class="line"><a id="l00190" name="l00190"></a><span class="lineno">  190</span>                {</div>
+<div class="line"><a id="l00191" name="l00191"></a><span class="lineno">  191</span>                    CROW_LOG_INFO &lt;&lt; <span class="stringliteral">&quot;Closing IO service &quot;</span> &lt;&lt; &amp;io_context;</div>
+<div class="line"><a id="l00192" name="l00192"></a><span class="lineno">  192</span>                    io_context-&gt;stop(); <span class="comment">// Close all io_services (and HTTP connections)</span></div>
+<div class="line"><a id="l00193" name="l00193"></a><span class="lineno">  193</span>                }</div>
+<div class="line"><a id="l00194" name="l00194"></a><span class="lineno">  194</span>            }</div>
+<div class="line"><a id="l00195" name="l00195"></a><span class="lineno">  195</span> </div>
+<div class="line"><a id="l00196" name="l00196"></a><span class="lineno">  196</span>            CROW_LOG_INFO &lt;&lt; <span class="stringliteral">&quot;Closing main IO service (&quot;</span> &lt;&lt; &amp;io_context_ &lt;&lt; <span class="charliteral">&#39;)&#39;</span>;</div>
+<div class="line"><a id="l00197" name="l00197"></a><span class="lineno">  197</span>            io_context_.stop(); <span class="comment">// Close main io_service</span></div>
+<div class="line"><a id="l00198" name="l00198"></a><span class="lineno">  198</span>        }</div>
+<div class="line"><a id="l00199" name="l00199"></a><span class="lineno">  199</span> </div>
+<div class="line"><a id="l00200" name="l00200"></a><span class="lineno">  200</span>        uint16_t port()<span class="keyword"> const </span>{</div>
+<div class="line"><a id="l00201" name="l00201"></a><span class="lineno">  201</span>            <span class="keywordflow">return</span> acceptor_.local_endpoint().port();</div>
+<div class="line"><a id="l00202" name="l00202"></a><span class="lineno">  202</span>        }</div>
+<div class="line"><a id="l00203" name="l00203"></a><span class="lineno">  203</span><span class="comment"></span> </div>
+<div class="line"><a id="l00204" name="l00204"></a><span class="lineno">  204</span><span class="comment">        /// Wait until the server has properly started or until timeout</span></div>
+<div class="foldopen" id="foldopen00205" data-start="{" data-end="}">
+<div class="line"><a id="l00205" name="l00205"></a><span class="lineno"><a class="line" href="classcrow_1_1_server.html#afe725c4024cef73ab5bf6562b7c7b27f">  205</a></span><span class="comment"></span>        std::cv_status <a class="code hl_function" href="classcrow_1_1_server.html#afe725c4024cef73ab5bf6562b7c7b27f">wait_for_start</a>(std::chrono::steady_clock::time_point wait_until)</div>
+<div class="line"><a id="l00206" name="l00206"></a><span class="lineno">  206</span>        {</div>
+<div class="line"><a id="l00207" name="l00207"></a><span class="lineno">  207</span>            std::unique_lock&lt;std::mutex&gt; lock(start_mutex_);</div>
+<div class="line"><a id="l00208" name="l00208"></a><span class="lineno">  208</span>            </div>
+<div class="line"><a id="l00209" name="l00209"></a><span class="lineno">  209</span>            std::cv_status status = std::cv_status::no_timeout;</div>
+<div class="line"><a id="l00210" name="l00210"></a><span class="lineno">  210</span>            <span class="keywordflow">while</span> (!server_started_ &amp;&amp; ( status==std::cv_status::no_timeout ))</div>
+<div class="line"><a id="l00211" name="l00211"></a><span class="lineno">  211</span>                status = cv_started_.wait_until(lock,wait_until);</div>
+<div class="line"><a id="l00212" name="l00212"></a><span class="lineno">  212</span>            <span class="keywordflow">return</span> status;</div>
+<div class="line"><a id="l00213" name="l00213"></a><span class="lineno">  213</span>        }</div>
 </div>
-<div class="line"><a id="l00206" name="l00206"></a><span class="lineno">  206</span> </div>
-<div class="line"><a id="l00207" name="l00207"></a><span class="lineno">  207</span>        <span class="keywordtype">void</span> signal_clear()</div>
-<div class="line"><a id="l00208" name="l00208"></a><span class="lineno">  208</span>        {</div>
-<div class="line"><a id="l00209" name="l00209"></a><span class="lineno">  209</span>            signals_.clear();</div>
-<div class="line"><a id="l00210" name="l00210"></a><span class="lineno">  210</span>        }</div>
-<div class="line"><a id="l00211" name="l00211"></a><span class="lineno">  211</span> </div>
-<div class="line"><a id="l00212" name="l00212"></a><span class="lineno">  212</span>        <span class="keywordtype">void</span> signal_add(<span class="keywordtype">int</span> signal_number)</div>
-<div class="line"><a id="l00213" name="l00213"></a><span class="lineno">  213</span>        {</div>
-<div class="line"><a id="l00214" name="l00214"></a><span class="lineno">  214</span>            signals_.add(signal_number);</div>
-<div class="line"><a id="l00215" name="l00215"></a><span class="lineno">  215</span>        }</div>
-<div class="line"><a id="l00216" name="l00216"></a><span class="lineno">  216</span> </div>
-<div class="line"><a id="l00217" name="l00217"></a><span class="lineno">  217</span>    <span class="keyword">private</span>:</div>
-<div class="line"><a id="l00218" name="l00218"></a><span class="lineno">  218</span>        uint16_t pick_io_context_idx()</div>
-<div class="line"><a id="l00219" name="l00219"></a><span class="lineno">  219</span>        {</div>
-<div class="line"><a id="l00220" name="l00220"></a><span class="lineno">  220</span>            uint16_t min_queue_idx = 0;</div>
-<div class="line"><a id="l00221" name="l00221"></a><span class="lineno">  221</span> </div>
-<div class="line"><a id="l00222" name="l00222"></a><span class="lineno">  222</span>            <span class="comment">// TODO improve load balancing</span></div>
-<div class="line"><a id="l00223" name="l00223"></a><span class="lineno">  223</span>            <span class="comment">// size_t is used here to avoid the security issue https://codeql.github.com/codeql-query-help/cpp/cpp-comparison-with-wider-type/</span></div>
-<div class="line"><a id="l00224" name="l00224"></a><span class="lineno">  224</span>            <span class="comment">// even though the max value of this can be only uint16_t as concurrency is uint16_t.</span></div>
-<div class="line"><a id="l00225" name="l00225"></a><span class="lineno">  225</span>            <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> i = 1; i &lt; task_queue_length_pool_.size() &amp;&amp; task_queue_length_pool_[min_queue_idx] &gt; 0; i++)</div>
-<div class="line"><a id="l00226" name="l00226"></a><span class="lineno">  226</span>            <span class="comment">// No need to check other io_services if the current one has no tasks</span></div>
-<div class="line"><a id="l00227" name="l00227"></a><span class="lineno">  227</span>            {</div>
-<div class="line"><a id="l00228" name="l00228"></a><span class="lineno">  228</span>                <span class="keywordflow">if</span> (task_queue_length_pool_[i] &lt; task_queue_length_pool_[min_queue_idx])</div>
-<div class="line"><a id="l00229" name="l00229"></a><span class="lineno">  229</span>                    min_queue_idx = i;</div>
-<div class="line"><a id="l00230" name="l00230"></a><span class="lineno">  230</span>            }</div>
-<div class="line"><a id="l00231" name="l00231"></a><span class="lineno">  231</span>            <span class="keywordflow">return</span> min_queue_idx;</div>
-<div class="line"><a id="l00232" name="l00232"></a><span class="lineno">  232</span>        }</div>
-<div class="line"><a id="l00233" name="l00233"></a><span class="lineno">  233</span> </div>
-<div class="line"><a id="l00234" name="l00234"></a><span class="lineno">  234</span>        <span class="keywordtype">void</span> do_accept()</div>
-<div class="line"><a id="l00235" name="l00235"></a><span class="lineno">  235</span>        {</div>
-<div class="line"><a id="l00236" name="l00236"></a><span class="lineno">  236</span>            <span class="keywordflow">if</span> (!shutting_down_)</div>
-<div class="line"><a id="l00237" name="l00237"></a><span class="lineno">  237</span>            {</div>
-<div class="line"><a id="l00238" name="l00238"></a><span class="lineno">  238</span>                uint16_t context_idx = pick_io_context_idx();</div>
-<div class="line"><a id="l00239" name="l00239"></a><span class="lineno">  239</span>                asio::io_context&amp; ic = *io_context_pool_[context_idx];</div>
-<div class="line"><a id="l00240" name="l00240"></a><span class="lineno">  240</span>                task_queue_length_pool_[context_idx]++;</div>
-<div class="line"><a id="l00241" name="l00241"></a><span class="lineno">  241</span>                CROW_LOG_DEBUG &lt;&lt; &amp;ic &lt;&lt; <span class="stringliteral">&quot; {&quot;</span> &lt;&lt; context_idx &lt;&lt; <span class="stringliteral">&quot;} queue length: &quot;</span> &lt;&lt; task_queue_length_pool_[context_idx];</div>
-<div class="line"><a id="l00242" name="l00242"></a><span class="lineno">  242</span> </div>
-<div class="line"><a id="l00243" name="l00243"></a><span class="lineno">  243</span>                <span class="keyword">auto</span> p = std::make_shared&lt;Connection&lt;Adaptor, Handler, Middlewares...&gt;&gt;(</div>
-<div class="line"><a id="l00244" name="l00244"></a><span class="lineno">  244</span>                  ic, handler_, server_name_, middlewares_,</div>
-<div class="line"><a id="l00245" name="l00245"></a><span class="lineno">  245</span>                  get_cached_date_str_pool_[context_idx], *task_timer_pool_[context_idx], adaptor_ctx_, task_queue_length_pool_[context_idx]);</div>
-<div class="line"><a id="l00246" name="l00246"></a><span class="lineno">  246</span> </div>
-<div class="line"><a id="l00247" name="l00247"></a><span class="lineno">  247</span>                acceptor_.async_accept(</div>
-<div class="line"><a id="l00248" name="l00248"></a><span class="lineno">  248</span>                  p-&gt;socket(),</div>
-<div class="line"><a id="l00249" name="l00249"></a><span class="lineno">  249</span>                  [<span class="keyword">this</span>, p, &amp;ic, context_idx](error_code ec) {</div>
-<div class="line"><a id="l00250" name="l00250"></a><span class="lineno">  250</span>                      <span class="keywordflow">if</span> (!ec)</div>
-<div class="line"><a id="l00251" name="l00251"></a><span class="lineno">  251</span>                      {</div>
-<div class="line"><a id="l00252" name="l00252"></a><span class="lineno">  252</span>                          asio::post(ic,</div>
-<div class="line"><a id="l00253" name="l00253"></a><span class="lineno">  253</span>                            [p] {</div>
-<div class="line"><a id="l00254" name="l00254"></a><span class="lineno">  254</span>                                p-&gt;start();</div>
-<div class="line"><a id="l00255" name="l00255"></a><span class="lineno">  255</span>                            });</div>
-<div class="line"><a id="l00256" name="l00256"></a><span class="lineno">  256</span>                      }</div>
-<div class="line"><a id="l00257" name="l00257"></a><span class="lineno">  257</span>                      <span class="keywordflow">else</span></div>
-<div class="line"><a id="l00258" name="l00258"></a><span class="lineno">  258</span>                      {</div>
-<div class="line"><a id="l00259" name="l00259"></a><span class="lineno">  259</span>                          task_queue_length_pool_[context_idx]--;</div>
-<div class="line"><a id="l00260" name="l00260"></a><span class="lineno">  260</span>                          CROW_LOG_DEBUG &lt;&lt; &amp;ic &lt;&lt; <span class="stringliteral">&quot; {&quot;</span> &lt;&lt; context_idx &lt;&lt; <span class="stringliteral">&quot;} queue length: &quot;</span> &lt;&lt; task_queue_length_pool_[context_idx];</div>
-<div class="line"><a id="l00261" name="l00261"></a><span class="lineno">  261</span>                      }</div>
-<div class="line"><a id="l00262" name="l00262"></a><span class="lineno">  262</span>                      do_accept();</div>
-<div class="line"><a id="l00263" name="l00263"></a><span class="lineno">  263</span>                  });</div>
-<div class="line"><a id="l00264" name="l00264"></a><span class="lineno">  264</span>            }</div>
-<div class="line"><a id="l00265" name="l00265"></a><span class="lineno">  265</span>        }</div>
-<div class="line"><a id="l00266" name="l00266"></a><span class="lineno">  266</span><span class="comment"></span> </div>
-<div class="line"><a id="l00267" name="l00267"></a><span class="lineno">  267</span><span class="comment">        /// Notify anything using `wait_for_start()` to proceed</span></div>
-<div class="line"><a id="l00268" name="l00268"></a><span class="lineno">  268</span><span class="comment"></span>        <span class="keywordtype">void</span> notify_start()</div>
-<div class="line"><a id="l00269" name="l00269"></a><span class="lineno">  269</span>        {</div>
-<div class="line"><a id="l00270" name="l00270"></a><span class="lineno">  270</span>            std::unique_lock&lt;std::mutex&gt; lock(start_mutex_);</div>
-<div class="line"><a id="l00271" name="l00271"></a><span class="lineno">  271</span>            server_started_ = <span class="keyword">true</span>;</div>
-<div class="line"><a id="l00272" name="l00272"></a><span class="lineno">  272</span>            cv_started_.notify_all();</div>
+<div class="line"><a id="l00214" name="l00214"></a><span class="lineno">  214</span> </div>
+<div class="line"><a id="l00215" name="l00215"></a><span class="lineno">  215</span>        <span class="keywordtype">void</span> signal_clear()</div>
+<div class="line"><a id="l00216" name="l00216"></a><span class="lineno">  216</span>        {</div>
+<div class="line"><a id="l00217" name="l00217"></a><span class="lineno">  217</span>            signals_.clear();</div>
+<div class="line"><a id="l00218" name="l00218"></a><span class="lineno">  218</span>        }</div>
+<div class="line"><a id="l00219" name="l00219"></a><span class="lineno">  219</span> </div>
+<div class="line"><a id="l00220" name="l00220"></a><span class="lineno">  220</span>        <span class="keywordtype">void</span> signal_add(<span class="keywordtype">int</span> signal_number)</div>
+<div class="line"><a id="l00221" name="l00221"></a><span class="lineno">  221</span>        {</div>
+<div class="line"><a id="l00222" name="l00222"></a><span class="lineno">  222</span>            signals_.add(signal_number);</div>
+<div class="line"><a id="l00223" name="l00223"></a><span class="lineno">  223</span>        }</div>
+<div class="line"><a id="l00224" name="l00224"></a><span class="lineno">  224</span> </div>
+<div class="line"><a id="l00225" name="l00225"></a><span class="lineno">  225</span>    <span class="keyword">private</span>:</div>
+<div class="line"><a id="l00226" name="l00226"></a><span class="lineno">  226</span>        uint16_t pick_io_context_idx()</div>
+<div class="line"><a id="l00227" name="l00227"></a><span class="lineno">  227</span>        {</div>
+<div class="line"><a id="l00228" name="l00228"></a><span class="lineno">  228</span>            uint16_t min_queue_idx = 0;</div>
+<div class="line"><a id="l00229" name="l00229"></a><span class="lineno">  229</span> </div>
+<div class="line"><a id="l00230" name="l00230"></a><span class="lineno">  230</span>            <span class="comment">// TODO improve load balancing</span></div>
+<div class="line"><a id="l00231" name="l00231"></a><span class="lineno">  231</span>            <span class="comment">// size_t is used here to avoid the security issue https://codeql.github.com/codeql-query-help/cpp/cpp-comparison-with-wider-type/</span></div>
+<div class="line"><a id="l00232" name="l00232"></a><span class="lineno">  232</span>            <span class="comment">// even though the max value of this can be only uint16_t as concurrency is uint16_t.</span></div>
+<div class="line"><a id="l00233" name="l00233"></a><span class="lineno">  233</span>            <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> i = 1; i &lt; task_queue_length_pool_.size() &amp;&amp; task_queue_length_pool_[min_queue_idx] &gt; 0; i++)</div>
+<div class="line"><a id="l00234" name="l00234"></a><span class="lineno">  234</span>            <span class="comment">// No need to check other io_services if the current one has no tasks</span></div>
+<div class="line"><a id="l00235" name="l00235"></a><span class="lineno">  235</span>            {</div>
+<div class="line"><a id="l00236" name="l00236"></a><span class="lineno">  236</span>                <span class="keywordflow">if</span> (task_queue_length_pool_[i] &lt; task_queue_length_pool_[min_queue_idx])</div>
+<div class="line"><a id="l00237" name="l00237"></a><span class="lineno">  237</span>                    min_queue_idx = i;</div>
+<div class="line"><a id="l00238" name="l00238"></a><span class="lineno">  238</span>            }</div>
+<div class="line"><a id="l00239" name="l00239"></a><span class="lineno">  239</span>            <span class="keywordflow">return</span> min_queue_idx;</div>
+<div class="line"><a id="l00240" name="l00240"></a><span class="lineno">  240</span>        }</div>
+<div class="line"><a id="l00241" name="l00241"></a><span class="lineno">  241</span> </div>
+<div class="line"><a id="l00242" name="l00242"></a><span class="lineno">  242</span>        <span class="keywordtype">void</span> do_accept()</div>
+<div class="line"><a id="l00243" name="l00243"></a><span class="lineno">  243</span>        {</div>
+<div class="line"><a id="l00244" name="l00244"></a><span class="lineno">  244</span>            <span class="keywordflow">if</span> (!shutting_down_)</div>
+<div class="line"><a id="l00245" name="l00245"></a><span class="lineno">  245</span>            {</div>
+<div class="line"><a id="l00246" name="l00246"></a><span class="lineno">  246</span>                uint16_t context_idx = pick_io_context_idx();</div>
+<div class="line"><a id="l00247" name="l00247"></a><span class="lineno">  247</span>                asio::io_context&amp; ic = *io_context_pool_[context_idx];</div>
+<div class="line"><a id="l00248" name="l00248"></a><span class="lineno">  248</span>                task_queue_length_pool_[context_idx]++;</div>
+<div class="line"><a id="l00249" name="l00249"></a><span class="lineno">  249</span>                CROW_LOG_DEBUG &lt;&lt; &amp;ic &lt;&lt; <span class="stringliteral">&quot; {&quot;</span> &lt;&lt; context_idx &lt;&lt; <span class="stringliteral">&quot;} queue length: &quot;</span> &lt;&lt; task_queue_length_pool_[context_idx];</div>
+<div class="line"><a id="l00250" name="l00250"></a><span class="lineno">  250</span> </div>
+<div class="line"><a id="l00251" name="l00251"></a><span class="lineno">  251</span>                <span class="keyword">auto</span> p = std::make_shared&lt;Connection&lt;Adaptor, Handler, Middlewares...&gt;&gt;(</div>
+<div class="line"><a id="l00252" name="l00252"></a><span class="lineno">  252</span>                  ic, handler_, server_name_, middlewares_,</div>
+<div class="line"><a id="l00253" name="l00253"></a><span class="lineno">  253</span>                  get_cached_date_str_pool_[context_idx], *task_timer_pool_[context_idx], adaptor_ctx_, task_queue_length_pool_[context_idx]);</div>
+<div class="line"><a id="l00254" name="l00254"></a><span class="lineno">  254</span> </div>
+<div class="line"><a id="l00255" name="l00255"></a><span class="lineno">  255</span>                acceptor_.async_accept(</div>
+<div class="line"><a id="l00256" name="l00256"></a><span class="lineno">  256</span>                  p-&gt;socket(),</div>
+<div class="line"><a id="l00257" name="l00257"></a><span class="lineno">  257</span>                  [<span class="keyword">this</span>, p, &amp;ic, context_idx](error_code ec) {</div>
+<div class="line"><a id="l00258" name="l00258"></a><span class="lineno">  258</span>                      <span class="keywordflow">if</span> (!ec)</div>
+<div class="line"><a id="l00259" name="l00259"></a><span class="lineno">  259</span>                      {</div>
+<div class="line"><a id="l00260" name="l00260"></a><span class="lineno">  260</span>                          asio::post(ic,</div>
+<div class="line"><a id="l00261" name="l00261"></a><span class="lineno">  261</span>                            [p] {</div>
+<div class="line"><a id="l00262" name="l00262"></a><span class="lineno">  262</span>                                p-&gt;start();</div>
+<div class="line"><a id="l00263" name="l00263"></a><span class="lineno">  263</span>                            });</div>
+<div class="line"><a id="l00264" name="l00264"></a><span class="lineno">  264</span>                      }</div>
+<div class="line"><a id="l00265" name="l00265"></a><span class="lineno">  265</span>                      <span class="keywordflow">else</span></div>
+<div class="line"><a id="l00266" name="l00266"></a><span class="lineno">  266</span>                      {</div>
+<div class="line"><a id="l00267" name="l00267"></a><span class="lineno">  267</span>                          task_queue_length_pool_[context_idx]--;</div>
+<div class="line"><a id="l00268" name="l00268"></a><span class="lineno">  268</span>                          CROW_LOG_DEBUG &lt;&lt; &amp;ic &lt;&lt; <span class="stringliteral">&quot; {&quot;</span> &lt;&lt; context_idx &lt;&lt; <span class="stringliteral">&quot;} queue length: &quot;</span> &lt;&lt; task_queue_length_pool_[context_idx];</div>
+<div class="line"><a id="l00269" name="l00269"></a><span class="lineno">  269</span>                      }</div>
+<div class="line"><a id="l00270" name="l00270"></a><span class="lineno">  270</span>                      do_accept();</div>
+<div class="line"><a id="l00271" name="l00271"></a><span class="lineno">  271</span>                  });</div>
+<div class="line"><a id="l00272" name="l00272"></a><span class="lineno">  272</span>            }</div>
 <div class="line"><a id="l00273" name="l00273"></a><span class="lineno">  273</span>        }</div>
-<div class="line"><a id="l00274" name="l00274"></a><span class="lineno">  274</span> </div>
-<div class="line"><a id="l00275" name="l00275"></a><span class="lineno">  275</span>    <span class="keyword">private</span>:</div>
-<div class="line"><a id="l00276" name="l00276"></a><span class="lineno">  276</span>        std::vector&lt;std::unique_ptr&lt;asio::io_context&gt;&gt; io_context_pool_;</div>
-<div class="line"><a id="l00277" name="l00277"></a><span class="lineno">  277</span>        asio::io_context io_context_;</div>
-<div class="line"><a id="l00278" name="l00278"></a><span class="lineno">  278</span>        std::vector&lt;detail::task_timer*&gt; task_timer_pool_;</div>
-<div class="line"><a id="l00279" name="l00279"></a><span class="lineno">  279</span>        std::vector&lt;std::function&lt;std::string()&gt;&gt; get_cached_date_str_pool_;</div>
-<div class="line"><a id="l00280" name="l00280"></a><span class="lineno">  280</span>        tcp::acceptor acceptor_;</div>
-<div class="line"><a id="l00281" name="l00281"></a><span class="lineno">  281</span>        <span class="keywordtype">bool</span> shutting_down_ = <span class="keyword">false</span>;</div>
-<div class="line"><a id="l00282" name="l00282"></a><span class="lineno">  282</span>        <span class="keywordtype">bool</span> server_started_{<span class="keyword">false</span>};</div>
-<div class="line"><a id="l00283" name="l00283"></a><span class="lineno">  283</span>        std::condition_variable cv_started_;</div>
-<div class="line"><a id="l00284" name="l00284"></a><span class="lineno">  284</span>        std::mutex start_mutex_;</div>
-<div class="line"><a id="l00285" name="l00285"></a><span class="lineno">  285</span>        asio::signal_set signals_;</div>
-<div class="line"><a id="l00286" name="l00286"></a><span class="lineno">  286</span> </div>
-<div class="line"><a id="l00287" name="l00287"></a><span class="lineno">  287</span>        asio::basic_waitable_timer&lt;std::chrono::high_resolution_clock&gt; tick_timer_;</div>
-<div class="line"><a id="l00288" name="l00288"></a><span class="lineno">  288</span> </div>
-<div class="line"><a id="l00289" name="l00289"></a><span class="lineno">  289</span>        Handler* handler_;</div>
-<div class="line"><a id="l00290" name="l00290"></a><span class="lineno">  290</span>        uint16_t concurrency_{2};</div>
-<div class="line"><a id="l00291" name="l00291"></a><span class="lineno">  291</span>        std::uint8_t timeout_;</div>
-<div class="line"><a id="l00292" name="l00292"></a><span class="lineno">  292</span>        std::string server_name_;</div>
-<div class="line"><a id="l00293" name="l00293"></a><span class="lineno">  293</span>        uint16_t port_;</div>
-<div class="line"><a id="l00294" name="l00294"></a><span class="lineno">  294</span>        std::string bindaddr_;</div>
-<div class="line"><a id="l00295" name="l00295"></a><span class="lineno">  295</span>        std::vector&lt;std::atomic&lt;unsigned int&gt;&gt; task_queue_length_pool_;</div>
+<div class="line"><a id="l00274" name="l00274"></a><span class="lineno">  274</span><span class="comment"></span> </div>
+<div class="line"><a id="l00275" name="l00275"></a><span class="lineno">  275</span><span class="comment">        /// Notify anything using `wait_for_start()` to proceed</span></div>
+<div class="line"><a id="l00276" name="l00276"></a><span class="lineno">  276</span><span class="comment"></span>        <span class="keywordtype">void</span> notify_start()</div>
+<div class="line"><a id="l00277" name="l00277"></a><span class="lineno">  277</span>        {</div>
+<div class="line"><a id="l00278" name="l00278"></a><span class="lineno">  278</span>            std::unique_lock&lt;std::mutex&gt; lock(start_mutex_);</div>
+<div class="line"><a id="l00279" name="l00279"></a><span class="lineno">  279</span>            server_started_ = <span class="keyword">true</span>;</div>
+<div class="line"><a id="l00280" name="l00280"></a><span class="lineno">  280</span>            cv_started_.notify_all();</div>
+<div class="line"><a id="l00281" name="l00281"></a><span class="lineno">  281</span>        }</div>
+<div class="line"><a id="l00282" name="l00282"></a><span class="lineno">  282</span> </div>
+<div class="line"><a id="l00283" name="l00283"></a><span class="lineno">  283</span>    <span class="keyword">private</span>:</div>
+<div class="line"><a id="l00284" name="l00284"></a><span class="lineno">  284</span>        std::vector&lt;std::unique_ptr&lt;asio::io_context&gt;&gt; io_context_pool_;</div>
+<div class="line"><a id="l00285" name="l00285"></a><span class="lineno">  285</span>        asio::io_context io_context_;</div>
+<div class="line"><a id="l00286" name="l00286"></a><span class="lineno">  286</span>        std::vector&lt;detail::task_timer*&gt; task_timer_pool_;</div>
+<div class="line"><a id="l00287" name="l00287"></a><span class="lineno">  287</span>        std::vector&lt;std::function&lt;std::string()&gt;&gt; get_cached_date_str_pool_;</div>
+<div class="line"><a id="l00288" name="l00288"></a><span class="lineno">  288</span>        tcp::acceptor acceptor_;</div>
+<div class="line"><a id="l00289" name="l00289"></a><span class="lineno">  289</span>        <span class="keywordtype">bool</span> shutting_down_ = <span class="keyword">false</span>;</div>
+<div class="line"><a id="l00290" name="l00290"></a><span class="lineno">  290</span>        <span class="keywordtype">bool</span> server_started_{<span class="keyword">false</span>};</div>
+<div class="line"><a id="l00291" name="l00291"></a><span class="lineno">  291</span>        std::condition_variable cv_started_;</div>
+<div class="line"><a id="l00292" name="l00292"></a><span class="lineno">  292</span>        std::mutex start_mutex_;</div>
+<div class="line"><a id="l00293" name="l00293"></a><span class="lineno">  293</span>        asio::signal_set signals_;</div>
+<div class="line"><a id="l00294" name="l00294"></a><span class="lineno">  294</span> </div>
+<div class="line"><a id="l00295" name="l00295"></a><span class="lineno">  295</span>        asio::basic_waitable_timer&lt;std::chrono::high_resolution_clock&gt; tick_timer_;</div>
 <div class="line"><a id="l00296" name="l00296"></a><span class="lineno">  296</span> </div>
-<div class="line"><a id="l00297" name="l00297"></a><span class="lineno">  297</span>        std::chrono::milliseconds tick_interval_;</div>
-<div class="line"><a id="l00298" name="l00298"></a><span class="lineno">  298</span>        std::function&lt;void()&gt; tick_function_;</div>
-<div class="line"><a id="l00299" name="l00299"></a><span class="lineno">  299</span> </div>
-<div class="line"><a id="l00300" name="l00300"></a><span class="lineno">  300</span>        std::tuple&lt;Middlewares...&gt;* middlewares_;</div>
-<div class="line"><a id="l00301" name="l00301"></a><span class="lineno">  301</span> </div>
-<div class="line"><a id="l00302" name="l00302"></a><span class="lineno">  302</span>        <span class="keyword">typename</span> Adaptor::context* adaptor_ctx_;</div>
-<div class="line"><a id="l00303" name="l00303"></a><span class="lineno">  303</span>    };</div>
+<div class="line"><a id="l00297" name="l00297"></a><span class="lineno">  297</span>        Handler* handler_;</div>
+<div class="line"><a id="l00298" name="l00298"></a><span class="lineno">  298</span>        uint16_t concurrency_{2};</div>
+<div class="line"><a id="l00299" name="l00299"></a><span class="lineno">  299</span>        std::uint8_t timeout_;</div>
+<div class="line"><a id="l00300" name="l00300"></a><span class="lineno">  300</span>        std::string server_name_;</div>
+<div class="line"><a id="l00301" name="l00301"></a><span class="lineno">  301</span>        std::vector&lt;std::atomic&lt;unsigned int&gt;&gt; task_queue_length_pool_;</div>
+<div class="line"><a id="l00302" name="l00302"></a><span class="lineno">  302</span> </div>
+<div class="line"><a id="l00303" name="l00303"></a><span class="lineno">  303</span>        std::chrono::milliseconds tick_interval_;</div>
+<div class="line"><a id="l00304" name="l00304"></a><span class="lineno">  304</span>        std::function&lt;void()&gt; tick_function_;</div>
+<div class="line"><a id="l00305" name="l00305"></a><span class="lineno">  305</span> </div>
+<div class="line"><a id="l00306" name="l00306"></a><span class="lineno">  306</span>        std::tuple&lt;Middlewares...&gt;* middlewares_;</div>
+<div class="line"><a id="l00307" name="l00307"></a><span class="lineno">  307</span> </div>
+<div class="line"><a id="l00308" name="l00308"></a><span class="lineno">  308</span>        <span class="keyword">typename</span> Adaptor::context* adaptor_ctx_;</div>
+<div class="line"><a id="l00309" name="l00309"></a><span class="lineno">  309</span>    };</div>
 </div>
-<div class="line"><a id="l00304" name="l00304"></a><span class="lineno">  304</span>} <span class="comment">// namespace crow</span></div>
+<div class="line"><a id="l00310" name="l00310"></a><span class="lineno">  310</span>} <span class="comment">// namespace crow</span></div>
 <div class="ttc" id="aclasscrow_1_1_server_html"><div class="ttname"><a href="classcrow_1_1_server.html">crow::Server</a></div><div class="ttdef"><b>Definition</b> http_server.h:43</div></div>
-<div class="ttc" id="aclasscrow_1_1_server_html_a0b63b4a3da3acbb2a1870db19279f580"><div class="ttname"><a href="classcrow_1_1_server.html#a0b63b4a3da3acbb2a1870db19279f580">crow::Server::wait_for_start</a></div><div class="ttdeci">void wait_for_start()</div><div class="ttdoc">Wait until the server has properly started.</div><div class="ttdef"><b>Definition</b> http_server.h:200</div></div>
+<div class="ttc" id="aclasscrow_1_1_server_html_afe725c4024cef73ab5bf6562b7c7b27f"><div class="ttname"><a href="classcrow_1_1_server.html#afe725c4024cef73ab5bf6562b7c7b27f">crow::Server::wait_for_start</a></div><div class="ttdeci">std::cv_status wait_for_start(std::chrono::steady_clock::time_point wait_until)</div><div class="ttdoc">Wait until the server has properly started or until timeout.</div><div class="ttdef"><b>Definition</b> http_server.h:205</div></div>
 <div class="ttc" id="aclasscrow_1_1detail_1_1task__timer_html"><div class="ttname"><a href="classcrow_1_1detail_1_1task__timer.html">crow::detail::task_timer</a></div><div class="ttdef"><b>Definition</b> task_timer.h:36</div></div>
 <div class="ttc" id="aclasscrow_1_1detail_1_1task__timer_html_a7a1851ddf3d42b65c674a8984557cbb0"><div class="ttname"><a href="classcrow_1_1detail_1_1task__timer.html#a7a1851ddf3d42b65c674a8984557cbb0">crow::detail::task_timer::set_default_timeout</a></div><div class="ttdeci">void set_default_timeout(uint8_t timeout)</div><div class="ttdef"><b>Definition</b> task_timer.h:107</div></div>
 <div class="ttc" id="anamespacecrow_html"><div class="ttname"><a href="namespacecrow.html">crow</a></div><div class="ttdoc">The main namespace of the library. In this namespace is defined the most important classes and functi...</div></div>
@@ -422,7 +428,7 @@ $(document).ready(function(){initNavTree('http__server_8h_source.html',''); init
 			<ul>
 				<li class="navelem"><a class="el" href="dir_d44c64559bbebec7f509842c48db8b23.html">include</a></li><li class="navelem"><a class="el" href="dir_d22c1cb87b72f01e1a7f207eb3bfd1ca.html">crow</a></li><li class="navelem"><b>http_server.h</b></li>
 				<li class="footer">
-					Generated on Wed Jan 15 2025 for Crow by <a href="http://www.doxygen.org/index.html">
+					Generated on Mon Feb 3 2025 for Crow by <a href="http://www.doxygen.org/index.html">
 					<img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.9.8.
 					Dark theme by <a href="http://majerle.eu" target="_new">Tilen Majerle</a>. Edited by <a href="https://github.com/The-EDev" target="_new">Farook Al-Sammarraie</a>. All rights reserved.
 				</li>
