@@ -433,7 +433,7 @@ $(document).ready(function(){initNavTree('http__response_8h_source.html',''); in
 <div class="line"><a id="l00301" name="l00301"></a><span class="lineno">  301</span><span class="preprocessor">#endif</span></div>
 <div class="line"><a id="l00302" name="l00302"></a><span class="lineno">  302</span>            <span class="keywordflow">if</span> (file_info.statResult == 0 &amp;&amp; S_ISREG(file_info.statbuf.st_mode))</div>
 <div class="line"><a id="l00303" name="l00303"></a><span class="lineno">  303</span>            {</div>
-<div class="line"><a id="l00304" name="l00304"></a><span class="lineno">  304</span>                std::size_t last_dot = path.find_last_of(<span class="stringliteral">&quot;.&quot;</span>);</div>
+<div class="line"><a id="l00304" name="l00304"></a><span class="lineno">  304</span>                std::size_t last_dot = path.find_last_of(<span class="charliteral">&#39;.&#39;</span>);</div>
 <div class="line"><a id="l00305" name="l00305"></a><span class="lineno">  305</span>                std::string extension = path.substr(last_dot + 1);</div>
 <div class="line"><a id="l00306" name="l00306"></a><span class="lineno">  306</span>                <a class="code hl_variable" href="structcrow_1_1response.html#aabc1f9b3264b8c5a2d05dcb409e8ff3f">code</a> = 200;</div>
 <div class="line"><a id="l00307" name="l00307"></a><span class="lineno">  307</span>                this-&gt;<a class="code hl_function" href="structcrow_1_1response.html#a16d1a8bcec6460ba97f90b80881693b8">add_header</a>(<span class="stringliteral">&quot;Content-Length&quot;</span>, std::to_string(file_info.statbuf.st_size));</div>
@@ -491,7 +491,7 @@ $(document).ready(function(){initNavTree('http__response_8h_source.html',''); in
 			<ul>
 				<li class="navelem"><a class="el" href="dir_d44c64559bbebec7f509842c48db8b23.html">include</a></li><li class="navelem"><a class="el" href="dir_d22c1cb87b72f01e1a7f207eb3bfd1ca.html">crow</a></li><li class="navelem"><b>http_response.h</b></li>
 				<li class="footer">
-					Generated on Fri Jan 31 2025 for Crow by <a href="http://www.doxygen.org/index.html">
+					Generated on Tue Feb 4 2025 for Crow by <a href="http://www.doxygen.org/index.html">
 					<img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.9.8.
 					Dark theme by <a href="http://majerle.eu" target="_new">Tilen Majerle</a>. Edited by <a href="https://github.com/The-EDev" target="_new">Farook Al-Sammarraie</a>. All rights reserved.
 				</li>
