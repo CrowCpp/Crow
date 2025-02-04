@@ -218,10 +218,10 @@ std::string&#160;</td><td class="memItemRight" valign="bottom"><b>bindaddr</b> (
 <a class="el" href="classcrow_1_1_crow.html#a5b0a203a6f9070ea8010227dcdbcec60">self_t</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>concurrency</b> (std::uint16_t concurrency)</td></tr>
 <tr class="memdesc:aef4806351da08c271f1e0863e9c75b3e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Run the server on multiple threads using a specific number. <br /></td></tr>
 <tr class="separator:aef4806351da08c271f1e0863e9c75b3e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af57f77dfa5ddbf65befc92779fee6d5d" id="r_af57f77dfa5ddbf65befc92779fee6d5d"><td class="memItemLeft" align="right" valign="top"><a id="af57f77dfa5ddbf65befc92779fee6d5d" name="af57f77dfa5ddbf65befc92779fee6d5d"></a>
-std::uint16_t&#160;</td><td class="memItemRight" valign="bottom"><b>concurrency</b> () const</td></tr>
-<tr class="memdesc:af57f77dfa5ddbf65befc92779fee6d5d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the number of threads that server is using. <br /></td></tr>
-<tr class="separator:af57f77dfa5ddbf65befc92779fee6d5d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abd824d73fdd02ba810b8dd37e2900240" id="r_abd824d73fdd02ba810b8dd37e2900240"><td class="memItemLeft" align="right" valign="top"><a id="abd824d73fdd02ba810b8dd37e2900240" name="abd824d73fdd02ba810b8dd37e2900240"></a>
+std::uint16_t&#160;</td><td class="memItemRight" valign="bottom"><b>concurrency</b> ()</td></tr>
+<tr class="memdesc:abd824d73fdd02ba810b8dd37e2900240"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the number of threads that server is using. <br /></td></tr>
+<tr class="separator:abd824d73fdd02ba810b8dd37e2900240"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adaaea481094e3f4488569c991772d27f" id="r_adaaea481094e3f4488569c991772d27f"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classcrow_1_1_crow.html#a5b0a203a6f9070ea8010227dcdbcec60">self_t</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcrow_1_1_crow.html#adaaea481094e3f4488569c991772d27f">loglevel</a> (LogLevel level)</td></tr>
 <tr class="memdesc:adaaea481094e3f4488569c991772d27f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the server's log level.  <br /></td></tr>
 <tr class="separator:adaaea481094e3f4488569c991772d27f"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -315,10 +315,10 @@ template&lt;typename T &gt; </td></tr>
 template&lt;typename T &gt; </td></tr>
 <tr class="memitem:ac6a0c5b3660cc5807e4e2bb43107c89b"><td class="memTemplItemLeft" align="right" valign="top">T &amp;&#160;</td><td class="memTemplItemRight" valign="bottom"><b>get_middleware</b> ()</td></tr>
 <tr class="separator:ac6a0c5b3660cc5807e4e2bb43107c89b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a06b50c2039e7bc146ac134af9fe7bf7f" id="r_a06b50c2039e7bc146ac134af9fe7bf7f"><td class="memItemLeft" align="right" valign="top"><a id="a06b50c2039e7bc146ac134af9fe7bf7f" name="a06b50c2039e7bc146ac134af9fe7bf7f"></a>
-std::cv_status&#160;</td><td class="memItemRight" valign="bottom"><b>wait_for_server_start</b> (std::chrono::milliseconds wait_timeout=std::chrono::milliseconds(3000))</td></tr>
-<tr class="memdesc:a06b50c2039e7bc146ac134af9fe7bf7f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Wait until the server has properly started. <br /></td></tr>
-<tr class="separator:a06b50c2039e7bc146ac134af9fe7bf7f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5e39821ccc9cbf8c6400fd86fc406c21" id="r_a5e39821ccc9cbf8c6400fd86fc406c21"><td class="memItemLeft" align="right" valign="top"><a id="a5e39821ccc9cbf8c6400fd86fc406c21" name="a5e39821ccc9cbf8c6400fd86fc406c21"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>wait_for_server_start</b> ()</td></tr>
+<tr class="memdesc:a5e39821ccc9cbf8c6400fd86fc406c21"><td class="mdescLeft">&#160;</td><td class="mdescRight">Wait until the server has properly started. <br /></td></tr>
+<tr class="separator:a5e39821ccc9cbf8c6400fd86fc406c21"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;typename... Middlewares&gt;<br />
@@ -515,7 +515,7 @@ template&lt;typename... Middlewares&gt; </div>
 			<ul>
 				<li class="navelem"><a class="el" href="namespacecrow.html">crow</a></li><li class="navelem"><a class="el" href="classcrow_1_1_crow.html">Crow</a></li>
 				<li class="footer">
-					Generated on Mon Feb 3 2025 for Crow by <a href="http://www.doxygen.org/index.html">
+					Generated on Tue Feb 4 2025 for Crow by <a href="http://www.doxygen.org/index.html">
 					<img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.9.8.
 					Dark theme by <a href="http://majerle.eu" target="_new">Tilen Majerle</a>. Edited by <a href="https://github.com/The-EDev" target="_new">Farook Al-Sammarraie</a>. All rights reserved.
 				</li>
