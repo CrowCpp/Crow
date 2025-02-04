@@ -1416,6 +1416,25 @@ TEST_CASE("json_list")
     CHECK("[5,6,7,8,4,3,2,1]" == x.dump());
 } // json_list
 
+static crow::json::wvalue getValue(int i){
+     return crow::json::wvalue(i);
+}
+
+TEST_CASE("json Incorrect move of wvalue class #953")
+{
+    {
+        crow::json::wvalue int_value(-500);
+        crow::json::wvalue copy_value(std::move(int_value));
+
+        REQUIRE(copy_value.dump()=="-500");
+    }
+    {
+         crow::json::wvalue json;
+         json["int_value"] = getValue(-500);
+         REQUIRE(json["int_value"].dump()=="-500");
+    }
+}
+
 TEST_CASE("template_basic")
 {
     auto t = crow::mustache::compile(R"---(attack of {{name}})---");
