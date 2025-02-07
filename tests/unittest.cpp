@@ -1997,6 +1997,10 @@ TEST_CASE("middleware_cors")
         return "-";
     });
 
+    CROW_ROUTE(app, "/auth-origin").methods(crow::HTTPMethod::Post)([&](const request&) {
+        return "-";
+    });
+
     CROW_ROUTE(app, "/expose")
     ([&](const request&) {
         return "-";
@@ -2024,8 +2028,14 @@ TEST_CASE("middleware_cors")
     CHECK(resp.find("Access-Control-Allow-Origin: test.test") != std::string::npos);
 
     resp = HttpClient::request(LOCALHOST_ADDRESS, port,
-                                    "GET /auth-origin\r\nOrigin: test-client\r\n\r\n");
+                               "GET /auth-origin\r\nOrigin: test-client\r\n\r\n");
     CHECK(resp.find("Access-Control-Allow-Origin: test-client") != std::string::npos);
+    CHECK(resp.find("Access-Control-Allow-Credentials: true") != std::string::npos);
+
+    resp = HttpClient::request(LOCALHOST_ADDRESS, port,
+                               "OPTIONS /auth-origin / HTTP/1.1 \r\n\r\n");
+    CHECK(resp.find("Access-Control-Allow-Origin: *") != std::string::npos);
+    CHECK(resp.find("Access-Control-Allow-Credentials: true") == std::string::npos);
 
     resp = HttpClient::request(LOCALHOST_ADDRESS, port,
                                "GET /expose\r\n\r\n");
