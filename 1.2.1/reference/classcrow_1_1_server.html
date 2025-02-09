@@ -34,7 +34,7 @@
 						<td id="projectlogo"><img alt="Logo" src="logo55.png"/></td>
 						<td id="projectalign" style="padding-left: 0.5em;">
 							<div id="projectname">Crow
-								&#160;<span id="projectnumber">1.2.2</span>
+								&#160;<span id="projectnumber">1.2.1</span>
 							</div>
 							<div id="projectbrief">A C++ microframework for the web</div>
 						</td>
@@ -108,9 +108,9 @@ $(document).ready(function(){initNavTree('classcrow_1_1_server.html',''); initRe
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:ad5afeaf32f38fa572f99ec9afb1a6fc7" id="r_ad5afeaf32f38fa572f99ec9afb1a6fc7"><td class="memItemLeft" align="right" valign="top"><a id="ad5afeaf32f38fa572f99ec9afb1a6fc7" name="ad5afeaf32f38fa572f99ec9afb1a6fc7"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>Server</b> (Handler *handler, const tcp::endpoint &amp;endpoint, std::string server_name=std::string(&quot;Crow/&quot;)+VERSION, std::tuple&lt; Middlewares... &gt; *middlewares=nullptr, uint16_t concurrency=1, uint8_t timeout=5, typename Adaptor::context *adaptor_ctx=nullptr)</td></tr>
-<tr class="separator:ad5afeaf32f38fa572f99ec9afb1a6fc7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af7960abfbe9b7b4f53a0f8b774b5015a" id="r_af7960abfbe9b7b4f53a0f8b774b5015a"><td class="memItemLeft" align="right" valign="top"><a id="af7960abfbe9b7b4f53a0f8b774b5015a" name="af7960abfbe9b7b4f53a0f8b774b5015a"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>Server</b> (Handler *handler, std::string bindaddr, uint16_t port, std::string server_name=std::string(&quot;Crow/&quot;)+VERSION, std::tuple&lt; Middlewares... &gt; *middlewares=nullptr, uint16_t concurrency=1, uint8_t timeout=5, typename Adaptor::context *adaptor_ctx=nullptr)</td></tr>
+<tr class="separator:af7960abfbe9b7b4f53a0f8b774b5015a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abcd3d2395e5ca2a44fd58eacfbb1ed65" id="r_abcd3d2395e5ca2a44fd58eacfbb1ed65"><td class="memItemLeft" align="right" valign="top"><a id="abcd3d2395e5ca2a44fd58eacfbb1ed65" name="abcd3d2395e5ca2a44fd58eacfbb1ed65"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>set_tick_function</b> (std::chrono::milliseconds d, std::function&lt; void()&gt; f)</td></tr>
 <tr class="separator:abcd3d2395e5ca2a44fd58eacfbb1ed65"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -123,13 +123,13 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>run</b> ()</td></tr>
 <tr class="memitem:aff2067a94286dd5a584a187cbce369f5" id="r_aff2067a94286dd5a584a187cbce369f5"><td class="memItemLeft" align="right" valign="top"><a id="aff2067a94286dd5a584a187cbce369f5" name="aff2067a94286dd5a584a187cbce369f5"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>stop</b> ()</td></tr>
 <tr class="separator:aff2067a94286dd5a584a187cbce369f5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4b406962ce8d566948d323d4c9e9a5a4" id="r_a4b406962ce8d566948d323d4c9e9a5a4"><td class="memItemLeft" align="right" valign="top"><a id="a4b406962ce8d566948d323d4c9e9a5a4" name="a4b406962ce8d566948d323d4c9e9a5a4"></a>
-uint16_t&#160;</td><td class="memItemRight" valign="bottom"><b>port</b> () const</td></tr>
-<tr class="separator:a4b406962ce8d566948d323d4c9e9a5a4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afe725c4024cef73ab5bf6562b7c7b27f" id="r_afe725c4024cef73ab5bf6562b7c7b27f"><td class="memItemLeft" align="right" valign="top"><a id="afe725c4024cef73ab5bf6562b7c7b27f" name="afe725c4024cef73ab5bf6562b7c7b27f"></a>
-std::cv_status&#160;</td><td class="memItemRight" valign="bottom"><b>wait_for_start</b> (std::chrono::steady_clock::time_point wait_until)</td></tr>
-<tr class="memdesc:afe725c4024cef73ab5bf6562b7c7b27f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Wait until the server has properly started or until timeout. <br /></td></tr>
-<tr class="separator:afe725c4024cef73ab5bf6562b7c7b27f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3e636f1a7330bffc109267686f5ef483" id="r_a3e636f1a7330bffc109267686f5ef483"><td class="memItemLeft" align="right" valign="top"><a id="a3e636f1a7330bffc109267686f5ef483" name="a3e636f1a7330bffc109267686f5ef483"></a>
+uint16_t&#160;</td><td class="memItemRight" valign="bottom"><b>port</b> ()</td></tr>
+<tr class="separator:a3e636f1a7330bffc109267686f5ef483"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0b63b4a3da3acbb2a1870db19279f580" id="r_a0b63b4a3da3acbb2a1870db19279f580"><td class="memItemLeft" align="right" valign="top"><a id="a0b63b4a3da3acbb2a1870db19279f580" name="a0b63b4a3da3acbb2a1870db19279f580"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>wait_for_start</b> ()</td></tr>
+<tr class="memdesc:a0b63b4a3da3acbb2a1870db19279f580"><td class="mdescLeft">&#160;</td><td class="mdescRight">Wait until the server has properly started. <br /></td></tr>
+<tr class="separator:a0b63b4a3da3acbb2a1870db19279f580"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae4683f3386b9f3f10013f42d01cdd769" id="r_ae4683f3386b9f3f10013f42d01cdd769"><td class="memItemLeft" align="right" valign="top"><a id="ae4683f3386b9f3f10013f42d01cdd769" name="ae4683f3386b9f3f10013f42d01cdd769"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>signal_clear</b> ()</td></tr>
 <tr class="separator:ae4683f3386b9f3f10013f42d01cdd769"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -147,7 +147,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>signal_add</b> (int s
 			<ul>
 				<li class="navelem"><a class="el" href="namespacecrow.html">crow</a></li><li class="navelem"><a class="el" href="classcrow_1_1_server.html">Server</a></li>
 				<li class="footer">
-					Generated on Fri Feb 7 2025 for Crow by <a href="http://www.doxygen.org/index.html">
+					Generated on Sun Feb 9 2025 for Crow by <a href="http://www.doxygen.org/index.html">
 					<img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.9.8.
 					Dark theme by <a href="http://majerle.eu" target="_new">Tilen Majerle</a>. Edited by <a href="https://github.com/The-EDev" target="_new">Farook Al-Sammarraie</a>. All rights reserved.
 				</li>
