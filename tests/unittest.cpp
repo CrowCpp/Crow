@@ -3494,8 +3494,8 @@ TEST_CASE("zlib_compression")
 
             std::string response_deflate(buf_deflate);
             std::string response_gzip(buf_gzip);
-            response_deflate = response_deflate.substr(98);
-            response_gzip = response_gzip.substr(98);
+            response_deflate = response_deflate.substr(response_deflate.find("\r\n\r\n") + 4);
+            response_gzip = response_gzip.substr(response_gzip.find("\r\n\r\n") + 4);
 
             socket[0].close();
             socket[1].close();
@@ -3516,8 +3516,8 @@ TEST_CASE("zlib_compression")
 
             std::string response_deflate(buf_deflate);
             std::string response_gzip(buf_gzip);
-            response_deflate = response_deflate.substr(98);
-            response_gzip = response_gzip.substr(98);
+            response_deflate = response_deflate.substr(response_deflate.find("\r\n\r\n") + 4);
+            response_gzip = response_gzip.substr(response_gzip.find("\r\n\r\n") + 4);
 
             socket[0].close();
             socket[1].close();
