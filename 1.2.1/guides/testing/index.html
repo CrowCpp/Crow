@@ -1475,7 +1475,10 @@
 <span class="normal">10</span>
 <span class="normal">11</span>
 <span class="normal">12</span>
-<span class="normal">13</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="w">  </span><span class="n">CROW_ROUTE</span><span class="p">(</span><span class="n">app</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;/place&quot;</span><span class="p">)</span>
+<span class="normal">13</span>
+<span class="normal">14</span>
+<span class="normal">15</span>
+<span class="normal">16</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="w">  </span><span class="n">CROW_ROUTE</span><span class="p">(</span><span class="n">app</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;/place&quot;</span><span class="p">)</span>
 <span class="w">  </span><span class="p">([]</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="s">&quot;hi&quot;</span><span class="p">;</span><span class="w"> </span><span class="p">});</span>
 
 <span class="w">  </span><span class="n">app</span><span class="p">.</span><span class="n">validate</span><span class="p">();</span><span class="w">  </span><span class="c1">//Used to make sure all the route handlers are in order.</span>
@@ -1486,7 +1489,10 @@
 
 <span class="w">    </span><span class="n">req</span><span class="p">.</span><span class="n">url</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;/place&quot;</span><span class="p">;</span>
 
-<span class="w">    </span><span class="n">app</span><span class="p">.</span><span class="n">handle</span><span class="p">(</span><span class="n">req</span><span class="p">,</span><span class="w"> </span><span class="n">res</span><span class="p">);</span><span class="w"> </span><span class="c1">//res will contain a code of 200, and a response body of &quot;hi&quot;</span>
+<span class="w">    </span><span class="n">app</span><span class="p">.</span><span class="n">handle_full</span><span class="p">(</span><span class="n">req</span><span class="p">,</span><span class="w"> </span><span class="n">res</span><span class="p">);</span>
+<span class="w">    </span><span class="c1">// res will contain:</span>
+<span class="w">    </span><span class="c1">// res.code == 200</span>
+<span class="w">    </span><span class="c1">// res.body == &quot;hi&quot;</span>
 <span class="w">  </span><span class="p">}</span>
 </code></pre></div></td></tr></table></div>
 <div class="admonition note">
