@@ -42,38 +42,27 @@ TEST_CASE("SSL")
 
     asio::ssl::context ctx(asio::ssl::context::sslv23);
 
-    asio::io_service is;
+    asio::io_context ioc;
     {
-        asio::ssl::stream<asio::ip::tcp::socket> c(is, ctx);
+        asio::ssl::stream<asio::ip::tcp::socket> c(ioc, ctx);
         c.lowest_layer().connect(asio::ip::tcp::endpoint(asio::ip::address::from_string(LOCALHOST_ADDRESS), 45460));
 
         c.handshake(asio::ssl::stream_base::client);
         c.write_some(asio::buffer(sendmsg));
 
-        size_t x = 0;
+        std::string http_response;
         size_t y = 0;
-        long z = 0;
 
-        while (x < 121)
-        {
-            y = c.read_some(asio::buffer(buf, 2048));
-            x += y;
-            buf[y] = '\0';
+        asio::error_code ec{};
+        while (!ec) {
+            y = c.read_some(asio::buffer(buf, 2048),ec);
+            http_response.append(buf,y);
         }
+        auto start_body =  http_response.find("\r\n\r\n");
+        CHECK(start_body!=std::string::npos);
 
-        std::string to_test(buf);
+        CHECK(std::string("Hello world, I'm keycrt.") == http_response.substr(start_body+4));
 
-        if ((z = to_test.length() - 24) >= 0)
-        {
-
-            CHECK(std::string("Hello world, I'm keycrt.") == to_test.substr(z));
-        }
-        else
-        {
-            CHECK(std::string("Hello world, I'm keycrt.").substr((z * -1)) == to_test);
-        }
-
-        asio::error_code ec;
         c.lowest_layer().shutdown(asio::socket_base::shutdown_type::shutdown_both, ec);
     }
 
