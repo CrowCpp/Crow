@@ -235,7 +235,7 @@ $(document).ready(function(){initNavTree('http__connection_8h_source.html',''); 
 <div class="line"><a id="l00128" name="l00128"></a><span class="lineno">  128</span>                buffers_.clear();</div>
 <div class="line"><a id="l00129" name="l00129"></a><span class="lineno">  129</span>                <span class="keyword">static</span> std::string expect_100_continue = <span class="stringliteral">&quot;HTTP/1.1 100 Continue\r\n\r\n&quot;</span>;</div>
 <div class="line"><a id="l00130" name="l00130"></a><span class="lineno">  130</span>                buffers_.emplace_back(expect_100_continue.data(), expect_100_continue.size());</div>
-<div class="line"><a id="l00131" name="l00131"></a><span class="lineno">  131</span>                do_write();</div>
+<div class="line"><a id="l00131" name="l00131"></a><span class="lineno">  131</span>                do_write_sync(buffers_);</div>
 <div class="line"><a id="l00132" name="l00132"></a><span class="lineno">  132</span>            }</div>
 <div class="line"><a id="l00133" name="l00133"></a><span class="lineno">  133</span>        }</div>
 <div class="line"><a id="l00134" name="l00134"></a><span class="lineno">  134</span> </div>
@@ -267,7 +267,7 @@ $(document).ready(function(){initNavTree('http__connection_8h_source.html',''); 
 <div class="line"><a id="l00160" name="l00160"></a><span class="lineno">  160</span>                <span class="keywordflow">else</span> <span class="keywordflow">if</span> (req_.<a class="code hl_variable" href="structcrow_1_1request.html#ac4b5e2e32e2e0b633211925158b03559">upgrade</a>)</div>
 <div class="line"><a id="l00161" name="l00161"></a><span class="lineno">  161</span>                {</div>
 <div class="line"><a id="l00162" name="l00162"></a><span class="lineno">  162</span>                    <span class="comment">// h2 or h2c headers</span></div>
-<div class="line"><a id="l00163" name="l00163"></a><span class="lineno">  163</span>                    <span class="keywordflow">if</span> (req_.get_header_value(<span class="stringliteral">&quot;upgrade&quot;</span>).substr(0, 2) == <span class="stringliteral">&quot;h2&quot;</span>)</div>
+<div class="line"><a id="l00163" name="l00163"></a><span class="lineno">  163</span>                    <span class="keywordflow">if</span> (req_.get_header_value(<span class="stringliteral">&quot;upgrade&quot;</span>).find(<span class="stringliteral">&quot;h2&quot;</span>)==0)</div>
 <div class="line"><a id="l00164" name="l00164"></a><span class="lineno">  164</span>                    {</div>
 <div class="line"><a id="l00165" name="l00165"></a><span class="lineno">  165</span>                        <span class="comment">// TODO(ipkn): HTTP/2</span></div>
 <div class="line"><a id="l00166" name="l00166"></a><span class="lineno">  166</span>                        <span class="comment">// currently, ignore upgrade header</span></div>
@@ -536,7 +536,7 @@ $(document).ready(function(){initNavTree('http__connection_8h_source.html',''); 
 <div class="line"><a id="l00427" name="l00427"></a><span class="lineno">  427</span>                res_body_copy_.swap(res.body);</div>
 <div class="line"><a id="l00428" name="l00428"></a><span class="lineno">  428</span>                buffers_.emplace_back(res_body_copy_.data(), res_body_copy_.size());</div>
 <div class="line"><a id="l00429" name="l00429"></a><span class="lineno">  429</span> </div>
-<div class="line"><a id="l00430" name="l00430"></a><span class="lineno">  430</span>                do_write();</div>
+<div class="line"><a id="l00430" name="l00430"></a><span class="lineno">  430</span>                do_write_sync(buffers_);</div>
 <div class="line"><a id="l00431" name="l00431"></a><span class="lineno">  431</span> </div>
 <div class="line"><a id="l00432" name="l00432"></a><span class="lineno">  432</span>                <span class="keywordflow">if</span> (need_to_start_read_after_complete_)</div>
 <div class="line"><a id="l00433" name="l00433"></a><span class="lineno">  433</span>                {</div>
