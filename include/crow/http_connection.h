@@ -128,7 +128,7 @@ namespace crow
                 buffers_.clear();
                 static std::string expect_100_continue = "HTTP/1.1 100 Continue\r\n\r\n";
                 buffers_.emplace_back(expect_100_continue.data(), expect_100_continue.size());
-                do_write();
+                do_write_sync(buffers_);
             }
         }
 
@@ -160,7 +160,7 @@ namespace crow
                 else if (req_.upgrade)
                 {
                     // h2 or h2c headers
-                    if (req_.get_header_value("upgrade").substr(0, 2) == "h2")
+                    if (req_.get_header_value("upgrade").find("h2")==0)
                     {
                         // TODO(ipkn): HTTP/2
                         // currently, ignore upgrade header
@@ -427,7 +427,7 @@ namespace crow
                 res_body_copy_.swap(res.body);
                 buffers_.emplace_back(res_body_copy_.data(), res_body_copy_.size());
 
-                do_write();
+                do_write_sync(buffers_);
 
                 if (need_to_start_read_after_complete_)
                 {

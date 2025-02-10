@@ -2,6 +2,7 @@
 #define CROW_LOG_LEVEL 0
 #include <sys/stat.h>
 
+#include <exception>
 #include <iostream>
 #include <vector>
 #include <thread>
@@ -548,7 +549,11 @@ TEST_CASE("http_method")
         req.method = "OPTIONS"_method;
         app.handle_full(req, res);
 
+#ifdef CROW_RETURNS_OK_ON_HTTP_OPTIONS_REQUEST
+        CHECK(200 == res.code);
+#else
         CHECK(204 == res.code);
+#endif
         CHECK("OPTIONS, HEAD, GET, POST" == res.get_header_value("Allow"));
     }
 
@@ -571,7 +576,11 @@ TEST_CASE("http_method")
         req.method = "OPTIONS"_method;
         app.handle_full(req, res);
 
+#ifdef CROW_RETURNS_OK_ON_HTTP_OPTIONS_REQUEST
+        CHECK(200 == res.code);
+#else
         CHECK(204 == res.code);
+#endif
         CHECK("OPTIONS, HEAD, GET, POST, PATCH, PURGE" == res.get_header_value("Allow"));
     }
 
@@ -583,7 +592,11 @@ TEST_CASE("http_method")
         req.method = "OPTIONS"_method;
         app.handle_full(req, res);
 
+#ifdef CROW_RETURNS_OK_ON_HTTP_OPTIONS_REQUEST
+        CHECK(200 == res.code);
+#else
         CHECK(204 == res.code);
+#endif
         CHECK("OPTIONS, HEAD" == res.get_header_value("Allow"));
     }
 } // http_method
@@ -643,7 +656,22 @@ TEST_CASE("server_handling_error_request")
     app.stop();
 } // server_handling_error_request
 
-TEST_CASE("server_dynamic_port_allication")
+TEST_CASE("server_invalid_ip_address")
+{
+    SimpleApp app;
+    CROW_ROUTE(app, "/")
+    ([] {
+        return "A";
+    });
+    auto _ = app.bindaddr("192.").port(45451).run_async();
+    auto state = app.wait_for_server_start();
+
+    // we should run into a timeout as the server will not started
+    CHECK(state==cv_status::timeout);
+} // server_invalid_ip_address
+
+
+TEST_CASE("server_dynamic_port_allocation")
 {
     SimpleApp app;
     CROW_ROUTE(app, "/")
@@ -659,7 +687,7 @@ TEST_CASE("server_dynamic_port_allication")
           asio::ip::make_address(LOCALHOST_ADDRESS), app.port()));
     }
     app.stop();
-} // server_dynamic_port_allication
+} // server_dynamic_port_allocation
 
 TEST_CASE("server_handling_error_request_http_version")
 {
@@ -1400,6 +1428,25 @@ TEST_CASE("json_list")
     CHECK("[5,6,7,8,4,3,2,1]" == x.dump());
 } // json_list
 
+static crow::json::wvalue getValue(int i){
+     return crow::json::wvalue(i);
+}
+
+TEST_CASE("json Incorrect move of wvalue class #953")
+{
+    {
+        crow::json::wvalue int_value(-500);
+        crow::json::wvalue copy_value(std::move(int_value));
+
+        REQUIRE(copy_value.dump()=="-500");
+    }
+    {
+         crow::json::wvalue json;
+         json["int_value"] = getValue(-500);
+         REQUIRE(json["int_value"].dump()=="-500");
+    }
+}
+
 TEST_CASE("template_basic")
 {
     auto t = crow::mustache::compile(R"---(attack of {{name}})---");
@@ -1520,7 +1567,9 @@ struct NullSimpleMiddleware
 TEST_CASE("middleware_simple")
 {
     App<NullMiddleware, NullSimpleMiddleware> app;
-    decltype(app)::server_t server(&app, LOCALHOST_ADDRESS, 45451);
+    asio::ip::address adr = asio::ip::make_address(LOCALHOST_ADDRESS);
+    tcp::endpoint ep(adr,45451);
+    decltype(app)::server_t server(&app, ep);
     CROW_ROUTE(app, "/")
     ([&](const crow::request& req) {
         app.get_context<NullMiddleware>(req);
@@ -1937,6 +1986,8 @@ TEST_CASE("middleware_cors")
     cors
       .prefix("/origin")
         .origin("test.test")
+      .prefix("/auth-origin")
+        .allow_credentials()
       .prefix("/expose")
         .expose("exposed-header")
       .prefix("/nocors")
@@ -1950,6 +2001,15 @@ TEST_CASE("middleware_cors")
 
     CROW_ROUTE(app, "/origin")
     ([&](const request&) {
+        return "-";
+    });
+
+    CROW_ROUTE(app, "/auth-origin")
+    ([&](const request&) {
+        return "-";
+    });
+
+    CROW_ROUTE(app, "/auth-origin").methods(crow::HTTPMethod::Post)([&](const request&) {
         return "-";
     });
 
@@ -1978,6 +2038,16 @@ TEST_CASE("middleware_cors")
     resp = HttpClient::request(LOCALHOST_ADDRESS, port,
                                "GET /origin\r\n\r\n");
     CHECK(resp.find("Access-Control-Allow-Origin: test.test") != std::string::npos);
+
+    resp = HttpClient::request(LOCALHOST_ADDRESS, port,
+                               "GET /auth-origin\r\nOrigin: test-client\r\n\r\n");
+    CHECK(resp.find("Access-Control-Allow-Origin: test-client") != std::string::npos);
+    CHECK(resp.find("Access-Control-Allow-Credentials: true") != std::string::npos);
+
+    resp = HttpClient::request(LOCALHOST_ADDRESS, port,
+                               "OPTIONS /auth-origin / HTTP/1.1 \r\n\r\n");
+    CHECK(resp.find("Access-Control-Allow-Origin: *") != std::string::npos);
+    CHECK(resp.find("Access-Control-Allow-Credentials: true") == std::string::npos);
 
     resp = HttpClient::request(LOCALHOST_ADDRESS, port,
                                "GET /expose\r\n\r\n");
@@ -3200,6 +3270,57 @@ TEST_CASE("websocket_subprotocols")
     app.stop();
 }
 
+TEST_CASE("mirror_websocket_subprotocols")
+{
+    static std::string http_message = "GET /ws HTTP/1.1\r\nConnection: keep-alive, Upgrade\r\nupgrade: websocket\r\nSec-WebSocket-Key: dGhlIHNhbXBsZSBub25jZQ==\r\nSec-WebSocket-Protocol: protocol1, protocol2\r\nSec-WebSocket-Version: 13\r\nHost: localhost\r\n\r\n";
+
+    websocket::connection* connection = nullptr;
+    bool connected{false};
+
+    SimpleApp app;
+
+    CROW_WEBSOCKET_ROUTE(app, "/ws")
+      .mirrorprotocols()
+      .onaccept([&](const crow::request& req, void**) {
+          CROW_LOG_INFO << "Accepted websocket with URL " << req.url;
+          return true;
+      })
+      .onopen([&](websocket::connection& con) {
+          connected = true;
+          connection = &con;
+          CROW_LOG_INFO << "Connected websocket and subprotocol is " << con.get_subprotocol();
+      })
+      .onclose([&](websocket::connection&, const std::string&, uint16_t) {
+          CROW_LOG_INFO << "Closing websocket";
+      });
+
+    app.validate();
+
+    auto _ = app.bindaddr(LOCALHOST_ADDRESS).port(45451).run_async();
+    app.wait_for_server_start();
+    asio::io_context ic;
+
+    asio::ip::tcp::socket c(ic);
+    c.connect(asio::ip::tcp::endpoint(
+      asio::ip::make_address(LOCALHOST_ADDRESS), 45451));
+
+
+    char buf[2048];
+
+    //----------Handshake----------
+    {
+        std::fill_n(buf, 2048, 0);
+        c.send(asio::buffer(http_message));
+
+        c.receive(asio::buffer(buf, 2048));
+        std::this_thread::sleep_for(std::chrono::milliseconds(5));
+        CHECK(connected);
+        CHECK(connection->get_subprotocol() == "protocol1, protocol2");
+    }
+
+    app.stop();
+}
+
 #ifdef CROW_ENABLE_COMPRESSION
 TEST_CASE("zlib_compression")
 {
@@ -3373,8 +3494,8 @@ TEST_CASE("zlib_compression")
 
             std::string response_deflate(buf_deflate);
             std::string response_gzip(buf_gzip);
-            response_deflate = response_deflate.substr(98);
-            response_gzip = response_gzip.substr(98);
+            response_deflate = response_deflate.substr(response_deflate.find("\r\n\r\n") + 4);
+            response_gzip = response_gzip.substr(response_gzip.find("\r\n\r\n") + 4);
 
             socket[0].close();
             socket[1].close();
@@ -3395,8 +3516,8 @@ TEST_CASE("zlib_compression")
 
             std::string response_deflate(buf_deflate);
             std::string response_gzip(buf_gzip);
-            response_deflate = response_deflate.substr(98);
-            response_gzip = response_gzip.substr(98);
+            response_deflate = response_deflate.substr(response_deflate.find("\r\n\r\n") + 4);
+            response_gzip = response_gzip.substr(response_gzip.find("\r\n\r\n") + 4);
 
             socket[0].close();
             socket[1].close();
@@ -3850,13 +3971,26 @@ TEST_CASE("task_timer")
         b = true;
     });
 
-    this_thread::sleep_for(3 * timer.get_tick_length());
+    asio::steady_timer t(io_context);
+    asio_error_code ec;
+
+    t.expires_from_now(3 * timer.get_tick_length());
+    t.wait(ec);
+    // we are at 3 ticks, nothing be changed yet
+    CHECK(!ec);
     CHECK(a == false);
     CHECK(b == false);
-    this_thread::sleep_for(3 * timer.get_tick_length());
+    t.expires_from_now(3 * timer.get_tick_length());
+    t.wait(ec);
+    // we are at 3+3 = 6 ticks, so first task_timer handler should have runned
+    CHECK(!ec);
     CHECK(a == true);
     CHECK(b == false);
-    this_thread::sleep_for(5 * timer.get_tick_length());
+
+    t.expires_from_now(5 * timer.get_tick_length());
+    t.wait(ec);
+    //we are at 3+3 +5 = 11 ticks, both task_timer handlers shoudl have run now
+    CHECK(!ec);
     CHECK(a == true);
     CHECK(b == true);
 
@@ -3940,5 +4074,67 @@ TEST_CASE("http2_upgrade_is_ignored")
 
     auto res = make_request(request);
     CHECK(res.find("http2 upgrade is not supported so body is parsed") != std::string::npos);
+    app.stop();
+}
+
+TEST_CASE("option_header_passed_in_full")
+{
+    const std::string ServerName = "AN_EXTREMELY_UNIQUE_SERVER_NAME";
+
+    crow::App<crow::CORSHandler>
+      app;
+
+    app.get_middleware<crow::CORSHandler>() //
+      .global()
+      .allow_credentials()
+      .expose("X-Total-Pages", "X-Total-Entries", "Content-Disposition");
+
+    app.server_name(ServerName);
+
+
+    CROW_ROUTE(app, "/echo").methods(crow::HTTPMethod::Options)([]() {
+        crow::response response{};
+        response.add_header("Key", "Value");
+        return response;
+    });
+
+    auto _ = app.bindaddr(LOCALHOST_ADDRESS).port(45451).run_async();
+
+    app.wait_for_server_start();
+
+    asio::io_service is;
+
+    auto make_request = [&](const std::string& rq) {
+        asio::ip::tcp::socket c(is);
+        c.connect(asio::ip::tcp::endpoint(
+          asio::ip::address::from_string(LOCALHOST_ADDRESS), 45451));
+        c.send(asio::buffer(rq));
+        std::string fullString{};
+        asio::error_code error;
+        char buffer[1024];
+        while (true)
+        {
+            size_t len = c.read_some(asio::buffer(buffer), error);
+
+            if (error == asio::error::eof)
+            {
+                break;
+            }
+            else if (error)
+            {
+                throw system_error(error);
+            }
+
+            fullString.append(buffer, len);
+        }
+        c.close();
+        return fullString;
+    };
+
+    std::string request =
+      "OPTIONS /echo HTTP/1.1\r\n";
+
+    auto res = make_request(request);
+    CHECK(res.find(ServerName) != std::string::npos);
     app.stop();
 }
