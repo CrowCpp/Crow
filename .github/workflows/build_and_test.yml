@@ -117,7 +117,7 @@ jobs:
       run: cmake --build . --target package
 
     - uses: actions/upload-artifact@v4
-      if: matrix.os == 'ubuntu-24.04'
+      if: matrix.os == 'ubuntu-latest'
       with: 
         name: packages
         path: ${{github.workspace}}/build/Crow-*
