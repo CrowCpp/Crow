@@ -550,13 +550,13 @@ namespace crow
 
             this->res.clear();
             this->res_body_copy_.clear();
-            if (!this->continue_requested)
+            if (this->continue_requested)
             {
-                this->parser_.clear();
+                this->continue_requested = false;
             }
             else
             {
-                this->continue_requested = false;
+                this->parser_.clear();
             }
 
             if (ec)
