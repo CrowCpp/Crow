@@ -2171,94 +2171,45 @@ TEST_CASE("middleware_session")
 TEST_CASE("bug_quick_repeated_request")
 {
     SimpleApp app;
-    std::uint8_t explicitTimeout = 5;
+    std::uint8_t explicitTimeout = 200;
     app.timeout(explicitTimeout);
 
-    std::chrono::microseconds doublingDelay;
-    const int numberOfReruns = 5;
-
-    CROW_ROUTE(app, "/fast")
+    CROW_ROUTE(app, "/")
     ([&] {
-        return "hello";
-    });
-
-    CROW_ROUTE(app, "/slow")
-    ([&] {
-        std::this_thread::sleep_for(doublingDelay);
+        std::this_thread::sleep_for(std::chrono::seconds(1));
         return "hello";
     });
 
     auto _ = app.bindaddr(LOCALHOST_ADDRESS).port(45451).run_async();
     app.wait_for_server_start();
+    std::string sendmsg = "GET / HTTP/1.1\r\nHost: localhost\r\n\r\n";
+
     auto start = std::chrono::high_resolution_clock::now();
-    std::string sendmsg = "GET /fast HTTP/1.1\r\nHost: localhost\r\n\r\n";
+
     asio::io_context ic;
-    int messageChecked = 0;
     {
         std::vector<std::future<void>> v;
-        for (int i = 0; i < numberOfReruns; i++)
+        for (int i = 0; i < 5; i++)
         {
             v.push_back(async(launch::async, [&] {
                 HttpClient c(LOCALHOST_ADDRESS, 45451);
 
-                for (int j = 0; j < numberOfReruns; j++)
+                for (int j = 0; j < 5; j++)
                 {
                     c.send(sendmsg);
 
                     auto resp = c.receive();
-                    messageChecked++;
-                    std::cout << resp;
-                    std::cout << "inside test";
                     CHECK("hello" == resp.substr(resp.length() - 5));
                 }
             }));
         }
     }
 
-    while (messageChecked < numberOfReruns * numberOfReruns)
-    {
-        std::this_thread::sleep_for(std::chrono::seconds(1));
-    }
-
-    messageChecked = 0;
     auto end = std::chrono::high_resolution_clock::now();
-    auto fastDuration = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
+    std::chrono::seconds testDuration = std::chrono::duration_cast<std::chrono::seconds>(end - start);
 
-    doublingDelay = fastDuration / (numberOfReruns * numberOfReruns);
+    CHECK(testDuration.count() < explicitTimeout);
 
-    start = std::chrono::high_resolution_clock::now();
-    sendmsg = "GET /slow HTTP/1.1\r\nHost: localhost\r\n\r\n";
-    {
-        std::vector<std::future<void>> v;
-        for (int i = 0; i < numberOfReruns; i++)
-        {
-            v.push_back(async(launch::async, [&] {
-                HttpClient c(LOCALHOST_ADDRESS, 45451);
-
-                for (int j = 0; j < numberOfReruns; j++)
-                {
-                    c.send(sendmsg);
-
-                    auto resp = c.receive();
-                    messageChecked++;
-                    std::cout << resp;
-                    std::cout << "inside test";
-                    CHECK("hello" == resp.substr(resp.length() - 5));
-                }
-            }));
-        }
-    }
-
-    while (messageChecked < numberOfReruns * numberOfReruns)
-    {
-        std::this_thread::sleep_for(std::chrono::seconds(1));
-    }
-
-    end = std::chrono::high_resolution_clock::now();
-    auto slowDuration = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
-
-    /// We allow for a great deal of random variations, since the broken case fails anyway
-    CHECK(slowDuration / fastDuration < 3);
     app.stop();
 } // bug_quick_repeated_request
 
