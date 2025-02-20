@@ -2183,15 +2183,21 @@ TEST_CASE("middleware_session")
 TEST_CASE("bug_quick_repeated_request")
 {
     SimpleApp app;
+    std::uint8_t explicitTimeout = 200;
+    app.timeout(explicitTimeout);
 
     CROW_ROUTE(app, "/")
     ([&] {
+        std::this_thread::sleep_for(std::chrono::seconds(1));
         return "hello";
     });
 
     auto _ = app.bindaddr(LOCALHOST_ADDRESS).port(45451).run_async();
     app.wait_for_server_start();
     std::string sendmsg = "GET / HTTP/1.1\r\nHost: localhost\r\n\r\n";
+
+    auto start = std::chrono::high_resolution_clock::now();
+
     asio::io_context ic;
     {
         std::vector<std::future<void>> v;
@@ -2210,6 +2216,12 @@ TEST_CASE("bug_quick_repeated_request")
             }));
         }
     }
+
+    auto end = std::chrono::high_resolution_clock::now();
+    std::chrono::seconds testDuration = std::chrono::duration_cast<std::chrono::seconds>(end - start);
+
+    CHECK(testDuration.count() < explicitTimeout);
+
     app.stop();
 } // bug_quick_repeated_request
 
