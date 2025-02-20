@@ -654,83 +654,89 @@ $(document).ready(function(){initNavTree('http__connection_8h_source.html',''); 
 <div class="line"><a id="l00545" name="l00545"></a><span class="lineno">  545</span> </div>
 <div class="line"><a id="l00546" name="l00546"></a><span class="lineno">  546</span>        <span class="keyword">inline</span> <span class="keywordtype">void</span> do_write_sync(std::vector&lt;asio::const_buffer&gt;&amp; buffers)</div>
 <div class="line"><a id="l00547" name="l00547"></a><span class="lineno">  547</span>        {</div>
-<div class="line"><a id="l00548" name="l00548"></a><span class="lineno">  548</span> </div>
-<div class="line"><a id="l00549" name="l00549"></a><span class="lineno">  549</span>            asio::write(adaptor_.socket(), buffers, [&amp;](error_code ec, std::size_t) {</div>
-<div class="line"><a id="l00550" name="l00550"></a><span class="lineno">  550</span>                if (!ec)</div>
-<div class="line"><a id="l00551" name="l00551"></a><span class="lineno">  551</span>                {</div>
-<div class="line"><a id="l00552" name="l00552"></a><span class="lineno">  552</span>                    return false;</div>
-<div class="line"><a id="l00553" name="l00553"></a><span class="lineno">  553</span>                }</div>
-<div class="line"><a id="l00554" name="l00554"></a><span class="lineno">  554</span>                <span class="keywordflow">else</span></div>
-<div class="line"><a id="l00555" name="l00555"></a><span class="lineno">  555</span>                {</div>
-<div class="line"><a id="l00556" name="l00556"></a><span class="lineno">  556</span>                    CROW_LOG_ERROR &lt;&lt; ec &lt;&lt; <span class="stringliteral">&quot; - happened while sending buffers&quot;</span>;</div>
-<div class="line"><a id="l00557" name="l00557"></a><span class="lineno">  557</span>                    CROW_LOG_DEBUG &lt;&lt; this &lt;&lt; <span class="stringliteral">&quot; from write (sync)(2)&quot;</span>;</div>
-<div class="line"><a id="l00558" name="l00558"></a><span class="lineno">  558</span>                    return true;</div>
-<div class="line"><a id="l00559" name="l00559"></a><span class="lineno">  559</span>                }</div>
-<div class="line"><a id="l00560" name="l00560"></a><span class="lineno">  560</span>            });</div>
-<div class="line"><a id="l00561" name="l00561"></a><span class="lineno">  561</span>        }</div>
-<div class="line"><a id="l00562" name="l00562"></a><span class="lineno">  562</span> </div>
-<div class="line"><a id="l00563" name="l00563"></a><span class="lineno">  563</span>        <span class="keywordtype">void</span> cancel_deadline_timer()</div>
-<div class="line"><a id="l00564" name="l00564"></a><span class="lineno">  564</span>        {</div>
-<div class="line"><a id="l00565" name="l00565"></a><span class="lineno">  565</span>            CROW_LOG_DEBUG &lt;&lt; <span class="keyword">this</span> &lt;&lt; <span class="stringliteral">&quot; timer cancelled: &quot;</span> &lt;&lt; &amp;task_timer_ &lt;&lt; <span class="charliteral">&#39; &#39;</span> &lt;&lt; task_id_;</div>
-<div class="line"><a id="l00566" name="l00566"></a><span class="lineno">  566</span>            task_timer_.cancel(task_id_);</div>
+<div class="line"><a id="l00548" name="l00548"></a><span class="lineno">  548</span>            error_code ec;</div>
+<div class="line"><a id="l00549" name="l00549"></a><span class="lineno">  549</span>            asio::write(adaptor_.socket(), buffers, ec);</div>
+<div class="line"><a id="l00550" name="l00550"></a><span class="lineno">  550</span> </div>
+<div class="line"><a id="l00551" name="l00551"></a><span class="lineno">  551</span>            this-&gt;res.clear();</div>
+<div class="line"><a id="l00552" name="l00552"></a><span class="lineno">  552</span>            this-&gt;res_body_copy_.clear();</div>
+<div class="line"><a id="l00553" name="l00553"></a><span class="lineno">  553</span>            <span class="keywordflow">if</span> (this-&gt;continue_requested)</div>
+<div class="line"><a id="l00554" name="l00554"></a><span class="lineno">  554</span>            {</div>
+<div class="line"><a id="l00555" name="l00555"></a><span class="lineno">  555</span>                this-&gt;continue_requested = <span class="keyword">false</span>;</div>
+<div class="line"><a id="l00556" name="l00556"></a><span class="lineno">  556</span>            }</div>
+<div class="line"><a id="l00557" name="l00557"></a><span class="lineno">  557</span>            <span class="keywordflow">else</span></div>
+<div class="line"><a id="l00558" name="l00558"></a><span class="lineno">  558</span>            {</div>
+<div class="line"><a id="l00559" name="l00559"></a><span class="lineno">  559</span>                this-&gt;parser_.clear();</div>
+<div class="line"><a id="l00560" name="l00560"></a><span class="lineno">  560</span>            }</div>
+<div class="line"><a id="l00561" name="l00561"></a><span class="lineno">  561</span> </div>
+<div class="line"><a id="l00562" name="l00562"></a><span class="lineno">  562</span>            <span class="keywordflow">if</span> (ec)</div>
+<div class="line"><a id="l00563" name="l00563"></a><span class="lineno">  563</span>            {</div>
+<div class="line"><a id="l00564" name="l00564"></a><span class="lineno">  564</span>                CROW_LOG_ERROR &lt;&lt; ec &lt;&lt; <span class="stringliteral">&quot; - happened while sending buffers&quot;</span>;</div>
+<div class="line"><a id="l00565" name="l00565"></a><span class="lineno">  565</span>                CROW_LOG_DEBUG &lt;&lt; <span class="keyword">this</span> &lt;&lt; <span class="stringliteral">&quot; from write (sync)(2)&quot;</span>;</div>
+<div class="line"><a id="l00566" name="l00566"></a><span class="lineno">  566</span>            }</div>
 <div class="line"><a id="l00567" name="l00567"></a><span class="lineno">  567</span>        }</div>
 <div class="line"><a id="l00568" name="l00568"></a><span class="lineno">  568</span> </div>
-<div class="line"><a id="l00569" name="l00569"></a><span class="lineno">  569</span>        <span class="keywordtype">void</span> start_deadline(<span class="comment">/*int timeout = 5*/</span>)</div>
+<div class="line"><a id="l00569" name="l00569"></a><span class="lineno">  569</span>        <span class="keywordtype">void</span> cancel_deadline_timer()</div>
 <div class="line"><a id="l00570" name="l00570"></a><span class="lineno">  570</span>        {</div>
-<div class="line"><a id="l00571" name="l00571"></a><span class="lineno">  571</span>            cancel_deadline_timer();</div>
-<div class="line"><a id="l00572" name="l00572"></a><span class="lineno">  572</span> </div>
-<div class="line"><a id="l00573" name="l00573"></a><span class="lineno">  573</span>            <span class="keyword">auto</span> self = this-&gt;shared_from_this();</div>
-<div class="line"><a id="l00574" name="l00574"></a><span class="lineno">  574</span>            task_id_ = task_timer_.schedule([self] {</div>
-<div class="line"><a id="l00575" name="l00575"></a><span class="lineno">  575</span>                <span class="keywordflow">if</span> (!self-&gt;adaptor_.is_open())</div>
-<div class="line"><a id="l00576" name="l00576"></a><span class="lineno">  576</span>                {</div>
-<div class="line"><a id="l00577" name="l00577"></a><span class="lineno">  577</span>                    return;</div>
-<div class="line"><a id="l00578" name="l00578"></a><span class="lineno">  578</span>                }</div>
-<div class="line"><a id="l00579" name="l00579"></a><span class="lineno">  579</span>                self-&gt;adaptor_.shutdown_readwrite();</div>
-<div class="line"><a id="l00580" name="l00580"></a><span class="lineno">  580</span>                self-&gt;adaptor_.close();</div>
-<div class="line"><a id="l00581" name="l00581"></a><span class="lineno">  581</span>            });</div>
-<div class="line"><a id="l00582" name="l00582"></a><span class="lineno">  582</span>            CROW_LOG_DEBUG &lt;&lt; <span class="keyword">this</span> &lt;&lt; <span class="stringliteral">&quot; timer added: &quot;</span> &lt;&lt; &amp;task_timer_ &lt;&lt; <span class="charliteral">&#39; &#39;</span> &lt;&lt; task_id_;</div>
-<div class="line"><a id="l00583" name="l00583"></a><span class="lineno">  583</span>        }</div>
-<div class="line"><a id="l00584" name="l00584"></a><span class="lineno">  584</span> </div>
-<div class="line"><a id="l00585" name="l00585"></a><span class="lineno">  585</span>    <span class="keyword">private</span>:</div>
-<div class="line"><a id="l00586" name="l00586"></a><span class="lineno">  586</span>        Adaptor adaptor_;</div>
-<div class="line"><a id="l00587" name="l00587"></a><span class="lineno">  587</span>        Handler* handler_;</div>
-<div class="line"><a id="l00588" name="l00588"></a><span class="lineno">  588</span> </div>
-<div class="line"><a id="l00589" name="l00589"></a><span class="lineno">  589</span>        std::array&lt;char, 4096&gt; buffer_;</div>
+<div class="line"><a id="l00571" name="l00571"></a><span class="lineno">  571</span>            CROW_LOG_DEBUG &lt;&lt; <span class="keyword">this</span> &lt;&lt; <span class="stringliteral">&quot; timer cancelled: &quot;</span> &lt;&lt; &amp;task_timer_ &lt;&lt; <span class="charliteral">&#39; &#39;</span> &lt;&lt; task_id_;</div>
+<div class="line"><a id="l00572" name="l00572"></a><span class="lineno">  572</span>            task_timer_.cancel(task_id_);</div>
+<div class="line"><a id="l00573" name="l00573"></a><span class="lineno">  573</span>        }</div>
+<div class="line"><a id="l00574" name="l00574"></a><span class="lineno">  574</span> </div>
+<div class="line"><a id="l00575" name="l00575"></a><span class="lineno">  575</span>        <span class="keywordtype">void</span> start_deadline(<span class="comment">/*int timeout = 5*/</span>)</div>
+<div class="line"><a id="l00576" name="l00576"></a><span class="lineno">  576</span>        {</div>
+<div class="line"><a id="l00577" name="l00577"></a><span class="lineno">  577</span>            cancel_deadline_timer();</div>
+<div class="line"><a id="l00578" name="l00578"></a><span class="lineno">  578</span> </div>
+<div class="line"><a id="l00579" name="l00579"></a><span class="lineno">  579</span>            <span class="keyword">auto</span> self = this-&gt;shared_from_this();</div>
+<div class="line"><a id="l00580" name="l00580"></a><span class="lineno">  580</span>            task_id_ = task_timer_.schedule([self] {</div>
+<div class="line"><a id="l00581" name="l00581"></a><span class="lineno">  581</span>                <span class="keywordflow">if</span> (!self-&gt;adaptor_.is_open())</div>
+<div class="line"><a id="l00582" name="l00582"></a><span class="lineno">  582</span>                {</div>
+<div class="line"><a id="l00583" name="l00583"></a><span class="lineno">  583</span>                    return;</div>
+<div class="line"><a id="l00584" name="l00584"></a><span class="lineno">  584</span>                }</div>
+<div class="line"><a id="l00585" name="l00585"></a><span class="lineno">  585</span>                self-&gt;adaptor_.shutdown_readwrite();</div>
+<div class="line"><a id="l00586" name="l00586"></a><span class="lineno">  586</span>                self-&gt;adaptor_.close();</div>
+<div class="line"><a id="l00587" name="l00587"></a><span class="lineno">  587</span>            });</div>
+<div class="line"><a id="l00588" name="l00588"></a><span class="lineno">  588</span>            CROW_LOG_DEBUG &lt;&lt; <span class="keyword">this</span> &lt;&lt; <span class="stringliteral">&quot; timer added: &quot;</span> &lt;&lt; &amp;task_timer_ &lt;&lt; <span class="charliteral">&#39; &#39;</span> &lt;&lt; task_id_;</div>
+<div class="line"><a id="l00589" name="l00589"></a><span class="lineno">  589</span>        }</div>
 <div class="line"><a id="l00590" name="l00590"></a><span class="lineno">  590</span> </div>
-<div class="line"><a id="l00591" name="l00591"></a><span class="lineno">  591</span>        HTTPParser&lt;Connection&gt; parser_;</div>
-<div class="line"><a id="l00592" name="l00592"></a><span class="lineno">  592</span>        std::unique_ptr&lt;routing_handle_result&gt; routing_handle_result_;</div>
-<div class="line"><a id="l00593" name="l00593"></a><span class="lineno">  593</span>        request&amp; req_;</div>
-<div class="line"><a id="l00594" name="l00594"></a><span class="lineno">  594</span>        response res;</div>
-<div class="line"><a id="l00595" name="l00595"></a><span class="lineno">  595</span> </div>
-<div class="line"><a id="l00596" name="l00596"></a><span class="lineno">  596</span>        <span class="keywordtype">bool</span> close_connection_ = <span class="keyword">false</span>;</div>
-<div class="line"><a id="l00597" name="l00597"></a><span class="lineno">  597</span> </div>
-<div class="line"><a id="l00598" name="l00598"></a><span class="lineno">  598</span>        <span class="keyword">const</span> std::string&amp; server_name_;</div>
-<div class="line"><a id="l00599" name="l00599"></a><span class="lineno">  599</span>        std::vector&lt;asio::const_buffer&gt; buffers_;</div>
-<div class="line"><a id="l00600" name="l00600"></a><span class="lineno">  600</span> </div>
-<div class="line"><a id="l00601" name="l00601"></a><span class="lineno">  601</span>        std::string content_length_;</div>
-<div class="line"><a id="l00602" name="l00602"></a><span class="lineno">  602</span>        std::string date_str_;</div>
-<div class="line"><a id="l00603" name="l00603"></a><span class="lineno">  603</span>        std::string res_body_copy_;</div>
-<div class="line"><a id="l00604" name="l00604"></a><span class="lineno">  604</span> </div>
-<div class="line"><a id="l00605" name="l00605"></a><span class="lineno">  605</span>        detail::task_timer::identifier_type task_id_{};</div>
+<div class="line"><a id="l00591" name="l00591"></a><span class="lineno">  591</span>    <span class="keyword">private</span>:</div>
+<div class="line"><a id="l00592" name="l00592"></a><span class="lineno">  592</span>        Adaptor adaptor_;</div>
+<div class="line"><a id="l00593" name="l00593"></a><span class="lineno">  593</span>        Handler* handler_;</div>
+<div class="line"><a id="l00594" name="l00594"></a><span class="lineno">  594</span> </div>
+<div class="line"><a id="l00595" name="l00595"></a><span class="lineno">  595</span>        std::array&lt;char, 4096&gt; buffer_;</div>
+<div class="line"><a id="l00596" name="l00596"></a><span class="lineno">  596</span> </div>
+<div class="line"><a id="l00597" name="l00597"></a><span class="lineno">  597</span>        HTTPParser&lt;Connection&gt; parser_;</div>
+<div class="line"><a id="l00598" name="l00598"></a><span class="lineno">  598</span>        std::unique_ptr&lt;routing_handle_result&gt; routing_handle_result_;</div>
+<div class="line"><a id="l00599" name="l00599"></a><span class="lineno">  599</span>        request&amp; req_;</div>
+<div class="line"><a id="l00600" name="l00600"></a><span class="lineno">  600</span>        response res;</div>
+<div class="line"><a id="l00601" name="l00601"></a><span class="lineno">  601</span> </div>
+<div class="line"><a id="l00602" name="l00602"></a><span class="lineno">  602</span>        <span class="keywordtype">bool</span> close_connection_ = <span class="keyword">false</span>;</div>
+<div class="line"><a id="l00603" name="l00603"></a><span class="lineno">  603</span> </div>
+<div class="line"><a id="l00604" name="l00604"></a><span class="lineno">  604</span>        <span class="keyword">const</span> std::string&amp; server_name_;</div>
+<div class="line"><a id="l00605" name="l00605"></a><span class="lineno">  605</span>        std::vector&lt;asio::const_buffer&gt; buffers_;</div>
 <div class="line"><a id="l00606" name="l00606"></a><span class="lineno">  606</span> </div>
-<div class="line"><a id="l00607" name="l00607"></a><span class="lineno">  607</span>        <span class="keywordtype">bool</span> continue_requested{};</div>
-<div class="line"><a id="l00608" name="l00608"></a><span class="lineno">  608</span>        <span class="keywordtype">bool</span> need_to_call_after_handlers_{};</div>
-<div class="line"><a id="l00609" name="l00609"></a><span class="lineno">  609</span>        <span class="keywordtype">bool</span> need_to_start_read_after_complete_{};</div>
-<div class="line"><a id="l00610" name="l00610"></a><span class="lineno">  610</span>        <span class="keywordtype">bool</span> add_keep_alive_{};</div>
-<div class="line"><a id="l00611" name="l00611"></a><span class="lineno">  611</span> </div>
-<div class="line"><a id="l00612" name="l00612"></a><span class="lineno">  612</span>        std::tuple&lt;Middlewares...&gt;* middlewares_;</div>
-<div class="line"><a id="l00613" name="l00613"></a><span class="lineno">  613</span>        detail::context&lt;Middlewares...&gt; ctx_;</div>
-<div class="line"><a id="l00614" name="l00614"></a><span class="lineno">  614</span> </div>
-<div class="line"><a id="l00615" name="l00615"></a><span class="lineno">  615</span>        std::function&lt;std::string()&gt;&amp; get_cached_date_str;</div>
-<div class="line"><a id="l00616" name="l00616"></a><span class="lineno">  616</span>        detail::task_timer&amp; task_timer_;</div>
+<div class="line"><a id="l00607" name="l00607"></a><span class="lineno">  607</span>        std::string content_length_;</div>
+<div class="line"><a id="l00608" name="l00608"></a><span class="lineno">  608</span>        std::string date_str_;</div>
+<div class="line"><a id="l00609" name="l00609"></a><span class="lineno">  609</span>        std::string res_body_copy_;</div>
+<div class="line"><a id="l00610" name="l00610"></a><span class="lineno">  610</span> </div>
+<div class="line"><a id="l00611" name="l00611"></a><span class="lineno">  611</span>        detail::task_timer::identifier_type task_id_{};</div>
+<div class="line"><a id="l00612" name="l00612"></a><span class="lineno">  612</span> </div>
+<div class="line"><a id="l00613" name="l00613"></a><span class="lineno">  613</span>        <span class="keywordtype">bool</span> continue_requested{};</div>
+<div class="line"><a id="l00614" name="l00614"></a><span class="lineno">  614</span>        <span class="keywordtype">bool</span> need_to_call_after_handlers_{};</div>
+<div class="line"><a id="l00615" name="l00615"></a><span class="lineno">  615</span>        <span class="keywordtype">bool</span> need_to_start_read_after_complete_{};</div>
+<div class="line"><a id="l00616" name="l00616"></a><span class="lineno">  616</span>        <span class="keywordtype">bool</span> add_keep_alive_{};</div>
 <div class="line"><a id="l00617" name="l00617"></a><span class="lineno">  617</span> </div>
-<div class="line"><a id="l00618" name="l00618"></a><span class="lineno">  618</span>        <span class="keywordtype">size_t</span> res_stream_threshold_;</div>
-<div class="line"><a id="l00619" name="l00619"></a><span class="lineno">  619</span> </div>
-<div class="line"><a id="l00620" name="l00620"></a><span class="lineno">  620</span>        std::atomic&lt;unsigned int&gt;&amp; queue_length_;</div>
-<div class="line"><a id="l00621" name="l00621"></a><span class="lineno">  621</span>    };</div>
+<div class="line"><a id="l00618" name="l00618"></a><span class="lineno">  618</span>        std::tuple&lt;Middlewares...&gt;* middlewares_;</div>
+<div class="line"><a id="l00619" name="l00619"></a><span class="lineno">  619</span>        detail::context&lt;Middlewares...&gt; ctx_;</div>
+<div class="line"><a id="l00620" name="l00620"></a><span class="lineno">  620</span> </div>
+<div class="line"><a id="l00621" name="l00621"></a><span class="lineno">  621</span>        std::function&lt;std::string()&gt;&amp; get_cached_date_str;</div>
+<div class="line"><a id="l00622" name="l00622"></a><span class="lineno">  622</span>        detail::task_timer&amp; task_timer_;</div>
+<div class="line"><a id="l00623" name="l00623"></a><span class="lineno">  623</span> </div>
+<div class="line"><a id="l00624" name="l00624"></a><span class="lineno">  624</span>        <span class="keywordtype">size_t</span> res_stream_threshold_;</div>
+<div class="line"><a id="l00625" name="l00625"></a><span class="lineno">  625</span> </div>
+<div class="line"><a id="l00626" name="l00626"></a><span class="lineno">  626</span>        std::atomic&lt;unsigned int&gt;&amp; queue_length_;</div>
+<div class="line"><a id="l00627" name="l00627"></a><span class="lineno">  627</span>    };</div>
 </div>
-<div class="line"><a id="l00622" name="l00622"></a><span class="lineno">  622</span> </div>
-<div class="line"><a id="l00623" name="l00623"></a><span class="lineno">  623</span>} <span class="comment">// namespace crow</span></div>
+<div class="line"><a id="l00628" name="l00628"></a><span class="lineno">  628</span> </div>
+<div class="line"><a id="l00629" name="l00629"></a><span class="lineno">  629</span>} <span class="comment">// namespace crow</span></div>
 <div class="ttc" id="aclasscrow_1_1_connection_html"><div class="ttname"><a href="classcrow_1_1_connection.html">crow::Connection</a></div><div class="ttdoc">An HTTP connection.</div><div class="ttdef"><b>Definition</b> http_connection.h:48</div></div>
 <div class="ttc" id="aclasscrow_1_1_connection_html_a4e1e6e41ec0fbf059c93fae2b9738a19"><div class="ttname"><a href="classcrow_1_1_connection.html#a4e1e6e41ec0fbf059c93fae2b9738a19">crow::Connection::socket</a></div><div class="ttdeci">decltype(std::declval&lt; Adaptor &gt;().raw_socket()) &amp; socket()</div><div class="ttdoc">The TCP socket on top of which the connection is established.</div><div class="ttdef"><b>Definition</b> http_connection.h:87</div></div>
 <div class="ttc" id="aclasscrow_1_1_connection_html_aa40019a3731cc55174401e3b31602524"><div class="ttname"><a href="classcrow_1_1_connection.html#aa40019a3731cc55174401e3b31602524">crow::Connection::complete_request</a></div><div class="ttdeci">void complete_request()</div><div class="ttdoc">Call the after handle middleware and send the write the response to the connection.</div><div class="ttdef"><b>Definition</b> http_connection.h:217</div></div>
@@ -751,7 +757,7 @@ $(document).ready(function(){initNavTree('http__connection_8h_source.html',''); 
 			<ul>
 				<li class="navelem"><a class="el" href="dir_d44c64559bbebec7f509842c48db8b23.html">include</a></li><li class="navelem"><a class="el" href="dir_d22c1cb87b72f01e1a7f207eb3bfd1ca.html">crow</a></li><li class="navelem"><b>http_connection.h</b></li>
 				<li class="footer">
-					Generated on Mon Feb 10 2025 for Crow by <a href="http://www.doxygen.org/index.html">
+					Generated on Thu Feb 20 2025 for Crow by <a href="http://www.doxygen.org/index.html">
 					<img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.9.8.
 					Dark theme by <a href="http://majerle.eu" target="_new">Tilen Majerle</a>. Edited by <a href="https://github.com/The-EDev" target="_new">Farook Al-Sammarraie</a>. All rights reserved.
 				</li>
