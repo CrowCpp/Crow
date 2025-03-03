@@ -552,7 +552,7 @@ namespace crow
         uint64_t chrono_time() const
         {
             return std::chrono::duration_cast<std::chrono::seconds>(
-                     std::chrono::system_clock::now().time_since_epoch())
+                     std::chrono::steady_clock::now().time_since_epoch())
               .count();
         }
 

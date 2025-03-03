@@ -556,19 +556,25 @@ namespace crow
 
         inline void do_write_sync(std::vector<asio::const_buffer>& buffers)
         {
+            error_code ec;
+            asio::write(adaptor_.socket(), buffers, ec);
 
-            asio::write(adaptor_.socket(), buffers, [&](error_code ec, std::size_t) {
-                if (!ec)
-                {
-                    return false;
-                }
-                else
-                {
-                    CROW_LOG_ERROR << ec << " - happened while sending buffers";
-                    CROW_LOG_DEBUG << this << " from write (sync)(2)";
-                    return true;
-                }
-            });
+            this->res.clear();
+            this->res_body_copy_.clear();
+            if (this->continue_requested)
+            {
+                this->continue_requested = false;
+            }
+            else
+            {
+                this->parser_.clear();
+            }
+
+            if (ec)
+            {
+                CROW_LOG_ERROR << ec << " - happened while sending buffers";
+                CROW_LOG_DEBUG << this << " from write (sync)(2)";
+            }
         }
 
         void cancel_deadline_timer()
