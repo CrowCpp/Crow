@@ -3,7 +3,7 @@ Here's how you can install Crow on your favorite GNU/Linux distro.
 
 ### Requirements
  - C++ compiler with at least C++17 support.
- - Asio development headers (1.10.9 or later).
+ - Asio development headers (1.28 or later, up to 1.30).
  - **(optional)** ZLib for HTTP Compression.
  - **(optional)** OpenSSL for HTTPS support.
  - **(optional)** CMake for building tests, examples, and/or installing Crow.
