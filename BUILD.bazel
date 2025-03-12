@@ -1,0 +1,7 @@
+cc_library(
+    name = "crow",
+    hdrs = glob(["include/**/*"]),
+    includes = ["include"],
+    visibility = ["//visibility:public"], 
+    copts = ["-DCROW_ENABLE_SSL"]
+)
