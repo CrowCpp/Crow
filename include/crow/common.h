@@ -347,7 +347,7 @@ constexpr crow::HTTPMethod method_from_string(const char* str)
                                                            throw std::runtime_error("invalid http method");
 }
 
-constexpr crow::HTTPMethod operator"" _method(const char* str, size_t /*len*/)
+constexpr crow::HTTPMethod operator""_method(const char* str, size_t /*len*/)
 {
     return method_from_string( str );
 }
