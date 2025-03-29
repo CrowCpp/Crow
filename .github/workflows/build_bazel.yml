@@ -49,6 +49,8 @@ jobs:
       shell: bash
 
     - name: Build bazel
-      run: ./bazel build //...
+      run: |
+        ./bazel build //...
+        ./bazel test //...
 
 
