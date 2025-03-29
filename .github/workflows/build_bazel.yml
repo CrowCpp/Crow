@@ -24,7 +24,7 @@ jobs:
               ubuntu-20.04,
               ubuntu-22.04,
               ubuntu-24.04,
-              macos-13
+              macos-13,
             ]
             # ubuntu-18.04 does not work due to compile error on asio
             # windows-2019 not included to spare free minutes
@@ -38,14 +38,10 @@ jobs:
 
               sudo apt-get update && \
               sudo apt-get install -yq \
-                libasio-dev \
-                libssl-dev zlib1g-dev \
                 g++ clang
          elif [ "$RUNNER_OS" == "macOS" ]; then
               curl --tlsv1.2 --proto =https -Lo bazel https://github.com/bazelbuild/bazelisk/releases/download/v1.25.0/bazelisk-darwin-amd64
               chmod +x bazel
-
-              brew install asio openssl zlib
          else
               echo "$RUNNER_OS not supported"
               exit 1
