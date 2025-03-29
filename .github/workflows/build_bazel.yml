@@ -1,4 +1,4 @@
-name: Build and test
+name: bazel - Build and test
 
 on:
   push:
@@ -35,7 +35,6 @@ jobs:
          if [ "$RUNNER_OS" == "Linux" ]; then
               curl --tlsv1.2 --proto =https -Lo bazel https://github.com/bazelbuild/bazelisk/releases/download/v1.25.0/bazelisk-linux-amd64
               chmod +x bazel
-              sudo mv bazel /usr/bin/
 
               sudo apt-get update && \
               sudo apt-get install -yq \
@@ -45,7 +44,6 @@ jobs:
          elif [ "$RUNNER_OS" == "macOS" ]; then
               curl --tlsv1.2 --proto =https -Lo bazel https://github.com/bazelbuild/bazelisk/releases/download/v1.25.0/bazelisk-darwin-amd64
               chmod +x bazel
-              sudo mv bazel /usr/bin/
 
               brew install asio openssl zlib
          else
@@ -55,6 +53,6 @@ jobs:
       shell: bash
 
     - name: Build bazel
-      run: bazel build //...
+      run: ./bazel build //...
 
 
