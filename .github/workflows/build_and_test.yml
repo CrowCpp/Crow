@@ -22,12 +22,9 @@ jobs:
         os: [ ubuntu-latest,
               windows-latest,
               macos-latest,
-              ubuntu-20.04,
               ubuntu-22.04,
               macos-13
             ]
-            # ubuntu-18.04 does not work due to compile error on asio
-            # windows-2019 not included to spare free minutes
     steps:
     - uses: actions/checkout@v4
     - name: Prepare dependencies
