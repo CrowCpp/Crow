@@ -46,7 +46,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
              const tcp::endpoint& endpoint,
              std::string server_name = std::string("Crow/") + VERSION,
              std::tuple<Middlewares...>* middlewares = nullptr,
-             uint16_t concurrency = 1,
+             unsigned int concurrency = 1,
              uint8_t timeout = 5,
              typename Adaptor::context* adaptor_ctx = nullptr):
           acceptor_(io_context_,endpoint),
@@ -223,9 +223,9 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         }
 
     private:
-        uint16_t pick_io_context_idx()
+        size_t pick_io_context_idx()
         {
-            uint16_t min_queue_idx = 0;
+            size_t min_queue_idx = 0;
 
             // TODO improve load balancing
             // size_t is used here to avoid the security issue https://codeql.github.com/codeql-query-help/cpp/cpp-comparison-with-wider-type/
@@ -243,9 +243,10 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         {
             if (!shutting_down_)
             {
-                uint16_t context_idx = pick_io_context_idx();
+                size_t context_idx = pick_io_context_idx();
                 asio::io_context& ic = *io_context_pool_[context_idx];
                 task_queue_length_pool_[context_idx]++;
+
                 CROW_LOG_DEBUG << &ic << " {" << context_idx << "} queue length: " << task_queue_length_pool_[context_idx];
 
                 auto p = std::make_shared<Connection<Adaptor, Handler, Middlewares...>>(
@@ -295,7 +296,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         asio::basic_waitable_timer<std::chrono::high_resolution_clock> tick_timer_;
 
         Handler* handler_;
-        uint16_t concurrency_{2};
+        unsigned int concurrency_{2};
         std::uint8_t timeout_;
         std::string server_name_;
         std::vector<std::atomic<unsigned int>> task_queue_length_pool_;
