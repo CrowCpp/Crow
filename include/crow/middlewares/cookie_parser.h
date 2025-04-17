@@ -231,8 +231,7 @@ namespace crow
 
         void before_handle(request& req, response& res, context& ctx)
         {
-            // TODO(dranikpg): remove copies, use string_view with c++17
-            int count = req.headers.count("Cookie");
+            const int count = req.headers.count("Cookie");
             if (!count)
                 return;
             if (count > 1)
@@ -241,34 +240,58 @@ namespace crow
                 res.end();
                 return;
             }
-            std::string cookies = req.get_header_value("Cookie");
+
+            const std::string_view cookies_sv = req.get_header_value("Cookie");
+
+            auto trim_sv = [](const std::string_view sv) -> std::string_view {
+                const size_t first = sv.find_first_not_of(" \t\n\r\f\v"); // same as isspace
+                if (std::string_view::npos == first) {
+                    return sv.substr(0, 0);
+                }
+                const size_t last = sv.find_last_not_of(" \t\n\r\f\v");
+                return sv.substr(first, (last - first + 1));
+            };
+
             size_t pos = 0;
-            while (pos < cookies.size())
+            while (pos < cookies_sv.size())
             {
-                size_t pos_equal = cookies.find('=', pos);
-                if (pos_equal == cookies.npos)
+                const size_t pos_equal = cookies_sv.find('=', pos);
+                if (pos_equal == std::string_view::npos) {
                     break;
-                std::string name = cookies.substr(pos, pos_equal - pos);
-                name = utility::trim(name);
-                pos = pos_equal + 1;
-                if (pos == cookies.size())
-                    break;
-
-                size_t pos_semicolon = cookies.find(';', pos);
-                std::string value = cookies.substr(pos, pos_semicolon - pos);
-
-                value = utility::trim(value);
-                if (value[0] == '"' && value[value.size() - 1] == '"')
-                {
-                    value = value.substr(1, value.size() - 2);
                 }
 
-                ctx.jar.emplace(std::move(name), std::move(value));
+                std::string_view name_sv = cookies_sv.substr(pos, pos_equal - pos);
+                name_sv = trim_sv(name_sv);
 
-                pos = pos_semicolon;
-                if (pos == cookies.npos)
+                pos = pos_equal + 1;
+                if (pos == cookies_sv.size()) {
                     break;
-                pos++;
+                }
+
+                const size_t pos_semicolon = cookies_sv.find(';', pos);
+                std::string_view value_sv;
+
+                if (pos_semicolon == std::string_view::npos) {
+                     value_sv = cookies_sv.substr(pos);
+                     pos = cookies_sv.size();
+                } else {
+                     value_sv = cookies_sv.substr(pos, pos_semicolon - pos);
+                     pos = pos_semicolon + 1;
+                }
+
+                value_sv = trim_sv(value_sv);
+
+                if (!value_sv.empty() && value_sv.front() == '"' && value_sv.back() == '"')
+                {
+                     if (value_sv.size() >= 2) {
+                        value_sv.remove_prefix(1);
+                        value_sv.remove_suffix(1);
+                     } else {
+                        value_sv = value_sv.substr(0,0);
+                     }
+                }
+
+                ctx.jar.emplace(std::string(name_sv), std::string(value_sv));
             }
         }
 
