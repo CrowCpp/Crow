@@ -1954,15 +1954,11 @@ TEST_CASE("middleware_cookieparser_format")
     }
     // expires
     {
-        std::time_t tp;
-        std::time(&tp);
-        std::tm* tm = std::gmtime(&tp);
+        std::tm tm = {};
         std::istringstream ss("2000-11-01 23:59:59");
-        ss >> std::get_time(tm, "%Y-%m-%d %H:%M:%S");
-        std::mktime(tm);
-
+        ss >> std::get_time(&tm, "%Y-%m-%d %H:%M:%S");
         auto c = Cookie("key", "value")
-                   .expires(*tm);
+                   .expires(tm);
         auto s = c.dump();
         CHECK(valid(s, 2));
         CHECK(s.find("Expires=Wed, 01 Nov 2000 23:59:59 GMT") != std::string::npos);
