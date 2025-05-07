@@ -45,7 +45,7 @@ TEST_CASE("SSL")
     asio::io_context ioc;
     {
         asio::ssl::stream<asio::ip::tcp::socket> c(ioc, ctx);
-        c.lowest_layer().connect(asio::ip::tcp::endpoint(asio::ip::address::from_string(LOCALHOST_ADDRESS), 45460));
+        c.lowest_layer().connect(asio::ip::tcp::endpoint(asio::ip::make_address(LOCALHOST_ADDRESS), 45460));
 
         c.handshake(asio::ssl::stream_base::client);
         c.write_some(asio::buffer(sendmsg));
