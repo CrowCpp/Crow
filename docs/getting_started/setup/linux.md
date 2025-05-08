@@ -51,6 +51,24 @@ You can also download the `crow_all.h` file and simply include that into your pr
 
 !!! note
 
+    By default, Crow sets `CROW_ENABLE_SSL=true` and `CROW_ENABLE_COMPRESSION=true` for CMake builds. You must call `find_package` and manually link with these libraries in your build if you keep these defaults.
+
+
+    ```
+    find_package(OpenSSL REQUIRED)
+    find_package(ZLIB REQUIRED)
+
+    target_link_libraries(main
+        PRIVATE
+        OpenSSL::SSL
+        OpenSSL::Crypto
+        ZLIB::ZLIB
+        Crow::Crow
+    )
+    ```
+
+!!! note
+
     You can uninstall Crow at a later time using `make uninstall`.
 
 <br>
