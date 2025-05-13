@@ -212,39 +212,39 @@ if(CROW_INSTALL)
 		"${CMAKE_CURRENT_BINARY_DIR}/CrowConfig.cmake"
 		DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/Crow"
 	)
-endif()
 
-if(WIN32 AND NOT CYGWIN)
-	set(CPACK_GENERATOR NSIS ZIP)
-endif(WIN32 AND NOT CYGWIN)
-if(APPLE)
-	set(CPACK_GENERATOR DragNDrop TGZ)
-endif(APPLE)
-if (UNIX AND NOT APPLE AND NOT WIN32)
-	set(CPACK_GENERATOR DEB TGZ)
-endif (UNIX AND NOT APPLE AND NOT WIN32)
-
-set(CPACK_PACKAGE_NAME "Crow")
-set(CPACK_DEBIAN_PACKAGE_MAINTAINER "CrowCpp")
-set(CPACK_PACKAGE_VENDOR "CrowCpp")
-set(CPACK_PACKAGE_DESCRIPTION "A Fast and Easy to use C++ microframework for the web.")
-set(CPACK_PACKAGE_HOMEPAGE_URL "https://crowcpp.org")
-set(CPACK_DEBIAN_PACKAGE_ARCHITECTURE "all")
-set(CPACK_DEBIAN_PACKAGE_DEBUG OFF)
-set(CPACK_DEBIAN_PACKAGE_DEPENDS "libasio-dev")
-set(CPACK_DEBIAN_PACKAGE_SECTION "libdevel")
-
-include(CPack)
-
-#####################################
-# Uninstall Files
-#####################################
-if(NOT TARGET uninstall)
-  configure_file(
-    "${CMAKE_CURRENT_SOURCE_DIR}/cmake/cmake_uninstall.cmake.in"
-    "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake"
-    IMMEDIATE @ONLY)
-
-  add_custom_target(uninstall
-    COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake)
+	if(WIN32 AND NOT CYGWIN)
+		set(CPACK_GENERATOR NSIS ZIP)
+	endif(WIN32 AND NOT CYGWIN)
+	if(APPLE)
+		set(CPACK_GENERATOR DragNDrop TGZ)
+	endif(APPLE)
+	if (UNIX AND NOT APPLE AND NOT WIN32)
+		set(CPACK_GENERATOR DEB TGZ)
+	endif (UNIX AND NOT APPLE AND NOT WIN32)
+	
+	set(CPACK_PACKAGE_NAME "Crow")
+	set(CPACK_DEBIAN_PACKAGE_MAINTAINER "CrowCpp")
+	set(CPACK_PACKAGE_VENDOR "CrowCpp")
+	set(CPACK_PACKAGE_DESCRIPTION "A Fast and Easy to use C++ microframework for the web.")
+	set(CPACK_PACKAGE_HOMEPAGE_URL "https://crowcpp.org")
+	set(CPACK_DEBIAN_PACKAGE_ARCHITECTURE "all")
+	set(CPACK_DEBIAN_PACKAGE_DEBUG OFF)
+	set(CPACK_DEBIAN_PACKAGE_DEPENDS "libasio-dev")
+	set(CPACK_DEBIAN_PACKAGE_SECTION "libdevel")
+	
+	include(CPack)
+	
+	#####################################
+	# Uninstall Files
+	#####################################
+	if(NOT TARGET uninstall)
+	  configure_file(
+	    "${CMAKE_CURRENT_SOURCE_DIR}/cmake/cmake_uninstall.cmake.in"
+	    "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake"
+	    IMMEDIATE @ONLY)
+	
+	  add_custom_target(uninstall
+	    COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake)
+	endif()
 endif()
