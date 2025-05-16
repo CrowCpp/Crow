@@ -184,6 +184,16 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         void stop()
         {
             shutting_down_ = true; // Prevent the acceptor from taking new connections
+
+            // Explicitly close the acceptor
+            // else asio will throw an exception (linux only), when trying to start server again:
+            // what():  bind: Address already in use
+            if (acceptor_.is_open())
+            {
+                CROW_LOG_INFO << "Closing acceptor. " << &acceptor_;
+                acceptor_.close();
+            }
+
             for (auto& io_context : io_context_pool_)
             {
                 if (io_context != nullptr)
