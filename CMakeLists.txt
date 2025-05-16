@@ -85,7 +85,8 @@ else()
 		INTERFACE
 			asio::asio
 	)
-endif()
+	target_compile_definitions(Crow INTERFACE ASIO_NO_DEPRECATED)
+      endif()
 
 target_compile_definitions(Crow INTERFACE "")
 

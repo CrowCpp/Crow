@@ -3986,20 +3986,20 @@ TEST_CASE("task_timer")
     asio::steady_timer t(io_context);
     asio_error_code ec;
 
-    t.expires_from_now(3 * timer.get_tick_length());
+    t.expires_after(3 * timer.get_tick_length());
     t.wait(ec);
     // we are at 3 ticks, nothing be changed yet
     CHECK(!ec);
     CHECK(a == false);
     CHECK(b == false);
-    t.expires_from_now(3 * timer.get_tick_length());
+    t.expires_after(3 * timer.get_tick_length());
     t.wait(ec);
     // we are at 3+3 = 6 ticks, so first task_timer handler should have runned
     CHECK(!ec);
     CHECK(a == true);
     CHECK(b == false);
 
-    t.expires_from_now(5 * timer.get_tick_length());
+    t.expires_after(5 * timer.get_tick_length());
     t.wait(ec);
     //we are at 3+3 +5 = 11 ticks, both task_timer handlers shoudl have run now
     CHECK(!ec);
@@ -4114,12 +4114,12 @@ TEST_CASE("option_header_passed_in_full")
 
     app.wait_for_server_start();
 
-    asio::io_service is;
+    asio::io_context is;
 
     auto make_request = [&](const std::string& rq) {
         asio::ip::tcp::socket c(is);
         c.connect(asio::ip::tcp::endpoint(
-          asio::ip::address::from_string(LOCALHOST_ADDRESS), 45451));
+          asio::ip::make_address(LOCALHOST_ADDRESS), 45451));
         c.send(asio::buffer(rq));
         std::string fullString{};
         asio::error_code error;
