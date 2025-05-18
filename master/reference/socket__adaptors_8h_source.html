@@ -122,7 +122,7 @@ $(document).ready(function(){initNavTree('socket__adaptors_8h_source.html',''); 
 <div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span><span class="preprocessor">#endif</span></div>
 <div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span><span class="preprocessor">#include &quot;crow/settings.h&quot;</span></div>
 <div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span> </div>
-<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span><span class="preprocessor">#if (CROW_USE_BOOST &amp;&amp; BOOST_VERSION &gt;= 107000) || (ASIO_VERSION &gt;= 101300)</span></div>
+<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span><span class="preprocessor">#if (CROW_USE_BOOST &amp;&amp; BOOST_VERSION &gt;= 107000) || (ASIO_VERSION &gt;= 101008)</span></div>
 <div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span><span class="preprocessor">#define GET_IO_CONTEXT(s) ((asio::io_context&amp;)(s).get_executor().context())</span></div>
 <div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span><span class="preprocessor">#else</span></div>
 <div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span><span class="preprocessor">#define GET_IO_CONTEXT(s) ((s).get_io_service())</span></div>
