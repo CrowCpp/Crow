@@ -1,0 +1,48 @@
+package(default_visibility = ["//visibility:public"])
+load("@bazel_skylib//rules:common_settings.bzl", "bool_flag")
+
+bool_flag(
+    name = "ssl_enabled_flag",
+    build_setting_default = True,
+    visibility = ["//visibility:public"],
+)
+
+config_setting(
+    name = "ssl_enabled",
+    flag_values = {
+        "//:ssl_enabled_flag": "True",
+    },
+)
+
+bool_flag(
+    name = "compression_enabled_flag",
+    build_setting_default = True,
+    visibility = ["//visibility:public"],
+)
+
+config_setting(
+    name = "compression_enabled",
+    flag_values = {
+        "//:compression_enabled_flag": "True",
+    },
+)
+
+cc_library(
+    name = "crow",
+    hdrs = glob(["include/**/*"]),
+    includes = ["include"],
+    copts = select({
+        ":ssl_enabled": ["-DASIO_STANDALONE", "-DCROW_ENABLE_SSL"],
+        "//conditions:default": [],
+    }) + select({
+        ":compression_enabled": ["-DCROW_ENABLE_COMPRESSION"],
+        "//conditions:default": [],
+    }),
+    deps = select({
+        ":ssl_enabled": ["@asio//:asio"],
+        "//conditions:default": [],
+    }) + select({
+        ":compression_enabled": ["@zlib//:zlib"],
+        "//conditions:default": [],
+    }),
+)
