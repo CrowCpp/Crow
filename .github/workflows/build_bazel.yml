@@ -20,7 +20,6 @@ jobs:
       fail-fast: true
       matrix:
         os: [ ubuntu-latest,
-              ubuntu-20.04,
               ubuntu-22.04,
               ubuntu-24.04
             ]
