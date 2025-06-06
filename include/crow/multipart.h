@@ -177,29 +177,66 @@ namespace crow
 
             void parse_body(std::string body)
             {
-                std::string delimiter = dd + boundary;
+                std::string normal_delim = dd + boundary;
+                std::string final_delim = normal_delim + dd; // Create final delimiter
 
-                // TODO(EDev): Exit on error
-                while (body != (crlf))
+                while (true)
                 {
-                    size_t found = body.find(delimiter);
-                    if (found == std::string::npos)
+                    size_t next_normal = body.find(normal_delim);
+                    size_t next_final = body.find(final_delim);
+
+                    // Use the first boundary that appears
+                    size_t found;
+                    bool is_final = false;
+
+                    // Relaxed check: allow final_delim to be treated as final even if it's not perfectly aligned
+                    if (next_final != std::string::npos && (next_normal == std::string::npos || next_final <= next_normal))
                     {
-                        // did not find delimiter; probably an ill-formed body; throw to indicate the issue to user
+                        found = next_final;
+                        is_final = true;
+                    }
+
+                    else if (next_normal != std::string::npos)
+                    {
+                        found = next_normal;
+                    }
+                    else
+                    {
                         throw bad_request("Unable to find delimiter in multipart message. Probably ill-formed body");
                     }
-                    std::string section = body.substr(0, found);
 
-                    // +2 is the CRLF.
-                    // We don't check it and delete it so that the same delimiter can be used for The last delimiter (--delimiter--CRLF).
-                    body.erase(0, found + delimiter.length() + 2);
+                    // Extract the section before the boundary
+                    std::string section = body.substr(0, found);
+                    body.erase(0, found);
+
+                    // Remove the matched delimiter
+                    if (is_final)
+                    {
+                        body.erase(0, final_delim.length());
+                    }
+                    else
+                    {
+                        body.erase(0, normal_delim.length());
+                    }
+
+                    // Strip CRLF if present
+                    if (body.compare(0, 2, crlf) == 0)
+                    {
+                        body.erase(0, 2);
+                    }
+
                     if (!section.empty())
                     {
                         part parsed_section(parse_section(section));
                         part_map.emplace(
-                          (get_header_object(parsed_section.headers, "Content-Disposition").params.find("name")->second),
-                          parsed_section);
+                        get_header_object(parsed_section.headers, "Content-Disposition").params.at("name"),
+                        parsed_section);
                         parts.push_back(std::move(parsed_section));
+                    }
+
+                    if (is_final)
+                    {
+                        break; // Exit after final part
                     }
                 }
             }
