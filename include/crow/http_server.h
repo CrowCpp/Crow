@@ -84,8 +84,8 @@ namespace crow // NOTE: Already documented in "crow/app.h"
 
             acceptor_.bind(endpoint, ec);
             if (ec) {
-                CROW_LOG_ERROR << "Failed to bind to " << endpoint.address().to_string()
-                            << ":" << endpoint.port() << " - " << ec.message();
+                CROW_LOG_ERROR << "Failed to bind to " << acceptor_.address()
+                            << ":" << acceptor_.port() << " - " << ec.message();
                 startup_failed_ = true;
                 return;
             }
@@ -198,7 +198,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                       on_tick();
                   });
             }
-            handler_->port(acceptor_.local_endpoint().port());
+            handler_->port(acceptor_.port());
             CROW_LOG_INFO << server_name_ 
                           << " server is running at " << acceptor_.url_display(handler_->ssl_used()) 
                           << " using " << concurrency_ << " threads";

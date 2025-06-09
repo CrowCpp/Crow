@@ -521,17 +521,17 @@ namespace crow
 #endif
             validate();
 
-            error_code ec;
-            asio::ip::address addr = asio::ip::make_address(bindaddr_,ec);
-            if (ec){
-                CROW_LOG_ERROR << ec.message() << " - Can not create valid ip address from string: \"" << bindaddr_ << "\"";
-                return;
-            }
-            tcp::endpoint endpoint(addr, port_);
 #ifdef CROW_ENABLE_SSL
             if (ssl_used_)
             {
 
+                error_code ec;
+                asio::ip::address addr = asio::ip::make_address(bindaddr_,ec);
+                if (ec){
+                    CROW_LOG_ERROR << ec.message() << " - Can not create valid ip address from string: \"" << bindaddr_ << "\"";
+                    return;
+                }
+                tcp::endpoint endpoint(addr, port_);
                 router_.using_ssl = true;
                 ssl_server_ = std::move(std::unique_ptr<ssl_server_t>(new ssl_server_t(this, endpoint, server_name_, &middlewares_, concurrency_, timeout_, &ssl_context_)));
                 ssl_server_->set_tick_function(tick_interval_, tick_function_);
@@ -560,7 +560,13 @@ namespace crow
                 }
                 else
                 {
-                    TCPAcceptor::endpoint endpoint(asio::ip::address::from_string(bindaddr_), port_);
+                    error_code ec;
+                    asio::ip::address addr = asio::ip::make_address(bindaddr_,ec);
+                    if (ec){
+                        CROW_LOG_ERROR << ec.message() << " - Can not create valid ip address from string: \"" << bindaddr_ << "\"";
+                        return;
+                    }
+                    TCPAcceptor::endpoint endpoint(addr, port_);
                     server_ = std::move(std::unique_ptr<server_t>(new server_t(this, endpoint, server_name_, &middlewares_, concurrency_, timeout_, nullptr)));
                     server_->set_tick_function(tick_interval_, tick_function_);
                     for (auto snum : signals_)

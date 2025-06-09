@@ -1567,7 +1567,7 @@ struct NullSimpleMiddleware
 TEST_CASE("middleware_simple")
 {
     App<NullMiddleware, NullSimpleMiddleware> app;
-    TCPAcceptor::endpoint endpoint(asio::ip::address::from_string(LOCALHOST_ADDRESS), 45451);
+    TCPAcceptor::endpoint endpoint(asio::ip::make_address(LOCALHOST_ADDRESS), 45451);
     decltype(app)::server_t server(&app, endpoint);
 
     CROW_ROUTE(app, "/")
@@ -4104,8 +4104,8 @@ TEST_CASE("unix_socket")
 
     std::string sendmsg = "GET / HTTP/1.0\r\n\r\n";
     {
-        asio::io_service is;
-        asio::local::stream_protocol::socket c(is);
+        asio::io_context ic;
+        asio::local::stream_protocol::socket c(ic);
         c.connect(asio::local::stream_protocol::endpoint(socket_path));
 
         c.send(asio::buffer(sendmsg));

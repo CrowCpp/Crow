@@ -111,14 +111,14 @@ namespace crow
     struct UnixSocketAdaptor
     {
         using context = void;
-        UnixSocketAdaptor(asio::io_service& io_service, context*):
-          socket_(io_service)
+        UnixSocketAdaptor(asio::io_context& io_context, context*):
+          socket_(io_context)
         {
         }
 
-        asio::io_service& get_io_service()
+        asio::io_context& get_io_context()
         {
-            return GET_IO_SERVICE(socket_);
+            return GET_IO_CONTEXT(socket_);
         }
 
         stream_protocol::socket& raw_socket()
