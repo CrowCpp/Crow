@@ -1,0 +1,50 @@
+name: bazel - Build and test
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+env:
+  BUILD_TYPE: Release
+  COVERALLS_PULL_REQUEST: ${{ github.event.number }}
+
+jobs:
+  build:
+    # The CMake configure and build commands are platform agnostic and should work equally well on Windows or Mac.
+    # You can convert this to a matrix build if you need cross-platform coverage.
+    # See: https://docs.github.com/en/free-pro-team@latest/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: true
+      matrix:
+        os: [ ubuntu-latest,
+              ubuntu-22.04,
+              ubuntu-24.04
+            ]
+            # ubuntu-18.04 & mac-os do not work due to compile error on asio
+            # windows-2019 not included to spare free minutes
+    steps:
+    - uses: actions/checkout@v4
+    - name: Prepare dependencies
+      run: |
+         if [ "$RUNNER_OS" == "Linux" ]; then
+              curl --tlsv1.2 --proto =https -Lo bazel https://github.com/bazelbuild/bazelisk/releases/download/v1.25.0/bazelisk-linux-amd64
+              chmod +x bazel
+
+              sudo apt-get update && \
+              sudo apt-get install -yq \
+                g++ clang
+         else
+              echo "$RUNNER_OS not supported"
+              exit 1
+         fi
+      shell: bash
+
+    - name: Build bazel
+      run: |
+        ./bazel build //...
+        ./bazel test //...
+
+

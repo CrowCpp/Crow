@@ -59,3 +59,7 @@ cmake-build-debug
 .cache
 site
 venv
+
+#Bazel
+bazel-*
+MODULE.bazel.lock

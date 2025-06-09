@@ -9,6 +9,8 @@ project(Crow
 	VERSION 1.1.1
 )
 
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
 # Make sure Findasio.cmake module is found
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
@@ -48,6 +50,9 @@ option(CROW_BUILD_FUZZER       "Instrument and build Crow fuzzer"       OFF)
 option(CROW_AMALGAMATE         "Combine all headers into one"           OFF)
 option(CROW_INSTALL            "Add install step for Crow"              ON )
 option(CROW_USE_BOOST          "Use Boost.Asio for Crow"                OFF)
+option( CROW_RETURNS_OK_ON_HTTP_OPTIONS_REQUEST
+		"Returns HTTP status code OK (200) instead of 204 for OPTIONS request"
+		OFF )
 
 option(CROW_ENABLE_SSL "Enable Crow's SSL feature for supporting https" OFF)
 option(CROW_ENABLE_COMPRESSION "Enable Crow's Compression feature for supporting compressed http content" OFF)
@@ -82,7 +87,8 @@ else()
 		INTERFACE
 			asio::asio
 	)
-endif()
+	target_compile_definitions(Crow INTERFACE ASIO_NO_DEPRECATED)
+      endif()
 
 target_compile_definitions(Crow INTERFACE "")
 

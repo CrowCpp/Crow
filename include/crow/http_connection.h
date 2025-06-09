@@ -158,7 +158,7 @@ namespace crow
                 else if (req_.upgrade)
                 {
                     // h2 or h2c headers
-                    if (req_.get_header_value("upgrade").substr(0, 2) == "h2")
+                    if (req_.get_header_value("upgrade").find("h2")==0)
                     {
                         // TODO(ipkn): HTTP/2
                         // currently, ignore upgrade header
@@ -363,7 +363,7 @@ namespace crow
                 buffers_.emplace_back(content_length_.data(), content_length_.size());
                 buffers_.emplace_back(crlf.data(), crlf.size());
             }
-            if (!res.headers.count("server"))
+            if (!res.headers.count("server") && !server_name_.empty())
             {
                 static std::string server_tag = "Server: ";
                 buffers_.emplace_back(server_tag.data(), server_tag.size());
@@ -543,19 +543,25 @@ namespace crow
 
         inline void do_write_sync(std::vector<asio::const_buffer>& buffers)
         {
+            error_code ec;
+            asio::write(adaptor_.socket(), buffers, ec);
 
-            asio::write(adaptor_.socket(), buffers, [&](error_code ec, std::size_t) {
-                if (!ec)
-                {
-                    return false;
-                }
-                else
-                {
-                    CROW_LOG_ERROR << ec << " - happened while sending buffers";
-                    CROW_LOG_DEBUG << this << " from write (sync)(2)";
-                    return true;
-                }
-            });
+            this->res.clear();
+            this->res_body_copy_.clear();
+            if (this->continue_requested)
+            {
+                this->continue_requested = false;
+            }
+            else
+            {
+                this->parser_.clear();
+            }
+
+            if (ec)
+            {
+                CROW_LOG_ERROR << ec << " - happened while sending buffers";
+                CROW_LOG_DEBUG << this << " from write (sync)(2)";
+            }
         }
 
         void cancel_deadline_timer()

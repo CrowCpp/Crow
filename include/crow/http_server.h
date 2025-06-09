@@ -50,7 +50,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
              uint16_t concurrency = 1,
              uint8_t timeout = 5,
              typename Adaptor::context* adaptor_ctx = nullptr):
-          acceptor_(io_context_,endpoint),
+          acceptor_(io_context_),
           signals_(io_context_),
           tick_timer_(io_context_),
           handler_(handler),
@@ -60,7 +60,45 @@ namespace crow // NOTE: Already documented in "crow/app.h"
           task_queue_length_pool_(concurrency_ - 1),
           middlewares_(middlewares),
           adaptor_ctx_(adaptor_ctx)
-        {}
+        {
+            if (startup_failed_) {
+                CROW_LOG_ERROR << "Startup failed; not running server.";
+                return;
+            }
+
+            error_code ec;
+
+            acceptor_.open(endpoint.protocol(), ec);
+            if (ec) {
+                CROW_LOG_ERROR << "Failed to open acceptor: " << ec.message();
+                startup_failed_ = true;
+                return;
+            }
+
+            acceptor_.set_option(tcp::acceptor::reuse_address(true), ec);
+            if (ec) {
+                CROW_LOG_ERROR << "Failed to set socket option: " << ec.message();
+                startup_failed_ = true;
+                return;
+            }
+
+            acceptor_.bind(endpoint, ec);
+            if (ec) {
+                CROW_LOG_ERROR << "Failed to bind to " << endpoint.address().to_string()
+                            << ":" << endpoint.port() << " - " << ec.message();
+                startup_failed_ = true;
+                return;
+            }
+
+            acceptor_.listen(tcp::acceptor::max_listen_connections, ec);
+            if (ec) {
+                CROW_LOG_ERROR << "Failed to listen on port: " << ec.message();
+                startup_failed_ = true;
+                return;
+            }
+
+
+        }
 
         void set_tick_function(std::chrono::milliseconds d, std::function<void()> f)
         {
@@ -81,6 +119,12 @@ namespace crow // NOTE: Already documented in "crow/app.h"
 
         void run()
         {
+
+            if (startup_failed_) {
+                CROW_LOG_ERROR << "Server startup failed. Aborting run().";
+                return;
+            }
+
             uint16_t worker_thread_count = concurrency_ - 1;
             for (int i = 0; i < worker_thread_count; i++)
                 io_context_pool_.emplace_back(new asio::io_context());
@@ -182,6 +226,16 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         void stop()
         {
             shutting_down_ = true; // Prevent the acceptor from taking new connections
+
+            // Explicitly close the acceptor
+            // else asio will throw an exception (linux only), when trying to start server again:
+            // what():  bind: Address already in use
+            if (acceptor_.is_open())
+            {
+                CROW_LOG_INFO << "Closing acceptor. " << &acceptor_;
+                acceptor_.close();
+            }
+
             for (auto& io_context : io_context_pool_)
             {
                 if (io_context != nullptr)
@@ -203,12 +257,13 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         std::cv_status wait_for_start(std::chrono::steady_clock::time_point wait_until)
         {
             std::unique_lock<std::mutex> lock(start_mutex_);
-            
+
             std::cv_status status = std::cv_status::no_timeout;
-            while (!server_started_ && ( status==std::cv_status::no_timeout ))
-                status = cv_started_.wait_until(lock,wait_until);
+            while (!server_started_ && !startup_failed_ && status == std::cv_status::no_timeout)
+                status = cv_started_.wait_until(lock, wait_until);
             return status;
         }
+
 
         void signal_clear()
         {
@@ -286,6 +341,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         Acceptor acceptor_;
         bool shutting_down_ = false;
         bool server_started_{false};
+        bool startup_failed_ = false;
         std::condition_variable cv_started_;
         std::mutex start_mutex_;
         asio::signal_set signals_;

@@ -549,7 +549,11 @@ TEST_CASE("http_method")
         req.method = "OPTIONS"_method;
         app.handle_full(req, res);
 
+#ifdef CROW_RETURNS_OK_ON_HTTP_OPTIONS_REQUEST
+        CHECK(200 == res.code);
+#else
         CHECK(204 == res.code);
+#endif
         CHECK("OPTIONS, HEAD, GET, POST" == res.get_header_value("Allow"));
     }
 
@@ -572,7 +576,11 @@ TEST_CASE("http_method")
         req.method = "OPTIONS"_method;
         app.handle_full(req, res);
 
+#ifdef CROW_RETURNS_OK_ON_HTTP_OPTIONS_REQUEST
+        CHECK(200 == res.code);
+#else
         CHECK(204 == res.code);
+#endif
         CHECK("OPTIONS, HEAD, GET, POST, PATCH, PURGE" == res.get_header_value("Allow"));
     }
 
@@ -584,7 +592,11 @@ TEST_CASE("http_method")
         req.method = "OPTIONS"_method;
         app.handle_full(req, res);
 
+#ifdef CROW_RETURNS_OK_ON_HTTP_OPTIONS_REQUEST
+        CHECK(200 == res.code);
+#else
         CHECK(204 == res.code);
+#endif
         CHECK("OPTIONS, HEAD" == res.get_header_value("Allow"));
     }
 } // http_method
@@ -1416,6 +1428,25 @@ TEST_CASE("json_list")
     CHECK("[5,6,7,8,4,3,2,1]" == x.dump());
 } // json_list
 
+static crow::json::wvalue getValue(int i){
+     return crow::json::wvalue(i);
+}
+
+TEST_CASE("json Incorrect move of wvalue class #953")
+{
+    {
+        crow::json::wvalue int_value(-500);
+        crow::json::wvalue copy_value(std::move(int_value));
+
+        REQUIRE(copy_value.dump()=="-500");
+    }
+    {
+         crow::json::wvalue json;
+         json["int_value"] = getValue(-500);
+         REQUIRE(json["int_value"].dump()=="-500");
+    }
+}
+
 TEST_CASE("template_basic")
 {
     auto t = crow::mustache::compile(R"---(attack of {{name}})---");
@@ -1978,6 +2009,10 @@ TEST_CASE("middleware_cors")
         return "-";
     });
 
+    CROW_ROUTE(app, "/auth-origin").methods(crow::HTTPMethod::Post)([&](const request&) {
+        return "-";
+    });
+
     CROW_ROUTE(app, "/expose")
     ([&](const request&) {
         return "-";
@@ -2005,8 +2040,14 @@ TEST_CASE("middleware_cors")
     CHECK(resp.find("Access-Control-Allow-Origin: test.test") != std::string::npos);
 
     resp = HttpClient::request(LOCALHOST_ADDRESS, port,
-                                    "GET /auth-origin\r\nOrigin: test-client\r\n\r\n");
+                               "GET /auth-origin\r\nOrigin: test-client\r\n\r\n");
     CHECK(resp.find("Access-Control-Allow-Origin: test-client") != std::string::npos);
+    CHECK(resp.find("Access-Control-Allow-Credentials: true") != std::string::npos);
+
+    resp = HttpClient::request(LOCALHOST_ADDRESS, port,
+                               "OPTIONS /auth-origin / HTTP/1.1 \r\n\r\n");
+    CHECK(resp.find("Access-Control-Allow-Origin: *") != std::string::npos);
+    CHECK(resp.find("Access-Control-Allow-Credentials: true") == std::string::npos);
 
     resp = HttpClient::request(LOCALHOST_ADDRESS, port,
                                "GET /expose\r\n\r\n");
@@ -2142,15 +2183,21 @@ TEST_CASE("middleware_session")
 TEST_CASE("bug_quick_repeated_request")
 {
     SimpleApp app;
+    std::uint8_t explicitTimeout = 200;
+    app.timeout(explicitTimeout);
 
     CROW_ROUTE(app, "/")
     ([&] {
+        std::this_thread::sleep_for(std::chrono::seconds(1));
         return "hello";
     });
 
     auto _ = app.bindaddr(LOCALHOST_ADDRESS).port(45451).run_async();
     app.wait_for_server_start();
     std::string sendmsg = "GET / HTTP/1.1\r\nHost: localhost\r\n\r\n";
+
+    auto start = std::chrono::high_resolution_clock::now();
+
     asio::io_context ic;
     {
         std::vector<std::future<void>> v;
@@ -2169,6 +2216,12 @@ TEST_CASE("bug_quick_repeated_request")
             }));
         }
     }
+
+    auto end = std::chrono::high_resolution_clock::now();
+    std::chrono::seconds testDuration = std::chrono::duration_cast<std::chrono::seconds>(end - start);
+
+    CHECK(testDuration.count() < explicitTimeout);
+
     app.stop();
 } // bug_quick_repeated_request
 
@@ -3453,8 +3506,8 @@ TEST_CASE("zlib_compression")
 
             std::string response_deflate(buf_deflate);
             std::string response_gzip(buf_gzip);
-            response_deflate = response_deflate.substr(98);
-            response_gzip = response_gzip.substr(98);
+            response_deflate = response_deflate.substr(response_deflate.find("\r\n\r\n") + 4);
+            response_gzip = response_gzip.substr(response_gzip.find("\r\n\r\n") + 4);
 
             socket[0].close();
             socket[1].close();
@@ -3475,8 +3528,8 @@ TEST_CASE("zlib_compression")
 
             std::string response_deflate(buf_deflate);
             std::string response_gzip(buf_gzip);
-            response_deflate = response_deflate.substr(98);
-            response_gzip = response_gzip.substr(98);
+            response_deflate = response_deflate.substr(response_deflate.find("\r\n\r\n") + 4);
+            response_gzip = response_gzip.substr(response_gzip.find("\r\n\r\n") + 4);
 
             socket[0].close();
             socket[1].close();
@@ -3933,20 +3986,20 @@ TEST_CASE("task_timer")
     asio::steady_timer t(io_context);
     asio_error_code ec;
 
-    t.expires_from_now(3 * timer.get_tick_length());
+    t.expires_after(3 * timer.get_tick_length());
     t.wait(ec);
     // we are at 3 ticks, nothing be changed yet
     CHECK(!ec);
     CHECK(a == false);
     CHECK(b == false);
-    t.expires_from_now(3 * timer.get_tick_length());
+    t.expires_after(3 * timer.get_tick_length());
     t.wait(ec);
     // we are at 3+3 = 6 ticks, so first task_timer handler should have runned
     CHECK(!ec);
     CHECK(a == true);
     CHECK(b == false);
 
-    t.expires_from_now(5 * timer.get_tick_length());
+    t.expires_after(5 * timer.get_tick_length());
     t.wait(ec);
     //we are at 3+3 +5 = 11 ticks, both task_timer handlers shoudl have run now
     CHECK(!ec);
@@ -4088,12 +4141,12 @@ TEST_CASE("option_header_passed_in_full")
 
     app.wait_for_server_start();
 
-    asio::io_service is;
+    asio::io_context is;
 
     auto make_request = [&](const std::string& rq) {
         asio::ip::tcp::socket c(is);
         c.connect(asio::ip::tcp::endpoint(
-          asio::ip::address::from_string(LOCALHOST_ADDRESS), 45451));
+          asio::ip::make_address(LOCALHOST_ADDRESS), 45451));
         c.send(asio::buffer(rq));
         std::string fullString{};
         asio::error_code error;

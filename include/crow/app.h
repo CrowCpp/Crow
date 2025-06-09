@@ -330,7 +330,7 @@ namespace crow
             return *this;
         }
 
-        /// \brief Set the server name
+        /// \brief Set the server name included in the 'Server' HTTP response header. If set to an empty string, the header will be omitted by default.
         self_t& server_name(std::string server_name)
         {
             server_name_ = server_name;
