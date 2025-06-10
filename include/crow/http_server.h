@@ -26,6 +26,7 @@
 #include "crow/http_connection.h"
 #include "crow/logging.h"
 #include "crow/task_timer.h"
+#include "crow/socket_acceptors.h"
 
 
 namespace crow // NOTE: Already documented in "crow/app.h"
@@ -71,13 +72,6 @@ namespace crow // NOTE: Already documented in "crow/app.h"
             acceptor_.open(endpoint.protocol(), ec);
             if (ec) {
                 CROW_LOG_ERROR << "Failed to open acceptor: " << ec.message();
-                startup_failed_ = true;
-                return;
-            }
-
-            acceptor_.set_option(tcp::acceptor::reuse_address(true), ec);
-            if (ec) {
-                CROW_LOG_ERROR << "Failed to set socket option: " << ec.message();
                 startup_failed_ = true;
                 return;
             }

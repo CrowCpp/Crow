@@ -1,11 +1,29 @@
 #pragma once
+#ifdef CROW_USE_BOOST
+#include <boost/asio.hpp>
+#ifdef CROW_ENABLE_SSL
+#include <boost/asio/ssl.hpp>
+#endif
+#else
 #ifndef ASIO_STANDALONE
 #define ASIO_STANDALONE
 #endif
 #include <asio.hpp>
+#ifdef CROW_ENABLE_SSL
+#include <asio/ssl.hpp>
+#endif
+#endif
+
+#include "crow/logging.h"
 
 namespace crow
 {
+#ifdef CROW_USE_BOOST
+    namespace asio = boost::asio;
+    using error_code = boost::system::error_code;
+#else
+    using error_code = asio::error_code;
+#endif
     using tcp = asio::ip::tcp;
     using stream_protocol = asio::local::stream_protocol;
 
@@ -14,7 +32,13 @@ namespace crow
         using endpoint = tcp::endpoint;
         tcp::acceptor acceptor_;
         TCPAcceptor(asio::io_context& io_context):
-          acceptor_(io_context) {}
+          acceptor_(io_context) {
+            error_code ec;
+            acceptor_.set_option(tcp::acceptor::reuse_address(true), ec);
+            if (ec) {
+                CROW_LOG_WARNING << "Failed to set socket option: " << ec.message();
+            }
+        }
 
         int16_t port() const
         {
@@ -40,11 +64,6 @@ namespace crow
         {
             acceptor_.open(protocol, ec);
         }
-        template <typename SettableSocketOption>
-        void set_option(const SettableSocketOption& option, error_code& ec)
-        {
-            acceptor_.set_option(option, ec);
-        }
         void bind(const endpoint& endpoint_, error_code& ec)
         {
             acceptor_.bind(endpoint_, ec);
@@ -68,8 +87,14 @@ namespace crow
         using endpoint = stream_protocol::endpoint;
         stream_protocol::acceptor acceptor_;
         UnixSocketAcceptor(asio::io_context& io_context):
-          acceptor_(io_context, false) {}
-        // reuse addr must be false (https://github.com/chriskohlhoff/asio/issues/622)
+          acceptor_(io_context) {
+            // reuse addr must be false (https://github.com/chriskohlhoff/asio/issues/622)
+            error_code ec;
+            acceptor_.set_option(tcp::acceptor::reuse_address(false), ec);
+            if (ec) {
+                CROW_LOG_WARNING << "Failed to set socket option: " << ec.message();
+            }
+        }
 
         int16_t port() const
         {
@@ -94,11 +119,6 @@ namespace crow
         void open(const stream_protocol::acceptor::protocol_type &protocol, error_code &ec)
         {
             acceptor_.open(protocol, ec);
-        }
-        template <typename SettableSocketOption>
-        void set_option(const SettableSocketOption& option, error_code& ec)
-        {
-            acceptor_.set_option(option, ec);
         }
         void bind(const endpoint& endpoint_, error_code& ec)
         {
