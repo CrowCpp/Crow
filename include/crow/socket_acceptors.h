@@ -32,13 +32,7 @@ namespace crow
         using endpoint = tcp::endpoint;
         tcp::acceptor acceptor_;
         TCPAcceptor(asio::io_context& io_context):
-          acceptor_(io_context) {
-            error_code ec;
-            acceptor_.set_option(tcp::acceptor::reuse_address(true), ec);
-            if (ec) {
-                CROW_LOG_WARNING << "Failed to set socket option: " << ec.message();
-            }
-        }
+          acceptor_(io_context) {}
 
         int16_t port() const
         {
@@ -63,6 +57,9 @@ namespace crow
         void open(const tcp::acceptor::protocol_type &protocol, error_code &ec)
         {
             acceptor_.open(protocol, ec);
+            if (!ec) {
+                acceptor_.set_option(tcp::acceptor::reuse_address(true), ec);
+            }
         }
         void bind(const endpoint& endpoint_, error_code& ec)
         {
@@ -87,14 +84,7 @@ namespace crow
         using endpoint = stream_protocol::endpoint;
         stream_protocol::acceptor acceptor_;
         UnixSocketAcceptor(asio::io_context& io_context):
-          acceptor_(io_context) {
-            // reuse addr must be false (https://github.com/chriskohlhoff/asio/issues/622)
-            error_code ec;
-            acceptor_.set_option(tcp::acceptor::reuse_address(false), ec);
-            if (ec) {
-                CROW_LOG_WARNING << "Failed to set socket option: " << ec.message();
-            }
-        }
+          acceptor_(io_context) {}
 
         int16_t port() const
         {
@@ -119,6 +109,10 @@ namespace crow
         void open(const stream_protocol::acceptor::protocol_type &protocol, error_code &ec)
         {
             acceptor_.open(protocol, ec);
+            if (!ec) {
+                // reuse addr must be false (https://github.com/chriskohlhoff/asio/issues/622)
+                acceptor_.set_option(stream_protocol::acceptor::reuse_address(false), ec);
+            }
         }
         void bind(const endpoint& endpoint_, error_code& ec)
         {
