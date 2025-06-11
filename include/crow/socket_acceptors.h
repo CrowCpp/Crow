@@ -54,29 +54,7 @@ namespace crow
         {
             return acceptor_.local_endpoint();
         }
-        void open(const tcp::acceptor::protocol_type &protocol, error_code &ec)
-        {
-            acceptor_.open(protocol, ec);
-            if (!ec) {
-                acceptor_.set_option(tcp::acceptor::reuse_address(true), ec);
-            }
-        }
-        void bind(const endpoint& endpoint_, error_code& ec)
-        {
-            acceptor_.bind(endpoint_, ec);
-        }
-        void listen(int backlog, error_code& ec)
-        {
-            acceptor_.listen(backlog, ec);
-        }
-        bool is_open() const
-        {
-            return acceptor_.is_open();
-        }
-        void close()
-        {
-            acceptor_.close();
-        }
+        inline static tcp::acceptor::reuse_address reuse_address_option() { return tcp::acceptor::reuse_address(true); }
     };
 
     struct UnixSocketAcceptor
@@ -106,29 +84,10 @@ namespace crow
         {
             return acceptor_.local_endpoint();
         }
-        void open(const stream_protocol::acceptor::protocol_type &protocol, error_code &ec)
+        inline static stream_protocol::acceptor::reuse_address reuse_address_option()
         {
-            acceptor_.open(protocol, ec);
-            if (!ec) {
-                // reuse addr must be false (https://github.com/chriskohlhoff/asio/issues/622)
-                acceptor_.set_option(stream_protocol::acceptor::reuse_address(false), ec);
-            }
-        }
-        void bind(const endpoint& endpoint_, error_code& ec)
-        {
-            acceptor_.bind(endpoint_, ec);
-        }
-        void listen(int backlog, error_code& ec)
-        {
-            acceptor_.listen(backlog, ec);
-        }
-        bool is_open() const
-        {
-            return acceptor_.is_open();
-        }
-        void close()
-        {
-            acceptor_.close();
+            // reuse addr must be false (https://github.com/chriskohlhoff/asio/issues/622)
+            return stream_protocol::acceptor::reuse_address(false);
         }
     };
 } // namespace crow

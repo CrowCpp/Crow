@@ -69,14 +69,21 @@ namespace crow // NOTE: Already documented in "crow/app.h"
 
             error_code ec;
 
-            acceptor_.open(endpoint.protocol(), ec);
+            acceptor_.raw_acceptor().open(endpoint.protocol(), ec);
             if (ec) {
                 CROW_LOG_ERROR << "Failed to open acceptor: " << ec.message();
                 startup_failed_ = true;
                 return;
             }
 
-            acceptor_.bind(endpoint, ec);
+            acceptor_.raw_acceptor().set_option(Acceptor::reuse_address_option(), ec);
+            if (ec) {
+                CROW_LOG_ERROR << "Failed to set socket option: " << ec.message();
+                startup_failed_ = true;
+                return;
+            }
+
+            acceptor_.raw_acceptor().bind(endpoint, ec);
             if (ec) {
                 CROW_LOG_ERROR << "Failed to bind to " << acceptor_.address()
                             << ":" << acceptor_.port() << " - " << ec.message();
@@ -84,7 +91,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                 return;
             }
 
-            acceptor_.listen(tcp::acceptor::max_listen_connections, ec);
+            acceptor_.raw_acceptor().listen(tcp::acceptor::max_listen_connections, ec);
             if (ec) {
                 CROW_LOG_ERROR << "Failed to listen on port: " << ec.message();
                 startup_failed_ = true;
@@ -224,10 +231,15 @@ namespace crow // NOTE: Already documented in "crow/app.h"
             // Explicitly close the acceptor
             // else asio will throw an exception (linux only), when trying to start server again:
             // what():  bind: Address already in use
-            if (acceptor_.is_open())
+            if (acceptor_.raw_acceptor().is_open())
             {
                 CROW_LOG_INFO << "Closing acceptor. " << &acceptor_;
-                acceptor_.close();
+                error_code ec;
+                acceptor_.raw_acceptor().close(ec);
+                if (ec)
+                {
+                    CROW_LOG_WARNING << "Failed to close acceptor: " << ec.message();
+                }
             }
 
             for (auto& io_context : io_context_pool_)
