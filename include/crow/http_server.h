@@ -251,18 +251,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
             io_context_.stop(); // Close main io_service
         }
 
-        void close_websockets(const std::vector<crow::websocket::connection*>& websockets,
-                              const std::string& reason = "Server Application Terminated")
-        {
-            // Make a copy to avoid issues if closing modifies the original collection
-            std::vector<crow::websocket::connection*> websockets_to_close = websockets;
-            for (auto websocket : websockets_to_close)
-            {
-                CROW_LOG_INFO << "Quitting Websocket: " << websocket;
-                websocket->close(reason);
-            }
-        }
-
+        
         uint16_t port() const {
             return acceptor_.local_endpoint().port();
         }
