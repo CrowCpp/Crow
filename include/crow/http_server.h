@@ -354,7 +354,6 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         std::uint8_t timeout_;
         std::string server_name_;
         bool use_unix_;
-        std::vector<std::atomic<unsigned int>> task_queue_length_pool_;
 
         std::chrono::milliseconds tick_interval_;
         std::function<void()> tick_function_;
