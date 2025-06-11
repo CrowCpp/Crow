@@ -51,14 +51,14 @@ namespace crow // NOTE: Already documented in "crow/app.h"
              uint16_t concurrency = 1,
              uint8_t timeout = 5,
              typename Adaptor::context* adaptor_ctx = nullptr):
+          concurrency_(concurrency),
+          task_queue_length_pool_(concurrency_ - 1),
           acceptor_(io_context_),
           signals_(io_context_),
           tick_timer_(io_context_),
           handler_(handler),
-          concurrency_(concurrency),
           timeout_(timeout),
           server_name_(server_name),
-          task_queue_length_pool_(concurrency_ - 1),
           middlewares_(middlewares),
           adaptor_ctx_(adaptor_ctx)
         {
@@ -304,12 +304,11 @@ namespace crow // NOTE: Already documented in "crow/app.h"
             {
                 uint16_t context_idx = pick_io_context_idx();
                 asio::io_context& ic = *io_context_pool_[context_idx];
-                task_queue_length_pool_[context_idx]++;
-                CROW_LOG_DEBUG << &ic << " {" << context_idx << "} queue length: " << task_queue_length_pool_[context_idx];
-
                 auto p = std::make_shared<Connection<Adaptor, Handler, Middlewares...>>(
-                  ic, handler_, server_name_, middlewares_,
-                  get_cached_date_str_pool_[context_idx], *task_timer_pool_[context_idx], adaptor_ctx_, task_queue_length_pool_[context_idx]);
+                    ic, handler_, server_name_, middlewares_,
+                    get_cached_date_str_pool_[context_idx], *task_timer_pool_[context_idx], adaptor_ctx_, task_queue_length_pool_[context_idx]);
+                    
+                CROW_LOG_DEBUG << &ic << " {" << context_idx << "} queue length: " << task_queue_length_pool_[context_idx];
 
                 acceptor_.raw_acceptor().async_accept(
                   p->socket(),
@@ -320,11 +319,6 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                             [p] {
                                 p->start();
                             });
-                      }
-                      else
-                      {
-                          task_queue_length_pool_[context_idx]--;
-                          CROW_LOG_DEBUG << &ic << " {" << context_idx << "} queue length: " << task_queue_length_pool_[context_idx];
                       }
                       do_accept();
                   });
@@ -340,6 +334,8 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         }
 
     private:
+        uint16_t concurrency_{2};
+        std::vector<std::atomic<unsigned int>> task_queue_length_pool_;
         std::vector<std::unique_ptr<asio::io_context>> io_context_pool_;
         asio::io_context io_context_;
         std::vector<detail::task_timer*> task_timer_pool_;
@@ -355,7 +351,6 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         asio::basic_waitable_timer<std::chrono::high_resolution_clock> tick_timer_;
 
         Handler* handler_;
-        uint16_t concurrency_{2};
         std::uint8_t timeout_;
         std::string server_name_;
         bool use_unix_;
