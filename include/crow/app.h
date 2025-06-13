@@ -563,15 +563,14 @@ namespace crow
             else
 #endif
             {
-                close_websockets(websockets_);
+                close_websockets();
                 if (server_) { server_->stop(); }
             }
         }
 
-        void close_websockets(const std::vector<crow::websocket::connection*>& websockets)
+        void close_websockets()
         {
-            std::vector<crow::websocket::connection*> websockets_to_close = websockets;
-            for (auto websocket : websockets_to_close)
+            for (auto websocket : websockets_)
             {
                 CROW_LOG_INFO << "Quitting Websocket: " << websocket;
                 websocket->close("Websocket Closed");
