@@ -18,7 +18,7 @@
 #endif
 #include "crow/settings.h"
 
-#if (CROW_USE_BOOST && BOOST_VERSION >= 107000) || (ASIO_VERSION >= 101008)
+#if (defined(CROW_USE_BOOST) && BOOST_VERSION >= 107000) || (ASIO_VERSION >= 101008)
 #define GET_IO_CONTEXT(s) ((asio::io_context&)(s).get_executor().context())
 #else
 #define GET_IO_CONTEXT(s) ((s).get_io_service())
