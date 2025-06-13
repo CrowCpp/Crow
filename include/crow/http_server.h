@@ -251,6 +251,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
             io_context_.stop(); // Close main io_service
         }
 
+        
         uint16_t port() const {
             return acceptor_.local_endpoint().port();
         }
