@@ -33,6 +33,7 @@ namespace crow
     using error_code = asio::error_code;
 #endif
     using tcp = asio::ip::tcp;
+    using stream_protocol = asio::local::stream_protocol;
 
     /// A wrapper for the asio::ip::tcp::socket and asio::ssl::stream
     struct SocketAdaptor
@@ -62,6 +63,11 @@ namespace crow
         tcp::endpoint remote_endpoint()
         {
             return socket_.remote_endpoint();
+        }
+
+        std::string address() const
+        {
+            return socket_.remote_endpoint().address().to_string();
         }
 
         bool is_open()
@@ -102,6 +108,77 @@ namespace crow
         tcp::socket socket_;
     };
 
+    struct UnixSocketAdaptor
+    {
+        using context = void;
+        UnixSocketAdaptor(asio::io_context& io_context, context*):
+          socket_(io_context)
+        {
+        }
+
+        asio::io_context& get_io_context()
+        {
+            return GET_IO_CONTEXT(socket_);
+        }
+
+        stream_protocol::socket& raw_socket()
+        {
+            return socket_;
+        }
+
+        stream_protocol::socket& socket()
+        {
+            return socket_;
+        }
+
+        stream_protocol::endpoint remote_endpoint()
+        {
+            return socket_.local_endpoint();
+        }
+
+        std::string address() const
+        {
+            return "";
+        }
+
+        bool is_open()
+        {
+            return socket_.is_open();
+        }
+
+        void close()
+        {
+            asio::error_code ec;
+            socket_.close(ec);
+        }
+
+        void shutdown_readwrite()
+        {
+            asio::error_code ec;
+            socket_.shutdown(asio::socket_base::shutdown_type::shutdown_both, ec);
+        }
+
+        void shutdown_write()
+        {
+            asio::error_code ec;
+            socket_.shutdown(asio::socket_base::shutdown_type::shutdown_send, ec);
+        }
+
+        void shutdown_read()
+        {
+            asio::error_code ec;
+            socket_.shutdown(asio::socket_base::shutdown_type::shutdown_receive, ec);
+        }
+
+        template<typename F>
+        void start(F f)
+        {
+            f(asio::error_code());
+        }
+
+        stream_protocol::socket socket_;
+    };
+
 #ifdef CROW_ENABLE_SSL
     struct SSLAdaptor
     {
@@ -125,6 +202,11 @@ namespace crow
         tcp::endpoint remote_endpoint()
         {
             return raw_socket().remote_endpoint();
+        }
+
+        std::string address() const
+        {
+            return ssl_socket_->lowest_layer().remote_endpoint().address().to_string();
         }
 
         bool is_open()
