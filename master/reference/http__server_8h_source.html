@@ -356,118 +356,119 @@ $(document).ready(function(){initNavTree('http__server_8h_source.html',''); init
 <div class="line"><a id="l00251" name="l00251"></a><span class="lineno">  251</span>            io_context_.stop(); <span class="comment">// Close main io_service</span></div>
 <div class="line"><a id="l00252" name="l00252"></a><span class="lineno">  252</span>        }</div>
 <div class="line"><a id="l00253" name="l00253"></a><span class="lineno">  253</span> </div>
-<div class="line"><a id="l00254" name="l00254"></a><span class="lineno">  254</span>        uint16_t port()<span class="keyword"> const </span>{</div>
-<div class="line"><a id="l00255" name="l00255"></a><span class="lineno">  255</span>            <span class="keywordflow">return</span> acceptor_.local_endpoint().port();</div>
-<div class="line"><a id="l00256" name="l00256"></a><span class="lineno">  256</span>        }</div>
-<div class="line"><a id="l00257" name="l00257"></a><span class="lineno">  257</span><span class="comment"></span> </div>
-<div class="line"><a id="l00258" name="l00258"></a><span class="lineno">  258</span><span class="comment">        /// Wait until the server has properly started or until timeout</span></div>
-<div class="foldopen" id="foldopen00259" data-start="{" data-end="}">
-<div class="line"><a id="l00259" name="l00259"></a><span class="lineno"><a class="line" href="classcrow_1_1_server.html#afe725c4024cef73ab5bf6562b7c7b27f">  259</a></span><span class="comment"></span>        std::cv_status <a class="code hl_function" href="classcrow_1_1_server.html#afe725c4024cef73ab5bf6562b7c7b27f">wait_for_start</a>(std::chrono::steady_clock::time_point wait_until)</div>
-<div class="line"><a id="l00260" name="l00260"></a><span class="lineno">  260</span>        {</div>
-<div class="line"><a id="l00261" name="l00261"></a><span class="lineno">  261</span>            std::unique_lock&lt;std::mutex&gt; lock(start_mutex_);</div>
-<div class="line"><a id="l00262" name="l00262"></a><span class="lineno">  262</span> </div>
-<div class="line"><a id="l00263" name="l00263"></a><span class="lineno">  263</span>            std::cv_status status = std::cv_status::no_timeout;</div>
-<div class="line"><a id="l00264" name="l00264"></a><span class="lineno">  264</span>            <span class="keywordflow">while</span> (!server_started_ &amp;&amp; !startup_failed_ &amp;&amp; status == std::cv_status::no_timeout)</div>
-<div class="line"><a id="l00265" name="l00265"></a><span class="lineno">  265</span>                status = cv_started_.wait_until(lock, wait_until);</div>
-<div class="line"><a id="l00266" name="l00266"></a><span class="lineno">  266</span>            <span class="keywordflow">return</span> status;</div>
-<div class="line"><a id="l00267" name="l00267"></a><span class="lineno">  267</span>        }</div>
+<div class="line"><a id="l00254" name="l00254"></a><span class="lineno">  254</span>        </div>
+<div class="line"><a id="l00255" name="l00255"></a><span class="lineno">  255</span>        uint16_t port()<span class="keyword"> const </span>{</div>
+<div class="line"><a id="l00256" name="l00256"></a><span class="lineno">  256</span>            <span class="keywordflow">return</span> acceptor_.local_endpoint().port();</div>
+<div class="line"><a id="l00257" name="l00257"></a><span class="lineno">  257</span>        }</div>
+<div class="line"><a id="l00258" name="l00258"></a><span class="lineno">  258</span><span class="comment"></span> </div>
+<div class="line"><a id="l00259" name="l00259"></a><span class="lineno">  259</span><span class="comment">        /// Wait until the server has properly started or until timeout</span></div>
+<div class="foldopen" id="foldopen00260" data-start="{" data-end="}">
+<div class="line"><a id="l00260" name="l00260"></a><span class="lineno"><a class="line" href="classcrow_1_1_server.html#afe725c4024cef73ab5bf6562b7c7b27f">  260</a></span><span class="comment"></span>        std::cv_status <a class="code hl_function" href="classcrow_1_1_server.html#afe725c4024cef73ab5bf6562b7c7b27f">wait_for_start</a>(std::chrono::steady_clock::time_point wait_until)</div>
+<div class="line"><a id="l00261" name="l00261"></a><span class="lineno">  261</span>        {</div>
+<div class="line"><a id="l00262" name="l00262"></a><span class="lineno">  262</span>            std::unique_lock&lt;std::mutex&gt; lock(start_mutex_);</div>
+<div class="line"><a id="l00263" name="l00263"></a><span class="lineno">  263</span> </div>
+<div class="line"><a id="l00264" name="l00264"></a><span class="lineno">  264</span>            std::cv_status status = std::cv_status::no_timeout;</div>
+<div class="line"><a id="l00265" name="l00265"></a><span class="lineno">  265</span>            <span class="keywordflow">while</span> (!server_started_ &amp;&amp; !startup_failed_ &amp;&amp; status == std::cv_status::no_timeout)</div>
+<div class="line"><a id="l00266" name="l00266"></a><span class="lineno">  266</span>                status = cv_started_.wait_until(lock, wait_until);</div>
+<div class="line"><a id="l00267" name="l00267"></a><span class="lineno">  267</span>            <span class="keywordflow">return</span> status;</div>
+<div class="line"><a id="l00268" name="l00268"></a><span class="lineno">  268</span>        }</div>
 </div>
-<div class="line"><a id="l00268" name="l00268"></a><span class="lineno">  268</span> </div>
 <div class="line"><a id="l00269" name="l00269"></a><span class="lineno">  269</span> </div>
-<div class="line"><a id="l00270" name="l00270"></a><span class="lineno">  270</span>        <span class="keywordtype">void</span> signal_clear()</div>
-<div class="line"><a id="l00271" name="l00271"></a><span class="lineno">  271</span>        {</div>
-<div class="line"><a id="l00272" name="l00272"></a><span class="lineno">  272</span>            signals_.clear();</div>
-<div class="line"><a id="l00273" name="l00273"></a><span class="lineno">  273</span>        }</div>
-<div class="line"><a id="l00274" name="l00274"></a><span class="lineno">  274</span> </div>
-<div class="line"><a id="l00275" name="l00275"></a><span class="lineno">  275</span>        <span class="keywordtype">void</span> signal_add(<span class="keywordtype">int</span> signal_number)</div>
-<div class="line"><a id="l00276" name="l00276"></a><span class="lineno">  276</span>        {</div>
-<div class="line"><a id="l00277" name="l00277"></a><span class="lineno">  277</span>            signals_.add(signal_number);</div>
-<div class="line"><a id="l00278" name="l00278"></a><span class="lineno">  278</span>        }</div>
-<div class="line"><a id="l00279" name="l00279"></a><span class="lineno">  279</span> </div>
-<div class="line"><a id="l00280" name="l00280"></a><span class="lineno">  280</span>    <span class="keyword">private</span>:</div>
-<div class="line"><a id="l00281" name="l00281"></a><span class="lineno">  281</span>        uint16_t pick_io_context_idx()</div>
-<div class="line"><a id="l00282" name="l00282"></a><span class="lineno">  282</span>        {</div>
-<div class="line"><a id="l00283" name="l00283"></a><span class="lineno">  283</span>            uint16_t min_queue_idx = 0;</div>
-<div class="line"><a id="l00284" name="l00284"></a><span class="lineno">  284</span> </div>
-<div class="line"><a id="l00285" name="l00285"></a><span class="lineno">  285</span>            <span class="comment">// TODO improve load balancing</span></div>
-<div class="line"><a id="l00286" name="l00286"></a><span class="lineno">  286</span>            <span class="comment">// size_t is used here to avoid the security issue https://codeql.github.com/codeql-query-help/cpp/cpp-comparison-with-wider-type/</span></div>
-<div class="line"><a id="l00287" name="l00287"></a><span class="lineno">  287</span>            <span class="comment">// even though the max value of this can be only uint16_t as concurrency is uint16_t.</span></div>
-<div class="line"><a id="l00288" name="l00288"></a><span class="lineno">  288</span>            <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> i = 1; i &lt; task_queue_length_pool_.size() &amp;&amp; task_queue_length_pool_[min_queue_idx] &gt; 0; i++)</div>
-<div class="line"><a id="l00289" name="l00289"></a><span class="lineno">  289</span>            <span class="comment">// No need to check other io_services if the current one has no tasks</span></div>
-<div class="line"><a id="l00290" name="l00290"></a><span class="lineno">  290</span>            {</div>
-<div class="line"><a id="l00291" name="l00291"></a><span class="lineno">  291</span>                <span class="keywordflow">if</span> (task_queue_length_pool_[i] &lt; task_queue_length_pool_[min_queue_idx])</div>
-<div class="line"><a id="l00292" name="l00292"></a><span class="lineno">  292</span>                    min_queue_idx = i;</div>
-<div class="line"><a id="l00293" name="l00293"></a><span class="lineno">  293</span>            }</div>
-<div class="line"><a id="l00294" name="l00294"></a><span class="lineno">  294</span>            <span class="keywordflow">return</span> min_queue_idx;</div>
-<div class="line"><a id="l00295" name="l00295"></a><span class="lineno">  295</span>        }</div>
-<div class="line"><a id="l00296" name="l00296"></a><span class="lineno">  296</span> </div>
-<div class="line"><a id="l00297" name="l00297"></a><span class="lineno">  297</span>        <span class="keywordtype">void</span> do_accept()</div>
-<div class="line"><a id="l00298" name="l00298"></a><span class="lineno">  298</span>        {</div>
-<div class="line"><a id="l00299" name="l00299"></a><span class="lineno">  299</span>            <span class="keywordflow">if</span> (!shutting_down_)</div>
-<div class="line"><a id="l00300" name="l00300"></a><span class="lineno">  300</span>            {</div>
-<div class="line"><a id="l00301" name="l00301"></a><span class="lineno">  301</span>                uint16_t context_idx = pick_io_context_idx();</div>
-<div class="line"><a id="l00302" name="l00302"></a><span class="lineno">  302</span>                asio::io_context&amp; ic = *io_context_pool_[context_idx];</div>
-<div class="line"><a id="l00303" name="l00303"></a><span class="lineno">  303</span>                <span class="keyword">auto</span> p = std::make_shared&lt;Connection&lt;Adaptor, Handler, Middlewares...&gt;&gt;(</div>
-<div class="line"><a id="l00304" name="l00304"></a><span class="lineno">  304</span>                    ic, handler_, server_name_, middlewares_,</div>
-<div class="line"><a id="l00305" name="l00305"></a><span class="lineno">  305</span>                    get_cached_date_str_pool_[context_idx], *task_timer_pool_[context_idx], adaptor_ctx_, task_queue_length_pool_[context_idx]);</div>
-<div class="line"><a id="l00306" name="l00306"></a><span class="lineno">  306</span>                    </div>
-<div class="line"><a id="l00307" name="l00307"></a><span class="lineno">  307</span>                CROW_LOG_DEBUG &lt;&lt; &amp;ic &lt;&lt; <span class="stringliteral">&quot; {&quot;</span> &lt;&lt; context_idx &lt;&lt; <span class="stringliteral">&quot;} queue length: &quot;</span> &lt;&lt; task_queue_length_pool_[context_idx];</div>
-<div class="line"><a id="l00308" name="l00308"></a><span class="lineno">  308</span> </div>
-<div class="line"><a id="l00309" name="l00309"></a><span class="lineno">  309</span>                acceptor_.async_accept(</div>
-<div class="line"><a id="l00310" name="l00310"></a><span class="lineno">  310</span>                  p-&gt;socket(),</div>
-<div class="line"><a id="l00311" name="l00311"></a><span class="lineno">  311</span>                  [<span class="keyword">this</span>, p, &amp;ic, context_idx](error_code ec) {</div>
-<div class="line"><a id="l00312" name="l00312"></a><span class="lineno">  312</span>                      <span class="keywordflow">if</span> (!ec)</div>
-<div class="line"><a id="l00313" name="l00313"></a><span class="lineno">  313</span>                      {</div>
-<div class="line"><a id="l00314" name="l00314"></a><span class="lineno">  314</span>                          asio::post(ic,</div>
-<div class="line"><a id="l00315" name="l00315"></a><span class="lineno">  315</span>                            [p] {</div>
-<div class="line"><a id="l00316" name="l00316"></a><span class="lineno">  316</span>                                p-&gt;start();</div>
-<div class="line"><a id="l00317" name="l00317"></a><span class="lineno">  317</span>                            });</div>
-<div class="line"><a id="l00318" name="l00318"></a><span class="lineno">  318</span>                      }</div>
-<div class="line"><a id="l00319" name="l00319"></a><span class="lineno">  319</span>                      do_accept();</div>
-<div class="line"><a id="l00320" name="l00320"></a><span class="lineno">  320</span>                  });</div>
-<div class="line"><a id="l00321" name="l00321"></a><span class="lineno">  321</span>            }</div>
-<div class="line"><a id="l00322" name="l00322"></a><span class="lineno">  322</span>        }</div>
-<div class="line"><a id="l00323" name="l00323"></a><span class="lineno">  323</span><span class="comment"></span> </div>
-<div class="line"><a id="l00324" name="l00324"></a><span class="lineno">  324</span><span class="comment">        /// Notify anything using `wait_for_start()` to proceed</span></div>
-<div class="line"><a id="l00325" name="l00325"></a><span class="lineno">  325</span><span class="comment"></span>        <span class="keywordtype">void</span> notify_start()</div>
-<div class="line"><a id="l00326" name="l00326"></a><span class="lineno">  326</span>        {</div>
-<div class="line"><a id="l00327" name="l00327"></a><span class="lineno">  327</span>            std::unique_lock&lt;std::mutex&gt; lock(start_mutex_);</div>
-<div class="line"><a id="l00328" name="l00328"></a><span class="lineno">  328</span>            server_started_ = <span class="keyword">true</span>;</div>
-<div class="line"><a id="l00329" name="l00329"></a><span class="lineno">  329</span>            cv_started_.notify_all();</div>
-<div class="line"><a id="l00330" name="l00330"></a><span class="lineno">  330</span>        }</div>
-<div class="line"><a id="l00331" name="l00331"></a><span class="lineno">  331</span> </div>
-<div class="line"><a id="l00332" name="l00332"></a><span class="lineno">  332</span>    <span class="keyword">private</span>:</div>
-<div class="line"><a id="l00333" name="l00333"></a><span class="lineno">  333</span>        uint16_t concurrency_{2};</div>
-<div class="line"><a id="l00334" name="l00334"></a><span class="lineno">  334</span>        std::vector&lt;std::atomic&lt;unsigned int&gt;&gt; task_queue_length_pool_;</div>
-<div class="line"><a id="l00335" name="l00335"></a><span class="lineno">  335</span>        std::vector&lt;std::unique_ptr&lt;asio::io_context&gt;&gt; io_context_pool_;</div>
-<div class="line"><a id="l00336" name="l00336"></a><span class="lineno">  336</span>        asio::io_context io_context_;</div>
-<div class="line"><a id="l00337" name="l00337"></a><span class="lineno">  337</span>        std::vector&lt;detail::task_timer*&gt; task_timer_pool_;</div>
-<div class="line"><a id="l00338" name="l00338"></a><span class="lineno">  338</span>        std::vector&lt;std::function&lt;std::string()&gt;&gt; get_cached_date_str_pool_;</div>
-<div class="line"><a id="l00339" name="l00339"></a><span class="lineno">  339</span>        tcp::acceptor acceptor_;</div>
-<div class="line"><a id="l00340" name="l00340"></a><span class="lineno">  340</span>        <span class="keywordtype">bool</span> shutting_down_ = <span class="keyword">false</span>;</div>
-<div class="line"><a id="l00341" name="l00341"></a><span class="lineno">  341</span>        <span class="keywordtype">bool</span> server_started_{<span class="keyword">false</span>};</div>
-<div class="line"><a id="l00342" name="l00342"></a><span class="lineno">  342</span>        <span class="keywordtype">bool</span> startup_failed_ = <span class="keyword">false</span>;</div>
-<div class="line"><a id="l00343" name="l00343"></a><span class="lineno">  343</span>        std::condition_variable cv_started_;</div>
-<div class="line"><a id="l00344" name="l00344"></a><span class="lineno">  344</span>        std::mutex start_mutex_;</div>
-<div class="line"><a id="l00345" name="l00345"></a><span class="lineno">  345</span>        asio::signal_set signals_;</div>
-<div class="line"><a id="l00346" name="l00346"></a><span class="lineno">  346</span> </div>
-<div class="line"><a id="l00347" name="l00347"></a><span class="lineno">  347</span>        asio::basic_waitable_timer&lt;std::chrono::high_resolution_clock&gt; tick_timer_;</div>
-<div class="line"><a id="l00348" name="l00348"></a><span class="lineno">  348</span> </div>
-<div class="line"><a id="l00349" name="l00349"></a><span class="lineno">  349</span>        Handler* handler_;</div>
-<div class="line"><a id="l00350" name="l00350"></a><span class="lineno">  350</span>        std::uint8_t timeout_;</div>
-<div class="line"><a id="l00351" name="l00351"></a><span class="lineno">  351</span>        std::string server_name_;</div>
-<div class="line"><a id="l00352" name="l00352"></a><span class="lineno">  352</span> </div>
-<div class="line"><a id="l00353" name="l00353"></a><span class="lineno">  353</span>        std::chrono::milliseconds tick_interval_;</div>
-<div class="line"><a id="l00354" name="l00354"></a><span class="lineno">  354</span>        std::function&lt;void()&gt; tick_function_;</div>
-<div class="line"><a id="l00355" name="l00355"></a><span class="lineno">  355</span> </div>
-<div class="line"><a id="l00356" name="l00356"></a><span class="lineno">  356</span>        std::tuple&lt;Middlewares...&gt;* middlewares_;</div>
-<div class="line"><a id="l00357" name="l00357"></a><span class="lineno">  357</span> </div>
-<div class="line"><a id="l00358" name="l00358"></a><span class="lineno">  358</span>        <span class="keyword">typename</span> Adaptor::context* adaptor_ctx_;</div>
-<div class="line"><a id="l00359" name="l00359"></a><span class="lineno">  359</span>    };</div>
+<div class="line"><a id="l00270" name="l00270"></a><span class="lineno">  270</span> </div>
+<div class="line"><a id="l00271" name="l00271"></a><span class="lineno">  271</span>        <span class="keywordtype">void</span> signal_clear()</div>
+<div class="line"><a id="l00272" name="l00272"></a><span class="lineno">  272</span>        {</div>
+<div class="line"><a id="l00273" name="l00273"></a><span class="lineno">  273</span>            signals_.clear();</div>
+<div class="line"><a id="l00274" name="l00274"></a><span class="lineno">  274</span>        }</div>
+<div class="line"><a id="l00275" name="l00275"></a><span class="lineno">  275</span> </div>
+<div class="line"><a id="l00276" name="l00276"></a><span class="lineno">  276</span>        <span class="keywordtype">void</span> signal_add(<span class="keywordtype">int</span> signal_number)</div>
+<div class="line"><a id="l00277" name="l00277"></a><span class="lineno">  277</span>        {</div>
+<div class="line"><a id="l00278" name="l00278"></a><span class="lineno">  278</span>            signals_.add(signal_number);</div>
+<div class="line"><a id="l00279" name="l00279"></a><span class="lineno">  279</span>        }</div>
+<div class="line"><a id="l00280" name="l00280"></a><span class="lineno">  280</span> </div>
+<div class="line"><a id="l00281" name="l00281"></a><span class="lineno">  281</span>    <span class="keyword">private</span>:</div>
+<div class="line"><a id="l00282" name="l00282"></a><span class="lineno">  282</span>        uint16_t pick_io_context_idx()</div>
+<div class="line"><a id="l00283" name="l00283"></a><span class="lineno">  283</span>        {</div>
+<div class="line"><a id="l00284" name="l00284"></a><span class="lineno">  284</span>            uint16_t min_queue_idx = 0;</div>
+<div class="line"><a id="l00285" name="l00285"></a><span class="lineno">  285</span> </div>
+<div class="line"><a id="l00286" name="l00286"></a><span class="lineno">  286</span>            <span class="comment">// TODO improve load balancing</span></div>
+<div class="line"><a id="l00287" name="l00287"></a><span class="lineno">  287</span>            <span class="comment">// size_t is used here to avoid the security issue https://codeql.github.com/codeql-query-help/cpp/cpp-comparison-with-wider-type/</span></div>
+<div class="line"><a id="l00288" name="l00288"></a><span class="lineno">  288</span>            <span class="comment">// even though the max value of this can be only uint16_t as concurrency is uint16_t.</span></div>
+<div class="line"><a id="l00289" name="l00289"></a><span class="lineno">  289</span>            <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> i = 1; i &lt; task_queue_length_pool_.size() &amp;&amp; task_queue_length_pool_[min_queue_idx] &gt; 0; i++)</div>
+<div class="line"><a id="l00290" name="l00290"></a><span class="lineno">  290</span>            <span class="comment">// No need to check other io_services if the current one has no tasks</span></div>
+<div class="line"><a id="l00291" name="l00291"></a><span class="lineno">  291</span>            {</div>
+<div class="line"><a id="l00292" name="l00292"></a><span class="lineno">  292</span>                <span class="keywordflow">if</span> (task_queue_length_pool_[i] &lt; task_queue_length_pool_[min_queue_idx])</div>
+<div class="line"><a id="l00293" name="l00293"></a><span class="lineno">  293</span>                    min_queue_idx = i;</div>
+<div class="line"><a id="l00294" name="l00294"></a><span class="lineno">  294</span>            }</div>
+<div class="line"><a id="l00295" name="l00295"></a><span class="lineno">  295</span>            <span class="keywordflow">return</span> min_queue_idx;</div>
+<div class="line"><a id="l00296" name="l00296"></a><span class="lineno">  296</span>        }</div>
+<div class="line"><a id="l00297" name="l00297"></a><span class="lineno">  297</span> </div>
+<div class="line"><a id="l00298" name="l00298"></a><span class="lineno">  298</span>        <span class="keywordtype">void</span> do_accept()</div>
+<div class="line"><a id="l00299" name="l00299"></a><span class="lineno">  299</span>        {</div>
+<div class="line"><a id="l00300" name="l00300"></a><span class="lineno">  300</span>            <span class="keywordflow">if</span> (!shutting_down_)</div>
+<div class="line"><a id="l00301" name="l00301"></a><span class="lineno">  301</span>            {</div>
+<div class="line"><a id="l00302" name="l00302"></a><span class="lineno">  302</span>                uint16_t context_idx = pick_io_context_idx();</div>
+<div class="line"><a id="l00303" name="l00303"></a><span class="lineno">  303</span>                asio::io_context&amp; ic = *io_context_pool_[context_idx];</div>
+<div class="line"><a id="l00304" name="l00304"></a><span class="lineno">  304</span>                <span class="keyword">auto</span> p = std::make_shared&lt;Connection&lt;Adaptor, Handler, Middlewares...&gt;&gt;(</div>
+<div class="line"><a id="l00305" name="l00305"></a><span class="lineno">  305</span>                    ic, handler_, server_name_, middlewares_,</div>
+<div class="line"><a id="l00306" name="l00306"></a><span class="lineno">  306</span>                    get_cached_date_str_pool_[context_idx], *task_timer_pool_[context_idx], adaptor_ctx_, task_queue_length_pool_[context_idx]);</div>
+<div class="line"><a id="l00307" name="l00307"></a><span class="lineno">  307</span>                    </div>
+<div class="line"><a id="l00308" name="l00308"></a><span class="lineno">  308</span>                CROW_LOG_DEBUG &lt;&lt; &amp;ic &lt;&lt; <span class="stringliteral">&quot; {&quot;</span> &lt;&lt; context_idx &lt;&lt; <span class="stringliteral">&quot;} queue length: &quot;</span> &lt;&lt; task_queue_length_pool_[context_idx];</div>
+<div class="line"><a id="l00309" name="l00309"></a><span class="lineno">  309</span> </div>
+<div class="line"><a id="l00310" name="l00310"></a><span class="lineno">  310</span>                acceptor_.async_accept(</div>
+<div class="line"><a id="l00311" name="l00311"></a><span class="lineno">  311</span>                  p-&gt;socket(),</div>
+<div class="line"><a id="l00312" name="l00312"></a><span class="lineno">  312</span>                  [<span class="keyword">this</span>, p, &amp;ic, context_idx](error_code ec) {</div>
+<div class="line"><a id="l00313" name="l00313"></a><span class="lineno">  313</span>                      <span class="keywordflow">if</span> (!ec)</div>
+<div class="line"><a id="l00314" name="l00314"></a><span class="lineno">  314</span>                      {</div>
+<div class="line"><a id="l00315" name="l00315"></a><span class="lineno">  315</span>                          asio::post(ic,</div>
+<div class="line"><a id="l00316" name="l00316"></a><span class="lineno">  316</span>                            [p] {</div>
+<div class="line"><a id="l00317" name="l00317"></a><span class="lineno">  317</span>                                p-&gt;start();</div>
+<div class="line"><a id="l00318" name="l00318"></a><span class="lineno">  318</span>                            });</div>
+<div class="line"><a id="l00319" name="l00319"></a><span class="lineno">  319</span>                      }</div>
+<div class="line"><a id="l00320" name="l00320"></a><span class="lineno">  320</span>                      do_accept();</div>
+<div class="line"><a id="l00321" name="l00321"></a><span class="lineno">  321</span>                  });</div>
+<div class="line"><a id="l00322" name="l00322"></a><span class="lineno">  322</span>            }</div>
+<div class="line"><a id="l00323" name="l00323"></a><span class="lineno">  323</span>        }</div>
+<div class="line"><a id="l00324" name="l00324"></a><span class="lineno">  324</span><span class="comment"></span> </div>
+<div class="line"><a id="l00325" name="l00325"></a><span class="lineno">  325</span><span class="comment">        /// Notify anything using `wait_for_start()` to proceed</span></div>
+<div class="line"><a id="l00326" name="l00326"></a><span class="lineno">  326</span><span class="comment"></span>        <span class="keywordtype">void</span> notify_start()</div>
+<div class="line"><a id="l00327" name="l00327"></a><span class="lineno">  327</span>        {</div>
+<div class="line"><a id="l00328" name="l00328"></a><span class="lineno">  328</span>            std::unique_lock&lt;std::mutex&gt; lock(start_mutex_);</div>
+<div class="line"><a id="l00329" name="l00329"></a><span class="lineno">  329</span>            server_started_ = <span class="keyword">true</span>;</div>
+<div class="line"><a id="l00330" name="l00330"></a><span class="lineno">  330</span>            cv_started_.notify_all();</div>
+<div class="line"><a id="l00331" name="l00331"></a><span class="lineno">  331</span>        }</div>
+<div class="line"><a id="l00332" name="l00332"></a><span class="lineno">  332</span> </div>
+<div class="line"><a id="l00333" name="l00333"></a><span class="lineno">  333</span>    <span class="keyword">private</span>:</div>
+<div class="line"><a id="l00334" name="l00334"></a><span class="lineno">  334</span>        uint16_t concurrency_{2};</div>
+<div class="line"><a id="l00335" name="l00335"></a><span class="lineno">  335</span>        std::vector&lt;std::atomic&lt;unsigned int&gt;&gt; task_queue_length_pool_;</div>
+<div class="line"><a id="l00336" name="l00336"></a><span class="lineno">  336</span>        std::vector&lt;std::unique_ptr&lt;asio::io_context&gt;&gt; io_context_pool_;</div>
+<div class="line"><a id="l00337" name="l00337"></a><span class="lineno">  337</span>        asio::io_context io_context_;</div>
+<div class="line"><a id="l00338" name="l00338"></a><span class="lineno">  338</span>        std::vector&lt;detail::task_timer*&gt; task_timer_pool_;</div>
+<div class="line"><a id="l00339" name="l00339"></a><span class="lineno">  339</span>        std::vector&lt;std::function&lt;std::string()&gt;&gt; get_cached_date_str_pool_;</div>
+<div class="line"><a id="l00340" name="l00340"></a><span class="lineno">  340</span>        tcp::acceptor acceptor_;</div>
+<div class="line"><a id="l00341" name="l00341"></a><span class="lineno">  341</span>        <span class="keywordtype">bool</span> shutting_down_ = <span class="keyword">false</span>;</div>
+<div class="line"><a id="l00342" name="l00342"></a><span class="lineno">  342</span>        <span class="keywordtype">bool</span> server_started_{<span class="keyword">false</span>};</div>
+<div class="line"><a id="l00343" name="l00343"></a><span class="lineno">  343</span>        <span class="keywordtype">bool</span> startup_failed_ = <span class="keyword">false</span>;</div>
+<div class="line"><a id="l00344" name="l00344"></a><span class="lineno">  344</span>        std::condition_variable cv_started_;</div>
+<div class="line"><a id="l00345" name="l00345"></a><span class="lineno">  345</span>        std::mutex start_mutex_;</div>
+<div class="line"><a id="l00346" name="l00346"></a><span class="lineno">  346</span>        asio::signal_set signals_;</div>
+<div class="line"><a id="l00347" name="l00347"></a><span class="lineno">  347</span> </div>
+<div class="line"><a id="l00348" name="l00348"></a><span class="lineno">  348</span>        asio::basic_waitable_timer&lt;std::chrono::high_resolution_clock&gt; tick_timer_;</div>
+<div class="line"><a id="l00349" name="l00349"></a><span class="lineno">  349</span> </div>
+<div class="line"><a id="l00350" name="l00350"></a><span class="lineno">  350</span>        Handler* handler_;</div>
+<div class="line"><a id="l00351" name="l00351"></a><span class="lineno">  351</span>        std::uint8_t timeout_;</div>
+<div class="line"><a id="l00352" name="l00352"></a><span class="lineno">  352</span>        std::string server_name_;</div>
+<div class="line"><a id="l00353" name="l00353"></a><span class="lineno">  353</span> </div>
+<div class="line"><a id="l00354" name="l00354"></a><span class="lineno">  354</span>        std::chrono::milliseconds tick_interval_;</div>
+<div class="line"><a id="l00355" name="l00355"></a><span class="lineno">  355</span>        std::function&lt;void()&gt; tick_function_;</div>
+<div class="line"><a id="l00356" name="l00356"></a><span class="lineno">  356</span> </div>
+<div class="line"><a id="l00357" name="l00357"></a><span class="lineno">  357</span>        std::tuple&lt;Middlewares...&gt;* middlewares_;</div>
+<div class="line"><a id="l00358" name="l00358"></a><span class="lineno">  358</span> </div>
+<div class="line"><a id="l00359" name="l00359"></a><span class="lineno">  359</span>        <span class="keyword">typename</span> Adaptor::context* adaptor_ctx_;</div>
+<div class="line"><a id="l00360" name="l00360"></a><span class="lineno">  360</span>    };</div>
 </div>
-<div class="line"><a id="l00360" name="l00360"></a><span class="lineno">  360</span>} <span class="comment">// namespace crow</span></div>
+<div class="line"><a id="l00361" name="l00361"></a><span class="lineno">  361</span>} <span class="comment">// namespace crow</span></div>
 <div class="ttc" id="aclasscrow_1_1_server_html"><div class="ttname"><a href="classcrow_1_1_server.html">crow::Server</a></div><div class="ttdef"><b>Definition</b> http_server.h:43</div></div>
-<div class="ttc" id="aclasscrow_1_1_server_html_afe725c4024cef73ab5bf6562b7c7b27f"><div class="ttname"><a href="classcrow_1_1_server.html#afe725c4024cef73ab5bf6562b7c7b27f">crow::Server::wait_for_start</a></div><div class="ttdeci">std::cv_status wait_for_start(std::chrono::steady_clock::time_point wait_until)</div><div class="ttdoc">Wait until the server has properly started or until timeout.</div><div class="ttdef"><b>Definition</b> http_server.h:259</div></div>
+<div class="ttc" id="aclasscrow_1_1_server_html_afe725c4024cef73ab5bf6562b7c7b27f"><div class="ttname"><a href="classcrow_1_1_server.html#afe725c4024cef73ab5bf6562b7c7b27f">crow::Server::wait_for_start</a></div><div class="ttdeci">std::cv_status wait_for_start(std::chrono::steady_clock::time_point wait_until)</div><div class="ttdoc">Wait until the server has properly started or until timeout.</div><div class="ttdef"><b>Definition</b> http_server.h:260</div></div>
 <div class="ttc" id="aclasscrow_1_1detail_1_1task__timer_html"><div class="ttname"><a href="classcrow_1_1detail_1_1task__timer.html">crow::detail::task_timer</a></div><div class="ttdef"><b>Definition</b> task_timer.h:36</div></div>
 <div class="ttc" id="aclasscrow_1_1detail_1_1task__timer_html_a7a1851ddf3d42b65c674a8984557cbb0"><div class="ttname"><a href="classcrow_1_1detail_1_1task__timer.html#a7a1851ddf3d42b65c674a8984557cbb0">crow::detail::task_timer::set_default_timeout</a></div><div class="ttdeci">void set_default_timeout(uint8_t timeout)</div><div class="ttdef"><b>Definition</b> task_timer.h:107</div></div>
 <div class="ttc" id="anamespacecrow_html"><div class="ttname"><a href="namespacecrow.html">crow</a></div><div class="ttdoc">The main namespace of the library. In this namespace is defined the most important classes and functi...</div></div>
@@ -478,7 +479,7 @@ $(document).ready(function(){initNavTree('http__server_8h_source.html',''); init
 			<ul>
 				<li class="navelem"><a class="el" href="dir_d44c64559bbebec7f509842c48db8b23.html">include</a></li><li class="navelem"><a class="el" href="dir_d22c1cb87b72f01e1a7f207eb3bfd1ca.html">crow</a></li><li class="navelem"><b>http_server.h</b></li>
 				<li class="footer">
-					Generated on Wed Jun 11 2025 for Crow by <a href="http://www.doxygen.org/index.html">
+					Generated on Sun Jun 15 2025 for Crow by <a href="http://www.doxygen.org/index.html">
 					<img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.9.8.
 					Dark theme by <a href="http://majerle.eu" target="_new">Tilen Majerle</a>. Edited by <a href="https://github.com/The-EDev" target="_new">Farook Al-Sammarraie</a>. All rights reserved.
 				</li>
