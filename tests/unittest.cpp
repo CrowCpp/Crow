@@ -1567,9 +1567,9 @@ struct NullSimpleMiddleware
 TEST_CASE("middleware_simple")
 {
     App<NullMiddleware, NullSimpleMiddleware> app;
-    asio::ip::address adr = asio::ip::make_address(LOCALHOST_ADDRESS);
-    tcp::endpoint ep(adr,45451);
-    decltype(app)::server_t server(&app, ep);
+    TCPAcceptor::endpoint endpoint(asio::ip::make_address(LOCALHOST_ADDRESS), 45451);
+    decltype(app)::server_t server(&app, endpoint);
+
     CROW_ROUTE(app, "/")
     ([&](const crow::request& req) {
         app.get_context<NullMiddleware>(req);
@@ -4088,6 +4088,33 @@ TEST_CASE("http2_upgrade_is_ignored")
     CHECK(res.find("http2 upgrade is not supported so body is parsed") != std::string::npos);
     app.stop();
 }
+
+TEST_CASE("unix_socket")
+{
+    static char buf[2048];
+    SimpleApp app;
+    CROW_ROUTE(app, "/").methods("GET"_method)([] {
+        return "A";
+    });
+
+    constexpr const char* socket_path = "unittest.sock";
+    unlink(socket_path);
+    auto _ = app.local_socket_path(socket_path).run_async();
+    app.wait_for_server_start();
+
+    std::string sendmsg = "GET / HTTP/1.0\r\n\r\n";
+    {
+        asio::io_context ic;
+        asio::local::stream_protocol::socket c(ic);
+        c.connect(asio::local::stream_protocol::endpoint(socket_path));
+
+        c.send(asio::buffer(sendmsg));
+
+        size_t recved = c.receive(asio::buffer(buf, 2048));
+        CHECK('A' == buf[recved - 1]);
+    }
+    app.stop();
+} // unix_socket
 
 TEST_CASE("option_header_passed_in_full")
 {

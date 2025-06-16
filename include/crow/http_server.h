@@ -26,6 +26,7 @@
 #include "crow/http_connection.h"
 #include "crow/logging.h"
 #include "crow/task_timer.h"
+#include "crow/socket_acceptors.h"
 
 
 namespace crow // NOTE: Already documented in "crow/app.h"
@@ -37,13 +38,14 @@ namespace crow // NOTE: Already documented in "crow/app.h"
     using error_code = asio::error_code;
 #endif
     using tcp = asio::ip::tcp;
+    using stream_protocol = asio::local::stream_protocol;
 
-    template<typename Handler, typename Adaptor = SocketAdaptor, typename... Middlewares>
+    template<typename Handler, typename Acceptor = TCPAcceptor, typename Adaptor = SocketAdaptor, typename... Middlewares>
     class Server
     {
     public:
       Server(Handler* handler,
-             const tcp::endpoint& endpoint,
+             typename Acceptor::endpoint endpoint, 
              std::string server_name = std::string("Crow/") + VERSION,
              std::tuple<Middlewares...>* middlewares = nullptr,
              uint16_t concurrency = 1,
@@ -67,29 +69,29 @@ namespace crow // NOTE: Already documented in "crow/app.h"
 
             error_code ec;
 
-            acceptor_.open(endpoint.protocol(), ec);
+            acceptor_.raw_acceptor().open(endpoint.protocol(), ec);
             if (ec) {
                 CROW_LOG_ERROR << "Failed to open acceptor: " << ec.message();
                 startup_failed_ = true;
                 return;
             }
 
-            acceptor_.set_option(tcp::acceptor::reuse_address(true), ec);
+            acceptor_.raw_acceptor().set_option(Acceptor::reuse_address_option(), ec);
             if (ec) {
                 CROW_LOG_ERROR << "Failed to set socket option: " << ec.message();
                 startup_failed_ = true;
                 return;
             }
 
-            acceptor_.bind(endpoint, ec);
+            acceptor_.raw_acceptor().bind(endpoint, ec);
             if (ec) {
-                CROW_LOG_ERROR << "Failed to bind to " << endpoint.address().to_string()
-                            << ":" << endpoint.port() << " - " << ec.message();
+                CROW_LOG_ERROR << "Failed to bind to " << acceptor_.address()
+                            << ":" << acceptor_.port() << " - " << ec.message();
                 startup_failed_ = true;
                 return;
             }
 
-            acceptor_.listen(tcp::acceptor::max_listen_connections, ec);
+            acceptor_.raw_acceptor().listen(tcp::acceptor::max_listen_connections, ec);
             if (ec) {
                 CROW_LOG_ERROR << "Failed to listen on port: " << ec.message();
                 startup_failed_ = true;
@@ -197,13 +199,10 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                       on_tick();
                   });
             }
-
-            handler_->port(acceptor_.local_endpoint().port());
-
-
-            CROW_LOG_INFO << server_name_
-                          << " server is running at " << (handler_->ssl_used() ? "https://" : "http://")
-                          << acceptor_.local_endpoint().address() << ":" << acceptor_.local_endpoint().port() << " using " << concurrency_ << " threads";
+            handler_->port(acceptor_.port());
+            CROW_LOG_INFO << server_name_ 
+                          << " server is running at " << acceptor_.url_display(handler_->ssl_used()) 
+                          << " using " << concurrency_ << " threads";
             CROW_LOG_INFO << "Call `app.loglevel(crow::LogLevel::Warning)` to hide Info level logs.";
 
             signals_.async_wait(
@@ -232,10 +231,15 @@ namespace crow // NOTE: Already documented in "crow/app.h"
             // Explicitly close the acceptor
             // else asio will throw an exception (linux only), when trying to start server again:
             // what():  bind: Address already in use
-            if (acceptor_.is_open())
+            if (acceptor_.raw_acceptor().is_open())
             {
                 CROW_LOG_INFO << "Closing acceptor. " << &acceptor_;
-                acceptor_.close();
+                error_code ec;
+                acceptor_.raw_acceptor().close(ec);
+                if (ec)
+                {
+                    CROW_LOG_WARNING << "Failed to close acceptor: " << ec.message();
+                }
             }
 
             for (auto& io_context : io_context_pool_)
@@ -307,7 +311,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                     
                 CROW_LOG_DEBUG << &ic << " {" << context_idx << "} queue length: " << task_queue_length_pool_[context_idx];
 
-                acceptor_.async_accept(
+                acceptor_.raw_acceptor().async_accept(
                   p->socket(),
                   [this, p, &ic, context_idx](error_code ec) {
                       if (!ec)
@@ -337,7 +341,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         asio::io_context io_context_;
         std::vector<detail::task_timer*> task_timer_pool_;
         std::vector<std::function<std::string()>> get_cached_date_str_pool_;
-        tcp::acceptor acceptor_;
+        Acceptor acceptor_;
         bool shutting_down_ = false;
         bool server_started_{false};
         bool startup_failed_ = false;
@@ -350,6 +354,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         Handler* handler_;
         std::uint8_t timeout_;
         std::string server_name_;
+        bool use_unix_;
 
         std::chrono::milliseconds tick_interval_;
         std::function<void()> tick_function_;
