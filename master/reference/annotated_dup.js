@@ -96,7 +96,10 @@ var annotated_dup =
       [ "SocketAdaptor", "structcrow_1_1_socket_adaptor.html", "structcrow_1_1_socket_adaptor" ],
       [ "SSLAdaptor", "structcrow_1_1_s_s_l_adaptor.html", null ],
       [ "TaggedRule", "classcrow_1_1_tagged_rule.html", null ],
+      [ "TCPAcceptor", "structcrow_1_1_t_c_p_acceptor.html", null ],
       [ "Trie", "classcrow_1_1_trie.html", "classcrow_1_1_trie" ],
+      [ "UnixSocketAcceptor", "structcrow_1_1_unix_socket_acceptor.html", null ],
+      [ "UnixSocketAdaptor", "structcrow_1_1_unix_socket_adaptor.html", null ],
       [ "UTF8", "structcrow_1_1_u_t_f8.html", "structcrow_1_1_u_t_f8" ],
       [ "WebSocketRule", "classcrow_1_1_web_socket_rule.html", "classcrow_1_1_web_socket_rule" ]
     ] ],

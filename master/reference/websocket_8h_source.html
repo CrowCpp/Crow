@@ -404,7 +404,7 @@ $(document).ready(function(){initNavTree('websocket_8h_source.html',''); initRes
 <div class="line"><a id="l00279" name="l00279"></a><span class="lineno">  279</span> </div>
 <div class="line"><a id="l00280" name="l00280"></a><span class="lineno">  280</span>            std::string get_remote_ip()<span class="keyword"> override</span></div>
 <div class="line"><a id="l00281" name="l00281"></a><span class="lineno">  281</span><span class="keyword">            </span>{</div>
-<div class="line"><a id="l00282" name="l00282"></a><span class="lineno">  282</span>                <span class="keywordflow">return</span> adaptor_.remote_endpoint().address().to_string();</div>
+<div class="line"><a id="l00282" name="l00282"></a><span class="lineno">  282</span>                <span class="keywordflow">return</span> adaptor_.address();</div>
 <div class="line"><a id="l00283" name="l00283"></a><span class="lineno">  283</span>            }</div>
 <div class="line"><a id="l00284" name="l00284"></a><span class="lineno">  284</span> </div>
 <div class="line"><a id="l00285" name="l00285"></a><span class="lineno">  285</span>            <span class="keywordtype">void</span> set_max_payload_size(uint64_t payload)</div>
@@ -1010,7 +1010,7 @@ $(document).ready(function(){initNavTree('websocket_8h_source.html',''); initRes
 			<ul>
 				<li class="navelem"><a class="el" href="dir_d44c64559bbebec7f509842c48db8b23.html">include</a></li><li class="navelem"><a class="el" href="dir_d22c1cb87b72f01e1a7f207eb3bfd1ca.html">crow</a></li><li class="navelem"><b>websocket.h</b></li>
 				<li class="footer">
-					Generated on Mon Jun 16 2025 for Crow by <a href="http://www.doxygen.org/index.html">
+					Generated on Tue Jun 17 2025 for Crow by <a href="http://www.doxygen.org/index.html">
 					<img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.9.8.
 					Dark theme by <a href="http://majerle.eu" target="_new">Tilen Majerle</a>. Edited by <a href="https://github.com/The-EDev" target="_new">Farook Al-Sammarraie</a>. All rights reserved.
 				</li>

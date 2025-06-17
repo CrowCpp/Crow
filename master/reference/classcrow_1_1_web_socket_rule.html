@@ -132,6 +132,8 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a921adb281f701d53187d9f20294010da"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af01bd035e8753d8e4fc7728b2d5d69e8" id="r_af01bd035e8753d8e4fc7728b2d5d69e8"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcrow_1_1_web_socket_rule.html#af01bd035e8753d8e4fc7728b2d5d69e8">handle_upgrade</a> (const <a class="el" href="structcrow_1_1request.html">request</a> &amp;req, <a class="el" href="structcrow_1_1response.html">response</a> &amp;, <a class="el" href="structcrow_1_1_socket_adaptor.html">SocketAdaptor</a> &amp;&amp;adaptor) override</td></tr>
 <tr class="separator:af01bd035e8753d8e4fc7728b2d5d69e8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad712bd121c1b8a87386c7425f65d4057" id="r_ad712bd121c1b8a87386c7425f65d4057"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcrow_1_1_web_socket_rule.html#ad712bd121c1b8a87386c7425f65d4057">handle_upgrade</a> (const <a class="el" href="structcrow_1_1request.html">request</a> &amp;req, <a class="el" href="structcrow_1_1response.html">response</a> &amp;, <a class="el" href="structcrow_1_1_unix_socket_adaptor.html">UnixSocketAdaptor</a> &amp;&amp;adaptor) override</td></tr>
+<tr class="separator:ad712bd121c1b8a87386c7425f65d4057"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aba2c2bc84f24c46b15cff19a2990ea9b" id="r_aba2c2bc84f24c46b15cff19a2990ea9b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcrow_1_1_web_socket_rule.html#aba2c2bc84f24c46b15cff19a2990ea9b">handle_upgrade</a> (const <a class="el" href="structcrow_1_1request.html">request</a> &amp;req, <a class="el" href="structcrow_1_1response.html">response</a> &amp;, <a class="el" href="structcrow_1_1_s_s_l_adaptor.html">SSLAdaptor</a> &amp;&amp;adaptor) override</td></tr>
 <tr class="separator:aba2c2bc84f24c46b15cff19a2990ea9b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3000e7081fb4fa9e77bb103c47cc3f3e" id="r_a3000e7081fb4fa9e77bb103c47cc3f3e"><td class="memItemLeft" align="right" valign="top"><a id="a3000e7081fb4fa9e77bb103c47cc3f3e" name="a3000e7081fb4fa9e77bb103c47cc3f3e"></a>
@@ -299,7 +301,7 @@ template&lt;typename <a class="el" href="namespacecrow.html#a153c1bf24903d1a8629
 </div>
 </div>
 <a id="af01bd035e8753d8e4fc7728b2d5d69e8" name="af01bd035e8753d8e4fc7728b2d5d69e8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af01bd035e8753d8e4fc7728b2d5d69e8">&#9670;&#160;</a></span>handle_upgrade() <span class="overload">[1/2]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#af01bd035e8753d8e4fc7728b2d5d69e8">&#9670;&#160;</a></span>handle_upgrade() <span class="overload">[1/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -345,7 +347,7 @@ template&lt;typename <a class="el" href="namespacecrow.html#a153c1bf24903d1a8629
 </div>
 </div>
 <a id="aba2c2bc84f24c46b15cff19a2990ea9b" name="aba2c2bc84f24c46b15cff19a2990ea9b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aba2c2bc84f24c46b15cff19a2990ea9b">&#9670;&#160;</a></span>handle_upgrade() <span class="overload">[2/2]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#aba2c2bc84f24c46b15cff19a2990ea9b">&#9670;&#160;</a></span>handle_upgrade() <span class="overload">[2/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -371,6 +373,52 @@ template&lt;typename <a class="el" href="namespacecrow.html#a153c1bf24903d1a8629
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype"><a class="el" href="structcrow_1_1_s_s_l_adaptor.html">SSLAdaptor</a> &amp;&amp;&#160;</td>
+          <td class="paramname"><em>adaptor</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Reimplemented from <a class="el" href="classcrow_1_1_base_rule.html">crow::BaseRule</a>.</p>
+
+</div>
+</div>
+<a id="ad712bd121c1b8a87386c7425f65d4057" name="ad712bd121c1b8a87386c7425f65d4057"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad712bd121c1b8a87386c7425f65d4057">&#9670;&#160;</a></span>handle_upgrade() <span class="overload">[3/3]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename <a class="el" href="namespacecrow.html#a153c1bf24903d1a8629ef6eaf045110b">App</a> &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classcrow_1_1_web_socket_rule.html">crow::WebSocketRule</a>&lt; <a class="el" href="namespacecrow.html#a153c1bf24903d1a8629ef6eaf045110b">App</a> &gt;::handle_upgrade </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="structcrow_1_1request.html">request</a> &amp;&#160;</td>
+          <td class="paramname"><em>req</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structcrow_1_1response.html">response</a> &amp;&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structcrow_1_1_unix_socket_adaptor.html">UnixSocketAdaptor</a> &amp;&amp;&#160;</td>
           <td class="paramname"><em>adaptor</em>&#160;</td>
         </tr>
         <tr>
@@ -429,7 +477,7 @@ template&lt;typename <a class="el" href="namespacecrow.html#a153c1bf24903d1a8629
 			<ul>
 				<li class="navelem"><a class="el" href="namespacecrow.html">crow</a></li><li class="navelem"><a class="el" href="classcrow_1_1_web_socket_rule.html">WebSocketRule</a></li>
 				<li class="footer">
-					Generated on Mon Jun 16 2025 for Crow by <a href="http://www.doxygen.org/index.html">
+					Generated on Tue Jun 17 2025 for Crow by <a href="http://www.doxygen.org/index.html">
 					<img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.9.8.
 					Dark theme by <a href="http://majerle.eu" target="_new">Tilen Majerle</a>. Edited by <a href="https://github.com/The-EDev" target="_new">Farook Al-Sammarraie</a>. All rights reserved.
 				</li>

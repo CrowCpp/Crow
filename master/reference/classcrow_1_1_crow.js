@@ -1,8 +1,9 @@
 var classcrow_1_1_crow =
 [
     [ "self_t", "classcrow_1_1_crow.html#a5b0a203a6f9070ea8010227dcdbcec60", null ],
-    [ "server_t", "classcrow_1_1_crow.html#a5df810d2619e31c2f024cc4e45898997", null ],
-    [ "ssl_server_t", "classcrow_1_1_crow.html#aac04f81d0bc897267d092bb8af1513d4", null ],
+    [ "server_t", "classcrow_1_1_crow.html#ab1c5adfe07aa4115b9452ba3b1c69f34", null ],
+    [ "ssl_server_t", "classcrow_1_1_crow.html#aa2b8c210254ad4c4afce885b91365081", null ],
+    [ "unix_server_t", "classcrow_1_1_crow.html#a484ab731754f45392ca3d18f7763c018", null ],
     [ "Crow", "classcrow_1_1_crow.html#abb69a7bf5d4a791a398c838d37086d94", null ],
     [ "add_blueprint", "classcrow_1_1_crow.html#af0d01b97da7d4d20844a80fd31b74f46", null ],
     [ "add_static_dir", "classcrow_1_1_crow.html#a3cbe89120e47d2bd3d05376b9129adfa", null ],
@@ -17,6 +18,8 @@ var classcrow_1_1_crow =
     [ "handle_full", "classcrow_1_1_crow.html#accf00be55c273297b758fa243f107018", null ],
     [ "handle_initial", "classcrow_1_1_crow.html#ad5e54dd12437653844565aa7c6295436", null ],
     [ "handle_upgrade", "classcrow_1_1_crow.html#a6e435bf5275735effd32647772bdbd04", null ],
+    [ "local_socket_path", "classcrow_1_1_crow.html#ad62ae6b2e726a828dabd833b19d87aad", null ],
+    [ "local_socket_path", "classcrow_1_1_crow.html#a7e8e8d33e54de09323f6604075accc99", null ],
     [ "loglevel", "classcrow_1_1_crow.html#adaaea481094e3f4488569c991772d27f", null ],
     [ "multithreaded", "classcrow_1_1_crow.html#a7a6277aa9a88b2ecf301e98e8cbf9c33", null ],
     [ "port", "classcrow_1_1_crow.html#a9cf5fac292b94d93ad09032a02ab0b62", null ],
