@@ -129,21 +129,21 @@ asio::io_context &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>get
 <tr class="separator:a9e80e85ea5032ae22b949abd2fc835be"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad5e6308293d17c4763a310e3c5cdc894" id="r_ad5e6308293d17c4763a310e3c5cdc894"><td class="memItemLeft" align="right" valign="top"><a id="ad5e6308293d17c4763a310e3c5cdc894" name="ad5e6308293d17c4763a310e3c5cdc894"></a>
 tcp::socket &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>raw_socket</b> ()</td></tr>
-<tr class="memdesc:ad5e6308293d17c4763a310e3c5cdc894"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the TCP socket handling data trasfers, regardless of what layer is handling transfers on top of the socket. <br /></td></tr>
+<tr class="memdesc:ad5e6308293d17c4763a310e3c5cdc894"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the TCP socket handling data transfers, regardless of what layer is handling transfers on top of the socket. <br /></td></tr>
 <tr class="separator:ad5e6308293d17c4763a310e3c5cdc894"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a41fbd5c8e046163bb50e793f5decfda6" id="r_a41fbd5c8e046163bb50e793f5decfda6"><td class="memItemLeft" align="right" valign="top"><a id="a41fbd5c8e046163bb50e793f5decfda6" name="a41fbd5c8e046163bb50e793f5decfda6"></a>
 tcp::socket &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>socket</b> ()</td></tr>
 <tr class="memdesc:a41fbd5c8e046163bb50e793f5decfda6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the object handling data transfers, this can be either a TCP socket or an SSL stream (if SSL is enabled). <br /></td></tr>
 <tr class="separator:a41fbd5c8e046163bb50e793f5decfda6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a23fb23ae334da14488199fe04d5ea066" id="r_a23fb23ae334da14488199fe04d5ea066"><td class="memItemLeft" align="right" valign="top"><a id="a23fb23ae334da14488199fe04d5ea066" name="a23fb23ae334da14488199fe04d5ea066"></a>
-tcp::endpoint&#160;</td><td class="memItemRight" valign="bottom"><b>remote_endpoint</b> ()</td></tr>
-<tr class="separator:a23fb23ae334da14488199fe04d5ea066"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9479e89f12f7a26a61a22fbcb375f8e9" id="r_a9479e89f12f7a26a61a22fbcb375f8e9"><td class="memItemLeft" align="right" valign="top"><a id="a9479e89f12f7a26a61a22fbcb375f8e9" name="a9479e89f12f7a26a61a22fbcb375f8e9"></a>
+tcp::endpoint&#160;</td><td class="memItemRight" valign="bottom"><b>remote_endpoint</b> () const</td></tr>
+<tr class="separator:a9479e89f12f7a26a61a22fbcb375f8e9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9187a440983ad2c79c3ab0a3cdf287f7" id="r_a9187a440983ad2c79c3ab0a3cdf287f7"><td class="memItemLeft" align="right" valign="top"><a id="a9187a440983ad2c79c3ab0a3cdf287f7" name="a9187a440983ad2c79c3ab0a3cdf287f7"></a>
 std::string&#160;</td><td class="memItemRight" valign="bottom"><b>address</b> () const</td></tr>
 <tr class="separator:a9187a440983ad2c79c3ab0a3cdf287f7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2630c4db0c3065e7c7b396515571941a" id="r_a2630c4db0c3065e7c7b396515571941a"><td class="memItemLeft" align="right" valign="top"><a id="a2630c4db0c3065e7c7b396515571941a" name="a2630c4db0c3065e7c7b396515571941a"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>is_open</b> ()</td></tr>
-<tr class="separator:a2630c4db0c3065e7c7b396515571941a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9f0c0a08d288cf72f8f2e0b0805b85b4" id="r_a9f0c0a08d288cf72f8f2e0b0805b85b4"><td class="memItemLeft" align="right" valign="top"><a id="a9f0c0a08d288cf72f8f2e0b0805b85b4" name="a9f0c0a08d288cf72f8f2e0b0805b85b4"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>is_open</b> () const</td></tr>
+<tr class="separator:a9f0c0a08d288cf72f8f2e0b0805b85b4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af925b4f600663b2293741947297d730e" id="r_af925b4f600663b2293741947297d730e"><td class="memItemLeft" align="right" valign="top"><a id="af925b4f600663b2293741947297d730e" name="af925b4f600663b2293741947297d730e"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>close</b> ()</td></tr>
 <tr class="separator:af925b4f600663b2293741947297d730e"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -179,7 +179,7 @@ tcp::socket&#160;</td><td class="memItemRight" valign="bottom"><b>socket_</b></t
 			<ul>
 				<li class="navelem"><a class="el" href="namespacecrow.html">crow</a></li><li class="navelem"><a class="el" href="structcrow_1_1_socket_adaptor.html">SocketAdaptor</a></li>
 				<li class="footer">
-					Generated on Tue Jun 17 2025 for Crow by <a href="http://www.doxygen.org/index.html">
+					Generated on Thu Jun 26 2025 for Crow by <a href="http://www.doxygen.org/index.html">
 					<img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.9.8.
 					Dark theme by <a href="http://majerle.eu" target="_new">Tilen Majerle</a>. Edited by <a href="https://github.com/The-EDev" target="_new">Farook Al-Sammarraie</a>. All rights reserved.
 				</li>

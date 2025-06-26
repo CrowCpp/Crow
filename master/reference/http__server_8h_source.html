@@ -153,7 +153,7 @@ $(document).ready(function(){initNavTree('http__server_8h_source.html',''); init
 <div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>             <span class="keyword">typename</span> Acceptor::endpoint endpoint, </div>
 <div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>             std::string server_name = std::string(<span class="stringliteral">&quot;Crow/&quot;</span>) + VERSION,</div>
 <div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>             std::tuple&lt;Middlewares...&gt;* middlewares = <span class="keyword">nullptr</span>,</div>
-<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>             uint16_t concurrency = 1,</div>
+<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>             <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> concurrency = 1,</div>
 <div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>             uint8_t timeout = 5,</div>
 <div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>             <span class="keyword">typename</span> Adaptor::context* adaptor_ctx = <span class="keyword">nullptr</span>):</div>
 <div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>          concurrency_(concurrency),</div>
@@ -390,9 +390,9 @@ $(document).ready(function(){initNavTree('http__server_8h_source.html',''); init
 <div class="line"><a id="l00283" name="l00283"></a><span class="lineno">  283</span>        }</div>
 <div class="line"><a id="l00284" name="l00284"></a><span class="lineno">  284</span> </div>
 <div class="line"><a id="l00285" name="l00285"></a><span class="lineno">  285</span>    <span class="keyword">private</span>:</div>
-<div class="line"><a id="l00286" name="l00286"></a><span class="lineno">  286</span>        uint16_t pick_io_context_idx()</div>
+<div class="line"><a id="l00286" name="l00286"></a><span class="lineno">  286</span>        <span class="keywordtype">size_t</span> pick_io_context_idx()</div>
 <div class="line"><a id="l00287" name="l00287"></a><span class="lineno">  287</span>        {</div>
-<div class="line"><a id="l00288" name="l00288"></a><span class="lineno">  288</span>            uint16_t min_queue_idx = 0;</div>
+<div class="line"><a id="l00288" name="l00288"></a><span class="lineno">  288</span>            <span class="keywordtype">size_t</span> min_queue_idx = 0;</div>
 <div class="line"><a id="l00289" name="l00289"></a><span class="lineno">  289</span> </div>
 <div class="line"><a id="l00290" name="l00290"></a><span class="lineno">  290</span>            <span class="comment">// TODO improve load balancing</span></div>
 <div class="line"><a id="l00291" name="l00291"></a><span class="lineno">  291</span>            <span class="comment">// size_t is used here to avoid the security issue https://codeql.github.com/codeql-query-help/cpp/cpp-comparison-with-wider-type/</span></div>
@@ -410,7 +410,7 @@ $(document).ready(function(){initNavTree('http__server_8h_source.html',''); init
 <div class="line"><a id="l00303" name="l00303"></a><span class="lineno">  303</span>        {</div>
 <div class="line"><a id="l00304" name="l00304"></a><span class="lineno">  304</span>            <span class="keywordflow">if</span> (!shutting_down_)</div>
 <div class="line"><a id="l00305" name="l00305"></a><span class="lineno">  305</span>            {</div>
-<div class="line"><a id="l00306" name="l00306"></a><span class="lineno">  306</span>                uint16_t context_idx = pick_io_context_idx();</div>
+<div class="line"><a id="l00306" name="l00306"></a><span class="lineno">  306</span>                <span class="keywordtype">size_t</span> context_idx = pick_io_context_idx();</div>
 <div class="line"><a id="l00307" name="l00307"></a><span class="lineno">  307</span>                asio::io_context&amp; ic = *io_context_pool_[context_idx];</div>
 <div class="line"><a id="l00308" name="l00308"></a><span class="lineno">  308</span>                <span class="keyword">auto</span> p = std::make_shared&lt;Connection&lt;Adaptor, Handler, Middlewares...&gt;&gt;(</div>
 <div class="line"><a id="l00309" name="l00309"></a><span class="lineno">  309</span>                    ic, handler_, server_name_, middlewares_,</div>
@@ -442,7 +442,7 @@ $(document).ready(function(){initNavTree('http__server_8h_source.html',''); init
 <div class="line"><a id="l00335" name="l00335"></a><span class="lineno">  335</span>        }</div>
 <div class="line"><a id="l00336" name="l00336"></a><span class="lineno">  336</span> </div>
 <div class="line"><a id="l00337" name="l00337"></a><span class="lineno">  337</span>    <span class="keyword">private</span>:</div>
-<div class="line"><a id="l00338" name="l00338"></a><span class="lineno">  338</span>        uint16_t concurrency_{2};</div>
+<div class="line"><a id="l00338" name="l00338"></a><span class="lineno">  338</span>        <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> concurrency_{2};</div>
 <div class="line"><a id="l00339" name="l00339"></a><span class="lineno">  339</span>        std::vector&lt;std::atomic&lt;unsigned int&gt;&gt; task_queue_length_pool_;</div>
 <div class="line"><a id="l00340" name="l00340"></a><span class="lineno">  340</span>        std::vector&lt;std::unique_ptr&lt;asio::io_context&gt;&gt; io_context_pool_;</div>
 <div class="line"><a id="l00341" name="l00341"></a><span class="lineno">  341</span>        asio::io_context io_context_;</div>
@@ -484,7 +484,7 @@ $(document).ready(function(){initNavTree('http__server_8h_source.html',''); init
 			<ul>
 				<li class="navelem"><a class="el" href="dir_d44c64559bbebec7f509842c48db8b23.html">include</a></li><li class="navelem"><a class="el" href="dir_d22c1cb87b72f01e1a7f207eb3bfd1ca.html">crow</a></li><li class="navelem"><b>http_server.h</b></li>
 				<li class="footer">
-					Generated on Tue Jun 17 2025 for Crow by <a href="http://www.doxygen.org/index.html">
+					Generated on Thu Jun 26 2025 for Crow by <a href="http://www.doxygen.org/index.html">
 					<img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.9.8.
 					Dark theme by <a href="http://majerle.eu" target="_new">Tilen Majerle</a>. Edited by <a href="https://github.com/The-EDev" target="_new">Farook Al-Sammarraie</a>. All rights reserved.
 				</li>

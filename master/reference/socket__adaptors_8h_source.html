@@ -153,7 +153,7 @@ $(document).ready(function(){initNavTree('socket__adaptors_8h_source.html',''); 
 <div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>            <span class="keywordflow">return</span> GET_IO_CONTEXT(socket_);</div>
 <div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>        }</div>
 <div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span><span class="comment"></span> </div>
-<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span><span class="comment">        /// Get the TCP socket handling data trasfers, regardless of what layer is handling transfers on top of the socket.</span></div>
+<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span><span class="comment">        /// Get the TCP socket handling data transfers, regardless of what layer is handling transfers on top of the socket.</span></div>
 <div class="foldopen" id="foldopen00052" data-start="{" data-end="}">
 <div class="line"><a id="l00052" name="l00052"></a><span class="lineno"><a class="line" href="structcrow_1_1_socket_adaptor.html#ad5e6308293d17c4763a310e3c5cdc894">   52</a></span><span class="comment"></span>        tcp::socket&amp; <a class="code hl_function" href="structcrow_1_1_socket_adaptor.html#ad5e6308293d17c4763a310e3c5cdc894">raw_socket</a>()</div>
 <div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>        {</div>
@@ -169,8 +169,8 @@ $(document).ready(function(){initNavTree('socket__adaptors_8h_source.html',''); 
 <div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>        }</div>
 </div>
 <div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span> </div>
-<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span>        tcp::endpoint remote_endpoint()</div>
-<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span>        {</div>
+<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span>        tcp::endpoint remote_endpoint()<span class="keyword"> const</span></div>
+<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span><span class="keyword">        </span>{</div>
 <div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span>            <span class="keywordflow">return</span> socket_.remote_endpoint();</div>
 <div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>        }</div>
 <div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span> </div>
@@ -179,8 +179,8 @@ $(document).ready(function(){initNavTree('socket__adaptors_8h_source.html',''); 
 <div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span>            <span class="keywordflow">return</span> socket_.remote_endpoint().address().to_string();</div>
 <div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span>        }</div>
 <div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span> </div>
-<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span>        <span class="keywordtype">bool</span> is_open()</div>
-<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span>        {</div>
+<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span>        <span class="keywordtype">bool</span> is_open()<span class="keyword"> const</span></div>
+<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span><span class="keyword">        </span>{</div>
 <div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span>            <span class="keywordflow">return</span> socket_.is_open();</div>
 <div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span>        }</div>
 <div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span> </div>
@@ -386,7 +386,7 @@ $(document).ready(function(){initNavTree('socket__adaptors_8h_source.html',''); 
 <div class="ttc" id="astructcrow_1_1_s_s_l_adaptor_html"><div class="ttname"><a href="structcrow_1_1_s_s_l_adaptor.html">crow::SSLAdaptor</a></div><div class="ttdef"><b>Definition</b> socket_adaptors.h:184</div></div>
 <div class="ttc" id="astructcrow_1_1_socket_adaptor_html"><div class="ttname"><a href="structcrow_1_1_socket_adaptor.html">crow::SocketAdaptor</a></div><div class="ttdoc">A wrapper for the asio::ip::tcp::socket and asio::ssl::stream.</div><div class="ttdef"><b>Definition</b> socket_adaptors.h:40</div></div>
 <div class="ttc" id="astructcrow_1_1_socket_adaptor_html_a41fbd5c8e046163bb50e793f5decfda6"><div class="ttname"><a href="structcrow_1_1_socket_adaptor.html#a41fbd5c8e046163bb50e793f5decfda6">crow::SocketAdaptor::socket</a></div><div class="ttdeci">tcp::socket &amp; socket()</div><div class="ttdoc">Get the object handling data transfers, this can be either a TCP socket or an SSL stream (if SSL is e...</div><div class="ttdef"><b>Definition</b> socket_adaptors.h:58</div></div>
-<div class="ttc" id="astructcrow_1_1_socket_adaptor_html_ad5e6308293d17c4763a310e3c5cdc894"><div class="ttname"><a href="structcrow_1_1_socket_adaptor.html#ad5e6308293d17c4763a310e3c5cdc894">crow::SocketAdaptor::raw_socket</a></div><div class="ttdeci">tcp::socket &amp; raw_socket()</div><div class="ttdoc">Get the TCP socket handling data trasfers, regardless of what layer is handling transfers on top of t...</div><div class="ttdef"><b>Definition</b> socket_adaptors.h:52</div></div>
+<div class="ttc" id="astructcrow_1_1_socket_adaptor_html_ad5e6308293d17c4763a310e3c5cdc894"><div class="ttname"><a href="structcrow_1_1_socket_adaptor.html#ad5e6308293d17c4763a310e3c5cdc894">crow::SocketAdaptor::raw_socket</a></div><div class="ttdeci">tcp::socket &amp; raw_socket()</div><div class="ttdoc">Get the TCP socket handling data transfers, regardless of what layer is handling transfers on top of ...</div><div class="ttdef"><b>Definition</b> socket_adaptors.h:52</div></div>
 <div class="ttc" id="astructcrow_1_1_unix_socket_adaptor_html"><div class="ttname"><a href="structcrow_1_1_unix_socket_adaptor.html">crow::UnixSocketAdaptor</a></div><div class="ttdef"><b>Definition</b> socket_adaptors.h:112</div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
@@ -395,7 +395,7 @@ $(document).ready(function(){initNavTree('socket__adaptors_8h_source.html',''); 
 			<ul>
 				<li class="navelem"><a class="el" href="dir_d44c64559bbebec7f509842c48db8b23.html">include</a></li><li class="navelem"><a class="el" href="dir_d22c1cb87b72f01e1a7f207eb3bfd1ca.html">crow</a></li><li class="navelem"><b>socket_adaptors.h</b></li>
 				<li class="footer">
-					Generated on Tue Jun 17 2025 for Crow by <a href="http://www.doxygen.org/index.html">
+					Generated on Thu Jun 26 2025 for Crow by <a href="http://www.doxygen.org/index.html">
 					<img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.9.8.
 					Dark theme by <a href="http://majerle.eu" target="_new">Tilen Majerle</a>. Edited by <a href="https://github.com/The-EDev" target="_new">Farook Al-Sammarraie</a>. All rights reserved.
 				</li>
