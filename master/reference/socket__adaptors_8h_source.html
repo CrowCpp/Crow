@@ -259,32 +259,32 @@ $(document).ready(function(){initNavTree('socket__adaptors_8h_source.html',''); 
 <div class="line"><a id="l00148" name="l00148"></a><span class="lineno">  148</span> </div>
 <div class="line"><a id="l00149" name="l00149"></a><span class="lineno">  149</span>        <span class="keywordtype">void</span> close()</div>
 <div class="line"><a id="l00150" name="l00150"></a><span class="lineno">  150</span>        {</div>
-<div class="line"><a id="l00151" name="l00151"></a><span class="lineno">  151</span>            asio::error_code ec;</div>
+<div class="line"><a id="l00151" name="l00151"></a><span class="lineno">  151</span>            error_code ec;</div>
 <div class="line"><a id="l00152" name="l00152"></a><span class="lineno">  152</span>            socket_.close(ec);</div>
 <div class="line"><a id="l00153" name="l00153"></a><span class="lineno">  153</span>        }</div>
 <div class="line"><a id="l00154" name="l00154"></a><span class="lineno">  154</span> </div>
 <div class="line"><a id="l00155" name="l00155"></a><span class="lineno">  155</span>        <span class="keywordtype">void</span> shutdown_readwrite()</div>
 <div class="line"><a id="l00156" name="l00156"></a><span class="lineno">  156</span>        {</div>
-<div class="line"><a id="l00157" name="l00157"></a><span class="lineno">  157</span>            asio::error_code ec;</div>
+<div class="line"><a id="l00157" name="l00157"></a><span class="lineno">  157</span>            error_code ec;</div>
 <div class="line"><a id="l00158" name="l00158"></a><span class="lineno">  158</span>            socket_.shutdown(asio::socket_base::shutdown_type::shutdown_both, ec);</div>
 <div class="line"><a id="l00159" name="l00159"></a><span class="lineno">  159</span>        }</div>
 <div class="line"><a id="l00160" name="l00160"></a><span class="lineno">  160</span> </div>
 <div class="line"><a id="l00161" name="l00161"></a><span class="lineno">  161</span>        <span class="keywordtype">void</span> shutdown_write()</div>
 <div class="line"><a id="l00162" name="l00162"></a><span class="lineno">  162</span>        {</div>
-<div class="line"><a id="l00163" name="l00163"></a><span class="lineno">  163</span>            asio::error_code ec;</div>
+<div class="line"><a id="l00163" name="l00163"></a><span class="lineno">  163</span>            error_code ec;</div>
 <div class="line"><a id="l00164" name="l00164"></a><span class="lineno">  164</span>            socket_.shutdown(asio::socket_base::shutdown_type::shutdown_send, ec);</div>
 <div class="line"><a id="l00165" name="l00165"></a><span class="lineno">  165</span>        }</div>
 <div class="line"><a id="l00166" name="l00166"></a><span class="lineno">  166</span> </div>
 <div class="line"><a id="l00167" name="l00167"></a><span class="lineno">  167</span>        <span class="keywordtype">void</span> shutdown_read()</div>
 <div class="line"><a id="l00168" name="l00168"></a><span class="lineno">  168</span>        {</div>
-<div class="line"><a id="l00169" name="l00169"></a><span class="lineno">  169</span>            asio::error_code ec;</div>
+<div class="line"><a id="l00169" name="l00169"></a><span class="lineno">  169</span>            error_code ec;</div>
 <div class="line"><a id="l00170" name="l00170"></a><span class="lineno">  170</span>            socket_.shutdown(asio::socket_base::shutdown_type::shutdown_receive, ec);</div>
 <div class="line"><a id="l00171" name="l00171"></a><span class="lineno">  171</span>        }</div>
 <div class="line"><a id="l00172" name="l00172"></a><span class="lineno">  172</span> </div>
 <div class="line"><a id="l00173" name="l00173"></a><span class="lineno">  173</span>        <span class="keyword">template</span>&lt;<span class="keyword">typename</span> F&gt;</div>
 <div class="line"><a id="l00174" name="l00174"></a><span class="lineno">  174</span>        <span class="keywordtype">void</span> start(F f)</div>
 <div class="line"><a id="l00175" name="l00175"></a><span class="lineno">  175</span>        {</div>
-<div class="line"><a id="l00176" name="l00176"></a><span class="lineno">  176</span>            f(asio::error_code());</div>
+<div class="line"><a id="l00176" name="l00176"></a><span class="lineno">  176</span>            f(error_code());</div>
 <div class="line"><a id="l00177" name="l00177"></a><span class="lineno">  177</span>        }</div>
 <div class="line"><a id="l00178" name="l00178"></a><span class="lineno">  178</span> </div>
 <div class="line"><a id="l00179" name="l00179"></a><span class="lineno">  179</span>        stream_protocol::socket socket_;</div>
