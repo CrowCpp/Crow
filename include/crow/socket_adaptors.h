@@ -148,32 +148,32 @@ namespace crow
 
         void close()
         {
-            asio::error_code ec;
+            error_code ec;
             socket_.close(ec);
         }
 
         void shutdown_readwrite()
         {
-            asio::error_code ec;
+            error_code ec;
             socket_.shutdown(asio::socket_base::shutdown_type::shutdown_both, ec);
         }
 
         void shutdown_write()
         {
-            asio::error_code ec;
+            error_code ec;
             socket_.shutdown(asio::socket_base::shutdown_type::shutdown_send, ec);
         }
 
         void shutdown_read()
         {
-            asio::error_code ec;
+            error_code ec;
             socket_.shutdown(asio::socket_base::shutdown_type::shutdown_receive, ec);
         }
 
         template<typename F>
         void start(F f)
         {
-            f(asio::error_code());
+            f(error_code());
         }
 
         stream_protocol::socket socket_;
