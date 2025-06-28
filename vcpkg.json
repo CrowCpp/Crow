@@ -1,6 +1,6 @@
 {
     "name": "crow",
-    "version-string": "master",
+    "version-string": "1.3.0",
     "dependencies": [
         "asio",
         "openssl",
