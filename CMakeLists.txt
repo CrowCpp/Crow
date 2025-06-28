@@ -6,7 +6,7 @@ cmake_minimum_required(VERSION 3.15.0 FATAL_ERROR)
 # Define the project name and language
 project(Crow
 	LANGUAGES CXX
-	VERSION 1.1.1
+	VERSION 1.3.0
 )
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
