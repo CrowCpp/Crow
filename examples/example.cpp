@@ -3,7 +3,7 @@
 class ExampleLogHandler : public crow::ILogHandler
 {
 public:
-    void log(std::string /*message*/, crow::LogLevel /*level*/) override
+    void log(const std::string& /*message*/, crow::LogLevel /*level*/) override
     {
         //            cerr << "ExampleLogHandler -> " << message;
     }

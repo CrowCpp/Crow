@@ -35,13 +35,13 @@ Writing a log is as simple as `#!cpp CROW_LOG_<LOG LEVEL> << "Hello";` (replace&
 
 
 Assuming you have an existing logger or Crow's default format just doesn't work for you. Crow allows you to use a custom logger for any log made using the `CROW_LOG_<LOG LEVEL>` macro.<br>
-All you need is a class extending `#!cpp crow::ILogHandler` containing the method `#!cpp void log(std::string, crow::LogLevel)`.<br>
+All you need is a class extending `#!cpp crow::ILogHandler` containing the method `#!cpp void log(const std::string&, crow::LogLevel)`.<br>
 Once you have your custom logger, you need to set it via `#!cpp crow::logger::setHandler(&MyLogger);`. Here's a full example:<br>
 ```cpp
 class CustomLogger : public crow::ILogHandler {
  public:
   CustomLogger() {}
-  void log(std::string message, crow::LogLevel /*level*/) {
+  void log(const std::string& message, crow::LogLevel /*level*/) {
     // "message" doesn't contain the timestamp and loglevel
     // prefix the default logger does and it doesn't end
     // in a newline.

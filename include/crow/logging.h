@@ -35,34 +35,44 @@ namespace crow
     public:
         virtual ~ILogHandler() = default;
 
-        virtual void log(std::string message, LogLevel level) = 0;
+        virtual void log(const std::string& message, LogLevel level) = 0;
     };
 
     class CerrLogHandler : public ILogHandler
     {
     public:
-        void log(std::string message, LogLevel level) override
+        void log(const std::string &message, LogLevel level) override
         {
-            std::string prefix;
+            std::string log_msg;
+            log_msg.reserve(message.length() + 1+32+3+8+2);
+            log_msg
+                .append("(")
+                .append(timestamp())
+                .append(") [");
+
             switch (level)
             {
                 case LogLevel::Debug:
-                    prefix = "DEBUG   ";
+                    log_msg.append("DEBUG   ");
                     break;
                 case LogLevel::Info:
-                    prefix = "INFO    ";
+                    log_msg.append("INFO    ");
                     break;
                 case LogLevel::Warning:
-                    prefix = "WARNING ";
+                    log_msg.append("WARNING ");
                     break;
                 case LogLevel::Error:
-                    prefix = "ERROR   ";
+                    log_msg.append("ERROR   ");
                     break;
                 case LogLevel::Critical:
-                    prefix = "CRITICAL";
+                    log_msg.append("CRITICAL");
                     break;
             }
-            std::cerr << std::string("(") + timestamp() + std::string(") [") + prefix + std::string("] ") + message << std::endl;
+
+            log_msg.append("] ")
+            .append(message);
+
+            std::cerr << log_msg << std::endl;
         }
 
     private:
