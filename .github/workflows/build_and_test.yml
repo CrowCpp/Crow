@@ -2,15 +2,14 @@ name: Build and test
 
 on:
   push:
-    branches: [ "master" ]
-    tags:
-      - "v*"
-  pull_request:
-    branches: [ "master" ]
+    branches: [ "v1.3" ]
 
 env:
   BUILD_TYPE: Release
   COVERALLS_PULL_REQUEST: ${{ github.event.number }}
+  GIT_REF: ${{github.ref}}
+  GIT_EVENT_REF: ${{github.event.ref}}
+  GIT_EVENT_TYPE: ${{github.event.type}}
 
 jobs:
   build:
@@ -32,6 +31,12 @@ jobs:
           - { os: windows-latest, compiler: msvc, cxx_stdlib: msvc }
 
     steps:
+    - name: Output Infos
+      run: |
+        echo $GIT_REF
+        echo $GIT_EVENT_REF
+        echo $GIT_EVENT_TYPE
+
     - uses: actions/checkout@v5
     - name: Prepare dependencies
       run: |
@@ -116,11 +121,12 @@ jobs:
       shell: bash
 
     - name: Generate coverage report
-      if: matrix.os == 'ubuntu-latest' && matrix.compiler == 'gcc' && matrix.cxx_stdlib == 'libstdc++' && matrix.asio_type == 'boost' && !startsWith(github.ref, 'refs/tags/v')
+      if: matrix.os == 'ubuntu-latest' && matrix.compiler == 'gcc' && matrix.cxx_stdlib == 'libstdc++' && matrix.asio_type == 'boost' && !startsWith(github.ref, 'refs/heads/v')
       run: |
         export CI_BRANCH=${GITHUB_BASE_REF:-${GITHUB_REF#refs/heads/}}
         echo "CI_BRANCH=$CI_BRANCH" >> $GITHUB_ENV && \
         export TRAVIS_JOB_ID=$GITHUB_RUN_NUMBER && \
+        echo gitref= {{github.ref}} && \
         git clone https://github.com/CrowCpp/cpp-coveralls.git && \
         cd cpp-coveralls && \
         pip3 install . --no-input && \
@@ -130,7 +136,7 @@ jobs:
 
     - name: Save report
       uses: actions/upload-artifact@v4
-      if: matrix.os == 'ubuntu-latest' && matrix.compiler == 'gcc' && matrix.cxx_stdlib == 'libstdc++' && matrix.asio_type == 'boost' && !startsWith(github.ref, 'refs/tags/v')
+      if: matrix.os == 'ubuntu-latest' && matrix.compiler == 'gcc' && matrix.cxx_stdlib == 'libstdc++' && matrix.asio_type == 'boost' && !startsWith(github.ref, 'refs/heads/v')
       with:
         name: coveralls.json
         path: coveralls.json
@@ -140,7 +146,7 @@ jobs:
       run: cmake --build . --target package
 
     - name: Generate checksums
-      if: matrix.os == 'ubuntu-latest' && matrix.compiler == 'gcc' && matrix.cxx_stdlib == 'libstdc++' && matrix.asio_type == 'boost' && startsWith(github.ref, 'refs/tags/v')
+      if: matrix.os == 'ubuntu-latest' && matrix.compiler == 'gcc' && matrix.cxx_stdlib == 'libstdc++' && matrix.asio_type == 'boost' && startsWith(github.ref, 'refs/heads/v')
       working-directory: ${{github.workspace}}/build
       run: |
         for f in Crow-* crow_all.h; do
@@ -150,7 +156,7 @@ jobs:
         done
 
     - uses: actions/upload-artifact@v4
-      if: matrix.os == 'ubuntu-latest' && matrix.compiler == 'gcc' && matrix.cxx_stdlib == 'libstdc++' && matrix.asio_type == 'boost' && startsWith(github.ref, 'refs/tags/v')
+      if: matrix.os == 'ubuntu-latest' && matrix.compiler == 'gcc' && matrix.cxx_stdlib == 'libstdc++' && matrix.asio_type == 'boost' && startsWith(github.ref, 'refs/heads/v')
       with:
         name: packages
         path: |
