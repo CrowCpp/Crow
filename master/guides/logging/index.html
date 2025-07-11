@@ -20,7 +20,7 @@
       
       
       <link rel="icon" href="../../assets/favicon.svg">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.14">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.15">
     
     
       
@@ -1560,12 +1560,12 @@
 <h2 id="creating-a-custom-logger">Creating A custom logger<a class="headerlink" href="#creating-a-custom-logger" title="Permanent link">&para;</a></h2>
 <p><span class="tag"><a href="https://github.com/CrowCpp/Crow/releases/v1.0"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M7.22 6.5a.72.72 0 1 1-1.44 0 .72.72 0 0 1 1.44 0"/><path d="M8 16A8 8 0 1 1 8 0a8 8 0 0 1 0 16M4 5v3.38c.001.397.159.778.44 1.059l3.211 3.213a1.2 1.2 0 0 0 1.698 0l3.303-3.303a1.2 1.2 0 0 0 0-1.698L9.439 4.44A1.5 1.5 0 0 0 8.379 4H5a1 1 0 0 0-1 1"/></svg></span> v1.0</a></span></p>
 <p>Assuming you have an existing logger or Crow's default format just doesn't work for you. Crow allows you to use a custom logger for any log made using the <code>CROW_LOG_&lt;LOG LEVEL&gt;</code> macro.<br>
-All you need is a class extending <code class="highlight"><span class="n">crow</span><span class="o">::</span><span class="n">ILogHandler</span></code> containing the method <code class="highlight"><span class="kt">void</span><span class="w"> </span><span class="n">log</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">,</span><span class="w"> </span><span class="n">crow</span><span class="o">::</span><span class="n">LogLevel</span><span class="p">)</span></code>.<br>
+All you need is a class extending <code class="highlight"><span class="n">crow</span><span class="o">::</span><span class="n">ILogHandler</span></code> containing the method <code class="highlight"><span class="kt">void</span><span class="w"> </span><span class="n">log</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="p">,</span><span class="w"> </span><span class="n">crow</span><span class="o">::</span><span class="n">LogLevel</span><span class="p">)</span></code>.<br>
 Once you have your custom logger, you need to set it via <code class="highlight"><span class="n">crow</span><span class="o">::</span><span class="n">logger</span><span class="o">::</span><span class="n">setHandler</span><span class="p">(</span><span class="o">&amp;</span><span class="n">MyLogger</span><span class="p">);</span></code>. Here's a full example:<br>
 <div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">CustomLogger</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">crow</span><span class="o">::</span><span class="n">ILogHandler</span><span class="w"> </span><span class="p">{</span>
 <span class="w"> </span><span class="k">public</span><span class="o">:</span>
 <span class="w">  </span><span class="n">CustomLogger</span><span class="p">()</span><span class="w"> </span><span class="p">{}</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">log</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">message</span><span class="p">,</span><span class="w"> </span><span class="n">crow</span><span class="o">::</span><span class="n">LogLevel</span><span class="w"> </span><span class="cm">/*level*/</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">log</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">message</span><span class="p">,</span><span class="w"> </span><span class="n">crow</span><span class="o">::</span><span class="n">LogLevel</span><span class="w"> </span><span class="cm">/*level*/</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
 <span class="w">    </span><span class="c1">// &quot;message&quot; doesn&#39;t contain the timestamp and loglevel</span>
 <span class="w">    </span><span class="c1">// prefix the default logger does and it doesn&#39;t end</span>
 <span class="w">    </span><span class="c1">// in a newline.</span>
@@ -1783,7 +1783,7 @@ Once you have your custom logger, you need to set it via <code class="highlight"
       <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.tabs", "content.code.annotate"], "search": "../../assets/javascripts/workers/search.d50fe291.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"default": "latest", "provider": "mike"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.13a4f30d.min.js"></script>
+      <script src="../../assets/javascripts/bundle.56ea9cef.min.js"></script>
       
     
   </body>
