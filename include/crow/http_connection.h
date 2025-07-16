@@ -113,7 +113,7 @@ namespace crow
         {
             routing_handle_result_ = handler_->handle_initial(req_, res);
             // if no route is found for the request method, return the response without parsing or processing anything further.
-            if (!routing_handle_result_->rule_index)
+            if (!routing_handle_result_->rule_index && req_.method != HTTPMethod::Options)
             {
                 parser_.done();
                 need_to_call_after_handlers_ = true;
@@ -131,6 +131,12 @@ namespace crow
                 static std::string expect_100_continue = "HTTP/1.1 100 Continue\r\n\r\n";
                 buffers_.emplace_back(expect_100_continue.data(), expect_100_continue.size());
                 do_write_sync(buffers_);
+            }
+            if (!routing_handle_result_->rule_index && req_.method == HTTPMethod::Options)
+            {
+                parser_.done();
+                need_to_call_after_handlers_ = true;
+                complete_request();
             }
         }
 
