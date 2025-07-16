@@ -163,7 +163,7 @@ namespace crow
                     is_invalid_request = true;
                     res = response(400);
                 }
-                else if (req_.upgrade)
+                else if (req_.upgrade && req_.method != HTTPMethod::Options)
                 {
                     // h2 or h2c headers
                     if (req_.get_header_value("upgrade").find("h2")==0)
