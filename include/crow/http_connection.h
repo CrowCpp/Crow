@@ -113,7 +113,7 @@ namespace crow
         {
             routing_handle_result_ = handler_->handle_initial(req_, res);
             // if no route is found for the request method, return the response without parsing or processing anything further.
-            if (!routing_handle_result_->rule_index && !routing_handle_result_->catch_all)
+            if (!routing_handle_result_->rule_index && !routing_handle_result_->catch_all && req_.method != HTTPMethod::Options)
             {
                 parser_.done();
                 need_to_call_after_handlers_ = true;
@@ -135,6 +135,12 @@ namespace crow
                 {
                     CROW_LOG_ERROR << ec << " buffer write error happened while handling sending continuation buffer header";
                 }
+            }
+            if (!routing_handle_result_->rule_index && req_.method == HTTPMethod::Options)
+            {
+                parser_.done();
+                need_to_call_after_handlers_ = true;
+                complete_request();
             }
         }
 
