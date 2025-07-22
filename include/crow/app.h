@@ -323,6 +323,16 @@ namespace crow
             }
         }
 
+        /// \brief Set status variable to note that the address that Crow will handle requests on is bound
+        void address_is_bound() {
+           is_bound_ = true;
+        }
+
+        /// \brief Get whether address that Crow will handle requests on is bound
+        bool is_bound() const {
+           return is_bound_;
+        }
+
         /// \brief Set the connection timeout in seconds (default is 5)
         self_t& timeout(std::uint8_t timeout)
         {
@@ -803,6 +813,7 @@ namespace crow
         std::uint8_t timeout_{5};
         uint16_t port_ = 80;
         unsigned int concurrency_ = 2;
+        std::atomic_bool is_bound_ = false;
         uint64_t max_payload_{UINT64_MAX};
         std::string server_name_ = std::string("Crow/") + VERSION;
         std::string bindaddr_ = "0.0.0.0";
