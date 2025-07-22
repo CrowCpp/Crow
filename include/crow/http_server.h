@@ -200,6 +200,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                   });
             }
             handler_->port(acceptor_.port());
+            handler_->address_is_bound();
             CROW_LOG_INFO << server_name_ 
                           << " server is running at " << acceptor_.url_display(handler_->ssl_used()) 
                           << " using " << concurrency_ << " threads";
