@@ -1447,6 +1447,16 @@ TEST_CASE("json Incorrect move of wvalue class #953")
     }
 }
 
+TEST_CASE("CrowJson, SmallNumber #1042")
+{
+    crow::json::wvalue data;
+    const double smallnumber = 1e-10;
+    data["testValue"] = smallnumber;
+    std::string text = data.dump( 4);
+    const auto expected_text ="{\n    \"testValue\": 1e-10\n}";
+    REQUIRE(text==expected_text);
+}
+
 TEST_CASE("template_basic")
 {
     auto t = crow::mustache::compile(R"---(attack of {{name}})---");
