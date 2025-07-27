@@ -4171,7 +4171,7 @@ TEST_CASE("option_header_passed_in_full")
     };
 
     std::string request =
-      "OPTIONS /echo HTTP/1.1\r\n";
+      "OPTIONS /echo HTTP/1.1\r\n\r\n";
 
     auto res = make_request(request);
     CHECK(res.find(ServerName) != std::string::npos);
