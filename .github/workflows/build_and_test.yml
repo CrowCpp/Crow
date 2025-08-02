@@ -25,13 +25,8 @@ jobs:
               ubuntu-22.04,
               macos-13
             ]
-        asio_type: [ standalone, boost ]
-        exclude:
-          - os: windows-latest
-            asio_type: boost
-          - os: macos-latest
-            asio_type: boost
-          - os: macos-13
+        include:
+          - os: ubuntu-latest
             asio_type: boost
     steps:
     - uses: actions/checkout@v4
@@ -39,7 +34,7 @@ jobs:
       run: |
          if [ "$RUNNER_OS" == "Linux" ]; then
               sudo apt-get update
-              if [ "${{ matrix.asio_type }}" == "boost" ]; then
+              if [ "${{ matrix.asio_type || 'standalone' }}" == "boost" ]; then
                   sudo apt-get install -yq \
                     libboost-all-dev \
                     libssl-dev zlib1g-dev \
@@ -83,7 +78,7 @@ jobs:
                   cmake_flags="-DCMAKE_CXX_COMPILER=g++"
               fi
 
-              if [ "${{ matrix.asio_type }}" == "boost" ]; then
+              if [ "${{ matrix.asio_type || 'standalone' }}" == "boost" ]; then
                   cmake_flags="${cmake_flags} -DCROW_USE_BOOST=ON"
               else
                   cmake_flags="${cmake_flags} -DCROW_USE_BOOST=OFF"
