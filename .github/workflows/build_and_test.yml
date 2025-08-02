@@ -131,10 +131,10 @@ jobs:
 
     - uses: actions/upload-artifact@v4
       if: matrix.os == 'ubuntu-latest'
-      with: 
+      with:
         name: packages
         path: ${{github.workspace}}/build/Crow-*
-    
+
     #- name: Source package
     #  working-directory: ${{github.workspace}}/build
     #  run: cpack --config CPackSourceConfig.cmake
