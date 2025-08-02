@@ -82,6 +82,12 @@ jobs:
               else
                   cmake_flags="-DCMAKE_CXX_COMPILER=g++"
               fi
+
+              if [ "${{ matrix.asio_type }}" == "boost" ]; then
+                  cmake_flags="${cmake_flags} -DCROW_USE_BOOST=ON"
+              else
+                  cmake_flags="${cmake_flags} -DCROW_USE_BOOST=OFF"
+              fi
          fi
 
          cmake \
