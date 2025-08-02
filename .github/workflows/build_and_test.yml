@@ -25,17 +25,33 @@ jobs:
               ubuntu-22.04,
               macos-13
             ]
+        asio_type: [ standalone, boost ]
+        exclude:
+          - os: windows-latest
+            asio_type: boost
+          - os: macos-latest
+            asio_type: boost
+          - os: macos-13
+            asio_type: boost
     steps:
     - uses: actions/checkout@v4
     - name: Prepare dependencies
       run: |
          if [ "$RUNNER_OS" == "Linux" ]; then
-              sudo apt-get update && \
-              sudo apt-get install -yq \
-                libasio-dev \
-                libssl-dev zlib1g-dev \
-                cmake \
-                g++ clang
+              sudo apt-get update
+              if [ "${{ matrix.asio_type }}" == "boost" ]; then
+                  sudo apt-get install -yq \
+                    libboost-all-dev \
+                    libssl-dev zlib1g-dev \
+                    cmake \
+                    g++ clang
+              else
+                  sudo apt-get install -yq \
+                    libasio-dev \
+                    libssl-dev zlib1g-dev \
+                    cmake \
+                    g++ clang
+              fi
          elif [ "$RUNNER_OS" == "Windows" ]; then
               VCPKG_DEFAULT_TRIPLET=x64-windows vcpkg install
          elif [ "$RUNNER_OS" == "macOS" ]; then
