@@ -4149,7 +4149,7 @@ TEST_CASE("option_header_passed_in_full")
           asio::ip::make_address(LOCALHOST_ADDRESS), 45451));
         c.send(asio::buffer(rq));
         std::string fullString{};
-        asio::error_code error;
+        asio_error_code error;
         char buffer[1024];
         while (true)
         {
