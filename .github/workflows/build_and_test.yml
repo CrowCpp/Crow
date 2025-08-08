@@ -25,17 +25,28 @@ jobs:
               ubuntu-22.04,
               macos-13
             ]
+        include:
+          - os: ubuntu-latest
+            asio_type: boost
     steps:
     - uses: actions/checkout@v4
     - name: Prepare dependencies
       run: |
          if [ "$RUNNER_OS" == "Linux" ]; then
-              sudo apt-get update && \
-              sudo apt-get install -yq \
-                libasio-dev \
-                libssl-dev zlib1g-dev \
-                cmake \
-                g++ clang
+              sudo apt-get update
+              if [ "${{ matrix.asio_type || 'standalone' }}" == "boost" ]; then
+                  sudo apt-get install -yq \
+                    libboost-all-dev \
+                    libssl-dev zlib1g-dev \
+                    cmake \
+                    g++ clang
+              else
+                  sudo apt-get install -yq \
+                    libasio-dev \
+                    libssl-dev zlib1g-dev \
+                    cmake \
+                    g++ clang
+              fi
          elif [ "$RUNNER_OS" == "Windows" ]; then
               VCPKG_DEFAULT_TRIPLET=x64-windows vcpkg install
          elif [ "$RUNNER_OS" == "macOS" ]; then
@@ -65,6 +76,12 @@ jobs:
                   cmake_flags="-DCMAKE_CXX_COMPILER=clang++ -DCMAKE_CXX_FLAGS='-stdlib=libstdc++'"
               else
                   cmake_flags="-DCMAKE_CXX_COMPILER=g++"
+              fi
+
+              if [ "${{ matrix.asio_type || 'standalone' }}" == "boost" ]; then
+                  cmake_flags="${cmake_flags} -DCROW_USE_BOOST=ON"
+              else
+                  cmake_flags="${cmake_flags} -DCROW_USE_BOOST=OFF"
               fi
          fi
 
@@ -115,10 +132,10 @@ jobs:
 
     - uses: actions/upload-artifact@v4
       if: matrix.os == 'ubuntu-latest'
-      with: 
+      with:
         name: packages
         path: ${{github.workspace}}/build/Crow-*
-    
+
     #- name: Source package
     #  working-directory: ${{github.workspace}}/build
     #  run: cpack --config CPackSourceConfig.cmake
