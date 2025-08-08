@@ -5,6 +5,13 @@
 #include "catch2/catch_all.hpp"
 #include "crow.h"
 
+#ifdef CROW_USE_BOOST
+    namespace asio = boost::asio;
+    using error_code = boost::system::error_code;
+#else
+    using error_code = asio::error_code;
+#endif
+
 #define LOCALHOST_ADDRESS "127.0.0.1"
 
 // TODO(EDev): SSL test with .pem file
@@ -53,7 +60,7 @@ TEST_CASE("SSL")
         std::string http_response;
         size_t y = 0;
 
-        asio::error_code ec{};
+        error_code ec{};
         while (!ec) {
             y = c.read_some(asio::buffer(buf, 2048),ec);
             http_response.append(buf,y);
