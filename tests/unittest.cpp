@@ -10,6 +10,8 @@
 #include <regex>
 
 #include "catch2/catch_all.hpp"
+
+
 #include "crow.h"
 #include "crow/middlewares/cookie_parser.h"
 #include "crow/middlewares/cors.h"
@@ -17,13 +19,6 @@
 
 using namespace std;
 using namespace crow;
-
-#ifdef CROW_USE_BOOST
-namespace asio = boost::asio;
-using asio_error_code = boost::system::error_code;
-#else
-using asio_error_code = asio::error_code;
-#endif
 
 #define LOCALHOST_ADDRESS "127.0.0.1"
 
@@ -3225,7 +3220,7 @@ TEST_CASE("websocket_max_payload")
         }
     }
 
-    asio_error_code ec;
+    crow::error_code ec;
     c.lowest_layer().shutdown(asio::socket_base::shutdown_type::shutdown_both, ec);
 
     app.stop();
@@ -3913,7 +3908,7 @@ TEST_CASE("timeout")
               asio::ip::make_address(LOCALHOST_ADDRESS), 45451));
 
             auto receive_future = async(launch::async, [&]() {
-                asio_error_code ec;
+                crow::error_code ec;
                 c.receive(asio::buffer(buf, 2048), 0, ec);
                 return ec;
             });
@@ -3933,7 +3928,7 @@ TEST_CASE("timeout")
 
             size_t received;
             auto receive_future = async(launch::async, [&]() {
-                asio_error_code ec;
+                crow::error_code ec;
                 received = c.receive(asio::buffer(buf, 2048), 0, ec);
                 return ec;
             });
@@ -3984,7 +3979,7 @@ TEST_CASE("task_timer")
     });
 
     asio::steady_timer t(io_context);
-    asio_error_code ec;
+    crow::error_code ec;
 
     t.expires_after(3 * timer.get_tick_length());
     t.wait(ec);
@@ -4149,7 +4144,7 @@ TEST_CASE("option_header_passed_in_full")
           asio::ip::make_address(LOCALHOST_ADDRESS), 45451));
         c.send(asio::buffer(rq));
         std::string fullString{};
-        asio_error_code error;
+        crow::error_code error;
         char buffer[1024];
         while (true)
         {
