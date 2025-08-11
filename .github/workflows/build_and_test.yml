@@ -29,7 +29,7 @@ jobs:
           - os: ubuntu-latest
             asio_type: boost
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v5
     - name: Prepare dependencies
       run: |
          if [ "$RUNNER_OS" == "Linux" ]; then
