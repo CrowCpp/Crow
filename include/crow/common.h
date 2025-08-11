@@ -6,8 +6,29 @@
 #include <iostream>
 #include "crow/utility.h"
 
-namespace crow
+#ifdef CROW_USE_BOOST
+  #include <boost/asio.hpp>
+  #ifdef CROW_ENABLE_SSL
+    #include <boost/asio/ssl.hpp>
+  #endif
+#else
+  #ifndef ASIO_STANDALONE
+    #define ASIO_STANDALONE
+  #endif
+  #include <asio.hpp>
+  #ifdef CROW_ENABLE_SSL
+    #include <asio/ssl.hpp>
+  #endif
+#endif
+
+namespace crow // NOTE: Already documented in "crow/app.h"
 {
+#ifdef CROW_USE_BOOST
+    namespace asio = boost::asio;
+    using error_code = boost::system::error_code;
+#else
+    using error_code = asio::error_code;
+#endif
     const char cr = '\r';
     const char lf = '\n';
     const std::string crlf("\r\n");

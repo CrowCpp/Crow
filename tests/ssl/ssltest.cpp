@@ -1,16 +1,10 @@
 #define CROW_LOG_LEVEL 0
 
 #include <thread>
+#include <asio/ssl/host_name_verification.hpp>
 
 #include "catch2/catch_all.hpp"
 #include "crow.h"
-
-#ifdef CROW_USE_BOOST
-    namespace asio = boost::asio;
-    using error_code = boost::system::error_code;
-#else
-    using error_code = asio::error_code;
-#endif
 
 #define LOCALHOST_ADDRESS "127.0.0.1"
 

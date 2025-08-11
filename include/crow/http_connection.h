@@ -1,13 +1,5 @@
 #pragma once
 
-#ifdef CROW_USE_BOOST
-#include <boost/asio.hpp>
-#else
-#ifndef ASIO_STANDALONE
-#define ASIO_STANDALONE
-#endif
-#include <asio.hpp>
-#endif
 
 #include <algorithm>
 #include <atomic>
@@ -30,12 +22,6 @@
 
 namespace crow
 {
-#ifdef CROW_USE_BOOST
-    namespace asio = boost::asio;
-    using error_code = boost::system::error_code;
-#else
-    using error_code = asio::error_code;
-#endif
     using tcp = asio::ip::tcp;
 
 #ifdef CROW_ENABLE_DEBUG

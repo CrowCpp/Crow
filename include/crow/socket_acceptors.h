@@ -1,29 +1,10 @@
 #pragma once
-#ifdef CROW_USE_BOOST
-#include <boost/asio.hpp>
-#ifdef CROW_ENABLE_SSL
-#include <boost/asio/ssl.hpp>
-#endif
-#else
-#ifndef ASIO_STANDALONE
-#define ASIO_STANDALONE
-#endif
-#include <asio.hpp>
-#ifdef CROW_ENABLE_SSL
-#include <asio/ssl.hpp>
-#endif
-#endif
+#include "crow/common.h"
 
 #include "crow/logging.h"
 
 namespace crow
 {
-#ifdef CROW_USE_BOOST
-    namespace asio = boost::asio;
-    using error_code = boost::system::error_code;
-#else
-    using error_code = asio::error_code;
-#endif
     using tcp = asio::ip::tcp;
     using stream_protocol = asio::local::stream_protocol;
 

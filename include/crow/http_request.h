@@ -1,14 +1,5 @@
 #pragma once
 
-#ifdef CROW_USE_BOOST
-#include <boost/asio.hpp>
-#else
-#ifndef ASIO_STANDALONE
-#define ASIO_STANDALONE
-#endif
-#include <asio.hpp>
-#endif
-
 #include "crow/common.h"
 #include "crow/ci_map.h"
 #include "crow/query_string.h"
