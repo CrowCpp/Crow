@@ -1,13 +1,8 @@
 #pragma once
 
 #ifdef CROW_USE_BOOST
-#include <boost/asio.hpp>
 #include <boost/asio/basic_waitable_timer.hpp>
 #else
-#ifndef ASIO_STANDALONE
-#define ASIO_STANDALONE
-#endif
-#include <asio.hpp>
 #include <asio/basic_waitable_timer.hpp>
 #endif
 
@@ -20,12 +15,6 @@
 
 namespace crow
 {
-#ifdef CROW_USE_BOOST
-    namespace asio = boost::asio;
-    using error_code = boost::system::error_code;
-#else
-    using error_code = asio::error_code;
-#endif
     namespace detail
     {
 
