@@ -13,13 +13,6 @@
 
 namespace crow // NOTE: Already documented in "crow/app.h"
 {
-#ifdef CROW_USE_BOOST
-    namespace asio = boost::asio;
-    using error_code = boost::system::error_code;
-#else
-    using error_code = asio::error_code;
-#endif
-
     /**
      * \namespace crow::websocket
      * \brief Namespace that includes the \ref Connection class
