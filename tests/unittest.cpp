@@ -2342,7 +2342,6 @@ TEST_CASE("catchall_check_full_handling")
         CHECK(global_middleware.after_handle_called==true);
         CHECK(global_middleware.before_handle_called==true);
         CHECK(headers_empty==false);
-
     }
 
     app.stop();
