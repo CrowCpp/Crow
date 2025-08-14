@@ -51,8 +51,8 @@ option(CROW_BUILD_TESTS        "Build the tests in the project"         ${CROW_I
 option(CROW_BUILD_FUZZER       "Instrument and build Crow fuzzer"       OFF)
 option(CROW_AMALGAMATE         "Combine all headers into one"           OFF)
 option(CROW_INSTALL            "Add install step for Crow"              ON )
-option(CROW_USE_BOOST          "Use Asio for Crow"                			OFF)
-option(CROW_GENERATE_SBOM      "Generate SBOM file" 										OFF)
+option(CROW_USE_BOOST          "Use Boost.Asio for Crow"                OFF)
+option(CROW_GENERATE_SBOM      "Generate SBOM file"                     OFF)
 option(CROW_RETURNS_OK_ON_HTTP_OPTIONS_REQUEST
 		"Returns HTTP status code OK (200) instead of 204 for OPTIONS request"
 		OFF )
