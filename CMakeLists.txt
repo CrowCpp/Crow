@@ -11,9 +11,10 @@ project(Crow
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
+include(${CMAKE_SOURCE_DIR}/cmake/CPM.cmake)
+
 # Make sure Findasio.cmake module is found
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
-list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake-sbom/cmake)
 
 # Check if Crow is the main project
 set(CROW_IS_MAIN_PROJECT OFF)
@@ -60,7 +61,15 @@ option(CROW_ENABLE_SSL "Enable Crow's SSL feature for supporting https" OFF)
 option(CROW_ENABLE_COMPRESSION "Enable Crow's Compression feature for supporting compressed http content" OFF)
 
 if(CROW_GENERATE_SBOM)
-	include(sbom)
+  CPMAddPackage(
+    NAME cmake-sbom
+    GITHUB_REPOSITORY DEMCON/cmake-sbom
+    GIT_TAG v1.3.0
+    DOWNLOAD_ONLY YES
+  )
+  list(APPEND CMAKE_MODULE_PATH "${CMAKE_BINARY_DIR}/_deps/cmake-sbom-src/cmake")
+
+  include(sbom)
 	include(version)
 	string(TIMESTAMP BUILD_DATE "%Y-%m-%d")
 	sbom_generate(
