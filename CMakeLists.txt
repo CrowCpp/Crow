@@ -11,6 +11,8 @@ project(Crow
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
+include(${CMAKE_SOURCE_DIR}/cmake/CPM.cmake)
+
 # Make sure Findasio.cmake module is found
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
@@ -50,13 +52,33 @@ option(CROW_BUILD_FUZZER       "Instrument and build Crow fuzzer"       OFF)
 option(CROW_AMALGAMATE         "Combine all headers into one"           OFF)
 option(CROW_INSTALL            "Add install step for Crow"              ON )
 option(CROW_USE_BOOST          "Use Boost.Asio for Crow"                OFF)
-option( CROW_RETURNS_OK_ON_HTTP_OPTIONS_REQUEST
+option(CROW_GENERATE_SBOM      "Generate SBOM file"                     OFF)
+option(CROW_RETURNS_OK_ON_HTTP_OPTIONS_REQUEST
 		"Returns HTTP status code OK (200) instead of 204 for OPTIONS request"
 		OFF )
 
 option(CROW_ENABLE_SSL "Enable Crow's SSL feature for supporting https" OFF)
 option(CROW_ENABLE_COMPRESSION "Enable Crow's Compression feature for supporting compressed http content" OFF)
 
+if(CROW_GENERATE_SBOM)
+  CPMAddPackage(
+    NAME cmake-sbom
+    GITHUB_REPOSITORY DEMCON/cmake-sbom
+    GIT_TAG v1.3.0
+    DOWNLOAD_ONLY YES
+  )
+  list(APPEND CMAKE_MODULE_PATH "${CMAKE_BINARY_DIR}/_deps/cmake-sbom-src/cmake")
+
+  include(sbom)
+	include(version)
+	string(TIMESTAMP BUILD_DATE "%Y-%m-%d")
+	sbom_generate(
+		SUPPLIER CrowCpp
+		SUPPLIER_URL https://crowcpp.org/
+		LICENSE "BSD-3-Clause"
+		OUTPUT crow-${PROJECT_VERSION}-${BUILD_DATE}.spdx
+	)
+endif()
 
 #####################################
 # Define Targets
@@ -81,6 +103,16 @@ if(CROW_USE_BOOST)
 			Boost::boost Boost::system Boost::date_time
 	)
 	target_compile_definitions(Crow INTERFACE CROW_USE_BOOST)
+
+	if(CROW_GENERATE_SBOM)
+		sbom_add(
+			PACKAGE boost
+			DOWNLOAD_LOCATION https://www.boost.org/
+			LICENSE "BSL-1.0"
+			SUPPLIER "Organization: Boost Community"
+			VERSION "${Boost_VERSION}"
+		)
+	endif()
 else()
     find_package(asio REQUIRED)
 	target_link_libraries(Crow
@@ -90,18 +122,67 @@ else()
 	target_compile_definitions(Crow INTERFACE ASIO_NO_DEPRECATED)
       endif()
 
+		if(ASIO_FOUND)
+			find_file(ASIO_VERSION_HPP "asio/version.hpp" PATHS ${ASIO_INCLUDE_DIR})
+			if(ASIO_VERSION_HPP)
+					file(READ ${ASIO_VERSION_HPP} ASIO_VERSION_CONTENT)
+					string(REGEX MATCH "#define ASIO_VERSION ([0-9]+)" _ ${ASIO_VERSION_CONTENT})
+					if(CMAKE_MATCH_1)
+							math(EXPR ASIO_VERSION_MAJOR "${CMAKE_MATCH_1} / 100000")
+							math(EXPR ASIO_VERSION_MINOR "(${CMAKE_MATCH_1} / 1000) % 100")
+							math(EXPR ASIO_VERSION_PATCH "${CMAKE_MATCH_1} % 1000")
+							set(asio_VERSION "${ASIO_VERSION_MAJOR}.${ASIO_VERSION_MINOR}.${ASIO_VERSION_PATCH}")
+					endif()
+			endif()
+
+			# Fallback
+			if(NOT asio_VERSION)
+					set(asio_VERSION "unknown")
+			endif()
+
+			if(CROW_GENERATE_SBOM)
+				sbom_add(
+					PACKAGE asio
+					DOWNLOAD_LOCATION https://github.com/chriskohlhoff/asio
+					LICENSE "BSL-1.0"
+					SUPPLIER "Organization: Boost Community"
+					VERSION "${asio_VERSION}"
+				)
+			endif()
+	endif()
+
 target_compile_definitions(Crow INTERFACE "")
 
 if(CROW_ENABLE_COMPRESSION)
 	find_package(ZLIB REQUIRED)
 	target_link_libraries(Crow INTERFACE ZLIB::ZLIB)
 	target_compile_definitions(Crow INTERFACE CROW_ENABLE_COMPRESSION)
+
+	if(CROW_GENERATE_SBOM)
+		sbom_add(
+	    PACKAGE zlib
+	    DOWNLOAD_LOCATION https://github.com/madler/zlib
+	    LICENSE "Zlib"
+	    SUPPLIER "Person: Jean-loup Gailly and Mark Adler"
+	    VERSION "${ZLIB_VERSION}"
+		)
+	endif()
 endif()
 
 if(CROW_ENABLE_SSL)
 	find_package(OpenSSL REQUIRED)
 	target_link_libraries(Crow INTERFACE OpenSSL::SSL)
 	target_compile_definitions(Crow INTERFACE CROW_ENABLE_SSL)
+
+	if(CROW_GENERATE_SBOM)
+		sbom_add(
+	    PACKAGE openssl
+	    DOWNLOAD_LOCATION https://github.com/openssl/openssl
+	    LICENSE "Apache-2.0"
+	    SUPPLIER "Organization: OpenSSL Software Foundation"
+	    VERSION "${OPENSSL_VERSION}"
+		)
+	endif()
 endif()
 
 if(CROW_AMALGAMATE)
@@ -140,6 +221,16 @@ if(CROW_AMALGAMATE)
 		include/crow/middlewares/session.h
 		include/crow/middlewares/utf-8.h
 	)
+
+	if(CROW_GENERATE_SBOM)
+		sbom_add(
+			PACKAGE python3
+			DOWNLOAD_LOCATION https://www.python.org/
+			LICENSE "PSF-2.0"
+			SUPPLIER "Organization: Python Software Foundation"
+			VERSION "${Python3_VERSION}"
+		)
+	endif()
 
 	add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/crow_all.h
 		COMMAND python3 ${CMAKE_CURRENT_SOURCE_DIR}/scripts/merge_all.py
@@ -249,4 +340,8 @@ if(NOT TARGET uninstall)
 
   add_custom_target(uninstall
     COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake)
+endif()
+
+if(CROW_GENERATE_SBOM)
+	sbom_finalize()
 endif()
