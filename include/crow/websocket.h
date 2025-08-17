@@ -700,38 +700,38 @@ namespace crow // NOTE: Already documented in "crow/app.h"
             /// Also destroys the object if the Close flag is set.
             void do_write()
             {
-                if (sending_buffers_.empty())
-                {
-                    sending_buffers_.swap(write_buffers_);
-                    std::vector<asio::const_buffer> buffers;
-                    buffers.reserve(sending_buffers_.size());
-                    for (auto& s : sending_buffers_)
-                    {
-                        buffers.emplace_back(asio::buffer(s));
-                    }
-                    auto watch = std::weak_ptr<void>{anchor_};
-                    asio::async_write(
-                      adaptor_.socket(), buffers,
-                      [&, watch](const error_code& ec, std::size_t /*bytes_transferred*/) {
-                          if (!ec && !close_connection_)
-                          {
-                              sending_buffers_.clear();
-                              if (!write_buffers_.empty())
-                                  do_write();
-                              if (has_sent_close_)
-                                  close_connection_ = true;
-                          }
-                          else
-                          {
-                              auto anchor = watch.lock();
-                              if (anchor == nullptr) { return; }
+                if (sending_buffers_.empty()) return;
 
-                              sending_buffers_.clear();
-                              close_connection_ = true;
-                              check_destroy();
-                          }
-                      });
+                sending_buffers_.swap(write_buffers_);
+                std::vector<asio::const_buffer> buffers;
+                buffers.reserve(sending_buffers_.size());
+                for (auto& s : sending_buffers_)
+                {
+                    buffers.emplace_back(asio::buffer(s));
                 }
+                auto watch = std::weak_ptr<void>{anchor_};
+                asio::async_write(
+                    adaptor_.socket(), buffers,
+                    [&, watch](const error_code& ec, std::size_t /*bytes_transferred*/) {
+                        auto anchor = watch.lock();
+                        if (anchor == nullptr)
+                            return;
+
+                        if (!ec && !close_connection_)
+                        {
+                            sending_buffers_.clear();
+                            if (!write_buffers_.empty())
+                                do_write();
+                            if (has_sent_close_)
+                                close_connection_ = true;
+                        }
+                        else
+                        {
+                            sending_buffers_.clear();
+                            close_connection_ = true;
+                            check_destroy();
+                        }
+                    });
             }
 
             /// Destroy the Connection.
