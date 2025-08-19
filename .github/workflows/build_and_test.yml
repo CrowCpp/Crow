@@ -110,7 +110,7 @@ jobs:
       shell: bash
 
     - name: Generate coverage report
-      if: matrix.os == 'ubuntu-latest' && matrix.compiler == 'gcc' && matrix.cxx_stdlib == 'libstdc++' && matrix.asio_type == 'boost'
+      if: matrix.os == 'ubuntu-latest' && matrix.compiler == 'gcc' && matrix.cxx_stdlib == 'libstdc++' && matrix.asio_type == 'boost' && !startsWith(github.ref, 'refs/tags/v')
       run: |
         export CI_BRANCH=${GITHUB_BASE_REF:-${GITHUB_REF#refs/heads/}}
         echo "CI_BRANCH=$CI_BRANCH" >> $GITHUB_ENV && \
@@ -124,7 +124,7 @@ jobs:
 
     - name: Save report
       uses: actions/upload-artifact@v4
-      if: matrix.os == 'ubuntu-latest'
+      if: matrix.os == 'ubuntu-latest' && matrix.compiler == 'gcc' && matrix.cxx_stdlib == 'libstdc++' && matrix.asio_type == 'boost' && !startsWith(github.ref, 'refs/tags/v')
       with:
         name: coveralls.json
         path: coveralls.json
