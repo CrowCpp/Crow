@@ -97,7 +97,12 @@ if(CROW_USE_BOOST)
 		# Use Boost CMake module from Boost instead of the one from CMake
 		cmake_policy(SET CMP0167 NEW)
 	endif()
-	find_package(Boost 1.64 COMPONENTS system date_time REQUIRED)
+	find_package(Boost 1.64 COMPONENTS date_time REQUIRED)
+	if(Boost_VERSION VERSION_LESS 1.89)
+		find_package(Boost 1.64 COMPONENTS system REQUIRED)
+	else()
+		add_library(Boost::system ALIAS Boost::headers)
+	endif()
 	target_link_libraries(Crow
 		INTERFACE
 			Boost::boost Boost::system Boost::date_time
