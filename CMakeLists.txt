@@ -11,7 +11,7 @@ project(Crow
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-include(${CMAKE_SOURCE_DIR}/cmake/CPM.cmake)
+include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/CPM.cmake)
 
 # Make sure Findasio.cmake module is found
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
