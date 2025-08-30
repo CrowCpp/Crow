@@ -700,7 +700,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
             /// Also destroys the object if the Close flag is set.
             void do_write()
             {
-                if (sending_buffers_.empty()) return;
+                if (write_buffers_.empty()) return;
 
                 sending_buffers_.swap(write_buffers_);
                 std::vector<asio::const_buffer> buffers;
@@ -712,7 +712,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                 auto watch = std::weak_ptr<void>{anchor_};
                 asio::async_write(
                     adaptor_.socket(), buffers,
-                    [&, watch](const error_code& ec, std::size_t /*bytes_transferred*/) {
+                    [this, watch](const error_code& ec, std::size_t /*bytes_transferred*/) {
                         auto anchor = watch.lock();
                         if (anchor == nullptr)
                             return;
