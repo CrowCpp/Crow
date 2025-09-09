@@ -299,6 +299,12 @@ if(CROW_INSTALL)
 		DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/Crow"
 	)
 
+	if(CROW_USE_BOOST)
+		set(CROW_ASIO_PROVIDER "Boost 1.64 COMPONENTS system date_time REQUIRED")
+	else()
+		set(CROW_ASIO_PROVIDER "asio")
+	endif()
+
 	include(CMakePackageConfigHelpers)
 	configure_package_config_file(
 		"${CMAKE_CURRENT_SOURCE_DIR}/cmake/CrowConfig.cmake.in"
