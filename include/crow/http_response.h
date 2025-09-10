@@ -284,15 +284,16 @@ namespace crow
             int statResult;
         };
 
-        /// Return a static file as the response body
-        void set_static_file_info(std::string path)
+        /// Return a static file as the response body, the content_type may be specified explicitly.
+        void set_static_file_info(std::string path, std::string content_type = "")
         {
             utility::sanitize_filename(path);
-            set_static_file_info_unsafe(path);
+            set_static_file_info_unsafe(path, content_type);
         }
 
-        /// Return a static file as the response body without sanitizing the path (use set_static_file_info instead)
-        void set_static_file_info_unsafe(std::string path)
+        /// Return a static file as the response body without sanitizing the path (use set_static_file_info instead),
+        /// the content_type may be specified explicitly.
+        void set_static_file_info_unsafe(std::string path, std::string content_type = "")
         {
             file_info.path = path;
             file_info.statResult = stat(file_info.path.c_str(), &file_info.statbuf);
@@ -306,9 +307,16 @@ namespace crow
                 code = 200;
                 this->add_header("Content-Length", std::to_string(file_info.statbuf.st_size));
 
-                if (!extension.empty())
+                if (content_type.empty())
                 {
-                    this->add_header("Content-Type", get_mime_type(extension));
+                    if (!extension.empty())
+                    {
+                        this->add_header("Content-Type", get_mime_type(extension));
+                    }
+                }
+                else
+                {
+                    this->add_header("Content-Type", content_type);
                 }
             }
             else
