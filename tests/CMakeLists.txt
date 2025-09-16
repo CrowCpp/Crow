@@ -23,11 +23,10 @@ enable_testing()
 set(TEST_SRCS
   unittest.cpp
   query_string_tests.cpp
-)
-
-# Automatically add all sources under unit_tests/
-file(GLOB_RECURSE UNIT_TEST_SRCS
-  "${CMAKE_CURRENT_SOURCE_DIR}/unit_tests/*.cpp"
+  unit_tests/test_http_response.cpp
+  unit_tests/test_mustache.cpp
+  unit_tests/test_utility.cpp
+  unit_tests/test_websocket.cpp
 )
 
 list(APPEND TEST_SRCS ${UNIT_TEST_SRCS})
