@@ -119,10 +119,14 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                 std::function<bool(const crow::request&, void**)> accept_handler,
                 bool mirror_protocols)
             {
-                auto conn = std::make_shared<Connection>(std::move(adaptor), handler, max_payload,
-                                                         std::move(open_handler), std::move(message_handler), std::move(close_handler),
-                                                         std::move(error_handler), std::move(accept_handler));
-
+                auto conn = std::shared_ptr<Connection>(new Connection(std::move(adaptor), 
+                                                                       handler, max_payload,
+                                                                       std::move(open_handler), 
+                                                                       std::move(message_handler), 
+                                                                       std::move(close_handler),
+                                                                       std::move(error_handler), 
+                                                                       std::move(accept_handler)));
+                
                 // Perform handshake validation
                 if (!utility::string_equals(req.get_header_value("upgrade"), "websocket"))
                 {
