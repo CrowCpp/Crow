@@ -627,12 +627,12 @@ namespace crow
         }
 
 
-        void add_websocket(crow::websocket::connection* conn)
+        void add_websocket(std::shared_ptr<websocket::connection> conn)
         {
             websockets_.push_back(conn);
         }
 
-        void remove_websocket(crow::websocket::connection* conn)
+        void remove_websocket(std::shared_ptr<websocket::connection> conn)
         {
             websockets_.erase(std::remove(websockets_.begin(), websockets_.end(), conn), websockets_.end());
         }
@@ -846,7 +846,7 @@ namespace crow
         bool server_started_{false};
         std::condition_variable cv_started_;
         std::mutex start_mutex_;
-        std::vector<crow::websocket::connection*> websockets_;
+        std::vector<std::shared_ptr<websocket::connection>> websockets_;
     };
 
     /// \brief Alias of Crow<Middlewares...>. Useful if you want
