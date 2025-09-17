@@ -2,7 +2,6 @@ var classcrow_1_1websocket_1_1_connection =
 [
     [ "SendMessageType", "structcrow_1_1websocket_1_1_connection_1_1_send_message_type.html", null ],
     [ "WeakWrappedMessage", "structcrow_1_1websocket_1_1_connection_1_1_weak_wrapped_message.html", null ],
-    [ "Connection", "classcrow_1_1websocket_1_1_connection.html#aebaa108174ae0efc3c59c80c4552ba4d", null ],
     [ "build_header", "classcrow_1_1websocket_1_1_connection.html#a2fc995281b9452b56f743294baa7ed17", null ],
     [ "check_destroy", "classcrow_1_1websocket_1_1_connection.html#ad13e9b7b8a2a551056b34495cb334124", null ],
     [ "close", "classcrow_1_1websocket_1_1_connection.html#a4fab99ae7f8e269480d5842cff1daf88", null ],

@@ -44,7 +44,8 @@ var hierarchy =
     [ "crow::CORSRules", "structcrow_1_1_c_o_r_s_rules.html", null ],
     [ "crow::Crow< Middlewares >", "classcrow_1_1_crow.html", null ],
     [ "std::enable_shared_from_this", null, [
-      [ "crow::Connection< Adaptor, Handler, Middlewares >", "classcrow_1_1_connection.html", null ]
+      [ "crow::Connection< Adaptor, Handler, Middlewares >", "classcrow_1_1_connection.html", null ],
+      [ "crow::websocket::Connection< Adaptor, Handler >", "classcrow_1_1websocket_1_1_connection.html", null ]
     ] ],
     [ "std::exception", null, [
       [ "crow::mustache::invalid_template_exception", "classcrow_1_1mustache_1_1invalid__template__exception.html", null ],

@@ -8,6 +8,6 @@ var searchData=
   ['compile_5',['compile',['../namespacecrow_1_1mustache.html#a5823e2be647059121cc4f0329e44741a',1,'crow::mustache']]],
   ['complete_5frequest_6',['complete_request',['../classcrow_1_1_connection.html#aa40019a3731cc55174401e3b31602524',1,'crow::Connection']]],
   ['concurrency_7',['concurrency',['../classcrow_1_1_crow.html#a9e1a24f305db4b2c313b752c72067b81',1,'crow::Crow::concurrency(unsigned int concurrency)'],['../classcrow_1_1_crow.html#af57f77dfa5ddbf65befc92779fee6d5d',1,'crow::Crow::concurrency() const']]],
-  ['connection_8',['Connection',['../classcrow_1_1websocket_1_1_connection.html#aebaa108174ae0efc3c59c80c4552ba4d',1,'crow::websocket::Connection']]],
+  ['create_8',['create',['../classcrow_1_1websocket_1_1_connection.html#ae99df650c42dd012eeeadcaa205ac95a',1,'crow::websocket::Connection']]],
   ['crow_9',['Crow',['../classcrow_1_1_crow.html#abb69a7bf5d4a791a398c838d37086d94',1,'crow::Crow']]]
 ];

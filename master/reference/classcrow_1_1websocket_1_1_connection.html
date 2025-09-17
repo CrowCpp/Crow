@@ -102,6 +102,7 @@ $(document).ready(function(){initNavTree('classcrow_1_1websocket_1_1_connection.
   <div class="summary">
 <a href="#nested-classes">Classes</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
+<a href="#pub-static-methods">Static Public Member Functions</a> &#124;
 <a href="#pro-methods">Protected Member Functions</a> &#124;
 <a href="classcrow_1_1websocket_1_1_connection-members.html">List of all members</a>  </div>
   <div class="headertitle"><div class="title">crow::websocket::Connection&lt; Adaptor, Handler &gt; Class Template Reference</div></div>
@@ -118,7 +119,7 @@ Inheritance diagram for crow::websocket::Connection&lt; Adaptor, Handler &gt;:</
  <div class="center">
   <img src="classcrow_1_1websocket_1_1_connection.png" usemap="#crow::websocket::Connection_3C_20Adaptor_2C_20Handler_20_3E_map" alt=""/>
   <map id="crow::websocket::Connection_3C_20Adaptor_2C_20Handler_20_3E_map" name="crow::websocket::Connection_3C_20Adaptor_2C_20Handler_20_3E_map">
-<area href="structcrow_1_1websocket_1_1connection.html" title="A base class for websocket connection." alt="crow::websocket::connection" shape="rect" coords="0,0,298,24"/>
+<area href="structcrow_1_1websocket_1_1connection.html" title="A base class for websocket connection." alt="crow::websocket::connection" shape="rect" coords="0,0,387,24"/>
   </map>
 </div></div>
 <table class="memberdecls">
@@ -131,9 +132,6 @@ Classes</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:aebaa108174ae0efc3c59c80c4552ba4d" id="r_aebaa108174ae0efc3c59c80c4552ba4d"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcrow_1_1websocket_1_1_connection.html#aebaa108174ae0efc3c59c80c4552ba4d">Connection</a> (const <a class="el" href="structcrow_1_1request.html">crow::request</a> &amp;req, Adaptor &amp;&amp;adaptor, Handler *handler, uint64_t max_payload, const std::vector&lt; std::string &gt; &amp;subprotocols, std::function&lt; void(<a class="el" href="structcrow_1_1websocket_1_1connection.html">crow::websocket::connection</a> &amp;)&gt; open_handler, std::function&lt; void(<a class="el" href="structcrow_1_1websocket_1_1connection.html">crow::websocket::connection</a> &amp;, const std::string &amp;, bool)&gt; message_handler, std::function&lt; void(<a class="el" href="structcrow_1_1websocket_1_1connection.html">crow::websocket::connection</a> &amp;, const std::string &amp;, uint16_t)&gt; close_handler, std::function&lt; void(<a class="el" href="structcrow_1_1websocket_1_1connection.html">crow::websocket::connection</a> &amp;, const std::string &amp;)&gt; error_handler, std::function&lt; bool(const <a class="el" href="structcrow_1_1request.html">crow::request</a> &amp;, void **)&gt; accept_handler, bool mirror_protocols)</td></tr>
-<tr class="memdesc:aebaa108174ae0efc3c59c80c4552ba4d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor for a connection.  <br /></td></tr>
-<tr class="separator:aebaa108174ae0efc3c59c80c4552ba4d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0d7758d7d22d74ee9ed17c8c7df0a380" id="r_a0d7758d7d22d74ee9ed17c8c7df0a380"><td class="memTemplParams" colspan="2"><a id="a0d7758d7d22d74ee9ed17c8c7df0a380" name="a0d7758d7d22d74ee9ed17c8c7df0a380"></a>
 template&lt;typename CompletionHandler &gt; </td></tr>
 <tr class="memitem:a0d7758d7d22d74ee9ed17c8c7df0a380"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><b>dispatch</b> (CompletionHandler &amp;&amp;handler)</td></tr>
@@ -175,6 +173,11 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>userdata</b> (void *u
 void *&#160;</td><td class="memItemRight" valign="bottom"><b>userdata</b> ()</td></tr>
 <tr class="separator:a6ef0262451cd36b3b9f3529180da3dee inherit pub_methods_structcrow_1_1websocket_1_1connection"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-static-methods" name="pub-static-methods"></a>
+Static Public Member Functions</h2></td></tr>
+<tr class="memitem:ae99df650c42dd012eeeadcaa205ac95a" id="r_ae99df650c42dd012eeeadcaa205ac95a"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcrow_1_1websocket_1_1_connection.html#ae99df650c42dd012eeeadcaa205ac95a">create</a> (const <a class="el" href="structcrow_1_1request.html">crow::request</a> &amp;req, Adaptor adaptor, Handler *handler, uint64_t max_payload, const std::vector&lt; std::string &gt; &amp;subprotocols, std::function&lt; void(<a class="el" href="structcrow_1_1websocket_1_1connection.html">crow::websocket::connection</a> &amp;)&gt; open_handler, std::function&lt; void(<a class="el" href="structcrow_1_1websocket_1_1connection.html">crow::websocket::connection</a> &amp;, const std::string &amp;, bool)&gt; message_handler, std::function&lt; void(<a class="el" href="structcrow_1_1websocket_1_1connection.html">crow::websocket::connection</a> &amp;, const std::string &amp;, uint16_t)&gt; close_handler, std::function&lt; void(<a class="el" href="structcrow_1_1websocket_1_1connection.html">crow::websocket::connection</a> &amp;, const std::string &amp;)&gt; error_handler, std::function&lt; bool(const <a class="el" href="structcrow_1_1request.html">crow::request</a> &amp;, void **)&gt; accept_handler, bool mirror_protocols)</td></tr>
+<tr class="separator:ae99df650c42dd012eeeadcaa205ac95a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pro-methods" name="pro-methods"></a>
 Protected Member Functions</h2></td></tr>
 <tr class="memitem:a2fc995281b9452b56f743294baa7ed17" id="r_a2fc995281b9452b56f743294baa7ed17"><td class="memItemLeft" align="right" valign="top"><a id="a2fc995281b9452b56f743294baa7ed17" name="a2fc995281b9452b56f743294baa7ed17"></a>
@@ -215,9 +218,9 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>send_data</b> (int <a
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;typename Adaptor, typename Handler&gt;<br />
 class crow::websocket::Connection&lt; Adaptor, Handler &gt;</div><p>A websocket connection. </p>
-</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="aebaa108174ae0efc3c59c80c4552ba4d" name="aebaa108174ae0efc3c59c80c4552ba4d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aebaa108174ae0efc3c59c80c4552ba4d">&#9670;&#160;</a></span>Connection()</h2>
+</div><h2 class="groupheader">Member Function Documentation</h2>
+<a id="a4fab99ae7f8e269480d5842cff1daf88" name="a4fab99ae7f8e269480d5842cff1daf88"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4fab99ae7f8e269480d5842cff1daf88">&#9670;&#160;</a></span>close()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -228,7 +231,50 @@ template&lt;typename Adaptor , typename Handler &gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classcrow_1_1websocket_1_1_connection.html">crow::websocket::Connection</a>&lt; Adaptor, Handler &gt;::Connection </td>
+          <td class="memname">void <a class="el" href="classcrow_1_1websocket_1_1_connection.html">crow::websocket::Connection</a>&lt; Adaptor, Handler &gt;::close </td>
+          <td>(</td>
+          <td class="paramtype">std::string const &amp;&#160;</td>
+          <td class="paramname"><em>msg</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint16_t&#160;</td>
+          <td class="paramname"><em>status_code</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Send a close signal. </p>
+<p>Sets a flag to destroy the object once the message is sent. </p>
+
+<p>Implements <a class="el" href="structcrow_1_1websocket_1_1connection.html">crow::websocket::connection</a>.</p>
+
+</div>
+</div>
+<a id="ae99df650c42dd012eeeadcaa205ac95a" name="ae99df650c42dd012eeeadcaa205ac95a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae99df650c42dd012eeeadcaa205ac95a">&#9670;&#160;</a></span>create()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Adaptor , typename Handler &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static void <a class="el" href="classcrow_1_1websocket_1_1_connection.html">crow::websocket::Connection</a>&lt; Adaptor, Handler &gt;::create </td>
           <td>(</td>
           <td class="paramtype">const <a class="el" href="structcrow_1_1request.html">crow::request</a> &amp;&#160;</td>
           <td class="paramname"><em>req</em>, </td>
@@ -236,7 +282,7 @@ template&lt;typename Adaptor , typename Handler &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">Adaptor &amp;&amp;&#160;</td>
+          <td class="paramtype">Adaptor&#160;</td>
           <td class="paramname"><em>adaptor</em>, </td>
         </tr>
         <tr>
@@ -301,58 +347,13 @@ template&lt;typename Adaptor , typename Handler &gt; </div>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
-
-<p>Constructor for a connection. </p>
+<p>Factory for a connection.</p>
 <p>Requires a request with an "Upgrade: websocket" header.<br  />
  Automatically handles the handshake. </p>
-
-</div>
-</div>
-<h2 class="groupheader">Member Function Documentation</h2>
-<a id="a4fab99ae7f8e269480d5842cff1daf88" name="a4fab99ae7f8e269480d5842cff1daf88"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4fab99ae7f8e269480d5842cff1daf88">&#9670;&#160;</a></span>close()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename Adaptor , typename Handler &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void <a class="el" href="classcrow_1_1websocket_1_1_connection.html">crow::websocket::Connection</a>&lt; Adaptor, Handler &gt;::close </td>
-          <td>(</td>
-          <td class="paramtype">std::string const &amp;&#160;</td>
-          <td class="paramname"><em>msg</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">uint16_t&#160;</td>
-          <td class="paramname"><em>status_code</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Send a close signal. </p>
-<p>Sets a flag to destroy the object once the message is sent. </p>
-
-<p>Implements <a class="el" href="structcrow_1_1websocket_1_1connection.html">crow::websocket::connection</a>.</p>
 
 </div>
 </div>
@@ -681,7 +682,7 @@ template&lt;typename Adaptor , typename Handler &gt; </div>
 			<ul>
 				<li class="navelem"><a class="el" href="namespacecrow.html">crow</a></li><li class="navelem"><a class="el" href="namespacecrow_1_1websocket.html">websocket</a></li><li class="navelem"><a class="el" href="classcrow_1_1websocket_1_1_connection.html">Connection</a></li>
 				<li class="footer">
-					Generated on Tue Sep 16 2025 for Crow by <a href="http://www.doxygen.org/index.html">
+					Generated on Wed Sep 17 2025 for Crow by <a href="http://www.doxygen.org/index.html">
 					<img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.9.8.
 					Dark theme by <a href="http://majerle.eu" target="_new">Tilen Majerle</a>. Edited by <a href="https://github.com/The-EDev" target="_new">Farook Al-Sammarraie</a>. All rights reserved.
 				</li>
