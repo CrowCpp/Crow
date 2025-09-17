@@ -23,14 +23,8 @@ enable_testing()
 set(TEST_SRCS
   unittest.cpp
   query_string_tests.cpp
+  unit_tests/test_http_response.cpp
 )
-
-# Automatically add all sources under unit_tests/
-file(GLOB_RECURSE UNIT_TEST_SRCS
-  "${CMAKE_CURRENT_SOURCE_DIR}/unit_tests/*.cpp"
-)
-
-list(APPEND TEST_SRCS ${UNIT_TEST_SRCS})
 
 add_executable(unittest ${TEST_SRCS})
 target_link_libraries(unittest Crow::Crow Catch2::Catch2WithMain)
