@@ -19,9 +19,12 @@ CPMAddPackage(Catch2
   
 enable_testing()
 
+# list the test sources
 set(TEST_SRCS
   unittest.cpp
   query_string_tests.cpp
+  unit_tests/test_http_response.cpp
+  unit_tests/test_utility.cpp
 )
 
 add_executable(unittest ${TEST_SRCS})
