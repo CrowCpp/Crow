@@ -1535,7 +1535,7 @@ TEST_CASE("simple_url_params")
     // check multiple value, multiple types
     HttpClient::request(LOCALHOST_ADDRESS, 45451,
                         "GET /params?int=100&double=123.45&boolean=1\r\n\r\n");
-    
+
     CHECK(utility::lexical_cast<int>(last_url_params.get("int")) == 100);
     REQUIRE_THAT(123.45, Catch::Matchers::WithinAbs(utility::lexical_cast<double>(last_url_params.get("double")), 1e-9));
     CHECK(utility::lexical_cast<bool>(last_url_params.get("boolean")));
@@ -1846,6 +1846,12 @@ TEST_CASE("send_file")
         res.end();
     });
 
+    CROW_ROUTE(app, "/jpg3")
+    ([](const crow::request&, crow::response& res) {
+        res.set_static_file_info("tests/img/cat.jpg", "application/octet-stream"); // Set Content-Type explicitly
+        res.end();
+    });
+
     CROW_ROUTE(app, "/filewith.badext")
     ([](const crow::request&, crow::response& res) {
         res.set_static_file_info("tests/img/filewith.badext");
@@ -1882,6 +1888,27 @@ TEST_CASE("send_file")
         CHECK(res.headers.count("Content-Type"));
         if (res.headers.count("Content-Type"))
             CHECK("image/jpeg" == res.headers.find("Content-Type")->second);
+
+        CHECK(res.headers.count("Content-Length"));
+        if (res.headers.count("Content-Length"))
+            CHECK(to_string(statbuf_cat.st_size) == res.headers.find("Content-Length")->second);
+    }
+
+    // Explicit Content-Type:
+    {
+        request req;
+        response res;
+
+        req.url = "/jpg3";
+        req.http_ver_major = 1;
+
+        app.handle_full(req, res);
+
+        CHECK(200 == res.code);
+
+        CHECK(res.headers.count("Content-Type"));
+        if (res.headers.count("Content-Type"))
+            CHECK("application/octet-stream" == res.headers.find("Content-Type")->second);
 
         CHECK(res.headers.count("Content-Length"));
         if (res.headers.count("Content-Length"))
