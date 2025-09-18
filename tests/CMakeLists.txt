@@ -24,8 +24,13 @@ set(TEST_SRCS
   unittest.cpp
   query_string_tests.cpp
   unit_tests/test_http_response.cpp
+  unit_tests/test_json.cpp
+  unit_tests/test_mustache.cpp
   unit_tests/test_utility.cpp
+  unit_tests/test_websocket.cpp
 )
+
+list(APPEND TEST_SRCS ${UNIT_TEST_SRCS})
 
 add_executable(unittest ${TEST_SRCS})
 target_link_libraries(unittest Crow::Crow Catch2::Catch2WithMain)
