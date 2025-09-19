@@ -1,6 +1,7 @@
 #pragma once
 #include <array>
 #include <memory>
+#include <thread>
 #include "crow/logging.h"
 #include "crow/socket_adaptors.h"
 #include "crow/http_request.h"
