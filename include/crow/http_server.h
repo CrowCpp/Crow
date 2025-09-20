@@ -20,6 +20,7 @@
 #include <cstdint>
 #include <future>
 #include <memory>
+#include <thread>
 #include <vector>
 
 #include "crow/version.h"
