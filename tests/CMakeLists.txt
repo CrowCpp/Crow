@@ -30,8 +30,6 @@ set(TEST_SRCS
   unit_tests/test_websocket.cpp
 )
 
-list(APPEND TEST_SRCS ${UNIT_TEST_SRCS})
-
 add_executable(unittest ${TEST_SRCS})
 target_link_libraries(unittest Crow::Crow Catch2::Catch2WithMain)
 add_warnings_optimizations(unittest)
