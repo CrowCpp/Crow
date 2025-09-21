@@ -315,7 +315,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
 
                 acceptor_.raw_acceptor().async_accept(
                   p->socket(),
-                  [this, p, &ic, context_idx](error_code ec) {
+                  [this, p, &ic](error_code ec) {
                       if (!ec)
                       {
                           asio::post(ic,
