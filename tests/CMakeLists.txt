@@ -25,6 +25,7 @@ set(TEST_SRCS
   query_string_tests.cpp
   unit_tests/test_http_response.cpp
   unit_tests/test_utility.cpp
+  unit_tests/test_websocket.cpp
   unit_tests/test_json.cpp
 )
 
