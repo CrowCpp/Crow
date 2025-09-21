@@ -28,6 +28,7 @@ set(TEST_SRCS
   unit_tests/test_mustache.cpp
   unit_tests/test_utility.cpp
   unit_tests/test_websocket.cpp
+  unit_tests/test_json.cpp
 )
 
 add_executable(unittest ${TEST_SRCS})
