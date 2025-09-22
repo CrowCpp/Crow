@@ -44,7 +44,8 @@ namespace crow
         }
         std::string url_display(bool ssl_used) const
         {
-            return (ssl_used ? "https://" : "http://") + acceptor_.local_endpoint().address().to_string() + ":" + std::to_string(acceptor_.local_endpoint().port());
+            auto address = acceptor_.local_endpoint().address();
+            return (ssl_used ? "https://" : "http://") + (address.is_v4() ? address.to_string() : "[" + address.to_string() + "]") + ":" + std::to_string(acceptor_.local_endpoint().port());
         }
         tcp::acceptor& raw_acceptor()
         {
