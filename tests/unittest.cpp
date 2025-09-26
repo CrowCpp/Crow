@@ -2294,28 +2294,23 @@ TEST_CASE("catchall")
 
 TEST_CASE("catchall_check_full_handling")
 {
-    struct LocalSecretMiddleware : crow::ILocalMiddleware
-    {
+    struct NotLocalMiddleware {
+        bool before_handle_called{false};
+        bool after_handle_called{false};
+
         struct context {
-            bool before_handle_called{false};
-            bool after_handle_called{false};
         };
 
-        void before_handle(request& /*req*/, response& res, context& ctx)
-        {
-            ctx.before_handle_called = true;
-
-            res.code = 403;
-            res.end();
+        void before_handle(request& /*req*/, response& /*res*/, context& /*ctx*/) {
+            before_handle_called = true;
         }
 
-        void after_handle(request& /*req*/, response& /*res*/, context& ctx) {
-            ctx.after_handle_called = true;
-
+        void after_handle(request& /*req*/, response& /*res*/, context& /*ctx*/) {
+            after_handle_called = true;
         }
     };
 
-    App<LocalSecretMiddleware> app;
+    App<NotLocalMiddleware> app;
     bool headers_empty=true;
     CROW_ROUTE(app, "/")
     ([]() {
@@ -2324,28 +2319,30 @@ TEST_CASE("catchall_check_full_handling")
 
     CROW_CATCHALL_ROUTE(app) ([&headers_empty](const crow::request& req,response& res) {
         headers_empty = req.headers.empty();
+        auto req_h = req.headers;
+        auto res_h = res.headers;
         res.add_header("bla","bla_val");
         res.body = "bla_body";
 
     });
 
-    CROW_ROUTE(app, "/secret")
-      .middlewares<decltype(app), LocalSecretMiddleware>()([]() {
-          return "works!";
-      });
-
     app.validate();
 
-    auto _ = app.bindaddr(LOCALHOST_ADDRESS).port(45451).run_async();
+    auto _ = app.bindaddr(LOCALHOST_ADDRESS).port(45451).server_name("lol").run_async();
     app.wait_for_server_start();
 
     {
         // call not handled url to get response from catch_all handler
         auto resp = HttpClient::request(LOCALHOST_ADDRESS, 45451,
-                                        "GET /catch_all\r\n\r\n");
+                                        "GET /catch_all HTTP/1.0\r\nHost: localhost\r\n\r\n");
 
         CHECK(resp.find("bla") != std::string::npos);
+
+        auto global_middleware = app.get_middleware<NotLocalMiddleware>();
+        CHECK(global_middleware.after_handle_called==true);
+        CHECK(global_middleware.before_handle_called==true);
         CHECK(headers_empty==false);
+
     }
 
     app.stop();

@@ -93,8 +93,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
           rule_(std::move(rule))
         {}
 
-        virtual ~BaseRule()
-        {}
+        virtual ~BaseRule()=default;
 
         virtual void validate() = 0;
 
@@ -1254,8 +1253,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
     };
 
     /// Handles matching requests to existing rules and upgrade requests.
-    class Router
-    {
+    class Router {
     public:
         bool using_ssl;
 
@@ -1457,7 +1455,9 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                 return;
             }
 
-            CROW_LOG_DEBUG << "Matched rule (upgrade) '" << rules[rule_index]->rule_ << "' " << static_cast<uint32_t>(req.method) << " / " << rules[rule_index]->get_methods();
+            CROW_LOG_DEBUG << "Matched rule (upgrade) '" << rules[rule_index]->rule_ << "' "
+                           << static_cast<uint32_t>(req.method) << " / "
+                           << rules[rule_index]->get_methods();
 
             try
             {
@@ -1471,7 +1471,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
             }
         }
 
-        void get_found_bp(std::vector<uint16_t>& bp_i, std::vector<Blueprint*>& blueprints, std::vector<Blueprint*>& found_bps, uint16_t index = 0)
+        void get_found_bp(const std::vector<uint16_t>& bp_i, const std::vector<Blueprint*>& blueprints, std::vector<Blueprint*>& found_bps, uint16_t index = 0)
         {
             // This statement makes 3 assertions:
             // 1. The index is above 0.
@@ -1512,10 +1512,23 @@ namespace crow // NOTE: Already documented in "crow/app.h"
             }
         }
 
-        /// Is used to handle errors, you insert the error code, found route, request, and response. and it'll either call the appropriate catchall route (considering the blueprint system) and send you a status string (which is mainly used for debug messages), or just set the response code to the proper error code.
-        std::string get_error(unsigned short code, routing_handle_result& found, const request& req, response& res)
+        CatchallRule& get_catch_all(const routing_handle_result& found) {
+            std::vector<Blueprint*> bps_found;
+            get_found_bp(found.blueprint_indices, blueprints_, bps_found);
+            for (int i = bps_found.size() - 1; i > 0; i--)
+            {
+                std::vector<uint16_t> bpi = found.blueprint_indices;
+                if (bps_found[i]->catchall_rule().has_handler()) {
+                    return bps_found[i]->catchall_rule();
+                }
+            }
+            return catchall_rule_;
+        }
+
+        std::string get_error(const routing_handle_result& found)
         {
-            res.code = code;
+            const std::string EMPTY;
+
             std::vector<Blueprint*> bps_found;
             get_found_bp(found.blueprint_indices, blueprints_, bps_found);
             for (int i = bps_found.size() - 1; i > 0; i--)
@@ -1523,38 +1536,22 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                 std::vector<uint16_t> bpi = found.blueprint_indices;
                 if (bps_found[i]->catchall_rule().has_handler())
                 {
-                    try
-                    {
-                        bps_found[i]->catchall_rule().handler_(req, res);
-                    }
-                    catch (...)
-                    {
-                        exception_handler_(res);
-                    }
 #ifdef CROW_ENABLE_DEBUG
                     return std::string("Redirected to Blueprint \"" + bps_found[i]->prefix() + "\" Catchall rule");
 #else
-                    return std::string();
+                    return EMPTY;
 #endif
                 }
             }
             if (catchall_rule_.has_handler())
             {
-                try
-                {
-                    catchall_rule_.handler_(req, res);
-                }
-                catch (...)
-                {
-                    exception_handler_(res);
-                }
 #ifdef CROW_ENABLE_DEBUG
                 return std::string("Redirected to global Catchall rule");
 #else
-                return std::string();
+                return EMPTY;
 #endif
             }
-            return std::string();
+            return EMPTY;
         }
 
         std::unique_ptr<routing_handle_result> handle_initial(request& req, response& res)
@@ -1667,17 +1664,18 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                     {
                         if (per_method.trie.find(req.url).rule_index) //Route found, but in another method
                         {
-                            const std::string error_message(get_error(405, *found, req, res));
-                            CROW_LOG_DEBUG << "Cannot match method " << req.url << " " << method_name(method_actual) << ". " << error_message;
-                            res.end();
+                            res.code = 405;
+                            found->catch_all = true;
+                            CROW_LOG_DEBUG << "Cannot match method " << req.url << " "
+                                           << method_name(method_actual) << ". " << get_error(*found);
                             return found;
                         }
                     }
                     //Route does not exist anywhere
 
-                    const std::string error_message(get_error(404, *found, req, res));
-                    CROW_LOG_DEBUG << "Cannot match rules " << req.url << ". " << error_message;
-                    res.end();
+                    res.code = 404;
+                    found->catch_all = true;
+                    CROW_LOG_DEBUG << "Cannot match rules " << req.url << ". " << get_error(*found);
                     return found;
                 }
 
@@ -1689,34 +1687,43 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         template<typename App>
         void handle(request& req, response& res, routing_handle_result found)
         {
-            HTTPMethod method_actual = found.method;
-            auto& rules = per_methods_[static_cast<int>(method_actual)].rules;
-            unsigned rule_index = found.rule_index;
-
-            if (rule_index >= rules.size())
-                throw std::runtime_error("Trie internal structure corrupted!");
-
-            if (rule_index == RULE_SPECIAL_REDIRECT_SLASH)
-            {
-                CROW_LOG_INFO << "Redirecting to a url with trailing slash: " << req.url;
-                res = response(301);
-                res.add_header("Location", req.url + "/");
+            if (found.catch_all) {
+                auto catch_all = get_catch_all(found);
+                if (catch_all.has_handler()) {
+                    try
+                    {
+                        catch_all.handler_(req, res);
+                    }
+                    catch (...)
+                    {
+                        exception_handler_(res);
+                    }
+                }
                 res.end();
-                return;
-            }
+            } else {
+                HTTPMethod method_actual = found.method;
+                const auto& rules = per_methods_[static_cast<int>(method_actual)].rules;
+                const unsigned rule_index = found.rule_index;
 
-            CROW_LOG_DEBUG << "Matched rule '" << rules[rule_index]->rule_ << "' " << static_cast<uint32_t>(req.method) << " / " << rules[rule_index]->get_methods();
+                if (rule_index >= rules.size())
+                    throw std::runtime_error("Trie internal structure corrupted!");
+                if (rule_index == RULE_SPECIAL_REDIRECT_SLASH) {
+                    CROW_LOG_INFO << "Redirecting to a url with trailing slash: " << req.url;
+                    res = response(301);
+                    res.add_header("Location", req.url + "/");
+                    res.end();
+                } else {
+                    CROW_LOG_DEBUG << "Matched rule '" << rules[rule_index]->rule_ << "' " << static_cast<uint32_t>(req.
+                                      method) << " / " << rules[rule_index]->get_methods();
 
-            try
-            {
-                BaseRule& rule = *rules[rule_index];
-                handle_rule<App>(rule, req, res, found.r_params);
-            }
-            catch (...)
-            {
-                exception_handler_(res);
-                res.end();
-                return;
+                    try {
+                        BaseRule &rule = *rules[rule_index];
+                        handle_rule<App>(rule, req, res, found.r_params);
+                    } catch (...) {
+                        exception_handler_(res);
+                        res.end();
+                    }
+                }
             }
         }
 
