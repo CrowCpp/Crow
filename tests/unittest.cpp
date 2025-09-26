@@ -2291,6 +2291,67 @@ TEST_CASE("catchall")
     }
 } // catchall
 
+
+TEST_CASE("catchall_check_full_handling")
+{
+    struct LocalSecretMiddleware : crow::ILocalMiddleware
+    {
+        struct context {
+            bool before_handle_called{false};
+            bool after_handle_called{false};
+        };
+
+        void before_handle(request& /*req*/, response& res, context& ctx)
+        {
+            ctx.before_handle_called = true;
+
+            res.code = 403;
+            res.end();
+        }
+
+        void after_handle(request& /*req*/, response& /*res*/, context& ctx) {
+            ctx.after_handle_called = true;
+
+        }
+    };
+
+    App<LocalSecretMiddleware> app;
+    bool headers_empty=true;
+    CROW_ROUTE(app, "/")
+    ([]() {
+        return "works!";
+    });
+
+    CROW_CATCHALL_ROUTE(app) ([&headers_empty](const crow::request& req,response& res) {
+        headers_empty = req.headers.empty();
+        res.add_header("bla","bla_val");
+        res.body = "bla_body";
+
+    });
+
+    CROW_ROUTE(app, "/secret")
+      .middlewares<decltype(app), LocalSecretMiddleware>()([]() {
+          return "works!";
+      });
+
+    app.validate();
+
+    auto _ = app.bindaddr(LOCALHOST_ADDRESS).port(45451).run_async();
+    app.wait_for_server_start();
+
+    {
+        // call not handled url to get response from catch_all handler
+        auto resp = HttpClient::request(LOCALHOST_ADDRESS, 45451,
+                                        "GET /catch_all\r\n\r\n");
+
+        CHECK(resp.find("bla") != std::string::npos);
+        CHECK(headers_empty==false);
+    }
+
+    app.stop();
+} // local_middleware
+
+
 TEST_CASE("blueprint")
 {
     SimpleApp app;

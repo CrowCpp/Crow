@@ -279,6 +279,7 @@ namespace crow
 
     struct routing_handle_result
     {
+        bool catch_all{false};
         uint16_t rule_index;
         std::vector<uint16_t> blueprint_indices;
         routing_params r_params;
