@@ -1291,7 +1291,7 @@ TEST_CASE("middleware_cors")
     CHECK(resp.find("Access-Control-Allow-Credentials: true") != std::string::npos);
 
     resp = HttpClient::request(LOCALHOST_ADDRESS, port,
-                               "OPTIONS /auth-origin / HTTP/1.1 \r\n\r\n");
+                               "OPTIONS /auth-origin HTTP/1.1\r\n\r\n");
     CHECK(resp.find("Access-Control-Allow-Origin: *") != std::string::npos);
     CHECK(resp.find("Access-Control-Allow-Credentials: true") == std::string::npos);
 
@@ -2742,7 +2742,7 @@ TEST_CASE("option_header_passed_in_full")
     };
 
     std::string request =
-      "OPTIONS /echo HTTP/1.1\r\n";
+      "OPTIONS /echo HTTP/1.1\r\n\r\n";
 
     auto res = make_request(request);
     CHECK(res.find(ServerName) != std::string::npos);
