@@ -641,3 +641,13 @@ TEST_CASE("json Incorrect move of wvalue class #953", "[json]")
          REQUIRE(json["int_value"].dump()=="-500");
     }
 }
+
+TEST_CASE("SmallNumber #1042", "[json]")
+{
+    crow::json::wvalue data;
+    const double smallnumber = 1e-10;
+    data["testValue"] = smallnumber;
+    std::string text = data.dump( 4);
+    const auto expected_text ="{\n    \"testValue\": 1e-10\n}";
+    REQUIRE(text==expected_text);
+}
