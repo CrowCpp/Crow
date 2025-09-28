@@ -131,7 +131,7 @@ namespace crow
             return socket_;
         }
 
-        stream_protocol::endpoint remote_endpoint()
+        stream_protocol::endpoint remote_endpoint() const
         {
             return socket_.local_endpoint();
         }
@@ -141,8 +141,7 @@ namespace crow
             return "";
         }
 
-        bool is_open()
-        {
+        bool is_open() const {
             return socket_.is_open();
         }
 
@@ -188,13 +187,12 @@ namespace crow
           ssl_socket_(new ssl_socket_t(io_context, *ctx))
         {}
 
-        asio::ssl::stream<tcp::socket>& socket()
+        asio::ssl::stream<tcp::socket>& socket() const
         {
             return *ssl_socket_;
         }
 
-        tcp::socket::lowest_layer_type&
-          raw_socket()
+        tcp::socket::lowest_layer_type& raw_socket() const
         {
             return ssl_socket_->lowest_layer();
         }

@@ -285,7 +285,7 @@ namespace crow
         routing_params r_params;
         HTTPMethod method;
 
-        routing_handle_result() {}
+        routing_handle_result()=default;
 
         routing_handle_result(size_t rule_index_, std::vector<size_t> blueprint_indices_, routing_params r_params_):
           rule_index(rule_index_),

@@ -89,17 +89,17 @@ namespace crow
         }
 
         /// Handle CORS on specific prefix path
-        CORSRules& prefix(const std::string& prefix);
+        CORSRules& prefix(const std::string& prefix) const;
 
         /// Handle CORS for specific blueprint
-        CORSRules& blueprint(const Blueprint& bp);
+        CORSRules& blueprint(const Blueprint& bp) const;
 
         /// Global CORS policy
-        CORSRules& global();
+        CORSRules& global() const;
 
     private:
         CORSRules() = delete;
-        CORSRules(CORSHandler* handler):
+        explicit CORSRules(CORSHandler* handler):
           handler_(handler) {}
 
         /// build comma separated list
@@ -219,17 +219,17 @@ namespace crow
         CORSRules default_ = CORSRules(this);
     };
 
-    inline CORSRules& CORSRules::prefix(const std::string& prefix)
+    inline CORSRules& CORSRules::prefix(const std::string& prefix) const
     {
         return handler_->prefix(prefix);
     }
 
-    inline CORSRules& CORSRules::blueprint(const Blueprint& bp)
+    inline CORSRules& CORSRules::blueprint(const Blueprint& bp) const
     {
         return handler_->blueprint(bp);
     }
 
-    inline CORSRules& CORSRules::global()
+    inline CORSRules& CORSRules::global() const
     {
         return handler_->global();
     }

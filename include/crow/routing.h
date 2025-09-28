@@ -40,7 +40,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
             {
                 using MwContainer = typename App::mw_container_t;
                 static_assert(black_magic::has_type<MW, MwContainer>::value, "Middleware must be present in app");
-                static_assert(std::is_base_of<crow::ILocalMiddleware, MW>::value, "Middleware must extend ILocalMiddleware");
+                static_assert(std::is_base_of_v<crow::ILocalMiddleware, MW>, "Middleware must extend ILocalMiddleware");
                 int idx = black_magic::tuple_index<MW, MwContainer>::value;
                 indices_.push_back(idx);
                 push<App, Middlewares...>();
@@ -104,7 +104,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
             added_ = true;
         }
 
-        bool is_added()
+        bool is_added() const
         {
             return added_;
         }
@@ -135,7 +135,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         }
 #endif
 
-        uint32_t get_methods()
+        uint32_t get_methods() const
         {
             return methods_;
         }
@@ -252,7 +252,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
             struct Wrapped
             {
                 template<typename... Args>
-                void set_(Func f, typename std::enable_if<!std::is_same<typename std::tuple_element<0, std::tuple<Args..., void>>::type, const request&>::value, int>::type = 0)
+                void set_(Func f, std::enable_if_t<!std::is_same_v<std::tuple_element_t<0, std::tuple<Args..., void>>, const request&>, int> = 0)
                 {
                     handler_ = ([f = std::move(f)](const request&, response& res, Args... args) {
                         res = response(f(args...));
@@ -278,10 +278,10 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                 };
 
                 template<typename... Args>
-                void set_(Func f, typename std::enable_if<
-                                    std::is_same<typename std::tuple_element<0, std::tuple<Args..., void>>::type, const request&>::value &&
-                                      !std::is_same<typename std::tuple_element<1, std::tuple<Args..., void, void>>::type, response&>::value,
-                                    int>::type = 0)
+                void set_(Func f, std::enable_if_t<
+                                    std::is_same_v<std::tuple_element_t<0, std::tuple<Args..., void>>, const request&> &&
+                                      !std::is_same_v<std::tuple_element_t<1, std::tuple<Args..., void, void>>, response&>,
+                                    int> = 0)
                 {
                     handler_ = req_handler_wrapper<Args...>(std::move(f));
                     /*handler_ = (
@@ -293,10 +293,10 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                 }
 
                 template<typename... Args>
-                void set_(Func f, typename std::enable_if<
-                                    std::is_same<typename std::tuple_element<0, std::tuple<Args..., void>>::type, const request&>::value &&
-                                      std::is_same<typename std::tuple_element<1, std::tuple<Args..., void, void>>::type, response&>::value,
-                                    int>::type = 0)
+                void set_(Func f, std::enable_if_t<
+                                    std::is_same_v<std::tuple_element_t<0, std::tuple<Args..., void>>, const request&> &&
+                                      std::is_same_v<std::tuple_element_t<1, std::tuple<Args..., void, void>>, response&>,
+                                    int> = 0)
                 {
                     handler_ = std::move(f);
                 }
@@ -305,21 +305,21 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                 struct handler_type_helper
                 {
                     using type = std::function<void(const crow::request&, crow::response&, Args...)>;
-                    using args_type = black_magic::S<typename black_magic::promote_t<Args>...>;
+                    using args_type = black_magic::S<black_magic::promote_t<Args>...>;
                 };
 
                 template<typename... Args>
                 struct handler_type_helper<const request&, Args...>
                 {
                     using type = std::function<void(const crow::request&, crow::response&, Args...)>;
-                    using args_type = black_magic::S<typename black_magic::promote_t<Args>...>;
+                    using args_type = black_magic::S<black_magic::promote_t<Args>...>;
                 };
 
                 template<typename... Args>
                 struct handler_type_helper<const request&, response&, Args...>
                 {
                     using type = std::function<void(const crow::request&, crow::response&, Args...)>;
-                    using args_type = black_magic::S<typename black_magic::promote_t<Args>...>;
+                    using args_type = black_magic::S<black_magic::promote_t<Args>...>;
                 };
 
                 typename handler_type_helper<ArgsWrapped...>::type handler_;
@@ -348,10 +348,10 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         CatchallRule() {}
 
         template<typename Func>
-        typename std::enable_if<black_magic::CallHelper<Func, black_magic::S<>>::value, void>::type
+        std::enable_if_t<black_magic::CallHelper<Func, black_magic::S<>>::value, void>
           operator()(Func&& f)
         {
-            static_assert(!std::is_same<void, decltype(f())>::value,
+            static_assert(!std::is_same_v<void, decltype(f())>,
                           "Handler function cannot have void return type; valid return types: string, int, crow::response, crow::returnable");
 
             handler_ = ([f = std::move(f)](const request&, response& res) {
@@ -361,13 +361,13 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         }
 
         template<typename Func>
-        typename std::enable_if<
+        std::enable_if_t<
           !black_magic::CallHelper<Func, black_magic::S<>>::value &&
             black_magic::CallHelper<Func, black_magic::S<crow::request>>::value,
-          void>::type
+          void>
           operator()(Func&& f)
         {
-            static_assert(!std::is_same<void, decltype(f(std::declval<crow::request>()))>::value,
+            static_assert(!std::is_same_v<void, decltype(f(std::declval<crow::request>()))>,
                           "Handler function cannot have void return type; valid return types: string, int, crow::response, crow::returnable");
 
             handler_ = ([f = std::move(f)](const request& req, response& res) {
@@ -377,14 +377,14 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         }
 
         template<typename Func>
-        typename std::enable_if<
+        std::enable_if_t<
           !black_magic::CallHelper<Func, black_magic::S<>>::value &&
             !black_magic::CallHelper<Func, black_magic::S<crow::request>>::value &&
             black_magic::CallHelper<Func, black_magic::S<crow::response&>>::value,
-          void>::type
+          void>
           operator()(Func&& f)
         {
-            static_assert(std::is_same<void, decltype(f(std::declval<crow::response&>()))>::value,
+            static_assert(std::is_same_v<void, decltype(f(std::declval<crow::response&>()))>,
                           "Handler function with response argument should have void return type");
             handler_ = ([f = std::move(f)](const request&, response& res) {
                 f(res);
@@ -392,20 +392,20 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         }
 
         template<typename Func>
-        typename std::enable_if<
+        std::enable_if_t<
           !black_magic::CallHelper<Func, black_magic::S<>>::value &&
             !black_magic::CallHelper<Func, black_magic::S<crow::request>>::value &&
             !black_magic::CallHelper<Func, black_magic::S<crow::response&>>::value,
-          void>::type
+          void>
           operator()(Func&& f)
         {
-            static_assert(std::is_same<void, decltype(f(std::declval<crow::request>(), std::declval<crow::response&>()))>::value,
+            static_assert(std::is_same_v<void, decltype(f(std::declval<crow::request>(), std::declval<crow::response&>()))>,
                           "Handler function with response argument should have void return type");
 
             handler_ = std::move(f);
         }
         /// @endcond
-        bool has_handler()
+        bool has_handler() const
         {
             return (handler_ != nullptr);
         }
@@ -656,7 +656,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         void operator()(std::string name, Func&& f)
         {
             name_ = std::move(name);
-            (*this).template operator()<Func>(std::forward(f));
+            this->operator()<Func>(std::forward(f));
         }
 
     private:
@@ -756,8 +756,8 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         Trie()
         {}
 
-        /// Check whether or not the trie is empty.
-        bool is_empty()
+        /// Check whether the trie is empty.
+        bool is_empty() const
         {
             return head_.children.empty();
         }
@@ -772,7 +772,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
 
 
     private:
-        void optimizeNode(Node& node)
+        static void optimizeNode(Node& node)
         {
             if (node.children.empty())
                 return;
@@ -795,7 +795,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
             }
         }
 
-        void debug_node_print(const Node& node, size_t level)
+        static void debug_node_print(const Node& node, size_t level)
         {
             if (node.param != ParamType::MAX)
             {
@@ -837,7 +837,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         }
 
     public:
-        void debug_print()
+        void debug_print() const
         {
             CROW_LOG_DEBUG << "└➙ ROOT";
             for (const auto& child : head_.children)
@@ -852,7 +852,11 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         }
 
         //Rule_index, Blueprint_index, routing_params
-        routing_handle_result find(const std::string& req_url, const Node& node, size_t pos = 0, routing_params* params = nullptr, std::vector<size_t>* blueprints = nullptr) const
+        routing_handle_result find(const std::string& req_url,
+            const Node& node,
+            size_t pos = 0,
+            routing_params* params = nullptr,
+            std::vector<size_t>* blueprints = nullptr) const
         {
             //start params as an empty struct
             routing_params empty;
@@ -1138,7 +1142,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
             all_rules_ = other.all_rules_;
         }
 */
-        Blueprint(Blueprint&& value)
+        Blueprint(Blueprint&& value) noexcept
         {
             *this = std::move(value);
         }
@@ -1157,12 +1161,12 @@ namespace crow // NOTE: Already documented in "crow/app.h"
             return *this;
         }
 
-        bool operator==(const Blueprint& value)
+        bool operator==(const Blueprint& value) const
         {
             return value.prefix() == prefix_;
         }
 
-        bool operator!=(const Blueprint& value)
+        bool operator!=(const Blueprint& value) const
         {
             return value.prefix() != prefix_;
         }
@@ -1182,7 +1186,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
             added_ = true;
         }
 
-        bool is_added()
+        bool is_added() const
         {
             return added_;
         }
@@ -1301,7 +1305,10 @@ namespace crow // NOTE: Already documented in "crow/app.h"
             internal_add_rule_object(rule, ruleObject, INVALID_BP_ID, blueprints_);
         }
 
-        void internal_add_rule_object(const std::string& rule, BaseRule* ruleObject, const size_t& BP_index, std::vector<Blueprint*>& blueprints)
+        void internal_add_rule_object(const std::string& rule,
+            BaseRule* ruleObject,
+            const size_t& BP_index,
+            const std::vector<Blueprint*>& blueprints)
         {
             bool has_trailing_slash = false;
             std::string rule_without_trailing_slash;
@@ -1341,7 +1348,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                 throw std::runtime_error("blueprint \"" + blueprint.prefix_ + "\" already exists in router");
         }
 
-        void get_recursive_child_methods(Blueprint* blueprint, std::vector<HTTPMethod>& methods)
+        static void get_recursive_child_methods(const Blueprint* const blueprint, std::vector<HTTPMethod>& methods)
         {
             //we only need to deal with children if the blueprint has absolutely no methods (meaning its index won't be added to the trie)
             if (blueprint->static_dir_.empty() && blueprint->all_rules_.empty())
@@ -1370,7 +1377,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
             validate_bp(blueprints_, blueprint_mw);
         }
 
-        void validate_bp(std::vector<Blueprint*> blueprints, detail::middleware_indices& current_mw)
+        void validate_bp(const std::vector<Blueprint*>& blueprints, detail::middleware_indices& current_mw)
         {
             for (unsigned i = 0; i < blueprints.size(); i++)
             {
@@ -1566,7 +1573,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
             return EMPTY;
         }
 
-        std::unique_ptr<routing_handle_result> handle_initial(request& req, response& res)
+        std::unique_ptr<routing_handle_result> handle_initial(const request& req, response& res)
         {
             HTTPMethod method_actual = req.method;
 
@@ -1740,7 +1747,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         }
 
         template<typename App>
-        typename std::enable_if<std::tuple_size<typename App::mw_container_t>::value != 0, void>::type
+        std::enable_if_t<std::tuple_size_v<typename App::mw_container_t> != 0, void>
           handle_rule(BaseRule& rule, crow::request& req, crow::response& res, const crow::routing_params& rp)
         {
             if (!rule.mw_indices_.empty())
@@ -1766,7 +1773,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
 
                     detail::after_handlers_call_helper<
                       decltype(crit_bwd),
-                      std::tuple_size<typename App::mw_container_t>::value - 1,
+                      std::tuple_size_v<typename App::mw_container_t> - 1,
                       typename App::context_t,
                       typename App::mw_container_t>(crit_bwd, container, ctx, req, res);
                     glob_completion_handler();
@@ -1776,7 +1783,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         }
 
         template<typename App>
-        typename std::enable_if<std::tuple_size<typename App::mw_container_t>::value == 0, void>::type
+        std::enable_if_t<std::tuple_size_v<typename App::mw_container_t> == 0, void>
           handle_rule(BaseRule& rule, crow::request& req, crow::response& res, const crow::routing_params& rp)
         {
             rule.handle(req, res, rp);

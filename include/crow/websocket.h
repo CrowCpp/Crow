@@ -75,10 +75,10 @@ namespace crow // NOTE: Already documented in "crow/app.h"
             virtual ~connection() = default;
 
             void userdata(void* u) { userdata_ = u; }
-            void* userdata() { return userdata_; }
+            const void* userdata() const { return userdata_; }
 
         private:
-            void* userdata_;
+            void* userdata_{nullptr};
         };
 
         // Modified version of the illustration in RFC6455 Section-5.2
@@ -595,13 +595,13 @@ namespace crow // NOTE: Already documented in "crow/app.h"
             }
 
             /// Check if the FIN bit is set.
-            bool is_FIN()
+            bool is_FIN() const
             {
                 return mini_header_ & 0x8000;
             }
 
             /// Extract the opcode from the header.
-            int opcode()
+            int opcode() const
             {
                 return (mini_header_ & 0x0f00) >> 8;
             }
