@@ -2291,6 +2291,64 @@ TEST_CASE("catchall")
     }
 } // catchall
 
+
+TEST_CASE("catchall_check_full_handling")
+{
+    struct NotLocalMiddleware {
+        bool before_handle_called{false};
+        bool after_handle_called{false};
+
+        struct context {
+        };
+
+        void before_handle(request& /*req*/, response& /*res*/, context& /*ctx*/) {
+            before_handle_called = true;
+        }
+
+        void after_handle(request& /*req*/, response& /*res*/, context& /*ctx*/) {
+            after_handle_called = true;
+        }
+    };
+
+    App<NotLocalMiddleware> app;
+    bool headers_empty=true;
+    CROW_ROUTE(app, "/")
+    ([]() {
+        return "works!";
+    });
+
+    CROW_CATCHALL_ROUTE(app) ([&headers_empty](const crow::request& req,response& res) {
+        headers_empty = req.headers.empty();
+        auto req_h = req.headers;
+        auto res_h = res.headers;
+        res.add_header("bla","bla_val");
+        res.body = "bla_body";
+
+    });
+
+    app.validate();
+
+    auto _ = app.bindaddr(LOCALHOST_ADDRESS).port(45451).server_name("lol").run_async();
+    app.wait_for_server_start();
+
+    {
+        // call not handled url to get response from catch_all handler
+        auto resp = HttpClient::request(LOCALHOST_ADDRESS, 45451,
+                                        "GET /catch_all HTTP/1.0\r\nHost: localhost\r\n\r\n");
+
+        CHECK(resp.find("bla") != std::string::npos);
+
+        auto global_middleware = app.get_middleware<NotLocalMiddleware>();
+        CHECK(global_middleware.after_handle_called==true);
+        CHECK(global_middleware.before_handle_called==true);
+        CHECK(headers_empty==false);
+
+    }
+
+    app.stop();
+} // local_middleware
+
+
 TEST_CASE("blueprint")
 {
     SimpleApp app;
