@@ -69,7 +69,7 @@ namespace crow
             headers.emplace(std::move(key), std::move(value));
         }
 
-        const std::string& get_header_value(const std::string& key)
+        const std::string& get_header_value(const std::string& key) const
         {
             return crow::get_header_value(headers, key);
         }
@@ -128,15 +128,15 @@ namespace crow
         // clang-format off
         response() {}
         explicit response(int code_) : code(code_) {}
-        response(std::string body_) : body(std::move(body_)) {}
-        response(int code_, std::string body_) : code(code_), body(std::move(body_)) {}
+        explicit response(std::string body_) : body(std::move(body_)) {}
+        explicit response(int code_, std::string body_) : code(code_), body(std::move(body_)) {}
         // clang-format on
-        response(returnable&& value)
+        explicit response(returnable&& value)
         {
             body = value.dump();
             set_header("Content-Type", value.content_type);
         }
-        response(returnable& value)
+        explicit response(returnable& value)
         {
             body = value.dump();
             set_header("Content-Type", value.content_type);
@@ -271,13 +271,13 @@ namespace crow
         }
 
         /// Check if the connection is still alive (usually by checking the socket status).
-        bool is_alive()
+        bool is_alive() const
         {
             return is_alive_helper_ && is_alive_helper_();
         }
 
         /// Check whether the response has a static file defined.
-        bool is_static_type()
+        bool is_static_type() const
         {
             return file_info.path.size();
         }
@@ -294,7 +294,7 @@ namespace crow
         };
 
         /// Return a static file as the response body, the content_type may be specified explicitly.
-        void set_static_file_info(std::string path, std::string content_type = "")
+        void set_static_file_info(std::string path, const std::string& content_type = "")
         {
             utility::sanitize_filename(path);
             set_static_file_info_unsafe(path, content_type);

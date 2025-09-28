@@ -284,23 +284,23 @@ namespace crow // NOTE: Already documented in "crow/app.h"
               option_{error_bit}
             {
             }
-            rvalue(type t) noexcept:
+            explicit rvalue(type t) noexcept:
               lsize_{}, lremain_{}, t_{t}
             {
             }
-            rvalue(type t, char* s, char* e) noexcept:
+            explicit rvalue(type t, char* s, char* e) noexcept:
               start_{s}, end_{e}, t_{t}
             {
                 determine_num_type();
             }
 
-            rvalue(const rvalue& r):
+            explicit rvalue(const rvalue& r):
               start_(r.start_), end_(r.end_), key_(r.key_), t_(r.t_), nt_(r.nt_), option_(r.option_)
             {
                 copy_l(r);
             }
 
-            rvalue(rvalue&& r) noexcept
+            explicit rvalue(rvalue&& r) noexcept
             {
                 *this = std::move(r);
             }
@@ -1337,52 +1337,52 @@ namespace crow // NOTE: Already documented in "crow/app.h"
             wvalue():
               returnable("application/json") {}
 
-            wvalue(std::nullptr_t):
+            explicit wvalue(std::nullptr_t):
               returnable("application/json"), t_(type::Null) {}
 
-            wvalue(bool value):
+            explicit wvalue(bool value):
               returnable("application/json"), t_(value ? type::True : type::False) {}
 
-            wvalue(std::uint8_t value):
+            explicit wvalue(std::uint8_t value):
               returnable("application/json"), t_(type::Number), nt(num_type::Unsigned_integer), num(static_cast<std::uint64_t>(value)) {}
-            wvalue(std::uint16_t value):
+            explicit wvalue(std::uint16_t value):
               returnable("application/json"), t_(type::Number), nt(num_type::Unsigned_integer), num(static_cast<std::uint64_t>(value)) {}
-            wvalue(std::uint32_t value):
+            explicit wvalue(std::uint32_t value):
               returnable("application/json"), t_(type::Number), nt(num_type::Unsigned_integer), num(static_cast<std::uint64_t>(value)) {}
-            wvalue(std::uint64_t value):
+            explicit wvalue(std::uint64_t value):
               returnable("application/json"), t_(type::Number), nt(num_type::Unsigned_integer), num(static_cast<std::uint64_t>(value)) {}
 
-            wvalue(std::int8_t value):
+            explicit wvalue(std::int8_t value):
               returnable("application/json"), t_(type::Number), nt(num_type::Signed_integer), num(static_cast<std::int64_t>(value)) {}
-            wvalue(std::int16_t value):
+            explicit wvalue(std::int16_t value):
               returnable("application/json"), t_(type::Number), nt(num_type::Signed_integer), num(static_cast<std::int64_t>(value)) {}
-            wvalue(std::int32_t value):
+            explicit wvalue(std::int32_t value):
               returnable("application/json"), t_(type::Number), nt(num_type::Signed_integer), num(static_cast<std::int64_t>(value)) {}
-            wvalue(std::int64_t value):
+            explicit wvalue(std::int64_t value):
               returnable("application/json"), t_(type::Number), nt(num_type::Signed_integer), num(static_cast<std::int64_t>(value)) {}
 
-            wvalue(float value):
+            explicit wvalue(float value):
               returnable("application/json"), t_(type::Number), nt(num_type::Floating_point), num(static_cast<double>(value)) {}
-            wvalue(double value):
+            explicit wvalue(double value):
               returnable("application/json"), t_(type::Number), nt(num_type::Double_precision_floating_point), num(static_cast<double>(value)) {}
 
-            wvalue(char const* value):
+            explicit wvalue(char const* value):
               returnable("application/json"), t_(type::String), s(value) {}
 
-            wvalue(std::string const& value):
+            explicit wvalue(std::string const& value):
               returnable("application/json"), t_(type::String), s(value) {}
-            wvalue(std::string&& value):
+            explicit wvalue(std::string&& value):
               returnable("application/json"), t_(type::String), s(std::move(value)) {}
 
-            wvalue(std::initializer_list<std::pair<std::string const, wvalue>> initializer_list):
+            explicit wvalue(std::initializer_list<std::pair<std::string const, wvalue>> initializer_list):
               returnable("application/json"), t_(type::Object), o(new object(initializer_list)) {}
 
-            wvalue(object const& value):
+            explicit wvalue(object const& value):
               returnable("application/json"), t_(type::Object), o(new object(value)) {}
-            wvalue(object&& value):
+            explicit wvalue(object&& value):
               returnable("application/json"), t_(type::Object), o(new object(std::move(value))) {}
 
-            wvalue(const list& r):
+            explicit wvalue(const list& r):
               returnable("application/json")
             {
                 t_ = type::List;
@@ -1391,7 +1391,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                 for (auto it = r.begin(); it != r.end(); ++it)
                     l->emplace_back(*it);
             }
-            wvalue(list& r):
+            explicit wvalue(list& r):
               returnable("application/json")
             {
                 t_ = type::List;
@@ -1402,7 +1402,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
             }
 
             /// Create a write value from a read value (useful for editing JSON strings).
-            wvalue(const rvalue& r):
+            explicit wvalue(const rvalue& r):
               returnable("application/json")
             {
                 t_ = r.t();
@@ -2047,7 +2047,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         // Used for accessing the internals of a wvalue
         struct wvalue_reader
         {
-            int64_t get(int64_t fallback)
+            int64_t get(int64_t fallback) const
             {
                 if (ref.t() != type::Number || ref.nt == num_type::Floating_point ||
                     ref.nt == num_type::Double_precision_floating_point)
@@ -2063,14 +2063,14 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                 return ref.num.d;
             }
 
-            bool get(bool fallback)
+            bool get(bool fallback) const
             {
                 if (ref.t() == type::True) return true;
                 if (ref.t() == type::False) return false;
                 return fallback;
             }
 
-            std::string get(const std::string& fallback)
+            std::string get(const std::string& fallback) const
             {
                 if (ref.t() != type::String) return fallback;
                 return ref.s;
