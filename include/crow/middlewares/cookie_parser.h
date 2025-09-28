@@ -50,7 +50,7 @@ namespace crow
                 value_ = std::forward<U>(value);
             }
 
-            Cookie(const std::string& key):
+            explicit Cookie(const std::string& key):
               Cookie(key, "") {}
 
             // format cookie to HTTP header format
