@@ -209,8 +209,7 @@ namespace crow
         /// \brief An HTTP server that runs on SSL with an SSLAdaptor
         using ssl_server_t = Server<Crow, TCPAcceptor, SSLAdaptor, Middlewares...>;
 #endif
-        Crow()
-        {}
+        Crow()=default;
 
         /// \brief Construct Crow with a subset of middleware
         template<typename... Ts>
@@ -275,7 +274,7 @@ namespace crow
         }
 
         /// \brief Get the default max payload size for websockets
-        uint64_t websocket_max_payload()
+        uint64_t websocket_max_payload() const
         {
             return max_payload_;
         }
@@ -341,14 +340,14 @@ namespace crow
         }
 
         /// \brief Set the server name included in the 'Server' HTTP response header. If set to an empty string, the header will be omitted by default.
-        self_t& server_name(std::string server_name)
+        self_t& server_name(const std::string& server_name)
         {
             server_name_ = server_name;
             return *this;
         }
 
         /// \brief The IP address that Crow will handle requests on (default is 0.0.0.0)
-        self_t& bindaddr(std::string bindaddr)
+        self_t& bindaddr(const std::string& bindaddr)
         {
             bindaddr_ = bindaddr;
             return *this;
@@ -361,7 +360,7 @@ namespace crow
         }
 
         /// \brief Disable tcp/ip and use unix domain socket instead
-        self_t& local_socket_path(std::string path)
+        self_t& local_socket_path(const std::string& path)
         {
             bindaddr_ = path;
             use_unix_ = true;
@@ -620,7 +619,7 @@ namespace crow
         void close_websockets()
         {
             std::lock_guard<std::mutex> lock{websockets_mutex_};
-            for (auto websocket : websockets_)
+            for (const auto & websocket : websockets_)
             {
                 CROW_LOG_INFO << "Quitting Websocket: " << websocket;
                 websocket->close("Websocket Closed");
@@ -808,7 +807,7 @@ namespace crow
             static_routes_added_ = true;
         }
 
-        bool are_static_routes_added() {
+        bool are_static_routes_added() const {
             return static_routes_added_;
         }
 

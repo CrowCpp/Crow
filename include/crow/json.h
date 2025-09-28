@@ -1391,7 +1391,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                 for (auto it = r.begin(); it != r.end(); ++it)
                     l->emplace_back(*it);
             }
-            wvalue(list& r):
+            explicit wvalue(list& r):
               returnable("application/json")
             {
                 t_ = type::List;
@@ -2047,7 +2047,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         // Used for accessing the internals of a wvalue
         struct wvalue_reader
         {
-            int64_t get(int64_t fallback)
+            int64_t get(int64_t fallback) const
             {
                 if (ref.t() != type::Number || ref.nt == num_type::Floating_point ||
                     ref.nt == num_type::Double_precision_floating_point)
@@ -2063,14 +2063,14 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                 return ref.num.d;
             }
 
-            bool get(bool fallback)
+            bool get(bool fallback) const
             {
                 if (ref.t() == type::True) return true;
                 if (ref.t() == type::False) return false;
                 return fallback;
             }
 
-            std::string get(const std::string& fallback)
+            std::string get(const std::string& fallback) const
             {
                 if (ref.t() != type::String) return fallback;
                 return ref.s;

@@ -204,7 +204,7 @@ namespace crow
             }
 
             // Check whether this session is already present
-            bool exists() { return bool(node); }
+            bool exists() const { return bool(node); }
 
             // Get a value by key or fallback if it doesn't exist or is of another type
             template<typename F>
@@ -235,7 +235,7 @@ namespace crow
                 node->entries[key].set(std::move(value));
             }
 
-            bool contains(const std::string& key)
+            bool contains(const std::string& key) const
             {
                 if (!node) return false;
                 return node->entries.find(key) != node->entries.end();
@@ -275,7 +275,7 @@ namespace crow
             }
 
             // Get a list of keys present in session
-            std::vector<std::string> keys()
+            std::vector<std::string> keys() const
             {
                 if (!node) return {};
                 rc_lock l(node->mutex);
@@ -288,7 +288,7 @@ namespace crow
 
             // Delay expiration by issuing another cookie with an updated expiration time
             // and notifying the store
-            void refresh_expiration()
+            void refresh_expiration() const
             {
                 if (!node) return;
                 node->requested_refresh = true;

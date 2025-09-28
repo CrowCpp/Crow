@@ -285,7 +285,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         }
 
     private:
-        size_t pick_io_context_idx()
+        size_t pick_io_context_idx() const
         {
             size_t min_queue_idx = 0;
 

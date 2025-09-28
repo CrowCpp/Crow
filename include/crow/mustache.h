@@ -54,7 +54,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
             invalid_template_exception(const std::string& msg_):
               msg("crow::mustache error: " + msg_)
             {}
-            virtual const char* what() const throw() override
+            const char* what() const throw() override
             {
                 return msg.c_str();
             }

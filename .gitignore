@@ -67,3 +67,4 @@ MODULE.bazel.lock
 
 # macOS Files
 .DS_Store
+cmake-build-relwithdebinfo

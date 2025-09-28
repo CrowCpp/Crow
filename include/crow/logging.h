@@ -105,7 +105,7 @@ namespace crow
     class logger
     {
     public:
-        logger(LogLevel level):
+        explicit logger(LogLevel level):
           level_(level)
         {}
         ~logger()
