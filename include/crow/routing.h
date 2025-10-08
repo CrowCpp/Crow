@@ -8,6 +8,7 @@
 #include <vector>
 #include <algorithm>
 #include <type_traits>
+#include <optional>
 
 #include "crow/common.h"
 #include "crow/http_response.h"
@@ -503,10 +504,21 @@ namespace crow // NOTE: Already documented in "crow/app.h"
             return *this;
         }
 
-        template<typename Func>
-        self_t& onaccept(Func f)
+
+        self_t& onaccept(std::function<void(const crow::request&, std::optional<crow::response>&, void**)>&& callback)
         {
-            accept_handler_ = f;
+            accept_handler_ = std::move(callback);
+            return *this;
+        }
+
+        self_t& onaccept(std::function<bool(const crow::request&, void**)>&& callback)
+        {
+            onaccept([callback](const crow::request& req, std::optional<crow::response>& res, void** p) {
+                if (!callback(req, p))
+                {
+                    res = crow::response(400);
+                }
+            });
             return *this;
         }
 
@@ -522,7 +534,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         std::function<void(crow::websocket::connection&, const std::string&, bool)> message_handler_;
         std::function<void(crow::websocket::connection&, const std::string&, uint16_t)> close_handler_;
         std::function<void(crow::websocket::connection&, const std::string&)> error_handler_;
-        std::function<bool(const crow::request&, void**)> accept_handler_;
+        std::function<void(const crow::request&, std::optional<crow::response>&, void**)> accept_handler_;
         bool mirror_protocols_ = false;
         uint64_t max_payload_;
         bool max_payload_override_ = false;
