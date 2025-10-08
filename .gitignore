@@ -51,6 +51,7 @@ html/
 *.cxxflags
 *.files
 *.includes
+CMakeLists.txt.user
 
 #VS-Code
 .vscode
@@ -63,3 +64,6 @@ venv
 #Bazel
 bazel-*
 MODULE.bazel.lock
+
+# macOS Files
+.DS_Store
