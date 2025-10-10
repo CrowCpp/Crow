@@ -220,7 +220,7 @@ $(document).ready(function(){initNavTree('http__connection_8h_source.html',''); 
 <div class="line"><a id="l00113" name="l00113"></a><span class="lineno">  113</span>        {</div>
 <div class="line"><a id="l00114" name="l00114"></a><span class="lineno">  114</span>            routing_handle_result_ = handler_-&gt;handle_initial(req_, res);</div>
 <div class="line"><a id="l00115" name="l00115"></a><span class="lineno">  115</span>            <span class="comment">// if no route is found for the request method, return the response without parsing or processing anything further.</span></div>
-<div class="line"><a id="l00116" name="l00116"></a><span class="lineno">  116</span>            <span class="keywordflow">if</span> (!routing_handle_result_-&gt;rule_index)</div>
+<div class="line"><a id="l00116" name="l00116"></a><span class="lineno">  116</span>            <span class="keywordflow">if</span> (!routing_handle_result_-&gt;rule_index &amp;&amp; !routing_handle_result_-&gt;catch_all)</div>
 <div class="line"><a id="l00117" name="l00117"></a><span class="lineno">  117</span>            {</div>
 <div class="line"><a id="l00118" name="l00118"></a><span class="lineno">  118</span>                parser_.done();</div>
 <div class="line"><a id="l00119" name="l00119"></a><span class="lineno">  119</span>                need_to_call_after_handlers_ = <span class="keyword">true</span>;</div>

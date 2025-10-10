@@ -28,7 +28,7 @@ var namespacecrow =
     [ "request", "structcrow_1_1request.html", "structcrow_1_1request" ],
     [ "response", "structcrow_1_1response.html", "structcrow_1_1response" ],
     [ "returnable", "structcrow_1_1returnable.html", null ],
-    [ "Router", "classcrow_1_1_router.html", "classcrow_1_1_router" ],
+    [ "Router", "classcrow_1_1_router.html", null ],
     [ "routing_handle_result", "structcrow_1_1routing__handle__result.html", null ],
     [ "RuleParameterTraits", "structcrow_1_1_rule_parameter_traits.html", "structcrow_1_1_rule_parameter_traits" ],
     [ "Server", "classcrow_1_1_server.html", "classcrow_1_1_server" ],
