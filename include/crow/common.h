@@ -157,7 +157,7 @@ namespace crow
     {
         if (CROW_LIKELY(method < HTTPMethod::InternalMethodCount))
         {
-            return method_strings[(unsigned char)method];
+            return method_strings[static_cast<unsigned int>(method)];
         }
         return "invalid";
     }
@@ -279,6 +279,7 @@ namespace crow
 
     struct routing_handle_result
     {
+        bool catch_all{false};
         uint16_t rule_index;
         std::vector<uint16_t> blueprint_indices;
         routing_params r_params;
@@ -347,7 +348,7 @@ constexpr crow::HTTPMethod method_from_string(const char* str)
                                                            throw std::runtime_error("invalid http method");
 }
 
-constexpr crow::HTTPMethod operator"" _method(const char* str, size_t /*len*/)
+constexpr crow::HTTPMethod operator""_method(const char* str, size_t /*len*/)
 {
     return method_from_string( str );
 }

@@ -18,17 +18,23 @@ string read_all(const string& filename)
 
 int main()
 {
-    auto data = json::load(read_all("data"));
-    auto templ = compile(read_all("template"));
-    auto partials = json::load(read_all("partials"));
-    set_loader([&](std::string name) -> std::string {
-        if (partials.count(name))
-        {
-            return partials[name].s();
-        }
-        return "";
-    });
-    context ctx(data);
-    cout << templ.render_string(ctx);
+    try {
+        auto data = json::load(read_all("data"));
+        auto templ = compile(read_all("template"));
+        auto partials = json::load(read_all("partials"));
+        set_loader([&](std::string name) -> std::string {
+            if (partials.count(name))
+            {
+                return partials[name].s();
+            }
+            return "";
+        });
+        context ctx(data);
+        cout << templ.render_string(ctx);
+    }
+    // catch and return compile errors as text, for the python test to compare
+    catch (invalid_template_exception & err) {
+        cout << "COMPILE EXCEPTION: " << err.what();
+    }
     return 0;
 }

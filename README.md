@@ -207,3 +207,8 @@ Crow has incorporated the following libraries into its source.
     FOR ANY DAMAGES OR OTHER LIABILITY, WHETHER IN CONTRACT, TORT OR OTHERWISE,
     ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
     DEALINGS IN THE SOFTWARE.
+
+
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=CrowCpp/Crow,oatpp/oatpp,drogonframework/drogon&type=Date)](https://www.star-history.com/#CrowCpp/Crow&oatpp/oatpp&drogonframework/drogon&Date)

@@ -9,3 +9,8 @@ updates:
     directory: "/" # Location of package manifests
     schedule:
       interval: "daily"
+  - package-ecosystem: "vcpkg"
+    directory: "/" # The location of your vcpkg.json
+    schedule:
+      interval: "daily"
+

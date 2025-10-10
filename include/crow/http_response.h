@@ -11,7 +11,7 @@
 #endif
 #include <sys/stat.h>
 #if !defined(S_ISREG) && defined(S_IFMT) && defined(S_IFREG)
-#define S_ISREG(m) (((m)&S_IFMT) == S_IFREG)
+#define S_ISREG(m) (((m) & S_IFMT) == S_IFREG)
 #endif
 
 #include "crow/http_request.h"
@@ -27,6 +27,12 @@ namespace crow
     template<typename Adaptor, typename Handler, typename... Middlewares>
     class Connection;
 
+    namespace websocket
+    {
+        template<typename Adaptor, typename Handler>
+        class Connection;
+    }
+
     class Router;
 
     /// HTTP response
@@ -34,6 +40,9 @@ namespace crow
     {
         template<typename Adaptor, typename Handler, typename... Middlewares>
         friend class crow::Connection;
+
+        template<typename Adaptor, typename Handler>
+        friend class websocket::Connection;
 
         friend class Router;
 
@@ -118,9 +127,9 @@ namespace crow
 
         // clang-format off
         response() {}
-        explicit response(int code) : code(code) {}
-        response(std::string body) : body(std::move(body)) {}
-        response(int code, std::string body) : code(code), body(std::move(body)) {}
+        explicit response(int code_) : code(code_) {}
+        response(std::string body_) : body(std::move(body_)) {}
+        response(int code_, std::string body_) : code(code_), body(std::move(body_)) {}
         // clang-format on
         response(returnable&& value)
         {
@@ -132,14 +141,14 @@ namespace crow
             body = value.dump();
             set_header("Content-Type", value.content_type);
         }
-        response(int code, returnable& value):
-          code(code)
+        response(int code_, returnable& value):
+          code(code_)
         {
             body = value.dump();
             set_header("Content-Type", value.content_type);
         }
-        response(int code, returnable&& value):
-          code(code), body(value.dump())
+        response(int code_, returnable&& value):
+          code(code_), body(value.dump())
         {
             set_header("Content-Type", std::move(value.content_type));
         }
@@ -149,14 +158,14 @@ namespace crow
             *this = std::move(r);
         }
 
-        response(std::string contentType, std::string body):
-          body(std::move(body))
+        response(std::string contentType, std::string body_):
+          body(std::move(body_))
         {
             set_header("Content-Type", get_mime_type(contentType));
         }
 
-        response(int code, std::string contentType, std::string body):
-          code(code), body(std::move(body))
+        response(int code_, std::string contentType, std::string body_):
+          code(code_), body(std::move(body_))
         {
             set_header("Content-Type", get_mime_type(contentType));
         }
@@ -284,15 +293,16 @@ namespace crow
             int statResult;
         };
 
-        /// Return a static file as the response body
-        void set_static_file_info(std::string path)
+        /// Return a static file as the response body, the content_type may be specified explicitly.
+        void set_static_file_info(std::string path, std::string content_type = "")
         {
             utility::sanitize_filename(path);
-            set_static_file_info_unsafe(path);
+            set_static_file_info_unsafe(path, content_type);
         }
 
-        /// Return a static file as the response body without sanitizing the path (use set_static_file_info instead)
-        void set_static_file_info_unsafe(std::string path)
+        /// Return a static file as the response body without sanitizing the path (use set_static_file_info instead),
+        /// the content_type may be specified explicitly.
+        void set_static_file_info_unsafe(std::string path, std::string content_type = "")
         {
             file_info.path = path;
             file_info.statResult = stat(file_info.path.c_str(), &file_info.statbuf);
@@ -301,14 +311,22 @@ namespace crow
 #endif
             if (file_info.statResult == 0 && S_ISREG(file_info.statbuf.st_mode))
             {
-                std::size_t last_dot = path.find_last_of(".");
-                std::string extension = path.substr(last_dot + 1);
                 code = 200;
                 this->add_header("Content-Length", std::to_string(file_info.statbuf.st_size));
 
-                if (!extension.empty())
+                if (content_type.empty())
                 {
-                    this->add_header("Content-Type", get_mime_type(extension));
+                    std::size_t last_dot = path.find_last_of('.');
+                    std::string extension = path.substr(last_dot + 1);
+
+                    if (!extension.empty())
+                    {
+                        this->add_header("Content-Type", get_mime_type(extension));
+                    }
+                }
+                else
+                {
+                    this->add_header("Content-Type", content_type);
                 }
             }
             else
@@ -319,6 +337,115 @@ namespace crow
         }
 
     private:
+        void write_header_into_buffer(std::vector<asio::const_buffer>& buffers, std::string& content_length_buffer, bool add_keep_alive, const std::string& server_name)
+        {
+            // TODO(EDev): HTTP version in status codes should be dynamic
+            // Keep in sync with common.h/status
+            static std::unordered_map<int, std::string> statusCodes = {
+              {status::CONTINUE, "HTTP/1.1 100 Continue\r\n"},
+              {status::SWITCHING_PROTOCOLS, "HTTP/1.1 101 Switching Protocols\r\n"},
+
+              {status::OK, "HTTP/1.1 200 OK\r\n"},
+              {status::CREATED, "HTTP/1.1 201 Created\r\n"},
+              {status::ACCEPTED, "HTTP/1.1 202 Accepted\r\n"},
+              {status::NON_AUTHORITATIVE_INFORMATION, "HTTP/1.1 203 Non-Authoritative Information\r\n"},
+              {status::NO_CONTENT, "HTTP/1.1 204 No Content\r\n"},
+              {status::RESET_CONTENT, "HTTP/1.1 205 Reset Content\r\n"},
+              {status::PARTIAL_CONTENT, "HTTP/1.1 206 Partial Content\r\n"},
+
+              {status::MULTIPLE_CHOICES, "HTTP/1.1 300 Multiple Choices\r\n"},
+              {status::MOVED_PERMANENTLY, "HTTP/1.1 301 Moved Permanently\r\n"},
+              {status::FOUND, "HTTP/1.1 302 Found\r\n"},
+              {status::SEE_OTHER, "HTTP/1.1 303 See Other\r\n"},
+              {status::NOT_MODIFIED, "HTTP/1.1 304 Not Modified\r\n"},
+              {status::TEMPORARY_REDIRECT, "HTTP/1.1 307 Temporary Redirect\r\n"},
+              {status::PERMANENT_REDIRECT, "HTTP/1.1 308 Permanent Redirect\r\n"},
+
+              {status::BAD_REQUEST, "HTTP/1.1 400 Bad Request\r\n"},
+              {status::UNAUTHORIZED, "HTTP/1.1 401 Unauthorized\r\n"},
+              {status::FORBIDDEN, "HTTP/1.1 403 Forbidden\r\n"},
+              {status::NOT_FOUND, "HTTP/1.1 404 Not Found\r\n"},
+              {status::METHOD_NOT_ALLOWED, "HTTP/1.1 405 Method Not Allowed\r\n"},
+              {status::NOT_ACCEPTABLE, "HTTP/1.1 406 Not Acceptable\r\n"},
+              {status::PROXY_AUTHENTICATION_REQUIRED, "HTTP/1.1 407 Proxy Authentication Required\r\n"},
+              {status::CONFLICT, "HTTP/1.1 409 Conflict\r\n"},
+              {status::GONE, "HTTP/1.1 410 Gone\r\n"},
+              {status::PAYLOAD_TOO_LARGE, "HTTP/1.1 413 Payload Too Large\r\n"},
+              {status::UNSUPPORTED_MEDIA_TYPE, "HTTP/1.1 415 Unsupported Media Type\r\n"},
+              {status::RANGE_NOT_SATISFIABLE, "HTTP/1.1 416 Range Not Satisfiable\r\n"},
+              {status::EXPECTATION_FAILED, "HTTP/1.1 417 Expectation Failed\r\n"},
+              {status::PRECONDITION_REQUIRED, "HTTP/1.1 428 Precondition Required\r\n"},
+              {status::TOO_MANY_REQUESTS, "HTTP/1.1 429 Too Many Requests\r\n"},
+              {status::UNAVAILABLE_FOR_LEGAL_REASONS, "HTTP/1.1 451 Unavailable For Legal Reasons\r\n"},
+
+              {status::INTERNAL_SERVER_ERROR, "HTTP/1.1 500 Internal Server Error\r\n"},
+              {status::NOT_IMPLEMENTED, "HTTP/1.1 501 Not Implemented\r\n"},
+              {status::BAD_GATEWAY, "HTTP/1.1 502 Bad Gateway\r\n"},
+              {status::SERVICE_UNAVAILABLE, "HTTP/1.1 503 Service Unavailable\r\n"},
+              {status::GATEWAY_TIMEOUT, "HTTP/1.1 504 Gateway Timeout\r\n"},
+              {status::VARIANT_ALSO_NEGOTIATES, "HTTP/1.1 506 Variant Also Negotiates\r\n"},
+            };
+
+            static const std::string seperator = ": ";
+
+            buffers.clear();
+            buffers.reserve(4 * (headers.size() + 5) + 3);
+
+            if (!statusCodes.count(code))
+            {
+                CROW_LOG_WARNING << this << " status code "
+                                 << "(" << code << ")"
+                                 << " not defined, returning 500 instead";
+                code = 500;
+            }
+
+            auto& status = statusCodes.find(code)->second;
+            buffers.emplace_back(status.data(), status.size());
+
+            if (code >= 400 && body.empty())
+                body = statusCodes[code].substr(9);
+
+            for (auto& kv : headers)
+            {
+                buffers.emplace_back(kv.first.data(), kv.first.size());
+                buffers.emplace_back(seperator.data(), seperator.size());
+                buffers.emplace_back(kv.second.data(), kv.second.size());
+                buffers.emplace_back(crlf.data(), crlf.size());
+            }
+
+            if (!manual_length_header && !headers.count("content-length"))
+            {
+                content_length_buffer = std::to_string(body.size());
+                static std::string content_length_tag = "Content-Length: ";
+                buffers.emplace_back(content_length_tag.data(), content_length_tag.size());
+                buffers.emplace_back(content_length_buffer.data(), content_length_buffer.size());
+                buffers.emplace_back(crlf.data(), crlf.size());
+            }
+            if (!headers.count("server") && !server_name.empty())
+            {
+                static std::string server_tag = "Server: ";
+                buffers.emplace_back(server_tag.data(), server_tag.size());
+                buffers.emplace_back(server_name.data(), server_name.size());
+                buffers.emplace_back(crlf.data(), crlf.size());
+            }
+            /*if (!headers.count("date"))
+            {
+                static std::string date_tag = "Date: ";
+                date_str_ = get_cached_date_str();
+                buffers.emplace_back(date_tag.data(), date_tag.size());
+                buffers.emplace_back(date_str_.data(), date_str_.size());
+                buffers.emplace_back(crlf.data(), crlf.size());
+            }*/
+            if (add_keep_alive)
+            {
+                static std::string keep_alive_tag = "Connection: Keep-Alive";
+                buffers.emplace_back(keep_alive_tag.data(), keep_alive_tag.size());
+                buffers.emplace_back(crlf.data(), crlf.size());
+            }
+
+            buffers.emplace_back(crlf.data(), crlf.size());
+        }
+
         bool completed_{};
         std::function<void()> complete_request_handler_;
         std::function<bool()> is_alive_helper_;

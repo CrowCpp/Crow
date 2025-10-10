@@ -202,11 +202,12 @@ namespace crow
         using self_t = Crow;
 
         /// \brief The HTTP server
-        using server_t = Server<Crow, SocketAdaptor, Middlewares...>;
-
+        using server_t = Server<Crow, TCPAcceptor, SocketAdaptor, Middlewares...>;
+        /// \brief An HTTP server that runs on unix domain socket
+        using unix_server_t = Server<Crow, UnixSocketAcceptor, UnixSocketAdaptor, Middlewares...>;
 #ifdef CROW_ENABLE_SSL
         /// \brief An HTTP server that runs on SSL with an SSLAdaptor
-        using ssl_server_t = Server<Crow, SSLAdaptor, Middlewares...>;
+        using ssl_server_t = Server<Crow, TCPAcceptor, SSLAdaptor, Middlewares...>;
 #endif
         Crow()
         {}
@@ -242,7 +243,7 @@ namespace crow
         void handle_full(request& req, response& res)
         {
             auto found = handle_initial(req, res);
-            if (found->rule_index)
+            if (found->rule_index || found->catch_all)
                 handle(req, res, found);
         }
 
@@ -254,16 +255,8 @@ namespace crow
 
         /// \brief Create a route using a rule (**Use CROW_ROUTE instead**)
         template<uint64_t Tag>
-#ifdef CROW_GCC83_WORKAROUND
-        auto& route(const std::string& rule)
-#else
         auto route(const std::string& rule)
-#endif
-#if defined CROW_CAN_USE_CPP17 && !defined CROW_GCC83_WORKAROUND
           -> typename std::invoke_result<decltype(&Router::new_rule_tagged<Tag>), Router, const std::string&>::type
-#elif !defined CROW_GCC83_WORKAROUND
-          -> typename std::result_of<decltype (&Router::new_rule_tagged<Tag>)(Router, const std::string&)>::type
-#endif
         {
             return router_.new_rule_tagged<Tag>(rule);
         }
@@ -314,7 +307,30 @@ namespace crow
         /// \brief Get the port that Crow will handle requests on
         std::uint16_t port() const
         {
-            return port_;
+            if (!server_started_)
+            {
+                return port_;
+            }
+#ifdef CROW_ENABLE_SSL
+            if (ssl_used_)
+            {
+                return ssl_server_->port();
+            }
+            else
+#endif
+            {
+                return server_->port();
+            }
+        }
+
+        /// \brief Set status variable to note that the address that Crow will handle requests on is bound
+        void address_is_bound() {
+           is_bound_ = true;
+        }
+
+        /// \brief Get whether address that Crow will handle requests on is bound
+        bool is_bound() const {
+           return is_bound_;
         }
 
         /// \brief Set the connection timeout in seconds (default is 5)
@@ -324,7 +340,7 @@ namespace crow
             return *this;
         }
 
-        /// \brief Set the server name
+        /// \brief Set the server name included in the 'Server' HTTP response header. If set to an empty string, the header will be omitted by default.
         self_t& server_name(std::string server_name)
         {
             server_name_ = server_name;
@@ -344,6 +360,20 @@ namespace crow
             return bindaddr_;
         }
 
+        /// \brief Disable tcp/ip and use unix domain socket instead
+        self_t& local_socket_path(std::string path)
+        {
+            bindaddr_ = path;
+            use_unix_ = true;
+            return *this;
+        }
+
+        /// \brief Get the unix domain socket path
+        std::string local_socket_path()
+        {
+            return bindaddr_;
+        }
+
         /// \brief Run the server on multiple threads using all available threads
         self_t& multithreaded()
         {
@@ -351,7 +381,7 @@ namespace crow
         }
 
         /// \brief Run the server on multiple threads using a specific number
-        self_t& concurrency(std::uint16_t concurrency)
+        self_t& concurrency(unsigned int concurrency)
         {
             if (concurrency < 2) // Crow can have a minimum of 2 threads running
                 concurrency = 2;
@@ -360,7 +390,7 @@ namespace crow
         }
 
         /// \brief Get the number of threads that server is using
-        std::uint16_t concurrency()
+        std::uint16_t concurrency() const
         {
             return concurrency_;
         }
@@ -504,7 +534,16 @@ namespace crow
 #ifdef CROW_ENABLE_SSL
             if (ssl_used_)
             {
-                ssl_server_ = std::move(std::unique_ptr<ssl_server_t>(new ssl_server_t(this, bindaddr_, port_, server_name_, &middlewares_, concurrency_, timeout_, &ssl_context_)));
+
+                error_code ec;
+                asio::ip::address addr = asio::ip::make_address(bindaddr_,ec);
+                if (ec){
+                    CROW_LOG_ERROR << ec.message() << " - Can not create valid ip address from string: \"" << bindaddr_ << "\"";
+                    return;
+                }
+                tcp::endpoint endpoint(addr, port_);
+                router_.using_ssl = true;
+                ssl_server_ = std::move(std::unique_ptr<ssl_server_t>(new ssl_server_t(this, endpoint, server_name_, &middlewares_, concurrency_, timeout_, &ssl_context_)));
                 ssl_server_->set_tick_function(tick_interval_, tick_function_);
                 ssl_server_->signal_clear();
                 for (auto snum : signals_)
@@ -517,14 +556,36 @@ namespace crow
             else
 #endif
             {
-                server_ = std::move(std::unique_ptr<server_t>(new server_t(this, bindaddr_, port_, server_name_, &middlewares_, concurrency_, timeout_, nullptr)));
-                server_->set_tick_function(tick_interval_, tick_function_);
-                for (auto snum : signals_)
+                if (use_unix_)
                 {
-                    server_->signal_add(snum);
+                    UnixSocketAcceptor::endpoint endpoint(bindaddr_);
+                    unix_server_ = std::move(std::unique_ptr<unix_server_t>(new unix_server_t(this, endpoint, server_name_, &middlewares_, concurrency_, timeout_, nullptr)));
+                    unix_server_->set_tick_function(tick_interval_, tick_function_);
+                    for (auto snum : signals_)
+                    {
+                        unix_server_->signal_add(snum);
+                    }
+                    notify_server_start();
+                    unix_server_->run();
                 }
-                notify_server_start();
-                server_->run();
+                else
+                {
+                    error_code ec;
+                    asio::ip::address addr = asio::ip::make_address(bindaddr_,ec);
+                    if (ec){
+                        CROW_LOG_ERROR << ec.message() << " - Can not create valid ip address from string: \"" << bindaddr_ << "\"";
+                        return;
+                    }
+                    TCPAcceptor::endpoint endpoint(addr, port_);
+                    server_ = std::move(std::unique_ptr<server_t>(new server_t(this, endpoint, server_name_, &middlewares_, concurrency_, timeout_, nullptr)));
+                    server_->set_tick_function(tick_interval_, tick_function_);
+                    for (auto snum : signals_)
+                    {
+                        server_->signal_add(snum);
+                    }
+                    notify_server_start();
+                    server_->run();
+                }
             }
         }
 
@@ -550,23 +611,28 @@ namespace crow
             else
 #endif
             {
-                // TODO(EDev): Move these 6 lines to a method in http_server.
-                std::vector<crow::websocket::connection*> websockets_to_close = websockets_;
-                for (auto websocket : websockets_to_close)
-                {
-                    CROW_LOG_INFO << "Quitting Websocket: " << websocket;
-                    websocket->close("Server Application Terminated");
-                }
+                close_websockets();
                 if (server_) { server_->stop(); }
+                if (unix_server_) { unix_server_->stop(); }
             }
         }
 
-        void add_websocket(crow::websocket::connection* conn)
+        void close_websockets()
+        {
+            for (auto websocket : websockets_)
+            {
+                CROW_LOG_INFO << "Quitting Websocket: " << websocket;
+                websocket->close("Websocket Closed");
+            }
+        }
+
+
+        void add_websocket(std::shared_ptr<websocket::connection> conn)
         {
             websockets_.push_back(conn);
         }
 
-        void remove_websocket(crow::websocket::connection* conn)
+        void remove_websocket(std::shared_ptr<websocket::connection> conn)
         {
             websockets_.erase(std::remove(websockets_.begin(), websockets_.end(), conn), websockets_.end());
         }
@@ -689,19 +755,32 @@ namespace crow
         }
 
         /// \brief Wait until the server has properly started
-        void wait_for_server_start()
+        std::cv_status wait_for_server_start(std::chrono::milliseconds wait_timeout = std::chrono::milliseconds(3000))
         {
+            std::cv_status status = std::cv_status::no_timeout;
+            auto wait_until = std::chrono::steady_clock::now() + wait_timeout;
             {
                 std::unique_lock<std::mutex> lock(start_mutex_);
-                while (!server_started_)
-                    cv_started_.wait(lock);
+                while (!server_started_ && (status == std::cv_status::no_timeout))
+                {
+                    status = cv_started_.wait_until(lock, wait_until);
+                }
             }
-            if (server_)
-                server_->wait_for_start();
+            if (status == std::cv_status::no_timeout)
+            {
+                if (server_) {
+                    status = server_->wait_for_start(wait_until);
+                } else if (unix_server_) {
+                    status = unix_server_->wait_for_start(wait_until);
+                }
 #ifdef CROW_ENABLE_SSL
-            else if (ssl_server_)
-                ssl_server_->wait_for_start();
+                else if (ssl_server_)
+                {
+                    status = ssl_server_->wait_for_start(wait_until);
+                }
 #endif
+            }
+            return status;
         }
 
     private:
@@ -733,10 +812,12 @@ namespace crow
     private:
         std::uint8_t timeout_{5};
         uint16_t port_ = 80;
-        uint16_t concurrency_ = 2;
+        unsigned int concurrency_ = 2;
+        std::atomic_bool is_bound_ = false;
         uint64_t max_payload_{UINT64_MAX};
         std::string server_name_ = std::string("Crow/") + VERSION;
         std::string bindaddr_ = "0.0.0.0";
+        bool use_unix_ = false;
         size_t res_stream_threshold_ = 1048576;
         Router router_;
         bool static_routes_added_{false};
@@ -758,13 +839,14 @@ namespace crow
 #endif
 
         std::unique_ptr<server_t> server_;
+        std::unique_ptr<unix_server_t> unix_server_;
 
         std::vector<int> signals_{SIGINT, SIGTERM};
 
         bool server_started_{false};
         std::condition_variable cv_started_;
         std::mutex start_mutex_;
-        std::vector<crow::websocket::connection*> websockets_;
+        std::vector<std::shared_ptr<websocket::connection>> websockets_;
     };
 
     /// \brief Alias of Crow<Middlewares...>. Useful if you want

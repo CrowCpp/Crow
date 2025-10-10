@@ -48,7 +48,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
 
         void* middleware_context{};
         void* middleware_container{};
-        asio::io_service* io_service{};
+        asio::io_context* io_context{};
 
         /// Construct an empty request. (sets the method to `GET`)
         request():
@@ -56,8 +56,8 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         {}
 
         /// Construct a request with all values assigned.
-        request(HTTPMethod method, std::string raw_url, std::string url, query_string url_params, ci_map headers, std::string body, unsigned char http_major, unsigned char http_minor, bool has_keep_alive, bool has_close_connection, bool is_upgrade):
-          method(method), raw_url(std::move(raw_url)), url(std::move(url)), url_params(std::move(url_params)), headers(std::move(headers)), body(std::move(body)), http_ver_major(http_major), http_ver_minor(http_minor), keep_alive(has_keep_alive), close_connection(has_close_connection), upgrade(is_upgrade)
+        request(HTTPMethod method_, std::string raw_url_, std::string url_, query_string url_params_, ci_map headers_, std::string body_, unsigned char http_major, unsigned char http_minor, bool has_keep_alive, bool has_close_connection, bool is_upgrade):
+          method(method_), raw_url(std::move(raw_url_)), url(std::move(url_)), url_params(std::move(url_params_)), headers(std::move(headers_)), body(std::move(body_)), http_ver_major(http_major), http_ver_minor(http_minor), keep_alive(has_keep_alive), close_connection(has_close_connection), upgrade(is_upgrade)
         {}
 
         void add_header(std::string key, std::string value)
@@ -88,14 +88,14 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         template<typename CompletionHandler>
         void post(CompletionHandler handler)
         {
-            io_service->post(handler);
+            asio::post(io_context, handler);
         }
 
         /// Send data to whoever made this request with a completion handler.
         template<typename CompletionHandler>
         void dispatch(CompletionHandler handler)
         {
-            io_service->dispatch(handler);
+            asio::dispatch(io_context, handler);
         }
     };
 } // namespace crow

@@ -9,7 +9,7 @@ include(${CMAKE_SOURCE_DIR}/cmake/CPM.cmake)
 
 
 CPMAddPackage(Catch2
-  VERSION 3.7.0
+  VERSION 3.10.0
   GITHUB_REPOSITORY catchorg/Catch2
   OPTIONS
   "CATCH_INSTALL_DOCS Off"
@@ -19,9 +19,16 @@ CPMAddPackage(Catch2
   
 enable_testing()
 
+# list the test sources
 set(TEST_SRCS
   unittest.cpp
   query_string_tests.cpp
+  unit_tests/test_http_response.cpp
+  unit_tests/test_json.cpp
+  unit_tests/test_mustache.cpp
+  unit_tests/test_utility.cpp
+  unit_tests/test_websocket.cpp
+  unit_tests/test_json.cpp
 )
 
 add_executable(unittest ${TEST_SRCS})

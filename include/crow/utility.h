@@ -16,9 +16,7 @@
 
 #include "crow/settings.h"
 
-#if defined(CROW_CAN_USE_CPP17) && !defined(CROW_FILESYSTEM_IS_EXPERIMENTAL)
 #include <filesystem>
-#endif
 
 // TODO(EDev): Adding C++20's [[likely]] and [[unlikely]] attributes might be useful
 #if defined(__GNUG__) || defined(__clang__)
@@ -291,21 +289,12 @@ namespace crow
         };
 
         // Extract element from forward tuple or get default
-#ifdef CROW_CAN_USE_CPP14
         template<typename T, typename Tup>
         typename std::enable_if<has_type<T&, Tup>::value, typename std::decay<T>::type&&>::type
           tuple_extract(Tup& tup)
         {
             return std::move(std::get<T&>(tup));
         }
-#else
-        template<typename T, typename Tup>
-        typename std::enable_if<has_type<T&, Tup>::value, T&&>::type
-          tuple_extract(Tup& tup)
-        {
-            return std::move(std::get<tuple_index<T&, Tup>::value>(tup));
-        }
-#endif
 
         template<typename T, typename Tup>
         typename std::enable_if<!has_type<T&, Tup>::value, T>::type
@@ -642,9 +631,9 @@ namespace crow
 
             // Padded
             else if (size >= 2 && data[size - 2] == '=') // padded with '=='
-                size = (size / 4 * 3) - 2;  // == padding means the last block only has 1 character instead of 3, hence the '-2'
+                size = (size / 4 * 3) - 2;               // == padding means the last block only has 1 character instead of 3, hence the '-2'
             else if (size >= 1 && data[size - 1] == '=') // padded with '='
-                size = (size / 4 * 3) - 1;  // = padding means the last block only has 2 character instead of 3, hence the '-1'
+                size = (size / 4 * 3) - 1;               // = padding means the last block only has 2 character instead of 3, hence the '-1'
 
             // Padding not needed
             else
@@ -724,7 +713,7 @@ namespace crow
             // Check for special device names. The Windows behavior is really odd here, it will consider both AUX and AUX.txt
             // a special device. Thus we search for the string (case-insensitive), and then check if the string ends or if
             // is has a dangerous follow up character (.:\/)
-            auto sanitizeSpecialFile = [](std::string& source, unsigned ofs, const char* pattern, bool includeNumber, char replacement) {
+            auto sanitizeSpecialFile = [](std::string& source, unsigned ofs, const char* pattern, bool includeNumber, char replacement_) {
                 unsigned i = ofs;
                 size_t len = source.length();
                 const char* p = pattern;
@@ -743,7 +732,7 @@ namespace crow
                 if ((i >= len) || (source[i] == '.') || (source[i] == ':') || (source[i] == '/') || (source[i] == '\\'))
                 {
                     source.erase(ofs + 1, (i - ofs) - 1);
-                    source[ofs] = replacement;
+                    source[ofs] = replacement_;
                 }
             };
             bool checkForSpecialEntries = true;
@@ -812,14 +801,7 @@ namespace crow
 
         inline static std::string join_path(std::string path, const std::string& fname)
         {
-#if defined(CROW_CAN_USE_CPP17) && !defined(CROW_FILESYSTEM_IS_EXPERIMENTAL)
             return (std::filesystem::path(path) / fname).string();
-#else
-            if (!(path.back() == '/' || path.back() == '\\'))
-                path += '/';
-            path += fname;
-            return path;
-#endif
         }
 
         /**
@@ -934,7 +916,7 @@ namespace crow
          * @param last2 end() iterator of the second range
          * @return first occurence that matches between two ranges of iterators 
         */
-        template <typename Iter1, typename Iter2>
+        template<typename Iter1, typename Iter2>
         inline static Iter1 find_first_of(Iter1 first1, Iter1 last1, Iter2 first2, Iter2 last2)
         {
             for (; first1 != last1; ++first1)

@@ -62,9 +62,9 @@ namespace crow
             const char padding = '"'; ///< Padding to use
 
             /// Outputs padded value to the stream
-            friend std::ostream& operator<<(std::ostream& stream, const padded value)
+            friend std::ostream& operator<<(std::ostream& stream, const padded value_)
             {
-                return stream << value.padding << value.value << value.padding;
+                return stream << value_.padding << value_.value << value_.padding;
             }
         };
 
@@ -99,12 +99,12 @@ namespace crow
 
             friend std::ostream& operator<<(std::ostream& stream, const part_view& part)
             {
-                for (const auto& [key, value] : part.headers)
+                for (const auto& [header_key, header_value] : part.headers)
                 {
-                    stream << key << ": " << value.value;
-                    for (const auto& [key, value] : value.params)
+                    stream << header_key << ": " << header_value.value;
+                    for (const auto& [param_key, param_value] : header_value.params)
                     {
-                        stream << "; " << key << '=' << padded{value};
+                        stream << "; " << param_key << '=' << padded{param_value};
                     }
                     stream << crlf;
                 }
@@ -170,8 +170,8 @@ namespace crow
             }
 
             /// Default constructor using default values
-            message_view(const ci_map& headers, const std::string& boundary, const std::vector<part_view>& sections):
-              headers(headers), boundary(boundary), parts(sections)
+            message_view(const ci_map& headers_, const std::string& boundary_, const std::vector<part_view>& sections):
+              headers(headers_), boundary(boundary_), parts(sections)
             {
                 for (const part_view& item : parts)
                 {
@@ -186,7 +186,7 @@ namespace crow
               headers(req.headers),
               boundary(get_boundary(get_header_value("Content-Type")))
             {
-                parse_body(req.body, parts, part_map);
+                parse_body(req.body);
             }
 
         private:
@@ -207,7 +207,7 @@ namespace crow
                 return to_return;
             }
 
-            void parse_body(std::string_view body, std::vector<part_view>& sections, mp_view_map& part_map)
+            void parse_body(std::string_view body)
             {
                 const std::string delimiter = dd + boundary;
 
@@ -232,7 +232,7 @@ namespace crow
                         part_map.emplace(
                           (get_header_object(parsed_section.headers, "Content-Disposition").params.find("name")->second),
                           parsed_section);
-                        sections.push_back(std::move(parsed_section));
+                        parts.push_back(std::move(parsed_section));
                     }
                 }
             }
@@ -259,17 +259,17 @@ namespace crow
                 {
                     header_view to_add;
 
-                    const size_t found = lines.find(crlf);
-                    std::string_view line = lines.substr(0, found);
+                    const size_t found_crlf = lines.find(crlf);
+                    std::string_view line = lines.substr(0, found_crlf);
                     std::string_view key;
-                    lines = lines.substr(found + 2);
+                    lines = lines.substr(found_crlf + 2);
                     // Add the header if available
                     if (!line.empty())
                     {
-                        const size_t found = line.find("; ");
-                        std::string_view header = line.substr(0, found);
-                        if (found != std::string_view::npos)
-                            line = line.substr(found + 2);
+                        const size_t found_semicolon = line.find("; ");
+                        std::string_view header = line.substr(0, found_semicolon);
+                        if (found_semicolon != std::string_view::npos)
+                            line = line.substr(found_semicolon + 2);
                         else
                             line = std::string_view();
 
@@ -282,10 +282,10 @@ namespace crow
                     // Add the parameters
                     while (!line.empty())
                     {
-                        const size_t found = line.find("; ");
-                        std::string_view param = line.substr(0, found);
-                        if (found != std::string_view::npos)
-                            line = line.substr(found + 2);
+                        const size_t found_semicolon = line.find("; ");
+                        std::string_view param = line.substr(0, found_semicolon);
+                        if (found_semicolon != std::string_view::npos)
+                            line = line.substr(found_semicolon + 2);
                         else
                             line = std::string_view();
 

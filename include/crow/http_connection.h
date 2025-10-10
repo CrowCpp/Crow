@@ -44,13 +44,13 @@ namespace crow
 
     /// An HTTP connection.
     template<typename Adaptor, typename Handler, typename... Middlewares>
-    class Connection: public std::enable_shared_from_this<Connection<Adaptor, Handler, Middlewares...>>
+    class Connection : public std::enable_shared_from_this<Connection<Adaptor, Handler, Middlewares...>>
     {
         friend struct crow::response;
 
     public:
         Connection(
-          asio::io_service& io_service,
+          asio::io_context& io_context,
           Handler* handler,
           const std::string& server_name,
           std::tuple<Middlewares...>* middlewares,
@@ -58,7 +58,7 @@ namespace crow
           detail::task_timer& task_timer,
           typename Adaptor::context* adaptor_ctx_,
           std::atomic<unsigned int>& queue_length):
-          adaptor_(io_service, adaptor_ctx_),
+          adaptor_(io_context, adaptor_ctx_),
           handler_(handler),
           parser_(this),
           req_(parser_.req),
@@ -69,6 +69,7 @@ namespace crow
           res_stream_threshold_(handler->stream_threshold()),
           queue_length_(queue_length)
         {
+            queue_length_++;
 #ifdef CROW_ENABLE_DEBUG
             connectionCount++;
             CROW_LOG_DEBUG << "Connection (" << this << ") allocated, total: " << connectionCount;
@@ -77,6 +78,7 @@ namespace crow
 
         ~Connection()
         {
+            queue_length_--;
 #ifdef CROW_ENABLE_DEBUG
             connectionCount--;
             CROW_LOG_DEBUG << "Connection (" << this << ") freed, total: " << connectionCount;
@@ -111,7 +113,7 @@ namespace crow
         {
             routing_handle_result_ = handler_->handle_initial(req_, res);
             // if no route is found for the request method, return the response without parsing or processing anything further.
-            if (!routing_handle_result_->rule_index)
+            if (!routing_handle_result_->rule_index && !routing_handle_result_->catch_all)
             {
                 parser_.done();
                 need_to_call_after_handlers_ = true;
@@ -128,7 +130,7 @@ namespace crow
                 buffers_.clear();
                 static std::string expect_100_continue = "HTTP/1.1 100 Continue\r\n\r\n";
                 buffers_.emplace_back(expect_100_continue.data(), expect_100_continue.size());
-                do_write();
+                do_write_sync(buffers_);
             }
         }
 
@@ -143,10 +145,8 @@ namespace crow
             ctx_ = detail::context<Middlewares...>();
             req_.middleware_context = static_cast<void*>(&ctx_);
             req_.middleware_container = static_cast<void*>(middlewares_);
-            req_.io_service = &adaptor_.get_io_service();
-
-            req_.remote_ip_address = adaptor_.remote_endpoint().address().to_string();
-
+            req_.io_context = &adaptor_.get_io_context();
+            req_.remote_ip_address = adaptor_.address();
             add_keep_alive_ = req_.keep_alive;
             close_connection_ = req_.close_connection;
 
@@ -160,7 +160,7 @@ namespace crow
                 else if (req_.upgrade)
                 {
                     // h2 or h2c headers
-                    if (req_.get_header_value("upgrade").substr(0, 2) == "h2")
+                    if (req_.get_header_value("upgrade").find("h2")==0)
                     {
                         // TODO(ipkn): HTTP/2
                         // currently, ignore upgrade header
@@ -194,7 +194,6 @@ namespace crow
 
                 if (!res.completed_)
                 {
-                    auto self = this->shared_from_this();
                     res.complete_request_handler_ = [self] {
                         self->complete_request();
                     };
@@ -232,7 +231,7 @@ namespace crow
                   decltype(*middlewares_)>({}, *middlewares_, ctx_, req_, res);
             }
 #ifdef CROW_ENABLE_COMPRESSION
-            if (handler_->compression_used())
+            if (!res.body.empty() && handler_->compression_used())
             {
                 std::string accept_encoding = req_.get_header_value("Accept-Encoding");
                 if (!accept_encoding.empty() && res.compressed)
@@ -259,18 +258,6 @@ namespace crow
                 }
             }
 #endif
-            //if there is a redirection with a partial URL, treat the URL as a route.
-            std::string location = res.get_header_value("Location");
-            if (!location.empty() && location.find("://", 0) == std::string::npos)
-            {
-#ifdef CROW_ENABLE_SSL
-                if (handler_->ssl_used())
-                    location.insert(0, "https://" + req_.get_header_value("Host"));
-                else
-#endif
-                    location.insert(0, "http://" + req_.get_header_value("Host"));
-                res.set_header("location", location);
-            }
 
             prepare_buffers();
 
@@ -296,111 +283,7 @@ namespace crow
                 //delete this;
                 return;
             }
-            // TODO(EDev): HTTP version in status codes should be dynamic
-            // Keep in sync with common.h/status
-            static std::unordered_map<int, std::string> statusCodes = {
-              {status::CONTINUE, "HTTP/1.1 100 Continue\r\n"},
-              {status::SWITCHING_PROTOCOLS, "HTTP/1.1 101 Switching Protocols\r\n"},
-
-              {status::OK, "HTTP/1.1 200 OK\r\n"},
-              {status::CREATED, "HTTP/1.1 201 Created\r\n"},
-              {status::ACCEPTED, "HTTP/1.1 202 Accepted\r\n"},
-              {status::NON_AUTHORITATIVE_INFORMATION, "HTTP/1.1 203 Non-Authoritative Information\r\n"},
-              {status::NO_CONTENT, "HTTP/1.1 204 No Content\r\n"},
-              {status::RESET_CONTENT, "HTTP/1.1 205 Reset Content\r\n"},
-              {status::PARTIAL_CONTENT, "HTTP/1.1 206 Partial Content\r\n"},
-
-              {status::MULTIPLE_CHOICES, "HTTP/1.1 300 Multiple Choices\r\n"},
-              {status::MOVED_PERMANENTLY, "HTTP/1.1 301 Moved Permanently\r\n"},
-              {status::FOUND, "HTTP/1.1 302 Found\r\n"},
-              {status::SEE_OTHER, "HTTP/1.1 303 See Other\r\n"},
-              {status::NOT_MODIFIED, "HTTP/1.1 304 Not Modified\r\n"},
-              {status::TEMPORARY_REDIRECT, "HTTP/1.1 307 Temporary Redirect\r\n"},
-              {status::PERMANENT_REDIRECT, "HTTP/1.1 308 Permanent Redirect\r\n"},
-
-              {status::BAD_REQUEST, "HTTP/1.1 400 Bad Request\r\n"},
-              {status::UNAUTHORIZED, "HTTP/1.1 401 Unauthorized\r\n"},
-              {status::FORBIDDEN, "HTTP/1.1 403 Forbidden\r\n"},
-              {status::NOT_FOUND, "HTTP/1.1 404 Not Found\r\n"},
-              {status::METHOD_NOT_ALLOWED, "HTTP/1.1 405 Method Not Allowed\r\n"},
-              {status::NOT_ACCEPTABLE, "HTTP/1.1 406 Not Acceptable\r\n"},
-              {status::PROXY_AUTHENTICATION_REQUIRED, "HTTP/1.1 407 Proxy Authentication Required\r\n"},
-              {status::CONFLICT, "HTTP/1.1 409 Conflict\r\n"},
-              {status::GONE, "HTTP/1.1 410 Gone\r\n"},
-              {status::PAYLOAD_TOO_LARGE, "HTTP/1.1 413 Payload Too Large\r\n"},
-              {status::UNSUPPORTED_MEDIA_TYPE, "HTTP/1.1 415 Unsupported Media Type\r\n"},
-              {status::RANGE_NOT_SATISFIABLE, "HTTP/1.1 416 Range Not Satisfiable\r\n"},
-              {status::EXPECTATION_FAILED, "HTTP/1.1 417 Expectation Failed\r\n"},
-              {status::PRECONDITION_REQUIRED, "HTTP/1.1 428 Precondition Required\r\n"},
-              {status::TOO_MANY_REQUESTS, "HTTP/1.1 429 Too Many Requests\r\n"},
-              {status::UNAVAILABLE_FOR_LEGAL_REASONS, "HTTP/1.1 451 Unavailable For Legal Reasons\r\n"},
-
-              {status::INTERNAL_SERVER_ERROR, "HTTP/1.1 500 Internal Server Error\r\n"},
-              {status::NOT_IMPLEMENTED, "HTTP/1.1 501 Not Implemented\r\n"},
-              {status::BAD_GATEWAY, "HTTP/1.1 502 Bad Gateway\r\n"},
-              {status::SERVICE_UNAVAILABLE, "HTTP/1.1 503 Service Unavailable\r\n"},
-              {status::GATEWAY_TIMEOUT, "HTTP/1.1 504 Gateway Timeout\r\n"},
-              {status::VARIANT_ALSO_NEGOTIATES, "HTTP/1.1 506 Variant Also Negotiates\r\n"},
-            };
-
-            static const std::string seperator = ": ";
-
-            buffers_.clear();
-            buffers_.reserve(4 * (res.headers.size() + 5) + 3);
-
-            if (!statusCodes.count(res.code))
-            {
-                CROW_LOG_WARNING << this << " status code "
-                                 << "(" << res.code << ")"
-                                 << " not defined, returning 500 instead";
-                res.code = 500;
-            }
-
-            auto& status = statusCodes.find(res.code)->second;
-            buffers_.emplace_back(status.data(), status.size());
-
-            if (res.code >= 400 && res.body.empty())
-                res.body = statusCodes[res.code].substr(9);
-
-            for (auto& kv : res.headers)
-            {
-                buffers_.emplace_back(kv.first.data(), kv.first.size());
-                buffers_.emplace_back(seperator.data(), seperator.size());
-                buffers_.emplace_back(kv.second.data(), kv.second.size());
-                buffers_.emplace_back(crlf.data(), crlf.size());
-            }
-
-            if (!res.manual_length_header && !res.headers.count("content-length"))
-            {
-                content_length_ = std::to_string(res.body.size());
-                static std::string content_length_tag = "Content-Length: ";
-                buffers_.emplace_back(content_length_tag.data(), content_length_tag.size());
-                buffers_.emplace_back(content_length_.data(), content_length_.size());
-                buffers_.emplace_back(crlf.data(), crlf.size());
-            }
-            if (!res.headers.count("server"))
-            {
-                static std::string server_tag = "Server: ";
-                buffers_.emplace_back(server_tag.data(), server_tag.size());
-                buffers_.emplace_back(server_name_.data(), server_name_.size());
-                buffers_.emplace_back(crlf.data(), crlf.size());
-            }
-            if (!res.headers.count("date"))
-            {
-                static std::string date_tag = "Date: ";
-                date_str_ = get_cached_date_str();
-                buffers_.emplace_back(date_tag.data(), date_tag.size());
-                buffers_.emplace_back(date_str_.data(), date_str_.size());
-                buffers_.emplace_back(crlf.data(), crlf.size());
-            }
-            if (add_keep_alive_)
-            {
-                static std::string keep_alive_tag = "Connection: Keep-Alive";
-                buffers_.emplace_back(keep_alive_tag.data(), keep_alive_tag.size());
-                buffers_.emplace_back(crlf.data(), crlf.size());
-            }
-
-            buffers_.emplace_back(crlf.data(), crlf.size());
+            res.write_header_into_buffer(buffers_, content_length_, add_keep_alive_, server_name_);
         }
 
         void do_write_static()
@@ -440,7 +323,7 @@ namespace crow
                 res_body_copy_.swap(res.body);
                 buffers_.emplace_back(res_body_copy_.data(), res_body_copy_.size());
 
-                do_write();
+                do_write_sync(buffers_);
 
                 if (need_to_start_read_after_complete_)
                 {
@@ -456,12 +339,12 @@ namespace crow
                 if (res.body.length() > 0)
                 {
                     std::vector<asio::const_buffer> buffers{1};
-                    const uint8_t *data = reinterpret_cast<const uint8_t*>(res.body.data());
+                    const uint8_t* data = reinterpret_cast<const uint8_t*>(res.body.data());
                     size_t length = res.body.length();
-                    for(size_t transferred = 0; transferred < length;)
+                    for (size_t transferred = 0; transferred < length;)
                     {
-                        size_t to_transfer = CROW_MIN(16384UL, length-transferred);
-                        buffers[0] = asio::const_buffer(data+transferred, to_transfer);
+                        size_t to_transfer = CROW_MIN(16384UL, length - transferred);
+                        buffers[0] = asio::const_buffer(data + transferred, to_transfer);
                         do_write_sync(buffers);
                         transferred += to_transfer;
                     }
@@ -558,19 +441,25 @@ namespace crow
 
         inline void do_write_sync(std::vector<asio::const_buffer>& buffers)
         {
+            error_code ec;
+            asio::write(adaptor_.socket(), buffers, ec);
 
-            asio::write(adaptor_.socket(), buffers, [&](error_code ec, std::size_t) {
-                if (!ec)
-                {
-                    return false;
-                }
-                else
-                {
-                    CROW_LOG_ERROR << ec << " - happened while sending buffers";
-                    CROW_LOG_DEBUG << this << " from write (sync)(2)";
-                    return true;
-                }
-            });
+            this->res.clear();
+            this->res_body_copy_.clear();
+            if (this->continue_requested)
+            {
+                this->continue_requested = false;
+            }
+            else
+            {
+                this->parser_.clear();
+            }
+
+            if (ec)
+            {
+                CROW_LOG_ERROR << ec << " - happened while sending buffers";
+                CROW_LOG_DEBUG << this << " from write (sync)(2)";
+            }
         }
 
         void cancel_deadline_timer()

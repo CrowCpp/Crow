@@ -2,8 +2,8 @@ Here's how you can install Crow on your favorite GNU/Linux distro.
 ## Getting Crow
 
 ### Requirements
- - C++ compiler with at least C++11 support.
- - Asio development headers (1.10.9 or later).
+ - C++ compiler with at least C++17 support.
+ - Asio development headers (1.28 or later, up to 1.30).
  - **(optional)** ZLib for HTTP Compression.
  - **(optional)** OpenSSL for HTTPS support.
  - **(optional)** CMake for building tests, examples, and/or installing Crow.
@@ -48,6 +48,24 @@ You can also download the `crow_all.h` file and simply include that into your pr
     While building you can set:
 	  the `CROW_ENABLE_SSL` variable to enable the support for https
 	  the `CROW_ENABLE_COMPRESSION` variable to enable the support for http compression
+
+!!! note
+
+    By default, Crow sets `CROW_ENABLE_SSL=true` and `CROW_ENABLE_COMPRESSION=true` for CMake builds. You must call `find_package` and manually link with these libraries in your build if you keep these defaults.
+
+
+    ```
+    find_package(OpenSSL REQUIRED)
+    find_package(ZLIB REQUIRED)
+
+    target_link_libraries(main
+        PRIVATE
+        OpenSSL::SSL
+        OpenSSL::Crypto
+        ZLIB::ZLIB
+        Crow::Crow
+    )
+    ```
 
 !!! note
 

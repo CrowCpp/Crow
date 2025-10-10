@@ -3,6 +3,8 @@ name: Build and test
 on:
   push:
     branches: [ "master" ]
+    tags:
+      - "v*"
   pull_request:
     branches: [ "master" ]
 
@@ -12,33 +14,42 @@ env:
 
 jobs:
   build:
-    # The CMake configure and build commands are platform agnostic and should work equally well on Windows or Mac.
-    # You can convert this to a matrix build if you need cross-platform coverage.
-    # See: https://docs.github.com/en/free-pro-team@latest/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: true
       matrix:
-        os: [ ubuntu-latest,
-              windows-latest,
-              macos-latest,
-              ubuntu-20.04,
-              ubuntu-24.04,
-              macos-13
-            ]
-            # ubuntu-18.04 does not work due to compile error on asio
-            # windows-2019 not included to spare free minutes
+        include:
+          - { os: ubuntu-latest, compiler: gcc,   cxx_stdlib: libstdc++, asio_type: boost }
+          - { os: ubuntu-latest, compiler: gcc,   cxx_stdlib: libstdc++, asio_type: standalone }
+          - { os: ubuntu-latest, compiler: clang, cxx_stdlib: libstdc++, asio_type: boost }
+          - { os: ubuntu-latest, compiler: clang, cxx_stdlib: libstdc++, asio_type: standalone }
+          - { os: ubuntu-latest, compiler: clang, cxx_stdlib: libc++,    asio_type: boost }
+          - { os: ubuntu-latest, compiler: clang, cxx_stdlib: libc++,    asio_type: standalone }
+          - { os: ubuntu-22.04,  compiler: gcc,   cxx_stdlib: libstdc++ }
+          - { os: macos-latest,  compiler: clang, cxx_stdlib: libstdc++ }
+          - { os: macos-latest,  compiler: clang, cxx_stdlib: libc++ }
+          - { os: macos-13,      compiler: clang, cxx_stdlib: libc++ }
+          - { os: windows-latest, compiler: msvc, cxx_stdlib: msvc }
+
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v5
     - name: Prepare dependencies
       run: |
          if [ "$RUNNER_OS" == "Linux" ]; then
-              sudo apt-get update && \
-              sudo apt-get install -yq \
-                libasio-dev \
-                libssl-dev zlib1g-dev \
-                cmake \
-                g++ clang
+              sudo apt-get update
+              if [ "${{ matrix.asio_type || 'standalone' }}" == "boost" ]; then
+                  sudo apt-get install -yq \
+                    libboost-all-dev \
+                    libssl-dev zlib1g-dev \
+                    cmake \
+                    g++ clang
+              else
+                  sudo apt-get install -yq \
+                    libasio-dev \
+                    libssl-dev zlib1g-dev \
+                    cmake \
+                    g++ clang
+              fi
          elif [ "$RUNNER_OS" == "Windows" ]; then
               VCPKG_DEFAULT_TRIPLET=x64-windows vcpkg install
          elif [ "$RUNNER_OS" == "macOS" ]; then
@@ -48,6 +59,12 @@ jobs:
               exit 1
          fi
       shell: bash
+
+    - name: Install NSIS
+      if: matrix.os == 'windows-latest'
+      uses: repolevedavaj/install-nsis@v1.1.0
+      with:
+        nsis-version: '3.10'
 
     - name: Configure CMake
       run: |
@@ -68,6 +85,12 @@ jobs:
                   cmake_flags="-DCMAKE_CXX_COMPILER=clang++ -DCMAKE_CXX_FLAGS='-stdlib=libstdc++'"
               else
                   cmake_flags="-DCMAKE_CXX_COMPILER=g++"
+              fi
+
+              if [ "${{ matrix.asio_type || 'standalone' }}" == "boost" ]; then
+                  cmake_flags="${cmake_flags} -DCROW_USE_BOOST=ON"
+              else
+                  cmake_flags="${cmake_flags} -DCROW_USE_BOOST=OFF"
               fi
          fi
 
@@ -93,7 +116,7 @@ jobs:
       shell: bash
 
     - name: Generate coverage report
-      if: matrix.os == 'ubuntu-latest' && matrix.compiler == 'gcc' && matrix.cxx_stdlib == 'libstdc++'
+      if: matrix.os == 'ubuntu-latest' && matrix.compiler == 'gcc' && matrix.cxx_stdlib == 'libstdc++' && matrix.asio_type == 'boost' && !startsWith(github.ref, 'refs/tags/v')
       run: |
         export CI_BRANCH=${GITHUB_BASE_REF:-${GITHUB_REF#refs/heads/}}
         echo "CI_BRANCH=$CI_BRANCH" >> $GITHUB_ENV && \
@@ -107,16 +130,30 @@ jobs:
 
     - name: Save report
       uses: actions/upload-artifact@v4
-      if: matrix.os == 'ubuntu-latest' && matrix.compiler == 'gcc' && matrix.cxx_stdlib == 'libstdc++'
+      if: matrix.os == 'ubuntu-latest' && matrix.compiler == 'gcc' && matrix.cxx_stdlib == 'libstdc++' && matrix.asio_type == 'boost' && !startsWith(github.ref, 'refs/tags/v')
       with:
         name: coveralls.json
         path: coveralls.json
 
+    - name: Package
+      working-directory: ${{github.workspace}}/build
+      run: cmake --build . --target package
 
-    #- name: Package
-    #  working-directory: ${{github.workspace}}/build
-    #  run: |
-    #    cmake --build . --target ALL_BUILD && \
-    #    cmake --build . --target doc && \
-    #    cmake --build . --target package && \
-    #    cpack --config CPackSourceConfig.cmake
+    - name: Generate checksums
+      if: matrix.os == 'ubuntu-latest' && matrix.compiler == 'gcc' && matrix.cxx_stdlib == 'libstdc++' && matrix.asio_type == 'boost' && startsWith(github.ref, 'refs/tags/v')
+      working-directory: ${{github.workspace}}/build
+      run: |
+        for f in Crow-* crow_all.h; do
+          [ -f "$f" ] || continue
+          sha256sum "$f" | awk '{print $1}' > "$f".sha256
+          md5sum "$f"    | awk '{print $1}' > "$f".md5
+        done
+
+    - uses: actions/upload-artifact@v4
+      if: matrix.os == 'ubuntu-latest' && matrix.compiler == 'gcc' && matrix.cxx_stdlib == 'libstdc++' && matrix.asio_type == 'boost' && startsWith(github.ref, 'refs/tags/v')
+      with:
+        name: packages
+        path: |
+          ${{github.workspace}}/build/Crow-*
+          ${{github.workspace}}/build/crow_all.h
+          ${{github.workspace}}/build/crow_all.h.*

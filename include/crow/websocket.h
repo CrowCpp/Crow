@@ -1,5 +1,10 @@
 #pragma once
 #include <array>
+#include <memory>
+#include <optional>
+#include <string>
+#include <thread>
+#include "crow/http_response.h"
 #include "crow/logging.h"
 #include "crow/socket_adaptors.h"
 #include "crow/http_request.h"
@@ -102,38 +107,36 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         /// A websocket connection.
 
         template<typename Adaptor, typename Handler>
-        class Connection : public connection
+        class Connection : public connection, public std::enable_shared_from_this<Connection<Adaptor, Handler>>
         {
         public:
-            /// Constructor for a connection.
-
+            /// Factory for a connection.
             ///
             /// Requires a request with an "Upgrade: websocket" header.<br>
             /// Automatically handles the handshake.
-            Connection(const crow::request& req, Adaptor&& adaptor, Handler* handler,
-                       uint64_t max_payload, const std::vector<std::string>& subprotocols,
-                       std::function<void(crow::websocket::connection&)> open_handler,
-                       std::function<void(crow::websocket::connection&, const std::string&, bool)> message_handler,
-                       std::function<void(crow::websocket::connection&, const std::string&, uint16_t)> close_handler,
-                       std::function<void(crow::websocket::connection&, const std::string&)> error_handler,
-                       std::pair<std::function<void(crow::websocket::connection&, const std::string&)>, uint64_t> receiver_timeout_handler,
-                       std::function<bool(const crow::request&, void**)> accept_handler):
-              adaptor_(std::move(adaptor)),
-              handler_(handler),
-              max_payload_bytes_(max_payload),
-              open_handler_(std::move(open_handler)),
-              message_handler_(std::move(message_handler)),
-              close_handler_(std::move(close_handler)),
-              error_handler_(std::move(error_handler)),
-              timeout_handler_(std::move(receiver_timeout_handler)),
-              accept_handler_(std::move(accept_handler)),
-              task_timer_(adaptor_.get_io_service())
+            static void create(const crow::request& req, Adaptor adaptor, Handler* handler,
+                               uint64_t max_payload, const std::vector<std::string>& subprotocols,
+                               std::function<void(crow::websocket::connection&)> open_handler,
+                               std::function<void(crow::websocket::connection&, const std::string&, bool)> message_handler,
+                               std::function<void(crow::websocket::connection&, const std::string&, uint16_t)> close_handler,
+                               std::function<void(crow::websocket::connection&, const std::string&)> error_handler,
+                               std::pair<std::function<void(crow::websocket::connection&, const std::string&)>, uint64_t> receiver_timeout_handler,
+                               std::function<void(const crow::request&, std::optional<crow::response>&, void**)> accept_handler,
+                               bool mirror_protocols)
             {
+                auto conn = std::shared_ptr<Connection>(new Connection(std::move(adaptor), 
+                                                                       handler, max_payload,
+                                                                       std::move(open_handler), 
+                                                                       std::move(message_handler), 
+                                                                       std::move(close_handler),
+                                                                       std::move(error_handler),
+                                                                       std::move(receiver_timeout_handler),
+                                                                       std::move(accept_handler)));
+                
+                // Perform handshake validation
                 if (!utility::string_equals(req.get_header_value("upgrade"), "websocket"))
                 {
-                    adaptor_.close();
-                    handler_->remove_websocket(this);
-                    delete this;
+                    conn->adaptor_.close();
                     return;
                 }
 
@@ -144,21 +147,33 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                     auto subprotocol = utility::find_first_of(subprotocols.begin(), subprotocols.end(), requested_subprotocols.begin(), requested_subprotocols.end());
                     if (subprotocol != subprotocols.end())
                     {
-                        subprotocol_ = *subprotocol;
+                        conn->subprotocol_ = *subprotocol;
                     }
                 }
 
-                if (accept_handler_)
+                if (mirror_protocols & !requested_subprotocols_header.empty())
+                {
+                    conn->subprotocol_ = requested_subprotocols_header;
+                }
+
+                if (conn->accept_handler_)
                 {
                     void* ud = nullptr;
-                    if (!accept_handler_(req, &ud))
+                    std::optional<crow::response> res;
+                    conn->accept_handler_(req, res, &ud);
+                    if (res)
                     {
-                        adaptor_.close();
-                        handler_->remove_websocket(this);
-                        delete this;
+                        std::vector<asio::const_buffer> buffers;
+                        auto server_name = "";
+                        std::string content_length_buffer;
+                        res->write_header_into_buffer(buffers, content_length_buffer, req.keep_alive, server_name);
+                        buffers.emplace_back(res->body.data(), res->body.size());
+                        error_code ec;
+                        asio::write(conn->adaptor_.socket(), buffers, ec);
+                        conn->adaptor_.close();
                         return;
                     }
-                    userdata(ud);
+                    conn->userdata(ud);
                 }
 
                 // Sec-WebSocket-Key: dGhlIHNhbXBsZSBub25jZQ==
@@ -169,22 +184,11 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                 uint8_t digest[20];
                 s.getDigestBytes(digest);
 
-                start(crow::utility::base64encode((unsigned char*)digest, 20));
+                conn->handler_->add_websocket(conn);
+                conn->start(crow::utility::base64encode((unsigned char*)digest, 20));
             }
 
-            ~Connection() noexcept override
-            {
-                // Do not modify anchor_ here since writing shared_ptr is not atomic.
-                auto watch = std::weak_ptr<void>{anchor_};
-
-                // Wait until all unhandled asynchronous operations to join.
-                // As the deletion occurs inside 'check_destroy()', which already locks
-                //  anchor, use count can be 1 on valid deletion context.
-                while (watch.use_count() > 2) // 1 for 'check_destroy() routine', 1 for 'this->anchor_'
-                {
-                    std::this_thread::yield();
-                }
-            }
+            ~Connection() noexcept override = default;
 
             template<typename Callable>
             struct WeakWrappedMessage
@@ -205,7 +209,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
             template<typename CompletionHandler>
             void dispatch(CompletionHandler&& handler)
             {
-                asio::dispatch(adaptor_.get_io_service(),
+                asio::dispatch(adaptor_.get_io_context(),
                                WeakWrappedMessage<typename std::decay<CompletionHandler>::type>{
                                  std::forward<CompletionHandler>(handler), anchor_});
             }
@@ -214,7 +218,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
             template<typename CompletionHandler>
             void post(CompletionHandler&& handler)
             {
-                asio::post(adaptor_.get_io_service(),
+                asio::post(adaptor_.get_io_context(),
                            WeakWrappedMessage<typename std::decay<CompletionHandler>::type>{
                              std::forward<CompletionHandler>(handler), anchor_});
             }
@@ -276,7 +280,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
 
             std::string get_remote_ip() override
             {
-                return adaptor_.remote_endpoint().address().to_string();
+                return adaptor_.address();
             }
 
             void set_max_payload_size(uint64_t payload)
@@ -736,38 +740,38 @@ namespace crow // NOTE: Already documented in "crow/app.h"
             /// Also destroys the object if the Close flag is set.
             void do_write()
             {
-                if (sending_buffers_.empty())
-                {
-                    sending_buffers_.swap(write_buffers_);
-                    std::vector<asio::const_buffer> buffers;
-                    buffers.reserve(sending_buffers_.size());
-                    for (auto& s : sending_buffers_)
-                    {
-                        buffers.emplace_back(asio::buffer(s));
-                    }
-                    auto watch = std::weak_ptr<void>{anchor_};
-                    asio::async_write(
-                      adaptor_.socket(), buffers,
-                      [&, watch](const error_code& ec, std::size_t /*bytes_transferred*/) {
-                          if (!ec && !close_connection_)
-                          {
-                              sending_buffers_.clear();
-                              if (!write_buffers_.empty())
-                                  do_write();
-                              if (has_sent_close_)
-                                  close_connection_ = true;
-                          }
-                          else
-                          {
-                              auto anchor = watch.lock();
-                              if (anchor == nullptr) { return; }
+                if (write_buffers_.empty()) return;
 
-                              sending_buffers_.clear();
-                              close_connection_ = true;
-                              check_destroy();
-                          }
-                      });
+                sending_buffers_.swap(write_buffers_);
+                std::vector<asio::const_buffer> buffers;
+                buffers.reserve(sending_buffers_.size());
+                for (auto& s : sending_buffers_)
+                {
+                    buffers.emplace_back(asio::buffer(s));
                 }
+                auto watch = std::weak_ptr<void>{anchor_};
+                asio::async_write(
+                    adaptor_.socket(), buffers,
+                    [this, watch](const error_code& ec, std::size_t /*bytes_transferred*/) {
+                        auto anchor = watch.lock();
+                        if (anchor == nullptr)
+                            return;
+
+                        if (!ec && !close_connection_)
+                        {
+                            sending_buffers_.clear();
+                            if (!write_buffers_.empty())
+                                do_write();
+                            if (has_sent_close_)
+                                close_connection_ = true;
+                        }
+                        else
+                        {
+                            sending_buffers_.clear();
+                            close_connection_ = true;
+                            check_destroy();
+                        }
+                    });
             }
 
             /// Destroy the Connection.
@@ -776,11 +780,14 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                 // Note that if the close handler was not yet called at this point we did not receive a close packet (or send one)
                 // and thus we use ClosedAbnormally unless instructed otherwise
                 if (!is_close_handler_called_)
+                {
                     if (close_handler_)
+                    {
                         close_handler_(*this, "uncleanly", code);
-                handler_->remove_websocket(this);
-                if (sending_buffers_.empty() && !is_reading)
-                    delete this;
+                    }
+                }
+
+                handler_->remove_websocket(this->shared_from_this());
             }
 
 
@@ -815,6 +822,22 @@ namespace crow // NOTE: Already documented in "crow/app.h"
             }
 
         private:
+            Connection(Adaptor&& adaptor, Handler* handler, uint64_t max_payload,
+                       std::function<void(crow::websocket::connection&)> open_handler,
+                       std::function<void(crow::websocket::connection&, const std::string&, bool)> message_handler,
+                       std::function<void(crow::websocket::connection&, const std::string&, uint16_t)> close_handler,
+                       std::function<void(crow::websocket::connection&, const std::string&)> error_handler,
+                       std::function<void(const crow::request&, std::optional<crow::response>&, void**)> accept_handler):
+              adaptor_(std::move(adaptor)),
+              handler_(handler),
+              max_payload_bytes_(max_payload),
+              open_handler_(std::move(open_handler)),
+              message_handler_(std::move(message_handler)),
+              close_handler_(std::move(close_handler)),
+              error_handler_(std::move(error_handler)),
+              accept_handler_(std::move(accept_handler))
+            {}
+
             Adaptor adaptor_;
             Handler* handler_;
 
@@ -848,7 +871,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
             std::function<void(crow::websocket::connection&, const std::string&, uint16_t status_code)> close_handler_;
             std::function<void(crow::websocket::connection&, const std::string&)> error_handler_;
             std::pair<std::function<void(crow::websocket::connection&, const std::string&)>, uint64_t> timeout_handler_;
-            std::function<bool(const crow::request&, void**)> accept_handler_;
+            std::function<void(const crow::request&, std::optional<crow::response>&, void**)> accept_handler_;
 
             detail::task_timer task_timer_;
             detail::task_timer::identifier_type task_id_;
