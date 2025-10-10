@@ -243,7 +243,7 @@ namespace crow
         void handle_full(request& req, response& res)
         {
             auto found = handle_initial(req, res);
-            if (found->rule_index)
+            if (found->rule_index || found->catch_all)
                 handle(req, res, found);
         }
 
