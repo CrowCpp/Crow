@@ -159,10 +159,12 @@ template&lt;typename Func &gt; </td></tr>
 template&lt;typename Func &gt; </td></tr>
 <tr class="memitem:a5f80c41d2566bbb0e915b4620401f34f"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classcrow_1_1_web_socket_rule.html">self_t</a> &amp;&#160;</td><td class="memTemplItemRight" valign="bottom"><b>onerror</b> (Func f)</td></tr>
 <tr class="separator:a5f80c41d2566bbb0e915b4620401f34f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a28a36f9503ccafa4b60108dc4748b867" id="r_a28a36f9503ccafa4b60108dc4748b867"><td class="memTemplParams" colspan="2"><a id="a28a36f9503ccafa4b60108dc4748b867" name="a28a36f9503ccafa4b60108dc4748b867"></a>
-template&lt;typename Func &gt; </td></tr>
-<tr class="memitem:a28a36f9503ccafa4b60108dc4748b867"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classcrow_1_1_web_socket_rule.html">self_t</a> &amp;&#160;</td><td class="memTemplItemRight" valign="bottom"><b>onaccept</b> (Func f)</td></tr>
-<tr class="separator:a28a36f9503ccafa4b60108dc4748b867"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5c9bedacdb693641ef92debbf725fe55" id="r_a5c9bedacdb693641ef92debbf725fe55"><td class="memItemLeft" align="right" valign="top"><a id="a5c9bedacdb693641ef92debbf725fe55" name="a5c9bedacdb693641ef92debbf725fe55"></a>
+<a class="el" href="classcrow_1_1_web_socket_rule.html">self_t</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>onaccept</b> (std::function&lt; void(const <a class="el" href="structcrow_1_1request.html">crow::request</a> &amp;, std::optional&lt; <a class="el" href="structcrow_1_1response.html">crow::response</a> &gt; &amp;, void **)&gt; &amp;&amp;callback)</td></tr>
+<tr class="separator:a5c9bedacdb693641ef92debbf725fe55"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa128ca9dee46f1d6246ad0c3d5f389e2" id="r_aa128ca9dee46f1d6246ad0c3d5f389e2"><td class="memItemLeft" align="right" valign="top"><a id="aa128ca9dee46f1d6246ad0c3d5f389e2" name="aa128ca9dee46f1d6246ad0c3d5f389e2"></a>
+<a class="el" href="classcrow_1_1_web_socket_rule.html">self_t</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>onaccept</b> (std::function&lt; bool(const <a class="el" href="structcrow_1_1request.html">crow::request</a> &amp;, void **)&gt; &amp;&amp;callback)</td></tr>
+<tr class="separator:aa128ca9dee46f1d6246ad0c3d5f389e2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a88c782e8f7de236562799b314f88f28f" id="r_a88c782e8f7de236562799b314f88f28f"><td class="memItemLeft" align="right" valign="top"><a id="a88c782e8f7de236562799b314f88f28f" name="a88c782e8f7de236562799b314f88f28f"></a>
 <a class="el" href="classcrow_1_1_web_socket_rule.html">self_t</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>mirrorprotocols</b> (bool mirror_protocols=true)</td></tr>
 <tr class="separator:a88c782e8f7de236562799b314f88f28f"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -207,9 +209,9 @@ std::function&lt; void(<a class="el" href="structcrow_1_1websocket_1_1connection
 <tr class="memitem:ae8d7bf00757eb5727fc5d0eb479cc9df" id="r_ae8d7bf00757eb5727fc5d0eb479cc9df"><td class="memItemLeft" align="right" valign="top"><a id="ae8d7bf00757eb5727fc5d0eb479cc9df" name="ae8d7bf00757eb5727fc5d0eb479cc9df"></a>
 std::function&lt; void(<a class="el" href="structcrow_1_1websocket_1_1connection.html">crow::websocket::connection</a> &amp;, const std::string &amp;)&gt;&#160;</td><td class="memItemRight" valign="bottom"><b>error_handler_</b></td></tr>
 <tr class="separator:ae8d7bf00757eb5727fc5d0eb479cc9df"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a08de36976f908322a8ee86edb4a8ba23" id="r_a08de36976f908322a8ee86edb4a8ba23"><td class="memItemLeft" align="right" valign="top"><a id="a08de36976f908322a8ee86edb4a8ba23" name="a08de36976f908322a8ee86edb4a8ba23"></a>
-std::function&lt; bool(const <a class="el" href="structcrow_1_1request.html">crow::request</a> &amp;, void **)&gt;&#160;</td><td class="memItemRight" valign="bottom"><b>accept_handler_</b></td></tr>
-<tr class="separator:a08de36976f908322a8ee86edb4a8ba23"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5b814faec6570f5b3be680db31c325ca" id="r_a5b814faec6570f5b3be680db31c325ca"><td class="memItemLeft" align="right" valign="top"><a id="a5b814faec6570f5b3be680db31c325ca" name="a5b814faec6570f5b3be680db31c325ca"></a>
+std::function&lt; void(const <a class="el" href="structcrow_1_1request.html">crow::request</a> &amp;, std::optional&lt; <a class="el" href="structcrow_1_1response.html">crow::response</a> &gt; &amp;, void **)&gt;&#160;</td><td class="memItemRight" valign="bottom"><b>accept_handler_</b></td></tr>
+<tr class="separator:a5b814faec6570f5b3be680db31c325ca"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3d6477a52aa5f7db2ae94b747649e146" id="r_a3d6477a52aa5f7db2ae94b747649e146"><td class="memItemLeft" align="right" valign="top"><a id="a3d6477a52aa5f7db2ae94b747649e146" name="a3d6477a52aa5f7db2ae94b747649e146"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><b>mirror_protocols_</b> = false</td></tr>
 <tr class="separator:a3d6477a52aa5f7db2ae94b747649e146"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -477,7 +479,7 @@ template&lt;typename <a class="el" href="namespacecrow.html#a153c1bf24903d1a8629
 			<ul>
 				<li class="navelem"><a class="el" href="namespacecrow.html">crow</a></li><li class="navelem"><a class="el" href="classcrow_1_1_web_socket_rule.html">WebSocketRule</a></li>
 				<li class="footer">
-					Generated on Thu Oct 9 2025 for Crow by <a href="http://www.doxygen.org/index.html">
+					Generated on Fri Oct 10 2025 for Crow by <a href="http://www.doxygen.org/index.html">
 					<img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.9.8.
 					Dark theme by <a href="http://majerle.eu" target="_new">Tilen Majerle</a>. Edited by <a href="https://github.com/The-EDev" target="_new">Farook Al-Sammarraie</a>. All rights reserved.
 				</li>

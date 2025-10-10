@@ -36,7 +36,7 @@ var searchData=
   ['cookieparser_33',['CookieParser',['../structcrow_1_1_cookie_parser.html',1,'crow']]],
   ['corshandler_34',['CORSHandler',['../structcrow_1_1_c_o_r_s_handler.html',1,'crow']]],
   ['corsrules_35',['CORSRules',['../structcrow_1_1_c_o_r_s_rules.html',1,'crow']]],
-  ['create_36',['create',['../classcrow_1_1websocket_1_1_connection.html#ae99df650c42dd012eeeadcaa205ac95a',1,'crow::websocket::Connection']]],
+  ['create_36',['create',['../classcrow_1_1websocket_1_1_connection.html#a5ee031765eeeaa9f96a8ca862a99d687',1,'crow::websocket::Connection']]],
   ['crow_37',['crow',['../namespacecrow.html',1,'crow'],['../classcrow_1_1_crow.html',1,'crow::Crow&lt; Middlewares &gt;'],['../classcrow_1_1_crow.html#abb69a7bf5d4a791a398c838d37086d94',1,'crow::Crow::Crow()']]],
   ['crow_3a_3amultipart_38',['multipart',['../namespacecrow_1_1multipart.html',1,'crow']]],
   ['crow_3a_3amustache_39',['mustache',['../namespacecrow_1_1mustache.html',1,'crow']]],

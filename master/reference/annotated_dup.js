@@ -60,8 +60,8 @@ var annotated_dup =
         [ "multi_value", "structcrow_1_1session_1_1multi__value.html", null ]
       ] ],
       [ "websocket", "namespacecrow_1_1websocket.html", [
-        [ "connection", "structcrow_1_1websocket_1_1connection.html", null ],
-        [ "Connection", "classcrow_1_1websocket_1_1_connection.html", "classcrow_1_1websocket_1_1_connection" ]
+        [ "Connection", "classcrow_1_1websocket_1_1_connection.html", "classcrow_1_1websocket_1_1_connection" ],
+        [ "connection", "structcrow_1_1websocket_1_1connection.html", null ]
       ] ],
       [ "bad_request", "structcrow_1_1bad__request.html", null ],
       [ "BaseRule", "classcrow_1_1_base_rule.html", null ],
