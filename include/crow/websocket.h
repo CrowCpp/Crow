@@ -257,7 +257,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
             /// Sets a flag to destroy the object once the message is sent.
             void close(std::string const& msg, uint16_t status_code) override
             {
-                dispatch([this, msg, status_code]() mutable {
+                dispatch([this, shared_this = this->shared_from_this(), msg, status_code]() mutable {
                     has_sent_close_ = true;
                     if (has_recv_close_ && !is_close_handler_called_)
                     {
@@ -371,7 +371,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                         //asio::async_read(adaptor_.socket(), asio::buffer(&mini_header_, 1),
                         adaptor_.socket().async_read_some(
                           asio::buffer(&mini_header_, 2),
-                          [this](const error_code& ec, std::size_t
+                          [this, shared_this = this->shared_from_this()](const error_code& ec, std::size_t
 #ifdef CROW_ENABLE_DEBUG
                                                                bytes_transferred
 #endif
@@ -439,7 +439,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                         remaining_length16_ = 0;
                         asio::async_read(
                           adaptor_.socket(), asio::buffer(&remaining_length16_, 2),
-                          [this](const error_code& ec, std::size_t
+                          [this, shared_this = this->shared_from_this()](const error_code& ec, std::size_t
 #ifdef CROW_ENABLE_DEBUG
                                                                bytes_transferred
 #endif
@@ -475,7 +475,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                     {
                         asio::async_read(
                           adaptor_.socket(), asio::buffer(&remaining_length_, 8),
-                          [this](const error_code& ec, std::size_t
+                          [this, shared_this = this->shared_from_this()](const error_code& ec, std::size_t
 #ifdef CROW_ENABLE_DEBUG
                                                                bytes_transferred
 #endif
@@ -519,7 +519,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                         {
                             asio::async_read(
                               adaptor_.socket(), asio::buffer((char*)&mask_, 4),
-                              [this](const error_code& ec, std::size_t
+                              [this, shared_this = this->shared_from_this()](const error_code& ec, std::size_t
 #ifdef CROW_ENABLE_DEBUG
                                                                    bytes_transferred
 #endif
@@ -561,7 +561,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                             to_read = remaining_length_;
                         adaptor_.socket().async_read_some(
                           asio::buffer(buffer_, static_cast<std::size_t>(to_read)),
-                          [this](const error_code& ec, std::size_t bytes_transferred) {
+                          [this, shared_this = this->shared_from_this()](const error_code& ec, std::size_t bytes_transferred) {
                               is_reading = false;
 
                               if (!ec)
@@ -728,7 +728,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                 auto watch = std::weak_ptr<void>{anchor_};
                 asio::async_write(
                     adaptor_.socket(), buffers,
-                    [this, watch](const error_code& ec, std::size_t /*bytes_transferred*/) {
+                    [this, shared_this = this->shared_from_this(), watch](const error_code& ec, std::size_t /*bytes_transferred*/) {
                         auto anchor = watch.lock();
                         if (anchor == nullptr)
                             return;
