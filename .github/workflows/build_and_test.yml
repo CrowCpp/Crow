@@ -117,6 +117,7 @@ jobs:
         export CI_BRANCH=${GITHUB_BASE_REF:-${GITHUB_REF#refs/heads/}}
         echo "CI_BRANCH=$CI_BRANCH" >> $GITHUB_ENV && \
         export TRAVIS_JOB_ID=$GITHUB_RUN_NUMBER && \
+        echo git_ref= {{github.ref}}\
         git clone https://github.com/CrowCpp/cpp-coveralls.git && \
         cd cpp-coveralls && \
         pip3 install . --no-input && \
