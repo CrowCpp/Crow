@@ -2017,9 +2017,9 @@ $(document).ready(function(){initNavTree('json_8h_source.html',''); initResizabl
 <div class="line"><a id="l01876" name="l01876"></a><span class="lineno"> 1876</span>                            <span class="keywordflow">if</span> (v.nt == num_type::Double_precision_floating_point)</div>
 <div class="line"><a id="l01877" name="l01877"></a><span class="lineno"> 1877</span>                            {</div>
 <div class="line"><a id="l01878" name="l01878"></a><span class="lineno"> 1878</span><span class="preprocessor">#ifdef _MSC_VER</span></div>
-<div class="line"><a id="l01879" name="l01879"></a><span class="lineno"> 1879</span>                                sprintf_s(outbuf, <span class="keyword">sizeof</span>(outbuf), <span class="stringliteral">&quot;%.*g&quot;</span>, DECIMAL_DIG, v.num.d);</div>
+<div class="line"><a id="l01879" name="l01879"></a><span class="lineno"> 1879</span>                                sprintf_s(outbuf, <span class="keyword">sizeof</span>(outbuf), <span class="stringliteral">&quot;%.*g&quot;</span>, DBL_DECIMAL_DIG, v.num.d);</div>
 <div class="line"><a id="l01880" name="l01880"></a><span class="lineno"> 1880</span><span class="preprocessor">#else</span></div>
-<div class="line"><a id="l01881" name="l01881"></a><span class="lineno"> 1881</span>                                snprintf(outbuf, <span class="keyword">sizeof</span>(outbuf), <span class="stringliteral">&quot;%.*g&quot;</span>, DECIMAL_DIG, v.num.d);</div>
+<div class="line"><a id="l01881" name="l01881"></a><span class="lineno"> 1881</span>                                snprintf(outbuf, <span class="keyword">sizeof</span>(outbuf), <span class="stringliteral">&quot;%.*g&quot;</span>, DBL_DECIMAL_DIG, v.num.d);</div>
 <div class="line"><a id="l01882" name="l01882"></a><span class="lineno"> 1882</span><span class="preprocessor">#endif</span></div>
 <div class="line"><a id="l01883" name="l01883"></a><span class="lineno"> 1883</span>                            }</div>
 <div class="line"><a id="l01884" name="l01884"></a><span class="lineno"> 1884</span>                            <span class="keywordflow">else</span></div>
@@ -2259,7 +2259,7 @@ $(document).ready(function(){initNavTree('json_8h_source.html',''); initResizabl
 			<ul>
 				<li class="navelem"><a class="el" href="dir_d44c64559bbebec7f509842c48db8b23.html">include</a></li><li class="navelem"><a class="el" href="dir_d22c1cb87b72f01e1a7f207eb3bfd1ca.html">crow</a></li><li class="navelem"><b>json.h</b></li>
 				<li class="footer">
-					Generated on Fri Oct 10 2025 for Crow by <a href="http://www.doxygen.org/index.html">
+					Generated on Sun Oct 12 2025 for Crow by <a href="http://www.doxygen.org/index.html">
 					<img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.9.8.
 					Dark theme by <a href="http://majerle.eu" target="_new">Tilen Majerle</a>. Edited by <a href="https://github.com/The-EDev" target="_new">Farook Al-Sammarraie</a>. All rights reserved.
 				</li>
