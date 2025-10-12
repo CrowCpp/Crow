@@ -257,22 +257,22 @@ namespace crow // NOTE: Already documented in "crow/app.h"
             /// Sets a flag to destroy the object once the message is sent.
             void close(std::string const& msg, uint16_t status_code) override
             {
-                dispatch([this, msg, status_code]() mutable {
-                    has_sent_close_ = true;
-                    if (has_recv_close_ && !is_close_handler_called_)
+                dispatch([shared_this = this->shared_from_this(), msg, status_code]() mutable {
+                    shared_this->has_sent_close_ = true;
+                    if (shared_this->has_recv_close_ && !shared_this->is_close_handler_called_)
                     {
-                        is_close_handler_called_ = true;
-                        if (close_handler_)
-                            close_handler_(*this, msg, status_code);
+                        shared_this->is_close_handler_called_ = true;
+                        if (shared_this->close_handler_)
+                            shared_this->close_handler_(*shared_this, msg, status_code);
                     }
-                    auto header = build_header(0x8, msg.size() + 2);
+                    auto header = shared_this->build_header(0x8, msg.size() + 2);
                     char status_buf[2];
                     *(uint16_t*)(status_buf) = htons(status_code);
 
-                    write_buffers_.emplace_back(std::move(header));
-                    write_buffers_.emplace_back(std::string(status_buf, 2));
-                    write_buffers_.emplace_back(msg);
-                    do_write();
+                    shared_this->write_buffers_.emplace_back(std::move(header));
+                    shared_this->write_buffers_.emplace_back(std::string(status_buf, 2));
+                    shared_this->write_buffers_.emplace_back(msg);
+                    shared_this->do_write();
                 });
             }
 
@@ -371,15 +371,15 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                         //asio::async_read(adaptor_.socket(), asio::buffer(&mini_header_, 1),
                         adaptor_.socket().async_read_some(
                           asio::buffer(&mini_header_, 2),
-                          [this](const error_code& ec, std::size_t
+                          [shared_this = this->shared_from_this()](const error_code& ec, std::size_t
 #ifdef CROW_ENABLE_DEBUG
                                                                bytes_transferred
 #endif
                           )
 
                           {
-                              is_reading = false;
-                              mini_header_ = ntohs(mini_header_);
+                              shared_this->is_reading = false;
+                              shared_this->mini_header_ = ntohs(shared_this->mini_header_);
 #ifdef CROW_ENABLE_DEBUG
 
                               if (!ec && bytes_transferred != 2)
@@ -390,45 +390,45 @@ namespace crow // NOTE: Already documented in "crow/app.h"
 
                               if (!ec)
                               {
-                                  if ((mini_header_ & 0x80) == 0x80)
-                                      has_mask_ = true;
+                                  if ((shared_this->mini_header_ & 0x80) == 0x80)
+                                      shared_this->has_mask_ = true;
                                   else //if the websocket specification is enforced and the message isn't masked, terminate the connection
                                   {
 #ifndef CROW_ENFORCE_WS_SPEC
-                                      has_mask_ = false;
+                                      shared_this->has_mask_ = false;
 #else
-                                      close_connection_ = true;
-                                      adaptor_.shutdown_readwrite();
-                                      adaptor_.close();
-                                      if (error_handler_)
-                                          error_handler_(*this, "Client connection not masked.");
-                                      check_destroy(CloseStatusCode::UnacceptableData);
+                                      shared_this->close_connection_ = true;
+                                      shared_this->adaptor_.shutdown_readwrite();
+                                      shared_this->adaptor_.close();
+                                      if (shared_this->error_handler_)
+                                          shared_this->error_handler_(*shared_this, "Client connection not masked.");
+                                      shared_this->check_destroy(CloseStatusCode::UnacceptableData);
 #endif
                                   }
 
-                                  if ((mini_header_ & 0x7f) == 127)
+                                  if ((shared_this->mini_header_ & 0x7f) == 127)
                                   {
-                                      state_ = WebSocketReadState::Len64;
+                                      shared_this->state_ = WebSocketReadState::Len64;
                                   }
-                                  else if ((mini_header_ & 0x7f) == 126)
+                                  else if ((shared_this->mini_header_ & 0x7f) == 126)
                                   {
-                                      state_ = WebSocketReadState::Len16;
+                                      shared_this->state_ = WebSocketReadState::Len16;
                                   }
                                   else
                                   {
-                                      remaining_length_ = mini_header_ & 0x7f;
-                                      state_ = WebSocketReadState::Mask;
+                                      shared_this->remaining_length_ = shared_this->mini_header_ & 0x7f;
+                                      shared_this->state_ = WebSocketReadState::Mask;
                                   }
-                                  do_read();
+                                  shared_this->do_read();
                               }
                               else
                               {
-                                  close_connection_ = true;
-                                  adaptor_.shutdown_readwrite();
-                                  adaptor_.close();
-                                  if (error_handler_)
-                                      error_handler_(*this, ec.message());
-                                  check_destroy();
+                                  shared_this->close_connection_ = true;
+                                  shared_this->adaptor_.shutdown_readwrite();
+                                  shared_this->adaptor_.close();
+                                  if (shared_this->error_handler_)
+                                      shared_this->error_handler_(*shared_this, ec.message());
+                                  shared_this->check_destroy();
                               }
                           });
                     }
@@ -439,14 +439,14 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                         remaining_length16_ = 0;
                         asio::async_read(
                           adaptor_.socket(), asio::buffer(&remaining_length16_, 2),
-                          [this](const error_code& ec, std::size_t
+                          [shared_this = this->shared_from_this()](const error_code& ec, std::size_t
 #ifdef CROW_ENABLE_DEBUG
                                                                bytes_transferred
 #endif
                           ) {
-                              is_reading = false;
-                              remaining_length16_ = ntohs(remaining_length16_);
-                              remaining_length_ = remaining_length16_;
+                              shared_this->is_reading = false;
+                              shared_this->remaining_length16_ = ntohs(shared_this->remaining_length16_);
+                              shared_this->remaining_length_ = shared_this->remaining_length16_;
 #ifdef CROW_ENABLE_DEBUG
                               if (!ec && bytes_transferred != 2)
                               {
@@ -456,17 +456,17 @@ namespace crow // NOTE: Already documented in "crow/app.h"
 
                               if (!ec)
                               {
-                                  state_ = WebSocketReadState::Mask;
-                                  do_read();
+                                  shared_this->state_ = WebSocketReadState::Mask;
+                                  shared_this->do_read();
                               }
                               else
                               {
-                                  close_connection_ = true;
-                                  adaptor_.shutdown_readwrite();
-                                  adaptor_.close();
-                                  if (error_handler_)
-                                      error_handler_(*this, ec.message());
-                                  check_destroy();
+                                  shared_this->close_connection_ = true;
+                                  shared_this->adaptor_.shutdown_readwrite();
+                                  shared_this->adaptor_.close();
+                                  if (shared_this->error_handler_)
+                                      shared_this->error_handler_(*shared_this, ec.message());
+                                  shared_this->check_destroy();
                               }
                           });
                     }
@@ -475,13 +475,13 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                     {
                         asio::async_read(
                           adaptor_.socket(), asio::buffer(&remaining_length_, 8),
-                          [this](const error_code& ec, std::size_t
+                          [shared_this = this->shared_from_this()](const error_code& ec, std::size_t
 #ifdef CROW_ENABLE_DEBUG
                                                                bytes_transferred
 #endif
                           ) {
-                              is_reading = false;
-                              remaining_length_ = ((1 == ntohl(1)) ? (remaining_length_) : (static_cast<uint64_t>(ntohl((remaining_length_)&0xFFFFFFFF)) << 32) | ntohl((remaining_length_) >> 32));
+                              shared_this->is_reading = false;
+                              shared_this->remaining_length_ = ((1 == ntohl(1)) ? (shared_this->remaining_length_) : (static_cast<uint64_t>(ntohl((shared_this->remaining_length_)&0xFFFFFFFF)) << 32) | ntohl((shared_this->remaining_length_) >> 32));
 #ifdef CROW_ENABLE_DEBUG
                               if (!ec && bytes_transferred != 8)
                               {
@@ -491,17 +491,17 @@ namespace crow // NOTE: Already documented in "crow/app.h"
 
                               if (!ec)
                               {
-                                  state_ = WebSocketReadState::Mask;
-                                  do_read();
+                                  shared_this->state_ = WebSocketReadState::Mask;
+                                  shared_this->do_read();
                               }
                               else
                               {
-                                  close_connection_ = true;
-                                  adaptor_.shutdown_readwrite();
-                                  adaptor_.close();
-                                  if (error_handler_)
-                                      error_handler_(*this, ec.message());
-                                  check_destroy();
+                                  shared_this->close_connection_ = true;
+                                  shared_this->adaptor_.shutdown_readwrite();
+                                  shared_this->adaptor_.close();
+                                  if (shared_this->error_handler_)
+                                      shared_this->error_handler_(*shared_this, ec.message());
+                                  shared_this->check_destroy();
                               }
                           });
                     }
@@ -519,12 +519,12 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                         {
                             asio::async_read(
                               adaptor_.socket(), asio::buffer((char*)&mask_, 4),
-                              [this](const error_code& ec, std::size_t
+                              [shared_this = this->shared_from_this()](const error_code& ec, std::size_t
 #ifdef CROW_ENABLE_DEBUG
                                                                    bytes_transferred
 #endif
                               ) {
-                                  is_reading = false;
+                                  shared_this->is_reading = false;
 #ifdef CROW_ENABLE_DEBUG
                                   if (!ec && bytes_transferred != 4)
                                   {
@@ -534,17 +534,17 @@ namespace crow // NOTE: Already documented in "crow/app.h"
 
                                   if (!ec)
                                   {
-                                      state_ = WebSocketReadState::Payload;
-                                      do_read();
+                                      shared_this->state_ = WebSocketReadState::Payload;
+                                      shared_this->do_read();
                                   }
                                   else
                                   {
-                                      close_connection_ = true;
-                                      if (error_handler_)
-                                          error_handler_(*this, ec.message());
-                                      adaptor_.shutdown_readwrite();
-                                      adaptor_.close();
-                                      check_destroy();
+                                      shared_this->close_connection_ = true;
+                                      if (shared_this->error_handler_)
+                                          shared_this->error_handler_(*shared_this, ec.message());
+                                      shared_this->adaptor_.shutdown_readwrite();
+                                      shared_this->adaptor_.close();
+                                      shared_this->check_destroy();
                                   }
                               });
                         }
@@ -561,32 +561,32 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                             to_read = remaining_length_;
                         adaptor_.socket().async_read_some(
                           asio::buffer(buffer_, static_cast<std::size_t>(to_read)),
-                          [this](const error_code& ec, std::size_t bytes_transferred) {
-                              is_reading = false;
+                          [shared_this = this->shared_from_this()](const error_code& ec, std::size_t bytes_transferred) {
+                              shared_this->is_reading = false;
 
                               if (!ec)
                               {
-                                  fragment_.insert(fragment_.end(), buffer_.begin(), buffer_.begin() + bytes_transferred);
-                                  remaining_length_ -= bytes_transferred;
-                                  if (remaining_length_ == 0)
+                                  shared_this->fragment_.insert(shared_this->fragment_.end(), shared_this->buffer_.begin(), shared_this->buffer_.begin() + bytes_transferred);
+                                  shared_this->remaining_length_ -= bytes_transferred;
+                                  if (shared_this->remaining_length_ == 0)
                                   {
-                                      if (handle_fragment())
+                                      if (shared_this->handle_fragment())
                                       {
-                                          state_ = WebSocketReadState::MiniHeader;
-                                          do_read();
+                                          shared_this->state_ = WebSocketReadState::MiniHeader;
+                                          shared_this->do_read();
                                       }
                                   }
                                   else
-                                      do_read();
+                                      shared_this->do_read();
                               }
                               else
                               {
-                                  close_connection_ = true;
-                                  if (error_handler_)
-                                      error_handler_(*this, ec.message());
-                                  adaptor_.shutdown_readwrite();
-                                  adaptor_.close();
-                                  check_destroy();
+                                  shared_this->close_connection_ = true;
+                                  if (shared_this->error_handler_)
+                                      shared_this->error_handler_(*shared_this, ec.message());
+                                  shared_this->adaptor_.shutdown_readwrite();
+                                  shared_this->adaptor_.close();
+                                  shared_this->check_destroy();
                               }
                           });
                     }
@@ -728,24 +728,24 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                 auto watch = std::weak_ptr<void>{anchor_};
                 asio::async_write(
                     adaptor_.socket(), buffers,
-                    [this, watch](const error_code& ec, std::size_t /*bytes_transferred*/) {
+                    [shared_this = this->shared_from_this(), watch](const error_code& ec, std::size_t /*bytes_transferred*/) {
                         auto anchor = watch.lock();
                         if (anchor == nullptr)
                             return;
 
-                        if (!ec && !close_connection_)
+                        if (!ec && !shared_this->close_connection_)
                         {
-                            sending_buffers_.clear();
-                            if (!write_buffers_.empty())
-                                do_write();
-                            if (has_sent_close_)
-                                close_connection_ = true;
+                            shared_this->sending_buffers_.clear();
+                            if (!shared_this->write_buffers_.empty())
+                                shared_this->do_write();
+                            if (shared_this->has_sent_close_)
+                                shared_this->close_connection_ = true;
                         }
                         else
                         {
-                            sending_buffers_.clear();
-                            close_connection_ = true;
-                            check_destroy();
+                            shared_this->sending_buffers_.clear();
+                            shared_this->close_connection_ = true;
+                            shared_this->check_destroy();
                         }
                     });
             }
