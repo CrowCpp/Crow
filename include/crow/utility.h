@@ -855,40 +855,17 @@ namespace crow
             return res;
         }
 
-
-        /// Return a copy of the given string with its
+        /// Return string view of the given string view with its
         /// leading and trailing whitespaces removed.
-        inline static std::string trim(const std::string& v)
-        {
-            if (v.empty())
-                return "";
-
-            size_t begin = 0, end = v.length();
-
-            size_t i;
-            for (i = 0; i < v.length(); i++)
-            {
-                if (!std::isspace(v[i]))
-                {
-                    begin = i;
-                    break;
-                }
+        inline static std::string_view trim(const std::string_view sv) {
+            const size_t first = sv.find_first_not_of(" \t\n\r\f\v"); // same as isspace
+            if (std::string_view::npos == first) {
+                return sv.substr(0, 0);
             }
-
-            if (i == v.length())
-                return "";
-
-            for (i = v.length(); i > 0; i--)
-            {
-                if (!std::isspace(v[i - 1]))
-                {
-                    end = i;
-                    break;
-                }
-            }
-
-            return v.substr(begin, end - begin);
+            const size_t last = sv.find_last_not_of(" \t\n\r\f\v");
+            return sv.substr(first, (last - first + 1));
         }
+
 
         /**
          * @brief splits a string based on a separator

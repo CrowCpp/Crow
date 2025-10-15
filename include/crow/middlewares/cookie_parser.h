@@ -243,15 +243,6 @@ namespace crow
 
             const std::string_view cookies_sv = req.get_header_value("Cookie");
 
-            auto trim_sv = [](const std::string_view sv) -> std::string_view {
-                const size_t first = sv.find_first_not_of(" \t\n\r\f\v"); // same as isspace
-                if (std::string_view::npos == first) {
-                    return sv.substr(0, 0);
-                }
-                const size_t last = sv.find_last_not_of(" \t\n\r\f\v");
-                return sv.substr(first, (last - first + 1));
-            };
-
             size_t pos = 0;
             while (pos < cookies_sv.size())
             {
@@ -261,7 +252,7 @@ namespace crow
                 }
 
                 std::string_view name_sv = cookies_sv.substr(pos, pos_equal - pos);
-                name_sv = trim_sv(name_sv);
+                name_sv = utility::trim(name_sv);
 
                 pos = pos_equal + 1;
                 if (pos == cookies_sv.size()) {
@@ -279,7 +270,7 @@ namespace crow
                      pos = pos_semicolon + 1;
                 }
 
-                value_sv = trim_sv(value_sv);
+                value_sv = utility::trim(value_sv);
 
                 if (!value_sv.empty() && value_sv.front() == '"' && value_sv.back() == '"')
                 {
