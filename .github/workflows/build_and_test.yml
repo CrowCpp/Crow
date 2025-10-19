@@ -28,7 +28,7 @@ jobs:
           - { os: ubuntu-22.04,  compiler: gcc,   cxx_stdlib: libstdc++ }
           - { os: macos-latest,  compiler: clang, cxx_stdlib: libstdc++ }
           - { os: macos-latest,  compiler: clang, cxx_stdlib: libc++ }
-          - { os: macos-13,      compiler: clang, cxx_stdlib: libc++ }
+          - { os: macos-14,      compiler: clang, cxx_stdlib: libc++ }
           - { os: windows-latest, compiler: msvc, cxx_stdlib: msvc }
 
     steps:
