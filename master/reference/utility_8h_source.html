@@ -958,82 +958,59 @@ $(document).ready(function(){initNavTree('utility_8h_source.html',''); initResiz
 <div class="line"><a id="l00854" name="l00854"></a><span class="lineno">  854</span> </div>
 <div class="line"><a id="l00855" name="l00855"></a><span class="lineno">  855</span>            <span class="keywordflow">return</span> res;</div>
 <div class="line"><a id="l00856" name="l00856"></a><span class="lineno">  856</span>        }</div>
-<div class="line"><a id="l00857" name="l00857"></a><span class="lineno">  857</span> </div>
-<div class="line"><a id="l00858" name="l00858"></a><span class="lineno">  858</span><span class="comment"></span> </div>
-<div class="line"><a id="l00859" name="l00859"></a><span class="lineno">  859</span><span class="comment">        /// Return a copy of the given string with its</span></div>
-<div class="line"><a id="l00860" name="l00860"></a><span class="lineno">  860</span><span class="comment">        /// leading and trailing whitespaces removed.</span></div>
-<div class="line"><a id="l00861" name="l00861"></a><span class="lineno">  861</span><span class="comment"></span>        <span class="keyword">inline</span> <span class="keyword">static</span> std::string trim(<span class="keyword">const</span> std::string&amp; v)</div>
-<div class="line"><a id="l00862" name="l00862"></a><span class="lineno">  862</span>        {</div>
-<div class="line"><a id="l00863" name="l00863"></a><span class="lineno">  863</span>            <span class="keywordflow">if</span> (v.empty())</div>
-<div class="line"><a id="l00864" name="l00864"></a><span class="lineno">  864</span>                <span class="keywordflow">return</span> <span class="stringliteral">&quot;&quot;</span>;</div>
-<div class="line"><a id="l00865" name="l00865"></a><span class="lineno">  865</span> </div>
-<div class="line"><a id="l00866" name="l00866"></a><span class="lineno">  866</span>            <span class="keywordtype">size_t</span> begin = 0, end = v.length();</div>
-<div class="line"><a id="l00867" name="l00867"></a><span class="lineno">  867</span> </div>
-<div class="line"><a id="l00868" name="l00868"></a><span class="lineno">  868</span>            <span class="keywordtype">size_t</span> i;</div>
-<div class="line"><a id="l00869" name="l00869"></a><span class="lineno">  869</span>            <span class="keywordflow">for</span> (i = 0; i &lt; v.length(); i++)</div>
-<div class="line"><a id="l00870" name="l00870"></a><span class="lineno">  870</span>            {</div>
-<div class="line"><a id="l00871" name="l00871"></a><span class="lineno">  871</span>                <span class="keywordflow">if</span> (!std::isspace(v[i]))</div>
-<div class="line"><a id="l00872" name="l00872"></a><span class="lineno">  872</span>                {</div>
-<div class="line"><a id="l00873" name="l00873"></a><span class="lineno">  873</span>                    begin = i;</div>
-<div class="line"><a id="l00874" name="l00874"></a><span class="lineno">  874</span>                    <span class="keywordflow">break</span>;</div>
-<div class="line"><a id="l00875" name="l00875"></a><span class="lineno">  875</span>                }</div>
-<div class="line"><a id="l00876" name="l00876"></a><span class="lineno">  876</span>            }</div>
+<div class="line"><a id="l00857" name="l00857"></a><span class="lineno">  857</span><span class="comment"></span> </div>
+<div class="line"><a id="l00858" name="l00858"></a><span class="lineno">  858</span><span class="comment">        /// Return string view of the given string view with its</span></div>
+<div class="line"><a id="l00859" name="l00859"></a><span class="lineno">  859</span><span class="comment">        /// leading and trailing whitespaces removed.</span></div>
+<div class="line"><a id="l00860" name="l00860"></a><span class="lineno">  860</span><span class="comment"></span>        <span class="keyword">inline</span> <span class="keyword">static</span> std::string_view trim(<span class="keyword">const</span> std::string_view sv) {</div>
+<div class="line"><a id="l00861" name="l00861"></a><span class="lineno">  861</span>            <span class="keyword">const</span> <span class="keywordtype">size_t</span> first = sv.find_first_not_of(<span class="stringliteral">&quot; \t\n\r\f\v&quot;</span>); <span class="comment">// same as isspace</span></div>
+<div class="line"><a id="l00862" name="l00862"></a><span class="lineno">  862</span>            <span class="keywordflow">if</span> (std::string_view::npos == first) {</div>
+<div class="line"><a id="l00863" name="l00863"></a><span class="lineno">  863</span>                <span class="keywordflow">return</span> sv.substr(0, 0);</div>
+<div class="line"><a id="l00864" name="l00864"></a><span class="lineno">  864</span>            }</div>
+<div class="line"><a id="l00865" name="l00865"></a><span class="lineno">  865</span>            <span class="keyword">const</span> <span class="keywordtype">size_t</span> last = sv.find_last_not_of(<span class="stringliteral">&quot; \t\n\r\f\v&quot;</span>);</div>
+<div class="line"><a id="l00866" name="l00866"></a><span class="lineno">  866</span>            <span class="keywordflow">return</span> sv.substr(first, (last - first + 1));</div>
+<div class="line"><a id="l00867" name="l00867"></a><span class="lineno">  867</span>        }</div>
+<div class="line"><a id="l00868" name="l00868"></a><span class="lineno">  868</span> </div>
+<div class="line"><a id="l00869" name="l00869"></a><span class="lineno">  869</span><span class="comment"></span> </div>
+<div class="line"><a id="l00870" name="l00870"></a><span class="lineno">  870</span><span class="comment">        /**</span></div>
+<div class="line"><a id="l00871" name="l00871"></a><span class="lineno">  871</span><span class="comment">         * @brief splits a string based on a separator</span></div>
+<div class="line"><a id="l00872" name="l00872"></a><span class="lineno">  872</span><span class="comment">         */</span></div>
+<div class="line"><a id="l00873" name="l00873"></a><span class="lineno">  873</span>        <span class="keyword">inline</span> <span class="keyword">static</span> std::vector&lt;std::string&gt; split(<span class="keyword">const</span> std::string&amp; v, <span class="keyword">const</span> std::string&amp; separator)</div>
+<div class="line"><a id="l00874" name="l00874"></a><span class="lineno">  874</span>        {</div>
+<div class="line"><a id="l00875" name="l00875"></a><span class="lineno">  875</span>            std::vector&lt;std::string&gt; result;</div>
+<div class="line"><a id="l00876" name="l00876"></a><span class="lineno">  876</span>            <span class="keywordtype">size_t</span> startPos = 0;</div>
 <div class="line"><a id="l00877" name="l00877"></a><span class="lineno">  877</span> </div>
-<div class="line"><a id="l00878" name="l00878"></a><span class="lineno">  878</span>            <span class="keywordflow">if</span> (i == v.length())</div>
-<div class="line"><a id="l00879" name="l00879"></a><span class="lineno">  879</span>                <span class="keywordflow">return</span> <span class="stringliteral">&quot;&quot;</span>;</div>
-<div class="line"><a id="l00880" name="l00880"></a><span class="lineno">  880</span> </div>
-<div class="line"><a id="l00881" name="l00881"></a><span class="lineno">  881</span>            <span class="keywordflow">for</span> (i = v.length(); i &gt; 0; i--)</div>
-<div class="line"><a id="l00882" name="l00882"></a><span class="lineno">  882</span>            {</div>
-<div class="line"><a id="l00883" name="l00883"></a><span class="lineno">  883</span>                <span class="keywordflow">if</span> (!std::isspace(v[i - 1]))</div>
-<div class="line"><a id="l00884" name="l00884"></a><span class="lineno">  884</span>                {</div>
-<div class="line"><a id="l00885" name="l00885"></a><span class="lineno">  885</span>                    end = i;</div>
-<div class="line"><a id="l00886" name="l00886"></a><span class="lineno">  886</span>                    <span class="keywordflow">break</span>;</div>
-<div class="line"><a id="l00887" name="l00887"></a><span class="lineno">  887</span>                }</div>
-<div class="line"><a id="l00888" name="l00888"></a><span class="lineno">  888</span>            }</div>
-<div class="line"><a id="l00889" name="l00889"></a><span class="lineno">  889</span> </div>
-<div class="line"><a id="l00890" name="l00890"></a><span class="lineno">  890</span>            <span class="keywordflow">return</span> v.substr(begin, end - begin);</div>
-<div class="line"><a id="l00891" name="l00891"></a><span class="lineno">  891</span>        }</div>
-<div class="line"><a id="l00892" name="l00892"></a><span class="lineno">  892</span><span class="comment"></span> </div>
-<div class="line"><a id="l00893" name="l00893"></a><span class="lineno">  893</span><span class="comment">        /**</span></div>
-<div class="line"><a id="l00894" name="l00894"></a><span class="lineno">  894</span><span class="comment">         * @brief splits a string based on a separator</span></div>
-<div class="line"><a id="l00895" name="l00895"></a><span class="lineno">  895</span><span class="comment">         */</span></div>
-<div class="line"><a id="l00896" name="l00896"></a><span class="lineno">  896</span>        <span class="keyword">inline</span> <span class="keyword">static</span> std::vector&lt;std::string&gt; split(<span class="keyword">const</span> std::string&amp; v, <span class="keyword">const</span> std::string&amp; separator)</div>
-<div class="line"><a id="l00897" name="l00897"></a><span class="lineno">  897</span>        {</div>
-<div class="line"><a id="l00898" name="l00898"></a><span class="lineno">  898</span>            std::vector&lt;std::string&gt; result;</div>
-<div class="line"><a id="l00899" name="l00899"></a><span class="lineno">  899</span>            <span class="keywordtype">size_t</span> startPos = 0;</div>
-<div class="line"><a id="l00900" name="l00900"></a><span class="lineno">  900</span> </div>
-<div class="line"><a id="l00901" name="l00901"></a><span class="lineno">  901</span>            <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> foundPos = v.find(separator); foundPos != std::string::npos; foundPos = v.find(separator, startPos))</div>
-<div class="line"><a id="l00902" name="l00902"></a><span class="lineno">  902</span>            {</div>
-<div class="line"><a id="l00903" name="l00903"></a><span class="lineno">  903</span>                result.push_back(v.substr(startPos, foundPos - startPos));</div>
-<div class="line"><a id="l00904" name="l00904"></a><span class="lineno">  904</span>                startPos = foundPos + separator.size();</div>
+<div class="line"><a id="l00878" name="l00878"></a><span class="lineno">  878</span>            <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> foundPos = v.find(separator); foundPos != std::string::npos; foundPos = v.find(separator, startPos))</div>
+<div class="line"><a id="l00879" name="l00879"></a><span class="lineno">  879</span>            {</div>
+<div class="line"><a id="l00880" name="l00880"></a><span class="lineno">  880</span>                result.push_back(v.substr(startPos, foundPos - startPos));</div>
+<div class="line"><a id="l00881" name="l00881"></a><span class="lineno">  881</span>                startPos = foundPos + separator.size();</div>
+<div class="line"><a id="l00882" name="l00882"></a><span class="lineno">  882</span>            }</div>
+<div class="line"><a id="l00883" name="l00883"></a><span class="lineno">  883</span> </div>
+<div class="line"><a id="l00884" name="l00884"></a><span class="lineno">  884</span>            result.push_back(v.substr(startPos));</div>
+<div class="line"><a id="l00885" name="l00885"></a><span class="lineno">  885</span>            <span class="keywordflow">return</span> result;</div>
+<div class="line"><a id="l00886" name="l00886"></a><span class="lineno">  886</span>        }</div>
+<div class="line"><a id="l00887" name="l00887"></a><span class="lineno">  887</span><span class="comment"></span> </div>
+<div class="line"><a id="l00888" name="l00888"></a><span class="lineno">  888</span><span class="comment">        /**</span></div>
+<div class="line"><a id="l00889" name="l00889"></a><span class="lineno">  889</span><span class="comment">         * @brief Returns the first occurence that matches between two ranges of iterators</span></div>
+<div class="line"><a id="l00890" name="l00890"></a><span class="lineno">  890</span><span class="comment">         * @param first1 begin() iterator of the first range</span></div>
+<div class="line"><a id="l00891" name="l00891"></a><span class="lineno">  891</span><span class="comment">         * @param last1 end() iterator of the first range</span></div>
+<div class="line"><a id="l00892" name="l00892"></a><span class="lineno">  892</span><span class="comment">         * @param first2 begin() iterator of the second range</span></div>
+<div class="line"><a id="l00893" name="l00893"></a><span class="lineno">  893</span><span class="comment">         * @param last2 end() iterator of the second range</span></div>
+<div class="line"><a id="l00894" name="l00894"></a><span class="lineno">  894</span><span class="comment">         * @return first occurence that matches between two ranges of iterators </span></div>
+<div class="line"><a id="l00895" name="l00895"></a><span class="lineno">  895</span><span class="comment">        */</span></div>
+<div class="line"><a id="l00896" name="l00896"></a><span class="lineno">  896</span>        <span class="keyword">template</span>&lt;<span class="keyword">typename</span> Iter1, <span class="keyword">typename</span> Iter2&gt;</div>
+<div class="line"><a id="l00897" name="l00897"></a><span class="lineno">  897</span>        <span class="keyword">inline</span> <span class="keyword">static</span> Iter1 find_first_of(Iter1 first1, Iter1 last1, Iter2 first2, Iter2 last2)</div>
+<div class="line"><a id="l00898" name="l00898"></a><span class="lineno">  898</span>        {</div>
+<div class="line"><a id="l00899" name="l00899"></a><span class="lineno">  899</span>            <span class="keywordflow">for</span> (; first1 != last1; ++first1)</div>
+<div class="line"><a id="l00900" name="l00900"></a><span class="lineno">  900</span>            {</div>
+<div class="line"><a id="l00901" name="l00901"></a><span class="lineno">  901</span>                <span class="keywordflow">if</span> (std::find(first2, last2, *first1) != last2)</div>
+<div class="line"><a id="l00902" name="l00902"></a><span class="lineno">  902</span>                {</div>
+<div class="line"><a id="l00903" name="l00903"></a><span class="lineno">  903</span>                    <span class="keywordflow">return</span> first1;</div>
+<div class="line"><a id="l00904" name="l00904"></a><span class="lineno">  904</span>                }</div>
 <div class="line"><a id="l00905" name="l00905"></a><span class="lineno">  905</span>            }</div>
-<div class="line"><a id="l00906" name="l00906"></a><span class="lineno">  906</span> </div>
-<div class="line"><a id="l00907" name="l00907"></a><span class="lineno">  907</span>            result.push_back(v.substr(startPos));</div>
-<div class="line"><a id="l00908" name="l00908"></a><span class="lineno">  908</span>            <span class="keywordflow">return</span> result;</div>
-<div class="line"><a id="l00909" name="l00909"></a><span class="lineno">  909</span>        }</div>
-<div class="line"><a id="l00910" name="l00910"></a><span class="lineno">  910</span><span class="comment"></span> </div>
-<div class="line"><a id="l00911" name="l00911"></a><span class="lineno">  911</span><span class="comment">        /**</span></div>
-<div class="line"><a id="l00912" name="l00912"></a><span class="lineno">  912</span><span class="comment">         * @brief Returns the first occurence that matches between two ranges of iterators</span></div>
-<div class="line"><a id="l00913" name="l00913"></a><span class="lineno">  913</span><span class="comment">         * @param first1 begin() iterator of the first range</span></div>
-<div class="line"><a id="l00914" name="l00914"></a><span class="lineno">  914</span><span class="comment">         * @param last1 end() iterator of the first range</span></div>
-<div class="line"><a id="l00915" name="l00915"></a><span class="lineno">  915</span><span class="comment">         * @param first2 begin() iterator of the second range</span></div>
-<div class="line"><a id="l00916" name="l00916"></a><span class="lineno">  916</span><span class="comment">         * @param last2 end() iterator of the second range</span></div>
-<div class="line"><a id="l00917" name="l00917"></a><span class="lineno">  917</span><span class="comment">         * @return first occurence that matches between two ranges of iterators </span></div>
-<div class="line"><a id="l00918" name="l00918"></a><span class="lineno">  918</span><span class="comment">        */</span></div>
-<div class="line"><a id="l00919" name="l00919"></a><span class="lineno">  919</span>        <span class="keyword">template</span>&lt;<span class="keyword">typename</span> Iter1, <span class="keyword">typename</span> Iter2&gt;</div>
-<div class="line"><a id="l00920" name="l00920"></a><span class="lineno">  920</span>        <span class="keyword">inline</span> <span class="keyword">static</span> Iter1 find_first_of(Iter1 first1, Iter1 last1, Iter2 first2, Iter2 last2)</div>
-<div class="line"><a id="l00921" name="l00921"></a><span class="lineno">  921</span>        {</div>
-<div class="line"><a id="l00922" name="l00922"></a><span class="lineno">  922</span>            <span class="keywordflow">for</span> (; first1 != last1; ++first1)</div>
-<div class="line"><a id="l00923" name="l00923"></a><span class="lineno">  923</span>            {</div>
-<div class="line"><a id="l00924" name="l00924"></a><span class="lineno">  924</span>                <span class="keywordflow">if</span> (std::find(first2, last2, *first1) != last2)</div>
-<div class="line"><a id="l00925" name="l00925"></a><span class="lineno">  925</span>                {</div>
-<div class="line"><a id="l00926" name="l00926"></a><span class="lineno">  926</span>                    <span class="keywordflow">return</span> first1;</div>
-<div class="line"><a id="l00927" name="l00927"></a><span class="lineno">  927</span>                }</div>
-<div class="line"><a id="l00928" name="l00928"></a><span class="lineno">  928</span>            }</div>
-<div class="line"><a id="l00929" name="l00929"></a><span class="lineno">  929</span>            <span class="keywordflow">return</span> last1;</div>
-<div class="line"><a id="l00930" name="l00930"></a><span class="lineno">  930</span>        }</div>
-<div class="line"><a id="l00931" name="l00931"></a><span class="lineno">  931</span>    } <span class="comment">// namespace utility</span></div>
-<div class="line"><a id="l00932" name="l00932"></a><span class="lineno">  932</span>} <span class="comment">// namespace crow</span></div>
+<div class="line"><a id="l00906" name="l00906"></a><span class="lineno">  906</span>            <span class="keywordflow">return</span> last1;</div>
+<div class="line"><a id="l00907" name="l00907"></a><span class="lineno">  907</span>        }</div>
+<div class="line"><a id="l00908" name="l00908"></a><span class="lineno">  908</span>    } <span class="comment">// namespace utility</span></div>
+<div class="line"><a id="l00909" name="l00909"></a><span class="lineno">  909</span>} <span class="comment">// namespace crow</span></div>
 <div class="ttc" id="anamespacecrow_html"><div class="ttname"><a href="namespacecrow.html">crow</a></div><div class="ttdoc">The main namespace of the library. In this namespace is defined the most important classes and functi...</div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
@@ -1042,7 +1019,7 @@ $(document).ready(function(){initNavTree('utility_8h_source.html',''); initResiz
 			<ul>
 				<li class="navelem"><a class="el" href="dir_d44c64559bbebec7f509842c48db8b23.html">include</a></li><li class="navelem"><a class="el" href="dir_d22c1cb87b72f01e1a7f207eb3bfd1ca.html">crow</a></li><li class="navelem"><b>utility.h</b></li>
 				<li class="footer">
-					Generated on Sun Oct 19 2025 for Crow by <a href="http://www.doxygen.org/index.html">
+					Generated on Sat Oct 25 2025 for Crow by <a href="http://www.doxygen.org/index.html">
 					<img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.9.8.
 					Dark theme by <a href="http://majerle.eu" target="_new">Tilen Majerle</a>. Edited by <a href="https://github.com/The-EDev" target="_new">Farook Al-Sammarraie</a>. All rights reserved.
 				</li>
