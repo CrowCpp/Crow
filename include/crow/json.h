@@ -180,7 +180,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                 }
 
             private:
-                void force(char* s, uint32_t length)
+                void force(char* s, size_t length)
                 {
                     s_ = s;
                     e_ = s_ + length;
@@ -1740,7 +1740,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                 return const_cast<wvalue*>(this)->operator[](index);
             }
 
-            int count(const std::string& str) const
+            size_t count(const std::string& str) const
             {
                 if (t_ != type::Object)
                     return 0;
