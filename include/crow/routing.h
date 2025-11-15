@@ -1316,7 +1316,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
 
             ruleObject->foreach_method([&](int method) {
                 per_methods_[method].rules.emplace_back(ruleObject);
-                per_methods_[method].trie.add(rule, per_methods_[method].rules.size() - 1, BP_index != INVALID_BP_ID ? blueprints[BP_index]->prefix().length() : 0, BP_index);
+                per_methods_[method].trie.add(rule, static_cast<uint16_t>(per_methods_[method].rules.size() - 1), BP_index != INVALID_BP_ID ? static_cast<uint16_t>(blueprints[BP_index]->prefix().length()) : 0, BP_index);
 
                 // directory case:
                 //   request to '/about' url matches '/about/' rule
