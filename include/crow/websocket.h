@@ -716,38 +716,40 @@ namespace crow // NOTE: Already documented in "crow/app.h"
             /// Also destroys the object if the Close flag is set.
             void do_write()
             {
-                if (write_buffers_.empty()) return;
+                if (sending_buffers_.empty()) {
+                    if (write_buffers_.empty()) return;
 
-                sending_buffers_.swap(write_buffers_);
-                std::vector<asio::const_buffer> buffers;
-                buffers.reserve(sending_buffers_.size());
-                for (auto& s : sending_buffers_)
-                {
-                    buffers.emplace_back(asio::buffer(s));
-                }
-                auto watch = std::weak_ptr<void>{anchor_};
-                asio::async_write(
-                    adaptor_.socket(), buffers,
-                    [shared_this = this->shared_from_this(), watch](const error_code& ec, std::size_t /*bytes_transferred*/) {
-                        auto anchor = watch.lock();
-                        if (anchor == nullptr)
-                            return;
+                    sending_buffers_.swap(write_buffers_);
+                    std::vector<asio::const_buffer> buffers;
+                    buffers.reserve(sending_buffers_.size());
+                    for (auto &s: sending_buffers_)
+                    {
+                        buffers.emplace_back(asio::buffer(s));
+                    }
+                    auto watch = std::weak_ptr<void>{anchor_};
+                    asio::async_write(
+                        adaptor_.socket(), buffers,
+                        [shared_this = this->shared_from_this(), watch](const error_code &ec, std::size_t /*bytes_transferred*/) {
+                            auto anchor = watch.lock();
+                            if (anchor == nullptr)
+                                return;
 
-                        if (!ec && !shared_this->close_connection_)
-                        {
-                            shared_this->sending_buffers_.clear();
-                            if (!shared_this->write_buffers_.empty())
-                                shared_this->do_write();
-                            if (shared_this->has_sent_close_)
+                            if (!ec && !shared_this->close_connection_)
+                            {
+                                shared_this->sending_buffers_.clear();
+                                if (!shared_this->write_buffers_.empty())
+                                    shared_this->do_write();
+                                if (shared_this->has_sent_close_)
+                                    shared_this->close_connection_ = true;
+                            }
+                            else
+                            {
+                                shared_this->sending_buffers_.clear();
                                 shared_this->close_connection_ = true;
-                        }
-                        else
-                        {
-                            shared_this->sending_buffers_.clear();
-                            shared_this->close_connection_ = true;
-                            shared_this->check_destroy();
-                        }
-                    });
+                                shared_this->check_destroy();
+                            }
+                        });
+                }
             }
 
             /// Destroy the Connection.
