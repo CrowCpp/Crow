@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <type_traits>
 #include <optional>
+#include <limits>
 
 #include "crow/common.h"
 #include "crow/http_response.h"
@@ -23,7 +24,7 @@
 namespace crow // NOTE: Already documented in "crow/app.h"
 {
 
-    constexpr const size_t INVALID_BP_ID{SIZE_T_MAX};
+    constexpr size_t INVALID_BP_ID{SIZE_MAX};
 
     namespace detail
     {
@@ -718,7 +719,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         std::function<void(crow::request&, crow::response&, Args...)> handler_;
     };
 
-    const int RULE_SPECIAL_REDIRECT_SLASH = 1;
+    constexpr int RULE_SPECIAL_REDIRECT_SLASH = 1;
 
 
     /// A search tree.
@@ -1529,11 +1530,13 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         CatchallRule& get_catch_all(const routing_handle_result& found) {
             std::vector<Blueprint*> bps_found;
             get_found_bp(found.blueprint_indices, blueprints_, bps_found);
-            for (int i = bps_found.size() - 1; i > 0; i--)
-            {
-                std::vector<uint16_t> bpi = found.blueprint_indices;
-                if (bps_found[i]->catchall_rule().has_handler()) {
-                    return bps_found[i]->catchall_rule();
+            if (!bps_found.empty()) {
+                for (size_t i = bps_found.size() - 1; i > 0; i--)
+                {
+                    std::vector<uint16_t> bpi = found.blueprint_indices;
+                    if (bps_found[i]->catchall_rule().has_handler()) {
+                        return bps_found[i]->catchall_rule();
+                    }
                 }
             }
             return catchall_rule_;
@@ -1545,25 +1548,25 @@ namespace crow // NOTE: Already documented in "crow/app.h"
 
             std::vector<Blueprint*> bps_found;
             get_found_bp(found.blueprint_indices, blueprints_, bps_found);
-            for (int i = bps_found.size() - 1; i > 0; i--)
-            {
-                std::vector<uint16_t> bpi = found.blueprint_indices;
-                if (bps_found[i]->catchall_rule().has_handler())
-                {
+            if (!bps_found.empty()) {
+                for (size_t i = bps_found.size() - 1; i > 0; i--) {
+                    std::vector<uint16_t> bpi = found.blueprint_indices;
+                    if (bps_found[i]->catchall_rule().has_handler()) {
 #ifdef CROW_ENABLE_DEBUG
-                    return std::string("Redirected to Blueprint \"" + bps_found[i]->prefix() + "\" Catchall rule");
+                        return std::string("Redirected to Blueprint \"" + bps_found[i]->prefix() + "\" Catchall rule");
+#else
+                        return EMPTY;
+#endif
+                    }
+                }
+                if (catchall_rule_.has_handler()) {
+#ifdef CROW_ENABLE_DEBUG
+                    return std::string("Redirected to global Catchall rule");
 #else
                     return EMPTY;
 #endif
                 }
-            }
-            if (catchall_rule_.has_handler())
-            {
-#ifdef CROW_ENABLE_DEBUG
-                return std::string("Redirected to global Catchall rule");
-#else
-                return EMPTY;
-#endif
+
             }
             return EMPTY;
         }
