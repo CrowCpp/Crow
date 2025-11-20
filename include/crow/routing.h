@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdint>
+#include <limits>
 #include <utility>
 #include <tuple>
 #include <unordered_map>
@@ -23,7 +24,7 @@
 namespace crow // NOTE: Already documented in "crow/app.h"
 {
 
-    constexpr const uint16_t INVALID_BP_ID{((uint16_t)-1)};
+    constexpr size_t INVALID_BP_ID{SIZE_MAX};
 
     namespace detail
     {
@@ -718,7 +719,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         std::function<void(crow::request&, crow::response&, Args...)> handler_;
     };
 
-    const int RULE_SPECIAL_REDIRECT_SLASH = 1;
+    constexpr size_t RULE_SPECIAL_REDIRECT_SLASH = 1;
 
 
     /// A search tree.
@@ -727,9 +728,9 @@ namespace crow // NOTE: Already documented in "crow/app.h"
     public:
         struct Node
         {
-            uint16_t rule_index{};
+            size_t rule_index{};
             // Assign the index to the maximum 32 unsigned integer value by default so that any other number (specifically 0) is a valid BP id.
-            uint16_t blueprint_index{INVALID_BP_ID};
+            size_t blueprint_index{INVALID_BP_ID};
             std::string key;
             ParamType param = ParamType::MAX; // MAX = No param.
             std::vector<Node> children;
@@ -852,19 +853,19 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         }
 
         //Rule_index, Blueprint_index, routing_params
-        routing_handle_result find(const std::string& req_url, const Node& node, unsigned pos = 0, routing_params* params = nullptr, std::vector<uint16_t>* blueprints = nullptr) const
+        routing_handle_result find(const std::string& req_url, const Node& node, size_t pos = 0, routing_params* params = nullptr, std::vector<size_t>* blueprints = nullptr) const
         {
             //start params as an empty struct
             routing_params empty;
             if (params == nullptr)
                 params = &empty;
             //same for blueprint vector
-            std::vector<uint16_t> MT;
+            std::vector<size_t> MT;
             if (blueprints == nullptr)
                 blueprints = &MT;
 
-            uint16_t found{};               //The rule index to be found
-            std::vector<uint16_t> found_BP; //The Blueprint indices to be found
+            size_t found{};               //The rule index to be found
+            std::vector<size_t> found_BP; //The Blueprint indices to be found
             routing_params match_params;    //supposedly the final matched parameters
 
             auto update_found = [&found, &found_BP, &match_params](routing_handle_result& ret) {
@@ -1016,7 +1017,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         }
 
         //This functions assumes any blueprint info passed is valid
-        void add(const std::string& url, uint16_t rule_index, unsigned bp_prefix_length = 0, uint16_t blueprint_index = INVALID_BP_ID)
+        void add(const std::string& url, size_t rule_index, unsigned bp_prefix_length = 0, size_t blueprint_index = INVALID_BP_ID)
         {
             auto idx = &head_;
 
@@ -1301,7 +1302,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
             internal_add_rule_object(rule, ruleObject, INVALID_BP_ID, blueprints_);
         }
 
-        void internal_add_rule_object(const std::string& rule, BaseRule* ruleObject, const uint16_t& BP_index, std::vector<Blueprint*>& blueprints)
+        void internal_add_rule_object(const std::string& rule, BaseRule* ruleObject, const size_t& BP_index, std::vector<Blueprint*>& blueprints)
         {
             bool has_trailing_slash = false;
             std::string rule_without_trailing_slash;
@@ -1434,7 +1435,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
 
             auto& per_method = per_methods_[static_cast<int>(req.method)];
             auto& rules = per_method.rules;
-            unsigned rule_index = per_method.trie.find(req.url).rule_index;
+            size_t rule_index = per_method.trie.find(req.url).rule_index;
 
             if (!rule_index)
             {
@@ -1483,7 +1484,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
             }
         }
 
-        void get_found_bp(const std::vector<uint16_t>& bp_i, const std::vector<Blueprint*>& blueprints, std::vector<Blueprint*>& found_bps, uint16_t index = 0)
+        void get_found_bp(const std::vector<size_t>& bp_i, const std::vector<Blueprint*>& blueprints, std::vector<Blueprint*>& found_bps, size_t index = 0)
         {
             // This statement makes 3 assertions:
             // 1. The index is above 0.
@@ -1529,7 +1530,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
             get_found_bp(found.blueprint_indices, blueprints_, bps_found);
             for (int i = bps_found.size() - 1; i > 0; i--)
             {
-                std::vector<uint16_t> bpi = found.blueprint_indices;
+                std::vector<size_t> bpi = found.blueprint_indices;
                 if (bps_found[i]->catchall_rule().has_handler()) {
                     return bps_found[i]->catchall_rule();
                 }
@@ -1545,7 +1546,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
             get_found_bp(found.blueprint_indices, blueprints_, bps_found);
             for (int i = bps_found.size() - 1; i > 0; i--)
             {
-                std::vector<uint16_t> bpi = found.blueprint_indices;
+                std::vector<size_t> bpi = found.blueprint_indices;
                 if (bps_found[i]->catchall_rule().has_handler())
                 {
 #ifdef CROW_ENABLE_DEBUG
@@ -1573,7 +1574,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
             std::unique_ptr<routing_handle_result> found{
               new routing_handle_result(
                 0,
-                std::vector<uint16_t>(),
+                std::vector<size_t>(),
                 routing_params(),
                 HTTPMethod::InternalMethodCount)}; // This is always returned to avoid a null pointer dereference.
 
@@ -1715,7 +1716,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
             } else {
                 HTTPMethod method_actual = found.method;
                 const auto& rules = per_methods_[static_cast<int>(method_actual)].rules;
-                const unsigned rule_index = found.rule_index;
+                const size_t rule_index = found.rule_index;
 
                 if (rule_index >= rules.size())
                     throw std::runtime_error("Trie internal structure corrupted!");

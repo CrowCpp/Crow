@@ -280,19 +280,19 @@ namespace crow
     struct routing_handle_result
     {
         bool catch_all{false};
-        uint16_t rule_index;
-        std::vector<uint16_t> blueprint_indices;
+        size_t rule_index;
+        std::vector<size_t> blueprint_indices;
         routing_params r_params;
         HTTPMethod method;
 
         routing_handle_result() {}
 
-        routing_handle_result(uint16_t rule_index_, std::vector<uint16_t> blueprint_indices_, routing_params r_params_):
+        routing_handle_result(size_t rule_index_, std::vector<size_t> blueprint_indices_, routing_params r_params_):
           rule_index(rule_index_),
           blueprint_indices(blueprint_indices_),
           r_params(r_params_) {}
 
-        routing_handle_result(uint16_t rule_index_, std::vector<uint16_t> blueprint_indices_, routing_params r_params_, HTTPMethod method_):
+        routing_handle_result(size_t rule_index_, std::vector<size_t> blueprint_indices_, routing_params r_params_, HTTPMethod method_):
           rule_index(rule_index_),
           blueprint_indices(blueprint_indices_),
           r_params(r_params_),
