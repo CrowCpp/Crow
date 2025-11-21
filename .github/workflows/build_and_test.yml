@@ -32,7 +32,7 @@ jobs:
           - { os: windows-latest, compiler: msvc, cxx_stdlib: msvc }
 
     steps:
-    - uses: actions/checkout@v5
+    - uses: actions/checkout@v6
     - name: Prepare dependencies
       run: |
          if [ "$RUNNER_OS" == "Linux" ]; then
