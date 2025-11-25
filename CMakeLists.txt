@@ -11,8 +11,6 @@ project(Crow
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/CPM.cmake)
-
 # Make sure Findasio.cmake module is found
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
@@ -255,6 +253,7 @@ endif()
 
 # Tests
 if(CROW_BUILD_TESTS)
+  include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/CPM.cmake)
 
   add_subdirectory(tests)
   enable_testing()
