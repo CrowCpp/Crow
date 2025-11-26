@@ -58,6 +58,10 @@ option(CROW_RETURNS_OK_ON_HTTP_OPTIONS_REQUEST
 option(CROW_ENABLE_SSL "Enable Crow's SSL feature for supporting https" OFF)
 option(CROW_ENABLE_COMPRESSION "Enable Crow's Compression feature for supporting compressed http content" OFF)
 
+if(CROW_GENERATE_SBOM OR CROW_BUILD_TESTS)
+	include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/CPM.cmake)
+endif ()
+
 if(CROW_GENERATE_SBOM)
   CPMAddPackage(
     NAME cmake-sbom
@@ -253,7 +257,6 @@ endif()
 
 # Tests
 if(CROW_BUILD_TESTS)
-  include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/CPM.cmake)
 
   add_subdirectory(tests)
   enable_testing()
