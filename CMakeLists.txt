@@ -11,8 +11,6 @@ project(Crow
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/CPM.cmake)
-
 # Make sure Findasio.cmake module is found
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
@@ -59,6 +57,10 @@ option(CROW_RETURNS_OK_ON_HTTP_OPTIONS_REQUEST
 
 option(CROW_ENABLE_SSL "Enable Crow's SSL feature for supporting https" OFF)
 option(CROW_ENABLE_COMPRESSION "Enable Crow's Compression feature for supporting compressed http content" OFF)
+
+if(CROW_GENERATE_SBOM OR CROW_BUILD_TESTS)
+	include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/CPM.cmake)
+endif ()
 
 if(CROW_GENERATE_SBOM)
   CPMAddPackage(
