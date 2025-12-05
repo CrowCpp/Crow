@@ -651,3 +651,24 @@ TEST_CASE("SmallNumber #1042", "[json]")
     const auto expected_text ="{\n    \"testValue\": 1e-10\n}";
     REQUIRE(text==expected_text);
 }
+
+TEST_CASE("compare", "[json]")
+{
+    auto data = crow::json::load(R"-({
+    "int": 4,
+    "int64": 1099511627776,
+    "double": 4.5,
+    "bool": true,
+    "string": "test"
+})-");
+    CHECK(data["int"] == 4);
+    CHECK(data["int"] != 5);
+    CHECK(data["int64"] == 1099511627776);
+    CHECK(data["int64"] != 1099511627777);
+    CHECK(data["double"] == 4.5);
+    CHECK(data["double"] != 4.7);
+    CHECK(data["bool"] == true);
+    CHECK(data["bool"] != false);
+    CHECK(data["string"] == "test");
+    CHECK(data["string"] != "test6");
+}
