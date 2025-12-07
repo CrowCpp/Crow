@@ -385,19 +385,19 @@ $(document).ready(function(){initNavTree('common_8h_source.html',''); initResiza
 <div class="line"><a id="l00280" name="l00280"></a><span class="lineno"><a class="line" href="structcrow_1_1routing__handle__result.html">  280</a></span>    <span class="keyword">struct </span><a class="code hl_struct" href="structcrow_1_1routing__handle__result.html">routing_handle_result</a></div>
 <div class="line"><a id="l00281" name="l00281"></a><span class="lineno">  281</span>    {</div>
 <div class="line"><a id="l00282" name="l00282"></a><span class="lineno">  282</span>        <span class="keywordtype">bool</span> catch_all{<span class="keyword">false</span>};</div>
-<div class="line"><a id="l00283" name="l00283"></a><span class="lineno">  283</span>        uint16_t rule_index;</div>
-<div class="line"><a id="l00284" name="l00284"></a><span class="lineno">  284</span>        std::vector&lt;uint16_t&gt; blueprint_indices;</div>
+<div class="line"><a id="l00283" name="l00283"></a><span class="lineno">  283</span>        <span class="keywordtype">size_t</span> rule_index;</div>
+<div class="line"><a id="l00284" name="l00284"></a><span class="lineno">  284</span>        std::vector&lt;size_t&gt; blueprint_indices;</div>
 <div class="line"><a id="l00285" name="l00285"></a><span class="lineno">  285</span>        routing_params r_params;</div>
 <div class="line"><a id="l00286" name="l00286"></a><span class="lineno">  286</span>        HTTPMethod method;</div>
 <div class="line"><a id="l00287" name="l00287"></a><span class="lineno">  287</span> </div>
 <div class="line"><a id="l00288" name="l00288"></a><span class="lineno">  288</span>        <a class="code hl_struct" href="structcrow_1_1routing__handle__result.html">routing_handle_result</a>() {}</div>
 <div class="line"><a id="l00289" name="l00289"></a><span class="lineno">  289</span> </div>
-<div class="line"><a id="l00290" name="l00290"></a><span class="lineno">  290</span>        <a class="code hl_struct" href="structcrow_1_1routing__handle__result.html">routing_handle_result</a>(uint16_t rule_index_, std::vector&lt;uint16_t&gt; blueprint_indices_, routing_params r_params_):</div>
+<div class="line"><a id="l00290" name="l00290"></a><span class="lineno">  290</span>        <a class="code hl_struct" href="structcrow_1_1routing__handle__result.html">routing_handle_result</a>(<span class="keywordtype">size_t</span> rule_index_, std::vector&lt;size_t&gt; blueprint_indices_, routing_params r_params_):</div>
 <div class="line"><a id="l00291" name="l00291"></a><span class="lineno">  291</span>          rule_index(rule_index_),</div>
 <div class="line"><a id="l00292" name="l00292"></a><span class="lineno">  292</span>          blueprint_indices(blueprint_indices_),</div>
 <div class="line"><a id="l00293" name="l00293"></a><span class="lineno">  293</span>          r_params(r_params_) {}</div>
 <div class="line"><a id="l00294" name="l00294"></a><span class="lineno">  294</span> </div>
-<div class="line"><a id="l00295" name="l00295"></a><span class="lineno">  295</span>        <a class="code hl_struct" href="structcrow_1_1routing__handle__result.html">routing_handle_result</a>(uint16_t rule_index_, std::vector&lt;uint16_t&gt; blueprint_indices_, routing_params r_params_, HTTPMethod method_):</div>
+<div class="line"><a id="l00295" name="l00295"></a><span class="lineno">  295</span>        <a class="code hl_struct" href="structcrow_1_1routing__handle__result.html">routing_handle_result</a>(<span class="keywordtype">size_t</span> rule_index_, std::vector&lt;size_t&gt; blueprint_indices_, routing_params r_params_, HTTPMethod method_):</div>
 <div class="line"><a id="l00296" name="l00296"></a><span class="lineno">  296</span>          rule_index(rule_index_),</div>
 <div class="line"><a id="l00297" name="l00297"></a><span class="lineno">  297</span>          blueprint_indices(blueprint_indices_),</div>
 <div class="line"><a id="l00298" name="l00298"></a><span class="lineno">  298</span>          r_params(r_params_),</div>

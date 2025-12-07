@@ -18,7 +18,7 @@ var searchData=
   ['check_5fglobal_5fcall_5ffalse_15',['check_global_call_false',['../structcrow_1_1detail_1_1check__global__call__false.html',1,'crow::detail']]],
   ['ci_5fhash_16',['ci_hash',['../structcrow_1_1ci__hash.html',1,'crow']]],
   ['ci_5fkey_5feq_17',['ci_key_eq',['../structcrow_1_1ci__key__eq.html',1,'crow']]],
-  ['connection_18',['connection',['../classcrow_1_1_connection.html',1,'crow::Connection&lt; Adaptor, Handler, Middlewares &gt;'],['../classcrow_1_1websocket_1_1_connection.html',1,'crow::websocket::Connection&lt; Adaptor, Handler &gt;'],['../structcrow_1_1websocket_1_1connection.html',1,'crow::websocket::connection']]],
+  ['connection_18',['connection',['../classcrow_1_1_connection.html',1,'crow::Connection&lt; Adaptor, Handler, Middlewares &gt;'],['../structcrow_1_1websocket_1_1connection.html',1,'crow::websocket::connection'],['../classcrow_1_1websocket_1_1_connection.html',1,'crow::websocket::Connection&lt; Adaptor, Handler &gt;']]],
   ['context_19',['context',['../structcrow_1_1_cookie_parser_1_1context.html',1,'crow::CookieParser::context'],['../structcrow_1_1_c_o_r_s_handler_1_1context.html',1,'crow::CORSHandler::context'],['../structcrow_1_1detail_1_1context.html',1,'crow::detail::context&lt; Middlewares &gt;'],['../structcrow_1_1_session_middleware_1_1context.html',1,'crow::SessionMiddleware&lt; Store &gt;::context'],['../structcrow_1_1_u_t_f8_1_1context.html',1,'crow::UTF8::context']]],
   ['context_3c_20middlewares_2e_2e_2e_20_3e_20',['context&lt; Middlewares... &gt;',['../structcrow_1_1detail_1_1context.html',1,'crow::detail']]],
   ['cookie_21',['Cookie',['../structcrow_1_1_cookie_parser_1_1_cookie.html',1,'crow::CookieParser']]],
