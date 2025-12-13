@@ -135,7 +135,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         }
 #endif
 
-        uint32_t get_methods()
+        uint32_t get_methods() const
         {
             return methods_;
         }
