@@ -129,7 +129,7 @@ jobs:
       shell: bash
 
     - name: Save report
-      uses: actions/upload-artifact@v5
+      uses: actions/upload-artifact@v6
       if: matrix.os == 'ubuntu-latest' && matrix.compiler == 'gcc' && matrix.cxx_stdlib == 'libstdc++' && matrix.asio_type == 'boost' && !startsWith(github.ref, 'refs/tags/v')
       with:
         name: coveralls.json
@@ -149,7 +149,7 @@ jobs:
           md5sum "$f"    | awk '{print $1}' > "$f".md5
         done
 
-    - uses: actions/upload-artifact@v5
+    - uses: actions/upload-artifact@v6
       if: matrix.os == 'ubuntu-latest' && matrix.compiler == 'gcc' && matrix.cxx_stdlib == 'libstdc++' && matrix.asio_type == 'boost' && startsWith(github.ref, 'refs/tags/v')
       with:
         name: packages
