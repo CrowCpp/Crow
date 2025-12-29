@@ -20,15 +20,16 @@ namespace crow // NOTE: Already documented in "crow/app.h"
 #endif
 
     /// Find and return the value associated with the key. (returns an empty string if nothing is found)
-    template<typename T>
-    inline const std::string& get_header_value(const T& headers, const std::string& key)
+    inline const std::string& get_header_value(const ci_map& headers, const std::string& key)
     {
-        if (headers.count(key))
-        {
-            return headers.find(key)->second;
+        static const std::string EMPTY;
+        const auto it = headers.find(key);
+        if (it != headers.end()) {
+            return it->second;
         }
-        static std::string empty;
-        return empty;
+        else {
+            return EMPTY;
+        }
     }
 
     /// An HTTP request.
