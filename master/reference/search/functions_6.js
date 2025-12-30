@@ -5,7 +5,7 @@ var searchData=
   ['get_5fdefault_5ftimeout_2',['get_default_timeout',['../classcrow_1_1detail_1_1task__timer.html#a2ee666f7730756b42c8e904e2c968350',1,'crow::detail::task_timer']]],
   ['get_5fdict_3',['get_dict',['../classcrow_1_1query__string.html#a790795a2524ca99fcab929794d9108f1',1,'crow::query_string']]],
   ['get_5fheader_5fobject_4',['get_header_object',['../namespacecrow_1_1multipart.html#a0f1be9cb3ce9e5ebed1a68465d7c13f9',1,'crow::multipart::get_header_object(const T &amp;headers, const std::string &amp;key)'],['../namespacecrow_1_1multipart.html#aa36eb3882474a45133541c2c81fa059a',1,'crow::multipart::get_header_object(const mph_view_map &amp;headers, const std::string_view key)']]],
-  ['get_5fheader_5fvalue_5',['get_header_value',['../namespacecrow.html#a28cea0cb8e934bf4c6ee5250f10f2ef7',1,'crow']]],
+  ['get_5fheader_5fvalue_5',['get_header_value',['../namespacecrow.html#a88064857f10f96ac9bf075e19624ee4d',1,'crow']]],
   ['get_5fheader_5fvalue_5fobject_6',['get_header_value_object',['../namespacecrow_1_1multipart.html#a0319ef6ff161bdbb52b6de9580fe9a72',1,'crow::multipart']]],
   ['get_5flist_7',['get_list',['../classcrow_1_1query__string.html#abf0bd4e7c262f52ab79b97f6217bb2b3',1,'crow::query_string']]],
   ['get_5fsubprotocol_8',['get_subprotocol',['../classcrow_1_1websocket_1_1_connection.html#a5e2427132ac75808a9e38c6ccaeae94a',1,'crow::websocket::Connection']]],
