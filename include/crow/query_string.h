@@ -15,9 +15,6 @@ namespace crow
 // qs_parse (modified)
 // https://github.com/bartgrantham/qs_parse
 // ----------------------------------------------------------------------------
-/*  Similar to strncmp, but handles URL-encoding for either string  */
-int qs_strncmp(const char* s, const char* qs, size_t n);
-
 
 /*  Finds the beginning of each key/value pair and stores a pointer in qs_kv.
  *  Also decodes the value portion of the k/v pair *in-place*.  In a future
@@ -49,11 +46,11 @@ char * qs_scanvalue(const char * key, const char * qs, char * val, size_t val_le
 #define CROW_QS_HEX2DEC(x)  (((x)>='0'&&(x)<='9') ? (x)-48 : ((x)>='A'&&(x)<='F') ? (x)-55 : ((x)>='a'&&(x)<='f') ? (x)-87 : 0)
 #define CROW_QS_ISQSCHR(x) ((((x)=='=')||((x)=='#')||((x)=='&')||((x)=='\0')) ? 0 : 1)
 
-inline int qs_strncmp(const char * s, const char * qs, size_t n)
+/*  Similar to strncmp, but handles URL-encoding for either string  */
+inline int qs_strncmp(const char * s, const char * qs, size_t qs_len)
 {
     unsigned char u1, u2, unyb, lnyb;
-
-    while(n-- > 0)
+    while(qs_len-- > 0)
     {
         u1 = static_cast<unsigned char>(*s++);
         u2 = static_cast<unsigned char>(*qs++);
@@ -143,20 +140,26 @@ inline size_t qs_parse(char* qs, char* qs_kv[], size_t qs_kv_size, bool parse_ur
 
 inline int qs_decode(char * qs)
 {
-    int i=0, j=0;
+    int i=0;
+    size_t j=0;
 
+    const size_t qs_len = strlen(qs);
     while( CROW_QS_ISQSCHR(qs[j]) )
     {
         if ( qs[j] == '+' ) {  qs[i] = ' ';  }
         else if ( qs[j] == '%' ) // easier/safer than scanf
         {
-            if ( ! CROW_QS_ISHEX(qs[j+1]) || ! CROW_QS_ISHEX(qs[j+2]) )
+            if ( (j >= qs_len-2) || ! CROW_QS_ISHEX(qs[j+1]) || ! CROW_QS_ISHEX(qs[j+2]) )
             {
+                // in case of error we end the string
                 qs[i] = '\0';
                 return i;
             }
-            qs[i] = (CROW_QS_HEX2DEC(qs[j+1]) * 16) + CROW_QS_HEX2DEC(qs[j+2]);
-            j+=2;
+            else
+            {
+                qs[i] = (CROW_QS_HEX2DEC(qs[j+1]) * 16) + CROW_QS_HEX2DEC(qs[j+2]);
+                j+=2;
+            }
         }
         else
         {
