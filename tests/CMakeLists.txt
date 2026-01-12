@@ -9,7 +9,7 @@ include(${CMAKE_SOURCE_DIR}/cmake/CPM.cmake)
 
 
 CPMAddPackage(Catch2
-  VERSION 3.10.0
+  VERSION 3.12.0
   GITHUB_REPOSITORY catchorg/Catch2
   OPTIONS
   "CATCH_INSTALL_DOCS Off"
