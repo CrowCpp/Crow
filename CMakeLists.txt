@@ -103,7 +103,9 @@ if(CROW_USE_BOOST)
 	if(Boost_VERSION VERSION_LESS 1.89)
 		find_package(Boost 1.64 COMPONENTS system REQUIRED)
 	else()
-		add_library(Boost::system ALIAS Boost::headers)
+		if(NOT TARGET Boost::system)
+			add_library(Boost::system ALIAS Boost::headers)
+		endif()
 	endif()
 	target_link_libraries(Crow
 		INTERFACE
