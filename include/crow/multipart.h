@@ -175,10 +175,21 @@ namespace crow
                 return std::string();
             }
 
+            // cpp17(cpp 20 have) does not have ends_with, so we need to implement it ourselves
+            bool ends_with(const std::string& str, const std::string& suffix) {
+                if (suffix.size() > str.size()) return false;
+                return std::equal(suffix.rbegin(), suffix.rend(), str.rbegin());
+            }
+            
+            // reload for char* suffix
+            bool ends_with(const std:: string& str, const char* suffix) {
+                return ends_with(str, std::string(suffix));
+            }
+
             void parse_body(std::string body)
             {
                 std::string delimiter = dd + boundary;
-                if(!body.ends_with(crlf))
+                if(!ends_with(body, crlf))
                 {
                     body += crlf;
                 }
