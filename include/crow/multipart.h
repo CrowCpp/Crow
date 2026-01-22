@@ -178,7 +178,10 @@ namespace crow
             void parse_body(std::string body)
             {
                 std::string delimiter = dd + boundary;
-
+                if(!body.ends_with(crlf))
+                {
+                    body += crlf;
+                }
                 // TODO(EDev): Exit on error
                 while (body != (crlf))
                 {
