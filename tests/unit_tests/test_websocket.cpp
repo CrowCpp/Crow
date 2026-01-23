@@ -1,6 +1,8 @@
 #include "catch2/catch_all.hpp"
 
 #include "crow.h"
+#include <cstddef>
+#include <thread>
 
 using namespace std;
 using namespace crow;
@@ -648,5 +650,91 @@ TEST_CASE("mirror_websocket_subprotocols", "[websocket]")
         CHECK(connection->get_subprotocol() == "protocol1, protocol2");
     }
 
+    app.stop();
+}
+
+TEST_CASE("multithreaded_websockets_open_close", "[websocket]")
+{
+    static std::string http_message = 
+      "GET /ws HTTP/1.1\r\n"
+      "Connection: keep-alive, Upgrade\r\n"
+      "upgrade: websocket\r\n"
+      "Sec-WebSocket-Key: dGhlIHNhbXBsZSBub25jZQ==\r\n"
+      "Sec-WebSocket-Version: 13\r\n"
+      "Host: localhost\r\n"
+      "\r\n";
+
+    CROW_LOG_INFO << "Setting up app!\n";
+    SimpleApp app;
+
+    CROW_WEBSOCKET_ROUTE(app, "/ws")
+      .onaccept([&](const crow::request& req, void**) {
+          CROW_LOG_INFO << "Accepted websocket with URL " << req.url;
+          return true;
+      })
+      .onopen([&](websocket::connection&) {
+          CROW_LOG_INFO << "Connected websocket";
+      })
+      .onmessage([&](websocket::connection&, const std::string&, bool) {})
+      .onclose([&](websocket::connection& conn, const std::string&, uint16_t) {
+          // There should just be one connection
+          CHECK_FALSE(conn.get_remote_ip().empty());
+          CROW_LOG_INFO << "Closing websocket";
+      });
+
+    app.validate();
+
+    CROW_LOG_WARNING << "Starting app!\n";
+    auto _ = app.bindaddr(LOCALHOST_ADDRESS).port(45453).run_async();
+    app.wait_for_server_start();
+    CROW_LOG_WARNING << "App started!\n";
+    asio::io_context ic;
+
+    const auto thread_function = [&]()
+    {
+        asio::ip::tcp::socket c(ic);
+        c.connect(asio::ip::tcp::endpoint(
+        asio::ip::make_address(LOCALHOST_ADDRESS), 45453));
+
+        CROW_LOG_WARNING << "Connected!\n";
+
+        char buf[2048];
+
+        //----------Handshake----------
+        {
+            std::fill_n(buf, 2048, 0);
+            c.send(asio::buffer(http_message));
+
+            c.receive(asio::buffer(buf, 2048));
+            std::this_thread::sleep_for(std::chrono::milliseconds(5));
+        }
+
+        //----------Close websocket----------
+        std::fill_n(buf, 2048, 0);
+        // Close message with, len = 2, status code = 1000
+        char close_message[5]("\x88\x02\x03\xE8");
+        c.send(asio::buffer(close_message, 4));
+        c.receive(asio::buffer(buf, 2048));
+        std::this_thread::sleep_for(std::chrono::milliseconds(5));
+    };
+
+    const auto multiple_run_thread_function = [&](const std::size_t count){
+        for(std::size_t i = 0; i < count; ++i) {
+            thread_function();
+        }
+    };
+
+    constexpr std::size_t threads_count = 3;
+    constexpr std::size_t thread_run = 10;
+
+    std::vector<std::thread> threads;
+    for(std::size_t i = 0; i < threads_count; ++i) {    
+        threads.emplace_back(multiple_run_thread_function, thread_run);
+    }
+    for(std::thread& thread : threads) {
+        thread.join();
+    }
+
+    CROW_LOG_WARNING << "Stopping app!\n";
     app.stop();
 }

@@ -619,6 +619,7 @@ namespace crow
 
         void close_websockets()
         {
+            std::lock_guard<std::mutex> lock{websockets_mutex_};
             for (auto websocket : websockets_)
             {
                 CROW_LOG_INFO << "Quitting Websocket: " << websocket;
@@ -629,11 +630,13 @@ namespace crow
 
         void add_websocket(std::shared_ptr<websocket::connection> conn)
         {
+            std::lock_guard<std::mutex> lock{websockets_mutex_};
             websockets_.push_back(conn);
         }
 
         void remove_websocket(std::shared_ptr<websocket::connection> conn)
         {
+            std::lock_guard<std::mutex> lock{websockets_mutex_};
             websockets_.erase(std::remove(websockets_.begin(), websockets_.end(), conn), websockets_.end());
         }
 
@@ -846,6 +849,7 @@ namespace crow
         bool server_started_{false};
         std::condition_variable cv_started_;
         std::mutex start_mutex_;
+        std::mutex websockets_mutex_; ///< \brief mutex to protect websockets_
         std::vector<std::shared_ptr<websocket::connection>> websockets_;
     };
 
