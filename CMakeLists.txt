@@ -84,9 +84,13 @@ if(CROW_GENERATE_SBOM)
 endif()
 
 if(CROW_ENABLE_TSAN)
-  message(STATUS "ThreadSanitizer enabled")
-  add_compile_options(-fsanitize=thread -fno-omit-frame-pointer)
-  add_link_options(-fsanitize=thread)
+  if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+    message(STATUS "ThreadSanitizer enabled")
+    add_compile_options(-fsanitize=thread -fno-omit-frame-pointer)
+    add_link_options(-fsanitize=thread)
+  else()
+    message(WARNING "ThreadSanitizer is exclusive to Clang and cannot be used with any other compilers")
+  endif()
 endif()
 
 #####################################
