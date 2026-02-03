@@ -11,8 +11,6 @@ project(Crow
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/CPM.cmake)
-
 # Make sure Findasio.cmake module is found
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
@@ -59,12 +57,17 @@ option(CROW_RETURNS_OK_ON_HTTP_OPTIONS_REQUEST
 
 option(CROW_ENABLE_SSL "Enable Crow's SSL feature for supporting https" OFF)
 option(CROW_ENABLE_COMPRESSION "Enable Crow's Compression feature for supporting compressed http content" OFF)
+option(CROW_ENABLE_TSAN "Enable ThreadSanitizer" OFF)
+
+if(CROW_GENERATE_SBOM OR CROW_BUILD_TESTS)
+	include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/CPM.cmake)
+endif ()
 
 if(CROW_GENERATE_SBOM)
   CPMAddPackage(
     NAME cmake-sbom
     GITHUB_REPOSITORY DEMCON/cmake-sbom
-    GIT_TAG v1.3.0
+    GIT_TAG v1.4.0
     DOWNLOAD_ONLY YES
   )
   list(APPEND CMAKE_MODULE_PATH "${CMAKE_BINARY_DIR}/_deps/cmake-sbom-src/cmake")
@@ -78,6 +81,16 @@ if(CROW_GENERATE_SBOM)
 		LICENSE "BSD-3-Clause"
 		OUTPUT crow-${PROJECT_VERSION}-${BUILD_DATE}.spdx
 	)
+endif()
+
+if(CROW_ENABLE_TSAN)
+  if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+    message(STATUS "ThreadSanitizer enabled")
+    add_compile_options(-fsanitize=thread -fno-omit-frame-pointer)
+    add_link_options(-fsanitize=thread)
+  else()
+    message(WARNING "ThreadSanitizer is exclusive to Clang and cannot be used with any other compilers")
+  endif()
 endif()
 
 #####################################

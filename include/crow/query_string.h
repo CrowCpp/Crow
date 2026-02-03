@@ -245,28 +245,28 @@ inline std::unique_ptr<std::pair<std::string, std::string>> qs_dict_name2kv(cons
 
 inline char * qs_scanvalue(const char * key, const char * qs, char * val, size_t val_len)
 {
-    size_t i, key_len;
-    const char * tmp;
+    const char * tmp= strchr(qs, '?');
 
     // find the beginning of the k/v substrings
-    if ( (tmp = strchr(qs, '?')) != NULL )
+    if ( tmp != nullptr )
         qs = tmp + 1;
 
-    key_len = strlen(key);
-    while(qs[0] != '#' && qs[0] != '\0')
+    const size_t key_len = strlen(key);
+    while(*qs != '#' && *qs != '\0')
     {
         if ( qs_strncmp(key, qs, key_len) == 0 )
             break;
-        qs += strcspn(qs, "&") + 1;
+        qs += strcspn(qs, "&");
+        if (*qs=='&') qs++;
     }
 
-    if ( qs[0] == '\0' ) return NULL;
+    if ( qs[0] == '\0' ) return nullptr;
 
     qs += strcspn(qs, "=&#");
     if ( qs[0] == '=' )
     {
         qs++;
-        i = strcspn(qs, "&=#");
+        size_t i = strcspn(qs, "&=#");
 #ifdef _MSC_VER
         strncpy_s(val, val_len, qs, (val_len - 1)<(i + 1) ? (val_len - 1) : (i + 1));
 #else

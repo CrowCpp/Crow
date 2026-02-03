@@ -31,13 +31,15 @@ jobs:
           - { os: windows-latest, compiler: msvc, cxx_stdlib: msvc }
 
     steps:
+
     - name: Output Infos
       run: |
         echo $GIT_REF
         echo $GIT_EVENT_REF
         echo $GIT_EVENT_TYPE
 
-    - uses: actions/checkout@v5
+    - uses: actions/checkout@v6
+
     - name: Prepare dependencies
       run: |
          if [ "$RUNNER_OS" == "Linux" ]; then
@@ -135,7 +137,7 @@ jobs:
       shell: bash
 
     - name: Save report
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v6
       if: matrix.os == 'ubuntu-latest' && matrix.compiler == 'gcc' && matrix.cxx_stdlib == 'libstdc++' && matrix.asio_type == 'boost' && !startsWith(github.ref, 'refs/heads/v')
       with:
         name: coveralls.json
@@ -157,7 +159,7 @@ jobs:
       shell: bash
 
     - name: Upload Linux packages
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v6
       if: matrix.os == 'ubuntu-latest' && matrix.compiler == 'gcc' && matrix.cxx_stdlib == 'libstdc++' && matrix.asio_type == 'boost' && startsWith(github.ref, 'refs/heads/v')
       with:
         name: packages
@@ -168,7 +170,7 @@ jobs:
           ${{github.workspace}}/build/crow_all.h.*
 
     - name: Upload Mac OS packages
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v6
       if: matrix.os == 'macos-latest' && matrix.compiler == 'clang' && matrix.cxx_stdlib == 'libstdc++' && startsWith(github.ref, 'refs/heads/v')
       with:
         name: packages
@@ -178,7 +180,7 @@ jobs:
 
 
     - name: Upload Windows packages
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v6
       if: matrix.os == 'windows-latest' && matrix.compiler == 'msvc' && matrix.cxx_stdlib == 'msvc' && startsWith(github.ref, 'refs/heads/v')
       with:
         name: packages
