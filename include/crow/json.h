@@ -1740,6 +1740,28 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                 return const_cast<wvalue*>(this)->operator[](index);
             }
 
+            /// Check if the object contains the given key.
+            bool has(const char* key) const
+            {
+                return contains(std::string(key));
+            }
+
+            /// Check if the object contains the given key.
+            bool has(const std::string& key) const
+            {
+                return contains(key);
+            }
+
+            /// Check if the object contains the given key.
+            bool contains(const std::string& key) const
+            {
+                if (t_ != type::Object)
+                    return false;
+                if (!o)
+                    return false;
+                return o->contains(key);
+            }
+
             int count(const std::string& str) const
             {
                 if (t_ != type::Object)
