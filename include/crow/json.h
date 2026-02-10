@@ -2064,6 +2064,21 @@ namespace crow // NOTE: Already documented in "crow/app.h"
 
                 return dump(DontIndent);
             }
+
+
+            /// Return json string.
+            explicit operator std::string() const
+            {
+                return dump();
+            }
+
+            /// Return json string.
+            std::string toStr() const
+            {
+                return dump();
+            }
+
+
         };
 
         // Used for accessing the internals of a wvalue
