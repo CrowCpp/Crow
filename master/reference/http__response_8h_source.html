@@ -487,7 +487,7 @@ $(document).ready(function(){initNavTree('http__response_8h_source.html',''); in
 <div class="line"><a id="l00352" name="l00352"></a><span class="lineno">  352</span>              {status::NO_CONTENT, <span class="stringliteral">&quot;HTTP/1.1 204 No Content\r\n&quot;</span>},</div>
 <div class="line"><a id="l00353" name="l00353"></a><span class="lineno">  353</span>              {status::RESET_CONTENT, <span class="stringliteral">&quot;HTTP/1.1 205 Reset Content\r\n&quot;</span>},</div>
 <div class="line"><a id="l00354" name="l00354"></a><span class="lineno">  354</span>              {status::PARTIAL_CONTENT, <span class="stringliteral">&quot;HTTP/1.1 206 Partial Content\r\n&quot;</span>},</div>
-<div class="line"><a id="l00355" name="l00355"></a><span class="lineno">  355</span> </div>
+<div class="line"><a id="l00355" name="l00355"></a><span class="lineno">  355</span>              {status::WEBDAV_MULTI_STATUS, <span class="stringliteral">&quot;HTTP/1.1 207 Multi-Status\r\n&quot;</span>},</div>
 <div class="line"><a id="l00356" name="l00356"></a><span class="lineno">  356</span>              {status::MULTIPLE_CHOICES, <span class="stringliteral">&quot;HTTP/1.1 300 Multiple Choices\r\n&quot;</span>},</div>
 <div class="line"><a id="l00357" name="l00357"></a><span class="lineno">  357</span>              {status::MOVED_PERMANENTLY, <span class="stringliteral">&quot;HTTP/1.1 301 Moved Permanently\r\n&quot;</span>},</div>
 <div class="line"><a id="l00358" name="l00358"></a><span class="lineno">  358</span>              {status::FOUND, <span class="stringliteral">&quot;HTTP/1.1 302 Found\r\n&quot;</span>},</div>
@@ -509,85 +509,91 @@ $(document).ready(function(){initNavTree('http__response_8h_source.html',''); in
 <div class="line"><a id="l00374" name="l00374"></a><span class="lineno">  374</span>              {status::UNSUPPORTED_MEDIA_TYPE, <span class="stringliteral">&quot;HTTP/1.1 415 Unsupported Media Type\r\n&quot;</span>},</div>
 <div class="line"><a id="l00375" name="l00375"></a><span class="lineno">  375</span>              {status::RANGE_NOT_SATISFIABLE, <span class="stringliteral">&quot;HTTP/1.1 416 Range Not Satisfiable\r\n&quot;</span>},</div>
 <div class="line"><a id="l00376" name="l00376"></a><span class="lineno">  376</span>              {status::EXPECTATION_FAILED, <span class="stringliteral">&quot;HTTP/1.1 417 Expectation Failed\r\n&quot;</span>},</div>
-<div class="line"><a id="l00377" name="l00377"></a><span class="lineno">  377</span>              {status::PRECONDITION_REQUIRED, <span class="stringliteral">&quot;HTTP/1.1 428 Precondition Required\r\n&quot;</span>},</div>
-<div class="line"><a id="l00378" name="l00378"></a><span class="lineno">  378</span>              {status::TOO_MANY_REQUESTS, <span class="stringliteral">&quot;HTTP/1.1 429 Too Many Requests\r\n&quot;</span>},</div>
-<div class="line"><a id="l00379" name="l00379"></a><span class="lineno">  379</span>              {status::UNAVAILABLE_FOR_LEGAL_REASONS, <span class="stringliteral">&quot;HTTP/1.1 451 Unavailable For Legal Reasons\r\n&quot;</span>},</div>
-<div class="line"><a id="l00380" name="l00380"></a><span class="lineno">  380</span> </div>
-<div class="line"><a id="l00381" name="l00381"></a><span class="lineno">  381</span>              {status::INTERNAL_SERVER_ERROR, <span class="stringliteral">&quot;HTTP/1.1 500 Internal Server Error\r\n&quot;</span>},</div>
-<div class="line"><a id="l00382" name="l00382"></a><span class="lineno">  382</span>              {status::NOT_IMPLEMENTED, <span class="stringliteral">&quot;HTTP/1.1 501 Not Implemented\r\n&quot;</span>},</div>
-<div class="line"><a id="l00383" name="l00383"></a><span class="lineno">  383</span>              {status::BAD_GATEWAY, <span class="stringliteral">&quot;HTTP/1.1 502 Bad Gateway\r\n&quot;</span>},</div>
-<div class="line"><a id="l00384" name="l00384"></a><span class="lineno">  384</span>              {status::SERVICE_UNAVAILABLE, <span class="stringliteral">&quot;HTTP/1.1 503 Service Unavailable\r\n&quot;</span>},</div>
-<div class="line"><a id="l00385" name="l00385"></a><span class="lineno">  385</span>              {status::GATEWAY_TIMEOUT, <span class="stringliteral">&quot;HTTP/1.1 504 Gateway Timeout\r\n&quot;</span>},</div>
-<div class="line"><a id="l00386" name="l00386"></a><span class="lineno">  386</span>              {status::VARIANT_ALSO_NEGOTIATES, <span class="stringliteral">&quot;HTTP/1.1 506 Variant Also Negotiates\r\n&quot;</span>},</div>
-<div class="line"><a id="l00387" name="l00387"></a><span class="lineno">  387</span>            };</div>
-<div class="line"><a id="l00388" name="l00388"></a><span class="lineno">  388</span> </div>
-<div class="line"><a id="l00389" name="l00389"></a><span class="lineno">  389</span>            <span class="keyword">static</span> <span class="keyword">const</span> std::string seperator = <span class="stringliteral">&quot;: &quot;</span>;</div>
-<div class="line"><a id="l00390" name="l00390"></a><span class="lineno">  390</span> </div>
-<div class="line"><a id="l00391" name="l00391"></a><span class="lineno">  391</span>            buffers.clear();</div>
-<div class="line"><a id="l00392" name="l00392"></a><span class="lineno">  392</span>            buffers.reserve(4 * (<a class="code hl_variable" href="structcrow_1_1response.html#ae56cfc39f24a56748c11016842427fb3">headers</a>.size() + 5) + 3);</div>
-<div class="line"><a id="l00393" name="l00393"></a><span class="lineno">  393</span> </div>
-<div class="line"><a id="l00394" name="l00394"></a><span class="lineno">  394</span>            <span class="keywordflow">if</span> (!statusCodes.count(<a class="code hl_variable" href="structcrow_1_1response.html#aabc1f9b3264b8c5a2d05dcb409e8ff3f">code</a>))</div>
-<div class="line"><a id="l00395" name="l00395"></a><span class="lineno">  395</span>            {</div>
-<div class="line"><a id="l00396" name="l00396"></a><span class="lineno">  396</span>                CROW_LOG_WARNING &lt;&lt; <span class="keyword">this</span> &lt;&lt; <span class="stringliteral">&quot; status code &quot;</span></div>
-<div class="line"><a id="l00397" name="l00397"></a><span class="lineno">  397</span>                                 &lt;&lt; <span class="stringliteral">&quot;(&quot;</span> &lt;&lt; <a class="code hl_variable" href="structcrow_1_1response.html#aabc1f9b3264b8c5a2d05dcb409e8ff3f">code</a> &lt;&lt; <span class="stringliteral">&quot;)&quot;</span></div>
-<div class="line"><a id="l00398" name="l00398"></a><span class="lineno">  398</span>                                 &lt;&lt; <span class="stringliteral">&quot; not defined, returning 500 instead&quot;</span>;</div>
-<div class="line"><a id="l00399" name="l00399"></a><span class="lineno">  399</span>                <a class="code hl_variable" href="structcrow_1_1response.html#aabc1f9b3264b8c5a2d05dcb409e8ff3f">code</a> = 500;</div>
-<div class="line"><a id="l00400" name="l00400"></a><span class="lineno">  400</span>            }</div>
-<div class="line"><a id="l00401" name="l00401"></a><span class="lineno">  401</span> </div>
-<div class="line"><a id="l00402" name="l00402"></a><span class="lineno">  402</span>            <span class="keyword">auto</span>&amp; status = statusCodes.find(<a class="code hl_variable" href="structcrow_1_1response.html#aabc1f9b3264b8c5a2d05dcb409e8ff3f">code</a>)-&gt;second;</div>
-<div class="line"><a id="l00403" name="l00403"></a><span class="lineno">  403</span>            buffers.emplace_back(status.data(), status.size());</div>
-<div class="line"><a id="l00404" name="l00404"></a><span class="lineno">  404</span> </div>
-<div class="line"><a id="l00405" name="l00405"></a><span class="lineno">  405</span>            <span class="keywordflow">if</span> (<a class="code hl_variable" href="structcrow_1_1response.html#aabc1f9b3264b8c5a2d05dcb409e8ff3f">code</a> &gt;= 400 &amp;&amp; <a class="code hl_variable" href="structcrow_1_1response.html#ae9f3cc153eac05954f1f4e599527892d">body</a>.empty())</div>
-<div class="line"><a id="l00406" name="l00406"></a><span class="lineno">  406</span>                <a class="code hl_variable" href="structcrow_1_1response.html#ae9f3cc153eac05954f1f4e599527892d">body</a> = statusCodes[<a class="code hl_variable" href="structcrow_1_1response.html#aabc1f9b3264b8c5a2d05dcb409e8ff3f">code</a>].substr(9);</div>
+<div class="line"><a id="l00377" name="l00377"></a><span class="lineno">  377</span>              {status::WEBDAV_PRECONDITION_FAILED, <span class="stringliteral">&quot;HTTP/1.1 412 Precondition Failed\r\n&quot;</span>},</div>
+<div class="line"><a id="l00378" name="l00378"></a><span class="lineno">  378</span>              {status::WEBDAV_REQUEST_URI_TOO_LONG, <span class="stringliteral">&quot;HTTP/1.1 414 Request-URI Too Long\r\n&quot;</span>},</div>
+<div class="line"><a id="l00379" name="l00379"></a><span class="lineno">  379</span>              {status::WEBDAV_UNPROCESSABLE_ENTITY, <span class="stringliteral">&quot;HTTP/1.1 422 Unprocessable Entity\r\n&quot;</span>},</div>
+<div class="line"><a id="l00380" name="l00380"></a><span class="lineno">  380</span>              {status::WEBDAV_LOCKED, <span class="stringliteral">&quot;HTTP/1.1 423 Locked\r\n&quot;</span>},</div>
+<div class="line"><a id="l00381" name="l00381"></a><span class="lineno">  381</span>              {status::WEBDAV_FAILED_DEPENDENCY, <span class="stringliteral">&quot;HTTP/1.1 424 Failed Dependency\r\n&quot;</span>},</div>
+<div class="line"><a id="l00382" name="l00382"></a><span class="lineno">  382</span>              {status::PRECONDITION_REQUIRED, <span class="stringliteral">&quot;HTTP/1.1 428 Precondition Required\r\n&quot;</span>},</div>
+<div class="line"><a id="l00383" name="l00383"></a><span class="lineno">  383</span>              {status::TOO_MANY_REQUESTS, <span class="stringliteral">&quot;HTTP/1.1 429 Too Many Requests\r\n&quot;</span>},</div>
+<div class="line"><a id="l00384" name="l00384"></a><span class="lineno">  384</span>              {status::UNAVAILABLE_FOR_LEGAL_REASONS, <span class="stringliteral">&quot;HTTP/1.1 451 Unavailable For Legal Reasons\r\n&quot;</span>},</div>
+<div class="line"><a id="l00385" name="l00385"></a><span class="lineno">  385</span> </div>
+<div class="line"><a id="l00386" name="l00386"></a><span class="lineno">  386</span>              {status::INTERNAL_SERVER_ERROR, <span class="stringliteral">&quot;HTTP/1.1 500 Internal Server Error\r\n&quot;</span>},</div>
+<div class="line"><a id="l00387" name="l00387"></a><span class="lineno">  387</span>              {status::NOT_IMPLEMENTED, <span class="stringliteral">&quot;HTTP/1.1 501 Not Implemented\r\n&quot;</span>},</div>
+<div class="line"><a id="l00388" name="l00388"></a><span class="lineno">  388</span>              {status::BAD_GATEWAY, <span class="stringliteral">&quot;HTTP/1.1 502 Bad Gateway\r\n&quot;</span>},</div>
+<div class="line"><a id="l00389" name="l00389"></a><span class="lineno">  389</span>              {status::SERVICE_UNAVAILABLE, <span class="stringliteral">&quot;HTTP/1.1 503 Service Unavailable\r\n&quot;</span>},</div>
+<div class="line"><a id="l00390" name="l00390"></a><span class="lineno">  390</span>              {status::GATEWAY_TIMEOUT, <span class="stringliteral">&quot;HTTP/1.1 504 Gateway Timeout\r\n&quot;</span>},</div>
+<div class="line"><a id="l00391" name="l00391"></a><span class="lineno">  391</span>              {status::VARIANT_ALSO_NEGOTIATES, <span class="stringliteral">&quot;HTTP/1.1 506 Variant Also Negotiates\r\n&quot;</span>},</div>
+<div class="line"><a id="l00392" name="l00392"></a><span class="lineno">  392</span>              {status::WEBDAV_INSUFFICIENT_STORAGE,  <span class="stringliteral">&quot;HTTP/1.1 507 Insufficient Storage\r\n&quot;</span>},</div>
+<div class="line"><a id="l00393" name="l00393"></a><span class="lineno">  393</span>              };</div>
+<div class="line"><a id="l00394" name="l00394"></a><span class="lineno">  394</span> </div>
+<div class="line"><a id="l00395" name="l00395"></a><span class="lineno">  395</span>            <span class="keyword">static</span> <span class="keyword">const</span> std::string seperator = <span class="stringliteral">&quot;: &quot;</span>;</div>
+<div class="line"><a id="l00396" name="l00396"></a><span class="lineno">  396</span> </div>
+<div class="line"><a id="l00397" name="l00397"></a><span class="lineno">  397</span>            buffers.clear();</div>
+<div class="line"><a id="l00398" name="l00398"></a><span class="lineno">  398</span>            buffers.reserve(4 * (<a class="code hl_variable" href="structcrow_1_1response.html#ae56cfc39f24a56748c11016842427fb3">headers</a>.size() + 5) + 3);</div>
+<div class="line"><a id="l00399" name="l00399"></a><span class="lineno">  399</span> </div>
+<div class="line"><a id="l00400" name="l00400"></a><span class="lineno">  400</span>            <span class="keywordflow">if</span> (!statusCodes.count(<a class="code hl_variable" href="structcrow_1_1response.html#aabc1f9b3264b8c5a2d05dcb409e8ff3f">code</a>))</div>
+<div class="line"><a id="l00401" name="l00401"></a><span class="lineno">  401</span>            {</div>
+<div class="line"><a id="l00402" name="l00402"></a><span class="lineno">  402</span>                CROW_LOG_WARNING &lt;&lt; <span class="keyword">this</span> &lt;&lt; <span class="stringliteral">&quot; status code &quot;</span></div>
+<div class="line"><a id="l00403" name="l00403"></a><span class="lineno">  403</span>                                 &lt;&lt; <span class="stringliteral">&quot;(&quot;</span> &lt;&lt; <a class="code hl_variable" href="structcrow_1_1response.html#aabc1f9b3264b8c5a2d05dcb409e8ff3f">code</a> &lt;&lt; <span class="stringliteral">&quot;)&quot;</span></div>
+<div class="line"><a id="l00404" name="l00404"></a><span class="lineno">  404</span>                                 &lt;&lt; <span class="stringliteral">&quot; not defined, returning 500 instead&quot;</span>;</div>
+<div class="line"><a id="l00405" name="l00405"></a><span class="lineno">  405</span>                <a class="code hl_variable" href="structcrow_1_1response.html#aabc1f9b3264b8c5a2d05dcb409e8ff3f">code</a> = 500;</div>
+<div class="line"><a id="l00406" name="l00406"></a><span class="lineno">  406</span>            }</div>
 <div class="line"><a id="l00407" name="l00407"></a><span class="lineno">  407</span> </div>
-<div class="line"><a id="l00408" name="l00408"></a><span class="lineno">  408</span>            <span class="keywordflow">for</span> (<span class="keyword">auto</span>&amp; kv : <a class="code hl_variable" href="structcrow_1_1response.html#ae56cfc39f24a56748c11016842427fb3">headers</a>)</div>
-<div class="line"><a id="l00409" name="l00409"></a><span class="lineno">  409</span>            {</div>
-<div class="line"><a id="l00410" name="l00410"></a><span class="lineno">  410</span>                buffers.emplace_back(kv.first.data(), kv.first.size());</div>
-<div class="line"><a id="l00411" name="l00411"></a><span class="lineno">  411</span>                buffers.emplace_back(seperator.data(), seperator.size());</div>
-<div class="line"><a id="l00412" name="l00412"></a><span class="lineno">  412</span>                buffers.emplace_back(kv.second.data(), kv.second.size());</div>
-<div class="line"><a id="l00413" name="l00413"></a><span class="lineno">  413</span>                buffers.emplace_back(crlf.data(), crlf.size());</div>
-<div class="line"><a id="l00414" name="l00414"></a><span class="lineno">  414</span>            }</div>
-<div class="line"><a id="l00415" name="l00415"></a><span class="lineno">  415</span> </div>
-<div class="line"><a id="l00416" name="l00416"></a><span class="lineno">  416</span>            <span class="keywordflow">if</span> (!<a class="code hl_variable" href="structcrow_1_1response.html#a95f300c05782e1934dad522b6d6588cf">manual_length_header</a> &amp;&amp; !<a class="code hl_variable" href="structcrow_1_1response.html#ae56cfc39f24a56748c11016842427fb3">headers</a>.count(<span class="stringliteral">&quot;content-length&quot;</span>))</div>
-<div class="line"><a id="l00417" name="l00417"></a><span class="lineno">  417</span>            {</div>
-<div class="line"><a id="l00418" name="l00418"></a><span class="lineno">  418</span>                content_length_buffer = std::to_string(<a class="code hl_variable" href="structcrow_1_1response.html#ae9f3cc153eac05954f1f4e599527892d">body</a>.size());</div>
-<div class="line"><a id="l00419" name="l00419"></a><span class="lineno">  419</span>                <span class="keyword">static</span> std::string content_length_tag = <span class="stringliteral">&quot;Content-Length: &quot;</span>;</div>
-<div class="line"><a id="l00420" name="l00420"></a><span class="lineno">  420</span>                buffers.emplace_back(content_length_tag.data(), content_length_tag.size());</div>
-<div class="line"><a id="l00421" name="l00421"></a><span class="lineno">  421</span>                buffers.emplace_back(content_length_buffer.data(), content_length_buffer.size());</div>
-<div class="line"><a id="l00422" name="l00422"></a><span class="lineno">  422</span>                buffers.emplace_back(crlf.data(), crlf.size());</div>
-<div class="line"><a id="l00423" name="l00423"></a><span class="lineno">  423</span>            }</div>
-<div class="line"><a id="l00424" name="l00424"></a><span class="lineno">  424</span>            <span class="keywordflow">if</span> (!<a class="code hl_variable" href="structcrow_1_1response.html#ae56cfc39f24a56748c11016842427fb3">headers</a>.count(<span class="stringliteral">&quot;server&quot;</span>) &amp;&amp; !server_name.empty())</div>
-<div class="line"><a id="l00425" name="l00425"></a><span class="lineno">  425</span>            {</div>
-<div class="line"><a id="l00426" name="l00426"></a><span class="lineno">  426</span>                <span class="keyword">static</span> std::string server_tag = <span class="stringliteral">&quot;Server: &quot;</span>;</div>
-<div class="line"><a id="l00427" name="l00427"></a><span class="lineno">  427</span>                buffers.emplace_back(server_tag.data(), server_tag.size());</div>
-<div class="line"><a id="l00428" name="l00428"></a><span class="lineno">  428</span>                buffers.emplace_back(server_name.data(), server_name.size());</div>
-<div class="line"><a id="l00429" name="l00429"></a><span class="lineno">  429</span>                buffers.emplace_back(crlf.data(), crlf.size());</div>
-<div class="line"><a id="l00430" name="l00430"></a><span class="lineno">  430</span>            }</div>
-<div class="line"><a id="l00431" name="l00431"></a><span class="lineno">  431</span>            <span class="comment">/*if (!headers.count(&quot;date&quot;))</span></div>
-<div class="line"><a id="l00432" name="l00432"></a><span class="lineno">  432</span><span class="comment">            {</span></div>
-<div class="line"><a id="l00433" name="l00433"></a><span class="lineno">  433</span><span class="comment">                static std::string date_tag = &quot;Date: &quot;;</span></div>
-<div class="line"><a id="l00434" name="l00434"></a><span class="lineno">  434</span><span class="comment">                date_str_ = get_cached_date_str();</span></div>
-<div class="line"><a id="l00435" name="l00435"></a><span class="lineno">  435</span><span class="comment">                buffers.emplace_back(date_tag.data(), date_tag.size());</span></div>
-<div class="line"><a id="l00436" name="l00436"></a><span class="lineno">  436</span><span class="comment">                buffers.emplace_back(date_str_.data(), date_str_.size());</span></div>
-<div class="line"><a id="l00437" name="l00437"></a><span class="lineno">  437</span><span class="comment">                buffers.emplace_back(crlf.data(), crlf.size());</span></div>
-<div class="line"><a id="l00438" name="l00438"></a><span class="lineno">  438</span><span class="comment">            }*/</span></div>
-<div class="line"><a id="l00439" name="l00439"></a><span class="lineno">  439</span>            <span class="keywordflow">if</span> (add_keep_alive)</div>
-<div class="line"><a id="l00440" name="l00440"></a><span class="lineno">  440</span>            {</div>
-<div class="line"><a id="l00441" name="l00441"></a><span class="lineno">  441</span>                <span class="keyword">static</span> std::string keep_alive_tag = <span class="stringliteral">&quot;Connection: Keep-Alive&quot;</span>;</div>
-<div class="line"><a id="l00442" name="l00442"></a><span class="lineno">  442</span>                buffers.emplace_back(keep_alive_tag.data(), keep_alive_tag.size());</div>
-<div class="line"><a id="l00443" name="l00443"></a><span class="lineno">  443</span>                buffers.emplace_back(crlf.data(), crlf.size());</div>
-<div class="line"><a id="l00444" name="l00444"></a><span class="lineno">  444</span>            }</div>
-<div class="line"><a id="l00445" name="l00445"></a><span class="lineno">  445</span> </div>
-<div class="line"><a id="l00446" name="l00446"></a><span class="lineno">  446</span>            buffers.emplace_back(crlf.data(), crlf.size());</div>
-<div class="line"><a id="l00447" name="l00447"></a><span class="lineno">  447</span>        }</div>
-<div class="line"><a id="l00448" name="l00448"></a><span class="lineno">  448</span> </div>
-<div class="line"><a id="l00449" name="l00449"></a><span class="lineno">  449</span>        <span class="keywordtype">bool</span> completed_{};</div>
-<div class="line"><a id="l00450" name="l00450"></a><span class="lineno">  450</span>        std::function&lt;void()&gt; complete_request_handler_;</div>
-<div class="line"><a id="l00451" name="l00451"></a><span class="lineno">  451</span>        std::function&lt;bool()&gt; is_alive_helper_;</div>
-<div class="line"><a id="l00452" name="l00452"></a><span class="lineno">  452</span>        static_file_info file_info;</div>
-<div class="line"><a id="l00453" name="l00453"></a><span class="lineno">  453</span>    };</div>
+<div class="line"><a id="l00408" name="l00408"></a><span class="lineno">  408</span>            <span class="keyword">auto</span>&amp; status = statusCodes.find(<a class="code hl_variable" href="structcrow_1_1response.html#aabc1f9b3264b8c5a2d05dcb409e8ff3f">code</a>)-&gt;second;</div>
+<div class="line"><a id="l00409" name="l00409"></a><span class="lineno">  409</span>            buffers.emplace_back(status.data(), status.size());</div>
+<div class="line"><a id="l00410" name="l00410"></a><span class="lineno">  410</span> </div>
+<div class="line"><a id="l00411" name="l00411"></a><span class="lineno">  411</span>            <span class="keywordflow">if</span> (<a class="code hl_variable" href="structcrow_1_1response.html#aabc1f9b3264b8c5a2d05dcb409e8ff3f">code</a> &gt;= 400 &amp;&amp; <a class="code hl_variable" href="structcrow_1_1response.html#ae9f3cc153eac05954f1f4e599527892d">body</a>.empty())</div>
+<div class="line"><a id="l00412" name="l00412"></a><span class="lineno">  412</span>                <a class="code hl_variable" href="structcrow_1_1response.html#ae9f3cc153eac05954f1f4e599527892d">body</a> = statusCodes[<a class="code hl_variable" href="structcrow_1_1response.html#aabc1f9b3264b8c5a2d05dcb409e8ff3f">code</a>].substr(9);</div>
+<div class="line"><a id="l00413" name="l00413"></a><span class="lineno">  413</span> </div>
+<div class="line"><a id="l00414" name="l00414"></a><span class="lineno">  414</span>            <span class="keywordflow">for</span> (<span class="keyword">auto</span>&amp; kv : <a class="code hl_variable" href="structcrow_1_1response.html#ae56cfc39f24a56748c11016842427fb3">headers</a>)</div>
+<div class="line"><a id="l00415" name="l00415"></a><span class="lineno">  415</span>            {</div>
+<div class="line"><a id="l00416" name="l00416"></a><span class="lineno">  416</span>                buffers.emplace_back(kv.first.data(), kv.first.size());</div>
+<div class="line"><a id="l00417" name="l00417"></a><span class="lineno">  417</span>                buffers.emplace_back(seperator.data(), seperator.size());</div>
+<div class="line"><a id="l00418" name="l00418"></a><span class="lineno">  418</span>                buffers.emplace_back(kv.second.data(), kv.second.size());</div>
+<div class="line"><a id="l00419" name="l00419"></a><span class="lineno">  419</span>                buffers.emplace_back(crlf.data(), crlf.size());</div>
+<div class="line"><a id="l00420" name="l00420"></a><span class="lineno">  420</span>            }</div>
+<div class="line"><a id="l00421" name="l00421"></a><span class="lineno">  421</span> </div>
+<div class="line"><a id="l00422" name="l00422"></a><span class="lineno">  422</span>            <span class="keywordflow">if</span> (!<a class="code hl_variable" href="structcrow_1_1response.html#a95f300c05782e1934dad522b6d6588cf">manual_length_header</a> &amp;&amp; !<a class="code hl_variable" href="structcrow_1_1response.html#ae56cfc39f24a56748c11016842427fb3">headers</a>.count(<span class="stringliteral">&quot;content-length&quot;</span>))</div>
+<div class="line"><a id="l00423" name="l00423"></a><span class="lineno">  423</span>            {</div>
+<div class="line"><a id="l00424" name="l00424"></a><span class="lineno">  424</span>                content_length_buffer = std::to_string(<a class="code hl_variable" href="structcrow_1_1response.html#ae9f3cc153eac05954f1f4e599527892d">body</a>.size());</div>
+<div class="line"><a id="l00425" name="l00425"></a><span class="lineno">  425</span>                <span class="keyword">static</span> std::string content_length_tag = <span class="stringliteral">&quot;Content-Length: &quot;</span>;</div>
+<div class="line"><a id="l00426" name="l00426"></a><span class="lineno">  426</span>                buffers.emplace_back(content_length_tag.data(), content_length_tag.size());</div>
+<div class="line"><a id="l00427" name="l00427"></a><span class="lineno">  427</span>                buffers.emplace_back(content_length_buffer.data(), content_length_buffer.size());</div>
+<div class="line"><a id="l00428" name="l00428"></a><span class="lineno">  428</span>                buffers.emplace_back(crlf.data(), crlf.size());</div>
+<div class="line"><a id="l00429" name="l00429"></a><span class="lineno">  429</span>            }</div>
+<div class="line"><a id="l00430" name="l00430"></a><span class="lineno">  430</span>            <span class="keywordflow">if</span> (!<a class="code hl_variable" href="structcrow_1_1response.html#ae56cfc39f24a56748c11016842427fb3">headers</a>.count(<span class="stringliteral">&quot;server&quot;</span>) &amp;&amp; !server_name.empty())</div>
+<div class="line"><a id="l00431" name="l00431"></a><span class="lineno">  431</span>            {</div>
+<div class="line"><a id="l00432" name="l00432"></a><span class="lineno">  432</span>                <span class="keyword">static</span> std::string server_tag = <span class="stringliteral">&quot;Server: &quot;</span>;</div>
+<div class="line"><a id="l00433" name="l00433"></a><span class="lineno">  433</span>                buffers.emplace_back(server_tag.data(), server_tag.size());</div>
+<div class="line"><a id="l00434" name="l00434"></a><span class="lineno">  434</span>                buffers.emplace_back(server_name.data(), server_name.size());</div>
+<div class="line"><a id="l00435" name="l00435"></a><span class="lineno">  435</span>                buffers.emplace_back(crlf.data(), crlf.size());</div>
+<div class="line"><a id="l00436" name="l00436"></a><span class="lineno">  436</span>            }</div>
+<div class="line"><a id="l00437" name="l00437"></a><span class="lineno">  437</span>            <span class="comment">/*if (!headers.count(&quot;date&quot;))</span></div>
+<div class="line"><a id="l00438" name="l00438"></a><span class="lineno">  438</span><span class="comment">            {</span></div>
+<div class="line"><a id="l00439" name="l00439"></a><span class="lineno">  439</span><span class="comment">                static std::string date_tag = &quot;Date: &quot;;</span></div>
+<div class="line"><a id="l00440" name="l00440"></a><span class="lineno">  440</span><span class="comment">                date_str_ = get_cached_date_str();</span></div>
+<div class="line"><a id="l00441" name="l00441"></a><span class="lineno">  441</span><span class="comment">                buffers.emplace_back(date_tag.data(), date_tag.size());</span></div>
+<div class="line"><a id="l00442" name="l00442"></a><span class="lineno">  442</span><span class="comment">                buffers.emplace_back(date_str_.data(), date_str_.size());</span></div>
+<div class="line"><a id="l00443" name="l00443"></a><span class="lineno">  443</span><span class="comment">                buffers.emplace_back(crlf.data(), crlf.size());</span></div>
+<div class="line"><a id="l00444" name="l00444"></a><span class="lineno">  444</span><span class="comment">            }*/</span></div>
+<div class="line"><a id="l00445" name="l00445"></a><span class="lineno">  445</span>            <span class="keywordflow">if</span> (add_keep_alive)</div>
+<div class="line"><a id="l00446" name="l00446"></a><span class="lineno">  446</span>            {</div>
+<div class="line"><a id="l00447" name="l00447"></a><span class="lineno">  447</span>                <span class="keyword">static</span> std::string keep_alive_tag = <span class="stringliteral">&quot;Connection: Keep-Alive&quot;</span>;</div>
+<div class="line"><a id="l00448" name="l00448"></a><span class="lineno">  448</span>                buffers.emplace_back(keep_alive_tag.data(), keep_alive_tag.size());</div>
+<div class="line"><a id="l00449" name="l00449"></a><span class="lineno">  449</span>                buffers.emplace_back(crlf.data(), crlf.size());</div>
+<div class="line"><a id="l00450" name="l00450"></a><span class="lineno">  450</span>            }</div>
+<div class="line"><a id="l00451" name="l00451"></a><span class="lineno">  451</span> </div>
+<div class="line"><a id="l00452" name="l00452"></a><span class="lineno">  452</span>            buffers.emplace_back(crlf.data(), crlf.size());</div>
+<div class="line"><a id="l00453" name="l00453"></a><span class="lineno">  453</span>        }</div>
+<div class="line"><a id="l00454" name="l00454"></a><span class="lineno">  454</span> </div>
+<div class="line"><a id="l00455" name="l00455"></a><span class="lineno">  455</span>        <span class="keywordtype">bool</span> completed_{};</div>
+<div class="line"><a id="l00456" name="l00456"></a><span class="lineno">  456</span>        std::function&lt;void()&gt; complete_request_handler_;</div>
+<div class="line"><a id="l00457" name="l00457"></a><span class="lineno">  457</span>        std::function&lt;bool()&gt; is_alive_helper_;</div>
+<div class="line"><a id="l00458" name="l00458"></a><span class="lineno">  458</span>        static_file_info file_info;</div>
+<div class="line"><a id="l00459" name="l00459"></a><span class="lineno">  459</span>    };</div>
 </div>
-<div class="line"><a id="l00454" name="l00454"></a><span class="lineno">  454</span>} <span class="comment">// namespace crow</span></div>
+<div class="line"><a id="l00460" name="l00460"></a><span class="lineno">  460</span>} <span class="comment">// namespace crow</span></div>
 <div class="ttc" id="aclasscrow_1_1_connection_html"><div class="ttname"><a href="classcrow_1_1_connection.html">crow::Connection</a></div><div class="ttdoc">An HTTP connection.</div><div class="ttdef"><b>Definition</b> http_connection.h:48</div></div>
 <div class="ttc" id="aclasscrow_1_1_router_html"><div class="ttname"><a href="classcrow_1_1_router.html">crow::Router</a></div><div class="ttdoc">Handles matching requests to existing rules and upgrade requests.</div><div class="ttdef"><b>Definition</b> routing.h:1268</div></div>
 <div class="ttc" id="aclasscrow_1_1websocket_1_1_connection_html"><div class="ttname"><a href="classcrow_1_1websocket_1_1_connection.html">crow::websocket::Connection</a></div><div class="ttdoc">A websocket connection.</div><div class="ttdef"><b>Definition</b> websocket.h:111</div></div>
@@ -621,7 +627,7 @@ $(document).ready(function(){initNavTree('http__response_8h_source.html',''); in
 			<ul>
 				<li class="navelem"><a class="el" href="dir_d44c64559bbebec7f509842c48db8b23.html">include</a></li><li class="navelem"><a class="el" href="dir_d22c1cb87b72f01e1a7f207eb3bfd1ca.html">crow</a></li><li class="navelem"><b>http_response.h</b></li>
 				<li class="footer">
-					Generated on Tue Feb 3 2026 for Crow by <a href="http://www.doxygen.org/index.html">
+					Generated on Wed Feb 11 2026 for Crow by <a href="http://www.doxygen.org/index.html">
 					<img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.9.8.
 					Dark theme by <a href="http://majerle.eu" target="_new">Tilen Majerle</a>. Edited by <a href="https://github.com/The-EDev" target="_new">Farook Al-Sammarraie</a>. All rights reserved.
 				</li>

@@ -371,42 +371,51 @@ Enumerations</h2></td></tr>
 , <b>RESET_CONTENT</b> = 205
 , <br />
 &#160;&#160;<b>PARTIAL_CONTENT</b> = 206
+, <b>WEBDAV_MULTI_STATUS</b> = 207
 , <b>MULTIPLE_CHOICES</b> = 300
 , <b>MOVED_PERMANENTLY</b> = 301
-, <b>FOUND</b> = 302
 , <br />
-&#160;&#160;<b>SEE_OTHER</b> = 303
+&#160;&#160;<b>FOUND</b> = 302
+, <b>SEE_OTHER</b> = 303
 , <b>NOT_MODIFIED</b> = 304
 , <b>TEMPORARY_REDIRECT</b> = 307
-, <b>PERMANENT_REDIRECT</b> = 308
 , <br />
-&#160;&#160;<b>BAD_REQUEST</b> = 400
+&#160;&#160;<b>PERMANENT_REDIRECT</b> = 308
+, <b>BAD_REQUEST</b> = 400
 , <b>UNAUTHORIZED</b> = 401
 , <b>FORBIDDEN</b> = 403
-, <b>NOT_FOUND</b> = 404
 , <br />
-&#160;&#160;<b>METHOD_NOT_ALLOWED</b> = 405
+&#160;&#160;<b>NOT_FOUND</b> = 404
+, <b>METHOD_NOT_ALLOWED</b> = 405
 , <b>NOT_ACCEPTABLE</b> = 406
 , <b>PROXY_AUTHENTICATION_REQUIRED</b> = 407
-, <b>CONFLICT</b> = 409
 , <br />
-&#160;&#160;<b>GONE</b> = 410
+&#160;&#160;<b>CONFLICT</b> = 409
+, <b>GONE</b> = 410
 , <b>PAYLOAD_TOO_LARGE</b> = 413
 , <b>UNSUPPORTED_MEDIA_TYPE</b> = 415
-, <b>RANGE_NOT_SATISFIABLE</b> = 416
 , <br />
-&#160;&#160;<b>EXPECTATION_FAILED</b> = 417
+&#160;&#160;<b>RANGE_NOT_SATISFIABLE</b> = 416
+, <b>EXPECTATION_FAILED</b> = 417
+, <b>WEBDAV_PRECONDITION_FAILED</b> = 412
+, <b>WEBDAV_REQUEST_URI_TOO_LONG</b> = 414
+, <br />
+&#160;&#160;<b>WEBDAV_UNPROCESSABLE_ENTITY</b> = 422
+, <b>WEBDAV_LOCKED</b> = 423
+, <b>WEBDAV_FAILED_DEPENDENCY</b> = 424
 , <b>PRECONDITION_REQUIRED</b> = 428
-, <b>TOO_MANY_REQUESTS</b> = 429
+, <br />
+&#160;&#160;<b>TOO_MANY_REQUESTS</b> = 429
 , <b>UNAVAILABLE_FOR_LEGAL_REASONS</b> = 451
-, <br />
-&#160;&#160;<b>INTERNAL_SERVER_ERROR</b> = 500
+, <b>INTERNAL_SERVER_ERROR</b> = 500
 , <b>NOT_IMPLEMENTED</b> = 501
-, <b>BAD_GATEWAY</b> = 502
-, <b>SERVICE_UNAVAILABLE</b> = 503
 , <br />
-&#160;&#160;<b>GATEWAY_TIMEOUT</b> = 504
+&#160;&#160;<b>BAD_GATEWAY</b> = 502
+, <b>SERVICE_UNAVAILABLE</b> = 503
+, <b>GATEWAY_TIMEOUT</b> = 504
 , <b>VARIANT_ALSO_NEGOTIATES</b> = 506
+, <br />
+&#160;&#160;<b>WEBDAV_INSUFFICIENT_STORAGE</b> = 507
 <br />
  }</td></tr>
 <tr class="separator:aa3ae5c0994dff8425d7515e2806180d2"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -649,7 +658,7 @@ constexpr const char&#160;</td><td class="memItemRight" valign="bottom"><b>VERSI
 			<ul>
 				<li class="navelem"><a class="el" href="namespacecrow.html">crow</a></li>
 				<li class="footer">
-					Generated on Tue Feb 3 2026 for Crow by <a href="http://www.doxygen.org/index.html">
+					Generated on Wed Feb 11 2026 for Crow by <a href="http://www.doxygen.org/index.html">
 					<img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.9.8.
 					Dark theme by <a href="http://majerle.eu" target="_new">Tilen Majerle</a>. Edited by <a href="https://github.com/The-EDev" target="_new">Farook Al-Sammarraie</a>. All rights reserved.
 				</li>
