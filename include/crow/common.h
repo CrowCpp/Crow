@@ -176,7 +176,7 @@ namespace crow
         NO_CONTENT                    = 204,
         RESET_CONTENT                 = 205,
         PARTIAL_CONTENT               = 206,
-
+        WEBDAV_MULTI_STATUS           = 207,
         MULTIPLE_CHOICES              = 300,
         MOVED_PERMANENTLY             = 301,
         FOUND                         = 302,
@@ -198,6 +198,13 @@ namespace crow
         UNSUPPORTED_MEDIA_TYPE        = 415,
         RANGE_NOT_SATISFIABLE         = 416,
         EXPECTATION_FAILED            = 417,
+
+        WEBDAV_PRECONDITION_FAILED    = 412,
+        WEBDAV_REQUEST_URI_TOO_LONG   = 414,
+        WEBDAV_UNPROCESSABLE_ENTITY   = 422,
+        WEBDAV_LOCKED                 = 423,
+        WEBDAV_FAILED_DEPENDENCY      = 424,
+
         PRECONDITION_REQUIRED         = 428,
         TOO_MANY_REQUESTS             = 429,
         UNAVAILABLE_FOR_LEGAL_REASONS = 451,
@@ -207,7 +214,8 @@ namespace crow
         BAD_GATEWAY                   = 502,
         SERVICE_UNAVAILABLE           = 503,
         GATEWAY_TIMEOUT               = 504,
-        VARIANT_ALSO_NEGOTIATES       = 506
+        VARIANT_ALSO_NEGOTIATES       = 506,
+        WEBDAV_INSUFFICIENT_STORAGE   = 507
     };
 
     // clang-format on
