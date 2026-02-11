@@ -162,7 +162,7 @@ jobs:
       uses: actions/upload-artifact@v6
       if: matrix.os == 'ubuntu-latest' && matrix.compiler == 'gcc' && matrix.cxx_stdlib == 'libstdc++' && matrix.asio_type == 'boost' && startsWith(github.ref, 'refs/heads/v')
       with:
-        name: packages
+        name: packages-linux
         overwrite: true
         path: |
           ${{github.workspace}}/build/Crow-*
@@ -173,7 +173,7 @@ jobs:
       uses: actions/upload-artifact@v6
       if: matrix.os == 'macos-latest' && matrix.compiler == 'clang' && matrix.cxx_stdlib == 'libstdc++' && startsWith(github.ref, 'refs/heads/v')
       with:
-        name: packages
+        name: packages-macos
         overwrite: true
         path: |
           ${{github.workspace}}/build/Crow-*
@@ -183,7 +183,7 @@ jobs:
       uses: actions/upload-artifact@v6
       if: matrix.os == 'windows-latest' && matrix.compiler == 'msvc' && matrix.cxx_stdlib == 'msvc' && startsWith(github.ref, 'refs/heads/v')
       with:
-        name: packages
+        name: packages-windows
         overwrite: true
         path: |
           ${{github.workspace}}/build/Crow-*
