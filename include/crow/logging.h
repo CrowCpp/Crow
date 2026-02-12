@@ -158,7 +158,6 @@ namespace crow
     };
 } // namespace crow
 
-#ifdef CROW_ENABLE_LOGGING
 #define CROW_LOG_CRITICAL                                                  \
     if (crow::logger::get_current_log_level() <= crow::LogLevel::Critical) \
     crow::logger(crow::LogLevel::Critical)
@@ -174,23 +173,3 @@ namespace crow
 #define CROW_LOG_DEBUG                                                  \
     if (crow::logger::get_current_log_level() <= crow::LogLevel::Debug) \
     crow::logger(crow::LogLevel::Debug)
-
-#else
-#define CROW_LOG_CRITICAL                                                  \
-    if (false) \
-    crow::logger(crow::LogLevel::Critical)
-#define CROW_LOG_ERROR                                                  \
-    if (false) \
-    crow::logger(crow::LogLevel::Error)
-#define CROW_LOG_WARNING                                                  \
-    if (false) \
-    crow::logger(crow::LogLevel::Warning)
-#define CROW_LOG_INFO                                                  \
-    if (false) \
-    crow::logger(crow::LogLevel::Info)
-#define CROW_LOG_DEBUG                                                  \
-    if (false) \
-    crow::logger(crow::LogLevel::Debug)
-
-
-#endif
