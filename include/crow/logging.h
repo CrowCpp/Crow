@@ -127,6 +127,8 @@ namespace crow
             {
                 stringstream_ << value;
             }
+#else
+            ((void)(value)); // Remove unused warning
 #endif
             return *this;
         }
