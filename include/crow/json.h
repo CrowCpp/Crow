@@ -1743,23 +1743,21 @@ namespace crow // NOTE: Already documented in "crow/app.h"
             /// Check if the object contains the given key.
             bool has(const char* key) const
             {
-                return contains(std::string(key));
+                return has(std::string(key));
             }
 
             /// Check if the object contains the given key.
             bool has(const std::string& key) const
             {
-                return contains(key);
-            }
-
-            /// Check if the object contains the given key.
-            bool contains(const std::string& key) const
-            {
                 if (t_ != type::Object)
                     return false;
                 if (!o)
                     return false;
+#if (__cplusplus>=202002L)
                 return o->contains(key);
+#else
+                return o->count(key)>0;
+#endif
             }
 
             int count(const std::string& str) const
