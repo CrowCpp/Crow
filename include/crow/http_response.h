@@ -352,7 +352,7 @@ namespace crow
               {status::NO_CONTENT, "HTTP/1.1 204 No Content\r\n"},
               {status::RESET_CONTENT, "HTTP/1.1 205 Reset Content\r\n"},
               {status::PARTIAL_CONTENT, "HTTP/1.1 206 Partial Content\r\n"},
-
+              {status::WEBDAV_MULTI_STATUS, "HTTP/1.1 207 Multi-Status\r\n"},
               {status::MULTIPLE_CHOICES, "HTTP/1.1 300 Multiple Choices\r\n"},
               {status::MOVED_PERMANENTLY, "HTTP/1.1 301 Moved Permanently\r\n"},
               {status::FOUND, "HTTP/1.1 302 Found\r\n"},
@@ -374,6 +374,11 @@ namespace crow
               {status::UNSUPPORTED_MEDIA_TYPE, "HTTP/1.1 415 Unsupported Media Type\r\n"},
               {status::RANGE_NOT_SATISFIABLE, "HTTP/1.1 416 Range Not Satisfiable\r\n"},
               {status::EXPECTATION_FAILED, "HTTP/1.1 417 Expectation Failed\r\n"},
+              {status::WEBDAV_PRECONDITION_FAILED, "HTTP/1.1 412 Precondition Failed\r\n"},
+              {status::WEBDAV_REQUEST_URI_TOO_LONG, "HTTP/1.1 414 Request-URI Too Long\r\n"},
+              {status::WEBDAV_UNPROCESSABLE_ENTITY, "HTTP/1.1 422 Unprocessable Entity\r\n"},
+              {status::WEBDAV_LOCKED, "HTTP/1.1 423 Locked\r\n"},
+              {status::WEBDAV_FAILED_DEPENDENCY, "HTTP/1.1 424 Failed Dependency\r\n"},
               {status::PRECONDITION_REQUIRED, "HTTP/1.1 428 Precondition Required\r\n"},
               {status::TOO_MANY_REQUESTS, "HTTP/1.1 429 Too Many Requests\r\n"},
               {status::UNAVAILABLE_FOR_LEGAL_REASONS, "HTTP/1.1 451 Unavailable For Legal Reasons\r\n"},
@@ -384,7 +389,8 @@ namespace crow
               {status::SERVICE_UNAVAILABLE, "HTTP/1.1 503 Service Unavailable\r\n"},
               {status::GATEWAY_TIMEOUT, "HTTP/1.1 504 Gateway Timeout\r\n"},
               {status::VARIANT_ALSO_NEGOTIATES, "HTTP/1.1 506 Variant Also Negotiates\r\n"},
-            };
+              {status::WEBDAV_INSUFFICIENT_STORAGE,  "HTTP/1.1 507 Insufficient Storage\r\n"},
+              };
 
             static const std::string seperator = ": ";
 
