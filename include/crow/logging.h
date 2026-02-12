@@ -178,20 +178,20 @@ namespace crow
     crow::logger(crow::LogLevel::Debug)
 
 #else
-#define CROW_LOG_CRITICAL                                                  \
-    if (false) \
+#define CROW_LOG_CRITICAL                                              \
+    if (false)                                                         \
     crow::logger(crow::LogLevel::Critical)
-#define CROW_LOG_ERROR                                                  \
-    if (false) \
+#define CROW_LOG_ERROR                                                 \
+    if (false)                                                         \
     crow::logger(crow::LogLevel::Error)
-#define CROW_LOG_WARNING                                                  \
-    if (false) \
+#define CROW_LOG_WARNING                                               \
+    if (false)                                                         \
     crow::logger(crow::LogLevel::Warning)
 #define CROW_LOG_INFO                                                  \
-    if (false) \
+    if (false)                                                         \
     crow::logger(crow::LogLevel::Info)
-#define CROW_LOG_DEBUG                                                  \
-    if (false) \
+#define CROW_LOG_DEBUG                                                 \
+    if (false)                                                         \
     crow::logger(crow::LogLevel::Debug)
 
 
