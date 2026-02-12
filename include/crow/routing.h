@@ -719,6 +719,8 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         std::function<void(crow::request&, crow::response&, Args...)> handler_;
     };
 
+    using StaticRule = TaggedRule<>;
+
     constexpr size_t RULE_SPECIAL_REDIRECT_SLASH = 1;
 
     /// A search tree.
@@ -1285,6 +1287,12 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         {
             using RuleT = typename black_magic::arguments<N>::type::template rebind<TaggedRule>;
 
+            return new_rule<RuleT>(rule);
+        }
+
+        template<typename RuleT=StaticRule>
+        auto& new_rule(const std::string& rule)
+        {
             auto ruleObject = new RuleT(rule);
             all_rules_.emplace_back(ruleObject);
 
