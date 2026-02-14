@@ -1,4 +1,5 @@
 #pragma once
+#include <algorithm>
 #include "crow/common.h"
 #include "crow/http_request.h"
 #include "crow/http_response.h"
@@ -17,6 +18,28 @@ namespace crow
         CORSRules& origin(const std::string& origin)
         {
             origin_ = origin;
+            origins_.clear();
+            return *this;
+        }
+
+        /// Set dynamically selected Access-Control-Allow-Origin values
+        /// If the request Origin header matches one of these values, that
+        /// origin is echoed back
+        CORSRules& origins(const std::string& origin)
+        {
+            if (std::find(origins_.begin(), origins_.end(), origin) == origins_.end())
+            {
+                origins_.emplace_back(origin);
+            }
+            return *this;
+        }
+
+        /// Set dynamically selected Access-Control-Allow-Origin values
+        template<typename... Origins>
+        CORSRules& origins(const std::string& origin, Origins... origin_list)
+        {
+            origins(origin);
+            origins(origin_list...);
             return *this;
         }
 
@@ -123,34 +146,68 @@ namespace crow
         {
             if (ignore_) return;
 
+            const std::string& request_origin = req.get_header_value("Origin");
+            std::string allow_origin_value;
+            bool dynamic_origin = false;
+
+            if (!origins_.empty())
+            {
+                if (request_origin.empty()) return;
+                if (std::find(origins_.begin(), origins_.end(), request_origin) == origins_.end()) return;
+
+                allow_origin_value = request_origin;
+                dynamic_origin = true;
+            }
+            else if (allow_credentials_ && origin_ == "*" && !request_origin.empty())
+            {
+                // credentials are not compatible with a wildcard origin value
+                allow_origin_value = request_origin;
+                dynamic_origin = true;
+            }
+            else
+            {
+                allow_origin_value = origin_;
+            }
+
             set_header_no_override("Access-Control-Allow-Methods", methods_, res);
             set_header_no_override("Access-Control-Allow-Headers", headers_, res);
             set_header_no_override("Access-Control-Expose-Headers", exposed_headers_, res);
             set_header_no_override("Access-Control-Max-Age", max_age_, res);
 
-            bool origin_set = false;
-
-            if (req.method != HTTPMethod::Options)
+            set_header_no_override("Access-Control-Allow-Origin", allow_origin_value, res);
+            if (allow_credentials_ && allow_origin_value != "*")
             {
-                if (allow_credentials_)
-                {
-                    set_header_no_override("Access-Control-Allow-Credentials", "true", res);
-                    if (origin_ == "*")
-                    {
-                        set_header_no_override("Access-Control-Allow-Origin", req.get_header_value("Origin"), res);
-                        origin_set = true;
-                    }
-                }
+                set_header_no_override("Access-Control-Allow-Credentials", "true", res);
             }
-
-            if( !origin_set){
-                set_header_no_override("Access-Control-Allow-Origin", origin_, res);
+            if (dynamic_origin)
+            {
+                add_vary_origin_no_override(res);
             }
         }
 
+        void add_vary_origin_no_override(crow::response& res)
+        {
+            const std::string& vary_header = get_header_value(res.headers, "Vary");
+            if (vary_header.empty())
+            {
+                res.add_header("Vary", "Origin");
+                return;
+            }
+
+            for (const std::string& current : utility::split(vary_header, ","))
+            {
+                if (utility::string_equals(utility::trim(current), "Origin"))
+                {
+                    return;
+                }
+            }
+
+            res.set_header("Vary", vary_header + ", Origin");
+        }
+
         bool ignore_ = false;
-        // TODO: support multiple origins that are dynamically selected
         std::string origin_ = "*";
+        std::vector<std::string> origins_;
         std::string methods_ = "*";
         std::string headers_ = "*";
         std::string exposed_headers_;
