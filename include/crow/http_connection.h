@@ -115,9 +115,16 @@ namespace crow
             // if no route is found for the request method, return the response without parsing or processing anything further.
             if (!routing_handle_result_->rule_index && !routing_handle_result_->catch_all)
             {
-                parser_.done();
-                need_to_call_after_handlers_ = true;
-                complete_request();
+                if (req_.method == HTTPMethod::Options)
+                {
+                    need_to_call_after_handlers_ = true;    
+                } 
+                else 
+                {
+                    parser_.done();
+                    need_to_call_after_handlers_ = true; // Not sure if the order of this and the above line matters
+                    complete_request();    
+                }
             }
         }
 
@@ -184,7 +191,11 @@ namespace crow
             CROW_LOG_INFO << "Request: " << utility::lexical_cast<std::string>(adaptor_.remote_endpoint()) << " " << this << " HTTP/" << (char)(req_.http_ver_major + '0') << "." << (char)(req_.http_ver_minor + '0') << ' ' << method_name(req_.method) << " " << req_.url;
 
 
-            need_to_call_after_handlers_ = false;
+            if (req_.method != HTTPMethod::Options)
+            {
+                need_to_call_after_handlers_ = false;
+            }
+            
             if (!is_invalid_request)
             {
                 res.complete_request_handler_ = nullptr;
