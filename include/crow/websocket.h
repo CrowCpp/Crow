@@ -74,11 +74,11 @@ namespace crow // NOTE: Already documented in "crow/app.h"
             virtual std::string get_subprotocol() const = 0;
             virtual ~connection() = default;
 
-            void userdata(void* u) { userdata_ = u; }
-            void* userdata() { return userdata_; }
+            void userdata(std::any u) { userdata_ = std::move(u); }
+            std::any userdata() { return userdata_; }
 
         private:
-            void* userdata_;
+            std::any userdata_;
         };
 
         // Modified version of the illustration in RFC6455 Section-5.2
