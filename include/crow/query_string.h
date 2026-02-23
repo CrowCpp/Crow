@@ -203,7 +203,7 @@ inline char * qs_k2v(const char * key, char * const * qs_kv, size_t qs_kv_size, 
 inline std::unique_ptr<std::pair<std::string, std::string>> qs_dict_name2kv(const char * dict_name, char * const * qs_kv, size_t qs_kv_size, int nth = 0)
 {
     size_t i;
-    size_t name_len, skip_to_eq, skip_to_brace_open, skip_to_brace_close;
+    size_t name_len, eq_pos, key_size;
 
     name_len = strlen(dict_name);
 
@@ -212,29 +212,22 @@ inline std::unique_ptr<std::pair<std::string, std::string>> qs_dict_name2kv(cons
 #else  // _qsSORTING
     for(i=0; i<qs_kv_size; i++)
     {
-        if ( strncmp(dict_name, qs_kv[i], name_len) == 0 )
-        {
-            skip_to_eq = strcspn(qs_kv[i], "=");
-            if ( qs_kv[i][skip_to_eq] == '=' )
-                skip_to_eq++;
-            skip_to_brace_open = strcspn(qs_kv[i], "[");
-            if ( qs_kv[i][skip_to_brace_open] == '[' )
-                skip_to_brace_open++;
-            skip_to_brace_close = strcspn(qs_kv[i], "]");
+        eq_pos = key_size = strcspn(qs_kv[i], "=");
+        if (qs_kv[i][eq_pos] == '\0')
+            continue;
+        auto key = std::unique_ptr<char[]>(new char[key_size]);
+        memcpy(key.get(), qs_kv[i], key_size);
+        key[key_size] = '\0';
+        key_size = qs_decode(key.get());
 
-            if ( skip_to_brace_open <= skip_to_brace_close &&
-                 skip_to_brace_open > 0 &&
-                 skip_to_brace_close > 0 &&
-                 nth == 0 )
-            {
-                auto key = std::string(qs_kv[i] + skip_to_brace_open, skip_to_brace_close - skip_to_brace_open);
-                auto value = std::string(qs_kv[i] + skip_to_eq);
-                return std::unique_ptr<std::pair<std::string, std::string>>(new std::pair<std::string, std::string>(key, value));
-            }
-            else
-            {
-                --nth;
-            }
+        if (strncmp(dict_name, key.get(), name_len) == 0 &&
+            key_size > name_len && key[name_len] == '[' &&
+            key[key_size - 1] == ']' &&
+            nth-- == 0)
+        {
+            auto sub_key = std::string(key.get() + name_len + 1, key_size - name_len - 2);
+            auto value = std::string(qs_kv[i] + eq_pos + 1);
+            return std::unique_ptr<std::pair<std::string, std::string>>(new std::pair<std::string, std::string>(sub_key, value));
         }
     }
 #endif  // _qsSORTING
