@@ -2806,3 +2806,10 @@ TEST_CASE("option_header_passed_in_full")
     CHECK(res.find(ServerName) != std::string::npos);
     app.stop();
 }
+
+TEST_CASE("url_decoding")
+{
+    std::string url = "image%20file.png";
+    crow::url_decode(url);
+    CHECK(url == "image file.png");
+}

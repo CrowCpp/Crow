@@ -32,6 +32,22 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         }
     }
 
+    /// URLs given to routes are in URL-encoding (aka Percent-encoding)
+    /// eg "image file.png" --> "image%20file.png"
+    /// This operates on the string in-place and decodes a percent-encoded string to UTF-8
+    /// The resulting string will always be shorter than the original, so this function
+    /// will set a new null terminator at the end of the string.
+    inline int url_decode( char* url )
+    {
+        return qs_decode(url);
+    }
+
+    /// This will decode the url in-place, resizing the string to the new shorter size.
+    inline void url_decode( std::string& url )
+    {
+        url.resize( url_decode(&url[0]) );
+    }
+
     /// An HTTP request.
     struct request
     {
