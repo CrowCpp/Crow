@@ -790,6 +790,8 @@ namespace crow
         template<typename... Ts>
         std::tuple<Middlewares...> make_middleware_tuple(Ts&&... ts)
         {
+            static_assert(black_magic::type_pack<Middlewares...>::template is_superset_of<Ts...>::value, "Constructor argument types must be a subset of the Crow template types");
+
             auto fwd = std::forward_as_tuple((ts)...);
             return std::make_tuple(
               std::forward<Middlewares>(
