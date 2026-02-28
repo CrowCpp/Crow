@@ -155,5 +155,31 @@
       "name": "ci-windows",
       "inherits": ["ci-build", "ci-win64", "dev-mode", "ci-multi-config"]
     }
+  ],
+  "buildPresets": [
+    {
+      "name": "ci-sanitize",
+      "configurePreset": "ci-sanitize",
+      "configuration": "Sanitize",
+      "jobs": 4
+    }
+  ],
+  "testPresets": [
+    {
+      "name": "ci-sanitize",
+      "configurePreset": "ci-sanitize",
+      "configuration": "Sanitize",
+      "output": {
+        "outputOnFailure": true
+      },
+      "execution": {
+        "jobs": 4,
+        "noTestsAction": "error"
+      },
+      "environment": {
+        "ASAN_OPTIONS": "strict_string_checks=1:detect_stack_use_after_return=1:check_initialization_order=1:strict_init_order=1:detect_leaks=0",
+        "UBSAN_OPTIONS": "print_stacktrace=1"
+      }
+    }
   ]
 }
