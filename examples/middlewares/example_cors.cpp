@@ -23,7 +23,7 @@ int main()
         .headers("X-Custom-Header", "Upgrade-Insecure-Requests")
         .methods("POST"_method, "GET"_method)
       .prefix("/cors")
-        .origin("example.com")
+        .origins("https://example.com", "https://api.example.com")
       .prefix("/nocors")
         .ignore();
     // clang-format on
