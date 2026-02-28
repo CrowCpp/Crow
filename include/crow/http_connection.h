@@ -12,6 +12,7 @@
 #include <algorithm>
 #include <atomic>
 #include <chrono>
+#include <cstdio>
 #include <memory>
 #include <vector>
 
@@ -263,11 +264,32 @@ namespace crow
             }
 #endif
 
+            if (res.skip_body && res.is_streamed_type() && res.streamed_body_info_.has_content_length)
+            {
+                // HEAD responses should not send a body, but should preserve the same known Content-Length.
+                res.set_header("Content-Length", std::to_string(res.streamed_body_info_.content_length));
+            }
+
+            if (res.is_streamed_type() && res.streamed_body_info_.chunked && !supports_chunked_transfer_encoding())
+            {
+                // HTTP/1.0 doesn't support Transfer-Encoding: chunked.
+                // Fall back to connection-close delimited streaming.
+                res.headers.erase("Transfer-Encoding");
+                res.streamed_body_info_.chunked = false;
+                res.set_header("Connection", "close");
+                add_keep_alive_ = false;
+                close_connection_ = true;
+            }
+
             prepare_buffers();
 
             if (res.is_static_type())
             {
                 do_write_static();
+            }
+            else if (res.is_streamed_type())
+            {
+                do_write_streamed();
             }
             else
             {
@@ -323,6 +345,157 @@ namespace crow
             res.clear();
             buffers_.clear();
             parser_.clear();
+        }
+
+        void do_write_streamed()
+        {
+            error_code ec;
+            asio::write(adaptor_.socket(), buffers_, ec); // Write the response start / headers
+            if (ec)
+            {
+                CROW_LOG_ERROR << ec << "- buffer write error happened while sending response start / headers. Writing stopped premature.";
+            }
+            cancel_deadline_timer();
+
+            if (!ec && res.skip_body)
+            {
+                // HEAD: only headers are sent.
+            }
+            else if (!ec && res.streamed_body_info_.reader)
+            {
+                std::vector<char> chunk_buffer(res.streamed_body_info_.chunk_size);
+                std::vector<asio::const_buffer> buffers;
+                buffers.reserve(3);
+
+                if (res.streamed_body_info_.chunked)
+                {
+                    char chunk_header[32];
+                    static constexpr char chunk_suffix[] = "\r\n";
+                    bool chunk_format_failed = false;
+
+                    while (true)
+                    {
+                        size_t produced = res.streamed_body_info_.reader(chunk_buffer.data(), chunk_buffer.size());
+                        if (produced == 0)
+                        {
+                            break;
+                        }
+                        if (produced > chunk_buffer.size())
+                        {
+                            produced = chunk_buffer.size();
+                        }
+
+                        const int chunk_header_size = std::snprintf(chunk_header, sizeof(chunk_header), "%zx\r\n", produced);
+                        if (chunk_header_size <= 0)
+                        {
+                            CROW_LOG_ERROR << "Failed to format chunk-size header while sending streamed response.";
+                            chunk_format_failed = true;
+                            close_connection_ = true;
+                            break;
+                        }
+
+                        buffers.clear();
+                        buffers.emplace_back(asio::const_buffer(chunk_header, static_cast<size_t>(chunk_header_size)));
+                        buffers.emplace_back(asio::const_buffer(chunk_buffer.data(), produced));
+                        buffers.emplace_back(asio::const_buffer(chunk_suffix, sizeof(chunk_suffix) - 1));
+                        asio::write(adaptor_.socket(), buffers, ec);
+                        if (ec)
+                        {
+                            CROW_LOG_ERROR << ec << " - buffer write error happened while sending chunked streamed response. Writing stopped premature.";
+                            break;
+                        }
+                    }
+
+                    if (!ec && !chunk_format_failed)
+                    {
+                        static constexpr char chunk_terminator[] = "0\r\n\r\n";
+                        buffers.clear();
+                        buffers.emplace_back(asio::const_buffer(chunk_terminator, sizeof(chunk_terminator) - 1));
+                        asio::write(adaptor_.socket(), buffers, ec);
+                        if (ec)
+                        {
+                            CROW_LOG_ERROR << ec << " - buffer write error happened while sending terminating chunk. Writing stopped premature.";
+                        }
+                    }
+                }
+                else if (res.streamed_body_info_.has_content_length)
+                {
+                    buffers.resize(1);
+                    size_t remaining = res.streamed_body_info_.content_length;
+
+                    while (remaining > 0)
+                    {
+                        const size_t to_produce = std::min(chunk_buffer.size(), remaining);
+                        size_t produced = res.streamed_body_info_.reader(chunk_buffer.data(), to_produce);
+                        if (produced == 0)
+                        {
+                            CROW_LOG_WARNING << "Streamed response terminated before reaching Content-Length.";
+                            break;
+                        }
+                        if (produced > to_produce)
+                        {
+                            produced = to_produce;
+                        }
+
+                        buffers[0] = asio::const_buffer(chunk_buffer.data(), produced);
+                        asio::write(adaptor_.socket(), buffers, ec);
+                        if (ec)
+                        {
+                            CROW_LOG_ERROR << ec << " - buffer write error happened while sending streamed response. Writing stopped premature.";
+                            break;
+                        }
+                        remaining -= produced;
+                    }
+
+                    if (remaining != 0)
+                    {
+                        close_connection_ = true;
+                    }
+                }
+                else
+                {
+                    // Unknown total length without chunking (HTTP/1.0 fallback): stream until reader returns 0.
+                    buffers.resize(1);
+                    while (true)
+                    {
+                        size_t produced = res.streamed_body_info_.reader(chunk_buffer.data(), chunk_buffer.size());
+                        if (produced == 0)
+                        {
+                            break;
+                        }
+                        if (produced > chunk_buffer.size())
+                        {
+                            produced = chunk_buffer.size();
+                        }
+
+                        buffers[0] = asio::const_buffer(chunk_buffer.data(), produced);
+                        asio::write(adaptor_.socket(), buffers, ec);
+                        if (ec)
+                        {
+                            CROW_LOG_ERROR << ec << " - buffer write error happened while sending streamed response (connection-close mode). Writing stopped premature.";
+                            break;
+                        }
+                    }
+                    close_connection_ = true;
+                }
+            }
+
+            if (close_connection_)
+            {
+                adaptor_.shutdown_readwrite();
+                adaptor_.close();
+                CROW_LOG_DEBUG << this << " from write (streamed_res)";
+            }
+
+            res.end();
+            res.clear();
+            buffers_.clear();
+            parser_.clear();
+        }
+
+        bool supports_chunked_transfer_encoding() const
+        {
+            return req_.http_ver_major > 1 || (req_.http_ver_major == 1 && req_.http_ver_minor >= 1);
         }
 
         void do_write_general()
