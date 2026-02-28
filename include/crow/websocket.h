@@ -120,6 +120,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                                std::function<void(crow::websocket::connection&, const std::string&, bool)> message_handler,
                                std::function<void(crow::websocket::connection&, const std::string&, uint16_t)> close_handler,
                                std::function<void(crow::websocket::connection&, const std::string&)> error_handler,
+                               std::pair<std::function<void(crow::websocket::connection&, const std::string&)>, uint64_t> receiver_timeout_handler,
                                std::function<void(const crow::request&, std::optional<crow::response>&, void**)> accept_handler,
                                bool mirror_protocols)
             {
@@ -128,7 +129,8 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                                                                        std::move(open_handler), 
                                                                        std::move(message_handler), 
                                                                        std::move(close_handler),
-                                                                       std::move(error_handler), 
+                                                                       std::move(error_handler),
+                                                                       std::move(receiver_timeout_handler),
                                                                        std::move(accept_handler)));
                 
                 // Perform handshake validation
@@ -344,6 +346,26 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                 do_read();
             }
 
+            void start_deadline(/*int timeout = 5*/)
+            {
+                cancel_deadline_timer();
+
+                if (close_connection_ || !timeout_handler_.first) return;
+
+                task_timer_.set_default_timeout(timeout_handler_.second);
+                task_id_ = task_timer_.schedule([this] {
+                    timeout_handler_.first(*this, "timeout");
+                });
+                CROW_LOG_DEBUG << this << " websocket timer added: " << &task_timer_ << ' ' << task_id_;
+            }
+
+            void cancel_deadline_timer()
+            {
+                if (!timeout_handler_.first) return;
+                CROW_LOG_DEBUG << this << " websocket timer cancelled: " << &task_timer_ << ' ' << task_id_;
+                task_timer_.cancel(task_id_);
+            }
+
             /// Read a websocket message.
 
             ///
@@ -361,6 +383,8 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                     check_destroy();
                     return;
                 }
+
+                start_deadline();
 
                 is_reading = true;
                 switch (state_)
@@ -848,7 +872,11 @@ namespace crow // NOTE: Already documented in "crow/app.h"
             std::function<void(crow::websocket::connection&, const std::string&, bool)> message_handler_;
             std::function<void(crow::websocket::connection&, const std::string&, uint16_t status_code)> close_handler_;
             std::function<void(crow::websocket::connection&, const std::string&)> error_handler_;
+            std::pair<std::function<void(crow::websocket::connection&, const std::string&)>, uint64_t> timeout_handler_;
             std::function<void(const crow::request&, std::optional<crow::response>&, void**)> accept_handler_;
+
+            detail::task_timer task_timer_;
+            detail::task_timer::identifier_type task_id_;
         };
     } // namespace websocket
 } // namespace crow
