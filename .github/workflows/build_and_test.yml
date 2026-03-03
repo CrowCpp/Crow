@@ -137,8 +137,8 @@ jobs:
       shell: bash
 
     - name: Save report
-      uses: actions/upload-artifact@v6
-      if: matrix.os == 'ubuntu-latest' && matrix.compiler == 'gcc' && matrix.cxx_stdlib == 'libstdc++' && matrix.asio_type == 'boost' && !startsWith(github.ref, 'refs/heads/v')
+      uses: actions/upload-artifact@v7
+      if: matrix.os == 'ubuntu-latest' && matrix.compiler == 'gcc' && matrix.cxx_stdlib == 'libstdc++' && matrix.asio_type == 'boost' && !startsWith(github.ref, 'refs/tags/v')
       with:
         name: coveralls.json
         path: coveralls.json
@@ -158,9 +158,8 @@ jobs:
         ls
       shell: bash
 
-    - name: Upload Linux packages
-      uses: actions/upload-artifact@v6
-      if: matrix.os == 'ubuntu-latest' && matrix.compiler == 'gcc' && matrix.cxx_stdlib == 'libstdc++' && matrix.asio_type == 'boost' && startsWith(github.ref, 'refs/heads/v')
+    - uses: actions/upload-artifact@v7
+      if: matrix.os == 'ubuntu-latest' && matrix.compiler == 'gcc' && matrix.cxx_stdlib == 'libstdc++' && matrix.asio_type == 'boost' && startsWith(github.ref, 'refs/tags/v')
       with:
         name: packages
         overwrite: true
