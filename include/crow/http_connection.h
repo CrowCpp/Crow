@@ -136,7 +136,7 @@ namespace crow
                     CROW_LOG_ERROR << ec << " buffer write error happened while handling sending continuation buffer header";
                 }
             }
-            if (!routing_handle_result_->rule_index && req_.method == HTTPMethod::Options)
+            if (!routing_handle_result_->rule_index && !routing_handle_result_->catch_all && req_.method == HTTPMethod::Options)
             {
                 parser_.done();
                 need_to_call_after_handlers_ = true;
