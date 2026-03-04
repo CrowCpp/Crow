@@ -350,6 +350,11 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                 return static_cast<int>(i());
             }
 
+            explicit operator double() const
+            {
+                return d();
+            }
+
             /// Return any json value (not object or list) as a string.
             explicit operator std::string() const
             {
@@ -2103,6 +2108,48 @@ namespace crow // NOTE: Already documented in "crow/app.h"
             }
 
             const wvalue& ref;
+        };
+
+        /**
+         * \brief JSON returnable class.
+         * An utilty to return a JSON string build by an external library/tool.
+         *
+         * Usage:
+         * ```cpp
+         *  CROW_ROUTE(wApp, "/api/currentState")
+         *      .methods(crow::HTTPMethod::Get)(
+         *          [this]() -> crow::response {
+         *              state.syncIn();
+         *              return crow::json::returnable(
+         *                   DataToJson::toJson(state.data())
+         *                   );
+         *          });
+         * ```
+         *
+         */
+        class returnable : public crow::returnable
+        {
+        public:
+            returnable()
+                : crow::returnable("application/json")
+            {}
+
+            returnable(std::string gBody)
+                : crow::returnable("application/json")
+                , body_(std::move(gBody))
+            {}
+
+            void setBody(std::string gBody) {
+                body_=gBody;
+            }
+
+            std::string dump() const override
+            {
+                return body_;
+            }
+
+        protected:
+            std::string body_;
         };
 
         //std::vector<asio::const_buffer> dump_ref(wvalue& v)
