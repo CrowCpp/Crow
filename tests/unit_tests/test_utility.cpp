@@ -106,8 +106,8 @@ TEST_CASE("string_equals")
 TEST_CASE("lexical_cast")
 {
     CHECK(utility::lexical_cast<int>(4) == 4);
-    CHECK(utility::lexical_cast<double>(4) == 4.0);
+    CHECK(utility::lexical_cast<double>(4) == Catch::Approx(4.0));
     CHECK(utility::lexical_cast<int>("5") == 5);
     CHECK(utility::lexical_cast<string>(4) == "4");
-    CHECK(utility::lexical_cast<float>("10", 2) == 10.0f);
+    CHECK(utility::lexical_cast<float>("10", 2) == Catch::Approx(10.0f));
 }
