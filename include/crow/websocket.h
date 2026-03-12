@@ -269,9 +269,12 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                     char status_buf[2];
                     *(uint16_t*)(status_buf) = htons(status_code);
 
-                    shared_this->write_buffers_.emplace_back(std::move(header));
-                    shared_this->write_buffers_.emplace_back(std::string(status_buf, 2));
-                    shared_this->write_buffers_.emplace_back(msg);
+                    {
+                        std::lock_guard<std::mutex> lock(shared_this->mtx_);
+                        shared_this->write_buffers_.emplace_back(std::move(header));
+                        shared_this->write_buffers_.emplace_back(std::string(status_buf, 2));
+                        shared_this->write_buffers_.emplace_back(msg);
+                    }
                     shared_this->do_write();
                 });
             }
@@ -328,16 +331,19 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                   "Upgrade: websocket\r\n"
                   "Connection: Upgrade\r\n"
                   "Sec-WebSocket-Accept: ";
-                write_buffers_.emplace_back(header);
-                write_buffers_.emplace_back(std::move(hello));
-                write_buffers_.emplace_back(crlf);
-                if (!subprotocol_.empty())
                 {
-                    write_buffers_.emplace_back("Sec-WebSocket-Protocol: ");
-                    write_buffers_.emplace_back(subprotocol_);
+                    std::lock_guard<std::mutex> lock(mtx_);
+                    write_buffers_.emplace_back(header);
+                    write_buffers_.emplace_back(std::move(hello));
+                    write_buffers_.emplace_back(crlf);
+                    if (!subprotocol_.empty())
+                    {
+                        write_buffers_.emplace_back("Sec-WebSocket-Protocol: ");
+                        write_buffers_.emplace_back(subprotocol_);
+                        write_buffers_.emplace_back(crlf);
+                    }
                     write_buffers_.emplace_back(crlf);
                 }
-                write_buffers_.emplace_back(crlf);
                 do_write();
                 if (open_handler_)
                     open_handler_(*this);
