@@ -64,23 +64,33 @@ inline int qs_strncmp(const char * s, const char * qs, size_t n)
         if ( u1 == '+' ) {  u1 = ' ';  }
         if ( u1 == '%' ) // easier/safer than scanf
         {
-            unyb = static_cast<unsigned char>(*s++);
-            lnyb = static_cast<unsigned char>(*s++);
-            if ( CROW_QS_ISHEX(unyb) && CROW_QS_ISHEX(lnyb) )
+            // Check that next two chars exist and are valid hex before reading
+            if ( CROW_QS_ISHEX(s[0]) && CROW_QS_ISHEX(s[1]) )
+            {
+                unyb = static_cast<unsigned char>(*s++);
+                lnyb = static_cast<unsigned char>(*s++);
                 u1 = (CROW_QS_HEX2DEC(unyb) * 16) + CROW_QS_HEX2DEC(lnyb);
+            }
             else
+            {
                 u1 = '\0';
+            }
         }
 
         if ( u2 == '+' ) {  u2 = ' ';  }
         if ( u2 == '%' ) // easier/safer than scanf
         {
-            unyb = static_cast<unsigned char>(*qs++);
-            lnyb = static_cast<unsigned char>(*qs++);
-            if ( CROW_QS_ISHEX(unyb) && CROW_QS_ISHEX(lnyb) )
+            // Check that next two chars exist and are valid hex before reading
+            if ( CROW_QS_ISHEX(qs[0]) && CROW_QS_ISHEX(qs[1]) )
+            {
+                unyb = static_cast<unsigned char>(*qs++);
+                lnyb = static_cast<unsigned char>(*qs++);
                 u2 = (CROW_QS_HEX2DEC(unyb) * 16) + CROW_QS_HEX2DEC(lnyb);
+            }
             else
+            {
                 u2 = '\0';
+            }
         }
 
         if ( u1 != u2 )
@@ -150,7 +160,9 @@ inline int qs_decode(char * qs)
         if ( qs[j] == '+' ) {  qs[i] = ' ';  }
         else if ( qs[j] == '%' ) // easier/safer than scanf
         {
-            if ( ! CROW_QS_ISHEX(qs[j+1]) || ! CROW_QS_ISHEX(qs[j+2]) )
+            // Check bounds before reading: ensure j+1 and j+2 are within string
+            if ( qs[j+1] == '\0' || qs[j+2] == '\0' ||
+                 ! CROW_QS_ISHEX(qs[j+1]) || ! CROW_QS_ISHEX(qs[j+2]) )
             {
                 qs[i] = '\0';
                 return i;
