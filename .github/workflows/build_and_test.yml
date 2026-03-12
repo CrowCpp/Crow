@@ -157,3 +157,35 @@ jobs:
           ${{github.workspace}}/build/Crow-*
           ${{github.workspace}}/build/crow_all.h
           ${{github.workspace}}/build/crow_all.h.*
+
+  sanitize:
+    name: Sanitizer Tests (ASan + UBSan)
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v6
+
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -yq \
+          libasio-dev \
+          libssl-dev zlib1g-dev \
+          cmake g++
+
+    - name: Configure with sanitizers
+      run: |
+        cmake --preset ci-sanitize \
+          -DCROW_BUILD_TESTS=ON \
+          -DCROW_ENABLE_SSL=ON \
+          -DCROW_ENABLE_COMPRESSION=ON \
+          -DCROW_ENABLE_SANITIZERS=ON
+
+    - name: Build
+      run: cmake --build build/sanitize -j $(nproc)
+
+    - name: Test under sanitizers
+      working-directory: ${{github.workspace}}/build/sanitize
+      env:
+        ASAN_OPTIONS: "strict_string_checks=1:detect_stack_use_after_return=1:check_initialization_order=1:strict_init_order=1:detect_leaks=0"
+        UBSAN_OPTIONS: "print_stacktrace=1"
+      run: ctest --output-on-failure
