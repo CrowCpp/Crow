@@ -49,3 +49,24 @@ function(add_warnings_optimizations target_name)
     )
   endif()
 endfunction()
+
+# Sanitizer flags for test builds (ASan + UBSan)
+function(add_sanitizer_flags target_name)
+  if(CROW_ENABLE_SANITIZERS)
+    if(MSVC)
+      # MSVC supports /fsanitize=address but not UBSan
+      target_compile_options(${target_name} PRIVATE /fsanitize=address)
+    elseif(NOT "${CMAKE_SYSTEM_NAME}" STREQUAL "Android")
+      target_compile_options(${target_name}
+        PRIVATE
+          -fsanitize=address,undefined
+          -fno-omit-frame-pointer
+          -fno-common
+      )
+      target_link_options(${target_name}
+        PRIVATE
+          -fsanitize=address,undefined
+      )
+    endif()
+  endif()
+endfunction()
