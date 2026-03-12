@@ -1740,6 +1740,26 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                 return const_cast<wvalue*>(this)->operator[](index);
             }
 
+            /// Check if the object contains the given key.
+            bool has(const char* key) const
+            {
+                return has(std::string(key));
+            }
+
+            /// Check if the object contains the given key.
+            bool has(const std::string& key) const
+            {
+                if (t_ != type::Object)
+                    return false;
+                if (!o)
+                    return false;
+#if (__cplusplus>=202002L)
+                return o->contains(key);
+#else
+                return o->count(key)>0;
+#endif
+            }
+
             int count(const std::string& str) const
             {
                 if (t_ != type::Object)
@@ -2041,6 +2061,12 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                 static constexpr int DontIndent = -1;
 
                 return dump(DontIndent);
+            }
+
+            /// Return json string.
+            explicit operator std::string() const
+            {
+                return dump();
             }
         };
 

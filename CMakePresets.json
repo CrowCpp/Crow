@@ -12,7 +12,7 @@
       "warnings": {
         "dev": true,
         "deprecated": true,
-        "uninitialized": true,
+        "uninitialized": false,
         "unusedCli": true,
         "systemVars": false
       },
@@ -81,7 +81,10 @@
     },
     {
       "name": "ci-linux",
-      "inherits": ["flags-gcc-clang", "ci-std"],
+      "inherits": [
+        "flags-gcc-clang",
+        "ci-std"
+      ],
       "generator": "Unix Makefiles",
       "hidden": true,
       "cacheVariables": {
@@ -90,13 +93,19 @@
     },
     {
       "name": "ci-darwin",
-      "inherits": ["flags-appleclang", "ci-std"],
+      "inherits": [
+        "flags-appleclang",
+        "ci-std"
+      ],
       "generator": "Xcode",
       "hidden": true
     },
     {
       "name": "ci-win64",
-      "inherits": ["flags-msvc", "ci-std"],
+      "inherits": [
+        "flags-msvc",
+        "ci-std"
+      ],
       "generator": "Visual Studio 17 2022",
       "architecture": "x64",
       "hidden": true
@@ -116,7 +125,10 @@
     },
     {
       "name": "ci-coverage",
-      "inherits": ["coverage-linux", "dev-mode"],
+      "inherits": [
+        "coverage-linux",
+        "dev-mode"
+      ],
       "cacheVariables": {
         "COVERAGE_HTML_COMMAND": ""
       }
@@ -124,7 +136,10 @@
     {
       "name": "ci-sanitize",
       "binaryDir": "${sourceDir}/build/sanitize",
-      "inherits": ["ci-linux", "dev-mode"],
+      "inherits": [
+        "ci-linux",
+        "dev-mode"
+      ],
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Sanitize",
         "CMAKE_CXX_FLAGS_SANITIZE": "-U_FORTIFY_SOURCE -O2 -g -fsanitize=address,undefined -fno-omit-frame-pointer -fno-common"
@@ -145,15 +160,57 @@
     },
     {
       "name": "ci-macos",
-      "inherits": ["ci-build", "ci-darwin", "dev-mode", "ci-multi-config"]
+      "inherits": [
+        "ci-build",
+        "ci-darwin",
+        "dev-mode",
+        "ci-multi-config"
+      ]
     },
     {
       "name": "ci-ubuntu",
-      "inherits": ["ci-build", "ci-linux", "clang-tidy", "cppcheck", "dev-mode"]
+      "inherits": [
+        "ci-build",
+        "ci-linux",
+        "clang-tidy",
+        "cppcheck",
+        "dev-mode"
+      ]
     },
     {
       "name": "ci-windows",
-      "inherits": ["ci-build", "ci-win64", "dev-mode", "ci-multi-config"]
+      "inherits": [
+        "ci-build",
+        "ci-win64",
+        "dev-mode",
+        "ci-multi-config"
+      ]
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "ci-sanitize",
+      "configurePreset": "ci-sanitize",
+      "configuration": "Sanitize",
+      "jobs": 4
+    }
+  ],
+  "testPresets": [
+    {
+      "name": "ci-sanitize",
+      "configurePreset": "ci-sanitize",
+      "configuration": "Sanitize",
+      "output": {
+        "outputOnFailure": true
+      },
+      "execution": {
+        "jobs": 4,
+        "noTestsAction": "error"
+      },
+      "environment": {
+        "ASAN_OPTIONS": "strict_string_checks=1:detect_stack_use_after_return=1:check_initialization_order=1:strict_init_order=1:detect_leaks=0",
+        "UBSAN_OPTIONS": "print_stacktrace=1"
+      }
     }
   ]
 }
