@@ -477,8 +477,8 @@ namespace crow
         }
 #endif
 
-        /// \brief Apply blueprints
-        void add_blueprint()
+        /// \brief Apply blueprints static routes
+        void add_blueprint_static_dirs()
         {
 #if defined(__APPLE__) || defined(__MACH__)
             if (router_.blueprints().empty()) return;
@@ -497,9 +497,7 @@ namespace crow
                     res.set_static_file_info_unsafe(static_dir_ + file_path_partial);
                     res.end();
                 });
-            }
-
-            router_.validate_bp();
+            }            
         }
 
         /// \brief Go through the rules, upgrade them if possible, and add them to the list of rules
@@ -519,14 +517,15 @@ namespace crow
         /// \brief A wrapper for `validate()` in the router
         void validate()
         {
-            router_.validate();
+            router_.validate_bp();  
+            router_.validate();            
         }
 
         /// \brief Run the server
         void run()
         {
 #ifndef CROW_DISABLE_STATIC_DIR
-            add_blueprint();
+            add_blueprint_static_dirs();
             add_static_dir();
 #endif
             validate();
