@@ -3,6 +3,10 @@
 //#define CROW_JSON_NO_ERROR_CHECK
 //#define CROW_JSON_USE_MAP
 
+#ifndef DBL_DECIMAL_DIG
+#define DBL_DECIMAL_DIG 17
+#endif /* ifndef DBL_DECIMAL_DIG */
+
 #include <string>
 #ifdef CROW_JSON_USE_MAP
 #include <map>
