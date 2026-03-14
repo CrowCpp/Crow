@@ -1,17 +1,51 @@
 <span class="tag">[:octicons-feed-tag-16: v0.2](https://github.com/CrowCpp/Crow/releases/0.2)</span>
 
-
 A static file is any file that resides in the server's storage.
 
 Crow supports returning static files as responses either implicitly or explicitly.
 
 ## Implicit
 Crow implicitly returns any static files placed in a `static` directory and any subdirectories, as long as the user calls the endpoint `/static/path/to/file`.<br><br>
-The static folder or endpoint can be changed by defining the macros `CROW_STATIC_DIRECTORY "alternative_directory/"` and `CROW_STATIC_ENDPOINT "/alternative_endpoint/<path>"`.<br>
-static directory changes the directory in the server's file system, while the endpoint changes the URL that the client needs to access.
+The static folder or endpoint can be changed by defining the macros :
+```cpp
+#define CROW_STATIC_DIRECTORY "alternative_directory/"
+#define CROW_STATIC_ENDPOINT "/alternative_endpoint/<path>"
+```
+`CROW_STATIC_DIRECTORY` changes the directory in the server's file system, while `CROW_STATIC_ENDPOINT` changes the URL that the client needs to access.
 
 ## Explicit
-You can directly return a static file by using the `crow::response` method `#!cpp response.set_static_file_info("path/to/file");`. The path is relative to the working directory.
+You can return a static file by using the `CROW_STATIC_FILE(<app>, <EndPoint>, <FilePath>)` macro.</br>
+Or by using `app.static_file(<EndPoint>, <FilePath>)` function of Crow::App.</br>
+The path is relative to the working directory.
+
+However for a dedicated case, you can directly return a static file by using the `crow::response` and set the file path and mime-type by `#!cpp response.set_static_file_info(<FilePath>,<mime-type>)`.
+
+### Example
+
+```cpp
+auto app = crow::SimpleApp(); // or crow::App()
+
+// by Macro
+CROW_STATIC_FILE(app, "/"          , "home.html");
+CROW_STATIC_FILE(app, "/home.html" , "home.html");
+
+// by Function
+app.static_file("/favicon.ico", "images/home.png");
+app.static_file("/style.css", "style.css");
+
+// Explicit route to add more information
+CROW_ROUTE(app, "/customDataType.xyz")
+([](const crow::request&, crow::response& res) {
+    res.set_static_file_info(
+                "data/customType.xyz",
+                "application/octet-stream"
+                );
+    res.end();
+});
+```
+
+
+## Notes
 
 !!! Warning
 

@@ -1833,30 +1833,20 @@ TEST_CASE("send_file")
 
     SimpleApp app;
 
-    CROW_ROUTE(app, "/jpg")
-    ([](const crow::request&, crow::response& res) {
-        res.set_static_file_info("tests/img/cat.jpg");
-        res.end();
-    });
+    CROW_STATIC_FILE(app, "/jpg", "tests/img/cat.jpg");
+    CROW_STATIC_FILE(app, "/jpg2", "tests/img/cat2.jpg"); // This file is nonexistent on purpose
 
-    CROW_ROUTE(app, "/jpg2")
-    ([](const crow::request&, crow::response& res) {
-        res.set_static_file_info(
-          "tests/img/cat2.jpg"); // This file is nonexistent on purpose
-        res.end();
-    });
-
+    // Explicit route to add more informations
     CROW_ROUTE(app, "/jpg3")
     ([](const crow::request&, crow::response& res) {
-        res.set_static_file_info("tests/img/cat.jpg", "application/octet-stream"); // Set Content-Type explicitly
+        res.set_static_file_info(
+                    "tests/img/cat.jpg",
+                    "application/octet-stream"); // Set Content-Type explicitly
         res.end();
     });
 
-    CROW_ROUTE(app, "/filewith.badext")
-    ([](const crow::request&, crow::response& res) {
-        res.set_static_file_info("tests/img/filewith.badext");
-        res.end();
-    });
+    // Bad Extension test
+    CROW_STATIC_FILE(app, "/filewith.badext", "tests/img/filewith.badext");
 
     app.validate();
 
