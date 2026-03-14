@@ -77,6 +77,10 @@ add_executable(example_middleware example_middleware.cpp)
 add_warnings_optimizations(example_middleware)
 target_link_libraries(example_middleware PUBLIC Crow::Crow)
 
+add_executable(example_request_id example_request_id.cpp)
+add_warnings_optimizations(example_request_id)
+target_link_libraries(example_request_id PUBLIC Crow::Crow)
+
 add_executable(example_cors middlewares/example_cors.cpp)
 add_warnings_optimizations(example_cors)
 target_link_libraries(example_cors PUBLIC Crow::Crow)
