@@ -179,6 +179,7 @@ namespace crow
             headers = std::move(r.headers);
             completed_ = r.completed_;
             file_info = std::move(r.file_info);
+            streamed_body_info_ = std::move(r.streamed_body_info_);
             return *this;
         }
 
@@ -195,6 +196,7 @@ namespace crow
             headers.clear();
             completed_ = false;
             file_info = static_file_info{};
+            streamed_body_info_ = streamed_body_info{};
         }
 
         /// Return a "Temporary Redirect" response.
@@ -282,6 +284,14 @@ namespace crow
             return file_info.path.size();
         }
 
+        /// Check whether the response has a streamed body defined.
+        bool is_streamed_type()
+        {
+            return static_cast<bool>(streamed_body_info_.reader);
+        }
+
+        static constexpr size_t default_stream_chunk_size = 16 * 1024;
+
         /// This constains metadata (coming from the `stat` command) related to any static files associated with this response.
 
         ///
@@ -292,6 +302,69 @@ namespace crow
             struct stat statbuf;
             int statResult;
         };
+
+        struct streamed_body_info
+        {
+            std::function<size_t(void*, size_t)> reader;
+            size_t content_length = 0;
+            bool has_content_length = false;
+            bool chunked = false;
+            size_t chunk_size = default_stream_chunk_size;
+        };
+
+        /// Stream a response body using a callback that fills an output buffer.
+        ///
+        /// The callback should write at most `max_size` bytes into `buffer` and return the number of written bytes.
+        /// Returning `0` indicates end-of-stream.
+        ///
+        /// `chunk_size` controls how many bytes Crow asks from the callback at a time.
+        void set_streamed_body(std::function<size_t(void*, size_t)> reader, size_t content_length, std::string content_type = "", size_t chunk_size = default_stream_chunk_size)
+        {
+            body.clear();
+            file_info = static_file_info{};
+            streamed_body_info_.reader = std::move(reader);
+            streamed_body_info_.content_length = content_length;
+            streamed_body_info_.has_content_length = true;
+            streamed_body_info_.chunked = false;
+            streamed_body_info_.chunk_size = (chunk_size == 0 ? 1 : chunk_size);
+            this->headers.erase("Transfer-Encoding");
+            this->set_header("Content-Length", std::to_string(content_length));
+            manual_length_header = false;
+            if (!content_type.empty())
+            {
+                this->set_header("Content-Type", get_mime_type(content_type));
+            }
+#ifdef CROW_ENABLE_COMPRESSION
+            compressed = false;
+#endif
+        }
+
+        /// Stream a response body with unknown total size.
+        ///
+        /// For HTTP/1.1+, Crow uses `Transfer-Encoding: chunked`.
+        /// The callback should return `0` to indicate end-of-stream.
+        ///
+        /// `chunk_size` controls how many bytes Crow asks from the callback at a time.
+        void set_streamed_body(std::function<size_t(void*, size_t)> reader, std::string content_type = "", size_t chunk_size = default_stream_chunk_size)
+        {
+            body.clear();
+            file_info = static_file_info{};
+            streamed_body_info_.reader = std::move(reader);
+            streamed_body_info_.content_length = 0;
+            streamed_body_info_.has_content_length = false;
+            streamed_body_info_.chunked = true;
+            streamed_body_info_.chunk_size = (chunk_size == 0 ? 1 : chunk_size);
+            this->headers.erase("Content-Length");
+            this->set_header("Transfer-Encoding", "chunked");
+            manual_length_header = true;
+            if (!content_type.empty())
+            {
+                this->set_header("Content-Type", get_mime_type(content_type));
+            }
+#ifdef CROW_ENABLE_COMPRESSION
+            compressed = false;
+#endif
+        }
 
         /// Return a static file as the response body, the content_type may be specified explicitly.
         void set_static_file_info(std::string path, std::string content_type = "")
@@ -456,5 +529,6 @@ namespace crow
         std::function<void()> complete_request_handler_;
         std::function<bool()> is_alive_helper_;
         static_file_info file_info;
+        streamed_body_info streamed_body_info_;
     };
 } // namespace crow

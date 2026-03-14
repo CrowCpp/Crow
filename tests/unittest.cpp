@@ -2012,6 +2012,270 @@ TEST_CASE("stream_response")
     runTest.join();
 } // stream_response
 
+TEST_CASE("streamed_response")
+{
+    SimpleApp app;
+
+    const std::string keyword_ = "hello";
+    const size_t repetitions = 250000;
+    const size_t key_response_size = keyword_.length() * repetitions;
+
+    std::string key_response;
+    key_response.reserve(key_response_size);
+    for (size_t i = 0; i < repetitions; i++)
+        key_response += keyword_;
+
+    CROW_ROUTE(app, "/test")
+    ([&key_response](const crow::request&, crow::response& res) {
+        res.set_streamed_body([&key_response, offset = size_t{0}](void* buffer, size_t max_size) mutable -> size_t {
+            const size_t remaining = key_response.size() - offset;
+            if (remaining == 0)
+                return 0;
+            const size_t to_copy = std::min(max_size, remaining);
+            std::copy_n(key_response.data() + offset, to_copy, static_cast<char*>(buffer));
+            offset += to_copy;
+            return to_copy;
+        },
+                              key_response.size(), "text/plain");
+        res.end();
+    });
+
+    app.validate();
+
+    std::thread runTest([&app, &key_response, key_response_size, keyword_]() {
+        auto _ = app.bindaddr(LOCALHOST_ADDRESS).port(45451).run_async();
+        app.wait_for_server_start();
+        asio::io_context io_context;
+        std::string sendmsg;
+
+        //Total bytes received
+        unsigned int received = 0;
+        sendmsg = "GET /test HTTP/1.0\r\n\r\n";
+        {
+            asio::streambuf b;
+
+            asio::ip::tcp::socket c(io_context);
+            c.connect(asio::ip::tcp::endpoint(
+              asio::ip::make_address(LOCALHOST_ADDRESS), 45451));
+            c.send(asio::buffer(sendmsg));
+
+            // consuming the headers, since we don't need those for the test
+            static char buf[2048];
+            size_t received_headers_bytes = 0;
+
+            // read some response bytes, then find where body starts
+            const size_t headers_bytes_and_some = 102 * 2;
+            while (received_headers_bytes < headers_bytes_and_some)
+                received_headers_bytes += c.receive(asio::buffer(buf + received_headers_bytes,
+                                                                 sizeof(buf) / sizeof(buf[0]) - received_headers_bytes));
+
+            const std::string::size_type header_end_pos = std::string(buf, received_headers_bytes).find(keyword_);
+            received += received_headers_bytes - header_end_pos;
+
+            while (received < key_response_size)
+            {
+                asio::streambuf::mutable_buffers_type bufs = b.prepare(16384);
+
+                size_t n(0);
+                n = c.receive(bufs);
+                b.commit(n);
+                received += n;
+
+                std::istream istream(&b);
+                std::string s;
+                istream >> s;
+
+                CHECK(key_response.substr(received - n, n) == s);
+            }
+        }
+        app.stop();
+    });
+    runTest.join();
+} // streamed_response
+
+TEST_CASE("streamed_response_unknown_size_chunked")
+{
+    SimpleApp app;
+    const std::string payload = "hello world";
+
+    CROW_ROUTE(app, "/test")
+    ([payload](const crow::request&, crow::response& res) {
+        res.set_streamed_body([payload, offset = size_t{0}](void* buffer, size_t max_size) mutable -> size_t {
+            const size_t remaining = payload.size() - offset;
+            if (remaining == 0)
+                return 0;
+
+            const size_t to_copy = std::min(max_size, remaining);
+            std::copy_n(payload.data() + offset, to_copy, static_cast<char*>(buffer));
+            offset += to_copy;
+            return to_copy;
+        },
+                              "text/plain", 4);
+        res.end();
+    });
+
+    app.validate();
+
+    std::thread runTest([&app]() {
+        auto _ = app.bindaddr(LOCALHOST_ADDRESS).port(45452).run_async();
+        app.wait_for_server_start();
+
+        asio::io_context io_context;
+        asio::ip::tcp::socket c(io_context);
+        c.connect(asio::ip::tcp::endpoint(asio::ip::make_address(LOCALHOST_ADDRESS), 45452));
+
+        const std::string sendmsg = "GET /test HTTP/1.1\r\nHost: localhost\r\nConnection: close\r\n\r\n";
+        c.send(asio::buffer(sendmsg));
+
+        std::string raw_response;
+        std::array<char, 2048> buf{};
+        asio_error_code ec;
+        while (true)
+        {
+            const size_t n = c.receive(asio::buffer(buf), 0, ec);
+            if (ec == asio::error::eof)
+                break;
+
+            REQUIRE_FALSE(ec);
+            raw_response.append(buf.data(), n);
+        }
+
+        const std::string::size_type header_end_pos = raw_response.find("\r\n\r\n");
+        REQUIRE(header_end_pos != std::string::npos);
+        const std::string headers = raw_response.substr(0, header_end_pos);
+        const std::string body = raw_response.substr(header_end_pos + 4);
+
+        CHECK(headers.find("Transfer-Encoding: chunked") != std::string::npos);
+        CHECK(headers.find("Content-Length") == std::string::npos);
+        CHECK(body == "4\r\nhell\r\n4\r\no wo\r\n3\r\nrld\r\n0\r\n\r\n");
+
+        app.stop();
+    });
+    runTest.join();
+} // streamed_response_unknown_size_chunked
+
+TEST_CASE("streamed_response_unknown_size_http10_fallback")
+{
+    SimpleApp app;
+    const std::string payload = "hello world";
+
+    CROW_ROUTE(app, "/test")
+    ([payload](const crow::request&, crow::response& res) {
+        res.set_streamed_body([payload, offset = size_t{0}](void* buffer, size_t max_size) mutable -> size_t {
+            const size_t remaining = payload.size() - offset;
+            if (remaining == 0)
+                return 0;
+
+            const size_t to_copy = std::min(max_size, remaining);
+            std::copy_n(payload.data() + offset, to_copy, static_cast<char*>(buffer));
+            offset += to_copy;
+            return to_copy;
+        },
+                              "text/plain", 4);
+        res.end();
+    });
+
+    app.validate();
+
+    std::thread runTest([&app, payload]() {
+        auto _ = app.bindaddr(LOCALHOST_ADDRESS).port(45453).run_async();
+        app.wait_for_server_start();
+
+        asio::io_context io_context;
+        asio::ip::tcp::socket c(io_context);
+        c.connect(asio::ip::tcp::endpoint(asio::ip::make_address(LOCALHOST_ADDRESS), 45453));
+
+        const std::string sendmsg = "GET /test HTTP/1.0\r\nConnection: close\r\n\r\n";
+        c.send(asio::buffer(sendmsg));
+
+        std::string raw_response;
+        std::array<char, 2048> buf{};
+        asio_error_code ec;
+        while (true)
+        {
+            const size_t n = c.receive(asio::buffer(buf), 0, ec);
+            if (ec == asio::error::eof)
+                break;
+
+            REQUIRE_FALSE(ec);
+            raw_response.append(buf.data(), n);
+        }
+
+        const std::string::size_type header_end_pos = raw_response.find("\r\n\r\n");
+        REQUIRE(header_end_pos != std::string::npos);
+        const std::string headers = raw_response.substr(0, header_end_pos);
+        const std::string body = raw_response.substr(header_end_pos + 4);
+
+        CHECK(headers.find("Transfer-Encoding: chunked") == std::string::npos);
+        CHECK(headers.find("Connection: close") != std::string::npos);
+        CHECK(body == payload);
+
+        app.stop();
+    });
+    runTest.join();
+} // streamed_response_unknown_size_http10_fallback
+
+TEST_CASE("streamed_response_head_known_length_no_body")
+{
+    SimpleApp app;
+    const std::string payload = "hello world";
+
+    CROW_ROUTE(app, "/test")
+      .methods(crow::HTTPMethod::Get, crow::HTTPMethod::Head)
+    ([payload](const crow::request&, crow::response& res) {
+        res.set_streamed_body([payload, offset = size_t{0}](void* buffer, size_t max_size) mutable -> size_t {
+            const size_t remaining = payload.size() - offset;
+            if (remaining == 0)
+                return 0;
+
+            const size_t to_copy = std::min(max_size, remaining);
+            std::copy_n(payload.data() + offset, to_copy, static_cast<char*>(buffer));
+            offset += to_copy;
+            return to_copy;
+        },
+                              payload.size(), "text/plain", 4);
+        res.end();
+    });
+
+    app.validate();
+
+    std::thread runTest([&app]() {
+        auto _ = app.bindaddr(LOCALHOST_ADDRESS).port(45454).run_async();
+        app.wait_for_server_start();
+
+        asio::io_context io_context;
+        asio::ip::tcp::socket c(io_context);
+        c.connect(asio::ip::tcp::endpoint(asio::ip::make_address(LOCALHOST_ADDRESS), 45454));
+
+        const std::string sendmsg = "HEAD /test HTTP/1.1\r\nHost: localhost\r\nConnection: close\r\n\r\n";
+        c.send(asio::buffer(sendmsg));
+
+        std::string raw_response;
+        std::array<char, 2048> buf{};
+        asio_error_code ec;
+        while (true)
+        {
+            const size_t n = c.receive(asio::buffer(buf), 0, ec);
+            if (ec == asio::error::eof)
+                break;
+
+            REQUIRE_FALSE(ec);
+            raw_response.append(buf.data(), n);
+        }
+
+        const std::string::size_type header_end_pos = raw_response.find("\r\n\r\n");
+        REQUIRE(header_end_pos != std::string::npos);
+        const std::string headers = raw_response.substr(0, header_end_pos);
+        const std::string body = raw_response.substr(header_end_pos + 4);
+
+        CHECK(headers.find("Content-Length: 11") != std::string::npos);
+        CHECK(body.empty());
+
+        app.stop();
+    });
+    runTest.join();
+} // streamed_response_head_known_length_no_body
+
 #ifdef CROW_ENABLE_COMPRESSION
 TEST_CASE("zlib_compression")
 {
