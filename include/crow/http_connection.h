@@ -128,9 +128,13 @@ namespace crow
             {
                 continue_requested = true;
                 buffers_.clear();
-                static std::string expect_100_continue = "HTTP/1.1 100 Continue\r\n\r\n";
+                static const std::string expect_100_continue = "HTTP/1.1 100 Continue\r\n\r\n";
                 buffers_.emplace_back(expect_100_continue.data(), expect_100_continue.size());
-                do_write_sync(buffers_);
+                error_code ec = do_write_sync(buffers_);
+                if (ec)
+                {
+                    CROW_LOG_ERROR << ec << " buffer write error happened while handling sending continuation buffer header";
+                }
             }
         }
 
@@ -299,7 +303,12 @@ namespace crow
                 while (is.gcount() > 0)
                 {
                     buffers[0] = asio::buffer(buf, is.gcount());
-                    do_write_sync(buffers);
+                    error_code ec = do_write_sync(buffers);
+                    if (ec) {
+                        CROW_LOG_ERROR << ec << " - buffer write error happened while sending content of file "
+                                       << res.file_info.path << ". Writing stopped premature.";
+                        break;
+                    }
                     is.read(buf, sizeof(buf));
                 }
             }
@@ -318,13 +327,16 @@ namespace crow
 
         void do_write_general()
         {
+            error_code ec;
             if (res.body.length() < res_stream_threshold_)
             {
                 res_body_copy_.swap(res.body);
                 buffers_.emplace_back(res_body_copy_.data(), res_body_copy_.size());
 
-                do_write_sync(buffers_);
-
+                ec = do_write_sync(buffers_);
+                if (ec) {
+                    CROW_LOG_ERROR << ec << " - buffer write error happened while sending response. Writing stopped premature.";
+                }
                 if (need_to_start_read_after_complete_)
                 {
                     need_to_start_read_after_complete_ = false;
@@ -334,7 +346,10 @@ namespace crow
             }
             else
             {
-                asio::write(adaptor_.socket(), buffers_); // Write the response start / headers
+                asio::write(adaptor_.socket(), buffers_,ec); // Write the response start / headers
+                if (ec) {
+                    CROW_LOG_ERROR << ec << "- buffer write error happened while sending response start / headers. Writing stopped premature.";
+                }
                 cancel_deadline_timer();
                 if (res.body.length() > 0)
                 {
@@ -345,7 +360,11 @@ namespace crow
                     {
                         size_t to_transfer = CROW_MIN(16384UL, length - transferred);
                         buffers[0] = asio::const_buffer(data + transferred, to_transfer);
-                        do_write_sync(buffers);
+                        ec = do_write_sync(buffers);
+                        if (ec) {
+                            CROW_LOG_ERROR << ec << " - " << transferred << " - buffer write error happened while sending response. Writing stopped premature.";
+                            break;
+                        }
                         transferred += to_transfer;
                     }
                 }
@@ -439,10 +458,15 @@ namespace crow
               });
         }
 
-        inline void do_write_sync(std::vector<asio::const_buffer>& buffers)
+        inline error_code do_write_sync(std::vector<asio::const_buffer>& buffers)
         {
             error_code ec;
             asio::write(adaptor_.socket(), buffers, ec);
+            if (ec)
+            {
+                // CROW_LOG_ERROR << ec << " - happened while sending buffers";
+                CROW_LOG_DEBUG << this << " from write (sync)(2)";
+            }
 
             this->res.clear();
             this->res_body_copy_.clear();
@@ -455,11 +479,7 @@ namespace crow
                 this->parser_.clear();
             }
 
-            if (ec)
-            {
-                CROW_LOG_ERROR << ec << " - happened while sending buffers";
-                CROW_LOG_DEBUG << this << " from write (sync)(2)";
-            }
+            return ec;
         }
 
         void cancel_deadline_timer()
