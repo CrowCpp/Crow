@@ -1573,6 +1573,10 @@ TEST_CASE("simple_url_params")
     CHECK(last_url_params.get_list("tmnt").size() == 1);
     CHECK(string(last_url_params.get_list("tmnt")[0]) == "leonardo");
 
+    BENCHMARK("get_list") {
+        return last_url_params.get_list("tmnt");
+    };
+
     // check multiple array value
     HttpClient::request(LOCALHOST_ADDRESS, 45451,
                         "GET /params?tmnt[]=leonardo&tmnt[]=donatello&tmnt[]=raphael\r\n\r\n");
