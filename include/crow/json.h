@@ -162,6 +162,12 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                     return std::string(s_, e_);
                 }
 
+                // The whole class should be replaced by std::string_view
+                operator std::string_view() const
+                {
+                    return std::string_view(s_, e_ - s_);
+                }
+
 
                 const char* begin() const { return s_; }
                 const char* end() const { return e_; }
@@ -831,44 +837,150 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         {
         }
 
-        inline bool operator==(const rvalue& l, const std::string& r)
+        inline bool operator==(const rvalue& l, std::string_view r)
         {
             return l.s() == r;
         }
 
-        inline bool operator==(const std::string& l, const rvalue& r)
+        inline bool operator==(std::string_view l, const rvalue& r)
         {
             return l == r.s();
         }
 
-        inline bool operator!=(const rvalue& l, const std::string& r)
+        inline bool operator!=(const rvalue& l, std::string_view r)
         {
             return l.s() != r;
         }
 
-        inline bool operator!=(const std::string& l, const rvalue& r)
+        inline bool operator!=(std::string_view l, const rvalue& r)
         {
             return l != r.s();
         }
 
-        inline bool operator==(const rvalue& l, const int& r)
+        // we need const char * in addition to std::string_view because otherwise json["string"] == "test" would select operator==(bool)
+        inline bool operator==(const rvalue& l, const char* r)
+        {
+            return l.s() == r;
+        }
+
+        inline bool operator==(const char* l, const rvalue& r)
+        {
+            return l == r.s();
+        }
+
+        inline bool operator!=(const rvalue& l, const char* r)
+        {
+            return l.s() != r;
+        }
+
+        inline bool operator!=(const char* l, const rvalue& r)
+        {
+            return l != r.s();
+        }
+
+
+        inline bool operator==(const rvalue& l, long long r)
         {
           return l.i() == r;
         }
 
-        inline bool operator==(const int& l, const rvalue& r)
+        inline bool operator==(long long l, const rvalue& r)
         {
           return l == r.i();
         }
 
-        inline bool operator!=(const rvalue& l, const int& r)
+        inline bool operator!=(const rvalue& l, long long r)
         {
           return l.i() != r;
         }
 
-        inline bool operator!=(const int& l, const rvalue& r)
+        inline bool operator!=(long long l, const rvalue& r)
         {
           return l != r.i();
+        }
+
+
+        inline bool operator==(const rvalue& l, int r)
+        {
+            return l.i() == r;
+        }
+
+        inline bool operator==(int l, const rvalue& r)
+        {
+            return l == r.i();
+        }
+
+        inline bool operator!=(const rvalue& l, int r)
+        {
+            return l.i() != r;
+        }
+
+        inline bool operator!=(int l, const rvalue& r)
+        {
+            return l != r.i();
+        }
+
+
+        inline bool operator==(const rvalue& l, unsigned int r)
+        {
+            return l.u() == r;
+        }
+
+        inline bool operator==(unsigned int l, const rvalue& r)
+        {
+            return l == r.u();
+        }
+
+        inline bool operator!=(const rvalue& l, unsigned int r)
+        {
+            return l.u() != r;
+        }
+
+        inline bool operator!=(unsigned int l, const rvalue& r)
+        {
+            return l != r.u();
+        }
+
+
+        inline bool operator==(const rvalue& l, bool r)
+        {
+            return l.b() == r;
+        }
+
+        inline bool operator==(bool l, const rvalue& r)
+        {
+            return l == r.b();
+        }
+
+        inline bool operator!=(const rvalue& l, bool r)
+        {
+            return l.b() != r;
+        }
+
+        inline bool operator!=(bool l, const rvalue& r)
+        {
+            return l != r.b();
+        }
+
+
+        inline bool operator==(const rvalue& l, double r)
+        {
+            return l.d() == r;
+        }
+
+        inline bool operator==(double l, const rvalue& r)
+        {
+            return l == r.d();
+        }
+
+        inline bool operator!=(const rvalue& l, double r)
+        {
+            return l.d() != r;
+        }
+
+        inline bool operator!=(double l, const rvalue& r)
+        {
+            return l != r.d();
         }
 
 
