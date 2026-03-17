@@ -227,8 +227,8 @@ inline std::unique_ptr<std::pair<std::string, std::string>> qs_dict_name2kv(cons
         eq_pos = key_size = strcspn(qs_kv[i], "=");
         if (qs_kv[i][eq_pos] == '\0')
             continue;
-        auto key = std::unique_ptr<char[]>(new char[key_size]);
-        memcpy(key.get(), qs_kv[i], key_size);
+        auto key = std::unique_ptr<char[]>(new char[key_size + 1]);
+        memcpy(key.get(), qs_kv[i], key_size + 1);
         key[key_size] = '\0';
         key_size = qs_decode(key.get());
 
@@ -239,7 +239,7 @@ inline std::unique_ptr<std::pair<std::string, std::string>> qs_dict_name2kv(cons
         {
             auto sub_key = std::string(key.get() + name_len + 1, key_size - name_len - 2);
             auto value = std::string(qs_kv[i] + eq_pos + 1);
-            return std::unique_ptr<std::pair<std::string, std::string>>(new std::pair<std::string, std::string>(sub_key, value));
+            return std::make_unique<std::pair<std::string, std::string>>(sub_key, value);
         }
     }
 #endif  // _qsSORTING
