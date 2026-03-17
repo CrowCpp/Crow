@@ -3,10 +3,6 @@
 //#define CROW_JSON_NO_ERROR_CHECK
 //#define CROW_JSON_USE_MAP
 
-#ifndef DBL_DECIMAL_DIG
-#define DBL_DECIMAL_DIG 17
-#endif /* ifndef DBL_DECIMAL_DIG */
-
 #include <string>
 #ifdef CROW_JSON_USE_MAP
 #include <map>
@@ -1900,9 +1896,9 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                             if (v.nt == num_type::Double_precision_floating_point)
                             {
 #ifdef _MSC_VER
-                                sprintf_s(outbuf, sizeof(outbuf), "%.*g", DBL_DECIMAL_DIG, v.num.d);
+                                sprintf_s(outbuf, sizeof(outbuf), "%.*g", std::numeric_limits<double>::max_digits10, v.num.d);
 #else
-                                snprintf(outbuf, sizeof(outbuf), "%.*g", DBL_DECIMAL_DIG, v.num.d);
+                                snprintf(outbuf, sizeof(outbuf), "%.*g", std::numeric_limits<double>::max_digits10, v.num.d);
 #endif
                             }
                             else
