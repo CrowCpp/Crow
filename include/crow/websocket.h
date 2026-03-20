@@ -123,14 +123,17 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                                std::function<void(const crow::request&, std::optional<crow::response>&, void**)> accept_handler,
                                bool mirror_protocols)
             {
-                auto conn = std::shared_ptr<Connection>(new Connection(std::move(adaptor), 
+                auto conn = std::shared_ptr<Connection>(new Connection(std::move(adaptor),
                                                                        handler, max_payload,
-                                                                       std::move(open_handler), 
-                                                                       std::move(message_handler), 
+                                                                       std::move(open_handler),
+                                                                       std::move(message_handler),
                                                                        std::move(close_handler),
-                                                                       std::move(error_handler), 
-                                                                       std::move(accept_handler)));
-                
+                                                                       std::move(error_handler),
+                                                                       std::move(accept_handler)), [](Connection *p){
+                                                                        std::cout << "Deleted " << p << std::endl;
+                                                                        delete p;
+                                                                       });
+
                 // Perform handshake validation
                 if (!utility::string_equals(req.get_header_value("upgrade"), "websocket"))
                 {
@@ -286,7 +289,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                 max_payload_bytes_ = payload;
             }
 
-            /// Returns the matching client/server subprotocol, empty string if none matched. 
+            /// Returns the matching client/server subprotocol, empty string if none matched.
             std::string get_subprotocol() const override
             {
                 return subprotocol_;
