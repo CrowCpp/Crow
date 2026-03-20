@@ -69,7 +69,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
             virtual void send_text(std::string msg) = 0;
             virtual void send_ping(std::string msg) = 0;
             virtual void send_pong(std::string msg) = 0;
-            virtual void close(const std::string& msg, uint16_t status_code = CloseStatusCode::NormalClosure, std::shared_ptr<std::promise<void>> done = nullptr) = 0;
+            virtual void close(const std::string& msg = "quit", uint16_t status_code = CloseStatusCode::NormalClosure, std::shared_ptr<std::promise<void>> done = nullptr) = 0;
             virtual std::string get_remote_ip() = 0;
             virtual std::string get_subprotocol() const = 0;
             virtual ~connection() = default;
@@ -129,10 +129,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                                                                        std::move(message_handler),
                                                                        std::move(close_handler),
                                                                        std::move(error_handler),
-                                                                       std::move(accept_handler)), [](Connection *p){
-                                                                        std::cout << "Deleted " << p << std::endl;
-                                                                        delete p;
-                                                                       });
+                                                                       std::move(accept_handler)));
 
                 // Perform handshake validation
                 if (!utility::string_equals(req.get_header_value("upgrade"), "websocket"))
@@ -258,7 +255,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
 
             ///
             /// Sets a flag to destroy the object once the message is sent.
-            void close(std::string const& msg, uint16_t status_code = CloseStatusCode::NormalClosure, std::shared_ptr<std::promise<void>> done = nullptr) override
+            void close(std::string const& msg = "quit", uint16_t status_code = CloseStatusCode::NormalClosure, std::shared_ptr<std::promise<void>> done = nullptr) override
             {
                 dispatch([shared_this = this->shared_from_this(), msg, status_code, done]() mutable {
                     shared_this->has_sent_close_ = true;
