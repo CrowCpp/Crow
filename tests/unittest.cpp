@@ -1234,6 +1234,9 @@ TEST_CASE("middleware_cors")
         .origin("test.test")
       .prefix("/auth-origin")
         .allow_credentials()
+      .prefix("/multi-origin")
+        .origins("https://a.test", "https://b.test")
+        .allow_credentials()
       .prefix("/expose")
         .expose("exposed-header")
       .prefix("/nocors")
@@ -1259,6 +1262,15 @@ TEST_CASE("middleware_cors")
         return "-";
     });
 
+    CROW_ROUTE(app, "/multi-origin")
+    ([&](const request&) {
+        return "-";
+    });
+
+    CROW_ROUTE(app, "/multi-origin").methods(crow::HTTPMethod::Options)([&](const request&) {
+        return "-";
+    });
+
     CROW_ROUTE(app, "/expose")
     ([&](const request&) {
         return "-";
@@ -1273,7 +1285,7 @@ TEST_CASE("middleware_cors")
     auto _ = app.bindaddr(LOCALHOST_ADDRESS).port(port).run_async();
     app.wait_for_server_start();
     auto resp = HttpClient::request(LOCALHOST_ADDRESS, port,
-                                    "OPTIONS / HTTP/1.1\r\n\r\n");
+                                    "OPTIONS / HTTP/1.1\r\nHost: localhost\r\nConnection: close\r\n\r\n");
 
     CHECK(resp.find("Access-Control-Allow-Origin: *") != std::string::npos);
 
@@ -1291,9 +1303,26 @@ TEST_CASE("middleware_cors")
     CHECK(resp.find("Access-Control-Allow-Credentials: true") != std::string::npos);
 
     resp = HttpClient::request(LOCALHOST_ADDRESS, port,
-                               "OPTIONS /auth-origin / HTTP/1.1 \r\n\r\n");
-    CHECK(resp.find("Access-Control-Allow-Origin: *") != std::string::npos);
-    CHECK(resp.find("Access-Control-Allow-Credentials: true") == std::string::npos);
+                               "OPTIONS /auth-origin HTTP/1.0\r\nOrigin: test-client\r\nConnection: close\r\n\r\n");
+    CHECK(resp.find("Access-Control-Allow-Origin: test-client") != std::string::npos);
+    CHECK(resp.find("Access-Control-Allow-Credentials: true") != std::string::npos);
+
+    resp = HttpClient::request(LOCALHOST_ADDRESS, port,
+                               "GET /multi-origin HTTP/1.0\r\nOrigin: https://a.test\r\nConnection: close\r\n\r\n");
+    CHECK(resp.find("Access-Control-Allow-Origin: https://a.test") != std::string::npos);
+    CHECK(resp.find("Access-Control-Allow-Credentials: true") != std::string::npos);
+    CHECK(resp.find("Vary: Origin") != std::string::npos);
+
+    resp = HttpClient::request(LOCALHOST_ADDRESS, port,
+                               "OPTIONS /multi-origin HTTP/1.0\r\nOrigin: https://b.test\r\nConnection: close\r\n\r\n");
+    CHECK(resp.find("Access-Control-Allow-Origin: https://b.test") != std::string::npos);
+    CHECK(resp.find("Access-Control-Allow-Credentials: true") != std::string::npos);
+    CHECK(resp.find("Vary: Origin") != std::string::npos);
+
+    resp = HttpClient::request(LOCALHOST_ADDRESS, port,
+                               "GET /multi-origin HTTP/1.0\r\nOrigin: https://c.test\r\nConnection: close\r\n\r\n");
+    CHECK(resp.find("Access-Control-Allow-Origin:") == std::string::npos);
+    CHECK(resp.find("Access-Control-Allow-Credentials:") == std::string::npos);
 
     resp = HttpClient::request(LOCALHOST_ADDRESS, port,
                                "GET /expose\r\n\r\n");
@@ -2800,7 +2829,9 @@ TEST_CASE("option_header_passed_in_full")
     };
 
     std::string request =
-      "OPTIONS /echo HTTP/1.1\r\n";
+      "OPTIONS /echo HTTP/1.1\r\n"
+      "Host: localhost\r\n"
+      "Connection: close\r\n\r\n";
 
     auto res = make_request(request);
     CHECK(res.find(ServerName) != std::string::npos);
