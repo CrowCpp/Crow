@@ -59,6 +59,8 @@ namespace crow
         /// Set the value of an existing header in the response.
         void set_header(std::string key, std::string value)
         {
+            sanitize_header_value(key);
+            sanitize_header_value(value);
             headers.erase(key);
             headers.emplace(std::move(key), std::move(value));
         }
@@ -66,6 +68,8 @@ namespace crow
         /// Add a new header to the response.
         void add_header(std::string key, std::string value)
         {
+            sanitize_header_value(key);
+            sanitize_header_value(value);
             headers.emplace(std::move(key), std::move(value));
         }
 
