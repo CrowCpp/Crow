@@ -1,5 +1,9 @@
 #pragma once
 
+#ifndef _WIN32
+#include <cstring>
+#include <cerrno>
+#endif
 #ifdef CROW_USE_BOOST
 #include <boost/asio.hpp>
 #ifdef CROW_ENABLE_SSL
@@ -46,7 +50,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
     {
     public:
       Server(Handler* handler,
-             typename Acceptor::endpoint endpoint, 
+             typename Acceptor::endpoint endpoint,
              std::string server_name = std::string("Crow/") + VERSION,
              std::tuple<Middlewares...>* middlewares = nullptr,
              unsigned int concurrency = 1,
@@ -73,6 +77,12 @@ namespace crow // NOTE: Already documented in "crow/app.h"
             acceptor_.raw_acceptor().open(endpoint.protocol(), ec);
             if (ec) {
                 CROW_LOG_ERROR << "Failed to open acceptor: " << ec.message();
+                startup_failed_ = true;
+                return;
+            }
+
+            if(set_cloexec(acceptor_.raw_acceptor().native_handle()) == -1){
+                CROW_LOG_ERROR << "Failed to set FD_CLOEXEC on start: " << std::strerror(errno);
                 startup_failed_ = true;
                 return;
             }
@@ -202,8 +212,8 @@ namespace crow // NOTE: Already documented in "crow/app.h"
             }
             handler_->port(acceptor_.port());
             handler_->address_is_bound();
-            CROW_LOG_INFO << server_name_ 
-                          << " server is running at " << acceptor_.url_display(handler_->ssl_used()) 
+            CROW_LOG_INFO << server_name_
+                          << " server is running at " << acceptor_.url_display(handler_->ssl_used())
                           << " using " << concurrency_ << " threads";
             CROW_LOG_INFO << "Call `app.loglevel(crow::LogLevel::Warning)` to hide Info level logs.";
 
@@ -257,7 +267,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
             io_context_.stop(); // Close main io_service
         }
 
-        
+
         uint16_t port() const {
             return acceptor_.local_endpoint().port();
         }
@@ -310,7 +320,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                 auto p = std::make_shared<Connection<Adaptor, Handler, Middlewares...>>(
                     ic, handler_, server_name_, middlewares_,
                     get_cached_date_str_pool_[context_idx], *task_timer_pool_[context_idx], adaptor_ctx_, task_queue_length_pool_[context_idx]);
-                    
+
                 CROW_LOG_DEBUG << &ic << " {" << context_idx << "} queue length: " << task_queue_length_pool_[context_idx];
 
                 acceptor_.raw_acceptor().async_accept(
@@ -318,6 +328,10 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                   [this, p, &ic](error_code ec) {
                       if (!ec)
                       {
+                          if(set_cloexec(p->socket().native_handle()) == -1){
+                                CROW_LOG_ERROR << "Failed to set FD_CLOEXEC on accepted socket: " << std::strerror(errno);
+                            }
+
                           asio::post(ic,
                             [p] {
                                 p->start();
