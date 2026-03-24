@@ -1,9 +1,5 @@
 #pragma once
 
-#ifndef _WIN32
-#include <cstring>
-#include <cerrno>
-#endif
 #ifdef CROW_USE_BOOST
 #include <boost/asio.hpp>
 #ifdef CROW_ENABLE_SSL
@@ -20,8 +16,10 @@
 #endif
 
 #include <atomic>
+#include <cerrno>
 #include <chrono>
 #include <cstdint>
+#include <cstring>
 #include <future>
 #include <memory>
 #include <thread>
