@@ -31,6 +31,7 @@ var NAVTREEINDEX1 =
 "mustache_8h_source.html":[2,0,0,0,18],
 "namespacecrow.html":[0,0,0],
 "namespacecrow.html#a153c1bf24903d1a8629ef6eaf045110b":[0,0,0,42],
+"namespacecrow.html#a174b64e64a3beaaf81ae402f8c4e8cbb":[0,0,0,45],
 "namespacecrow.html#a3603179c9794548cac2c9990685178b4":[0,0,0,43],
 "namespacecrow.html#a88064857f10f96ac9bf075e19624ee4d":[0,0,0,44],
 "namespacecrow_1_1multipart.html":[0,0,0,0],
@@ -248,6 +249,5 @@ var NAVTREEINDEX1 =
 "structcrow_1_1multipart_1_1message.html#abeeebf36687f9cbdf06a6521eac1ce33":[1,0,0,2,2,3],
 "structcrow_1_1multipart_1_1message.html#abeeebf36687f9cbdf06a6521eac1ce33":[0,0,0,0,2,3],
 "structcrow_1_1multipart_1_1message.html#adac4c7af1a5d0eb66c2accbaf80e0196":[1,0,0,2,2,2],
-"structcrow_1_1multipart_1_1message.html#adac4c7af1a5d0eb66c2accbaf80e0196":[0,0,0,0,2,2],
-"structcrow_1_1multipart_1_1message.html#ae333adda5d66d21018a978e6a3c317dd":[1,0,0,2,2,5]
+"structcrow_1_1multipart_1_1message.html#adac4c7af1a5d0eb66c2accbaf80e0196":[0,0,0,0,2,2]
 };

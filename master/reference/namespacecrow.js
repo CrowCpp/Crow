@@ -44,5 +44,6 @@ var namespacecrow =
     [ "WebSocketRule", "classcrow_1_1_web_socket_rule.html", "classcrow_1_1_web_socket_rule" ],
     [ "App", "namespacecrow.html#a153c1bf24903d1a8629ef6eaf045110b", null ],
     [ "SimpleApp", "namespacecrow.html#a3603179c9794548cac2c9990685178b4", null ],
-    [ "get_header_value", "namespacecrow.html#a88064857f10f96ac9bf075e19624ee4d", null ]
+    [ "get_header_value", "namespacecrow.html#a88064857f10f96ac9bf075e19624ee4d", null ],
+    [ "sanitize_header_value", "namespacecrow.html#a174b64e64a3beaaf81ae402f8c4e8cbb", null ]
 ];
