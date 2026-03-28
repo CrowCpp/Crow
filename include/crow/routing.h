@@ -155,7 +155,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         const std::string& rule() { return rule_; }
 
     protected:
-        uint64_t methods_{uint64_t(1) << static_cast<int>(HTTPMethod::Get)};
+        uint64_t methods_{1ULL << static_cast<int>(HTTPMethod::Get)};
 
         std::string rule_;
         std::string name_;
@@ -566,7 +566,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
 
         self_t& methods(HTTPMethod method)
         {
-            static_cast<self_t*>(this)->methods_ = uint64_t(1) << static_cast<int>(method);
+            static_cast<self_t*>(this)->methods_ = 1ULL << static_cast<int>(method);
             return static_cast<self_t&>(*this);
         }
 
@@ -574,7 +574,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         self_t& methods(HTTPMethod method, MethodArgs... args_method)
         {
             methods(args_method...);
-            static_cast<self_t*>(this)->methods_ |= uint64_t(1) << static_cast<int>(method);
+            static_cast<self_t*>(this)->methods_ |= 1ULL << static_cast<int>(method);
             return static_cast<self_t&>(*this);
         }
 
