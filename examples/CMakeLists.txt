@@ -7,10 +7,6 @@ add_executable(helloworld helloworld.cpp)
 add_warnings_optimizations(helloworld)
 target_link_libraries(helloworld PUBLIC Crow::Crow)
 
-add_executable(helloworld_inject helloworld_inject.cpp)
-add_warnings_optimizations(helloworld_inject)
-target_link_libraries(helloworld_inject PUBLIC Crow::Crow)
-
 # If compression is enabled, the example will be built
 if("compression" IN_LIST CROW_FEATURES)
   add_executable(example_compression example_compression.cpp)

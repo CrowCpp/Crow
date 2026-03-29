@@ -2806,3 +2806,35 @@ TEST_CASE("option_header_passed_in_full")
     CHECK(res.find(ServerName) != std::string::npos);
     app.stop();
 }
+
+
+TEST_CASE("inject_header_via_set_haeder")
+{
+    crow::SimpleApp app;
+
+    CROW_ROUTE(app, "/")
+    ([](const crow::request &req, crow::response &res) {
+        res.write("Hello, world!");
+        res.set_header("X-Custom", "safe\r\nInjected: yes");
+        res.add_header("X-Custom2", "safe\r\nInjected: yes");
+
+        res.end();
+        //return "Hello, world!";
+    });
+
+    app.validate();
+
+    auto _ = app.bindaddr(LOCALHOST_ADDRESS).port(45451).server_name("lol").run_async();
+    app.wait_for_server_start();
+
+    {
+        //
+        auto resp = HttpClient::request(LOCALHOST_ADDRESS, 45451,
+                                        "GET / HTTP/1.0\r\nHost: localhost\r\n\r\n");
+
+        CHECK(resp.find("\r\nInjected") == std::string::npos);
+    }
+
+    app.stop();
+}
+
