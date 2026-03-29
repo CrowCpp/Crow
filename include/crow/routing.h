@@ -135,7 +135,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         }
 #endif
 
-        uint32_t get_methods()
+        uint64_t get_methods()
         {
             return methods_;
         }
@@ -143,7 +143,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         template<typename F>
         void foreach_method(F f)
         {
-            for (uint32_t method = 0, method_bit = 1; method < static_cast<uint32_t>(HTTPMethod::InternalMethodCount); method++, method_bit <<= 1)
+            for (uint64_t method = 0, method_bit = 1; method < static_cast<uint64_t>(HTTPMethod::InternalMethodCount); method++, method_bit <<= 1)
             {
                 if (methods_ & method_bit)
                     f(method);
@@ -155,7 +155,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         const std::string& rule() { return rule_; }
 
     protected:
-        uint32_t methods_{1 << static_cast<int>(HTTPMethod::Get)};
+        uint64_t methods_{1ULL << static_cast<int>(HTTPMethod::Get)};
 
         std::string rule_;
         std::string name_;
@@ -566,7 +566,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
 
         self_t& methods(HTTPMethod method)
         {
-            static_cast<self_t*>(this)->methods_ = 1 << static_cast<int>(method);
+            static_cast<self_t*>(this)->methods_ = 1ULL << static_cast<int>(method);
             return static_cast<self_t&>(*this);
         }
 
@@ -574,7 +574,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         self_t& methods(HTTPMethod method, MethodArgs... args_method)
         {
             methods(args_method...);
-            static_cast<self_t*>(this)->methods_ |= 1 << static_cast<int>(method);
+            static_cast<self_t*>(this)->methods_ |= 1ULL << static_cast<int>(method);
             return static_cast<self_t&>(*this);
         }
 
@@ -1470,7 +1470,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
             }
 
             CROW_LOG_DEBUG << "Matched rule (upgrade) '" << rules[rule_index]->rule_ << "' "
-                           << static_cast<uint32_t>(req.method) << " / "
+                           << static_cast<uint64_t>(req.method) << " / "
                            << rules[rule_index]->get_methods();
 
             try
@@ -1725,7 +1725,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                     res.add_header("Location", req.url + "/");
                     res.end();
                 } else {
-                    CROW_LOG_DEBUG << "Matched rule '" << rules[rule_index]->rule_ << "' " << static_cast<uint32_t>(req.
+                    CROW_LOG_DEBUG << "Matched rule '" << rules[rule_index]->rule_ << "' " << static_cast<uint64_t>(req.
                                       method) << " / " << rules[rule_index]->get_methods();
 
                     try {
