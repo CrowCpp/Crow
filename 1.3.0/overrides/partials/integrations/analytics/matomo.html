@@ -1,0 +1,19 @@
+<!-- Matomo -->
+<script>
+  var _paq = window._paq = window._paq || [];
+  /* tracker methods like "setCustomDimension" should be called before "trackPageView" */
+  _paq.push(['trackPageView']);
+  _paq.push(['enableLinkTracking']);
+  (function() {
+    var u="{{config.extra.analytics.link}}";
+    _paq.push(['setTrackerUrl', u+'matomo.php']);
+    _paq.push(['setSiteId', '{{config.extra.analytics.id}}']);
+    var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+    g.async=true; g.src=u+'matomo.js'; s.parentNode.insertBefore(g,s);
+  })();
+</script>
+
+<noscript>
+<img referrerpolicy="no-referrer-when-downgrade" src="https://thee.dev/matomo/matomo.php?idsite=1&amp;rec=1&amp;action_name={{ page.title }}" style="border:0" alt="" />
+</noscript>
+<!-- End Matomo Code -->

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="128mm"
+   height="128mm"
+   viewBox="0 0 128 128"
+   version="1.1"
+   id="svg5"
+   inkscape:version="1.1.2 (0a00cf5339, 2022-02-04, custom)"
+   sodipodi:docname="typesafe_light_icon.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview7"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:document-units="mm"
+     showgrid="false"
+     inkscape:zoom="1.0419012"
+     inkscape:cx="114.21428"
+     inkscape:cy="204.43397"
+     inkscape:window-width="1920"
+     inkscape:window-height="1051"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1"
+     height="128mm" />
+  <defs
+     id="defs2">
+    <inkscape:path-effect
+       effect="mirror_symmetry"
+       start_point="83.49758,103.2497"
+       end_point="83.677144,216.55502"
+       center_point="83.587362,159.90236"
+       id="path-effect1148"
+       is_visible="true"
+       lpeversion="1.1"
+       mode="free"
+       discard_orig_path="false"
+       fuse_paths="true"
+       oposite_fuse="false"
+       split_items="false"
+       split_open="false" />
+  </defs>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-35.610134,-93.0589)">
+    <path
+       style="fill:none;fill-opacity:1;stroke:#e5f2f8;stroke-width:6.465;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="M 83.489092,97.893689 C 61.657927,122.25262 42.116054,116.87646 39.272073,119.55834 c -2.61289,2.46396 6.066946,69.88504 44.404869,96.86893 38.252208,-27.10527 46.718298,-94.55352 44.097618,-97.00919 -2.85247,-2.67285 -22.37721,2.76522 -44.285468,-21.524391 z"
+       id="path857"
+       sodipodi:nodetypes="csc"
+       inkscape:original-d="m 83.677144,97.68319 c -21.906891,24.60036 -41.552926,19.18557 -44.405071,21.87515 -2.615268,2.4662 6.082752,70.00779 44.5096,96.94249"
+       inkscape:path-effect="#path-effect1148"
+       transform="translate(16.150228,0.25394282)" />
+  </g>
+</svg>
