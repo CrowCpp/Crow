@@ -3,7 +3,7 @@ name: Deploy Doxygen results to Github Pages
 #on: push
 on:
   push:
-    branches: [ v1.3" ]
+    branches: [ "v1.3" ]
 
 permissions:
   contents: write

@@ -9,6 +9,8 @@
 #include <asio.hpp>
 #endif
 
+#include <algorithm>
+
 #include "crow/common.h"
 #include "crow/ci_map.h"
 #include "crow/query_string.h"
@@ -18,6 +20,14 @@ namespace crow // NOTE: Already documented in "crow/app.h"
 #ifdef CROW_USE_BOOST
     namespace asio = boost::asio;
 #endif
+
+    /// Remove CR (\r) and LF (\n) characters from a header name or value to prevent header injection.
+    inline void sanitize_header_value(std::string& s)
+    {
+        s.erase(std::remove_if(s.begin(), s.end(),
+                               [](char c) { return c == '\r' || c == '\n'; }),
+                s.end());
+    }
 
     /// Find and return the value associated with the key. (returns an empty string if nothing is found)
     inline const std::string& get_header_value(const ci_map& headers, const std::string& key)
@@ -63,6 +73,8 @@ namespace crow // NOTE: Already documented in "crow/app.h"
 
         void add_header(std::string key, std::string value)
         {
+            sanitize_header_value(key);
+            sanitize_header_value(value);
             headers.emplace(std::move(key), std::move(value));
         }
 
