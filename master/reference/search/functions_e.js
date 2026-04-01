@@ -8,6 +8,7 @@ var searchData=
   ['request_5',['request',['../structcrow_1_1request.html#a838c9a8c9a5eb2283d57e66f3630b5a6',1,'crow::request::request()'],['../structcrow_1_1request.html#ab90c2762f152a7d58a1ab8ea55e0afd0',1,'crow::request::request(HTTPMethod method_, std::string raw_url_, std::string url_, query_string url_params_, ci_map headers_, std::string body_, unsigned char http_major, unsigned char http_minor, bool has_keep_alive, bool has_close_connection, bool is_upgrade)']]],
   ['route_6',['route',['../classcrow_1_1_crow.html#af2a46207b71be452e8514146a83a9868',1,'crow::Crow']]],
   ['route_5fdynamic_7',['route_dynamic',['../classcrow_1_1_crow.html#ad6c106ad129820885a51a05ef6e92f63',1,'crow::Crow']]],
-  ['run_8',['run',['../classcrow_1_1_crow.html#a193d8b03f717234a841cd92f72c6b4b5',1,'crow::Crow']]],
-  ['run_5fasync_9',['run_async',['../classcrow_1_1_crow.html#afd29cf4e11557abfd7bce88b84af9b99',1,'crow::Crow']]]
+  ['route_5fstatic_8',['route_static',['../classcrow_1_1_crow.html#a54bee1963e2b9ceef2149d1fbee2e916',1,'crow::Crow']]],
+  ['run_9',['run',['../classcrow_1_1_crow.html#a193d8b03f717234a841cd92f72c6b4b5',1,'crow::Crow']]],
+  ['run_5fasync_10',['run_async',['../classcrow_1_1_crow.html#afd29cf4e11557abfd7bce88b84af9b99',1,'crow::Crow']]]
 ];

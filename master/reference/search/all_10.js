@@ -16,12 +16,13 @@ var searchData=
   ['returnable_13',['returnable',['../structcrow_1_1returnable.html',1,'crow']]],
   ['route_14',['route',['../classcrow_1_1_crow.html#af2a46207b71be452e8514146a83a9868',1,'crow::Crow']]],
   ['route_5fdynamic_15',['route_dynamic',['../classcrow_1_1_crow.html#ad6c106ad129820885a51a05ef6e92f63',1,'crow::Crow']]],
-  ['router_16',['Router',['../classcrow_1_1_router.html',1,'crow']]],
-  ['routing_5fhandle_5fresult_17',['routing_handle_result',['../structcrow_1_1routing__handle__result.html',1,'crow']]],
-  ['ruleparametertraits_18',['RuleParameterTraits',['../structcrow_1_1_rule_parameter_traits.html',1,'crow']]],
-  ['ruleparametertraits_3c_20dynamicrule_20_3e_19',['RuleParameterTraits&lt; DynamicRule &gt;',['../structcrow_1_1_rule_parameter_traits.html',1,'crow']]],
-  ['ruleparametertraits_3c_20taggedrule_3c_20args_2e_2e_2e_20_3e_20_3e_20',['RuleParameterTraits&lt; TaggedRule&lt; Args... &gt; &gt;',['../structcrow_1_1_rule_parameter_traits.html',1,'crow']]],
-  ['run_21',['run',['../classcrow_1_1_crow.html#a193d8b03f717234a841cd92f72c6b4b5',1,'crow::Crow']]],
-  ['run_5fasync_22',['run_async',['../classcrow_1_1_crow.html#afd29cf4e11557abfd7bce88b84af9b99',1,'crow::Crow']]],
-  ['rvalue_23',['rvalue',['../classcrow_1_1json_1_1rvalue.html',1,'crow::json']]]
+  ['route_5fstatic_16',['route_static',['../classcrow_1_1_crow.html#a54bee1963e2b9ceef2149d1fbee2e916',1,'crow::Crow']]],
+  ['router_17',['Router',['../classcrow_1_1_router.html',1,'crow']]],
+  ['routing_5fhandle_5fresult_18',['routing_handle_result',['../structcrow_1_1routing__handle__result.html',1,'crow']]],
+  ['ruleparametertraits_19',['RuleParameterTraits',['../structcrow_1_1_rule_parameter_traits.html',1,'crow']]],
+  ['ruleparametertraits_3c_20dynamicrule_20_3e_20',['RuleParameterTraits&lt; DynamicRule &gt;',['../structcrow_1_1_rule_parameter_traits.html',1,'crow']]],
+  ['ruleparametertraits_3c_20taggedrule_3c_20args_2e_2e_2e_20_3e_20_3e_21',['RuleParameterTraits&lt; TaggedRule&lt; Args... &gt; &gt;',['../structcrow_1_1_rule_parameter_traits.html',1,'crow']]],
+  ['run_22',['run',['../classcrow_1_1_crow.html#a193d8b03f717234a841cd92f72c6b4b5',1,'crow::Crow']]],
+  ['run_5fasync_23',['run_async',['../classcrow_1_1_crow.html#afd29cf4e11557abfd7bce88b84af9b99',1,'crow::Crow']]],
+  ['rvalue_24',['rvalue',['../classcrow_1_1json_1_1rvalue.html',1,'crow::json']]]
 ];

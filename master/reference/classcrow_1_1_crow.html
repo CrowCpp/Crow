@@ -169,6 +169,12 @@ template&lt;uint64_t Tag&gt; </td></tr>
 <tr class="memitem:af2a46207b71be452e8514146a83a9868"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><b>route</b> (const std::string &amp;rule) -&gt; typename std::invoke_result&lt; decltype(&amp;Router::new_rule_tagged&lt; Tag &gt;), <a class="el" href="classcrow_1_1_router.html">Router</a>, const std::string &amp; &gt;::type</td></tr>
 <tr class="memdesc:af2a46207b71be452e8514146a83a9868"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a route using a rule (<b>Use CROW_ROUTE instead</b>) <br /></td></tr>
 <tr class="separator:af2a46207b71be452e8514146a83a9868"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a54bee1963e2b9ceef2149d1fbee2e916" id="r_a54bee1963e2b9ceef2149d1fbee2e916"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classcrow_1_1_tagged_rule.html">StaticRule</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcrow_1_1_crow.html#a54bee1963e2b9ceef2149d1fbee2e916">route_static</a> (const std::string &amp;url)</td></tr>
+<tr class="memdesc:a54bee1963e2b9ceef2149d1fbee2e916"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a static route to given url.  <br /></td></tr>
+<tr class="separator:a54bee1963e2b9ceef2149d1fbee2e916"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad28362be780a71415e032d5401cdaaca" id="r_ad28362be780a71415e032d5401cdaaca"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classcrow_1_1_tagged_rule.html">StaticRule</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcrow_1_1_crow.html#ad28362be780a71415e032d5401cdaaca">static_file</a> (std::string_view url, std::string_view internalPath)</td></tr>
+<tr class="memdesc:ad28362be780a71415e032d5401cdaaca"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates a static route for given url to internalPath.  <br /></td></tr>
+<tr class="separator:ad28362be780a71415e032d5401cdaaca"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abfb285bf01d12f28eabcc716423effe4" id="r_abfb285bf01d12f28eabcc716423effe4"><td class="memItemLeft" align="right" valign="top"><a id="abfb285bf01d12f28eabcc716423effe4" name="abfb285bf01d12f28eabcc716423effe4"></a>
 <a class="el" href="classcrow_1_1_catchall_rule.html">CatchallRule</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>catchall_route</b> ()</td></tr>
 <tr class="memdesc:abfb285bf01d12f28eabcc716423effe4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a route for any requests without a proper route (<b>Use CROW_CATCHALL_ROUTE instead</b>) <br /></td></tr>
@@ -467,6 +473,43 @@ template&lt;typename... Middlewares&gt; </div>
 
 </div>
 </div>
+<a id="a54bee1963e2b9ceef2149d1fbee2e916" name="a54bee1963e2b9ceef2149d1fbee2e916"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a54bee1963e2b9ceef2149d1fbee2e916">&#9670;&#160;</a></span>route_static()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename... Middlewares&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classcrow_1_1_tagged_rule.html">StaticRule</a> &amp; <a class="el" href="classcrow_1_1_crow.html">crow::Crow</a>&lt; Middlewares &gt;::route_static </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>url</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Create a static route to given url. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">url</td><td>public URL </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The rule </dd></dl>
+
+</div>
+</div>
 <a id="afd29cf4e11557abfd7bce88b84af9b99" name="afd29cf4e11557abfd7bce88b84af9b99"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#afd29cf4e11557abfd7bce88b84af9b99">&#9670;&#160;</a></span>run_async()</h2>
 
@@ -494,6 +537,54 @@ template&lt;typename... Middlewares&gt; </div>
 
 <p>Non-blocking version of <a class="el" href="classcrow_1_1_crow.html#a193d8b03f717234a841cd92f72c6b4b5">run()</a> </p>
 <p>The output from this method needs to be saved into a variable! Otherwise the call will be made on the same thread. </p>
+
+</div>
+</div>
+<a id="ad28362be780a71415e032d5401cdaaca" name="ad28362be780a71415e032d5401cdaaca"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad28362be780a71415e032d5401cdaaca">&#9670;&#160;</a></span>static_file()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename... Middlewares&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classcrow_1_1_tagged_rule.html">StaticRule</a> &amp; <a class="el" href="classcrow_1_1_crow.html">crow::Crow</a>&lt; Middlewares &gt;::static_file </td>
+          <td>(</td>
+          <td class="paramtype">std::string_view&#160;</td>
+          <td class="paramname"><em>url</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::string_view&#160;</td>
+          <td class="paramname"><em>internalPath</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Creates a static route for given url to internalPath. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">url</td><td>public URL </td></tr>
+    <tr><td class="paramname">internalPath</td><td>internal path to reach te file </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The rule </dd></dl>
 
 </div>
 </div>
@@ -538,7 +629,7 @@ template&lt;typename... Middlewares&gt; </div>
 			<ul>
 				<li class="navelem"><a class="el" href="namespacecrow.html">crow</a></li><li class="navelem"><a class="el" href="classcrow_1_1_crow.html">Crow</a></li>
 				<li class="footer">
-					Generated on Sun Mar 29 2026 for Crow by <a href="http://www.doxygen.org/index.html">
+					Generated on Wed Apr 1 2026 for Crow by <a href="http://www.doxygen.org/index.html">
 					<img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.9.8.
 					Dark theme by <a href="http://majerle.eu" target="_new">Tilen Majerle</a>. Edited by <a href="https://github.com/The-EDev" target="_new">Farook Al-Sammarraie</a>. All rights reserved.
 				</li>
