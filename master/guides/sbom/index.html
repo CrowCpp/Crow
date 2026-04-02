@@ -6,35 +6,35 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="Here&#x27;s how you can install Crow on your Mac.">
+        <meta name="description" content="Crow has the ability to generate a SBOM (Software Bill of Materials) at build using cmake-sbom in SPDX format.">
       
       
       
-        <link rel="canonical" href="https://crowcpp.org/master/getting_started/setup/macos/">
+        <link rel="canonical" href="https://crowcpp.org/master/guides/sbom/">
       
       
-        <link rel="prev" href="../linux/">
+        <link rel="prev" href="../middleware/">
       
       
-        <link rel="next" href="../windows/">
+        <link rel="next" href="../ssl/">
       
       
         
       
       
-      <link rel="icon" href="../../../assets/favicon.svg">
+      <link rel="icon" href="../../assets/favicon.svg">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
     
     
       
-        <title>MacOS - Crow</title>
+        <title>SBOM Generation - Crow</title>
       
     
     
-      <link rel="stylesheet" href="../../../assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
       
         
-        <link rel="stylesheet" href="../../../assets/stylesheets/palette.ab4e12ef.min.css">
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
       
       
 
@@ -47,13 +47,13 @@
       
     
     
-      <link rel="stylesheet" href="../../../stylesheets/colors.css">
+      <link rel="stylesheet" href="../../stylesheets/colors.css">
     
-      <link rel="stylesheet" href="../../../stylesheets/latofonts.css">
+      <link rel="stylesheet" href="../../stylesheets/latofonts.css">
     
-      <link rel="stylesheet" href="../../../stylesheets/extra.css">
+      <link rel="stylesheet" href="../../stylesheets/extra.css">
     
-    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
   
@@ -75,7 +75,7 @@
 </script>
 
 <noscript>
-<img referrerpolicy="no-referrer-when-downgrade" src="https://thee.dev/matomo/matomo.php?idsite=1&amp;rec=1&amp;action_name=MacOS" style="border:0" alt="" />
+<img referrerpolicy="no-referrer-when-downgrade" src="https://thee.dev/matomo/matomo.php?idsite=1&amp;rec=1&amp;action_name=SBOM Generation" style="border:0" alt="" />
 </noscript>
 <!-- End Matomo Code -->
   
@@ -111,7 +111,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#getting-crow" class="md-skip">
+        <a href="#prerequisites" class="md-skip">
           Skip to content
         </a>
       
@@ -153,14 +153,14 @@
 
     <!-- Link to home -->
     <a
-      href="../../.."
+      href="../.."
       title="Crow"
       class="md-header__button md-logo"
       aria-label="Crow"
       data-md-component="logo"
     >
       
-  <img src="../../../assets/favicon.svg" alt="logo">
+  <img src="../../assets/favicon.svg" alt="logo">
 
     </a>
 
@@ -180,7 +180,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              MacOS
+              SBOM Generation
             
           </span>
         </div>
@@ -290,7 +290,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="../../.." class="md-tabs__link">
+      <a href="../.." class="md-tabs__link">
         
   
   
@@ -300,6 +300,36 @@
 
       </a>
     </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../getting_started/setup/linux/" class="md-tabs__link">
+          
+  
+  
+  Getting Started
+
+        </a>
+      </li>
+    
+  
+
+    
   
 
       
@@ -322,37 +352,7 @@
     
     
       <li class="md-tabs__item md-tabs__item--active">
-        <a href="../linux/" class="md-tabs__link">
-          
-  
-  
-  Getting Started
-
-        </a>
-      </li>
-    
-  
-
-    
-  
-
-      
-        
-  
-  
-  
-  
-    
-    
-      
-  
-  
-  
-  
-    
-    
-      <li class="md-tabs__item">
-        <a href="../../../guides/app/" class="md-tabs__link">
+        <a href="../app/" class="md-tabs__link">
           
   
   
@@ -375,7 +375,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../../reference/" class="md-tabs__link">
+        <a href="../../reference/" class="md-tabs__link">
           
   
   
@@ -409,9 +409,9 @@
 
 <nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../.." title="Crow" class="md-nav__button md-logo" aria-label="Crow" data-md-component="logo">
+    <a href="../.." title="Crow" class="md-nav__button md-logo" aria-label="Crow" data-md-component="logo">
       
-  <img src="../../../assets/favicon.svg" alt="logo">
+  <img src="../../assets/favicon.svg" alt="logo">
 
     </a>
     Crow
@@ -438,7 +438,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../.." class="md-nav__link">
+      <a href="../.." class="md-nav__link">
         
   
   
@@ -462,29 +462,24 @@
       
   
   
-    
   
   
-  
     
     
     
     
       
-        
-        
-      
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
         
           
-          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
             
   
   
@@ -502,7 +497,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_2">
             <span class="md-nav__icon md-icon"></span>
             
@@ -517,8 +512,6 @@
                 
   
   
-    
-  
   
   
     
@@ -529,11 +522,11 @@
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_1" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_1" >
         
           
           <label class="md-nav__link" for="__nav_2_1" id="__nav_2_1_label" tabindex="0">
@@ -554,7 +547,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_1_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_1_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_2_1">
             <span class="md-nav__icon md-icon"></span>
             
@@ -572,7 +565,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../linux/" class="md-nav__link">
+      <a href="../../getting_started/setup/linux/" class="md-nav__link">
         
   
   
@@ -597,35 +590,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    MacOS
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../getting_started/setup/macos/" class="md-nav__link">
         
   
   
@@ -641,180 +609,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#getting-crow" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Getting Crow
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Getting Crow">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#from-homebrew" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        From Homebrew
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#from-a-release" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        From a release
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="From a release">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#archive" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Archive
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#single-header-file" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Single header file
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#from-source" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        From Source
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="From Source">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#include-folder" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        include folder
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#single-header-file_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Single header file
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#setting-up-your-crow-project" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Setting up your Crow project
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Setting up your Crow project">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#using-xcode" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Using XCode
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#building-crows-testsexamples" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Building Crow's tests/examples
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#compiling-using-a-compiler-directly" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Compiling using a compiler directly
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -827,7 +621,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../windows/" class="md-nav__link">
+      <a href="../../getting_started/setup/windows/" class="md-nav__link">
         
   
   
@@ -863,7 +657,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../project_templates_and_applications/" class="md-nav__link">
+      <a href="../../getting_started/project_templates_and_applications/" class="md-nav__link">
         
   
   
@@ -891,7 +685,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../your_first_application/" class="md-nav__link">
+      <a href="../../getting_started/your_first_application/" class="md-nav__link">
         
   
   
@@ -919,7 +713,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../a_simple_webpage/" class="md-nav__link">
+      <a href="../../getting_started/a_simple_webpage/" class="md-nav__link">
         
   
   
@@ -951,24 +745,29 @@
       
   
   
+    
   
   
+  
     
     
     
     
-      
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
         
           
-          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
             
   
   
@@ -986,7 +785,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_3">
             <span class="md-nav__icon md-icon"></span>
             
@@ -1001,6 +800,8 @@
                 
   
   
+    
+  
   
   
     
@@ -1011,11 +812,11 @@
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_1" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_1" checked>
         
           
           <label class="md-nav__link" for="__nav_3_1" id="__nav_3_1_label" tabindex="0">
@@ -1036,7 +837,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_1_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_1_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_3_1">
             <span class="md-nav__icon md-icon"></span>
             
@@ -1054,7 +855,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../guides/app/" class="md-nav__link">
+      <a href="../app/" class="md-nav__link">
         
   
   
@@ -1082,7 +883,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../guides/routes/" class="md-nav__link">
+      <a href="../routes/" class="md-nav__link">
         
   
   
@@ -1110,7 +911,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../guides/logging/" class="md-nav__link">
+      <a href="../logging/" class="md-nav__link">
         
   
   
@@ -1138,7 +939,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../guides/json/" class="md-nav__link">
+      <a href="../json/" class="md-nav__link">
         
   
   
@@ -1166,7 +967,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../guides/templating/" class="md-nav__link">
+      <a href="../templating/" class="md-nav__link">
         
   
   
@@ -1194,7 +995,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../guides/multipart/" class="md-nav__link">
+      <a href="../multipart/" class="md-nav__link">
         
   
   
@@ -1222,7 +1023,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../guides/query-string/" class="md-nav__link">
+      <a href="../query-string/" class="md-nav__link">
         
   
   
@@ -1250,7 +1051,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../guides/middleware/" class="md-nav__link">
+      <a href="../middleware/" class="md-nav__link">
         
   
   
@@ -1275,10 +1076,35 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../../../guides/sbom/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SBOM Generation
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -1294,6 +1120,74 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#prerequisites" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Prerequisites
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#example-steps" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example Steps
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Example Steps">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#install-python-packages" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Install Python Packages
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#build-crow-with-cmake-sbom" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Build Crow with cmake-sbom
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -1306,7 +1200,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../guides/ssl/" class="md-nav__link">
+      <a href="../ssl/" class="md-nav__link">
         
   
   
@@ -1334,7 +1228,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../guides/static/" class="md-nav__link">
+      <a href="../static/" class="md-nav__link">
         
   
   
@@ -1362,7 +1256,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../guides/blueprints/" class="md-nav__link">
+      <a href="../blueprints/" class="md-nav__link">
         
   
   
@@ -1390,7 +1284,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../guides/compression/" class="md-nav__link">
+      <a href="../compression/" class="md-nav__link">
         
   
   
@@ -1418,7 +1312,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../guides/websockets/" class="md-nav__link">
+      <a href="../websockets/" class="md-nav__link">
         
   
   
@@ -1446,7 +1340,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../guides/base64/" class="md-nav__link">
+      <a href="../base64/" class="md-nav__link">
         
   
   
@@ -1474,7 +1368,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../guides/testing/" class="md-nav__link">
+      <a href="../testing/" class="md-nav__link">
         
   
   
@@ -1560,7 +1454,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../guides/auth/" class="md-nav__link">
+      <a href="../auth/" class="md-nav__link">
         
   
   
@@ -1588,7 +1482,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../guides/included-middleware/" class="md-nav__link">
+      <a href="../included-middleware/" class="md-nav__link">
         
   
   
@@ -1674,7 +1568,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../guides/proxies/" class="md-nav__link">
+      <a href="../proxies/" class="md-nav__link">
         
   
   
@@ -1702,7 +1596,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../guides/syste/" class="md-nav__link">
+      <a href="../syste/" class="md-nav__link">
         
   
   
@@ -1795,7 +1689,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/" class="md-nav__link">
+      <a href="../../reference/" class="md-nav__link">
         
   
   
@@ -1848,144 +1742,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#getting-crow" class="md-nav__link">
+  <a href="#prerequisites" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Getting Crow
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Getting Crow">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#from-homebrew" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        From Homebrew
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#from-a-release" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        From a release
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="From a release">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#archive" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Archive
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#single-header-file" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Single header file
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#from-source" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        From Source
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="From Source">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#include-folder" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        include folder
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#single-header-file_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Single header file
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#setting-up-your-crow-project" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Setting up your Crow project
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Setting up your Crow project">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#using-xcode" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Using XCode
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#building-crows-testsexamples" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Building Crow's tests/examples
+        Prerequisites
       
     </span>
   </a>
@@ -1993,13 +1753,41 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#compiling-using-a-compiler-directly" class="md-nav__link">
+  <a href="#example-steps" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Compiling using a compiler directly
+        Example Steps
       
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="Example Steps">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#install-python-packages" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Install Python Packages
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#build-crow-with-cmake-sbom" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Build Crow with cmake-sbom
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -2020,107 +1808,43 @@
 
 
 
-  <h1>MacOS</h1>
+  <h1>SBOM Generation</h1>
 
-<p>Here's how you can install Crow on your Mac.</p>
-<h2 id="getting-crow">Getting Crow<a class="headerlink" href="#getting-crow" title="Permanent link">&para;</a></h2>
-<h3 id="from-homebrew">From Homebrew<a class="headerlink" href="#from-homebrew" title="Permanent link">&para;</a></h3>
+<p>Crow has the ability to generate a SBOM (Software Bill of Materials) at build using <a href="https://github.com/DEMCON/cmake-sbom"><code>cmake-sbom</code></a> in SPDX format.</p>
+<h2 id="prerequisites">Prerequisites<a class="headerlink" href="#prerequisites" title="Permanent link">&para;</a></h2>
+<p>The CMake module <code>cmake-sbom</code> expects the <code>spdx-tools</code>, <code>reuse</code>, and <code>ntia-conformance-checker</code> Python packages as external prerequisites. </p>
+<h2 id="example-steps">Example Steps<a class="headerlink" href="#example-steps" title="Permanent link">&para;</a></h2>
+<p>Below you'll find the steps to add SBOM generation. </p>
+<h3 id="install-python-packages">Install Python Packages<a class="headerlink" href="#install-python-packages" title="Permanent link">&para;</a></h3>
+<p>Create a Python virtual environment first so you're not installing Python packages globally:</p>
 <ol>
-<li>Download and install <a href="https://brew.sh">Homebrew</a>.</li>
-<li>Run <code>brew install crow</code> in your terminal.</li>
+<li>Create and navigate to the build directory:<br> <code>mkdir build &amp;&amp; cd build</code></li>
+<li>Create the venv:<br> <code>python3 -m venv .venv</code></li>
+<li>Activate the venv (macOS/Linux):<br> <code>source .venv/bin/activate</code></li>
+<li>Install the required Python packages:<br> <code>pip install spdx-tools reuse ntia-conformance-checker</code></li>
 </ol>
-<h3 id="from-a-release">From a <a href="https://github.com/CrowCpp/Crow/releases">release</a><a class="headerlink" href="#from-a-release" title="Permanent link">&para;</a></h3>
-<h4 id="archive">Archive<a class="headerlink" href="#archive" title="Permanent link">&para;</a></h4>
-<p>Crow provides an archive containing the framework and CMake files, You will only need the <code>include</code> folder inside that archive.</p>
-<h4 id="single-header-file">Single header file<a class="headerlink" href="#single-header-file" title="Permanent link">&para;</a></h4>
-<p>You can also download the <code>crow_all.h</code> file which replaces the <code>include</code> folder.</p>
-<h3 id="from-source">From Source<a class="headerlink" href="#from-source" title="Permanent link">&para;</a></h3>
-<p>To get Crow from source, you only need to download the repository (as a <code>.zip</code> or through <code>git clone https://github.com/CrowCpp/Crow.git</code>).</p>
-<h4 id="include-folder">include folder<a class="headerlink" href="#include-folder" title="Permanent link">&para;</a></h4>
-<p>Once you've downloaded Crow's source code, you only need to take the <code>include</code> folder.</p>
-<h4 id="single-header-file_1">Single header file<a class="headerlink" href="#single-header-file_1" title="Permanent link">&para;</a></h4>
-<p>You can generate your own single header file by navigating to the <code>scripts</code> folder with your terminal and running the following command:
-<div class="highlight"><pre><span></span><code>python3 merge_all.py ../include crow_all.h
-</code></pre></div>
-This will generate a <code>crow_all.h</code> file which you can use in the following steps</p>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p><code>crow_all.h</code> is recommended only for small, possibly single source file projects. For larger projects, it is advised to use the multi-header version.</p>
-</div>
-<h2 id="setting-up-your-crow-project">Setting up your Crow project<a class="headerlink" href="#setting-up-your-crow-project" title="Permanent link">&para;</a></h2>
+<h3 id="build-crow-with-cmake-sbom">Build Crow with cmake-sbom<a class="headerlink" href="#build-crow-with-cmake-sbom" title="Permanent link">&para;</a></h3>
+<p>Steps to generate a <code>.spdx</code> file using CMake for your project:</p>
+<ol>
+<li>If you didn't create the <code>build</code> directory, create and navigate to the build directory:<br> <code>mkdir build &amp;&amp; cd build</code></li>
+<li>Enable the build option:<br> <code>cmake .. -DCROW_GENERATE_SBOM=ON -DPython3_EXECUTABLE=$(which python3)</code></li>
+<li>Then run:<br> <code>cmake --build .</code></li>
+<li>Run the install:<br> <code>cmake --install . --prefix /tmp/crow-install</code></li>
+</ol>
+<p>Check for the generated .spdx file in the <code>build/</code> directory. The file name follows this pattern:<br> <code>crow-&lt;version&gt;-&lt;date&gt;.spdx</code></p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>You can skip steps 1 and 2 if you've installed Crow via Homebrew</p>
-</div>
-<h3 id="using-xcode">Using XCode<a class="headerlink" href="#using-xcode" title="Permanent link">&para;</a></h3>
-<ol>
-<li>Download and install <a href="https://brew.sh">Homebrew</a>.</li>
-<li>Run <code>brew install asio</code> in your terminal.</li>
-<li>Create a new XCode project (macOS -&gt; Command Line Tool).</li>
-<li>
-<p>Change the following project settings:</p>
-<div class="tabbed-set" data-tabs="1:2"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><label for="__tabbed_1_1">Multiple Headers</label><div class="tabbed-content">
-<ol>
-<li>Add header search paths for crow's include folder and asio's folder (<code>/usr/local/include</code>, <code>/usr/local/Cellar/asio/include</code>, and where you placed Crow's <code>include</code> folder)</li>
-<li>Add linker flags (<code>-lpthread</code>)</li>
-</ol>
-</div>
-<input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><label for="__tabbed_1_2">Single Header</label><div class="tabbed-content">
-<ol>
-<li>Place <code>crow_all.h</code> inside your project folder and add it to the project in XCode (you need to use File -&gt; Add files to "project_name")</li>
-<li>Add header search paths for asio's folder:</li>
-<li><code>/usr/local/include</code>, and</li>
-<li><strong>Silicon</strong>: <code>/opt/homebrew/Cellar/asio/&lt;asio_version&gt;/include</code></li>
-<li><strong>Intel</strong>: <code>/usr/local/Cellar/asio/&lt;asio_version&gt;/include</code></li>
-<li>Add linker flags (<code>-lpthread</code> for g++, <code>-pthread</code> for clang++)</li>
-</ol>
-</div>
-</div>
-</li>
-<li>
-<p>Write your Crow application in <code>main.cpp</code> (something like the Hello World example will work).</p>
-</li>
-<li>Press <code>▶</code> to compile and run your Crow application.</li>
-</ol>
-<h2 id="building-crows-testsexamples">Building Crow's tests/examples<a class="headerlink" href="#building-crows-testsexamples" title="Permanent link">&para;</a></h2>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>This tutorial can be used for Crow projects built with CMake as well</p>
+<p>You must pass <code>-DPython3_EXECUTABLE=$(which python3)</code> so CMake uses the venv's Python instead of the system Python. Without it,
+the SBOM verification step will fail because the system Python won't have the required packages installed. </p>
 </div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>You can skip steps 1 and 2 if you've installed Crow via Homebrew</p>
+<p>The .spdx file is generated when you run the <code>cmake --install . --prefix /tmp/crow-install</code></p>
 </div>
-<ol>
-<li>Download and install <a href="https://brew.sh">Homebrew</a>.</li>
-<li>Run <code>brew install cmake asio</code> in your terminal.</li>
-<li>Get Crow's source code (the entire source code).</li>
-<li>Run the following Commands:<ol>
-<li><code>mkdir build</code></li>
-<li><code>cd build</code></li>
-<li><code>cmake ..</code></li>
-<li><code>make -j12</code></li>
-</ol>
-</li>
-</ol>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<div class="highlight"><pre><span></span><code>You can add options like `-DCROW_ENABLE_COMPRESSION=ON`
-        or `-DCROW_ENABLE_SSL=ON`
-        or `-DCROW_AMALGAMATE`
-to `cmake ..` to build optional tests/examples for HTTP Compression or HTTPS.
-</code></pre></div>
+<p>You can also combine <code>-DCROW_GENERATE_SBOM=ON</code> with conditional dependencies:<br> <code>cmake .. -DCROW_GENERATE_SBOM=ON -DCROW_ENABLE_SSL=ON -DCROW_ENABLE_COMPRESSION=ON</code></p>
 </div>
-<h2 id="compiling-using-a-compiler-directly">Compiling using a compiler directly<a class="headerlink" href="#compiling-using-a-compiler-directly" title="Permanent link">&para;</a></h2>
-<p>All you need to do is run the following command:
-<div class="highlight"><pre><span></span><code>g++ main.cpp -lpthread
-</code></pre></div></p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>You'll need to install GCC via <code>brew install gcc</code>. the Clang compiler should be part of XCode or XCode command line tools.</p>
-</div>
-<p>You can use arguments like <code>-DCROW_ENABLE_DEBUG</code>, <code>-DCROW_ENABLE_COMPRESSION -lz</code> for HTTP Compression, or <code>-DCROW_ENABLE_SSL -lssl</code> for HTTPS support, or even replace g++ with clang++.</p>
-<p>If GCC throws errors and your program does not compile, you may be using C++03 instead of ≥C++17. Use the flag <code>-std=c++17</code>.</p>
 
 
 
@@ -2195,9 +1919,9 @@ to `cmake ..` to build optional tests/examples for HTTP Compression or HTTPS.
       
         
         <a
-          href="../linux/"
+          href="../middleware/"
           class="md-footer__link md-footer__link--prev"
-          aria-label="Previous: Linux"
+          aria-label="Previous: Middleware"
           rel="prev"
         >
           <div class="md-footer__button md-icon">
@@ -2208,7 +1932,7 @@ to `cmake ..` to build optional tests/examples for HTTP Compression or HTTPS.
               <span class="md-footer__direction">
                 Previous
               </span>
-              Linux
+              Middleware
             </div>
           </div>
         </a>
@@ -2218,9 +1942,9 @@ to `cmake ..` to build optional tests/examples for HTTP Compression or HTTPS.
       
         
         <a
-          href="../windows/"
+          href="../ssl/"
           class="md-footer__link md-footer__link--next"
-          aria-label="Next: Windows"
+          aria-label="Next: SSL"
           rel="next"
         >
           <div class="md-footer__title">
@@ -2228,7 +1952,7 @@ to `cmake ..` to build optional tests/examples for HTTP Compression or HTTPS.
               <span class="md-footer__direction">
                 Next
               </span>
-              Windows
+              SSL
             </div>
           </div>
           <div class="md-footer__button md-icon">
@@ -2320,10 +2044,10 @@ to `cmake ..` to build optional tests/examples for HTTP Compression or HTTPS.
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["navigation.tabs", "content.code.annotate"], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"default": "latest", "provider": "mike"}}</script>
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.tabs", "content.code.annotate"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"default": "latest", "provider": "mike"}}</script>
     
     
-      <script src="../../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
       
     
   </body>
