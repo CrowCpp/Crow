@@ -476,6 +476,12 @@ namespace crow // NOTE: Already documented in "crow/app.h"
             return *this;
         }
 
+        /// \brief Set functor that process a client request to open a WebSocket.
+        ///     The required interface is:
+        ///         void(crow::websocket::connection& conn)
+        ///
+        /// \param f Functor to set.
+        ///
         template<typename Func>
         self_t& onopen(Func f)
         {
@@ -483,6 +489,12 @@ namespace crow // NOTE: Already documented in "crow/app.h"
             return *this;
         }
 
+        /// \brief Set functor that process a client message.
+        ///     The required interface is:
+        ///         void(crow::websocket::connection& conn, const std::string& msgData, bool is_binary)
+        ///
+        /// \param f Functor to set.
+        ///
         template<typename Func>
         self_t& onmessage(Func f)
         {
@@ -490,6 +502,12 @@ namespace crow // NOTE: Already documented in "crow/app.h"
             return *this;
         }
 
+        /// \brief Set functor that process a client close.
+        ///     The required interface is:
+        ///         void(crow::websocket::connection& conn, const std::string& reason, uint16_t status_code)
+        ///
+        /// \param f Functor to set.
+        ///
         template<typename Func>
         self_t& onclose(Func f)
         {
@@ -497,6 +515,12 @@ namespace crow // NOTE: Already documented in "crow/app.h"
             return *this;
         }
 
+        /// \brief Set functor that process an error on this WebSocket.
+        ///     The required interface is:
+        ///         void(crow::websocket::connection& conn, const std::string& error_message)
+        ///
+        /// \param f Functor to set.
+        ///
         template<typename Func>
         self_t& onerror(Func f)
         {
@@ -504,13 +528,24 @@ namespace crow // NOTE: Already documented in "crow/app.h"
             return *this;
         }
 
-
+        /// \brief Set functor that process a client request to start a WebSocket.
+        ///     The required interface is:
+        ///         const crow::request& conn, std::optional<crow::response>& response, void** userData)
+        ///
+        /// \param callback Functor to set.
+        ///
         self_t& onaccept(std::function<void(const crow::request&, std::optional<crow::response>&, void**)>&& callback)
         {
             accept_handler_ = std::move(callback);
             return *this;
         }
 
+        /// \brief Set functor that process a client request to start a WebSocket.
+        ///     The required interface is (**without response**):
+        ///         const crow::request& conn, void** userData)
+        ///
+        /// \param callback Functor to set.
+        ///
         self_t& onaccept(std::function<bool(const crow::request&, void**)>&& callback)
         {
             onaccept([callback](const crow::request& req, std::optional<crow::response>& res, void** p) {
