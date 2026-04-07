@@ -26,3 +26,17 @@ The repositories mentioned here are 3rd party owned and are not supported or man
     - Uses vcpkg as package manager
     - Format rules using `clang-format`
     - Docker support out of the box
+
+# Applications
+
++ https://github.com/harshal24-chavan/LoadBalancer-CPP
+High-performance C++ L7 Load Balancer. 
+Features multi-threading, async health checks, zero-downtime hot-reloading (EFSW), 
+and thread-safe observability. 
+Built with Strategy & Singleton patterns. 
+Libraries: Crow, Cpr, EFSW, toml++.
+
++ https://github.com/aryanbarde80/SwiftLink-Cpp
+A high-performance C++ URL shortener built with Crow. 
+Shorten links instantly with a sleek UI and fast backend, 
+ready for Replit deployment.
