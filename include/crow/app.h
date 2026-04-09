@@ -662,11 +662,26 @@ namespace crow
 
         void close_websockets()
         {
-            std::lock_guard<std::mutex> lock{websockets_mutex_};
-            for (auto websocket : websockets_)
+            std::vector<std::future<void>> futures;
             {
-                CROW_LOG_INFO << "Quitting Websocket: " << websocket;
-                websocket->close("Websocket Closed");
+                std::lock_guard<std::mutex> lock{websockets_mutex_};
+                futures.reserve(websockets_.size());
+                for (auto& websocket : websockets_)
+                {
+                    CROW_LOG_INFO << "Quitting Websocket: " << websocket;
+                    auto done = std::make_shared<std::promise<void>>();
+                    futures.push_back(done->get_future());
+                    websocket->close("Websocket Closed", websocket::NormalClosure, std::move(done));
+                }
+            }
+            // Wait for all close frames to be written to the wire
+            for (auto& f : futures)
+            {
+                // Use a timeout to avoid hanging forever if a connection is stuck
+                if (f.wait_for(std::chrono::seconds(5)) == std::future_status::timeout)
+                {
+                    CROW_LOG_WARNING << "Timed out waiting for websocket close frame to send";
+                }
             }
         }
 
