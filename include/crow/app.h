@@ -224,6 +224,32 @@ namespace crow
         /// \brief An HTTP server that runs on SSL with an SSLAdaptor
         using ssl_server_t = Server<Crow, TCPAcceptor, SSLAdaptor, Middlewares...>;
 #endif
+        /// \brief WebSocket rule type used in this application.
+        ///
+        /// Usefull during WebSocket route definition.
+        /// Usage:
+        ///
+        /// ```cpp
+        ///     crow::SimpleApp::WebSocketRule_t& ws = CROW_WEBSOCKET_ROUTE(app, "/ws");
+        ///
+        ///     ws.onaccept([](const crow::request& /*conn*/, void** userData) -> bool
+        ///     {
+        ///         // ...
+        ///         return true;
+        ///     });
+        ///     ws.onopen([](crow::websocket::connection& conn) {
+        ///         // ...
+        ///     });
+        ///     ws.onclose([](crow::websocket::connection& conn, const std::string& /*reason*/, uint16_t){
+        ///         // ...
+        ///     });
+        ///     ws.onmessage([](crow::websocket::connection& conn, const std::string& msgData, bool is_binary) {
+        ///         // ...
+        ///     });
+        /// ```
+        ///
+        using WebSocketRule_t = WebSocketRule<Crow<Middlewares...>>;
+
         Crow()
         {}
 
