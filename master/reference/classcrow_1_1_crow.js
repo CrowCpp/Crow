@@ -4,6 +4,7 @@ var classcrow_1_1_crow =
     [ "server_t", "classcrow_1_1_crow.html#ab1c5adfe07aa4115b9452ba3b1c69f34", null ],
     [ "ssl_server_t", "classcrow_1_1_crow.html#aa2b8c210254ad4c4afce885b91365081", null ],
     [ "unix_server_t", "classcrow_1_1_crow.html#a484ab731754f45392ca3d18f7763c018", null ],
+    [ "WebSocketRule_t", "classcrow_1_1_crow.html#a8ce9c4e7343480097d8a8afbf911ec72", null ],
     [ "Crow", "classcrow_1_1_crow.html#abb69a7bf5d4a791a398c838d37086d94", null ],
     [ "add_blueprint", "classcrow_1_1_crow.html#af0d01b97da7d4d20844a80fd31b74f46", null ],
     [ "add_static_dir", "classcrow_1_1_crow.html#a3cbe89120e47d2bd3d05376b9129adfa", null ],

@@ -143,27 +143,27 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:ad230c57d0b8f476761fb311e839147e7" id="r_ad230c57d0b8f476761fb311e839147e7"><td class="memItemLeft" align="right" valign="top"><a id="ad230c57d0b8f476761fb311e839147e7" name="ad230c57d0b8f476761fb311e839147e7"></a>
 <a class="el" href="classcrow_1_1_web_socket_rule.html">self_t</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>subprotocols</b> (const std::vector&lt; std::string &gt; &amp;subprotocols)</td></tr>
 <tr class="separator:ad230c57d0b8f476761fb311e839147e7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a44dd94a602da9eacabd145edbae18764" id="r_a44dd94a602da9eacabd145edbae18764"><td class="memTemplParams" colspan="2"><a id="a44dd94a602da9eacabd145edbae18764" name="a44dd94a602da9eacabd145edbae18764"></a>
-template&lt;typename Func &gt; </td></tr>
-<tr class="memitem:a44dd94a602da9eacabd145edbae18764"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classcrow_1_1_web_socket_rule.html">self_t</a> &amp;&#160;</td><td class="memTemplItemRight" valign="bottom"><b>onopen</b> (Func f)</td></tr>
+<tr class="memitem:a44dd94a602da9eacabd145edbae18764" id="r_a44dd94a602da9eacabd145edbae18764"><td class="memTemplParams" colspan="2">template&lt;typename Func &gt; </td></tr>
+<tr class="memitem:a44dd94a602da9eacabd145edbae18764"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classcrow_1_1_web_socket_rule.html">self_t</a> &amp;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classcrow_1_1_web_socket_rule.html#a44dd94a602da9eacabd145edbae18764">onopen</a> (Func f)</td></tr>
+<tr class="memdesc:a44dd94a602da9eacabd145edbae18764"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set functor that process a client request to open a WebSocket. The required interface is: void(crow::websocket::connection&amp; conn)  <br /></td></tr>
 <tr class="separator:a44dd94a602da9eacabd145edbae18764"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3c173e7d4a27066bf07ee619ce08213d" id="r_a3c173e7d4a27066bf07ee619ce08213d"><td class="memTemplParams" colspan="2"><a id="a3c173e7d4a27066bf07ee619ce08213d" name="a3c173e7d4a27066bf07ee619ce08213d"></a>
-template&lt;typename Func &gt; </td></tr>
-<tr class="memitem:a3c173e7d4a27066bf07ee619ce08213d"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classcrow_1_1_web_socket_rule.html">self_t</a> &amp;&#160;</td><td class="memTemplItemRight" valign="bottom"><b>onmessage</b> (Func f)</td></tr>
+<tr class="memitem:a3c173e7d4a27066bf07ee619ce08213d" id="r_a3c173e7d4a27066bf07ee619ce08213d"><td class="memTemplParams" colspan="2">template&lt;typename Func &gt; </td></tr>
+<tr class="memitem:a3c173e7d4a27066bf07ee619ce08213d"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classcrow_1_1_web_socket_rule.html">self_t</a> &amp;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classcrow_1_1_web_socket_rule.html#a3c173e7d4a27066bf07ee619ce08213d">onmessage</a> (Func f)</td></tr>
+<tr class="memdesc:a3c173e7d4a27066bf07ee619ce08213d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set functor that process a client message. The required interface is: void(crow::websocket::connection&amp; conn, const std::string&amp; msgData, bool is_binary)  <br /></td></tr>
 <tr class="separator:a3c173e7d4a27066bf07ee619ce08213d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2ec997d0a538e1124421f1c470386cd4" id="r_a2ec997d0a538e1124421f1c470386cd4"><td class="memTemplParams" colspan="2"><a id="a2ec997d0a538e1124421f1c470386cd4" name="a2ec997d0a538e1124421f1c470386cd4"></a>
-template&lt;typename Func &gt; </td></tr>
-<tr class="memitem:a2ec997d0a538e1124421f1c470386cd4"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classcrow_1_1_web_socket_rule.html">self_t</a> &amp;&#160;</td><td class="memTemplItemRight" valign="bottom"><b>onclose</b> (Func f)</td></tr>
+<tr class="memitem:a2ec997d0a538e1124421f1c470386cd4" id="r_a2ec997d0a538e1124421f1c470386cd4"><td class="memTemplParams" colspan="2">template&lt;typename Func &gt; </td></tr>
+<tr class="memitem:a2ec997d0a538e1124421f1c470386cd4"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classcrow_1_1_web_socket_rule.html">self_t</a> &amp;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classcrow_1_1_web_socket_rule.html#a2ec997d0a538e1124421f1c470386cd4">onclose</a> (Func f)</td></tr>
+<tr class="memdesc:a2ec997d0a538e1124421f1c470386cd4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set functor that process a client close. The required interface is: void(crow::websocket::connection&amp; conn, const std::string&amp; reason, uint16_t status_code)  <br /></td></tr>
 <tr class="separator:a2ec997d0a538e1124421f1c470386cd4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5f80c41d2566bbb0e915b4620401f34f" id="r_a5f80c41d2566bbb0e915b4620401f34f"><td class="memTemplParams" colspan="2"><a id="a5f80c41d2566bbb0e915b4620401f34f" name="a5f80c41d2566bbb0e915b4620401f34f"></a>
-template&lt;typename Func &gt; </td></tr>
-<tr class="memitem:a5f80c41d2566bbb0e915b4620401f34f"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classcrow_1_1_web_socket_rule.html">self_t</a> &amp;&#160;</td><td class="memTemplItemRight" valign="bottom"><b>onerror</b> (Func f)</td></tr>
+<tr class="memitem:a5f80c41d2566bbb0e915b4620401f34f" id="r_a5f80c41d2566bbb0e915b4620401f34f"><td class="memTemplParams" colspan="2">template&lt;typename Func &gt; </td></tr>
+<tr class="memitem:a5f80c41d2566bbb0e915b4620401f34f"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classcrow_1_1_web_socket_rule.html">self_t</a> &amp;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classcrow_1_1_web_socket_rule.html#a5f80c41d2566bbb0e915b4620401f34f">onerror</a> (Func f)</td></tr>
+<tr class="memdesc:a5f80c41d2566bbb0e915b4620401f34f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set functor that process an error on this WebSocket. The required interface is: void(crow::websocket::connection&amp; conn, const std::string&amp; error_message)  <br /></td></tr>
 <tr class="separator:a5f80c41d2566bbb0e915b4620401f34f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5c9bedacdb693641ef92debbf725fe55" id="r_a5c9bedacdb693641ef92debbf725fe55"><td class="memItemLeft" align="right" valign="top"><a id="a5c9bedacdb693641ef92debbf725fe55" name="a5c9bedacdb693641ef92debbf725fe55"></a>
-<a class="el" href="classcrow_1_1_web_socket_rule.html">self_t</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>onaccept</b> (std::function&lt; void(const <a class="el" href="structcrow_1_1request.html">crow::request</a> &amp;, std::optional&lt; <a class="el" href="structcrow_1_1response.html">crow::response</a> &gt; &amp;, void **)&gt; &amp;&amp;callback)</td></tr>
+<tr class="memitem:a5c9bedacdb693641ef92debbf725fe55" id="r_a5c9bedacdb693641ef92debbf725fe55"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classcrow_1_1_web_socket_rule.html">self_t</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcrow_1_1_web_socket_rule.html#a5c9bedacdb693641ef92debbf725fe55">onaccept</a> (std::function&lt; void(const <a class="el" href="structcrow_1_1request.html">crow::request</a> &amp;, std::optional&lt; <a class="el" href="structcrow_1_1response.html">crow::response</a> &gt; &amp;, void **)&gt; &amp;&amp;callback)</td></tr>
+<tr class="memdesc:a5c9bedacdb693641ef92debbf725fe55"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set functor that process a client request to start a WebSocket. The required interface is: const <a class="el" href="structcrow_1_1request.html" title="An HTTP request.">crow::request</a>&amp; conn, std::optional&lt;crow::response&gt;&amp; response, void** userData)  <br /></td></tr>
 <tr class="separator:a5c9bedacdb693641ef92debbf725fe55"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa128ca9dee46f1d6246ad0c3d5f389e2" id="r_aa128ca9dee46f1d6246ad0c3d5f389e2"><td class="memItemLeft" align="right" valign="top"><a id="aa128ca9dee46f1d6246ad0c3d5f389e2" name="aa128ca9dee46f1d6246ad0c3d5f389e2"></a>
-<a class="el" href="classcrow_1_1_web_socket_rule.html">self_t</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>onaccept</b> (std::function&lt; bool(const <a class="el" href="structcrow_1_1request.html">crow::request</a> &amp;, void **)&gt; &amp;&amp;callback)</td></tr>
+<tr class="memitem:aa128ca9dee46f1d6246ad0c3d5f389e2" id="r_aa128ca9dee46f1d6246ad0c3d5f389e2"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classcrow_1_1_web_socket_rule.html">self_t</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcrow_1_1_web_socket_rule.html#aa128ca9dee46f1d6246ad0c3d5f389e2">onaccept</a> (std::function&lt; bool(const <a class="el" href="structcrow_1_1request.html">crow::request</a> &amp;, void **)&gt; &amp;&amp;callback)</td></tr>
+<tr class="memdesc:aa128ca9dee46f1d6246ad0c3d5f389e2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set functor that process a client request to start a WebSocket. The required interface is (<b>without response</b>): const <a class="el" href="structcrow_1_1request.html" title="An HTTP request.">crow::request</a>&amp; conn, void** userData)  <br /></td></tr>
 <tr class="separator:aa128ca9dee46f1d6246ad0c3d5f389e2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a88c782e8f7de236562799b314f88f28f" id="r_a88c782e8f7de236562799b314f88f28f"><td class="memItemLeft" align="right" valign="top"><a id="a88c782e8f7de236562799b314f88f28f" name="a88c782e8f7de236562799b314f88f28f"></a>
 <a class="el" href="classcrow_1_1_web_socket_rule.html">self_t</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>mirrorprotocols</b> (bool mirror_protocols=true)</td></tr>
@@ -440,6 +440,230 @@ template&lt;typename <a class="el" href="namespacecrow.html#a153c1bf24903d1a8629
 
 </div>
 </div>
+<a id="aa128ca9dee46f1d6246ad0c3d5f389e2" name="aa128ca9dee46f1d6246ad0c3d5f389e2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa128ca9dee46f1d6246ad0c3d5f389e2">&#9670;&#160;</a></span>onaccept() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename <a class="el" href="namespacecrow.html#a153c1bf24903d1a8629ef6eaf045110b">App</a> &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classcrow_1_1_web_socket_rule.html">self_t</a> &amp; <a class="el" href="classcrow_1_1_web_socket_rule.html">crow::WebSocketRule</a>&lt; <a class="el" href="namespacecrow.html#a153c1bf24903d1a8629ef6eaf045110b">App</a> &gt;::onaccept </td>
+          <td>(</td>
+          <td class="paramtype">std::function&lt; bool(const <a class="el" href="structcrow_1_1request.html">crow::request</a> &amp;, void **)&gt; &amp;&amp;&#160;</td>
+          <td class="paramname"><em>callback</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Set functor that process a client request to start a WebSocket. The required interface is (<b>without response</b>): const <a class="el" href="structcrow_1_1request.html" title="An HTTP request.">crow::request</a>&amp; conn, void** userData) </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">callback</td><td>Functor to set. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a5c9bedacdb693641ef92debbf725fe55" name="a5c9bedacdb693641ef92debbf725fe55"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5c9bedacdb693641ef92debbf725fe55">&#9670;&#160;</a></span>onaccept() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename <a class="el" href="namespacecrow.html#a153c1bf24903d1a8629ef6eaf045110b">App</a> &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classcrow_1_1_web_socket_rule.html">self_t</a> &amp; <a class="el" href="classcrow_1_1_web_socket_rule.html">crow::WebSocketRule</a>&lt; <a class="el" href="namespacecrow.html#a153c1bf24903d1a8629ef6eaf045110b">App</a> &gt;::onaccept </td>
+          <td>(</td>
+          <td class="paramtype">std::function&lt; void(const <a class="el" href="structcrow_1_1request.html">crow::request</a> &amp;, std::optional&lt; <a class="el" href="structcrow_1_1response.html">crow::response</a> &gt; &amp;, void **)&gt; &amp;&amp;&#160;</td>
+          <td class="paramname"><em>callback</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Set functor that process a client request to start a WebSocket. The required interface is: const <a class="el" href="structcrow_1_1request.html" title="An HTTP request.">crow::request</a>&amp; conn, std::optional&lt;crow::response&gt;&amp; response, void** userData) </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">callback</td><td>Functor to set. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a2ec997d0a538e1124421f1c470386cd4" name="a2ec997d0a538e1124421f1c470386cd4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2ec997d0a538e1124421f1c470386cd4">&#9670;&#160;</a></span>onclose()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename <a class="el" href="namespacecrow.html#a153c1bf24903d1a8629ef6eaf045110b">App</a> &gt; </div>
+<div class="memtemplate">
+template&lt;typename Func &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classcrow_1_1_web_socket_rule.html">self_t</a> &amp; <a class="el" href="classcrow_1_1_web_socket_rule.html">crow::WebSocketRule</a>&lt; <a class="el" href="namespacecrow.html#a153c1bf24903d1a8629ef6eaf045110b">App</a> &gt;::onclose </td>
+          <td>(</td>
+          <td class="paramtype">Func&#160;</td>
+          <td class="paramname"><em>f</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Set functor that process a client close. The required interface is: void(crow::websocket::connection&amp; conn, const std::string&amp; reason, uint16_t status_code) </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">f</td><td>Functor to set. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a5f80c41d2566bbb0e915b4620401f34f" name="a5f80c41d2566bbb0e915b4620401f34f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5f80c41d2566bbb0e915b4620401f34f">&#9670;&#160;</a></span>onerror()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename <a class="el" href="namespacecrow.html#a153c1bf24903d1a8629ef6eaf045110b">App</a> &gt; </div>
+<div class="memtemplate">
+template&lt;typename Func &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classcrow_1_1_web_socket_rule.html">self_t</a> &amp; <a class="el" href="classcrow_1_1_web_socket_rule.html">crow::WebSocketRule</a>&lt; <a class="el" href="namespacecrow.html#a153c1bf24903d1a8629ef6eaf045110b">App</a> &gt;::onerror </td>
+          <td>(</td>
+          <td class="paramtype">Func&#160;</td>
+          <td class="paramname"><em>f</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Set functor that process an error on this WebSocket. The required interface is: void(crow::websocket::connection&amp; conn, const std::string&amp; error_message) </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">f</td><td>Functor to set. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a3c173e7d4a27066bf07ee619ce08213d" name="a3c173e7d4a27066bf07ee619ce08213d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3c173e7d4a27066bf07ee619ce08213d">&#9670;&#160;</a></span>onmessage()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename <a class="el" href="namespacecrow.html#a153c1bf24903d1a8629ef6eaf045110b">App</a> &gt; </div>
+<div class="memtemplate">
+template&lt;typename Func &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classcrow_1_1_web_socket_rule.html">self_t</a> &amp; <a class="el" href="classcrow_1_1_web_socket_rule.html">crow::WebSocketRule</a>&lt; <a class="el" href="namespacecrow.html#a153c1bf24903d1a8629ef6eaf045110b">App</a> &gt;::onmessage </td>
+          <td>(</td>
+          <td class="paramtype">Func&#160;</td>
+          <td class="paramname"><em>f</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Set functor that process a client message. The required interface is: void(crow::websocket::connection&amp; conn, const std::string&amp; msgData, bool is_binary) </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">f</td><td>Functor to set. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a44dd94a602da9eacabd145edbae18764" name="a44dd94a602da9eacabd145edbae18764"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a44dd94a602da9eacabd145edbae18764">&#9670;&#160;</a></span>onopen()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename <a class="el" href="namespacecrow.html#a153c1bf24903d1a8629ef6eaf045110b">App</a> &gt; </div>
+<div class="memtemplate">
+template&lt;typename Func &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classcrow_1_1_web_socket_rule.html">self_t</a> &amp; <a class="el" href="classcrow_1_1_web_socket_rule.html">crow::WebSocketRule</a>&lt; <a class="el" href="namespacecrow.html#a153c1bf24903d1a8629ef6eaf045110b">App</a> &gt;::onopen </td>
+          <td>(</td>
+          <td class="paramtype">Func&#160;</td>
+          <td class="paramname"><em>f</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Set functor that process a client request to open a WebSocket. The required interface is: void(crow::websocket::connection&amp; conn) </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">f</td><td>Functor to set. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
 <a id="abe8e71a9a3845698f432307f282be0cc" name="abe8e71a9a3845698f432307f282be0cc"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#abe8e71a9a3845698f432307f282be0cc">&#9670;&#160;</a></span>validate()</h2>
 
@@ -479,7 +703,7 @@ template&lt;typename <a class="el" href="namespacecrow.html#a153c1bf24903d1a8629
 			<ul>
 				<li class="navelem"><a class="el" href="namespacecrow.html">crow</a></li><li class="navelem"><a class="el" href="classcrow_1_1_web_socket_rule.html">WebSocketRule</a></li>
 				<li class="footer">
-					Generated on Tue Apr 7 2026 for Crow by <a href="http://www.doxygen.org/index.html">
+					Generated on Mon Apr 13 2026 for Crow by <a href="http://www.doxygen.org/index.html">
 					<img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.9.8.
 					Dark theme by <a href="http://majerle.eu" target="_new">Tilen Majerle</a>. Edited by <a href="https://github.com/The-EDev" target="_new">Farook Al-Sammarraie</a>. All rights reserved.
 				</li>
