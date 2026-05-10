@@ -356,7 +356,6 @@ namespace crow // NOTE: Already documented in "crow/app.h"
 
             handler_ = ([f = std::move(f)](const request&, response& res) {
                 res = response(f());
-                res.end();
             });
         }
 
@@ -372,7 +371,6 @@ namespace crow // NOTE: Already documented in "crow/app.h"
 
             handler_ = ([f = std::move(f)](const request& req, response& res) {
                 res = response(f(req));
-                res.end();
             });
         }
 

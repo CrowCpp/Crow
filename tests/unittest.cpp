@@ -2338,6 +2338,40 @@ TEST_CASE("catchall_check_full_handling")
     app.stop();
 } // local_middleware
 
+// Regression test: a catchall handler that returns a value (overloads 1 & 2 of CatchallRule)
+// must not leave response::completed_ as true after the first request on a keep-alive connection.
+// Before the fix, Router::handle() called res.end() unconditionally, but the CatchallRule wrapper
+// also called res.end() — the first end() sent the response and cleared completed_ back to false
+// via res.clear(); the second end() then set completed_=true with no cleanup callback, poisoning
+// the connection so all subsequent requests on the same socket bypassed the router and returned 404.
+TEST_CASE("catchall_keepalive_return_value_handler")
+{
+    SimpleApp app;
+
+    CROW_CATCHALL_ROUTE(app)
+    ([](const crow::request&) {
+        return response(200, "ok");
+    });
+
+    auto _ = app.bindaddr(LOCALHOST_ADDRESS).port(45451).run_async();
+    app.wait_for_server_start();
+
+    // Reuse the same TCP connection for two requests (HTTP/1.1 keep-alive by default).
+    // Before the fix, the second request would be answered with 404 because completed_
+    // was left as true on the Connection's response object after the first request.
+    HttpClient c(LOCALHOST_ADDRESS, 45451);
+    const std::string req = "GET /any HTTP/1.1\r\nHost: localhost\r\n\r\n";
+
+    c.send(req);
+    auto resp1 = c.receive();
+    CHECK(resp1.find("200 OK") != std::string::npos);
+
+    c.send(req);
+    auto resp2 = c.receive();
+    CHECK(resp2.find("200 OK") != std::string::npos);
+
+    app.stop();
+} // catchall_keepalive_return_value_handler
 
 TEST_CASE("blueprint")
 {
