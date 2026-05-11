@@ -2007,14 +2007,14 @@ $(document).ready(function(){initNavTree('json_8h_source.html',''); initResizabl
 <div class="line"><a id="l01862" name="l01862"></a><span class="lineno"> 1862</span>                out.push_back(<span class="charliteral">&#39;&quot;&#39;</span>);</div>
 <div class="line"><a id="l01863" name="l01863"></a><span class="lineno"> 1863</span>            }</div>
 <div class="line"><a id="l01864" name="l01864"></a><span class="lineno"> 1864</span> </div>
-<div class="line"><a id="l01865" name="l01865"></a><span class="lineno"> 1865</span>            <span class="keyword">inline</span> <span class="keywordtype">void</span> dump_indentation_part(std::string&amp; out, <span class="keyword">const</span> <span class="keywordtype">int</span> indent, <span class="keyword">const</span> <span class="keywordtype">char</span> separator, <span class="keyword">const</span> <span class="keywordtype">int</span> indent_level)<span class="keyword"> const</span></div>
+<div class="line"><a id="l01865" name="l01865"></a><span class="lineno"> 1865</span>            <span class="keyword">inline</span> <span class="keywordtype">void</span> dump_indentation_part(std::string&amp; out, <span class="keyword">const</span> <span class="keywordtype">size_t</span> indent, <span class="keyword">const</span> <span class="keywordtype">char</span> separator, <span class="keyword">const</span> <span class="keywordtype">int</span> indent_level)<span class="keyword"> const</span></div>
 <div class="line"><a id="l01866" name="l01866"></a><span class="lineno"> 1866</span><span class="keyword">            </span>{</div>
 <div class="line"><a id="l01867" name="l01867"></a><span class="lineno"> 1867</span>                out.push_back(<span class="charliteral">&#39;\n&#39;</span>);</div>
 <div class="line"><a id="l01868" name="l01868"></a><span class="lineno"> 1868</span>                out.append(indent_level * indent, separator);</div>
 <div class="line"><a id="l01869" name="l01869"></a><span class="lineno"> 1869</span>            }</div>
 <div class="line"><a id="l01870" name="l01870"></a><span class="lineno"> 1870</span> </div>
 <div class="line"><a id="l01871" name="l01871"></a><span class="lineno"> 1871</span> </div>
-<div class="line"><a id="l01872" name="l01872"></a><span class="lineno"> 1872</span>            <span class="keyword">inline</span> <span class="keywordtype">void</span> dump_internal(<span class="keyword">const</span> wvalue&amp; v, std::string&amp; out, <span class="keyword">const</span> <span class="keywordtype">int</span> indent, <span class="keyword">const</span> <span class="keywordtype">char</span> separator, <span class="keyword">const</span> <span class="keywordtype">int</span> indent_level = 0)<span class="keyword"> const</span></div>
+<div class="line"><a id="l01872" name="l01872"></a><span class="lineno"> 1872</span>            <span class="keyword">inline</span> <span class="keywordtype">void</span> dump_internal(<span class="keyword">const</span> wvalue&amp; v, std::string&amp; out, <span class="keyword">const</span> <span class="keywordtype">size_t</span> indent, <span class="keyword">const</span> <span class="keywordtype">char</span> separator, <span class="keyword">const</span> <span class="keywordtype">int</span> indent_level = 0)<span class="keyword"> const</span></div>
 <div class="line"><a id="l01873" name="l01873"></a><span class="lineno"> 1873</span><span class="keyword">            </span>{</div>
 <div class="line"><a id="l01874" name="l01874"></a><span class="lineno"> 1874</span>                <span class="keywordflow">switch</span> (v.t_)</div>
 <div class="line"><a id="l01875" name="l01875"></a><span class="lineno"> 1875</span>                {</div>
@@ -2110,7 +2110,7 @@ $(document).ready(function(){initNavTree('json_8h_source.html',''); initResizabl
 <div class="line"><a id="l01965" name="l01965"></a><span class="lineno"> 1965</span>                    {</div>
 <div class="line"><a id="l01966" name="l01966"></a><span class="lineno"> 1966</span>                        out.push_back(<span class="charliteral">&#39;[&#39;</span>);</div>
 <div class="line"><a id="l01967" name="l01967"></a><span class="lineno"> 1967</span> </div>
-<div class="line"><a id="l01968" name="l01968"></a><span class="lineno"> 1968</span>                        <span class="keywordflow">if</span> (indent &gt;= 0)</div>
+<div class="line"><a id="l01968" name="l01968"></a><span class="lineno"> 1968</span>                        <span class="keywordflow">if</span> (indent !=std::string::npos)</div>
 <div class="line"><a id="l01969" name="l01969"></a><span class="lineno"> 1969</span>                        {</div>
 <div class="line"><a id="l01970" name="l01970"></a><span class="lineno"> 1970</span>                            dump_indentation_part(out, indent, separator, indent_level + 1);</div>
 <div class="line"><a id="l01971" name="l01971"></a><span class="lineno"> 1971</span>                        }</div>
@@ -2124,7 +2124,7 @@ $(document).ready(function(){initNavTree('json_8h_source.html',''); initResizabl
 <div class="line"><a id="l01979" name="l01979"></a><span class="lineno"> 1979</span>                                {</div>
 <div class="line"><a id="l01980" name="l01980"></a><span class="lineno"> 1980</span>                                    out.push_back(<span class="charliteral">&#39;,&#39;</span>);</div>
 <div class="line"><a id="l01981" name="l01981"></a><span class="lineno"> 1981</span> </div>
-<div class="line"><a id="l01982" name="l01982"></a><span class="lineno"> 1982</span>                                    <span class="keywordflow">if</span> (indent &gt;= 0)</div>
+<div class="line"><a id="l01982" name="l01982"></a><span class="lineno"> 1982</span>                                    <span class="keywordflow">if</span> (indent != std::string::npos)</div>
 <div class="line"><a id="l01983" name="l01983"></a><span class="lineno"> 1983</span>                                    {</div>
 <div class="line"><a id="l01984" name="l01984"></a><span class="lineno"> 1984</span>                                        dump_indentation_part(out, indent, separator, indent_level + 1);</div>
 <div class="line"><a id="l01985" name="l01985"></a><span class="lineno"> 1985</span>                                    }</div>
@@ -2134,7 +2134,7 @@ $(document).ready(function(){initNavTree('json_8h_source.html',''); initResizabl
 <div class="line"><a id="l01989" name="l01989"></a><span class="lineno"> 1989</span>                            }</div>
 <div class="line"><a id="l01990" name="l01990"></a><span class="lineno"> 1990</span>                        }</div>
 <div class="line"><a id="l01991" name="l01991"></a><span class="lineno"> 1991</span> </div>
-<div class="line"><a id="l01992" name="l01992"></a><span class="lineno"> 1992</span>                        <span class="keywordflow">if</span> (indent &gt;= 0)</div>
+<div class="line"><a id="l01992" name="l01992"></a><span class="lineno"> 1992</span>                        <span class="keywordflow">if</span> (indent !=std::string::npos)</div>
 <div class="line"><a id="l01993" name="l01993"></a><span class="lineno"> 1993</span>                        {</div>
 <div class="line"><a id="l01994" name="l01994"></a><span class="lineno"> 1994</span>                            dump_indentation_part(out, indent, separator, indent_level);</div>
 <div class="line"><a id="l01995" name="l01995"></a><span class="lineno"> 1995</span>                        }</div>
@@ -2146,7 +2146,7 @@ $(document).ready(function(){initNavTree('json_8h_source.html',''); initResizabl
 <div class="line"><a id="l02001" name="l02001"></a><span class="lineno"> 2001</span>                    {</div>
 <div class="line"><a id="l02002" name="l02002"></a><span class="lineno"> 2002</span>                        out.push_back(<span class="charliteral">&#39;{&#39;</span>);</div>
 <div class="line"><a id="l02003" name="l02003"></a><span class="lineno"> 2003</span> </div>
-<div class="line"><a id="l02004" name="l02004"></a><span class="lineno"> 2004</span>                        <span class="keywordflow">if</span> (indent &gt;= 0)</div>
+<div class="line"><a id="l02004" name="l02004"></a><span class="lineno"> 2004</span>                        <span class="keywordflow">if</span> (indent != std::string::npos)</div>
 <div class="line"><a id="l02005" name="l02005"></a><span class="lineno"> 2005</span>                        {</div>
 <div class="line"><a id="l02006" name="l02006"></a><span class="lineno"> 2006</span>                            dump_indentation_part(out, indent, separator, indent_level + 1);</div>
 <div class="line"><a id="l02007" name="l02007"></a><span class="lineno"> 2007</span>                        }</div>
@@ -2159,7 +2159,7 @@ $(document).ready(function(){initNavTree('json_8h_source.html',''); initResizabl
 <div class="line"><a id="l02014" name="l02014"></a><span class="lineno"> 2014</span>                                <span class="keywordflow">if</span> (!first)</div>
 <div class="line"><a id="l02015" name="l02015"></a><span class="lineno"> 2015</span>                                {</div>
 <div class="line"><a id="l02016" name="l02016"></a><span class="lineno"> 2016</span>                                    out.push_back(<span class="charliteral">&#39;,&#39;</span>);</div>
-<div class="line"><a id="l02017" name="l02017"></a><span class="lineno"> 2017</span>                                    <span class="keywordflow">if</span> (indent &gt;= 0)</div>
+<div class="line"><a id="l02017" name="l02017"></a><span class="lineno"> 2017</span>                                    <span class="keywordflow">if</span> (indent != std::string::npos)</div>
 <div class="line"><a id="l02018" name="l02018"></a><span class="lineno"> 2018</span>                                    {</div>
 <div class="line"><a id="l02019" name="l02019"></a><span class="lineno"> 2019</span>                                        dump_indentation_part(out, indent, separator, indent_level + 1);</div>
 <div class="line"><a id="l02020" name="l02020"></a><span class="lineno"> 2020</span>                                    }</div>
@@ -2168,7 +2168,7 @@ $(document).ready(function(){initNavTree('json_8h_source.html',''); initResizabl
 <div class="line"><a id="l02023" name="l02023"></a><span class="lineno"> 2023</span>                                dump_string(kv.first, out);</div>
 <div class="line"><a id="l02024" name="l02024"></a><span class="lineno"> 2024</span>                                out.push_back(<span class="charliteral">&#39;:&#39;</span>);</div>
 <div class="line"><a id="l02025" name="l02025"></a><span class="lineno"> 2025</span> </div>
-<div class="line"><a id="l02026" name="l02026"></a><span class="lineno"> 2026</span>                                <span class="keywordflow">if</span> (indent &gt;= 0)</div>
+<div class="line"><a id="l02026" name="l02026"></a><span class="lineno"> 2026</span>                                <span class="keywordflow">if</span> (indent != std::string::npos)</div>
 <div class="line"><a id="l02027" name="l02027"></a><span class="lineno"> 2027</span>                                {</div>
 <div class="line"><a id="l02028" name="l02028"></a><span class="lineno"> 2028</span>                                    out.push_back(<span class="charliteral">&#39; &#39;</span>);</div>
 <div class="line"><a id="l02029" name="l02029"></a><span class="lineno"> 2029</span>                                }</div>
@@ -2177,7 +2177,7 @@ $(document).ready(function(){initNavTree('json_8h_source.html',''); initResizabl
 <div class="line"><a id="l02032" name="l02032"></a><span class="lineno"> 2032</span>                            }</div>
 <div class="line"><a id="l02033" name="l02033"></a><span class="lineno"> 2033</span>                        }</div>
 <div class="line"><a id="l02034" name="l02034"></a><span class="lineno"> 2034</span> </div>
-<div class="line"><a id="l02035" name="l02035"></a><span class="lineno"> 2035</span>                        <span class="keywordflow">if</span> (indent &gt;= 0)</div>
+<div class="line"><a id="l02035" name="l02035"></a><span class="lineno"> 2035</span>                        <span class="keywordflow">if</span> (indent != std::string::npos)</div>
 <div class="line"><a id="l02036" name="l02036"></a><span class="lineno"> 2036</span>                        {</div>
 <div class="line"><a id="l02037" name="l02037"></a><span class="lineno"> 2037</span>                            dump_indentation_part(out, indent, separator, indent_level);</div>
 <div class="line"><a id="l02038" name="l02038"></a><span class="lineno"> 2038</span>                        }</div>
@@ -2193,7 +2193,7 @@ $(document).ready(function(){initNavTree('json_8h_source.html',''); initResizabl
 <div class="line"><a id="l02048" name="l02048"></a><span class="lineno"> 2048</span>            }</div>
 <div class="line"><a id="l02049" name="l02049"></a><span class="lineno"> 2049</span> </div>
 <div class="line"><a id="l02050" name="l02050"></a><span class="lineno"> 2050</span>        <span class="keyword">public</span>:</div>
-<div class="line"><a id="l02051" name="l02051"></a><span class="lineno"> 2051</span>            std::string dump(<span class="keyword">const</span> <span class="keywordtype">int</span> indent, <span class="keyword">const</span> <span class="keywordtype">char</span> separator = <span class="charliteral">&#39; &#39;</span>)<span class="keyword"> const</span></div>
+<div class="line"><a id="l02051" name="l02051"></a><span class="lineno"> 2051</span>            std::string dump(<span class="keyword">const</span> <span class="keywordtype">size_t</span> indent, <span class="keyword">const</span> <span class="keywordtype">char</span> separator = <span class="charliteral">&#39; &#39;</span>)<span class="keyword"> const</span></div>
 <div class="line"><a id="l02052" name="l02052"></a><span class="lineno"> 2052</span><span class="keyword">            </span>{</div>
 <div class="line"><a id="l02053" name="l02053"></a><span class="lineno"> 2053</span>                std::string ret;</div>
 <div class="line"><a id="l02054" name="l02054"></a><span class="lineno"> 2054</span>                ret.reserve(<a class="code hl_function" href="classcrow_1_1json_1_1wvalue.html#a5af23d208ed3d066a0fb5339350978c6">estimate_length</a>());</div>
@@ -2203,7 +2203,7 @@ $(document).ready(function(){initNavTree('json_8h_source.html',''); initResizabl
 <div class="line"><a id="l02058" name="l02058"></a><span class="lineno"> 2058</span> </div>
 <div class="line"><a id="l02059" name="l02059"></a><span class="lineno"> 2059</span>            std::string dump()<span class="keyword"> const override</span></div>
 <div class="line"><a id="l02060" name="l02060"></a><span class="lineno"> 2060</span><span class="keyword">            </span>{</div>
-<div class="line"><a id="l02061" name="l02061"></a><span class="lineno"> 2061</span>                <span class="keyword">static</span> <span class="keyword">constexpr</span> <span class="keywordtype">int</span> DontIndent = -1;</div>
+<div class="line"><a id="l02061" name="l02061"></a><span class="lineno"> 2061</span>                <span class="keyword">static</span> <span class="keyword">constexpr</span> <span class="keywordtype">size_t</span> DontIndent = std::string::npos;</div>
 <div class="line"><a id="l02062" name="l02062"></a><span class="lineno"> 2062</span> </div>
 <div class="line"><a id="l02063" name="l02063"></a><span class="lineno"> 2063</span>                <span class="keywordflow">return</span> dump(DontIndent);</div>
 <div class="line"><a id="l02064" name="l02064"></a><span class="lineno"> 2064</span>            }</div>
@@ -2293,7 +2293,7 @@ $(document).ready(function(){initNavTree('json_8h_source.html',''); initResizabl
 			<ul>
 				<li class="navelem"><a class="el" href="dir_d44c64559bbebec7f509842c48db8b23.html">include</a></li><li class="navelem"><a class="el" href="dir_d22c1cb87b72f01e1a7f207eb3bfd1ca.html">crow</a></li><li class="navelem"><b>json.h</b></li>
 				<li class="footer">
-					Generated on Sat May 9 2026 for Crow by <a href="http://www.doxygen.org/index.html">
+					Generated on Mon May 11 2026 for Crow by <a href="http://www.doxygen.org/index.html">
 					<img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.9.8.
 					Dark theme by <a href="http://majerle.eu" target="_new">Tilen Majerle</a>. Edited by <a href="https://github.com/The-EDev" target="_new">Farook Al-Sammarraie</a>. All rights reserved.
 				</li>
