@@ -1862,14 +1862,14 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                 out.push_back('"');
             }
 
-            inline void dump_indentation_part(std::string& out, const int indent, const char separator, const int indent_level) const
+            inline void dump_indentation_part(std::string& out, const size_t indent, const char separator, const int indent_level) const
             {
                 out.push_back('\n');
                 out.append(indent_level * indent, separator);
             }
 
 
-            inline void dump_internal(const wvalue& v, std::string& out, const int indent, const char separator, const int indent_level = 0) const
+            inline void dump_internal(const wvalue& v, std::string& out, const size_t indent, const char separator, const int indent_level = 0) const
             {
                 switch (v.t_)
                 {
@@ -1965,7 +1965,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                     {
                         out.push_back('[');
 
-                        if (indent >= 0)
+                        if (indent !=std::string::npos)
                         {
                             dump_indentation_part(out, indent, separator, indent_level + 1);
                         }
@@ -1979,7 +1979,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                                 {
                                     out.push_back(',');
 
-                                    if (indent >= 0)
+                                    if (indent != std::string::npos)
                                     {
                                         dump_indentation_part(out, indent, separator, indent_level + 1);
                                     }
@@ -1989,7 +1989,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                             }
                         }
 
-                        if (indent >= 0)
+                        if (indent !=std::string::npos)
                         {
                             dump_indentation_part(out, indent, separator, indent_level);
                         }
@@ -2001,7 +2001,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                     {
                         out.push_back('{');
 
-                        if (indent >= 0)
+                        if (indent != std::string::npos)
                         {
                             dump_indentation_part(out, indent, separator, indent_level + 1);
                         }
@@ -2014,7 +2014,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                                 if (!first)
                                 {
                                     out.push_back(',');
-                                    if (indent >= 0)
+                                    if (indent != std::string::npos)
                                     {
                                         dump_indentation_part(out, indent, separator, indent_level + 1);
                                     }
@@ -2023,7 +2023,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                                 dump_string(kv.first, out);
                                 out.push_back(':');
 
-                                if (indent >= 0)
+                                if (indent != std::string::npos)
                                 {
                                     out.push_back(' ');
                                 }
@@ -2032,7 +2032,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                             }
                         }
 
-                        if (indent >= 0)
+                        if (indent != std::string::npos)
                         {
                             dump_indentation_part(out, indent, separator, indent_level);
                         }
@@ -2048,7 +2048,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
             }
 
         public:
-            std::string dump(const int indent, const char separator = ' ') const
+            std::string dump(const size_t indent, const char separator = ' ') const
             {
                 std::string ret;
                 ret.reserve(estimate_length());
@@ -2058,7 +2058,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
 
             std::string dump() const override
             {
-                static constexpr int DontIndent = -1;
+                static constexpr size_t DontIndent = std::string::npos;
 
                 return dump(DontIndent);
             }
