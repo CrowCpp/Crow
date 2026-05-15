@@ -1644,6 +1644,17 @@ namespace crow // NOTE: Already documented in "crow/app.h"
             }
             else if (req.method == HTTPMethod::Options)
             {
+                // Prefer explicit OPTIONS routes while preserving the automatic "/*" handler.
+                if (req.url != "/*")
+                {
+                    *found = per_methods_[static_cast<int>(HTTPMethod::Options)].trie.find(req.url);
+                    if (found->rule_index)
+                    {
+                        found->method = HTTPMethod::Options;
+                        return found;
+                    }
+                }
+
                 std::string allow = "OPTIONS, HEAD";
 
                 if (req.url == "/*")
