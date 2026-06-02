@@ -640,8 +640,9 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         {
             if (!custom_templates_base.empty())
                 mustache::set_base(custom_templates_base);
-            else if (mustache::detail::get_template_base_directory_ref() != "templates")
-                mustache::set_base("templates");
+            else if (mustache::detail::get_template_base_directory_ref() != mustache::detail::get_global_template_base_directory_ref())
+                mustache::set_base(mustache::detail::get_global_template_base_directory_ref());
+
             erased_handler_(req, res, params);
         }
 
