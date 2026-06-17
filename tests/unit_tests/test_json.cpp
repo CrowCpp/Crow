@@ -642,12 +642,22 @@ TEST_CASE("json Incorrect move of wvalue class #953", "[json]")
     }
 }
 
-TEST_CASE("SmallNumber #1042", "[json]")
+TEST_CASE("Assorted floating points", "[json]")
 {
     crow::json::wvalue data;
-    const double smallnumber = 1e-10;
-    data["testValue"] = smallnumber;
+    const double smallnumbers[] = { 1, 1e5, 1e10, 1e20, 1e-8, 1e-10, 
+                                    1.5, 1.5e5, 1.5e10, 1.5e20, 1.5e-5, 1.5e-10, 
+                                    1.04, 1.04e5, 1.04e10, 1.04e20, 1.04e-5, 1.04e-10, 
+                                    1.008, 1.008e5, 1.008e10, 1.008e20, 1.008e-5, 1.008e-10 };
+    for (long unsigned int i = 0; i < sizeof(smallnumbers)/sizeof(double); ++i) {
+        data["testValues"][i] = smallnumbers[i];
+    }
     std::string text = data.dump( 4);
-    const auto expected_text ="{\n    \"testValue\": 1e-10\n}";
+    const auto expected_text ="{\n    \"testValues\": [\n"
+        "        1,\n        100000,\n        10000000000,\n        1e+20,\n        1e-08,\n        1e-10,\n"
+        "        1.5,\n        150000,\n        15000000000,\n        1.5e+20,\n        1.5e-05,\n        1.5e-10,\n"
+        "        1.04,\n        104000,\n        10400000000,\n        1.04e+20,\n        1.04e-05,\n        1.04e-10,\n"
+        "        1.008,\n        100800,\n        10080000000,\n        1.008e+20,\n        1.008e-05,\n        1.008e-10\n"
+        "    ]\n}";
     REQUIRE(text==expected_text);
 }
