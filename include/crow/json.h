@@ -1886,69 +1886,9 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                                 CROW_LOG_WARNING << "Invalid JSON value detected (" << v.num.d << "), value set to null";
                                 break;
                             }
-                            enum
-                            {
-                                start,
-                                decp, // Decimal point
-                                zero
-                            } f_state;
-                            char outbuf[128];
-                            if (v.nt == num_type::Double_precision_floating_point)
-                            {
-#ifdef _MSC_VER
-                                sprintf_s(outbuf, sizeof(outbuf), "%.*g", std::numeric_limits<double>::max_digits10, v.num.d);
-#else
-                                snprintf(outbuf, sizeof(outbuf), "%.*g", std::numeric_limits<double>::max_digits10, v.num.d);
-#endif
-                            }
-                            else
-                            {
-#ifdef _MSC_VER
-                                sprintf_s(outbuf, sizeof(outbuf), "%f", v.num.d);
-#else
-                                snprintf(outbuf, sizeof(outbuf), "%f", v.num.d);
-#endif
-                            }
-                            char* p = &outbuf[0];
-                            char* pos_first_trailing_0 = nullptr;
-                            f_state = start;
-                            while (*p != '\0')
-                            {
-                                //std::cout << *p << std::endl;
-                                char ch = *p;
-                                switch (f_state)
-                                {
-                                    case start: // Loop and lookahead until a decimal point is found
-                                        if (ch == '.')
-                                        {
-                                            char fch = *(p + 1);
-                                            // if the first character is 0, leave it be (this is so that "1.00000" becomes "1.0" and not "1.")
-                                            if (fch != '\0' && fch == '0') p++;
-                                            f_state = decp;
-                                        }
-                                        p++;
-                                        break;
-                                    case decp: // Loop until a 0 is found, if found, record its position
-                                        if (ch == '0')
-                                        {
-                                            f_state = zero;
-                                            pos_first_trailing_0 = p;
-                                        }
-                                        p++;
-                                        break;
-                                    case zero: // if a non 0 is found (e.g. 1.00004) remove the earlier recorded 0 position and look for more trailing 0s
-                                        if (ch != '0')
-                                        {
-                                            pos_first_trailing_0 = nullptr;
-                                            f_state = decp;
-                                        }
-                                        p++;
-                                        break;
-                                }
-                            }
-                            if (pos_first_trailing_0 != nullptr) // if any trailing 0s are found, terminate the string where they begin
-                                *pos_first_trailing_0 = '\0';
-                            out += outbuf;
+                            std::ostringstream oss;
+                            oss << v.num.d;
+                            out += oss.str();
                         }
                         else if (v.nt == num_type::Signed_integer)
                         {
