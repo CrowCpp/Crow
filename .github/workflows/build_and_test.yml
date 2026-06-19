@@ -32,7 +32,7 @@ jobs:
           - { os: windows-latest, compiler: msvc, cxx_stdlib: msvc }
 
     steps:
-    - uses: actions/checkout@v6
+    - uses: actions/checkout@v7
     - name: Prepare dependencies
       run: |
          if [ "$RUNNER_OS" == "Linux" ]; then
@@ -162,7 +162,7 @@ jobs:
     name: Sanitizer Tests (ASan + UBSan)
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v6
+    - uses: actions/checkout@v7
 
     - name: Install dependencies
       run: |
