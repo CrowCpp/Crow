@@ -1890,7 +1890,8 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                             {
                                 start,
                                 decp, // Decimal point
-                                zero
+                                zero,
+                                exp // in the exponent
                             } f_state;
                             char outbuf[128];
                             if (v.nt == num_type::Double_precision_floating_point)
@@ -1911,6 +1912,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                             }
                             char* p = &outbuf[0];
                             char* pos_first_trailing_0 = nullptr;
+                            char* pos_exponent = nullptr;
                             f_state = start;
                             while (*p != '\0')
                             {
@@ -1934,20 +1936,39 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                                             f_state = zero;
                                             pos_first_trailing_0 = p;
                                         }
+                                        else if (ch == 'e')
+                                        {
+                                            pos_exponent = p;
+                                            f_state = exp;
+                                        }
                                         p++;
                                         break;
                                     case zero: // if a non 0 is found (e.g. 1.00004) remove the earlier recorded 0 position and look for more trailing 0s
-                                        if (ch != '0')
+                                        if (ch == 'e')
+                                        {
+                                            pos_exponent = p;
+                                            f_state = exp;
+                                        }
+                                        else if (ch != '0')
                                         {
                                             pos_first_trailing_0 = nullptr;
                                             f_state = decp;
                                         }
                                         p++;
                                         break;
+                                    case exp: // if an 'e' has been found, one is in the exponent; no more looking for trailing zeroes
+                                        p++;
+                                        break;
                                 }
                             }
                             if (pos_first_trailing_0 != nullptr) // if any trailing 0s are found, terminate the string where they begin
+                            {
                                 *pos_first_trailing_0 = '\0';
+                                if (pos_exponent != nullptr) // if there is an exponent, include it
+                                {
+                                    strcpy(pos_first_trailing_0, pos_exponent);
+                                }
+                            }
                             out += outbuf;
                         }
                         else if (v.nt == num_type::Signed_integer)
