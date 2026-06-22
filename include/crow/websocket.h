@@ -269,9 +269,12 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                     char status_buf[2];
                     *(uint16_t*)(status_buf) = htons(status_code);
 
-                    shared_this->write_buffers_.emplace_back(std::move(header));
-                    shared_this->write_buffers_.emplace_back(std::string(status_buf, 2));
-                    shared_this->write_buffers_.emplace_back(msg);
+                    {
+                        std::lock_guard<std::mutex> lock(shared_this->mtx_);
+                        shared_this->write_buffers_.emplace_back(std::move(header));
+                        shared_this->write_buffers_.emplace_back(std::string(status_buf, 2));
+                        shared_this->write_buffers_.emplace_back(msg);
+                    }
                     shared_this->do_write();
                 });
             }
@@ -328,16 +331,19 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                   "Upgrade: websocket\r\n"
                   "Connection: Upgrade\r\n"
                   "Sec-WebSocket-Accept: ";
-                write_buffers_.emplace_back(header);
-                write_buffers_.emplace_back(std::move(hello));
-                write_buffers_.emplace_back(crlf);
-                if (!subprotocol_.empty())
                 {
-                    write_buffers_.emplace_back("Sec-WebSocket-Protocol: ");
-                    write_buffers_.emplace_back(subprotocol_);
+                    std::lock_guard<std::mutex> lock(mtx_);
+                    write_buffers_.emplace_back(header);
+                    write_buffers_.emplace_back(std::move(hello));
+                    write_buffers_.emplace_back(crlf);
+                    if (!subprotocol_.empty())
+                    {
+                        write_buffers_.emplace_back("Sec-WebSocket-Protocol: ");
+                        write_buffers_.emplace_back(subprotocol_);
+                        write_buffers_.emplace_back(crlf);
+                    }
                     write_buffers_.emplace_back(crlf);
                 }
-                write_buffers_.emplace_back(crlf);
                 do_write();
                 if (open_handler_)
                     open_handler_(*this);
@@ -716,29 +722,37 @@ namespace crow // NOTE: Already documented in "crow/app.h"
             /// Also destroys the object if the Close flag is set.
             void do_write()
             {
-                if (sending_buffers_.empty()) {
+                {
+                    std::lock_guard<std::mutex> lock(mtx_);
                     if (write_buffers_.empty()) return;
 
                     sending_buffers_.swap(write_buffers_);
-                    std::vector<asio::const_buffer> buffers;
-                    buffers.reserve(sending_buffers_.size());
-                    for (auto &s: sending_buffers_)
-                    {
-                        buffers.emplace_back(asio::buffer(s));
-                    }
-                    auto watch = std::weak_ptr<void>{anchor_};
-                    asio::async_write(
-                        adaptor_.socket(), buffers,
-                        [shared_this = this->shared_from_this(), watch](const error_code &ec, std::size_t /*bytes_transferred*/) {
-                            auto anchor = watch.lock();
-                            if (anchor == nullptr)
-                                return;
+                }
+                std::vector<asio::const_buffer> buffers;
+                buffers.reserve(sending_buffers_.size());
+                for (auto& s : sending_buffers_)
+                {
+                    buffers.emplace_back(asio::buffer(s));
+                }
+                auto watch = std::weak_ptr<void>{anchor_};
+                asio::async_write(
+                    adaptor_.socket(), buffers,
+                    [shared_this = this->shared_from_this(), watch](const error_code& ec, std::size_t /*bytes_transferred*/) {
+                        auto anchor = watch.lock();
+                        if (anchor == nullptr)
+                            return;
 
+                        bool call_do_write = false;
+                        bool call_check_destroy = false;
+
+                        {
+                            std::lock_guard<std::mutex> lock(shared_this->mtx_);
                             if (!ec && !shared_this->close_connection_)
                             {
                                 shared_this->sending_buffers_.clear();
                                 if (!shared_this->write_buffers_.empty())
-                                    shared_this->do_write();
+                                    call_do_write = true;
+                                
                                 if (shared_this->has_sent_close_)
                                     shared_this->close_connection_ = true;
                             }
@@ -746,10 +760,14 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                             {
                                 shared_this->sending_buffers_.clear();
                                 shared_this->close_connection_ = true;
-                                shared_this->check_destroy();
+                                call_check_destroy = true;
                             }
-                        });
-                }
+                        }
+                        if (call_do_write)
+                            shared_this->do_write();
+                        else if (call_check_destroy)
+                            shared_this->check_destroy();
+                    });
             }
 
             /// Destroy the Connection.
@@ -784,9 +802,19 @@ namespace crow // NOTE: Already documented in "crow/app.h"
             void send_data_impl(SendMessageType* s)
             {
                 auto header = build_header(s->opcode, s->payload.size());
-                write_buffers_.emplace_back(std::move(header));
-                write_buffers_.emplace_back(std::move(s->payload));
-                do_write();
+                bool is_writing_now = false;
+
+                {
+                    std::lock_guard<std::mutex> lock(mtx_);
+                    is_writing_now = !sending_buffers_.empty();
+                    write_buffers_.emplace_back(std::move(header));
+                    write_buffers_.emplace_back(std::move(s->payload));
+                }
+
+                if (!is_writing_now)
+                {
+                    do_write();
+                }
             }
 
             void send_data(int opcode, std::string&& msg)
@@ -823,6 +851,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
             std::vector<std::string> write_buffers_;
 
             std::array<char, 4096> buffer_;
+            std::mutex mtx_;
             bool is_binary_;
             std::string message_;
             std::string fragment_;
