@@ -67,3 +67,7 @@ MODULE.bazel.lock
 
 # macOS Files
 .DS_Store
+
+# hello_world compiled binary (platform-specific, not committed)
+examples/hello_world/build/
+examples/hello_world/hello_world
