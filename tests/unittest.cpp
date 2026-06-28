@@ -1757,6 +1757,54 @@ TEST_CASE("multipart")
     }
 } // multipart
 
+
+TEST_CASE("multipart_name_header_missing_issue_1192") {
+    //
+    //--CROW-BOUNDARY
+    //Content-Disposition: form-data;
+    //
+    //world
+    //--CROW-BOUNDARY
+    //Content-Disposition: form-data;
+    //
+    //hello
+    //--CROW-BOUNDARY
+    //Content-Disposition: form-data;
+    //
+    //text
+    //text
+    //text
+    //--CROW-BOUNDARY--
+    //
+
+    std::string test_string = "--CROW-BOUNDARY\r\nContent-Disposition: form-data; \r\n\r\nworld\r\n--CROW-BOUNDARY\r\nContent-Disposition: form-data; \r\n\r\nhello\r\n--CROW-BOUNDARY\r\nContent-Disposition: form-data; \r\n\r\ntext\ntext\ntext\r\n--CROW-BOUNDARY--\r\n";
+
+    SimpleApp app;
+
+    CROW_ROUTE(app, "/multipart")
+    ([](const crow::request& req, crow::response& res) {
+        multipart::message msg(req);
+        res.body = msg.dump();
+        res.end();
+    });
+
+    app.validate();
+
+    {
+        request req;
+        response res;
+
+        req.url = "/multipart";
+        req.add_header("Content-Type", "multipart/form-data; boundary=CROW-BOUNDARY");
+        req.body = test_string;
+
+        // with the above-mentioned bug we get SIGV here
+        app.handle_full(req, res);
+
+        CHECK(res.code == crow::status::BAD_REQUEST);
+    }
+}
+
 TEST_CASE("multipart_view")
 {
     //
