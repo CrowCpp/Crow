@@ -46,5 +46,6 @@ var searchData=
   ['crow_5fcatchall_5froute_43',['CROW_CATCHALL_ROUTE',['../app_8h.html#a182dcf033f11eb89855a7b98bd6cfe02',1,'app.h']]],
   ['crow_5fmiddlewares_44',['CROW_MIDDLEWARES',['../app_8h.html#a12ac01cb1979c953ac1c1203114c5e0e',1,'app.h']]],
   ['crow_5froute_45',['CROW_ROUTE',['../app_8h.html#a6aa7ec3a2f3ee3f17d5f9acd879e7381',1,'app.h']]],
-  ['crow_5fwebsocket_5froute_46',['CROW_WEBSOCKET_ROUTE',['../app_8h.html#a8deb011ba0eae4684d6c6bb13014c926',1,'app.h']]]
+  ['crow_5fstatic_5ffile_46',['CROW_STATIC_FILE',['../app_8h.html#a69a5fefe6cecb1ca0e90777e19f89ff9',1,'app.h']]],
+  ['crow_5fwebsocket_5froute_47',['CROW_WEBSOCKET_ROUTE',['../app_8h.html#a8deb011ba0eae4684d6c6bb13014c926',1,'app.h']]]
 ];
