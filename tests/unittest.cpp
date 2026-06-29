@@ -1757,6 +1757,54 @@ TEST_CASE("multipart")
     }
 } // multipart
 
+
+TEST_CASE("multipart_name_header_missing_issue_1192") {
+    //
+    //--CROW-BOUNDARY
+    //Content-Disposition: form-data;
+    //
+    //world
+    //--CROW-BOUNDARY
+    //Content-Disposition: form-data;
+    //
+    //hello
+    //--CROW-BOUNDARY
+    //Content-Disposition: form-data;
+    //
+    //text
+    //text
+    //text
+    //--CROW-BOUNDARY--
+    //
+
+    std::string test_string = "--CROW-BOUNDARY\r\nContent-Disposition: form-data; \r\n\r\nworld\r\n--CROW-BOUNDARY\r\nContent-Disposition: form-data; \r\n\r\nhello\r\n--CROW-BOUNDARY\r\nContent-Disposition: form-data; \r\n\r\ntext\ntext\ntext\r\n--CROW-BOUNDARY--\r\n";
+
+    SimpleApp app;
+
+    CROW_ROUTE(app, "/multipart")
+    ([](const crow::request& req, crow::response& res) {
+        multipart::message msg(req);
+        res.body = msg.dump();
+        res.end();
+    });
+
+    app.validate();
+
+    {
+        request req;
+        response res;
+
+        req.url = "/multipart";
+        req.add_header("Content-Type", "multipart/form-data; boundary=CROW-BOUNDARY");
+        req.body = test_string;
+
+        // with the above-mentioned bug we get SIGV here
+        app.handle_full(req, res);
+
+        CHECK(res.code == crow::status::BAD_REQUEST);
+    }
+}
+
 TEST_CASE("multipart_view")
 {
     //
@@ -1833,30 +1881,20 @@ TEST_CASE("send_file")
 
     SimpleApp app;
 
-    CROW_ROUTE(app, "/jpg")
-    ([](const crow::request&, crow::response& res) {
-        res.set_static_file_info("tests/img/cat.jpg");
-        res.end();
-    });
+    CROW_STATIC_FILE(app, "/jpg", "tests/img/cat.jpg");
+    CROW_STATIC_FILE(app, "/jpg2", "tests/img/cat2.jpg"); // This file is nonexistent on purpose
 
-    CROW_ROUTE(app, "/jpg2")
-    ([](const crow::request&, crow::response& res) {
-        res.set_static_file_info(
-          "tests/img/cat2.jpg"); // This file is nonexistent on purpose
-        res.end();
-    });
-
+    // Explicit route to add more informations
     CROW_ROUTE(app, "/jpg3")
     ([](const crow::request&, crow::response& res) {
-        res.set_static_file_info("tests/img/cat.jpg", "application/octet-stream"); // Set Content-Type explicitly
+        res.set_static_file_info(
+                    "tests/img/cat.jpg",
+                    "application/octet-stream"); // Set Content-Type explicitly
         res.end();
     });
 
-    CROW_ROUTE(app, "/filewith.badext")
-    ([](const crow::request&, crow::response& res) {
-        res.set_static_file_info("tests/img/filewith.badext");
-        res.end();
-    });
+    // Bad Extension test
+    CROW_STATIC_FILE(app, "/filewith.badext", "tests/img/filewith.badext");
 
     app.validate();
 
@@ -2348,6 +2386,40 @@ TEST_CASE("catchall_check_full_handling")
     app.stop();
 } // local_middleware
 
+// Regression test: a catchall handler that returns a value (overloads 1 & 2 of CatchallRule)
+// must not leave response::completed_ as true after the first request on a keep-alive connection.
+// Before the fix, Router::handle() called res.end() unconditionally, but the CatchallRule wrapper
+// also called res.end() — the first end() sent the response and cleared completed_ back to false
+// via res.clear(); the second end() then set completed_=true with no cleanup callback, poisoning
+// the connection so all subsequent requests on the same socket bypassed the router and returned 404.
+TEST_CASE("catchall_keepalive_return_value_handler")
+{
+    SimpleApp app;
+
+    CROW_CATCHALL_ROUTE(app)
+    ([](const crow::request&) {
+        return response(200, "ok");
+    });
+
+    auto _ = app.bindaddr(LOCALHOST_ADDRESS).port(45451).run_async();
+    app.wait_for_server_start();
+
+    // Reuse the same TCP connection for two requests (HTTP/1.1 keep-alive by default).
+    // Before the fix, the second request would be answered with 404 because completed_
+    // was left as true on the Connection's response object after the first request.
+    HttpClient c(LOCALHOST_ADDRESS, 45451);
+    const std::string req = "GET /any HTTP/1.1\r\nHost: localhost\r\n\r\n";
+
+    c.send(req);
+    auto resp1 = c.receive();
+    CHECK(resp1.find("200 OK") != std::string::npos);
+
+    c.send(req);
+    auto resp2 = c.receive();
+    CHECK(resp2.find("200 OK") != std::string::npos);
+
+    app.stop();
+} // catchall_keepalive_return_value_handler
 
 TEST_CASE("blueprint")
 {
@@ -2806,3 +2878,35 @@ TEST_CASE("option_header_passed_in_full")
     CHECK(res.find(ServerName) != std::string::npos);
     app.stop();
 }
+
+
+TEST_CASE("inject_header_via_set_haeder")
+{
+    crow::SimpleApp app;
+
+    CROW_ROUTE(app, "/")
+    ([](const crow::request &req, crow::response &res) {
+        res.write("Hello, world!");
+        res.set_header("X-Custom", "safe\r\nInjected: yes");
+        res.add_header("X-Custom2", "safe\r\nInjected: yes");
+
+        res.end();
+        //return "Hello, world!";
+    });
+
+    app.validate();
+
+    auto _ = app.bindaddr(LOCALHOST_ADDRESS).port(45451).server_name("lol").run_async();
+    app.wait_for_server_start();
+
+    {
+        //
+        auto resp = HttpClient::request(LOCALHOST_ADDRESS, 45451,
+                                        "GET / HTTP/1.0\r\nHost: localhost\r\n\r\n");
+
+        CHECK(resp.find("\r\nInjected") == std::string::npos);
+    }
+
+    app.stop();
+}
+

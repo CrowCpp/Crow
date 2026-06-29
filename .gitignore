@@ -56,7 +56,7 @@ CMakeLists.txt.user
 #VS-Code
 .vscode
 .idea
-cmake-build-debug
+cmake-build-*
 .cache
 site
 venv

@@ -135,7 +135,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         }
 #endif
 
-        uint32_t get_methods()
+        uint64_t get_methods()
         {
             return methods_;
         }
@@ -143,7 +143,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         template<typename F>
         void foreach_method(F f)
         {
-            for (uint32_t method = 0, method_bit = 1; method < static_cast<uint32_t>(HTTPMethod::InternalMethodCount); method++, method_bit <<= 1)
+            for (uint64_t method = 0, method_bit = 1; method < static_cast<uint64_t>(HTTPMethod::InternalMethodCount); method++, method_bit <<= 1)
             {
                 if (methods_ & method_bit)
                     f(method);
@@ -155,7 +155,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         const std::string& rule() { return rule_; }
 
     protected:
-        uint32_t methods_{1 << static_cast<int>(HTTPMethod::Get)};
+        uint64_t methods_{1ULL << static_cast<int>(HTTPMethod::Get)};
 
         std::string rule_;
         std::string name_;
@@ -356,7 +356,6 @@ namespace crow // NOTE: Already documented in "crow/app.h"
 
             handler_ = ([f = std::move(f)](const request&, response& res) {
                 res = response(f());
-                res.end();
             });
         }
 
@@ -372,7 +371,6 @@ namespace crow // NOTE: Already documented in "crow/app.h"
 
             handler_ = ([f = std::move(f)](const request& req, response& res) {
                 res = response(f(req));
-                res.end();
             });
         }
 
@@ -476,6 +474,12 @@ namespace crow // NOTE: Already documented in "crow/app.h"
             return *this;
         }
 
+        /// \brief Set functor that process a client request to open a WebSocket.
+        ///     The required interface is:
+        ///         void(crow::websocket::connection& conn)
+        ///
+        /// \param f Functor to set.
+        ///
         template<typename Func>
         self_t& onopen(Func f)
         {
@@ -483,6 +487,12 @@ namespace crow // NOTE: Already documented in "crow/app.h"
             return *this;
         }
 
+        /// \brief Set functor that process a client message.
+        ///     The required interface is:
+        ///         void(crow::websocket::connection& conn, const std::string& msgData, bool is_binary)
+        ///
+        /// \param f Functor to set.
+        ///
         template<typename Func>
         self_t& onmessage(Func f)
         {
@@ -490,6 +500,12 @@ namespace crow // NOTE: Already documented in "crow/app.h"
             return *this;
         }
 
+        /// \brief Set functor that process a client close.
+        ///     The required interface is:
+        ///         void(crow::websocket::connection& conn, const std::string& reason, uint16_t status_code)
+        ///
+        /// \param f Functor to set.
+        ///
         template<typename Func>
         self_t& onclose(Func f)
         {
@@ -497,6 +513,12 @@ namespace crow // NOTE: Already documented in "crow/app.h"
             return *this;
         }
 
+        /// \brief Set functor that process an error on this WebSocket.
+        ///     The required interface is:
+        ///         void(crow::websocket::connection& conn, const std::string& error_message)
+        ///
+        /// \param f Functor to set.
+        ///
         template<typename Func>
         self_t& onerror(Func f)
         {
@@ -504,13 +526,24 @@ namespace crow // NOTE: Already documented in "crow/app.h"
             return *this;
         }
 
-
+        /// \brief Set functor that process a client request to start a WebSocket.
+        ///     The required interface is:
+        ///         const crow::request& conn, std::optional<crow::response>& response, void** userData)
+        ///
+        /// \param callback Functor to set.
+        ///
         self_t& onaccept(std::function<void(const crow::request&, std::optional<crow::response>&, void**)>&& callback)
         {
             accept_handler_ = std::move(callback);
             return *this;
         }
 
+        /// \brief Set functor that process a client request to start a WebSocket.
+        ///     The required interface is (**without response**):
+        ///         const crow::request& conn, void** userData)
+        ///
+        /// \param callback Functor to set.
+        ///
         self_t& onaccept(std::function<bool(const crow::request&, void**)>&& callback)
         {
             onaccept([callback](const crow::request& req, std::optional<crow::response>& res, void** p) {
@@ -566,7 +599,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
 
         self_t& methods(HTTPMethod method)
         {
-            static_cast<self_t*>(this)->methods_ = 1 << static_cast<int>(method);
+            static_cast<self_t*>(this)->methods_ = 1ULL << static_cast<int>(method);
             return static_cast<self_t&>(*this);
         }
 
@@ -574,7 +607,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         self_t& methods(HTTPMethod method, MethodArgs... args_method)
         {
             methods(args_method...);
-            static_cast<self_t*>(this)->methods_ |= 1 << static_cast<int>(method);
+            static_cast<self_t*>(this)->methods_ |= 1ULL << static_cast<int>(method);
             return static_cast<self_t&>(*this);
         }
 
@@ -607,8 +640,9 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         {
             if (!custom_templates_base.empty())
                 mustache::set_base(custom_templates_base);
-            else if (mustache::detail::get_template_base_directory_ref() != "templates")
-                mustache::set_base("templates");
+            else if (mustache::detail::get_template_base_directory_ref() != mustache::detail::get_global_template_base_directory_ref())
+                mustache::set_base(mustache::detail::get_global_template_base_directory_ref());
+
             erased_handler_(req, res, params);
         }
 
@@ -718,6 +752,8 @@ namespace crow // NOTE: Already documented in "crow/app.h"
     private:
         std::function<void(crow::request&, crow::response&, Args...)> handler_;
     };
+
+    using StaticRule = TaggedRule<>;
 
     constexpr size_t RULE_SPECIAL_REDIRECT_SLASH = 1;
 
@@ -1285,6 +1321,12 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         {
             using RuleT = typename black_magic::arguments<N>::type::template rebind<TaggedRule>;
 
+            return new_rule<RuleT>(rule);
+        }
+
+        template<typename RuleT=StaticRule>
+        auto& new_rule(const std::string& rule)
+        {
             auto ruleObject = new RuleT(rule);
             all_rules_.emplace_back(ruleObject);
 
@@ -1470,7 +1512,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
             }
 
             CROW_LOG_DEBUG << "Matched rule (upgrade) '" << rules[rule_index]->rule_ << "' "
-                           << static_cast<uint32_t>(req.method) << " / "
+                           << static_cast<uint64_t>(req.method) << " / "
                            << rules[rule_index]->get_methods();
 
             try
@@ -1725,7 +1767,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                     res.add_header("Location", req.url + "/");
                     res.end();
                 } else {
-                    CROW_LOG_DEBUG << "Matched rule '" << rules[rule_index]->rule_ << "' " << static_cast<uint32_t>(req.
+                    CROW_LOG_DEBUG << "Matched rule '" << rules[rule_index]->rule_ << "' " << static_cast<uint64_t>(req.
                                       method) << " / " << rules[rule_index]->get_methods();
 
                     try {
