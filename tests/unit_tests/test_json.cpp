@@ -2,6 +2,8 @@
 
 #include "crow.h"
 
+#include <cstring>
+
 using namespace std;
 using namespace crow;
 
@@ -627,6 +629,20 @@ static crow::json::wvalue getValue(int i){
      return crow::json::wvalue(i);
 }
 
+// Creates an owned r_string from a copy of the text so the tests can
+// verify ownership transfer without depending on the lifetime of the original buffer.
+static crow::json::detail::r_string makeOwnedRString(const char* text)
+{
+    const size_t text_length = std::strlen(text);
+    char* buffer = new char[text_length + 1];
+    std::memcpy(buffer, text, text_length + 1);
+
+    crow::json::detail::r_string r_string_object(buffer, buffer + text_length);
+    r_string_object.owned_ = 1;
+
+    return r_string_object;
+}
+
 TEST_CASE("json Incorrect move of wvalue class #953", "[json]")
 {
     {
@@ -639,6 +655,60 @@ TEST_CASE("json Incorrect move of wvalue class #953", "[json]")
          crow::json::wvalue json;
          json["int_value"] = getValue(-500);
          REQUIRE(json["int_value"].dump()=="-500");
+    }
+}
+
+// Verifies that r_string correctly transfers ownership when it is moved.
+// This protects against leaks and double-frees in move construction, move assignment,
+// and self-move assignment.
+TEST_CASE("json r_string move ownership transfer #1199", "[json]")
+{
+    constexpr const char* kTestTextAlpha = "alpha";
+    constexpr const char* kTestTextBeta= "beta";
+    constexpr const char* kTestTextOld = "old";
+    constexpr const char* kTestTextSelf = "self";
+
+    // Move construction should keep the owned buffer pointer and clear ownership
+    // on the moved-from object.
+    SECTION("move constructor transfers ownership")
+    {
+        crow::json::detail::r_string source_rstring_object = makeOwnedRString(kTestTextAlpha);
+        const char* source_rstring_s_ = source_rstring_object.s_;
+        crow::json::detail::r_string moved_rstring_obj(std::move(source_rstring_object));
+
+        CHECK(moved_rstring_obj.s_ == source_rstring_s_);
+        CHECK(moved_rstring_obj.owned_ == 1);
+        CHECK(source_rstring_object.owned_ == 0);
+        CHECK(std::string(moved_rstring_obj) == kTestTextAlpha);
+    }
+
+    // Move assignment should release the destination's old buffer and take
+    // ownership from the source object.
+    SECTION("move assignment transfers ownership")
+    {
+        crow::json::detail::r_string source_rstring_object = makeOwnedRString(kTestTextBeta);
+        const char* source_rstring_s_ = source_rstring_object.s_;
+        crow::json::detail::r_string destination_rstring_object = makeOwnedRString(kTestTextOld);
+        destination_rstring_object = std::move(source_rstring_object);
+
+        CHECK(destination_rstring_object.s_ == source_rstring_s_);
+        CHECK(destination_rstring_object.owned_ == 1);
+        CHECK(source_rstring_object.owned_ == 0);
+        CHECK(std::string(destination_rstring_object) == kTestTextBeta);
+    }
+
+    // Self-move assignment must be a no-op so the object keeps its buffer and
+    // does not free memory it still points to.
+    SECTION("self move assignment is a no operation")
+    {
+        crow::json::detail::r_string rstring_object = makeOwnedRString(kTestTextSelf);
+        const char* rstring_object_s_ = rstring_object.s_;
+        auto* self = &rstring_object;
+        *self = std::move(rstring_object);
+
+        CHECK(rstring_object.s_ == rstring_object_s_);
+        CHECK(rstring_object.owned_ == 1);
+        CHECK(std::string(rstring_object) == kTestTextSelf);
     }
 }
 
