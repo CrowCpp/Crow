@@ -2910,6 +2910,8 @@ TEST_CASE("inject_header_via_set_haeder")
     app.stop();
 }
 
+// Tests the low-level apply_tcp_socket_options function to verify that
+// TCP_NODELAY can be enabled (false -> true transition)
 TEST_CASE("TCP_NODELAY_socket_option_apply_enable")
 {
     asio::io_context io_context;
@@ -2933,6 +2935,8 @@ TEST_CASE("TCP_NODELAY_socket_option_apply_enable")
     CHECK(no_delay_enabled.value());
 }
 
+// Tests the low-level apply_tcp_socket_options function to verify that
+// TCP_NODELAY can be disabled (true -> false transition)
 TEST_CASE("TCP_NODELAY_socket_option_apply_disable")
 {
     asio::io_context io_context;
@@ -2956,6 +2960,7 @@ TEST_CASE("TCP_NODELAY_socket_option_apply_disable")
     CHECK(!no_delay_disabled.value());
 }
 
+// Tests that HTTP socket TCP_NODELAY defaults to false (disabled)
 TEST_CASE("TCP_NODELAY_http_api_defaults")
 {
     crow::SimpleApp app;
@@ -2971,6 +2976,7 @@ TEST_CASE("TCP_NODELAY_http_api_defaults")
     CHECK(http_options.no_delay == false);
 }
 
+// Tests that HTTP socket TCP_NODELAY can be enabled via tcp_nodelay(true) API
 TEST_CASE("TCP_NODELAY_http_api_enabled")
 {
     crow::SimpleApp app;
@@ -2987,6 +2993,7 @@ TEST_CASE("TCP_NODELAY_http_api_enabled")
     CHECK(http_options.no_delay == true);
 }
 
+// Tests that HTTP socket TCP_NODELAY can be disabled via tcp_nodelay(false) API
 TEST_CASE("TCP_NODELAY_http_api_disabled")
 {
     crow::SimpleApp app;
@@ -3004,6 +3011,7 @@ TEST_CASE("TCP_NODELAY_http_api_disabled")
     CHECK(http_options.no_delay == false);
 }
 
+// Tests that WebSocket socket TCP_NODELAY defaults to false (disabled)
 TEST_CASE("TCP_NODELAY_websocket_api_defaults")
 {
     crow::SimpleApp app;
@@ -3019,6 +3027,7 @@ TEST_CASE("TCP_NODELAY_websocket_api_defaults")
     CHECK(ws_options.no_delay == false);
 }
 
+// Tests that WebSocket socket TCP_NODELAY can be enabled via websocket_tcp_nodelay(true) API
 TEST_CASE("TCP_NODELAY_websocket_api_enabled")
 {
     crow::SimpleApp app;
@@ -3035,6 +3044,7 @@ TEST_CASE("TCP_NODELAY_websocket_api_enabled")
     CHECK(ws_options.no_delay == true);
 }
 
+// Tests that WebSocket socket TCP_NODELAY can be disabled via websocket_tcp_nodelay(false) API
 TEST_CASE("TCP_NODELAY_websocket_api_disabled")
 {
     crow::SimpleApp app;
@@ -3052,6 +3062,8 @@ TEST_CASE("TCP_NODELAY_websocket_api_disabled")
     CHECK(ws_options.no_delay == false);
 }
 
+// Smoke test to verify HTTP server starts and handles requests correctly
+// with TCP_NODELAY enabled on HTTP sockets
 TEST_CASE("TCP_NODELAY_http_smoke_test")
 {
     crow::SimpleApp app;
@@ -3079,6 +3091,8 @@ TEST_CASE("TCP_NODELAY_http_smoke_test")
     CHECK(response.find("ok") != std::string::npos);
 }
 
+// Smoke test to verify WebSocket upgrade handshake succeeds and connections work
+// correctly with TCP_NODELAY enabled on WebSocket sockets
 TEST_CASE("TCP_NODELAY_websocket_smoke_test")
 {
     crow::SimpleApp app;
