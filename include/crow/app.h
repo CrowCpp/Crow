@@ -485,6 +485,12 @@ namespace crow
             return *this;
         }
 
+        /// \brief Get the TCP_NODELAY setting for HTTP connections.
+        detail::socket::tcp_socket_options tcp_socket_options() const
+        {
+            return tcp_socket_options_;
+        }
+
         /// \brief Enable or disable TCP_NODELAY for WebSocket connections.
         /// We also have to differentiate between socket options for http server socket and websocket server socket.
         self_t& websocket_tcp_nodelay(bool enabled = true)
@@ -494,7 +500,7 @@ namespace crow
         }
 
         /// \brief Get the TCP_NODELAY setting for WebSocket connections.
-        detail::socket::tcp_socket_options websocket_tcp_nodelay_options() const
+        detail::socket::tcp_socket_options websocket_tcp_socket_options() const
         {
             return websocket_tcp_socket_options_;
         }

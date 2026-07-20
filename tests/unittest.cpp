@@ -2996,14 +2996,21 @@ TEST_CASE("TCP_NODELAY_websocket_api")
 
     app.validate();
 
+    // Test setting TCP_NODELAY for HTTP connections
+    app.tcp_nodelay(true);
+    auto http_options = app.tcp_socket_options();
+    CHECK(http_options.no_delay == true);
+
+    app.tcp_nodelay(false);
+    http_options = app.tcp_socket_options();
+    CHECK(http_options.no_delay == false);
+
     // Test setting TCP_NODELAY for WebSocket connections
     app.websocket_tcp_nodelay(true);
-    
-    auto options = app.websocket_tcp_nodelay_options();
-    CHECK(options.no_delay == true);
+    auto ws_options = app.websocket_tcp_socket_options();
+    CHECK(ws_options.no_delay == true);
 
     app.websocket_tcp_nodelay(false);
-    
-    options = app.websocket_tcp_nodelay_options();
-    CHECK(options.no_delay == false);
+    ws_options = app.websocket_tcp_socket_options();
+    CHECK(ws_options.no_delay == false);
 }
