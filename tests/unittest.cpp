@@ -3103,12 +3103,10 @@ TEST_CASE("TCP_NODELAY_websocket_smoke_test")
     auto _ = app.bindaddr(LOCALHOST_ADDRESS).port(0).run_async();
     app.wait_for_server_start();
 
-    // Simple WebSocket connection test
     asio::io_context ic;
     asio::ip::tcp::socket socket(ic);
     socket.connect(asio::ip::tcp::endpoint(asio::ip::make_address(LOCALHOST_ADDRESS), app.port()));
 
-    // Send WebSocket upgrade request
     std::string upgrade_request =
         "GET /ws HTTP/1.1\r\n"
         "Host: localhost\r\n"
@@ -3120,12 +3118,10 @@ TEST_CASE("TCP_NODELAY_websocket_smoke_test")
 
     socket.send(asio::buffer(upgrade_request));
 
-    // Receive upgrade response
     std::vector<char> response_buffer(4096);
     size_t bytes_received = socket.receive(asio::buffer(response_buffer));
     std::string response(response_buffer.begin(), response_buffer.begin() + bytes_received);
 
-    // Check if we got 101 Switching Protocols
     CHECK(response.find("101") != std::string::npos);
     CHECK(response.find("Upgrade") != std::string::npos);
 
