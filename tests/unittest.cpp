@@ -2910,7 +2910,7 @@ TEST_CASE("inject_header_via_set_haeder")
     app.stop();
 }
 
-TEST_CASE("TCP_NODELAY_socket_option_apply")
+TEST_CASE("TCP_NODELAY_socket_option_apply_enable")
 {
     asio::io_context io_context;
     asio::ip::tcp::acceptor acceptor(io_context,
@@ -2931,14 +2931,29 @@ TEST_CASE("TCP_NODELAY_socket_option_apply")
     asio::ip::tcp::no_delay no_delay_enabled;
     server_socket.get_option(no_delay_enabled);
     CHECK(no_delay_enabled.value());
+}
+
+TEST_CASE("TCP_NODELAY_socket_option_apply_disable")
+{
+    asio::io_context io_context;
+    asio::ip::tcp::acceptor acceptor(io_context,
+                                     asio::ip::tcp::endpoint(asio::ip::make_address(LOCALHOST_ADDRESS), 0));
+
+    asio::ip::tcp::socket client_socket(io_context);
+    client_socket.connect(acceptor.local_endpoint());
+
+    asio::ip::tcp::socket server_socket(io_context);
+    acceptor.accept(server_socket);
+
+    server_socket.set_option(asio::ip::tcp::no_delay(true));
 
     crow::detail::socket::tcp_socket_options disable_options;
     disable_options.no_delay = false;
     crow::detail::socket::apply_tcp_socket_options(server_socket, disable_options);
 
-    asio::ip::tcp::no_delay no_delay_after_disable_call;
-    server_socket.get_option(no_delay_after_disable_call);
-    CHECK(!no_delay_after_disable_call.value());
+    asio::ip::tcp::no_delay no_delay_disabled;
+    server_socket.get_option(no_delay_disabled);
+    CHECK(!no_delay_disabled.value());
 }
 
 TEST_CASE("TCP_NODELAY_http_api_defaults")
