@@ -32,14 +32,11 @@ namespace crow
 
             inline void apply_tcp_socket_options(tcp::socket& socket, const tcp_socket_options& options)
             {
-                if (options.no_delay)
+                error_code ec;
+                socket.set_option(tcp::no_delay(options.no_delay), ec);
+                if (ec)
                 {
-                    error_code ec;
-                    socket.set_option(tcp::no_delay(true), ec);
-                    if (ec)
-                    {
-                        CROW_LOG_WARNING << "Failed to set TCP_NODELAY: " << ec.message();
-                    }
+                    CROW_LOG_WARNING << "Failed to set TCP_NODELAY: " << ec.message();
                 }
             }
 
