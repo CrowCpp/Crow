@@ -2910,3 +2910,74 @@ TEST_CASE("inject_header_via_set_haeder")
     app.stop();
 }
 
+TEST_CASE("TCP_NODELAY_socket_option_apply")
+{
+    asio::io_context io_context;
+    asio::ip::tcp::acceptor acceptor(io_context,
+                                     asio::ip::tcp::endpoint(asio::ip::make_address(LOCALHOST_ADDRESS), 0));
+
+    asio::ip::tcp::socket client_socket(io_context);
+    client_socket.connect(acceptor.local_endpoint());
+
+    asio::ip::tcp::socket server_socket(io_context);
+    acceptor.accept(server_socket);
+
+    server_socket.set_option(asio::ip::tcp::no_delay(false));
+
+    crow::detail::socket::tcp_socket_options enable_options;
+    enable_options.no_delay = true;
+    crow::detail::socket::apply_tcp_socket_options(server_socket, enable_options);
+
+    asio::ip::tcp::no_delay no_delay_enabled;
+    server_socket.get_option(no_delay_enabled);
+    CHECK(no_delay_enabled.value());
+
+    crow::detail::socket::tcp_socket_options disable_options;
+    disable_options.no_delay = false;
+    crow::detail::socket::apply_tcp_socket_options(server_socket, disable_options);
+
+    asio::ip::tcp::no_delay no_delay_after_disable_call;
+    server_socket.get_option(no_delay_after_disable_call);
+    CHECK(no_delay_after_disable_call.value());
+}
+
+TEST_CASE("TCP_NODELAY_app_api_smoke")
+{
+    auto run_request = [](crow::SimpleApp& app) {
+        auto _ = app.bindaddr(LOCALHOST_ADDRESS).port(0).run_async();
+        app.wait_for_server_start();
+
+        auto response = HttpClient::request(LOCALHOST_ADDRESS,
+                                            app.port(),
+                                            "GET / HTTP/1.0\r\n"
+                                            "Host: localhost\r\n"
+                                            "\r\n");
+
+        app.stop();
+        return response;
+    };
+
+    {
+        crow::SimpleApp app;
+        CROW_ROUTE(app, "/")([] {
+            return "ok";
+        });
+        app.validate();
+
+        app.tcp_nodelay(true);
+        auto response = run_request(app);
+        CHECK(response.find("200 OK") != std::string::npos);
+    }
+
+    {
+        crow::SimpleApp app;
+        CROW_ROUTE(app, "/")([] {
+            return "ok";
+        });
+        app.validate();
+
+        app.tcp_nodelay(false);
+        auto response = run_request(app);
+        CHECK(response.find("200 OK") != std::string::npos);
+    }
+}
