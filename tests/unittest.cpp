@@ -2981,3 +2981,29 @@ TEST_CASE("TCP_NODELAY_app_api_smoke")
         CHECK(response.find("200 OK") != std::string::npos);
     }
 }
+
+TEST_CASE("TCP_NODELAY_websocket_api")
+{
+    crow::SimpleApp app;
+
+    CROW_WEBSOCKET_ROUTE(app, "/ws")
+        .onopen([&](crow::websocket::connection& conn){
+            conn.send_text("Connected");
+        })
+        .onmessage([&](crow::websocket::connection& conn, const std::string& data, bool /*is_binary*/){
+            conn.send_text("Echo: " + data);
+        });
+
+    app.validate();
+
+    // Test setting TCP_NODELAY for WebSocket connections
+    app.websocket_tcp_nodelay(true);
+    
+    auto options = app.websocket_tcp_nodelay_options();
+    CHECK(options.no_delay == true);
+
+    app.websocket_tcp_nodelay(false);
+    
+    options = app.websocket_tcp_nodelay_options();
+    CHECK(options.no_delay == false);
+}

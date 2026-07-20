@@ -485,6 +485,20 @@ namespace crow
             return *this;
         }
 
+        /// \brief Enable or disable TCP_NODELAY for WebSocket connections.
+        /// We also have to differentiate between socket options for http server socket and websocket server socket.
+        self_t& websocket_tcp_nodelay(bool enabled = true)
+        {
+            websocket_tcp_socket_options_.no_delay = enabled;
+            return *this;
+        }
+
+        /// \brief Get the TCP_NODELAY setting for WebSocket connections.
+        detail::socket::tcp_socket_options websocket_tcp_nodelay_options() const
+        {
+            return websocket_tcp_socket_options_;
+        }
+
         /// \brief Set the response body size (in bytes) beyond which Crow automatically streams responses (Default is 1MiB)
         ///
         /// Any streamed response is unaffected by Crow's timer, and therefore won't timeout before a response is fully sent.
@@ -898,6 +912,7 @@ namespace crow
         std::string bindaddr_ = "0.0.0.0";
         bool use_unix_ = false;
         detail::socket::tcp_socket_options tcp_socket_options_{};
+        detail::socket::tcp_socket_options websocket_tcp_socket_options_{};
         size_t res_stream_threshold_ = 1048576;
         Router router_;
         bool static_routes_added_{false};
