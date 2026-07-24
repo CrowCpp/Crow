@@ -2930,53 +2930,23 @@ TEST_CASE("inject_header_via_set_haeder")
 }
 
 // Tests the low-level apply_tcp_socket_options function to verify that
-// TCP_NODELAY can be enabled (false -> true transition)
+// TCP_NODELAY can be enabled.
 TEST_CASE("TCP_NODELAY_socket_option_apply_enable")
 {
-    asio::io_context io_context;
-    asio::ip::tcp::acceptor acceptor(io_context,
-                                     asio::ip::tcp::endpoint(asio::ip::make_address(LOCALHOST_ADDRESS), 0));
-
-    asio::ip::tcp::socket client_socket(io_context);
-    client_socket.connect(acceptor.local_endpoint());
-
-    asio::ip::tcp::socket server_socket(io_context);
-    acceptor.accept(server_socket);
-
-    server_socket.set_option(asio::ip::tcp::no_delay(false));
-
     crow::detail::socket::tcp_socket_options enable_options;
     enable_options.no_delay = true;
-    crow::detail::socket::apply_tcp_socket_options(server_socket, enable_options);
 
-    asio::ip::tcp::no_delay no_delay_enabled;
-    server_socket.get_option(no_delay_enabled);
-    CHECK(no_delay_enabled.value());
+    CHECK(tcp_nodelay_on_connection(enable_options) == true);
 }
 
 // Tests the low-level apply_tcp_socket_options function to verify that
-// TCP_NODELAY can be disabled (true -> false transition)
+// TCP_NODELAY can be disabled.
 TEST_CASE("TCP_NODELAY_socket_option_apply_disable")
 {
-    asio::io_context io_context;
-    asio::ip::tcp::acceptor acceptor(io_context,
-                                     asio::ip::tcp::endpoint(asio::ip::make_address(LOCALHOST_ADDRESS), 0));
-
-    asio::ip::tcp::socket client_socket(io_context);
-    client_socket.connect(acceptor.local_endpoint());
-
-    asio::ip::tcp::socket server_socket(io_context);
-    acceptor.accept(server_socket);
-
-    server_socket.set_option(asio::ip::tcp::no_delay(true));
-
     crow::detail::socket::tcp_socket_options disable_options;
     disable_options.no_delay = false;
-    crow::detail::socket::apply_tcp_socket_options(server_socket, disable_options);
 
-    asio::ip::tcp::no_delay no_delay_disabled;
-    server_socket.get_option(no_delay_disabled);
-    CHECK(!no_delay_disabled.value());
+    CHECK(tcp_nodelay_on_connection(disable_options) == false);
 }
 
 // Tests that HTTP socket TCP_NODELAY defaults to false (disabled)
