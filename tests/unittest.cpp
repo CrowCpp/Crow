@@ -78,6 +78,25 @@ public:
     }
 };
 
+bool tcp_nodelay_on_connection(const crow::detail::socket::tcp_socket_options& options)
+{
+    asio::io_context io_context;
+    asio::ip::tcp::acceptor acceptor(io_context,
+                                     asio::ip::tcp::endpoint(asio::ip::make_address(LOCALHOST_ADDRESS), 0));
+
+    asio::ip::tcp::socket client_socket(io_context);
+    client_socket.connect(acceptor.local_endpoint());
+
+    asio::ip::tcp::socket server_socket(io_context);
+    acceptor.accept(server_socket);
+
+    crow::detail::socket::apply_tcp_socket_options(server_socket, options);
+
+    asio::ip::tcp::no_delay no_delay;
+    server_socket.get_option(no_delay);
+    return no_delay.value();
+}
+
 TEST_CASE("Rule")
 {
     TaggedRule<> r("/http/");
@@ -2992,21 +3011,7 @@ TEST_CASE("TCP_NODELAY_http_api_enabled")
     auto http_options = app.tcp_socket_options();
     CHECK(http_options.no_delay == true);
 
-    asio::io_context io_context;
-    asio::ip::tcp::acceptor acceptor(io_context,
-                                     asio::ip::tcp::endpoint(asio::ip::make_address(LOCALHOST_ADDRESS), 0));
-
-    asio::ip::tcp::socket client_socket(io_context);
-    client_socket.connect(acceptor.local_endpoint());
-
-    asio::ip::tcp::socket server_socket(io_context);
-    acceptor.accept(server_socket);
-
-    crow::detail::socket::apply_tcp_socket_options(server_socket, http_options);
-
-    asio::ip::tcp::no_delay no_delay;
-    server_socket.get_option(no_delay);
-    CHECK(no_delay.value());
+    CHECK(tcp_nodelay_on_connection(http_options) == true);
 }
 
 // Tests that HTTP socket TCP_NODELAY can be disabled via tcp_nodelay(false) API
@@ -3026,21 +3031,7 @@ TEST_CASE("TCP_NODELAY_http_api_disabled")
     auto http_options = app.tcp_socket_options();
     CHECK(http_options.no_delay == false);
 
-    asio::io_context io_context;
-    asio::ip::tcp::acceptor acceptor(io_context,
-                                     asio::ip::tcp::endpoint(asio::ip::make_address(LOCALHOST_ADDRESS), 0));
-
-    asio::ip::tcp::socket client_socket(io_context);
-    client_socket.connect(acceptor.local_endpoint());
-
-    asio::ip::tcp::socket server_socket(io_context);
-    acceptor.accept(server_socket);
-
-    crow::detail::socket::apply_tcp_socket_options(server_socket, http_options);
-
-    asio::ip::tcp::no_delay no_delay;
-    server_socket.get_option(no_delay);
-    CHECK(!no_delay.value());
+    CHECK(tcp_nodelay_on_connection(http_options) == false);
 }
 
 // Tests that WebSocket socket TCP_NODELAY defaults to false (disabled)
@@ -3075,21 +3066,7 @@ TEST_CASE("TCP_NODELAY_websocket_api_enabled")
     auto ws_options = app.websocket_tcp_socket_options();
     CHECK(ws_options.no_delay == true);
 
-    asio::io_context io_context;
-    asio::ip::tcp::acceptor acceptor(io_context,
-                                     asio::ip::tcp::endpoint(asio::ip::make_address(LOCALHOST_ADDRESS), 0));
-
-    asio::ip::tcp::socket client_socket(io_context);
-    client_socket.connect(acceptor.local_endpoint());
-
-    asio::ip::tcp::socket server_socket(io_context);
-    acceptor.accept(server_socket);
-
-    crow::detail::socket::apply_tcp_socket_options(server_socket, ws_options);
-
-    asio::ip::tcp::no_delay no_delay;
-    server_socket.get_option(no_delay);
-    CHECK(no_delay.value());
+    CHECK(tcp_nodelay_on_connection(ws_options) == true);
 }
 
 // Tests that WebSocket socket TCP_NODELAY can be disabled via websocket_tcp_nodelay(false) API
@@ -3109,21 +3086,7 @@ TEST_CASE("TCP_NODELAY_websocket_api_disabled")
     auto ws_options = app.websocket_tcp_socket_options();
     CHECK(ws_options.no_delay == false);
 
-    asio::io_context io_context;
-    asio::ip::tcp::acceptor acceptor(io_context,
-                                     asio::ip::tcp::endpoint(asio::ip::make_address(LOCALHOST_ADDRESS), 0));
-
-    asio::ip::tcp::socket client_socket(io_context);
-    client_socket.connect(acceptor.local_endpoint());
-
-    asio::ip::tcp::socket server_socket(io_context);
-    acceptor.accept(server_socket);
-
-    crow::detail::socket::apply_tcp_socket_options(server_socket, ws_options);
-
-    asio::ip::tcp::no_delay no_delay;
-    server_socket.get_option(no_delay);
-    CHECK(!no_delay.value());
+    CHECK(tcp_nodelay_on_connection(ws_options) == false);
 }
 
 // Smoke test to verify HTTP server starts and handles requests correctly
