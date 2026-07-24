@@ -136,11 +136,17 @@ namespace crow // NOTE: Already documented in "crow/app.h"
 
                 r_string(r_string&& r)
                 {
-                    *this = r;
+                    *this = std::move(r);
                 }
 
                 r_string& operator=(r_string&& r)
                 {
+                    if (this == &r)
+                        return *this;
+
+                    if (owned_)
+                        delete[] s_;
+
                     s_ = r.s_;
                     e_ = r.e_;
                     owned_ = r.owned_;
@@ -151,6 +157,9 @@ namespace crow // NOTE: Already documented in "crow/app.h"
 
                 r_string& operator=(const r_string& r)
                 {
+                    if (this == &r)
+                        return *this;
+
                     s_ = r.s_;
                     e_ = r.e_;
                     owned_ = 0;
