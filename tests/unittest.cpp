@@ -78,7 +78,7 @@ public:
     }
 };
 
-bool tcp_nodelay_on_connection(const crow::detail::socket::tcp_socket_options& options)
+bool is_tcp_nodelay_enabled_for_connection_after_apply(const crow::detail::socket::tcp_socket_options& options)
 {
     asio::io_context io_context;
     asio::ip::tcp::acceptor acceptor(io_context,
@@ -2936,7 +2936,7 @@ TEST_CASE("TCP_NODELAY_socket_option_apply_enable")
     crow::detail::socket::tcp_socket_options enable_options;
     enable_options.no_delay = true;
 
-    CHECK(tcp_nodelay_on_connection(enable_options) == true);
+    CHECK(is_tcp_nodelay_enabled_for_connection_after_apply(enable_options) == true);
 }
 
 // Tests the low-level apply_tcp_socket_options function to verify that
@@ -2946,7 +2946,7 @@ TEST_CASE("TCP_NODELAY_socket_option_apply_disable")
     crow::detail::socket::tcp_socket_options disable_options;
     disable_options.no_delay = false;
 
-    CHECK(tcp_nodelay_on_connection(disable_options) == false);
+    CHECK(is_tcp_nodelay_enabled_for_connection_after_apply(disable_options) == false);
 }
 
 // Tests that HTTP socket TCP_NODELAY defaults to false (disabled)
@@ -2981,7 +2981,7 @@ TEST_CASE("TCP_NODELAY_http_api_enabled")
     auto http_options = app.tcp_socket_options();
     CHECK(http_options.no_delay == true);
 
-    CHECK(tcp_nodelay_on_connection(http_options) == true);
+    CHECK(is_tcp_nodelay_enabled_for_connection_after_apply(http_options) == true);
 }
 
 // Tests that HTTP socket TCP_NODELAY can be disabled via tcp_nodelay(false) API
@@ -3001,7 +3001,7 @@ TEST_CASE("TCP_NODELAY_http_api_disabled")
     auto http_options = app.tcp_socket_options();
     CHECK(http_options.no_delay == false);
 
-    CHECK(tcp_nodelay_on_connection(http_options) == false);
+    CHECK(is_tcp_nodelay_enabled_for_connection_after_apply(http_options) == false);
 }
 
 // Tests that WebSocket socket TCP_NODELAY defaults to false (disabled)
@@ -3036,7 +3036,7 @@ TEST_CASE("TCP_NODELAY_websocket_api_enabled")
     auto ws_options = app.websocket_tcp_socket_options();
     CHECK(ws_options.no_delay == true);
 
-    CHECK(tcp_nodelay_on_connection(ws_options) == true);
+    CHECK(is_tcp_nodelay_enabled_for_connection_after_apply(ws_options) == true);
 }
 
 // Tests that WebSocket socket TCP_NODELAY can be disabled via websocket_tcp_nodelay(false) API
@@ -3056,7 +3056,7 @@ TEST_CASE("TCP_NODELAY_websocket_api_disabled")
     auto ws_options = app.websocket_tcp_socket_options();
     CHECK(ws_options.no_delay == false);
 
-    CHECK(tcp_nodelay_on_connection(ws_options) == false);
+    CHECK(is_tcp_nodelay_enabled_for_connection_after_apply(ws_options) == false);
 }
 
 // Smoke test to verify HTTP server starts and handles requests correctly
