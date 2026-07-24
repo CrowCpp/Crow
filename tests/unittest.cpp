@@ -2963,6 +2963,7 @@ TEST_CASE("TCP_NODELAY_http_api_defaults")
     // Default should be false (no_delay disabled)
     auto http_options = app.tcp_socket_options();
     CHECK(http_options.no_delay == false);
+    CHECK(is_tcp_nodelay_enabled_for_connection_after_apply(http_options) == false);
 }
 
 // Tests that HTTP socket TCP_NODELAY can be enabled via tcp_nodelay(true) API
@@ -3018,6 +3019,7 @@ TEST_CASE("TCP_NODELAY_websocket_api_defaults")
     // Default should be false (no_delay disabled)
     auto ws_options = app.websocket_tcp_socket_options();
     CHECK(ws_options.no_delay == false);
+    CHECK(is_tcp_nodelay_enabled_for_connection_after_apply(ws_options) == false);
 }
 
 // Tests that WebSocket socket TCP_NODELAY can be enabled via websocket_tcp_nodelay(true) API
