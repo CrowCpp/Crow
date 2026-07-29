@@ -42,7 +42,9 @@ namespace crow
 
             template<typename Socket>
             inline void apply_tcp_socket_options(Socket&, const tcp_socket_options&)
-            {}
+            {
+                CROW_LOG_WARNING << "This socket type does not support set TCP_NODELAY option";
+            }
         } // namespace socket
     } // namespace detail
 } // namespace crow
