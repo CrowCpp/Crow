@@ -24,6 +24,11 @@
 using std::isinf;
 using std::isnan;
 
+#ifdef __CHAR_UNSIGNED__
+#define IS_CONTROL_ASCII(c) (c < 0x20)
+#else
+#define IS_CONTROL_ASCII(c) ((c >= 0) && (c < 0x20))
+#endif
 
 namespace crow // NOTE: Already documented in "crow/app.h"
 {
@@ -57,7 +62,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                     case '\r': ret += "\\r"; break;
                     case '\t': ret += "\\t"; break;
                     default:
-                        if (c >= 0 && c < 0x20)
+                        if (IS_CONTROL_ASCII(c))
                         {
                             ret += "\\u00";
                             ret += to_hex(c / 16);
