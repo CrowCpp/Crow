@@ -78,6 +78,25 @@ public:
     }
 };
 
+bool is_tcp_nodelay_enabled_for_connection_after_apply(const crow::detail::socket::tcp_socket_options& options)
+{
+    asio::io_context io_context;
+    asio::ip::tcp::acceptor acceptor(io_context,
+                                     asio::ip::tcp::endpoint(asio::ip::make_address(LOCALHOST_ADDRESS), 0));
+
+    asio::ip::tcp::socket client_socket(io_context);
+    client_socket.connect(acceptor.local_endpoint());
+
+    asio::ip::tcp::socket server_socket(io_context);
+    acceptor.accept(server_socket);
+
+    crow::detail::socket::apply_tcp_socket_options(server_socket, options);
+
+    asio::ip::tcp::no_delay no_delay;
+    server_socket.get_option(no_delay);
+    return no_delay.value();
+}
+
 TEST_CASE("Rule")
 {
     TaggedRule<> r("/http/");
@@ -2910,3 +2929,215 @@ TEST_CASE("inject_header_via_set_haeder")
     app.stop();
 }
 
+// Tests the low-level apply_tcp_socket_options function to verify that
+// TCP_NODELAY can be enabled.
+TEST_CASE("TCP_NODELAY_socket_option_apply_enable")
+{
+    crow::detail::socket::tcp_socket_options enable_options;
+    enable_options.no_delay = true;
+
+    CHECK(is_tcp_nodelay_enabled_for_connection_after_apply(enable_options) == true);
+}
+
+// Tests the low-level apply_tcp_socket_options function to verify that
+// TCP_NODELAY can be disabled.
+TEST_CASE("TCP_NODELAY_socket_option_apply_disable")
+{
+    crow::detail::socket::tcp_socket_options disable_options;
+    disable_options.no_delay = false;
+
+    CHECK(is_tcp_nodelay_enabled_for_connection_after_apply(disable_options) == false);
+}
+
+// Tests that HTTP socket TCP_NODELAY defaults to false (disabled)
+TEST_CASE("TCP_NODELAY_http_api_defaults")
+{
+    crow::SimpleApp app;
+
+    CROW_ROUTE(app, "/")([] {
+        return "ok";
+    });
+
+    app.validate();
+
+    // Default should be false (no_delay disabled)
+    auto http_options = app.tcp_socket_options();
+    CHECK(http_options.no_delay == false);
+    CHECK(is_tcp_nodelay_enabled_for_connection_after_apply(http_options) == false);
+}
+
+// Tests that HTTP socket TCP_NODELAY can be enabled via tcp_nodelay(true) API
+TEST_CASE("TCP_NODELAY_http_api_enabled")
+{
+    crow::SimpleApp app;
+
+    CROW_ROUTE(app, "/")([] {
+        return "ok";
+    });
+
+    app.validate();
+
+    // Enable TCP_NODELAY
+    app.tcp_nodelay(true);
+    auto http_options = app.tcp_socket_options();
+    CHECK(http_options.no_delay == true);
+
+    CHECK(is_tcp_nodelay_enabled_for_connection_after_apply(http_options) == true);
+}
+
+// Tests that HTTP socket TCP_NODELAY can be disabled via tcp_nodelay(false) API
+TEST_CASE("TCP_NODELAY_http_api_disabled")
+{
+    crow::SimpleApp app;
+
+    CROW_ROUTE(app, "/")([] {
+        return "ok";
+    });
+
+    app.validate();
+
+    // Enable first, then disable
+    app.tcp_nodelay(true);
+    app.tcp_nodelay(false);
+    auto http_options = app.tcp_socket_options();
+    CHECK(http_options.no_delay == false);
+
+    CHECK(is_tcp_nodelay_enabled_for_connection_after_apply(http_options) == false);
+}
+
+// Tests that WebSocket socket TCP_NODELAY defaults to false (disabled)
+TEST_CASE("TCP_NODELAY_websocket_api_defaults")
+{
+    crow::SimpleApp app;
+
+    CROW_WEBSOCKET_ROUTE(app, "/ws")
+        .onopen([&](crow::websocket::connection&){})
+        .onmessage([&](crow::websocket::connection&, const std::string&, bool){});
+
+    app.validate();
+
+    // Default should be false (no_delay disabled)
+    auto ws_options = app.websocket_tcp_socket_options();
+    CHECK(ws_options.no_delay == false);
+    CHECK(is_tcp_nodelay_enabled_for_connection_after_apply(ws_options) == false);
+}
+
+// Tests that WebSocket socket TCP_NODELAY can be enabled via websocket_tcp_nodelay(true) API
+TEST_CASE("TCP_NODELAY_websocket_api_enabled")
+{
+    crow::SimpleApp app;
+
+    CROW_WEBSOCKET_ROUTE(app, "/ws")
+        .onopen([&](crow::websocket::connection&){})
+        .onmessage([&](crow::websocket::connection&, const std::string&, bool){});
+
+    app.validate();
+
+    // Enable TCP_NODELAY
+    app.websocket_tcp_nodelay(true);
+    auto ws_options = app.websocket_tcp_socket_options();
+    CHECK(ws_options.no_delay == true);
+
+    CHECK(is_tcp_nodelay_enabled_for_connection_after_apply(ws_options) == true);
+}
+
+// Tests that WebSocket socket TCP_NODELAY can be disabled via websocket_tcp_nodelay(false) API
+TEST_CASE("TCP_NODELAY_websocket_api_disabled")
+{
+    crow::SimpleApp app;
+
+    CROW_WEBSOCKET_ROUTE(app, "/ws")
+        .onopen([&](crow::websocket::connection&){})
+        .onmessage([&](crow::websocket::connection&, const std::string&, bool){});
+
+    app.validate();
+
+    // Enable first, then disable
+    app.websocket_tcp_nodelay(true);
+    app.websocket_tcp_nodelay(false);
+    auto ws_options = app.websocket_tcp_socket_options();
+    CHECK(ws_options.no_delay == false);
+
+    CHECK(is_tcp_nodelay_enabled_for_connection_after_apply(ws_options) == false);
+}
+
+// Smoke test to verify HTTP server starts and handles requests correctly
+// with TCP_NODELAY enabled on HTTP sockets
+TEST_CASE("TCP_NODELAY_http_smoke_test")
+{
+    crow::SimpleApp app;
+
+    CROW_ROUTE(app, "/")([] {
+        return "ok";
+    });
+
+    app.validate();
+
+    // Test with TCP_NODELAY enabled
+    app.tcp_nodelay(true);
+    
+    auto _ = app.bindaddr(LOCALHOST_ADDRESS).port(0).run_async();
+    app.wait_for_server_start();
+
+    auto response = HttpClient::request(LOCALHOST_ADDRESS,
+                                        app.port(),
+                                        "GET / HTTP/1.0\r\n"
+                                        "Host: localhost\r\n"
+                                        "\r\n");
+
+    app.stop();
+    CHECK(response.find("200 OK") != std::string::npos);
+    CHECK(response.find("ok") != std::string::npos);
+}
+
+// Smoke test to verify WebSocket upgrade handshake succeeds and connections work
+// correctly with TCP_NODELAY enabled on WebSocket sockets
+TEST_CASE("TCP_NODELAY_websocket_smoke_test")
+{
+    crow::SimpleApp app;
+
+    std::string received_message;
+
+    CROW_WEBSOCKET_ROUTE(app, "/ws")
+        .onopen([&](crow::websocket::connection& conn){
+            conn.send_text("Hello WebSocket");
+        })
+        .onmessage([&](crow::websocket::connection& conn, const std::string& data, bool /*is_binary*/){
+            received_message = data;
+            conn.send_text("Echo: " + data);
+        })
+        .onclose([&](crow::websocket::connection&, const std::string&, uint16_t){});
+
+    app.validate();
+
+    // Test with TCP_NODELAY enabled for WebSocket
+    app.websocket_tcp_nodelay(true);
+    
+    auto _ = app.bindaddr(LOCALHOST_ADDRESS).port(0).run_async();
+    app.wait_for_server_start();
+
+    asio::io_context ic;
+    asio::ip::tcp::socket socket(ic);
+    socket.connect(asio::ip::tcp::endpoint(asio::ip::make_address(LOCALHOST_ADDRESS), app.port()));
+
+    std::string upgrade_request =
+        "GET /ws HTTP/1.1\r\n"
+        "Host: localhost\r\n"
+        "Upgrade: websocket\r\n"
+        "Connection: Upgrade\r\n"
+        "Sec-WebSocket-Key: dGhlIHNhbXBsZSBub25jZQ==\r\n"
+        "Sec-WebSocket-Version: 13\r\n"
+        "\r\n";
+
+    socket.send(asio::buffer(upgrade_request));
+
+    std::vector<char> response_buffer(4096);
+    size_t bytes_received = socket.receive(asio::buffer(response_buffer));
+    std::string response(response_buffer.begin(), response_buffer.begin() + bytes_received);
+
+    CHECK(response.find("101") != std::string::npos);
+    CHECK(response.find("Upgrade") != std::string::npos);
+
+    socket.close();
+    app.stop();
+}
