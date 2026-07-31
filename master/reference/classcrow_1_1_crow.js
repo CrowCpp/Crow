@@ -40,10 +40,14 @@ var classcrow_1_1_crow =
     [ "stop", "classcrow_1_1_crow.html#a0266672657128919ab9a067d93f3868f", null ],
     [ "stream_threshold", "classcrow_1_1_crow.html#af35a53c39414aa79446690fea359e573", null ],
     [ "stream_threshold", "classcrow_1_1_crow.html#a058d8138c140c1073f0972c74cfa812b", null ],
+    [ "tcp_nodelay", "classcrow_1_1_crow.html#a851e53c7c31c97964d643c2d0cb5df7c", null ],
+    [ "tcp_socket_options", "classcrow_1_1_crow.html#afbf6d9db5fd6d1d2638b0b868f5ffcfa", null ],
     [ "tick", "classcrow_1_1_crow.html#a7d5baf439ee8c85ad500cdb022bcd3a1", null ],
     [ "timeout", "classcrow_1_1_crow.html#a1d69f60255f2bf1571d6570a6abb1552", null ],
     [ "validate", "classcrow_1_1_crow.html#ab9a22c981e0afec0d55ee234683a6d38", null ],
     [ "wait_for_server_start", "classcrow_1_1_crow.html#a06b50c2039e7bc146ac134af9fe7bf7f", null ],
     [ "websocket_max_payload", "classcrow_1_1_crow.html#a391a488c01ce53c0ccfd502c7ad15640", null ],
-    [ "websocket_max_payload", "classcrow_1_1_crow.html#ac30b84b54096d1bfe517a9cf81d65fc7", null ]
+    [ "websocket_max_payload", "classcrow_1_1_crow.html#ac30b84b54096d1bfe517a9cf81d65fc7", null ],
+    [ "websocket_tcp_nodelay", "classcrow_1_1_crow.html#a717c0811ebfcadd12dbef788771ec46d", null ],
+    [ "websocket_tcp_socket_options", "classcrow_1_1_crow.html#af7d8bd7e8b72899f3bcdae49a586c89c", null ]
 ];
