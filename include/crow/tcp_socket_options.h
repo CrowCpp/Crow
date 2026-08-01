@@ -44,66 +44,77 @@ namespace crow
                 std::optional<asio::socket_base::enable_connection_aborted> enable_connection_aborted;  // Applied on TCP acceptors (before async_accept).
                 std::optional<int> listen_backlog;                                                      // Controls the listen backlog used by acceptor.listen().
 
+                /// \brief Enable or disable TCP_NODELAY on accepted TCP sockets.
                 tcp_socket_options& set_no_delay(bool enabled = true)
                 {
                     no_delay = tcp::no_delay(enabled);
                     return *this;
                 }
 
+                /// \brief Enable or disable SO_KEEPALIVE on accepted TCP sockets.
                 tcp_socket_options& set_keep_alive(bool enabled = true)
                 {
                     keep_alive = asio::socket_base::keep_alive(enabled);
                     return *this;
                 }
 
+                /// \brief Set SO_RCVBUF on accepted TCP sockets.
                 tcp_socket_options& set_receive_buffer_size(int size)
                 {
                     receive_buffer_size = asio::socket_base::receive_buffer_size(size);
                     return *this;
                 }
 
+                /// \brief Set SO_SNDBUF on accepted TCP sockets.
                 tcp_socket_options& set_send_buffer_size(int size)
                 {
                     send_buffer_size = asio::socket_base::send_buffer_size(size);
                     return *this;
                 }
 
+                /// \brief Configure SO_LINGER on accepted TCP sockets.
                 tcp_socket_options& set_linger(bool enabled, int timeout = 0)
                 {
                     linger = asio::socket_base::linger(enabled, timeout);
                     return *this;
                 }
 
+                /// \brief Enable or disable SO_BROADCAST on accepted TCP sockets.
                 tcp_socket_options& set_broadcast(bool enabled = true)
                 {
                     broadcast = asio::socket_base::broadcast(enabled);
                     return *this;
                 }
 
+                /// \brief Enable or disable SO_DEBUG on accepted TCP sockets.
                 tcp_socket_options& set_debug(bool enabled = true)
                 {
                     debug = asio::socket_base::debug(enabled);
                     return *this;
                 }
 
+                /// \brief Enable or disable SO_REUSEADDR on TCP acceptors.
                 tcp_socket_options& set_reuse_address(bool enabled = true)
                 {
                     reuse_address = asio::socket_base::reuse_address(enabled);
                     return *this;
                 }
 
+                /// \brief Enable or disable IPV6_V6ONLY on TCP acceptors.
                 tcp_socket_options& set_v6_only(bool enabled = true)
                 {
                     v6_only = asio::ip::v6_only(enabled);
                     return *this;
                 }
 
+                /// \brief Enable or disable aborted-connection reporting on TCP acceptors.
                 tcp_socket_options& set_enable_connection_aborted(bool enabled = true)
                 {
                     enable_connection_aborted = asio::socket_base::enable_connection_aborted(enabled);
                     return *this;
                 }
 
+                /// \brief Set the acceptor listen backlog. Non-positive values restore the default backlog.
                 tcp_socket_options& set_listen_backlog(int backlog)
                 {
                     if (backlog > 0)
