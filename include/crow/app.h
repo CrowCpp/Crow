@@ -492,8 +492,30 @@ namespace crow
             return *this;
         }
 
-        /// \brief Enable or disable SO_REUSEADDR for the HTTP TCP acceptor.
-        self_t& tcp_reuse_address(bool enabled = true)
+        /// \brief Set the TCP receive buffer size for accepted TCP connections.
+        self_t& tcp_receive_buffer_size(int size)
+        {
+            tcp_socket_options_.receive_buffer_size = size;
+            return *this;
+        }
+
+        /// \brief Set the TCP send buffer size for accepted TCP connections.
+        self_t& tcp_send_buffer_size(int size)
+        {
+            tcp_socket_options_.send_buffer_size = size;
+            return *this;
+        }
+
+        /// \brief Set the TCP linger option for accepted TCP connections.
+        /// \param timeout The linger timeout in seconds.
+        self_t& tcp_linger(int timeout)
+        {
+            tcp_socket_options_.linger = asio::socket_base::linger(true, timeout);
+            return *this;
+        }
+
+          /// \brief Enable or disable SO_REUSEADDR for the HTTP TCP acceptor.
+          self_t& tcp_reuse_address(bool enabled = true)
         {
             tcp_socket_options_.reuse_address = asio::socket_base::reuse_address(enabled);
             return *this;

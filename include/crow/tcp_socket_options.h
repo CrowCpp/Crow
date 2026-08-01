@@ -98,7 +98,7 @@ namespace crow
                     }
                     else
                     {
-                        CROW_LOG_DEBUG << "SO_LINGER set to: " << (options.linger->enabled() ? "true" : "false");
+                        CROW_LOG_DEBUG << "SO_LINGER set to: " << (options.linger->enabled() ? "true" : "false") << ", timeout: " << options.linger->timeout();
                     }
                 }
 
