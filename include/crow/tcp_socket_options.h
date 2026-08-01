@@ -29,8 +29,8 @@ namespace crow
         {
             struct tcp_socket_options
             {
-                std::optional<bool> no_delay;
-                std::optional<bool> keep_alive;
+                std::optional<tcp::no_delay> no_delay;
+                std::optional<asio::socket_base::keep_alive> keep_alive;
                 std::optional<asio::socket_base::receive_buffer_size> receive_buffer_size;
                 std::optional<asio::socket_base::send_buffer_size> send_buffer_size;
                 std::optional<asio::socket_base::linger> linger;
