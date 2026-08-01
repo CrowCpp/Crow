@@ -167,7 +167,6 @@ namespace crow
                     CROW_LOG_DEBUG << "enable_connection_aborted set on acceptor to: " << (*options.enable_connection_aborted ? "true" : "false");
                 }
 
-                CROW_LOG_DEBUG << "SO_REUSEADDR set on acceptor to: " << reuse_address;
                 return true;
             }
 
@@ -189,7 +188,6 @@ namespace crow
                     CROW_LOG_WARNING << "This acceptor type does not support applying enable_connection_aborted";
                 }
 
-                CROW_LOG_INFO << "This acceptor type does not support applying TCP socket options";
                 return true;
             }
 

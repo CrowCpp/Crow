@@ -506,11 +506,12 @@ namespace crow
             return *this;
         }
 
-        /// \brief Set the TCP linger option for accepted TCP connections.
+        /// \brief Enable or disable TCP linger for accepted TCP connections.
+        /// \param enabled Whether lingering should be enabled.
         /// \param timeout The linger timeout in seconds.
-        self_t& tcp_linger(int timeout)
+        self_t& tcp_linger(bool enabled, int timeout = 0)
         {
-            tcp_socket_options_.linger = asio::socket_base::linger(true, timeout);
+            tcp_socket_options_.linger = asio::socket_base::linger(enabled, timeout);
             return *this;
         }
 
@@ -590,6 +591,29 @@ namespace crow
         self_t& websocket_tcp_keep_alive(bool enabled = true)
         {
             websocket_tcp_socket_options_.keep_alive = enabled;
+            return *this;
+        }
+
+        /// \brief Set the TCP receive buffer size for WebSocket connections.
+        self_t& websocket_tcp_receive_buffer_size(int size)
+        {
+            websocket_tcp_socket_options_.receive_buffer_size = size;
+            return *this;
+        }
+
+        /// \brief Set the TCP send buffer size for WebSocket connections.
+        self_t& websocket_tcp_send_buffer_size(int size)
+        {
+            websocket_tcp_socket_options_.send_buffer_size = size;
+            return *this;
+        }
+
+        /// \brief Enable or disable TCP linger for WebSocket connections.
+        /// \param enabled Whether lingering should be enabled.
+        /// \param timeout The linger timeout in seconds.
+        self_t& websocket_tcp_linger(bool enabled, int timeout = 0)
+        {
+            websocket_tcp_socket_options_.linger = asio::socket_base::linger(enabled, timeout);
             return *this;
         }
 
