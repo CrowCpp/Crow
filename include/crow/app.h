@@ -499,6 +499,35 @@ namespace crow
             return *this;
         }
 
+        /// \brief Enable or disable IPV6_V6ONLY for the HTTP TCP acceptor.
+        self_t& tcp_v6_only(bool enabled = true)
+        {
+            tcp_socket_options_.v6_only = enabled;
+            return *this;
+        }
+
+        /// \brief Enable or disable enable_connection_aborted for the HTTP TCP acceptor.
+        self_t& tcp_enable_connection_aborted(bool enabled = true)
+        {
+            tcp_socket_options_.enable_connection_aborted = enabled;
+            return *this;
+        }
+
+        /// \brief Set the listen backlog for the HTTP TCP acceptor.
+        /// \note Non-positive values reset to the platform default backlog.
+        self_t& tcp_listen_backlog(int backlog)
+        {
+            if (backlog > 0)
+            {
+                tcp_socket_options_.listen_backlog = backlog;
+            }
+            else
+            {
+                tcp_socket_options_.listen_backlog.reset();
+            }
+            return *this;
+        }
+
         /// \brief Get TCP socket options for HTTP connections.
         /// \return Mutable reference to the HTTP TCP socket options.
         detail::socket::tcp_socket_options& tcp_socket_options()

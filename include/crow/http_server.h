@@ -95,7 +95,8 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                 return;
             }
 
-            acceptor_.raw_acceptor().listen(tcp::acceptor::max_listen_connections, ec);
+            const int listen_backlog = detail::socket::resolve_acceptor_listen_backlog(tcp_socket_options_, tcp::acceptor::max_listen_connections);
+            acceptor_.raw_acceptor().listen(listen_backlog, ec);
             if (ec) {
                 CROW_LOG_ERROR << "Failed to listen on port: " << ec.message();
                 startup_failed_ = true;

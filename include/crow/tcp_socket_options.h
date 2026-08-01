@@ -36,6 +36,12 @@ namespace crow
                 std::optional<asio::socket_base::linger> linger;
                 // This option is applied on TCP acceptors (before bind), not on accepted sockets.
                 std::optional<asio::socket_base::reuse_address> reuse_address;
+                // This option is applied on TCP acceptors (before bind).
+                std::optional<bool> v6_only;
+                // This option is applied on TCP acceptors (before async_accept).
+                std::optional<bool> enable_connection_aborted;
+                // This option controls the listen backlog used by acceptor.listen().
+                std::optional<int> listen_backlog;
             };
 
             inline void apply_tcp_socket_options(tcp::socket& socket, const tcp_socket_options& options)
@@ -113,6 +119,29 @@ namespace crow
                     CROW_LOG_WARNING << "Failed to set SO_REUSEADDR on acceptor: " << ec.message();
                     return false;
                 }
+                CROW_LOG_DEBUG << "SO_REUSEADDR set on acceptor to: " << (reuse_address ? "true" : "false");
+
+                if (options.v6_only)
+                {
+                    acceptor.set_option(asio::ip::v6_only(*options.v6_only), ec);
+                    if (ec)
+                    {
+                        CROW_LOG_WARNING << "Failed to set IPV6_V6ONLY on acceptor: " << ec.message();
+                        return false;
+                    }
+                    CROW_LOG_DEBUG << "IPV6_V6ONLY set on acceptor to: " << (*options.v6_only ? "true" : "false");
+                }
+
+                if (options.enable_connection_aborted)
+                {
+                    acceptor.set_option(asio::socket_base::enable_connection_aborted(*options.enable_connection_aborted), ec);
+                    if (ec)
+                    {
+                        CROW_LOG_WARNING << "Failed to set enable_connection_aborted on acceptor: " << ec.message();
+                        return false;
+                    }
+                    CROW_LOG_DEBUG << "enable_connection_aborted set on acceptor to: " << (*options.enable_connection_aborted ? "true" : "false");
+                }
 
                 CROW_LOG_DEBUG << "SO_REUSEADDR set on acceptor to: " << reuse_address;
                 return true;
@@ -125,7 +154,30 @@ namespace crow
                 {
                     CROW_LOG_WARNING << "This acceptor type does not support applying SO_REUSEADDR";
                 }
+
+                if (options.v6_only)
+                {
+                    CROW_LOG_WARNING << "This acceptor type does not support applying IPV6_V6ONLY";
+                }
+
+                if (options.enable_connection_aborted)
+                {
+                    CROW_LOG_WARNING << "This acceptor type does not support applying enable_connection_aborted";
+                }
+
+                CROW_LOG_INFO << "This acceptor type does not support applying TCP socket options";
                 return true;
+            }
+
+            inline int resolve_acceptor_listen_backlog(const tcp_socket_options& options, int default_listen_backlog)
+            {
+                if (!options.listen_backlog || *options.listen_backlog <= 0) {
+                    CROW_LOG_INFO << "Using default listen backlog: " << default_listen_backlog;
+                    return default_listen_backlog;
+                }
+
+                CROW_LOG_INFO << "Using configured listen backlog: " << *options.listen_backlog;
+                return *options.listen_backlog;
             }
 
             template<typename Socket>
