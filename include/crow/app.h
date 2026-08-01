@@ -550,9 +550,23 @@ namespace crow
             return *this;
         }
 
-        /// \brief Get TCP socket options for HTTP connections.
-        /// \return Mutable reference to the HTTP TCP socket options.
-        detail::socket::tcp_socket_options& tcp_socket_options()
+        /// \brief Enable or disable TCP broadcast for accepted TCP connections.
+        self_t& tcp_broadcast(bool enabled = true)
+        {
+            tcp_socket_options_.broadcast = asio::socket_base::broadcast(enabled);
+            return *this;
+        }
+
+        /// \brief Enable or disable TCP debug for accepted TCP connections.
+        self_t& tcp_debug(bool enabled = true)
+        {
+            tcp_socket_options_.debug = asio::socket_base::debug(enabled);
+            return *this;
+        }
+
+          /// \brief Get TCP socket options for HTTP connections.
+          /// \return Mutable reference to the HTTP TCP socket options.
+          detail::socket::tcp_socket_options& tcp_socket_options()
         {
             return tcp_socket_options_;
         }
@@ -576,6 +590,20 @@ namespace crow
         self_t& websocket_tcp_keep_alive(bool enabled = true)
         {
             websocket_tcp_socket_options_.keep_alive = enabled;
+            return *this;
+        }
+
+        /// \brief Enable or disable TCP broadcast for WebSocket connections.
+        self_t& websocket_tcp_broadcast(bool enabled = true)
+        {
+            websocket_tcp_socket_options_.broadcast = asio::socket_base::broadcast(enabled);
+            return *this;
+        }
+
+        /// \brief Enable or disable TCP debug for WebSocket connections.
+        self_t& websocket_tcp_debug(bool enabled = true)
+        {
+            websocket_tcp_socket_options_.debug = asio::socket_base::debug(enabled);
             return *this;
         }
 
