@@ -80,12 +80,16 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                 return;
             }
 
+            // Apply the acceptor's platform-specific default reuse_address policy first.
             acceptor_.raw_acceptor().set_option(Acceptor::reuse_address_option(), ec);
             if (ec) {
-                CROW_LOG_ERROR << "Failed to set socket option: " << ec.message();
+                CROW_LOG_ERROR << "Failed to set default SO_REUSEADDR policy: " << ec.message();
                 startup_failed_ = true;
                 return;
             }
+
+            // Optionally override SO_REUSEADDR from app-level tcp_socket_options.
+            detail::socket::apply_acceptor_socket_options(acceptor_.raw_acceptor(), tcp_socket_options_);
 
             acceptor_.raw_acceptor().bind(endpoint, ec);
             if (ec) {

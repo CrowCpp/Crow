@@ -485,7 +485,7 @@ namespace crow
             return *this;
         }
 
-        /// @brief Enable or disable TCP keep-alive for accepted TCP connections.
+        /// \brief Enable or disable TCP keep-alive for accepted TCP connections.
         self_t& tcp_keep_alive(bool enabled = true)
         {
             tcp_socket_options_.keep_alive = enabled;

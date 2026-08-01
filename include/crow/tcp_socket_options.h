@@ -29,30 +29,37 @@ namespace crow
         {
             struct tcp_socket_options
             {
-                bool no_delay{false};
-                bool keep_alive{false};
+                std::optional<bool> no_delay;
+                std::optional<bool> keep_alive;
                 std::optional<asio::socket_base::receive_buffer_size> receive_buffer_size;
                 std::optional<asio::socket_base::send_buffer_size> send_buffer_size;
                 std::optional<asio::socket_base::linger> linger;
+                // This option is applied on TCP acceptors (before bind), not on accepted sockets.
                 std::optional<asio::socket_base::reuse_address> reuse_address;
             };
 
             inline void apply_tcp_socket_options(tcp::socket& socket, const tcp_socket_options& options)
             {
                 error_code ec;
-                socket.set_option(tcp::no_delay(options.no_delay), ec);
-                if (ec)
+                if (options.no_delay)
                 {
-                    CROW_LOG_WARNING << "Failed to set TCP_NODELAY: " << ec.message();
+                    socket.set_option(tcp::no_delay(*options.no_delay), ec);
+                    if (ec)
+                    {
+                        CROW_LOG_WARNING << "Failed to set TCP_NODELAY: " << ec.message();
+                    }
+                    CROW_LOG_DEBUG << "TCP_NODELAY set to: " << (*options.no_delay ? "true" : "false");
                 }
-                CROW_LOG_DEBUG << "TCP_NODELAY set to: " << (options.no_delay ? "true" : "false");
 
-                socket.set_option(asio::socket_base::keep_alive(options.keep_alive), ec);
-                if (ec)
+                if (options.keep_alive)
                 {
-                    CROW_LOG_WARNING << "Failed to set SO_KEEPALIVE: " << ec.message();
+                    socket.set_option(asio::socket_base::keep_alive(*options.keep_alive), ec);
+                    if (ec)
+                    {
+                        CROW_LOG_WARNING << "Failed to set SO_KEEPALIVE: " << ec.message();
+                    }
+                    CROW_LOG_DEBUG << "SO_KEEPALIVE set to: " << (*options.keep_alive ? "true" : "false");
                 }
-                CROW_LOG_DEBUG << "SO_KEEPALIVE set to: " << (options.keep_alive ? "true" : "false");
 
                 if (options.receive_buffer_size)
                 {
@@ -93,24 +100,38 @@ namespace crow
                     }
                 }
 
+            }
+
+            inline void apply_acceptor_socket_options(tcp::acceptor& acceptor, const tcp_socket_options& options)
+            {
+                if (!options.reuse_address)
+                    return;
+
+                error_code ec;
+                acceptor.set_option(tcp::acceptor::reuse_address(options.reuse_address->value()), ec);
+                if (ec)
+                {
+                    CROW_LOG_WARNING << "Failed to set SO_REUSEADDR on acceptor: " << ec.message();
+                }
+                else
+                {
+                    CROW_LOG_DEBUG << "SO_REUSEADDR set on acceptor to: " << options.reuse_address->value();
+                }
+            }
+
+            template<typename Acceptor>
+            inline void apply_acceptor_socket_options(Acceptor&, const tcp_socket_options& options)
+            {
                 if (options.reuse_address)
                 {
-                    socket.set_option(*options.reuse_address, ec);
-                    if (ec)
-                    {
-                        CROW_LOG_WARNING << "Failed to set SO_REUSEADDR: " << ec.message();
-                    }
-                    else
-                    {
-                        CROW_LOG_DEBUG << "SO_REUSEADDR set to: " << options.reuse_address->value();
-                    }
+                    CROW_LOG_WARNING << "This acceptor type does not support applying SO_REUSEADDR";
                 }
             }
 
             template<typename Socket>
             inline void apply_tcp_socket_options(Socket&, const tcp_socket_options&)
             {
-                CROW_LOG_WARNING << "This socket type does not support set TCP_NODELAY option";
+                CROW_LOG_WARNING << "This socket type does not support applying TCP socket options";
             }
         } // namespace socket
     } // namespace detail
