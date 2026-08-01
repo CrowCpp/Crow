@@ -485,8 +485,23 @@ namespace crow
             return *this;
         }
 
-        /// \brief Get the TCP_NODELAY setting for HTTP connections.
-        detail::socket::tcp_socket_options tcp_socket_options() const
+        /// @brief Enable or disable TCP keep-alive for accepted TCP connections.
+        self_t& tcp_keep_alive(bool enabled = true)
+        {
+            tcp_socket_options_.keep_alive = enabled;
+            return *this;
+        }
+
+        /// \brief Get TCP socket options for HTTP connections.
+        /// \return Mutable reference to the HTTP TCP socket options.
+        detail::socket::tcp_socket_options& tcp_socket_options()
+        {
+            return tcp_socket_options_;
+        }
+
+        /// \brief Get TCP socket options for HTTP connections.
+        /// \return Read-only reference to the HTTP TCP socket options.
+        const detail::socket::tcp_socket_options& tcp_socket_options() const
         {
             return tcp_socket_options_;
         }
@@ -499,11 +514,27 @@ namespace crow
             return *this;
         }
 
-        /// \brief Get the TCP_NODELAY setting for WebSocket connections.
-        detail::socket::tcp_socket_options websocket_tcp_socket_options() const
+        /// \brief Enable or disable TCP keep-alive for WebSocket connections.
+        self_t& websocket_tcp_keep_alive(bool enabled = true)
+        {
+            websocket_tcp_socket_options_.keep_alive = enabled;
+            return *this;
+        }
+
+        /// \brief Get TCP socket options for WebSocket connections.
+        /// \return Mutable reference to the WebSocket TCP socket options.
+        detail::socket::tcp_socket_options& websocket_tcp_socket_options()
         {
             return websocket_tcp_socket_options_;
         }
+
+        /// \brief Get TCP socket options for WebSocket connections.
+        /// \return Read-only reference to the WebSocket TCP socket options.
+        const detail::socket::tcp_socket_options& websocket_tcp_socket_options() const
+        {
+            return websocket_tcp_socket_options_;
+        }
+
 
         /// \brief Set the response body size (in bytes) beyond which Crow automatically streams responses (Default is 1MiB)
         ///
