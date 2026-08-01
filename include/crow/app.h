@@ -492,6 +492,13 @@ namespace crow
             return *this;
         }
 
+        /// \brief Enable or disable SO_REUSEADDR for the HTTP TCP acceptor.
+        self_t& tcp_reuse_address(bool enabled = true)
+        {
+            tcp_socket_options_.reuse_address = asio::socket_base::reuse_address(enabled);
+            return *this;
+        }
+
         /// \brief Get TCP socket options for HTTP connections.
         /// \return Mutable reference to the HTTP TCP socket options.
         detail::socket::tcp_socket_options& tcp_socket_options()
