@@ -29,17 +29,20 @@ namespace crow
         {
             struct tcp_socket_options
             {
+                // Applied on accepted TCP sockets (including WebSocket TCP sockets).
                 std::optional<tcp::no_delay> no_delay;
                 std::optional<asio::socket_base::keep_alive> keep_alive;
                 std::optional<asio::socket_base::receive_buffer_size> receive_buffer_size;
                 std::optional<asio::socket_base::send_buffer_size> send_buffer_size;
                 std::optional<asio::socket_base::linger> linger;
+                std::optional<asio::socket_base::broadcast> broadcast;                                  // Applied on accepted TCP sockets.
+                std::optional<asio::socket_base::debug> debug;                                          // Applied on accepted TCP sockets.
+
+                // Applied on TCP acceptors during server startup.
                 std::optional<asio::socket_base::reuse_address> reuse_address;                          // Applied on TCP acceptors (before bind).
                 std::optional<asio::ip::v6_only> v6_only;                                               // Applied on TCP acceptors (before bind).
                 std::optional<asio::socket_base::enable_connection_aborted> enable_connection_aborted;  // Applied on TCP acceptors (before async_accept).
                 std::optional<int> listen_backlog;                                                      // Controls the listen backlog used by acceptor.listen().
-                std::optional<asio::socket_base::broadcast> broadcast;                                  // Permit sending of broadcast messages
-                std::optional<asio::socket_base::debug> debug;                                          // Enable socket-level debugging.
             };
 
             inline void apply_tcp_socket_options(tcp::socket& socket, const tcp_socket_options& options)

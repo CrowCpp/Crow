@@ -580,7 +580,7 @@ namespace crow
         }
 
         /// \brief Enable or disable TCP_NODELAY for WebSocket connections.
-        /// We also have to differentiate between socket options for http server socket and websocket server socket.
+        /// WebSocket helpers configure socket-level options only; acceptor-level options remain HTTP listener specific.
         self_t& websocket_tcp_nodelay(bool enabled = true)
         {
             websocket_tcp_socket_options_.no_delay = enabled;
