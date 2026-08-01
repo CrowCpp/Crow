@@ -481,28 +481,28 @@ namespace crow
         /// \brief Enable or disable TCP_NODELAY for accepted TCP connections.
         self_t& tcp_nodelay(bool enabled = true)
         {
-            tcp_socket_options_.no_delay = enabled;
+            tcp_socket_options_.set_no_delay(enabled);
             return *this;
         }
 
         /// \brief Enable or disable TCP keep-alive for accepted TCP connections.
         self_t& tcp_keep_alive(bool enabled = true)
         {
-            tcp_socket_options_.keep_alive = enabled;
+            tcp_socket_options_.set_keep_alive(enabled);
             return *this;
         }
 
         /// \brief Set the TCP receive buffer size for accepted TCP connections.
         self_t& tcp_receive_buffer_size(int size)
         {
-            tcp_socket_options_.receive_buffer_size = size;
+            tcp_socket_options_.set_receive_buffer_size(size);
             return *this;
         }
 
         /// \brief Set the TCP send buffer size for accepted TCP connections.
         self_t& tcp_send_buffer_size(int size)
         {
-            tcp_socket_options_.send_buffer_size = size;
+            tcp_socket_options_.set_send_buffer_size(size);
             return *this;
         }
 
@@ -511,28 +511,28 @@ namespace crow
         /// \param timeout The linger timeout in seconds.
         self_t& tcp_linger(bool enabled, int timeout = 0)
         {
-            tcp_socket_options_.linger = asio::socket_base::linger(enabled, timeout);
+            tcp_socket_options_.set_linger(enabled, timeout);
             return *this;
         }
 
         /// \brief Enable or disable SO_REUSEADDR for the HTTP TCP acceptor.
         self_t& tcp_reuse_address(bool enabled = true)
         {
-            tcp_socket_options_.reuse_address = asio::socket_base::reuse_address(enabled);
+            tcp_socket_options_.set_reuse_address(enabled);
             return *this;
         }
 
         /// \brief Enable or disable IPV6_V6ONLY for the HTTP TCP acceptor.
         self_t& tcp_v6_only(bool enabled = true)
         {
-            tcp_socket_options_.v6_only = enabled;
+            tcp_socket_options_.set_v6_only(enabled);
             return *this;
         }
 
         /// \brief Enable or disable connection-aborted reporting for the HTTP TCP acceptor.
         self_t& tcp_enable_connection_aborted(bool enabled = true)
         {
-            tcp_socket_options_.enable_connection_aborted = enabled;
+            tcp_socket_options_.set_enable_connection_aborted(enabled);
             return *this;
         }
 
@@ -540,28 +540,21 @@ namespace crow
         /// \note Non-positive values reset to the platform default backlog.
         self_t& tcp_listen_backlog(int backlog)
         {
-            if (backlog > 0)
-            {
-                tcp_socket_options_.listen_backlog = backlog;
-            }
-            else
-            {
-                tcp_socket_options_.listen_backlog.reset();
-            }
+            tcp_socket_options_.set_listen_backlog(backlog);
             return *this;
         }
 
         /// \brief Enable or disable TCP broadcast for accepted TCP connections.
         self_t& tcp_broadcast(bool enabled = true)
         {
-            tcp_socket_options_.broadcast = asio::socket_base::broadcast(enabled);
+            tcp_socket_options_.set_broadcast(enabled);
             return *this;
         }
 
         /// \brief Enable or disable TCP debug for accepted TCP connections.
         self_t& tcp_debug(bool enabled = true)
         {
-            tcp_socket_options_.debug = asio::socket_base::debug(enabled);
+            tcp_socket_options_.set_debug(enabled);
             return *this;
         }
 
@@ -583,28 +576,28 @@ namespace crow
         /// WebSocket helpers configure socket-level options only; acceptor-level options remain HTTP listener specific.
         self_t& websocket_tcp_nodelay(bool enabled = true)
         {
-            websocket_tcp_socket_options_.no_delay = enabled;
+            websocket_tcp_socket_options_.set_no_delay(enabled);
             return *this;
         }
 
         /// \brief Enable or disable TCP keep-alive for WebSocket connections.
         self_t& websocket_tcp_keep_alive(bool enabled = true)
         {
-            websocket_tcp_socket_options_.keep_alive = enabled;
+            websocket_tcp_socket_options_.set_keep_alive(enabled);
             return *this;
         }
 
         /// \brief Set the TCP receive buffer size for WebSocket connections.
         self_t& websocket_tcp_receive_buffer_size(int size)
         {
-            websocket_tcp_socket_options_.receive_buffer_size = size;
+            websocket_tcp_socket_options_.set_receive_buffer_size(size);
             return *this;
         }
 
         /// \brief Set the TCP send buffer size for WebSocket connections.
         self_t& websocket_tcp_send_buffer_size(int size)
         {
-            websocket_tcp_socket_options_.send_buffer_size = size;
+            websocket_tcp_socket_options_.set_send_buffer_size(size);
             return *this;
         }
 
@@ -613,21 +606,21 @@ namespace crow
         /// \param timeout The linger timeout in seconds.
         self_t& websocket_tcp_linger(bool enabled, int timeout = 0)
         {
-            websocket_tcp_socket_options_.linger = asio::socket_base::linger(enabled, timeout);
+            websocket_tcp_socket_options_.set_linger(enabled, timeout);
             return *this;
         }
 
         /// \brief Enable or disable TCP broadcast for WebSocket connections.
         self_t& websocket_tcp_broadcast(bool enabled = true)
         {
-            websocket_tcp_socket_options_.broadcast = asio::socket_base::broadcast(enabled);
+            websocket_tcp_socket_options_.set_broadcast(enabled);
             return *this;
         }
 
         /// \brief Enable or disable TCP debug for WebSocket connections.
         self_t& websocket_tcp_debug(bool enabled = true)
         {
-            websocket_tcp_socket_options_.debug = asio::socket_base::debug(enabled);
+            websocket_tcp_socket_options_.set_debug(enabled);
             return *this;
         }
 
