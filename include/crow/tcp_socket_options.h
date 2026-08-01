@@ -34,14 +34,10 @@ namespace crow
                 std::optional<asio::socket_base::receive_buffer_size> receive_buffer_size;
                 std::optional<asio::socket_base::send_buffer_size> send_buffer_size;
                 std::optional<asio::socket_base::linger> linger;
-                // This option is applied on TCP acceptors (before bind), not on accepted sockets.
-                std::optional<asio::socket_base::reuse_address> reuse_address;
-                // This option is applied on TCP acceptors (before bind).
-                std::optional<bool> v6_only;
-                // This option is applied on TCP acceptors (before async_accept).
-                std::optional<bool> enable_connection_aborted;
-                // This option controls the listen backlog used by acceptor.listen().
-                std::optional<int> listen_backlog;
+                std::optional<asio::socket_base::reuse_address> reuse_address;  // Applied on TCP acceptors (before bind).
+                std::optional<bool> v6_only;                                    // Applied on TCP acceptors (before bind).
+                std::optional<bool> enable_connection_aborted;                  // Applied on TCP acceptors (before async_accept).
+                std::optional<int> listen_backlog;                              // Controls the listen backlog used by acceptor.listen().
             };
 
             inline void apply_tcp_socket_options(tcp::socket& socket, const tcp_socket_options& options)
