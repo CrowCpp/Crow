@@ -1304,7 +1304,6 @@ TEST_CASE("middleware_cors")
 
     CHECK(resp.find("Access-Control-Allow-Origin:") == std::string::npos);
 
-
     app.stop();
 } // middleware_cors
 
