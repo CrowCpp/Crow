@@ -249,7 +249,7 @@ namespace
     }
 } // namespace
 
-TEST_CASE("tcp_socket_options_struct_setters", "[socket-options]")
+TEST_CASE("tcp_socket_options_set_no_delay", "[socket-options]")
 {
     crow::detail::socket::tcp_socket_options options;
 
@@ -260,6 +260,11 @@ TEST_CASE("tcp_socket_options_struct_setters", "[socket-options]")
     options.set_no_delay(false);
     REQUIRE(options.no_delay.has_value());
     CHECK(options.no_delay->value() == false);
+}
+
+TEST_CASE("tcp_socket_options_set_keep_alive", "[socket-options]")
+{
+    crow::detail::socket::tcp_socket_options options;
 
     options.set_keep_alive(true);
     REQUIRE(options.keep_alive.has_value());
@@ -268,14 +273,29 @@ TEST_CASE("tcp_socket_options_struct_setters", "[socket-options]")
     options.set_keep_alive(false);
     REQUIRE(options.keep_alive.has_value());
     CHECK(options.keep_alive->value() == false);
+}
+
+TEST_CASE("tcp_socket_options_set_receive_buffer_size", "[socket-options]")
+{
+    crow::detail::socket::tcp_socket_options options;
 
     options.set_receive_buffer_size(65536);
     REQUIRE(options.receive_buffer_size.has_value());
     CHECK(options.receive_buffer_size->value() == 65536);
+}
+
+TEST_CASE("tcp_socket_options_set_send_buffer_size", "[socket-options]")
+{
+    crow::detail::socket::tcp_socket_options options;
 
     options.set_send_buffer_size(32768);
     REQUIRE(options.send_buffer_size.has_value());
     CHECK(options.send_buffer_size->value() == 32768);
+}
+
+TEST_CASE("tcp_socket_options_set_linger", "[socket-options]")
+{
+    crow::detail::socket::tcp_socket_options options;
 
     options.set_linger(true, 30);
     REQUIRE(options.linger.has_value());
@@ -285,26 +305,76 @@ TEST_CASE("tcp_socket_options_struct_setters", "[socket-options]")
     options.set_linger(false, 0);
     REQUIRE(options.linger.has_value());
     CHECK(options.linger->enabled() == false);
+}
+
+TEST_CASE("tcp_socket_options_set_broadcast", "[socket-options]")
+{
+    crow::detail::socket::tcp_socket_options options;
 
     options.set_broadcast(true);
     REQUIRE(options.broadcast.has_value());
     CHECK(options.broadcast->value() == true);
 
+    options.set_broadcast(false);
+    REQUIRE(options.broadcast.has_value());
+    CHECK(options.broadcast->value() == false);
+}
+
+TEST_CASE("tcp_socket_options_set_debug", "[socket-options]")
+{
+    crow::detail::socket::tcp_socket_options options;
+
     options.set_debug(true);
     REQUIRE(options.debug.has_value());
     CHECK(options.debug->value() == true);
+
+    options.set_debug(false);
+    REQUIRE(options.debug.has_value());
+    CHECK(options.debug->value() == false);
+}
+
+TEST_CASE("tcp_socket_options_set_reuse_address", "[socket-options]")
+{
+    crow::detail::socket::tcp_socket_options options;
 
     options.set_reuse_address(true);
     REQUIRE(options.reuse_address.has_value());
     CHECK(options.reuse_address->value() == true);
 
+    options.set_reuse_address(false);
+    REQUIRE(options.reuse_address.has_value());
+    CHECK(options.reuse_address->value() == false);
+}
+
+TEST_CASE("tcp_socket_options_set_v6_only", "[socket-options]")
+{
+    crow::detail::socket::tcp_socket_options options;
+
     options.set_v6_only(true);
     REQUIRE(options.v6_only.has_value());
     CHECK(options.v6_only->value() == true);
 
+    options.set_v6_only(false);
+    REQUIRE(options.v6_only.has_value());
+    CHECK(options.v6_only->value() == false);
+}
+
+TEST_CASE("tcp_socket_options_set_enable_connection_aborted", "[socket-options]")
+{
+    crow::detail::socket::tcp_socket_options options;
+
     options.set_enable_connection_aborted(true);
     REQUIRE(options.enable_connection_aborted.has_value());
     CHECK(options.enable_connection_aborted->value() == true);
+
+    options.set_enable_connection_aborted(false);
+    REQUIRE(options.enable_connection_aborted.has_value());
+    CHECK(options.enable_connection_aborted->value() == false);
+}
+
+TEST_CASE("tcp_socket_options_set_listen_backlog", "[socket-options]")
+{
+    crow::detail::socket::tcp_socket_options options;
 
     options.set_listen_backlog(512);
     REQUIRE(options.listen_backlog.has_value());
