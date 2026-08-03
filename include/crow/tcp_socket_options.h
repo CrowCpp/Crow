@@ -35,14 +35,14 @@ namespace crow
                 std::optional<asio::socket_base::receive_buffer_size> receive_buffer_size;
                 std::optional<asio::socket_base::send_buffer_size> send_buffer_size;
                 std::optional<asio::socket_base::linger> linger;
-                std::optional<asio::socket_base::broadcast> broadcast;                                  // Applied on accepted TCP sockets.
-                std::optional<asio::socket_base::debug> debug;                                          // Applied on accepted TCP sockets.
+                std::optional<asio::socket_base::broadcast> broadcast; // Applied on accepted TCP sockets.
+                std::optional<asio::socket_base::debug> debug;         // Applied on accepted TCP sockets.
 
                 // Applied on TCP acceptors during server startup.
-                std::optional<asio::socket_base::reuse_address> reuse_address;                          // Applied on TCP acceptors (before bind).
-                std::optional<asio::ip::v6_only> v6_only;                                               // Applied on TCP acceptors (before bind).
-                std::optional<asio::socket_base::enable_connection_aborted> enable_connection_aborted;  // Applied on TCP acceptors (before async_accept).
-                std::optional<int> listen_backlog;                                                      // Controls the listen backlog used by acceptor.listen().
+                std::optional<asio::socket_base::reuse_address> reuse_address;                         // Applied on TCP acceptors (before bind).
+                std::optional<asio::ip::v6_only> v6_only;                                              // Applied on TCP acceptors (before bind).
+                std::optional<asio::socket_base::enable_connection_aborted> enable_connection_aborted; // Applied on TCP acceptors (before async_accept).
+                std::optional<int> listen_backlog;                                                     // Controls the listen backlog used by acceptor.listen().
 
                 /// \brief Enable or disable TCP_NODELAY on accepted TCP sockets.
                 tcp_socket_options& set_no_delay(bool enabled = true)
@@ -216,7 +216,6 @@ namespace crow
                         CROW_LOG_DEBUG << "SO_DEBUG set to: " << (options.debug->value() ? "true" : "false");
                     }
                 }
-
             }
 
             inline bool apply_acceptor_socket_options(tcp::acceptor& acceptor, const tcp_socket_options& options, bool default_reuse_address)
@@ -280,7 +279,8 @@ namespace crow
 
             inline int resolve_acceptor_listen_backlog(const tcp_socket_options& options, int default_listen_backlog)
             {
-                if (!options.listen_backlog || *options.listen_backlog <= 0) {
+                if (!options.listen_backlog || *options.listen_backlog <= 0)
+                {
                     CROW_LOG_INFO << "Using default listen backlog: " << default_listen_backlog;
                     return default_listen_backlog;
                 }
