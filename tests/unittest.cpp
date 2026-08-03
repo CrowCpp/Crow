@@ -1255,6 +1255,219 @@ TEST_CASE("middleware_cors")
         return "-";
     });
 
+    CROW_ROUTE(app, "/auth-origin").methods(crow::HTTPMethod::Post)([&](const request&) {
+        return "-";
+    });
+
+    CROW_ROUTE(app, "/expose")
+    ([&](const request&) {
+        return "-";
+    });
+
+    CROW_ROUTE(app, "/nocors/path")
+    ([&](const request&) {
+        return "-";
+    });
+
+    const auto port = 33333;
+    auto _ = app.bindaddr(LOCALHOST_ADDRESS).port(port).run_async();
+    app.wait_for_server_start();
+    auto resp = HttpClient::request(LOCALHOST_ADDRESS, port,
+                                    "OPTIONS / HTTP/1.1\r\n\r\n");
+
+    CHECK(resp.find("Access-Control-Allow-Origin: *") != std::string::npos);
+
+    resp = HttpClient::request(LOCALHOST_ADDRESS, port,
+                               "GET /\r\n\r\n");
+    CHECK(resp.find("Access-Control-Allow-Origin: *") != std::string::npos);
+
+    resp = HttpClient::request(LOCALHOST_ADDRESS, port,
+                               "GET /origin\r\n\r\n");
+    CHECK(resp.find("Access-Control-Allow-Origin: test.test") != std::string::npos);
+
+    resp = HttpClient::request(LOCALHOST_ADDRESS, port,
+                               "GET /auth-origin\r\nOrigin: test-client\r\n\r\n");
+    CHECK(resp.find("Access-Control-Allow-Origin: test-client") != std::string::npos);
+    CHECK(resp.find("Access-Control-Allow-Credentials: true") != std::string::npos);
+
+    resp = HttpClient::request(LOCALHOST_ADDRESS, port,
+                               "OPTIONS /auth-origin HTTP/1.1\r\n\r\n");
+    CHECK(resp.find("Access-Control-Allow-Origin: *") != std::string::npos);
+    CHECK(resp.find("Access-Control-Allow-Credentials: true") == std::string::npos);
+
+    resp = HttpClient::request(LOCALHOST_ADDRESS, port,
+                               "GET /expose\r\n\r\n");
+    CHECK(resp.find("Access-Control-Expose-Headers: exposed-header") != std::string::npos);
+
+    resp = HttpClient::request(LOCALHOST_ADDRESS, port,
+                               "GET /nocors/path\r\n\r\n");
+
+    CHECK(resp.find("Access-Control-Allow-Origin:") == std::string::npos);
+
+
+    app.stop();
+} // middleware_cors
+
+TEST_CASE("middleware_session")
+{
+    static char buf[5012];
+
+    using Session = SessionMiddleware<InMemoryStore>;
+
+    App<crow::CookieParser, Session> app{
+      Session{InMemoryStore{}}};
+
+    CROW_ROUTE(app, "/get")
+    ([&](const request& req) {
+        auto& session = app.get_context<Session>(req);
+        auto key = req.url_params.get("key");
+        return session.string(key);
+    });
+
+    CROW_ROUTE(app, "/set")
+    ([&](const request& req) {
+        auto& session = app.get_context<Session>(req);
+        auto key = req.url_params.get("key");
+        auto value = req.url_params.get("value");
+        session.set(key, value);
+        return "ok";
+    });
+
+    CROW_ROUTE(app, "/count")
+    ([&](const request& req) {
+        auto& session = app.get_context<Session>(req);
+        session.apply("counter", [](int v) {
+            return v + 2;
+        });
+        return session.string("counter");
+    });
+
+    CROW_ROUTE(app, "/lock")
+    ([&](const request& req) {
+        auto& session = app.get_context<Session>(req);
+        session.mutex().lock();
+        std::this_thread::sleep_for(std::chrono::milliseconds(50));
+        session.mutex().unlock();
+        return "OK";
+    });
+
+    CROW_ROUTE(app, "/check_lock")
+    ([&](const request& req) {
+        auto& session = app.get_context<Session>(req);
+        if (session.mutex().try_lock())
+            return "LOCKED";
+        else
+        {
+            session.mutex().unlock();
+            return "FAILED";
+        };
+    });
+
+    auto _ = app.bindaddr(LOCALHOST_ADDRESS).port(45451).run_async();
+
+    app.wait_for_server_start();
+    asio::io_context ic;
+
+    auto make_request = [&](const std::string& rq) {
+        asio::ip::tcp::socket c(ic);
+        c.connect(asio::ip::tcp::endpoint(
+          asio::ip::make_address(LOCALHOST_ADDRESS), 45451));
+        c.send(asio::buffer(rq));
+        c.receive(asio::buffer(buf, 2048));
+        c.close();
+        return std::string(buf);
+    };
+
+    std::string cookie = "Cookie: session=";
+
+    // test = works
+    {
+        auto res = make_request(
+          "GET /set?key=test&value=works\r\n" + cookie + "\r\n\r\n");
+
+        const std::regex cookiev_regex("Cookie:\\ssession=(.*?);", std::regex::icase);
+        auto istart = std::sregex_token_iterator(res.begin(), res.end(), cookiev_regex, 1);
+        auto iend = std::sregex_token_iterator();
+
+        CHECK(istart != iend);
+        cookie.append(istart->str());
+        cookie.push_back(';');
+    }
+
+    // check test = works
+    {
+        auto res = make_request("GET /get?key=test\r\n" + cookie + "\r\n\r\n");
+        CHECK(res.find("works") != std::string::npos);
+    }
+
+    // check counter
+    {
+        for (int i = 1; i < 5; i++)
+        {
+            auto res = make_request("GET /count\r\n" + cookie + "\r\n\r\n");
+            CHECK(res.find(std::to_string(2 * i)) != std::string::npos);
+        }
+    }
+
+    // lock
+    {
+        asio::ip::tcp::socket c_lock(ic);
+        c_lock.connect(asio::ip::tcp::endpoint(
+          asio::ip::make_address(LOCALHOST_ADDRESS), 45451));
+        c_lock.send(asio::buffer("GET /lock\r\n" + cookie + "\r\n\r\n"));
+
+        auto res = make_request("GET /check_lock\r\n" + cookie + "\r\n\r\n");
+        CHECK(res.find("LOCKED") != std::string::npos);
+
+        c_lock.close();
+    }
+
+
+    app.stop();
+} // middleware_session
+
+
+TEST_CASE("bug_quick_repeated_request")
+{
+    SimpleApp app;
+    std::uint8_t explicitTimeout = 200;
+    app.timeout(explicitTimeout);
+
+    CROW_ROUTE(app, "/")
+    ([&] {
+        std::this_thread::sleep_for(std::chrono::seconds(1));
+        return "hello";
+    });
+
+    auto _ = app.bindaddr(LOCALHOST_ADDRESS).port(45451).run_async();
+    app.wait_for_server_start();
+    std::string sendmsg = "GET / HTTP/1.1\r\nHost: localhost\r\n\r\n";
+
+    auto start = std::chrono::high_resolution_clock::now();
+
+    asio::io_context ic;
+    {
+        std::vector<std::future<void>> v;
+        for (int i = 0; i < 5; i++)
+        {
+            v.push_back(async(launch::async, [&] {
+                HttpClient c(LOCALHOST_ADDRESS, 45451);
+
+                for (int j = 0; j < 5; j++)
+                {
+                    c.send(sendmsg);
+
+                    auto resp = c.receive();
+                    CHECK("hello" == resp.substr(resp.length() - 5));
+                }
+            }));
+        }
+    }
+
+    auto end = std::chrono::high_resolution_clock::now();
+    std::chrono::seconds testDuration = std::chrono::duration_cast<std::chrono::seconds>(end - start);
+
+    CHECK(testDuration.count() < explicitTimeout);
 
     app.stop();
 } // bug_quick_repeated_request
