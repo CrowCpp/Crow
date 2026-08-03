@@ -26,6 +26,7 @@ set(TEST_SRCS
   unit_tests/test_http_response.cpp
   unit_tests/test_json.cpp
   unit_tests/test_mustache.cpp
+  unit_tests/test_tcp_socket_options.cpp
   unit_tests/test_utility.cpp
   unit_tests/test_websocket.cpp
   unit_tests/test_json.cpp
