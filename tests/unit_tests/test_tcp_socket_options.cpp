@@ -11,8 +11,9 @@ using namespace crow;
 
 #ifdef CROW_USE_BOOST
 namespace asio = boost::asio;
+using error_code = boost::system::error_code;
 #else
-using asio_error_code = asio::error_code;
+using error_code = asio::error_code;
 #endif
 
 namespace
@@ -194,7 +195,7 @@ namespace
 
     bool can_open_and_apply_v6_only(bool enabled)
     {
-        asio::error_code ec;
+        error_code ec;
         asio::io_context io_context;
         asio::ip::tcp::acceptor acceptor(io_context);
         acceptor.open(asio::ip::tcp::v6(), ec);
