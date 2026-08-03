@@ -17,8 +17,51 @@ using asio_error_code = asio::error_code;
 
 namespace
 {
-    constexpr const char* kLocalhostAddress = "127.0.0.1";
-    constexpr const char* kIpv6LocalhostAddress = "::1";
+        namespace socket_test_constants
+        {
+                constexpr const char* kLocalhostAddress = "127.0.0.1";
+                constexpr const char* kIpv6LocalhostAddress = "::1";
+                constexpr const char* kHttpOkMarker = "200 OK";
+                constexpr const char* kHttpBodyMarker = "ok";
+                constexpr const char* kWebsocketUpgradeStatusMarker = "101";
+                constexpr const char* kWebsocketUpgradeHeaderMarker = "Upgrade";
+
+                constexpr const char* kHttpGetRequest =
+                    "GET / HTTP/1.0\r\n"
+                    "Host: localhost\r\n"
+                    "\r\n";
+
+                constexpr const char* kWebsocketUpgradeRequest =
+                    "GET /ws HTTP/1.1\r\n"
+                    "Host: localhost\r\n"
+                    "Upgrade: websocket\r\n"
+                    "Connection: Upgrade\r\n"
+                    "Sec-WebSocket-Key: dGhlIHNhbXBsZSBub25jZQ==\r\n"
+                    "Sec-WebSocket-Version: 13\r\n"
+                    "\r\n";
+
+                constexpr const char* kWebsocketOpenMessage = "Hello WebSocket";
+                constexpr const char* kWebsocketEchoPrefix = "Echo: ";
+
+                constexpr int kDefaultPort = 0;
+                constexpr size_t kHttpReadBufferSize = 2048;
+                constexpr size_t kWebsocketReadBufferSize = 4096;
+
+                constexpr int kReceiveBufferSize = 65536;
+                constexpr int kSendBufferSize = 32768;
+                constexpr int kLingerTimeoutLong = 30;
+                constexpr int kLingerTimeoutAppSet = 45;
+                constexpr int kLingerTimeoutShort = 20;
+                constexpr int kLingerTimeoutSmoke = 10;
+                constexpr int kLingerTimeoutDisabled = 0;
+
+                constexpr int kBacklogDefault = 128;
+                constexpr int kBacklogConfigured = 256;
+                constexpr int kBacklogStructSet = 512;
+                constexpr int kBacklogAppSet = 511;
+                constexpr int kBacklogResetToDefault = 0;
+                constexpr int kBacklogInvalidNegative = -10;
+        } // namespace socket_test_constants
 
     class SocketTestHttpClient
     {
@@ -36,7 +79,7 @@ namespace
 
         std::string receive()
         {
-            char buffer[2048];
+            char buffer[socket_test_constants::kHttpReadBufferSize];
             const auto received = socket_.receive(asio::buffer(buffer, sizeof(buffer)));
             return std::string(buffer, received);
         }
@@ -57,7 +100,7 @@ namespace
     {
         asio::io_context io_context;
         asio::ip::tcp::acceptor acceptor(io_context,
-                                         asio::ip::tcp::endpoint(asio::ip::make_address(kLocalhostAddress), 0));
+                                         asio::ip::tcp::endpoint(asio::ip::make_address(socket_test_constants::kLocalhostAddress), socket_test_constants::kDefaultPort));
 
         asio::ip::tcp::socket client_socket(io_context);
         client_socket.connect(acceptor.local_endpoint());
@@ -76,7 +119,7 @@ namespace
     {
         asio::io_context io_context;
         asio::ip::tcp::acceptor acceptor(io_context,
-                                         asio::ip::tcp::endpoint(asio::ip::make_address(kLocalhostAddress), 0));
+                                         asio::ip::tcp::endpoint(asio::ip::make_address(socket_test_constants::kLocalhostAddress), socket_test_constants::kDefaultPort));
 
         asio::ip::tcp::socket client_socket(io_context);
         client_socket.connect(acceptor.local_endpoint());
@@ -95,7 +138,7 @@ namespace
     {
         asio::io_context io_context;
         asio::ip::tcp::acceptor acceptor(io_context,
-                                         asio::ip::tcp::endpoint(asio::ip::make_address(kLocalhostAddress), 0));
+                                         asio::ip::tcp::endpoint(asio::ip::make_address(socket_test_constants::kLocalhostAddress), socket_test_constants::kDefaultPort));
 
         asio::ip::tcp::socket client_socket(io_context);
         client_socket.connect(acceptor.local_endpoint());
@@ -117,7 +160,7 @@ namespace
     {
         asio::io_context io_context;
         asio::ip::tcp::acceptor acceptor(io_context,
-                                         asio::ip::tcp::endpoint(asio::ip::make_address(kLocalhostAddress), 0));
+                                         asio::ip::tcp::endpoint(asio::ip::make_address(socket_test_constants::kLocalhostAddress), socket_test_constants::kDefaultPort));
 
         asio::ip::tcp::socket client_socket(io_context);
         client_socket.connect(acceptor.local_endpoint());
@@ -181,25 +224,23 @@ namespace
         return actual.value();
     }
 
-    std::string run_http_smoke(const std::function<void(crow::SimpleApp&)>& configure, const std::string& bind_address = kLocalhostAddress)
+    std::string run_http_smoke(const std::function<void(crow::SimpleApp&)>& configure, const std::string& bind_address = socket_test_constants::kLocalhostAddress)
     {
         crow::SimpleApp app;
 
         CROW_ROUTE(app, "/")([] {
-            return "ok";
+            return socket_test_constants::kHttpBodyMarker;
         });
 
         app.validate();
         configure(app);
 
-        auto _ = app.bindaddr(bind_address).port(0).run_async();
+        auto _ = app.bindaddr(bind_address).port(socket_test_constants::kDefaultPort).run_async();
         app.wait_for_server_start();
 
         const auto response = SocketTestHttpClient::request(bind_address,
                                                             app.port(),
-                                                            "GET / HTTP/1.0\r\n"
-                                                            "Host: localhost\r\n"
-                                                            "\r\n");
+                                    socket_test_constants::kHttpGetRequest);
 
         app.stop();
         return response;
@@ -209,43 +250,48 @@ namespace
     {
         crow::SimpleApp app;
 
-        CROW_WEBSOCKET_ROUTE(app, "/ws")
+                CROW_WEBSOCKET_ROUTE(app, "/ws")
           .onopen([&](crow::websocket::connection& conn) {
-              conn.send_text("Hello WebSocket");
+              conn.send_text(socket_test_constants::kWebsocketOpenMessage);
           })
           .onmessage([&](crow::websocket::connection& conn, const std::string& data, bool) {
-              conn.send_text("Echo: " + data);
+              conn.send_text(std::string(socket_test_constants::kWebsocketEchoPrefix) + data);
           })
           .onclose([&](crow::websocket::connection&, const std::string&, uint16_t) {});
 
         app.validate();
         configure(app);
 
-        auto _ = app.bindaddr(kLocalhostAddress).port(0).run_async();
+        auto _ = app.bindaddr(socket_test_constants::kLocalhostAddress).port(socket_test_constants::kDefaultPort).run_async();
         app.wait_for_server_start();
 
         asio::io_context ic;
         asio::ip::tcp::socket socket(ic);
-        socket.connect(asio::ip::tcp::endpoint(asio::ip::make_address(kLocalhostAddress), app.port()));
+                socket.connect(asio::ip::tcp::endpoint(asio::ip::make_address(socket_test_constants::kLocalhostAddress), app.port()));
 
-        const std::string upgrade_request =
-          "GET /ws HTTP/1.1\r\n"
-          "Host: localhost\r\n"
-          "Upgrade: websocket\r\n"
-          "Connection: Upgrade\r\n"
-          "Sec-WebSocket-Key: dGhlIHNhbXBsZSBub25jZQ==\r\n"
-          "Sec-WebSocket-Version: 13\r\n"
-          "\r\n";
+                const std::string upgrade_request = socket_test_constants::kWebsocketUpgradeRequest;
 
         socket.send(asio::buffer(upgrade_request));
 
-        std::vector<char> response_buffer(4096);
+        std::vector<char> response_buffer(socket_test_constants::kWebsocketReadBufferSize);
         const size_t bytes_received = socket.receive(asio::buffer(response_buffer));
         const std::string response(response_buffer.begin(), response_buffer.begin() + bytes_received);
 
         socket.close();
         app.stop();
         return response;
+    }
+
+    void check_http_smoke_response(const std::string& response)
+    {
+        CHECK(response.find(socket_test_constants::kHttpOkMarker) != std::string::npos);
+        CHECK(response.find(socket_test_constants::kHttpBodyMarker) != std::string::npos);
+    }
+
+    void check_websocket_upgrade_response(const std::string& response)
+    {
+        CHECK(response.find(socket_test_constants::kWebsocketUpgradeStatusMarker) != std::string::npos);
+        CHECK(response.find(socket_test_constants::kWebsocketUpgradeHeaderMarker) != std::string::npos);
     }
 } // namespace
 
@@ -279,30 +325,30 @@ TEST_CASE("tcp_socket_options_set_receive_buffer_size", "[socket-options]")
 {
     crow::detail::socket::tcp_socket_options options;
 
-    options.set_receive_buffer_size(65536);
+    options.set_receive_buffer_size(socket_test_constants::kReceiveBufferSize);
     REQUIRE(options.receive_buffer_size.has_value());
-    CHECK(options.receive_buffer_size->value() == 65536);
+    CHECK(options.receive_buffer_size->value() == socket_test_constants::kReceiveBufferSize);
 }
 
 TEST_CASE("tcp_socket_options_set_send_buffer_size", "[socket-options]")
 {
     crow::detail::socket::tcp_socket_options options;
 
-    options.set_send_buffer_size(32768);
+    options.set_send_buffer_size(socket_test_constants::kSendBufferSize);
     REQUIRE(options.send_buffer_size.has_value());
-    CHECK(options.send_buffer_size->value() == 32768);
+    CHECK(options.send_buffer_size->value() == socket_test_constants::kSendBufferSize);
 }
 
 TEST_CASE("tcp_socket_options_set_linger", "[socket-options]")
 {
     crow::detail::socket::tcp_socket_options options;
 
-    options.set_linger(true, 30);
+    options.set_linger(true, socket_test_constants::kLingerTimeoutLong);
     REQUIRE(options.linger.has_value());
     CHECK(options.linger->enabled() == true);
-    CHECK(options.linger->timeout() == 30);
+    CHECK(options.linger->timeout() == socket_test_constants::kLingerTimeoutLong);
 
-    options.set_linger(false, 0);
+    options.set_linger(false, socket_test_constants::kLingerTimeoutDisabled);
     REQUIRE(options.linger.has_value());
     CHECK(options.linger->enabled() == false);
 }
@@ -376,14 +422,14 @@ TEST_CASE("tcp_socket_options_set_listen_backlog", "[socket-options]")
 {
     crow::detail::socket::tcp_socket_options options;
 
-    options.set_listen_backlog(512);
+    options.set_listen_backlog(socket_test_constants::kBacklogStructSet);
     REQUIRE(options.listen_backlog.has_value());
-    CHECK(*options.listen_backlog == 512);
+    CHECK(*options.listen_backlog == socket_test_constants::kBacklogStructSet);
 
-    options.set_listen_backlog(0);
+    options.set_listen_backlog(socket_test_constants::kBacklogResetToDefault);
     CHECK_FALSE(options.listen_backlog.has_value());
 
-    options.set_listen_backlog(-10);
+    options.set_listen_backlog(socket_test_constants::kBacklogInvalidNegative);
     CHECK_FALSE(options.listen_backlog.has_value());
 }
 
@@ -391,13 +437,13 @@ TEST_CASE("tcp_socket_options_resolve_acceptor_backlog", "[socket-options]")
 {
     crow::detail::socket::tcp_socket_options options;
 
-    CHECK(crow::detail::socket::resolve_acceptor_listen_backlog(options, 128) == 128);
+    CHECK(crow::detail::socket::resolve_acceptor_listen_backlog(options, socket_test_constants::kBacklogDefault) == socket_test_constants::kBacklogDefault);
 
-    options.set_listen_backlog(256);
-    CHECK(crow::detail::socket::resolve_acceptor_listen_backlog(options, 128) == 256);
+    options.set_listen_backlog(socket_test_constants::kBacklogConfigured);
+    CHECK(crow::detail::socket::resolve_acceptor_listen_backlog(options, socket_test_constants::kBacklogDefault) == socket_test_constants::kBacklogConfigured);
 
-    options.set_listen_backlog(0);
-    CHECK(crow::detail::socket::resolve_acceptor_listen_backlog(options, 128) == 128);
+    options.set_listen_backlog(socket_test_constants::kBacklogResetToDefault);
+    CHECK(crow::detail::socket::resolve_acceptor_listen_backlog(options, socket_test_constants::kBacklogDefault) == socket_test_constants::kBacklogDefault);
 }
 
 TEST_CASE("socket_option_apply_tcp_nodelay", "[socket-options]")
@@ -477,7 +523,7 @@ TEST_CASE("http_socket_api_defaults_and_setters", "[socket-options]")
     crow::SimpleApp app;
 
     CROW_ROUTE(app, "/")([] {
-        return "ok";
+        return socket_test_constants::kHttpBodyMarker;
     });
 
     app.validate();
@@ -497,15 +543,15 @@ TEST_CASE("http_socket_api_defaults_and_setters", "[socket-options]")
 
     app.tcp_nodelay(true)
       .tcp_keep_alive(true)
-      .tcp_receive_buffer_size(65536)
-      .tcp_send_buffer_size(32768)
-      .tcp_linger(true, 45)
+            .tcp_receive_buffer_size(socket_test_constants::kReceiveBufferSize)
+            .tcp_send_buffer_size(socket_test_constants::kSendBufferSize)
+            .tcp_linger(true, socket_test_constants::kLingerTimeoutAppSet)
       .tcp_broadcast(true)
       .tcp_debug(true)
       .tcp_reuse_address(true)
       .tcp_v6_only(true)
       .tcp_enable_connection_aborted(true)
-      .tcp_listen_backlog(511);
+            .tcp_listen_backlog(socket_test_constants::kBacklogAppSet);
 
     const auto& options = app.tcp_socket_options();
     REQUIRE(options.no_delay.has_value());
@@ -513,12 +559,12 @@ TEST_CASE("http_socket_api_defaults_and_setters", "[socket-options]")
     REQUIRE(options.keep_alive.has_value());
     CHECK(options.keep_alive->value() == true);
     REQUIRE(options.receive_buffer_size.has_value());
-    CHECK(options.receive_buffer_size->value() == 65536);
+    CHECK(options.receive_buffer_size->value() == socket_test_constants::kReceiveBufferSize);
     REQUIRE(options.send_buffer_size.has_value());
-    CHECK(options.send_buffer_size->value() == 32768);
+    CHECK(options.send_buffer_size->value() == socket_test_constants::kSendBufferSize);
     REQUIRE(options.linger.has_value());
     CHECK(options.linger->enabled() == true);
-    CHECK(options.linger->timeout() == 45);
+    CHECK(options.linger->timeout() == socket_test_constants::kLingerTimeoutAppSet);
     REQUIRE(options.broadcast.has_value());
     CHECK(options.broadcast->value() == true);
     REQUIRE(options.debug.has_value());
@@ -530,17 +576,17 @@ TEST_CASE("http_socket_api_defaults_and_setters", "[socket-options]")
     REQUIRE(options.enable_connection_aborted.has_value());
     CHECK(options.enable_connection_aborted->value() == true);
     REQUIRE(options.listen_backlog.has_value());
-    CHECK(*options.listen_backlog == 511);
+    CHECK(*options.listen_backlog == socket_test_constants::kBacklogAppSet);
 
     app.tcp_nodelay(false)
       .tcp_keep_alive(false)
-      .tcp_linger(false, 0)
+            .tcp_linger(false, socket_test_constants::kLingerTimeoutDisabled)
       .tcp_broadcast(false)
       .tcp_debug(false)
       .tcp_reuse_address(false)
       .tcp_v6_only(false)
       .tcp_enable_connection_aborted(false)
-      .tcp_listen_backlog(0);
+            .tcp_listen_backlog(socket_test_constants::kBacklogResetToDefault);
 
     const auto& updated_options = app.tcp_socket_options();
     REQUIRE(updated_options.no_delay.has_value());
@@ -566,7 +612,7 @@ TEST_CASE("websocket_socket_api_defaults_and_setters", "[socket-options]")
 {
     crow::SimpleApp app;
 
-    CROW_WEBSOCKET_ROUTE(app, "/ws")
+        CROW_WEBSOCKET_ROUTE(app, "/ws")
       .onopen([&](crow::websocket::connection&) {})
       .onmessage([&](crow::websocket::connection&, const std::string&, bool) {});
 
@@ -583,9 +629,9 @@ TEST_CASE("websocket_socket_api_defaults_and_setters", "[socket-options]")
 
     app.websocket_tcp_nodelay(true)
       .websocket_tcp_keep_alive(true)
-      .websocket_tcp_receive_buffer_size(65536)
-      .websocket_tcp_send_buffer_size(32768)
-      .websocket_tcp_linger(true, 10)
+            .websocket_tcp_receive_buffer_size(socket_test_constants::kReceiveBufferSize)
+            .websocket_tcp_send_buffer_size(socket_test_constants::kSendBufferSize)
+            .websocket_tcp_linger(true, socket_test_constants::kLingerTimeoutSmoke)
       .websocket_tcp_broadcast(true)
       .websocket_tcp_debug(true);
 
@@ -595,12 +641,12 @@ TEST_CASE("websocket_socket_api_defaults_and_setters", "[socket-options]")
     REQUIRE(options.keep_alive.has_value());
     CHECK(options.keep_alive->value() == true);
     REQUIRE(options.receive_buffer_size.has_value());
-    CHECK(options.receive_buffer_size->value() == 65536);
+    CHECK(options.receive_buffer_size->value() == socket_test_constants::kReceiveBufferSize);
     REQUIRE(options.send_buffer_size.has_value());
-    CHECK(options.send_buffer_size->value() == 32768);
+    CHECK(options.send_buffer_size->value() == socket_test_constants::kSendBufferSize);
     REQUIRE(options.linger.has_value());
     CHECK(options.linger->enabled() == true);
-    CHECK(options.linger->timeout() == 10);
+    CHECK(options.linger->timeout() == socket_test_constants::kLingerTimeoutSmoke);
     REQUIRE(options.broadcast.has_value());
     CHECK(options.broadcast->value() == true);
     REQUIRE(options.debug.has_value());
@@ -608,7 +654,7 @@ TEST_CASE("websocket_socket_api_defaults_and_setters", "[socket-options]")
 
     app.websocket_tcp_nodelay(false)
       .websocket_tcp_keep_alive(false)
-      .websocket_tcp_linger(false, 0)
+            .websocket_tcp_linger(false, socket_test_constants::kLingerTimeoutDisabled)
       .websocket_tcp_broadcast(false)
       .websocket_tcp_debug(false);
 
@@ -631,8 +677,7 @@ TEST_CASE("tcp_nodelay_http_smoke_test", "[socket-options]")
         app.tcp_nodelay(true);
     });
 
-    CHECK(response.find("200 OK") != std::string::npos);
-    CHECK(response.find("ok") != std::string::npos);
+    check_http_smoke_response(response);
 }
 
 TEST_CASE("tcp_nodelay_websocket_smoke_test", "[socket-options]")
@@ -641,8 +686,7 @@ TEST_CASE("tcp_nodelay_websocket_smoke_test", "[socket-options]")
         app.websocket_tcp_nodelay(true);
     });
 
-    CHECK(response.find("101") != std::string::npos);
-    CHECK(response.find("Upgrade") != std::string::npos);
+    check_websocket_upgrade_response(response);
 }
 
 TEST_CASE("http_socket_options_full_smoke_enable_all_added_options", "[socket-options]")
@@ -650,18 +694,17 @@ TEST_CASE("http_socket_options_full_smoke_enable_all_added_options", "[socket-op
     const auto response = run_http_smoke([](crow::SimpleApp& app) {
         app.tcp_nodelay(true)
           .tcp_keep_alive(true)
-          .tcp_receive_buffer_size(65536)
-          .tcp_send_buffer_size(32768)
-          .tcp_linger(true, 20)
+                    .tcp_receive_buffer_size(socket_test_constants::kReceiveBufferSize)
+                    .tcp_send_buffer_size(socket_test_constants::kSendBufferSize)
+                    .tcp_linger(true, socket_test_constants::kLingerTimeoutShort)
           .tcp_broadcast(true)
           .tcp_debug(true)
           .tcp_reuse_address(true)
           .tcp_enable_connection_aborted(true)
-          .tcp_listen_backlog(511);
+                    .tcp_listen_backlog(socket_test_constants::kBacklogAppSet);
     });
 
-    CHECK(response.find("200 OK") != std::string::npos);
-    CHECK(response.find("ok") != std::string::npos);
+        check_http_smoke_response(response);
 }
 
 TEST_CASE("http_socket_options_full_smoke_disable_bool_options", "[socket-options]")
@@ -669,16 +712,15 @@ TEST_CASE("http_socket_options_full_smoke_disable_bool_options", "[socket-option
     const auto response = run_http_smoke([](crow::SimpleApp& app) {
         app.tcp_nodelay(false)
           .tcp_keep_alive(false)
-          .tcp_linger(false, 0)
+          .tcp_linger(false, socket_test_constants::kLingerTimeoutDisabled)
           .tcp_broadcast(false)
           .tcp_debug(false)
           .tcp_reuse_address(false)
           .tcp_enable_connection_aborted(false)
-          .tcp_listen_backlog(0);
+            .tcp_listen_backlog(socket_test_constants::kBacklogResetToDefault);
     });
 
-    CHECK(response.find("200 OK") != std::string::npos);
-    CHECK(response.find("ok") != std::string::npos);
+        check_http_smoke_response(response);
 }
 
 TEST_CASE("http_socket_options_smoke_v6_only", "[socket-options]")
@@ -690,10 +732,9 @@ TEST_CASE("http_socket_options_smoke_v6_only", "[socket-options]")
               .tcp_reuse_address(true)
               .tcp_nodelay(true);
         },
-        kIpv6LocalhostAddress);
+        socket_test_constants::kIpv6LocalhostAddress);
 
-        CHECK(response.find("200 OK") != std::string::npos);
-        CHECK(response.find("ok") != std::string::npos);
+        check_http_smoke_response(response);
     }
     catch (...)
     {
@@ -706,15 +747,14 @@ TEST_CASE("websocket_socket_options_full_smoke_enable_all_added_options", "[sock
     const auto response = run_websocket_upgrade_smoke([](crow::SimpleApp& app) {
         app.websocket_tcp_nodelay(true)
           .websocket_tcp_keep_alive(true)
-          .websocket_tcp_receive_buffer_size(65536)
-          .websocket_tcp_send_buffer_size(32768)
-          .websocket_tcp_linger(true, 20)
+                    .websocket_tcp_receive_buffer_size(socket_test_constants::kReceiveBufferSize)
+                    .websocket_tcp_send_buffer_size(socket_test_constants::kSendBufferSize)
+                    .websocket_tcp_linger(true, socket_test_constants::kLingerTimeoutShort)
           .websocket_tcp_broadcast(true)
           .websocket_tcp_debug(true);
     });
 
-    CHECK(response.find("101") != std::string::npos);
-    CHECK(response.find("Upgrade") != std::string::npos);
+        check_websocket_upgrade_response(response);
 }
 
 TEST_CASE("websocket_socket_options_full_smoke_disable_bool_options", "[socket-options]")
@@ -722,13 +762,12 @@ TEST_CASE("websocket_socket_options_full_smoke_disable_bool_options", "[socket-o
     const auto response = run_websocket_upgrade_smoke([](crow::SimpleApp& app) {
         app.websocket_tcp_nodelay(false)
           .websocket_tcp_keep_alive(false)
-          .websocket_tcp_linger(false, 0)
+                    .websocket_tcp_linger(false, socket_test_constants::kLingerTimeoutDisabled)
           .websocket_tcp_broadcast(false)
           .websocket_tcp_debug(false);
     });
 
-    CHECK(response.find("101") != std::string::npos);
-    CHECK(response.find("Upgrade") != std::string::npos);
+        check_websocket_upgrade_response(response);
 }
 
 TEST_CASE("http_socket_options_per_option_smoke", "[socket-options]")
@@ -738,7 +777,7 @@ TEST_CASE("http_socket_options_per_option_smoke", "[socket-options]")
         const auto response = run_http_smoke([](crow::SimpleApp& app) {
             app.tcp_keep_alive(true);
         });
-        CHECK(response.find("200 OK") != std::string::npos);
+        check_http_smoke_response(response);
     }
 
     SECTION("tcp_keep_alive disabled")
@@ -746,39 +785,39 @@ TEST_CASE("http_socket_options_per_option_smoke", "[socket-options]")
         const auto response = run_http_smoke([](crow::SimpleApp& app) {
             app.tcp_keep_alive(false);
         });
-        CHECK(response.find("200 OK") != std::string::npos);
+        check_http_smoke_response(response);
     }
 
     SECTION("tcp_receive_buffer_size configured")
     {
         const auto response = run_http_smoke([](crow::SimpleApp& app) {
-            app.tcp_receive_buffer_size(65536);
+            app.tcp_receive_buffer_size(socket_test_constants::kReceiveBufferSize);
         });
-        CHECK(response.find("200 OK") != std::string::npos);
+        check_http_smoke_response(response);
     }
 
     SECTION("tcp_send_buffer_size configured")
     {
         const auto response = run_http_smoke([](crow::SimpleApp& app) {
-            app.tcp_send_buffer_size(65536);
+            app.tcp_send_buffer_size(socket_test_constants::kSendBufferSize);
         });
-        CHECK(response.find("200 OK") != std::string::npos);
+        check_http_smoke_response(response);
     }
 
     SECTION("tcp_linger enabled")
     {
         const auto response = run_http_smoke([](crow::SimpleApp& app) {
-            app.tcp_linger(true, 10);
+            app.tcp_linger(true, socket_test_constants::kLingerTimeoutSmoke);
         });
-        CHECK(response.find("200 OK") != std::string::npos);
+        check_http_smoke_response(response);
     }
 
     SECTION("tcp_linger disabled")
     {
         const auto response = run_http_smoke([](crow::SimpleApp& app) {
-            app.tcp_linger(false, 0);
+            app.tcp_linger(false, socket_test_constants::kLingerTimeoutDisabled);
         });
-        CHECK(response.find("200 OK") != std::string::npos);
+        check_http_smoke_response(response);
     }
 
     SECTION("tcp_broadcast enabled")
@@ -786,7 +825,7 @@ TEST_CASE("http_socket_options_per_option_smoke", "[socket-options]")
         const auto response = run_http_smoke([](crow::SimpleApp& app) {
             app.tcp_broadcast(true);
         });
-        CHECK(response.find("200 OK") != std::string::npos);
+        check_http_smoke_response(response);
     }
 
     SECTION("tcp_broadcast disabled")
@@ -794,7 +833,7 @@ TEST_CASE("http_socket_options_per_option_smoke", "[socket-options]")
         const auto response = run_http_smoke([](crow::SimpleApp& app) {
             app.tcp_broadcast(false);
         });
-        CHECK(response.find("200 OK") != std::string::npos);
+        check_http_smoke_response(response);
     }
 
     SECTION("tcp_debug enabled")
@@ -802,7 +841,7 @@ TEST_CASE("http_socket_options_per_option_smoke", "[socket-options]")
         const auto response = run_http_smoke([](crow::SimpleApp& app) {
             app.tcp_debug(true);
         });
-        CHECK(response.find("200 OK") != std::string::npos);
+        check_http_smoke_response(response);
     }
 
     SECTION("tcp_debug disabled")
@@ -810,7 +849,7 @@ TEST_CASE("http_socket_options_per_option_smoke", "[socket-options]")
         const auto response = run_http_smoke([](crow::SimpleApp& app) {
             app.tcp_debug(false);
         });
-        CHECK(response.find("200 OK") != std::string::npos);
+        check_http_smoke_response(response);
     }
 
     SECTION("tcp_reuse_address enabled")
@@ -818,7 +857,7 @@ TEST_CASE("http_socket_options_per_option_smoke", "[socket-options]")
         const auto response = run_http_smoke([](crow::SimpleApp& app) {
             app.tcp_reuse_address(true);
         });
-        CHECK(response.find("200 OK") != std::string::npos);
+        check_http_smoke_response(response);
     }
 
     SECTION("tcp_reuse_address disabled")
@@ -826,7 +865,7 @@ TEST_CASE("http_socket_options_per_option_smoke", "[socket-options]")
         const auto response = run_http_smoke([](crow::SimpleApp& app) {
             app.tcp_reuse_address(false);
         });
-        CHECK(response.find("200 OK") != std::string::npos);
+        check_http_smoke_response(response);
     }
 
     SECTION("tcp_enable_connection_aborted enabled")
@@ -834,7 +873,7 @@ TEST_CASE("http_socket_options_per_option_smoke", "[socket-options]")
         const auto response = run_http_smoke([](crow::SimpleApp& app) {
             app.tcp_enable_connection_aborted(true);
         });
-        CHECK(response.find("200 OK") != std::string::npos);
+        check_http_smoke_response(response);
     }
 
     SECTION("tcp_enable_connection_aborted disabled")
@@ -842,23 +881,23 @@ TEST_CASE("http_socket_options_per_option_smoke", "[socket-options]")
         const auto response = run_http_smoke([](crow::SimpleApp& app) {
             app.tcp_enable_connection_aborted(false);
         });
-        CHECK(response.find("200 OK") != std::string::npos);
+        check_http_smoke_response(response);
     }
 
     SECTION("tcp_listen_backlog configured")
     {
         const auto response = run_http_smoke([](crow::SimpleApp& app) {
-            app.tcp_listen_backlog(256);
+            app.tcp_listen_backlog(socket_test_constants::kBacklogConfigured);
         });
-        CHECK(response.find("200 OK") != std::string::npos);
+        check_http_smoke_response(response);
     }
 
     SECTION("tcp_listen_backlog reset to default")
     {
         const auto response = run_http_smoke([](crow::SimpleApp& app) {
-            app.tcp_listen_backlog(0);
+            app.tcp_listen_backlog(socket_test_constants::kBacklogResetToDefault);
         });
-        CHECK(response.find("200 OK") != std::string::npos);
+        check_http_smoke_response(response);
     }
 }
 
@@ -869,7 +908,7 @@ TEST_CASE("websocket_socket_options_per_option_smoke", "[socket-options]")
         const auto response = run_websocket_upgrade_smoke([](crow::SimpleApp& app) {
             app.websocket_tcp_keep_alive(true);
         });
-        CHECK(response.find("101") != std::string::npos);
+        check_websocket_upgrade_response(response);
     }
 
     SECTION("websocket_tcp_keep_alive disabled")
@@ -877,39 +916,39 @@ TEST_CASE("websocket_socket_options_per_option_smoke", "[socket-options]")
         const auto response = run_websocket_upgrade_smoke([](crow::SimpleApp& app) {
             app.websocket_tcp_keep_alive(false);
         });
-        CHECK(response.find("101") != std::string::npos);
+        check_websocket_upgrade_response(response);
     }
 
     SECTION("websocket_tcp_receive_buffer_size configured")
     {
         const auto response = run_websocket_upgrade_smoke([](crow::SimpleApp& app) {
-            app.websocket_tcp_receive_buffer_size(65536);
+            app.websocket_tcp_receive_buffer_size(socket_test_constants::kReceiveBufferSize);
         });
-        CHECK(response.find("101") != std::string::npos);
+        check_websocket_upgrade_response(response);
     }
 
     SECTION("websocket_tcp_send_buffer_size configured")
     {
         const auto response = run_websocket_upgrade_smoke([](crow::SimpleApp& app) {
-            app.websocket_tcp_send_buffer_size(65536);
+            app.websocket_tcp_send_buffer_size(socket_test_constants::kSendBufferSize);
         });
-        CHECK(response.find("101") != std::string::npos);
+        check_websocket_upgrade_response(response);
     }
 
     SECTION("websocket_tcp_linger enabled")
     {
         const auto response = run_websocket_upgrade_smoke([](crow::SimpleApp& app) {
-            app.websocket_tcp_linger(true, 10);
+            app.websocket_tcp_linger(true, socket_test_constants::kLingerTimeoutSmoke);
         });
-        CHECK(response.find("101") != std::string::npos);
+        check_websocket_upgrade_response(response);
     }
 
     SECTION("websocket_tcp_linger disabled")
     {
         const auto response = run_websocket_upgrade_smoke([](crow::SimpleApp& app) {
-            app.websocket_tcp_linger(false, 0);
+            app.websocket_tcp_linger(false, socket_test_constants::kLingerTimeoutDisabled);
         });
-        CHECK(response.find("101") != std::string::npos);
+        check_websocket_upgrade_response(response);
     }
 
     SECTION("websocket_tcp_broadcast enabled")
@@ -917,7 +956,7 @@ TEST_CASE("websocket_socket_options_per_option_smoke", "[socket-options]")
         const auto response = run_websocket_upgrade_smoke([](crow::SimpleApp& app) {
             app.websocket_tcp_broadcast(true);
         });
-        CHECK(response.find("101") != std::string::npos);
+        check_websocket_upgrade_response(response);
     }
 
     SECTION("websocket_tcp_broadcast disabled")
@@ -925,7 +964,7 @@ TEST_CASE("websocket_socket_options_per_option_smoke", "[socket-options]")
         const auto response = run_websocket_upgrade_smoke([](crow::SimpleApp& app) {
             app.websocket_tcp_broadcast(false);
         });
-        CHECK(response.find("101") != std::string::npos);
+        check_websocket_upgrade_response(response);
     }
 
     SECTION("websocket_tcp_debug enabled")
@@ -933,7 +972,7 @@ TEST_CASE("websocket_socket_options_per_option_smoke", "[socket-options]")
         const auto response = run_websocket_upgrade_smoke([](crow::SimpleApp& app) {
             app.websocket_tcp_debug(true);
         });
-        CHECK(response.find("101") != std::string::npos);
+        check_websocket_upgrade_response(response);
     }
 
     SECTION("websocket_tcp_debug disabled")
@@ -941,6 +980,6 @@ TEST_CASE("websocket_socket_options_per_option_smoke", "[socket-options]")
         const auto response = run_websocket_upgrade_smoke([](crow::SimpleApp& app) {
             app.websocket_tcp_debug(false);
         });
-        CHECK(response.find("101") != std::string::npos);
+        check_websocket_upgrade_response(response);
     }
 }
