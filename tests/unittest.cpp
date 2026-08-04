@@ -2904,7 +2904,7 @@ TEST_CASE("inject_header_via_set_haeder")
     crow::SimpleApp app;
 
     CROW_ROUTE(app, "/")
-    ([](const crow::request &req, crow::response &res) {
+    ([](crow::response &res) {
         res.write("Hello, world!");
         res.set_header("X-Custom", "safe\r\nInjected: yes");
         res.add_header("X-Custom2", "safe\r\nInjected: yes");
