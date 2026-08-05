@@ -56,6 +56,14 @@ namespace crow
         bool skip_body = false;            ///< Whether this is a response to a HEAD request.
         bool manual_length_header = false; ///< Whether Crow should automatically add a "Content-Length" header.
 
+        /// Provider of the response body, called repeatedly until it returns false.
+
+        ///
+        /// The provider fills the given string with the next chunk of the body and returns
+        /// `true` while more data is coming, `false` on its last invocation. Leaving the
+        /// string empty is allowed and sends no chunk.
+        using chunk_provider_t = std::function<bool(std::string&)>;
+
         /// Set the value of an existing header in the response.
         void set_header(std::string key, std::string value)
         {
@@ -183,6 +191,7 @@ namespace crow
             headers = std::move(r.headers);
             completed_ = r.completed_;
             file_info = std::move(r.file_info);
+            chunk_provider_ = std::move(r.chunk_provider_);
             return *this;
         }
 
@@ -199,6 +208,7 @@ namespace crow
             headers.clear();
             completed_ = false;
             file_info = static_file_info{};
+            chunk_provider_ = nullptr;
         }
 
         /// Return a "Temporary Redirect" response.
@@ -254,6 +264,7 @@ namespace crow
                 completed_ = true;
                 if (skip_body)
                 {
+                    chunk_provider_ = nullptr;
                     set_header("Content-Length", std::to_string(body.size()));
                     body = "";
                     manual_length_header = true;
@@ -284,6 +295,29 @@ namespace crow
         bool is_static_type()
         {
             return file_info.path.size();
+        }
+
+        /// Check whether the response body is produced by a chunk provider.
+        bool is_chunked_type() const
+        {
+            return static_cast<bool>(chunk_provider_);
+        }
+
+        /// Send the response body in chunks produced on demand, without holding it in memory.
+
+        ///
+        /// The body is sent using `Transfer-Encoding: chunked`, so its size need not be known
+        /// in advance, which makes it suitable for bodies of arbitrary or unknown length. The
+        /// provider runs on the connection thread while the response is being written.
+        void set_chunked_content_provider(chunk_provider_t provider, std::string content_type = "")
+        {
+            chunk_provider_ = std::move(provider);
+            manual_length_header = true;
+            set_header("Transfer-Encoding", "chunked");
+            if (!content_type.empty())
+            {
+                set_header("Content-Type", std::move(content_type));
+            }
         }
 
         /// This constains metadata (coming from the `stat` command) related to any static files associated with this response.
@@ -460,5 +494,6 @@ namespace crow
         std::function<void()> complete_request_handler_;
         std::function<bool()> is_alive_helper_;
         static_file_info file_info;
+        chunk_provider_t chunk_provider_;
     };
 } // namespace crow
