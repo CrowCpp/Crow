@@ -418,6 +418,15 @@ namespace crow
             res.clear();
             buffers_.clear();
             parser_.clear();
+
+            // The deadline was cancelled for the duration of the transfer, so a kept-alive
+            // connection has to be put back into reading state explicitly.
+            if (!close_connection_ && need_to_start_read_after_complete_)
+            {
+                need_to_start_read_after_complete_ = false;
+                start_deadline();
+                do_read();
+            }
         }
 
         void do_write_general()

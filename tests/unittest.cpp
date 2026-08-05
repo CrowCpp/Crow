@@ -2069,6 +2069,139 @@ TEST_CASE("stream_response")
     runTest.join();
 } // stream_response
 
+TEST_CASE("chunked_response")
+{
+    SimpleApp app;
+
+    CROW_ROUTE(app, "/chunks")
+    ([](const crow::request&, crow::response& res) {
+        int remaining = 3;
+        res.set_chunked_content_provider(
+          [remaining](std::string& chunk) mutable -> bool {
+              if (remaining == 0)
+                  return false;
+              chunk = "part" + std::to_string(4 - remaining);
+              --remaining;
+              return true;
+          },
+          "text/plain");
+        res.end();
+    });
+
+    auto _ = app.bindaddr(LOCALHOST_ADDRESS).port(45451).run_async();
+    app.wait_for_server_start();
+
+    HttpClient client(LOCALHOST_ADDRESS, 45451);
+    client.send("GET /chunks HTTP/1.0\r\n\r\n");
+
+    std::string response;
+    while (response.size() < 5 || response.compare(response.size() - 5, 5, "0\r\n\r\n") != 0)
+        response += client.receive();
+
+    CHECK(response.find("Transfer-Encoding: chunked") != std::string::npos);
+    CHECK(response.find("Content-Length") == std::string::npos);
+    CHECK(response.find("Content-Type: text/plain") != std::string::npos);
+    CHECK(response.find("5\r\npart1\r\n") != std::string::npos);
+    CHECK(response.find("5\r\npart2\r\n") != std::string::npos);
+    CHECK(response.find("5\r\npart3\r\n") != std::string::npos);
+
+    app.stop();
+} // chunked_response
+
+TEST_CASE("chunked_response_no_data")
+{
+    SimpleApp app;
+
+    CROW_ROUTE(app, "/empty")
+    ([](const crow::request&, crow::response& res) {
+        int calls = 0;
+        res.set_chunked_content_provider([calls](std::string& chunk) mutable -> bool {
+            chunk.clear();
+            return ++calls < 3; // three calls producing nothing at all
+        });
+        res.end();
+    });
+
+    auto _ = app.bindaddr(LOCALHOST_ADDRESS).port(45451).run_async();
+    app.wait_for_server_start();
+
+    HttpClient client(LOCALHOST_ADDRESS, 45451);
+    client.send("GET /empty HTTP/1.0\r\n\r\n");
+
+    std::string response;
+    while (response.size() < 5 || response.compare(response.size() - 5, 5, "0\r\n\r\n") != 0)
+        response += client.receive();
+
+    CHECK(response.find("Transfer-Encoding: chunked") != std::string::npos);
+    CHECK(response.find("Content-Length") == std::string::npos);
+
+    app.stop();
+} // chunked_response_no_data
+
+TEST_CASE("chunked_response_large_body")
+{
+    SimpleApp app;
+
+    const size_t chunk_count = 64;
+    const size_t chunk_size = 1024;
+
+    CROW_ROUTE(app, "/large")
+    ([chunk_count, chunk_size](const crow::request&, crow::response& res) {
+        size_t remaining = chunk_count;
+        res.set_chunked_content_provider([remaining, chunk_size](std::string& chunk) mutable -> bool {
+            if (remaining == 0)
+                return false;
+            chunk.assign(chunk_size, 'x');
+            --remaining;
+            return true;
+        });
+        res.end();
+    });
+
+    auto _ = app.bindaddr(LOCALHOST_ADDRESS).port(45451).run_async();
+    app.wait_for_server_start();
+
+    HttpClient client(LOCALHOST_ADDRESS, 45451);
+    client.send("GET /large HTTP/1.0\r\n\r\n");
+
+    std::string response;
+    while (response.size() < 5 || response.compare(response.size() - 5, 5, "0\r\n\r\n") != 0)
+        response += client.receive();
+
+    CHECK(response.find("Transfer-Encoding: chunked") != std::string::npos);
+
+    // every chunk carries its size in hex, 1024 bytes being "400"
+    size_t seen = 0;
+    for (std::string::size_type pos = response.find("400\r\n"); pos != std::string::npos;
+         pos = response.find("400\r\n", pos + 1))
+        ++seen;
+    CHECK(seen >= chunk_count);
+
+    app.stop();
+} // chunked_response_large_body
+
+TEST_CASE("chunked_response_head_request")
+{
+    SimpleApp app;
+
+    CROW_ROUTE(app, "/chunks").methods("GET"_method, "HEAD"_method)([](const crow::request&, crow::response& res) {
+        res.set_chunked_content_provider([](std::string& chunk) -> bool {
+            chunk = "body";
+            return false;
+        });
+        res.end();
+    });
+
+    auto _ = app.bindaddr(LOCALHOST_ADDRESS).port(45451).run_async();
+    app.wait_for_server_start();
+
+    std::string response = HttpClient::request(LOCALHOST_ADDRESS, 45451, "HEAD /chunks HTTP/1.0\r\n\r\n");
+
+    CHECK(response.find("body") == std::string::npos);
+
+    app.stop();
+} // chunked_response_head_request
+
 #ifdef CROW_ENABLE_COMPRESSION
 TEST_CASE("zlib_compression")
 {
