@@ -275,6 +275,10 @@ namespace crow
             {
                 do_write_static();
             }
+            else if (res.is_chunked_type())
+            {
+                do_write_chunked();
+            }
             else
             {
                 do_write_general();
@@ -323,6 +327,91 @@ namespace crow
                 adaptor_.shutdown_readwrite();
                 adaptor_.close();
                 CROW_LOG_DEBUG << this << " from write (static)";
+            }
+
+            res.end();
+            res.clear();
+            buffers_.clear();
+            parser_.clear();
+        }
+
+        /// Format a chunk size the way chunked transfer encoding wants it: lowercase hex.
+        static std::string chunk_size_to_hex(std::size_t value)
+        {
+            static const char digits[] = "0123456789abcdef";
+            if (value == 0)
+            {
+                return "0";
+            }
+            std::string out;
+            while (value != 0)
+            {
+                out.insert(out.begin(), digits[value & 0xF]);
+                value >>= 4;
+            }
+            return out;
+        }
+
+        void do_write_chunked()
+        {
+            error_code ec;
+            asio::write(adaptor_.socket(), buffers_, ec); // Write the response start / headers
+            if (ec)
+            {
+                CROW_LOG_ERROR << ec << " - buffer write error happened while sending response start / headers. Writing stopped premature.";
+            }
+
+            // Producing the body may take arbitrarily long, so the connection must not be
+            // closed by the deadline while chunks are still on their way.
+            cancel_deadline_timer();
+
+            // do_write_sync() clears the response on every write, so the provider has to be
+            // taken out of it before the loop starts.
+            auto provider = std::move(res.chunk_provider_);
+            res.chunk_provider_ = nullptr;
+
+            std::string chunk;
+            std::string chunk_header;
+            std::vector<asio::const_buffer> buffers{3};
+            bool more = static_cast<bool>(provider);
+            while (more && !ec)
+            {
+                chunk.clear();
+                more = provider(chunk);
+                if (chunk.empty())
+                {
+                    continue;
+                }
+
+                chunk_header = chunk_size_to_hex(chunk.size());
+                chunk_header += crlf;
+                buffers[0] = asio::const_buffer(chunk_header.data(), chunk_header.size());
+                buffers[1] = asio::const_buffer(chunk.data(), chunk.size());
+                buffers[2] = asio::const_buffer(crlf.data(), crlf.size());
+                ec = do_write_sync(buffers);
+                if (ec)
+                {
+                    CROW_LOG_ERROR << ec << " - buffer write error happened while sending a chunk. Writing stopped premature.";
+                }
+            }
+
+            if (!ec)
+            {
+                static const std::string last_chunk = "0\r\n\r\n";
+                std::vector<asio::const_buffer> tail{1};
+                tail[0] = asio::const_buffer(last_chunk.data(), last_chunk.size());
+                ec = do_write_sync(tail);
+                if (ec)
+                {
+                    CROW_LOG_ERROR << ec << " - buffer write error happened while sending the last chunk.";
+                }
+            }
+
+            if (close_connection_)
+            {
+                adaptor_.shutdown_readwrite();
+                adaptor_.close();
+                CROW_LOG_DEBUG << this << " from write (chunked)";
             }
 
             res.end();
