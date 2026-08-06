@@ -2348,6 +2348,44 @@ TEST_CASE("chunked_response_completion_handler")
     app.stop();
 } // chunked_response_completion_handler
 
+TEST_CASE("chunked_response_throwing_completion_handler")
+{
+    SimpleApp app;
+
+    CROW_ROUTE(app, "/throwing")
+    ([](const crow::request&, crow::response& res) {
+        res.set_chunked_content_provider([](std::string& chunk) {
+            chunk = "body";
+            return crow::chunk_result::done;
+        });
+        res.set_chunked_completion_handler([](bool) {
+            throw std::runtime_error("completion failed");
+        });
+        res.end();
+    });
+
+    auto _ = app.bindaddr(LOCALHOST_ADDRESS).port(45451).run_async();
+    app.wait_for_server_start();
+
+    // An exception from the completion handler must not skip the connection
+    // cleanup: the response is still delivered in full and the server survives.
+    HttpClient client(LOCALHOST_ADDRESS, 45451);
+    client.send("GET /throwing HTTP/1.1\r\nHost: localhost\r\n\r\n");
+    std::string response;
+    while (response.size() < 5 || response.compare(response.size() - 5, 5, "0\r\n\r\n") != 0)
+        response += client.receive();
+    CHECK(response.find("Transfer-Encoding: chunked") != std::string::npos);
+
+    // The connection stays usable for the next request.
+    client.send("GET /throwing HTTP/1.1\r\nHost: localhost\r\n\r\n");
+    std::string second;
+    while (second.size() < 5 || second.compare(second.size() - 5, 5, "0\r\n\r\n") != 0)
+        second += client.receive();
+    CHECK(second.find("Transfer-Encoding: chunked") != std::string::npos);
+
+    app.stop();
+} // chunked_response_throwing_completion_handler
+
 TEST_CASE("chunked_response_throwing_provider")
 {
     SimpleApp app;

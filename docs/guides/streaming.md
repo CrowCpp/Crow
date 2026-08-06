@@ -110,3 +110,9 @@ last write and before the response is finalized.
 
     A response to a `HEAD` request never calls the provider: the headers are sent
     and the body is skipped.
+
+!!! note
+
+    A write error in the middle of the transfer is treated like `abort` as far
+    as the connection is concerned: the terminating frame is not sent and the
+    connection is closed instead of being reused for keep-alive.

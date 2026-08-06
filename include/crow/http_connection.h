@@ -433,22 +433,39 @@ namespace crow
                 }
             }
 
+            // A write failure leaves the message framing just as incomplete as an explicit
+            // abort (the terminating frame never made it out), so the connection policy is
+            // the same for both: force the close and never reuse the socket for keep-alive.
             const bool aborted = (result == response::chunk_result::abort);
-            if (aborted)
+            const bool force_close = aborted || static_cast<bool>(ec);
+            if (force_close)
             {
                 // Close the connection forcefully, without the terminating frame, so that the
                 // client sees a truncated body instead of a seemingly complete one.
                 adaptor_.shutdown_readwrite();
                 adaptor_.close();
-                CROW_LOG_DEBUG << this << " from write (chunked, aborted)";
+                CROW_LOG_DEBUG << this << " from write (chunked, " << (aborted ? "aborted" : "write error") << ")";
             }
 
             if (completion_handler)
             {
-                completion_handler(result == response::chunk_result::done && !ec);
+                // An exception from the handler must not escape into the Asio stack or skip
+                // the cleanup below; it is logged and swallowed.
+                try
+                {
+                    completion_handler(result == response::chunk_result::done && !ec);
+                }
+                catch (const std::exception& e)
+                {
+                    CROW_LOG_ERROR << "An uncaught exception occurred in the chunked completion handler: " << e.what();
+                }
+                catch (...)
+                {
+                    CROW_LOG_ERROR << "An uncaught exception occurred in the chunked completion handler.";
+                }
             }
 
-            if (close_connection_ && !aborted)
+            if (close_connection_ && !force_close)
             {
                 adaptor_.shutdown_readwrite();
                 adaptor_.close();
@@ -462,7 +479,7 @@ namespace crow
 
             // The deadline was cancelled for the duration of the transfer, so a kept-alive
             // connection has to be put back into reading state explicitly.
-            if (!aborted && !close_connection_ && need_to_start_read_after_complete_)
+            if (!force_close && !close_connection_ && need_to_start_read_after_complete_)
             {
                 need_to_start_read_after_complete_ = false;
                 start_deadline();
