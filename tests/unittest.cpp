@@ -3,6 +3,7 @@
 #include <sys/stat.h>
 
 #include <exception>
+#include <future>
 #include <iostream>
 #include <vector>
 #include <thread>
@@ -2068,6 +2069,421 @@ TEST_CASE("stream_response")
     });
     runTest.join();
 } // stream_response
+
+TEST_CASE("chunked_response")
+{
+    SimpleApp app;
+
+    CROW_ROUTE(app, "/chunks")
+    ([](const crow::request&, crow::response& res) {
+        int remaining = 3;
+        res.set_chunked_content_provider(
+          [remaining](std::string& chunk) mutable -> bool {
+              if (remaining == 0)
+                  return false;
+              chunk = "part" + std::to_string(4 - remaining);
+              --remaining;
+              return true;
+          },
+          "text/plain");
+        res.end();
+    });
+
+    auto _ = app.bindaddr(LOCALHOST_ADDRESS).port(45451).run_async();
+    app.wait_for_server_start();
+
+    HttpClient client(LOCALHOST_ADDRESS, 45451);
+    client.send("GET /chunks HTTP/1.1\r\nHost: localhost\r\n\r\n");
+
+    std::string response;
+    while (response.size() < 5 || response.compare(response.size() - 5, 5, "0\r\n\r\n") != 0)
+        response += client.receive();
+
+    CHECK(response.find("Transfer-Encoding: chunked") != std::string::npos);
+    CHECK(response.find("Content-Length") == std::string::npos);
+    CHECK(response.find("Content-Type: text/plain") != std::string::npos);
+    CHECK(response.find("5\r\npart1\r\n") != std::string::npos);
+    CHECK(response.find("5\r\npart2\r\n") != std::string::npos);
+    CHECK(response.find("5\r\npart3\r\n") != std::string::npos);
+
+    // The connection is kept alive after a chunked response: a second request on
+    // the same connection is served, so the connection went back to reading state.
+    client.send("GET /chunks HTTP/1.1\r\nHost: localhost\r\n\r\n");
+    std::string second;
+    while (second.size() < 5 || second.compare(second.size() - 5, 5, "0\r\n\r\n") != 0)
+        second += client.receive();
+    CHECK(second.find("Transfer-Encoding: chunked") != std::string::npos);
+    CHECK(second.find("5\r\npart1\r\n") != std::string::npos);
+    CHECK(second.find("5\r\npart3\r\n") != std::string::npos);
+
+    app.stop();
+} // chunked_response
+
+TEST_CASE("chunked_response_no_data")
+{
+    SimpleApp app;
+
+    CROW_ROUTE(app, "/empty")
+    ([](const crow::request&, crow::response& res) {
+        int calls = 0;
+        res.set_chunked_content_provider([calls](std::string& chunk) mutable -> bool {
+            chunk.clear();
+            return ++calls < 3; // three calls producing nothing at all
+        });
+        res.end();
+    });
+
+    auto _ = app.bindaddr(LOCALHOST_ADDRESS).port(45451).run_async();
+    app.wait_for_server_start();
+
+    HttpClient client(LOCALHOST_ADDRESS, 45451);
+    client.send("GET /empty HTTP/1.1\r\nHost: localhost\r\n\r\n");
+
+    std::string response;
+    while (response.size() < 5 || response.compare(response.size() - 5, 5, "0\r\n\r\n") != 0)
+        response += client.receive();
+
+    CHECK(response.find("Transfer-Encoding: chunked") != std::string::npos);
+    CHECK(response.find("Content-Length") == std::string::npos);
+
+    app.stop();
+} // chunked_response_no_data
+
+TEST_CASE("chunked_response_large_body")
+{
+    SimpleApp app;
+
+    const size_t chunk_count = 64;
+    const size_t chunk_size = 1024;
+
+    CROW_ROUTE(app, "/large")
+    ([chunk_count, chunk_size](const crow::request&, crow::response& res) {
+        size_t remaining = chunk_count;
+        res.set_chunked_content_provider([remaining, chunk_size](std::string& chunk) mutable -> bool {
+            if (remaining == 0)
+                return false;
+            chunk.assign(chunk_size, 'x');
+            --remaining;
+            return true;
+        });
+        res.end();
+    });
+
+    auto _ = app.bindaddr(LOCALHOST_ADDRESS).port(45451).run_async();
+    app.wait_for_server_start();
+
+    HttpClient client(LOCALHOST_ADDRESS, 45451);
+    client.send("GET /large HTTP/1.1\r\nHost: localhost\r\n\r\n");
+
+    std::string response;
+    while (response.size() < 5 || response.compare(response.size() - 5, 5, "0\r\n\r\n") != 0)
+        response += client.receive();
+
+    CHECK(response.find("Transfer-Encoding: chunked") != std::string::npos);
+
+    // decode the chunked body: every frame is "<size in hex>\r\n<data>\r\n",
+    // the terminating frame has size zero
+    auto header_end = response.find("\r\n\r\n");
+    REQUIRE(header_end != std::string::npos);
+    std::string chunked_body = response.substr(header_end + 4);
+    size_t seen = 0;
+    size_t total = 0;
+    std::string::size_type pos = 0;
+    while (true)
+    {
+        auto size_end = chunked_body.find("\r\n", pos);
+        REQUIRE(size_end != std::string::npos);
+        size_t size = std::stoul(chunked_body.substr(pos, size_end - pos), nullptr, 16);
+        if (size == 0)
+            break;
+        ++seen;
+        total += size;
+        pos = size_end + 2 + size + 2; // past the size line, the data and its trailing CRLF
+        REQUIRE(pos <= chunked_body.size());
+    }
+    CHECK(seen == chunk_count);
+    CHECK(total == chunk_count * chunk_size);
+
+    app.stop();
+} // chunked_response_large_body
+
+TEST_CASE("chunked_response_head_request")
+{
+    SimpleApp app;
+
+    auto completion_clean = std::make_shared<std::promise<bool>>();
+
+    CROW_ROUTE(app, "/chunks").methods("GET"_method, "HEAD"_method)([completion_clean](const crow::request&, crow::response& res) {
+        res.set_chunked_content_provider([](std::string& chunk) -> bool {
+            chunk = "body";
+            return false;
+        });
+        res.set_chunked_completion_handler([completion_clean](bool clean) {
+            completion_clean->set_value(clean);
+        });
+        res.end();
+    });
+
+    auto _ = app.bindaddr(LOCALHOST_ADDRESS).port(45451).run_async();
+    app.wait_for_server_start();
+
+    std::string response = HttpClient::request(LOCALHOST_ADDRESS, 45451, "HEAD /chunks HTTP/1.1\r\nHost: localhost\r\n\r\n");
+
+    // Same header fields as a GET would produce: the body length is unknown, so
+    // "Transfer-Encoding: chunked" is announced and "Content-Length" is absent.
+    CHECK(response.find("Transfer-Encoding: chunked") != std::string::npos);
+    CHECK(response.find("Content-Length") == std::string::npos);
+
+    // The body itself is skipped entirely.
+    auto header_end = response.find("\r\n\r\n");
+    REQUIRE(header_end != std::string::npos);
+    CHECK(response.substr(header_end + 4).empty());
+    CHECK(response.find("body") == std::string::npos);
+
+    // The provider is never called, but the completion handler still runs (with
+    // clean == true): it stays the single release point for the source of the data.
+    auto completion = completion_clean->get_future();
+    REQUIRE(completion.wait_for(std::chrono::seconds(5)) == std::future_status::ready);
+    CHECK(completion.get() == true);
+
+    app.stop();
+} // chunked_response_head_request
+
+TEST_CASE("chunked_response_abort")
+{
+    SimpleApp app;
+
+    CROW_ROUTE(app, "/abort")
+    ([](const crow::request&, crow::response& res) {
+        int calls = 0;
+        res.set_chunked_content_provider(
+          [calls](std::string& chunk) mutable -> crow::chunk_result {
+              if (++calls < 3)
+              {
+                  chunk = "part" + std::to_string(calls);
+                  return crow::chunk_result::more;
+              }
+              return crow::chunk_result::abort;
+          },
+          "text/plain");
+        res.end();
+    });
+
+    auto _ = app.bindaddr(LOCALHOST_ADDRESS).port(45451).run_async();
+    app.wait_for_server_start();
+
+    HttpClient client(LOCALHOST_ADDRESS, 45451);
+    client.send("GET /abort HTTP/1.1\r\nHost: localhost\r\n\r\n");
+
+    // The server closes the connection without the terminating frame, so reading
+    // past the truncated body eventually throws (end of file).
+    std::string response;
+    try
+    {
+        while (true)
+            response += client.receive();
+    }
+    catch (const std::exception&)
+    {
+    }
+
+    CHECK(response.find("Transfer-Encoding: chunked") != std::string::npos);
+
+    // the body is truncated: the produced chunks are there, the terminating frame is not
+    auto body_start = response.find("\r\n\r\n");
+    REQUIRE(body_start != std::string::npos);
+    std::string chunked_body = response.substr(body_start + 4);
+    CHECK(chunked_body.find("5\r\npart1\r\n") != std::string::npos);
+    CHECK(chunked_body.find("5\r\npart2\r\n") != std::string::npos);
+    CHECK(chunked_body.find("0\r\n\r\n") == std::string::npos);
+
+    app.stop();
+} // chunked_response_abort
+
+TEST_CASE("chunked_response_completion_handler")
+{
+    SimpleApp app;
+
+    auto done_clean = std::make_shared<std::promise<bool>>();
+    auto abort_clean = std::make_shared<std::promise<bool>>();
+
+    CROW_ROUTE(app, "/done")
+    ([done_clean](const crow::request&, crow::response& res) {
+        res.set_chunked_content_provider([](std::string& chunk) {
+            chunk = "body";
+            return crow::chunk_result::done;
+        });
+        res.set_chunked_completion_handler([done_clean](bool clean) {
+            done_clean->set_value(clean);
+        });
+        res.end();
+    });
+
+    CROW_ROUTE(app, "/abort")
+    ([abort_clean](const crow::request&, crow::response& res) {
+        res.set_chunked_content_provider([](std::string&) {
+            return crow::chunk_result::abort;
+        });
+        res.set_chunked_completion_handler([abort_clean](bool clean) {
+            abort_clean->set_value(clean);
+        });
+        res.end();
+    });
+
+    auto _ = app.bindaddr(LOCALHOST_ADDRESS).port(45451).run_async();
+    app.wait_for_server_start();
+
+    {
+        HttpClient client(LOCALHOST_ADDRESS, 45451);
+        client.send("GET /done HTTP/1.1\r\nHost: localhost\r\n\r\n");
+        std::string response;
+        while (response.size() < 5 || response.compare(response.size() - 5, 5, "0\r\n\r\n") != 0)
+            response += client.receive();
+    }
+    CHECK(done_clean->get_future().get() == true);
+
+    {
+        HttpClient client(LOCALHOST_ADDRESS, 45451);
+        client.send("GET /abort HTTP/1.1\r\nHost: localhost\r\n\r\n");
+        try
+        {
+            while (true)
+                client.receive();
+        }
+        catch (const std::exception&)
+        {
+        }
+    }
+    CHECK(abort_clean->get_future().get() == false);
+
+    app.stop();
+} // chunked_response_completion_handler
+
+TEST_CASE("chunked_response_throwing_completion_handler")
+{
+    SimpleApp app;
+
+    CROW_ROUTE(app, "/throwing")
+    ([](const crow::request&, crow::response& res) {
+        res.set_chunked_content_provider([](std::string& chunk) {
+            chunk = "body";
+            return crow::chunk_result::done;
+        });
+        res.set_chunked_completion_handler([](bool) {
+            throw std::runtime_error("completion failed");
+        });
+        res.end();
+    });
+
+    auto _ = app.bindaddr(LOCALHOST_ADDRESS).port(45451).run_async();
+    app.wait_for_server_start();
+
+    // An exception from the completion handler must not skip the connection
+    // cleanup: the response is still delivered in full and the server survives.
+    HttpClient client(LOCALHOST_ADDRESS, 45451);
+    client.send("GET /throwing HTTP/1.1\r\nHost: localhost\r\n\r\n");
+    std::string response;
+    while (response.size() < 5 || response.compare(response.size() - 5, 5, "0\r\n\r\n") != 0)
+        response += client.receive();
+    CHECK(response.find("Transfer-Encoding: chunked") != std::string::npos);
+
+    // The connection stays usable for the next request.
+    client.send("GET /throwing HTTP/1.1\r\nHost: localhost\r\n\r\n");
+    std::string second;
+    while (second.size() < 5 || second.compare(second.size() - 5, 5, "0\r\n\r\n") != 0)
+        second += client.receive();
+    CHECK(second.find("Transfer-Encoding: chunked") != std::string::npos);
+
+    app.stop();
+} // chunked_response_throwing_completion_handler
+
+TEST_CASE("chunked_provider_excludes_other_body_sources")
+{
+    // A response has exactly one body source; whichever is configured last wins.
+
+    // A chunk provider discards a previously configured static file and string body.
+    {
+        response res;
+        res.set_static_file_info("tests/img/cat.jpg");
+        res.body = "leftover";
+        res.set_chunked_content_provider([](std::string&) { return crow::chunk_result::done; });
+
+        CHECK(res.is_chunked_type());
+        CHECK(!res.is_static_type());
+        CHECK(res.body.empty());
+        CHECK(res.get_header_value("Content-Length").empty());
+        CHECK(res.get_header_value("Transfer-Encoding") == "chunked");
+    }
+
+    // A static file discards a previously configured chunk provider and its framing header.
+    {
+        response res;
+        res.set_chunked_content_provider([](std::string&) { return crow::chunk_result::done; });
+        res.set_static_file_info("tests/img/cat.jpg");
+
+        CHECK(!res.is_chunked_type());
+        CHECK(res.is_static_type());
+        CHECK(res.get_header_value("Transfer-Encoding").empty());
+        CHECK(!res.get_header_value("Content-Length").empty());
+    }
+} // chunked_provider_excludes_other_body_sources
+
+TEST_CASE("chunked_response_throwing_provider")
+{
+    SimpleApp app;
+
+    auto throw_clean = std::make_shared<std::promise<bool>>();
+
+    CROW_ROUTE(app, "/throw")
+    ([throw_clean](const crow::request&, crow::response& res) {
+        int calls = 0;
+        res.set_chunked_content_provider(
+          [calls](std::string& chunk) mutable -> bool {
+              if (++calls < 3)
+              {
+                  chunk = "part" + std::to_string(calls);
+                  return true;
+              }
+              throw std::runtime_error("provider failed");
+          },
+          "text/plain");
+        res.set_chunked_completion_handler([throw_clean](bool clean) {
+            throw_clean->set_value(clean);
+        });
+        res.end();
+    });
+
+    auto _ = app.bindaddr(LOCALHOST_ADDRESS).port(45451).run_async();
+    app.wait_for_server_start();
+
+    HttpClient client(LOCALHOST_ADDRESS, 45451);
+    client.send("GET /throw HTTP/1.1\r\nHost: localhost\r\n\r\n");
+
+    // The exception is treated as an abort: the connection is closed without the
+    // terminating frame, so reading past the truncated body eventually throws.
+    std::string response;
+    try
+    {
+        while (true)
+            response += client.receive();
+    }
+    catch (const std::exception&)
+    {
+    }
+
+    CHECK(response.find("Transfer-Encoding: chunked") != std::string::npos);
+
+    auto body_start = response.find("\r\n\r\n");
+    REQUIRE(body_start != std::string::npos);
+    std::string chunked_body = response.substr(body_start + 4);
+    CHECK(chunked_body.find("5\r\npart1\r\n") != std::string::npos);
+    CHECK(chunked_body.find("5\r\npart2\r\n") != std::string::npos);
+    CHECK(chunked_body.find("0\r\n\r\n") == std::string::npos);
+
+    CHECK(throw_clean->get_future().get() == false);
+
+    app.stop();
+} // chunked_response_throwing_provider
 
 #ifdef CROW_ENABLE_COMPRESSION
 TEST_CASE("zlib_compression")

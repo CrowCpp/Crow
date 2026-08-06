@@ -275,6 +275,10 @@ namespace crow
             {
                 do_write_static();
             }
+            else if (res.is_chunked_type())
+            {
+                do_write_chunked();
+            }
             else
             {
                 do_write_general();
@@ -329,6 +333,158 @@ namespace crow
             res.clear();
             buffers_.clear();
             parser_.clear();
+        }
+
+        /// Format a chunk size the way chunked transfer encoding wants it: lowercase hex.
+        static std::string chunk_size_to_hex(std::size_t value)
+        {
+            static const char digits[] = "0123456789abcdef";
+            if (value == 0)
+            {
+                return "0";
+            }
+            std::string out;
+            while (value != 0)
+            {
+                out.insert(out.begin(), digits[value & 0xF]);
+                value >>= 4;
+            }
+            return out;
+        }
+
+        void do_write_chunked()
+        {
+            error_code ec;
+            asio::write(adaptor_.socket(), buffers_, ec); // Write the response start / headers
+            if (ec)
+            {
+                CROW_LOG_ERROR << ec << " - buffer write error happened while sending response start / headers. Writing stopped premature.";
+            }
+
+            // Producing the body may take arbitrarily long, so the connection must not be
+            // closed by the deadline while chunks are still on their way.
+            cancel_deadline_timer();
+
+            // do_write_sync() clears the response on every write, so the provider and the
+            // completion handler have to be taken out of it before the loop starts.
+            auto provider = std::move(res.chunk_provider_ex_);
+            res.chunk_provider_ex_ = nullptr;
+            if (!provider && res.chunk_provider_)
+            {
+                provider = [bool_provider = std::move(res.chunk_provider_)](std::string& chunk) {
+                    return bool_provider(chunk) ? response::chunk_result::more : response::chunk_result::done;
+                };
+            }
+            res.chunk_provider_ = nullptr;
+            auto completion_handler = std::move(res.chunk_complete_);
+            res.chunk_complete_ = nullptr;
+
+            std::string chunk;
+            std::string chunk_header;
+            std::vector<asio::const_buffer> buffers{3};
+            auto result = provider ? response::chunk_result::more : response::chunk_result::done;
+            while (result == response::chunk_result::more && !ec)
+            {
+                chunk.clear();
+                // An exception from the provider must not escape into the Asio stack; it is
+                // treated as an abort: no terminating frame, forced close, completion(false).
+                try
+                {
+                    result = provider(chunk);
+                }
+                catch (const std::exception& e)
+                {
+                    CROW_LOG_ERROR << "An uncaught exception occurred in the chunk provider: " << e.what();
+                    result = response::chunk_result::abort;
+                }
+                catch (...)
+                {
+                    CROW_LOG_ERROR << "An uncaught exception occurred in the chunk provider.";
+                    result = response::chunk_result::abort;
+                }
+                if (result == response::chunk_result::abort || chunk.empty())
+                {
+                    continue;
+                }
+
+                chunk_header = chunk_size_to_hex(chunk.size());
+                chunk_header += crlf;
+                buffers[0] = asio::const_buffer(chunk_header.data(), chunk_header.size());
+                buffers[1] = asio::const_buffer(chunk.data(), chunk.size());
+                buffers[2] = asio::const_buffer(crlf.data(), crlf.size());
+                ec = do_write_sync(buffers);
+                if (ec)
+                {
+                    CROW_LOG_ERROR << ec << " - buffer write error happened while sending a chunk. Writing stopped premature.";
+                }
+            }
+
+            // The terminating frame marks the body as complete, so it is only sent when the
+            // provider finished cleanly and every previous write succeeded.
+            if (result == response::chunk_result::done && !ec)
+            {
+                static const std::string last_chunk = "0\r\n\r\n";
+                std::vector<asio::const_buffer> tail{1};
+                tail[0] = asio::const_buffer(last_chunk.data(), last_chunk.size());
+                ec = do_write_sync(tail);
+                if (ec)
+                {
+                    CROW_LOG_ERROR << ec << " - buffer write error happened while sending the last chunk.";
+                }
+            }
+
+            // A write failure leaves the message framing just as incomplete as an explicit
+            // abort (the terminating frame never made it out), so the connection policy is
+            // the same for both: force the close and never reuse the socket for keep-alive.
+            const bool aborted = (result == response::chunk_result::abort);
+            const bool force_close = aborted || static_cast<bool>(ec);
+            if (force_close)
+            {
+                // Close the connection forcefully, without the terminating frame, so that the
+                // client sees a truncated body instead of a seemingly complete one.
+                adaptor_.shutdown_readwrite();
+                adaptor_.close();
+                CROW_LOG_DEBUG << this << " from write (chunked, " << (aborted ? "aborted" : "write error") << ")";
+            }
+
+            if (completion_handler)
+            {
+                // An exception from the handler must not escape into the Asio stack or skip
+                // the cleanup below; it is logged and swallowed.
+                try
+                {
+                    completion_handler(result == response::chunk_result::done && !ec);
+                }
+                catch (const std::exception& e)
+                {
+                    CROW_LOG_ERROR << "An uncaught exception occurred in the chunked completion handler: " << e.what();
+                }
+                catch (...)
+                {
+                    CROW_LOG_ERROR << "An uncaught exception occurred in the chunked completion handler.";
+                }
+            }
+
+            if (close_connection_ && !force_close)
+            {
+                adaptor_.shutdown_readwrite();
+                adaptor_.close();
+                CROW_LOG_DEBUG << this << " from write (chunked)";
+            }
+
+            res.end();
+            res.clear();
+            buffers_.clear();
+            parser_.clear();
+
+            // The deadline was cancelled for the duration of the transfer, so a kept-alive
+            // connection has to be put back into reading state explicitly.
+            if (!force_close && !close_connection_ && need_to_start_read_after_complete_)
+            {
+                need_to_start_read_after_complete_ = false;
+                start_deadline();
+                do_read();
+            }
         }
 
         void do_write_general()
