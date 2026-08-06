@@ -35,6 +35,14 @@ namespace crow
 
     class Router;
 
+    /// Outcome of a single chunk provider invocation.
+    enum class chunk_result
+    {
+        more, ///< The chunk is valid and more data is coming.
+        done, ///< The chunk is valid and it is the last one; the terminating frame is sent.
+        abort ///< The body cannot be finished; the connection is closed without the terminating frame.
+    };
+
     /// HTTP response
     struct response
     {
@@ -63,6 +71,24 @@ namespace crow
         /// `true` while more data is coming, `false` on its last invocation. Leaving the
         /// string empty is allowed and sends no chunk.
         using chunk_provider_t = std::function<bool(std::string&)>;
+
+        /// Outcome of a single chunk provider invocation; see crow::chunk_result.
+        using chunk_result = crow::chunk_result;
+
+        /// Provider of the response body, called repeatedly until it returns `done` or `abort`.
+
+        ///
+        /// The provider fills the given string with the next chunk of the body and returns
+        /// a chunk_result describing how to proceed. Leaving the string empty is allowed
+        /// and sends no chunk.
+        using chunk_provider_ex_t = std::function<chunk_result(std::string&)>;
+
+        /// Handler called once after the chunked body has been written (or writing has stopped).
+
+        ///
+        /// `clean` is `true` when the provider finished with `chunk_result::done` and every
+        /// write succeeded, `false` when the provider aborted or a write error occurred.
+        using chunk_complete_t = std::function<void(bool clean)>;
 
         /// Set the value of an existing header in the response.
         void set_header(std::string key, std::string value)
@@ -192,6 +218,8 @@ namespace crow
             completed_ = r.completed_;
             file_info = std::move(r.file_info);
             chunk_provider_ = std::move(r.chunk_provider_);
+            chunk_provider_ex_ = std::move(r.chunk_provider_ex_);
+            chunk_complete_ = std::move(r.chunk_complete_);
             return *this;
         }
 
@@ -209,6 +237,8 @@ namespace crow
             completed_ = false;
             file_info = static_file_info{};
             chunk_provider_ = nullptr;
+            chunk_provider_ex_ = nullptr;
+            chunk_complete_ = nullptr;
         }
 
         /// Return a "Temporary Redirect" response.
@@ -265,6 +295,7 @@ namespace crow
                 if (skip_body)
                 {
                     chunk_provider_ = nullptr;
+                    chunk_provider_ex_ = nullptr;
                     set_header("Content-Length", std::to_string(body.size()));
                     body = "";
                     manual_length_header = true;
@@ -300,7 +331,7 @@ namespace crow
         /// Check whether the response body is produced by a chunk provider.
         bool is_chunked_type() const
         {
-            return static_cast<bool>(chunk_provider_);
+            return static_cast<bool>(chunk_provider_) || static_cast<bool>(chunk_provider_ex_);
         }
 
         /// Send the response body in chunks produced on demand, without holding it in memory.
@@ -311,13 +342,39 @@ namespace crow
         /// provider runs on the connection thread while the response is being written.
         void set_chunked_content_provider(chunk_provider_t provider, std::string content_type = "")
         {
-            chunk_provider_ = std::move(provider);
+            set_chunked_content_provider(
+              [provider = std::move(provider)](std::string& chunk) {
+                  return provider(chunk) ? chunk_result::more : chunk_result::done;
+              },
+              std::move(content_type));
+        }
+
+        /// Send the response body in chunks produced on demand, without holding it in memory.
+
+        ///
+        /// Same as the `chunk_provider_t` overload, except that the provider can also return
+        /// `chunk_result::abort` to close the connection without the terminating frame, so
+        /// that the client sees a truncated body instead of a seemingly complete one.
+        void set_chunked_content_provider(chunk_provider_ex_t provider, std::string content_type = "")
+        {
+            chunk_provider_ex_ = std::move(provider);
             manual_length_header = true;
             set_header("Transfer-Encoding", "chunked");
             if (!content_type.empty())
             {
                 set_header("Content-Type", std::move(content_type));
             }
+        }
+
+        /// Set a handler called once after the chunked body has been written (or writing has stopped).
+
+        ///
+        /// The handler runs on the connection thread before the response is finalized. Its
+        /// `clean` argument is `true` when the provider finished normally (`chunk_result::done`,
+        /// or `false` from the `chunk_provider_t` overload) and every write succeeded.
+        void set_chunked_completion_handler(chunk_complete_t handler)
+        {
+            chunk_complete_ = std::move(handler);
         }
 
         /// This constains metadata (coming from the `stat` command) related to any static files associated with this response.
@@ -495,5 +552,7 @@ namespace crow
         std::function<bool()> is_alive_helper_;
         static_file_info file_info;
         chunk_provider_t chunk_provider_;
+        chunk_provider_ex_t chunk_provider_ex_;
+        chunk_complete_t chunk_complete_;
     };
 } // namespace crow

@@ -3,6 +3,7 @@
 #include <sys/stat.h>
 
 #include <exception>
+#include <future>
 #include <iostream>
 #include <vector>
 #include <thread>
@@ -2201,6 +2202,116 @@ TEST_CASE("chunked_response_head_request")
 
     app.stop();
 } // chunked_response_head_request
+
+TEST_CASE("chunked_response_abort")
+{
+    SimpleApp app;
+
+    CROW_ROUTE(app, "/abort")
+    ([](const crow::request&, crow::response& res) {
+        int calls = 0;
+        res.set_chunked_content_provider(
+          [calls](std::string& chunk) mutable -> crow::chunk_result {
+              if (++calls < 3)
+              {
+                  chunk = "part" + std::to_string(calls);
+                  return crow::chunk_result::more;
+              }
+              return crow::chunk_result::abort;
+          },
+          "text/plain");
+        res.end();
+    });
+
+    auto _ = app.bindaddr(LOCALHOST_ADDRESS).port(45451).run_async();
+    app.wait_for_server_start();
+
+    HttpClient client(LOCALHOST_ADDRESS, 45451);
+    client.send("GET /abort HTTP/1.0\r\n\r\n");
+
+    // The server closes the connection without the terminating frame, so reading
+    // past the truncated body eventually throws (end of file).
+    std::string response;
+    try
+    {
+        while (true)
+            response += client.receive();
+    }
+    catch (const std::exception&)
+    {
+    }
+
+    CHECK(response.find("Transfer-Encoding: chunked") != std::string::npos);
+
+    // the body is truncated: the produced chunks are there, the terminating frame is not
+    auto body_start = response.find("\r\n\r\n");
+    REQUIRE(body_start != std::string::npos);
+    std::string chunked_body = response.substr(body_start + 4);
+    CHECK(chunked_body.find("5\r\npart1\r\n") != std::string::npos);
+    CHECK(chunked_body.find("5\r\npart2\r\n") != std::string::npos);
+    CHECK(chunked_body.find("0\r\n\r\n") == std::string::npos);
+
+    app.stop();
+} // chunked_response_abort
+
+TEST_CASE("chunked_response_completion_handler")
+{
+    SimpleApp app;
+
+    auto done_clean = std::make_shared<std::promise<bool>>();
+    auto abort_clean = std::make_shared<std::promise<bool>>();
+
+    CROW_ROUTE(app, "/done")
+    ([done_clean](const crow::request&, crow::response& res) {
+        res.set_chunked_content_provider([](std::string& chunk) {
+            chunk = "body";
+            return crow::chunk_result::done;
+        });
+        res.set_chunked_completion_handler([done_clean](bool clean) {
+            done_clean->set_value(clean);
+        });
+        res.end();
+    });
+
+    CROW_ROUTE(app, "/abort")
+    ([abort_clean](const crow::request&, crow::response& res) {
+        res.set_chunked_content_provider([](std::string&) {
+            return crow::chunk_result::abort;
+        });
+        res.set_chunked_completion_handler([abort_clean](bool clean) {
+            abort_clean->set_value(clean);
+        });
+        res.end();
+    });
+
+    auto _ = app.bindaddr(LOCALHOST_ADDRESS).port(45451).run_async();
+    app.wait_for_server_start();
+
+    {
+        HttpClient client(LOCALHOST_ADDRESS, 45451);
+        client.send("GET /done HTTP/1.0\r\n\r\n");
+        std::string response;
+        while (response.size() < 5 || response.compare(response.size() - 5, 5, "0\r\n\r\n") != 0)
+            response += client.receive();
+    }
+    CHECK(done_clean->get_future().get() == true);
+
+    {
+        HttpClient client(LOCALHOST_ADDRESS, 45451);
+        client.send("GET /abort HTTP/1.0\r\n\r\n");
+        try
+        {
+            while (true)
+                client.receive();
+        }
+        catch (const std::exception&)
+        {
+        }
+    }
+    CHECK(abort_clean->get_future().get() == false);
+
+    app.stop();
+} // chunked_response_completion_handler
 
 #ifdef CROW_ENABLE_COMPRESSION
 TEST_CASE("zlib_compression")

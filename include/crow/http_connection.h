@@ -365,20 +365,29 @@ namespace crow
             // closed by the deadline while chunks are still on their way.
             cancel_deadline_timer();
 
-            // do_write_sync() clears the response on every write, so the provider has to be
-            // taken out of it before the loop starts.
-            auto provider = std::move(res.chunk_provider_);
+            // do_write_sync() clears the response on every write, so the provider and the
+            // completion handler have to be taken out of it before the loop starts.
+            auto provider = std::move(res.chunk_provider_ex_);
+            res.chunk_provider_ex_ = nullptr;
+            if (!provider && res.chunk_provider_)
+            {
+                provider = [bool_provider = std::move(res.chunk_provider_)](std::string& chunk) {
+                    return bool_provider(chunk) ? response::chunk_result::more : response::chunk_result::done;
+                };
+            }
             res.chunk_provider_ = nullptr;
+            auto completion_handler = std::move(res.chunk_complete_);
+            res.chunk_complete_ = nullptr;
 
             std::string chunk;
             std::string chunk_header;
             std::vector<asio::const_buffer> buffers{3};
-            bool more = static_cast<bool>(provider);
-            while (more && !ec)
+            auto result = provider ? response::chunk_result::more : response::chunk_result::done;
+            while (result == response::chunk_result::more && !ec)
             {
                 chunk.clear();
-                more = provider(chunk);
-                if (chunk.empty())
+                result = provider(chunk);
+                if (result == response::chunk_result::abort || chunk.empty())
                 {
                     continue;
                 }
@@ -395,7 +404,9 @@ namespace crow
                 }
             }
 
-            if (!ec)
+            // The terminating frame marks the body as complete, so it is only sent when the
+            // provider finished cleanly and every previous write succeeded.
+            if (result == response::chunk_result::done && !ec)
             {
                 static const std::string last_chunk = "0\r\n\r\n";
                 std::vector<asio::const_buffer> tail{1};
@@ -407,7 +418,22 @@ namespace crow
                 }
             }
 
-            if (close_connection_)
+            const bool aborted = (result == response::chunk_result::abort);
+            if (aborted)
+            {
+                // Close the connection forcefully, without the terminating frame, so that the
+                // client sees a truncated body instead of a seemingly complete one.
+                adaptor_.shutdown_readwrite();
+                adaptor_.close();
+                CROW_LOG_DEBUG << this << " from write (chunked, aborted)";
+            }
+
+            if (completion_handler)
+            {
+                completion_handler(result == response::chunk_result::done && !ec);
+            }
+
+            if (close_connection_ && !aborted)
             {
                 adaptor_.shutdown_readwrite();
                 adaptor_.close();
@@ -421,7 +447,7 @@ namespace crow
 
             // The deadline was cancelled for the duration of the transfer, so a kept-alive
             // connection has to be put back into reading state explicitly.
-            if (!close_connection_ && need_to_start_read_after_complete_)
+            if (!aborted && !close_connection_ && need_to_start_read_after_complete_)
             {
                 need_to_start_read_after_complete_ = false;
                 start_deadline();
