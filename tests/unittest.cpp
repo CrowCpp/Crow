@@ -2397,6 +2397,37 @@ TEST_CASE("chunked_response_throwing_completion_handler")
     app.stop();
 } // chunked_response_throwing_completion_handler
 
+TEST_CASE("chunked_provider_excludes_other_body_sources")
+{
+    // A response has exactly one body source; whichever is configured last wins.
+
+    // A chunk provider discards a previously configured static file and string body.
+    {
+        response res;
+        res.set_static_file_info("tests/img/cat.jpg");
+        res.body = "leftover";
+        res.set_chunked_content_provider([](std::string&) { return crow::chunk_result::done; });
+
+        CHECK(res.is_chunked_type());
+        CHECK(!res.is_static_type());
+        CHECK(res.body.empty());
+        CHECK(res.get_header_value("Content-Length").empty());
+        CHECK(res.get_header_value("Transfer-Encoding") == "chunked");
+    }
+
+    // A static file discards a previously configured chunk provider and its framing header.
+    {
+        response res;
+        res.set_chunked_content_provider([](std::string&) { return crow::chunk_result::done; });
+        res.set_static_file_info("tests/img/cat.jpg");
+
+        CHECK(!res.is_chunked_type());
+        CHECK(res.is_static_type());
+        CHECK(res.get_header_value("Transfer-Encoding").empty());
+        CHECK(!res.get_header_value("Content-Length").empty());
+    }
+} // chunked_provider_excludes_other_body_sources
+
 TEST_CASE("chunked_response_throwing_provider")
 {
     SimpleApp app;

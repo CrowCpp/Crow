@@ -398,10 +398,14 @@ namespace crow
         /// `chunk_result::abort` to close the connection without the terminating frame, so
         /// that the client sees a truncated body instead of a seemingly complete one.
         /// Any previously set "Content-Length" header is removed: chunked transfer encoding
-        /// and "Content-Length" must not be sent together.
+        /// and "Content-Length" must not be sent together. A previously configured static
+        /// file or string body is discarded for the same reason: a response has exactly one
+        /// body source, and the one configured last wins.
         void set_chunked_content_provider(chunk_provider_ex_t provider, std::string content_type = "")
         {
             chunk_provider_ex_ = std::move(provider);
+            file_info = static_file_info{};
+            body.clear();
             manual_length_header = true;
             headers.erase("Content-Length");
             set_header("Transfer-Encoding", "chunked");
@@ -448,6 +452,15 @@ namespace crow
         /// the content_type may be specified explicitly.
         void set_static_file_info_unsafe(std::string path, std::string content_type = "")
         {
+            // A response has exactly one body source: installing the file drops a
+            // previously configured chunk provider together with its framing header,
+            // otherwise "Transfer-Encoding: chunked" and "Content-Length" would be
+            // sent side by side while the raw file bytes go out unframed.
+            chunk_provider_ = nullptr;
+            chunk_provider_ex_ = nullptr;
+            chunk_complete_ = nullptr;
+            headers.erase("Transfer-Encoding");
+            manual_length_header = false;
             file_info.path = path;
             file_info.statResult = stat(file_info.path.c_str(), &file_info.statbuf);
 #ifdef CROW_ENABLE_COMPRESSION
