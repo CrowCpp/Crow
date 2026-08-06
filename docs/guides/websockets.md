@@ -50,6 +50,27 @@ The maximum payload size that a connection accepts can be adjusted either global
 
 Specifies the possible subprotocols that are available for the client. If specified, the first match with the client's requested subprotocols will be returned in the "Sec-WebSocket-Protocol" header of the handshake response. Otherwise, the connection will be closed. If no subprotocol are specified on both the client and the server side, the connection process will continue normally. It can be specified by using `#!cpp CROW_WEBSOCKET_ROUTE(app, "/url").subprotocols(<values>)`.
 
+## TCP_NODELAY for WebSocket sockets
+<span class="tag">[:octicons-feed-tag-16: master](https://github.com/CrowCpp/Crow)</span>
+
+You can enable or disable TCP_NODELAY for WebSocket connections with:
+
+- `#!cpp app.websocket_tcp_nodelay(true)`
+
+This setting is separate from HTTP connections.
+To control HTTP sockets, use:
+
+- `#!cpp app.tcp_nodelay(true)`
+
+Example:
+
+```cpp
+crow::SimpleApp app;
+
+app.tcp_nodelay(true)
+    .websocket_tcp_nodelay(true);
+```
+
 
 For more info about websocket routes go [here](../reference/classcrow_1_1_web_socket_rule.html).
 
