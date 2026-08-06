@@ -294,11 +294,24 @@ namespace crow
                 completed_ = true;
                 if (skip_body)
                 {
-                    chunk_provider_ = nullptr;
-                    chunk_provider_ex_ = nullptr;
-                    set_header("Content-Length", std::to_string(body.size()));
-                    body = "";
-                    manual_length_header = true;
+                    if (is_chunked_type())
+                    {
+                        // A response to HEAD must carry the same header fields a GET would
+                        // produce; with a chunk provider the body length is unknown, so
+                        // "Transfer-Encoding: chunked" is kept and "Content-Length" is not
+                        // set (RFC 7230 forbids sending both at once). The body itself is
+                        // skipped, so the provider is dropped without being called.
+                        chunk_provider_ = nullptr;
+                        chunk_provider_ex_ = nullptr;
+                        body = "";
+                        manual_length_header = true;
+                    }
+                    else
+                    {
+                        set_header("Content-Length", std::to_string(body.size()));
+                        body = "";
+                        manual_length_header = true;
+                    }
                 }
                 if (complete_request_handler_)
                 {

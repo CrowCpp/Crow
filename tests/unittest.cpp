@@ -2198,6 +2198,15 @@ TEST_CASE("chunked_response_head_request")
 
     std::string response = HttpClient::request(LOCALHOST_ADDRESS, 45451, "HEAD /chunks HTTP/1.0\r\n\r\n");
 
+    // Same header fields as a GET would produce: the body length is unknown, so
+    // "Transfer-Encoding: chunked" is announced and "Content-Length" is absent.
+    CHECK(response.find("Transfer-Encoding: chunked") != std::string::npos);
+    CHECK(response.find("Content-Length") == std::string::npos);
+
+    // The body itself is skipped entirely.
+    auto header_end = response.find("\r\n\r\n");
+    REQUIRE(header_end != std::string::npos);
+    CHECK(response.substr(header_end + 4).empty());
     CHECK(response.find("body") == std::string::npos);
 
     app.stop();
