@@ -368,10 +368,13 @@ namespace crow
         /// Same as the `chunk_provider_t` overload, except that the provider can also return
         /// `chunk_result::abort` to close the connection without the terminating frame, so
         /// that the client sees a truncated body instead of a seemingly complete one.
+        /// Any previously set "Content-Length" header is removed: chunked transfer encoding
+        /// and "Content-Length" must not be sent together.
         void set_chunked_content_provider(chunk_provider_ex_t provider, std::string content_type = "")
         {
             chunk_provider_ex_ = std::move(provider);
             manual_length_header = true;
+            headers.erase("Content-Length");
             set_header("Transfer-Encoding", "chunked");
             if (!content_type.empty())
             {
