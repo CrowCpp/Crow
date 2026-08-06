@@ -37,8 +37,8 @@ app.bindaddr("192.168.1.2")
 
 Crow lets you control TCP_NODELAY for accepted connections.
 
-- `#!cpp app.tcp_nodelay(true)` enables TCP_NODELAY on HTTP server connections.
-- `#!cpp app.websocket_tcp_nodelay(true)` enables TCP_NODELAY on WebSocket connections.
+- `app.tcp_nodelay(true)` enables TCP_NODELAY on HTTP server connections.
+- `app.websocket_tcp_nodelay(true)` enables TCP_NODELAY on WebSocket connections.
 
 These settings can be configured independently.
 

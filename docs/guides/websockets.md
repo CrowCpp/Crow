@@ -55,12 +55,12 @@ Specifies the possible subprotocols that are available for the client. If specif
 
 You can enable or disable TCP_NODELAY for WebSocket connections with:
 
-- `#!cpp app.websocket_tcp_nodelay(true)`
+- `app.websocket_tcp_nodelay(true)`
 
 This setting is separate from HTTP connections.
 To control HTTP sockets, use:
 
-- `#!cpp app.tcp_nodelay(true)`
+- `app.tcp_nodelay(true)`
 
 Example:
 
