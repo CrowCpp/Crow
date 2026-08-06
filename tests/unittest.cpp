@@ -2181,12 +2181,28 @@ TEST_CASE("chunked_response_large_body")
 
     CHECK(response.find("Transfer-Encoding: chunked") != std::string::npos);
 
-    // every chunk carries its size in hex, 1024 bytes being "400"
+    // decode the chunked body: every frame is "<size in hex>\r\n<data>\r\n",
+    // the terminating frame has size zero
+    auto header_end = response.find("\r\n\r\n");
+    REQUIRE(header_end != std::string::npos);
+    std::string chunked_body = response.substr(header_end + 4);
     size_t seen = 0;
-    for (std::string::size_type pos = response.find("400\r\n"); pos != std::string::npos;
-         pos = response.find("400\r\n", pos + 1))
+    size_t total = 0;
+    std::string::size_type pos = 0;
+    while (true)
+    {
+        auto size_end = chunked_body.find("\r\n", pos);
+        REQUIRE(size_end != std::string::npos);
+        size_t size = std::stoul(chunked_body.substr(pos, size_end - pos), nullptr, 16);
+        if (size == 0)
+            break;
         ++seen;
-    CHECK(seen >= chunk_count);
+        total += size;
+        pos = size_end + 2 + size + 2; // past the size line, the data and its trailing CRLF
+        REQUIRE(pos <= chunked_body.size());
+    }
+    CHECK(seen == chunk_count);
+    CHECK(total == chunk_count * chunk_size);
 
     app.stop();
 } // chunked_response_large_body
