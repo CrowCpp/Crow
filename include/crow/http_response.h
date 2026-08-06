@@ -217,6 +217,11 @@ namespace crow
             headers = std::move(r.headers);
             completed_ = r.completed_;
             file_info = std::move(r.file_info);
+#ifdef CROW_ENABLE_COMPRESSION
+            compressed = r.compressed;
+#endif
+            skip_body = r.skip_body;
+            manual_length_header = r.manual_length_header;
             chunk_provider_ = std::move(r.chunk_provider_);
             chunk_provider_ex_ = std::move(r.chunk_provider_ex_);
             chunk_complete_ = std::move(r.chunk_complete_);
