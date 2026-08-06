@@ -2211,10 +2211,15 @@ TEST_CASE("chunked_response_head_request")
 {
     SimpleApp app;
 
-    CROW_ROUTE(app, "/chunks").methods("GET"_method, "HEAD"_method)([](const crow::request&, crow::response& res) {
+    auto completion_clean = std::make_shared<std::promise<bool>>();
+
+    CROW_ROUTE(app, "/chunks").methods("GET"_method, "HEAD"_method)([completion_clean](const crow::request&, crow::response& res) {
         res.set_chunked_content_provider([](std::string& chunk) -> bool {
             chunk = "body";
             return false;
+        });
+        res.set_chunked_completion_handler([completion_clean](bool clean) {
+            completion_clean->set_value(clean);
         });
         res.end();
     });
@@ -2234,6 +2239,12 @@ TEST_CASE("chunked_response_head_request")
     REQUIRE(header_end != std::string::npos);
     CHECK(response.substr(header_end + 4).empty());
     CHECK(response.find("body") == std::string::npos);
+
+    // The provider is never called, but the completion handler still runs (with
+    // clean == true): it stays the single release point for the source of the data.
+    auto completion = completion_clean->get_future();
+    REQUIRE(completion.wait_for(std::chrono::seconds(5)) == std::future_status::ready);
+    CHECK(completion.get() == true);
 
     app.stop();
 } // chunked_response_head_request

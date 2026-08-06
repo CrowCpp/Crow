@@ -90,7 +90,11 @@ res.set_chunked_completion_handler([](bool clean) {
 (`#!cpp crow::chunk_result::done`, or `#!cpp false` from the `bool` provider)
 and every write succeeded; it is `#!cpp false` when the provider aborted or a
 write error occurred. The handler runs on the connection's thread, after the
-last write and before the response is finalized.
+last write and before the response is finalized. For a `HEAD` request the
+provider is never called, but the handler still runs (with `clean == true`)
+when the response ends, so it is a reliable place to release the source of
+the data. The handler should not throw: an exception that escapes it is
+logged and swallowed.
 
 ## Notes
 
@@ -109,7 +113,8 @@ last write and before the response is finalized.
 !!! note
 
     A response to a `HEAD` request never calls the provider: the headers are sent
-    and the body is skipped.
+    and the body is skipped. The completion handler still runs, with
+    `clean == true`.
 
 !!! note
 

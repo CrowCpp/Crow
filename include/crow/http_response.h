@@ -311,11 +311,27 @@ namespace crow
                         // produce; with a chunk provider the body length is unknown, so
                         // "Transfer-Encoding: chunked" is kept and "Content-Length" is not
                         // set (RFC 7230 forbids sending both at once). The body itself is
-                        // skipped, so the provider is dropped without being called.
+                        // skipped, so the provider is dropped without being called. The
+                        // completion handler is still invoked (with clean == true) so that
+                        // it remains the single release point for the data source no matter
+                        // which method the client used.
                         chunk_provider_ = nullptr;
                         chunk_provider_ex_ = nullptr;
                         body = "";
                         manual_length_header = true;
+                        if (chunk_complete_)
+                        {
+                            auto completion_handler = std::move(chunk_complete_);
+                            chunk_complete_ = nullptr;
+                            try
+                            {
+                                completion_handler(true);
+                            }
+                            catch (...)
+                            {
+                                CROW_LOG_ERROR << "An uncaught exception occurred in the chunked completion handler.";
+                            }
+                        }
                     }
                     else
                     {
@@ -400,7 +416,11 @@ namespace crow
         ///
         /// The handler runs on the connection thread before the response is finalized. Its
         /// `clean` argument is `true` when the provider finished normally (`chunk_result::done`,
-        /// or `false` from the `chunk_provider_t` overload) and every write succeeded.
+        /// or `false` from the `chunk_provider_t` overload) and every write succeeded. For a
+        /// HEAD request the body is skipped and the provider is never called, but the handler
+        /// still runs (with `clean == true`) when the response ends, so it remains a reliable
+        /// place to release the source of the data. The handler should not throw: an exception
+        /// that escapes it is logged and swallowed.
         void set_chunked_completion_handler(chunk_complete_t handler)
         {
             chunk_complete_ = std::move(handler);
