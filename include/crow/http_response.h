@@ -69,7 +69,9 @@ namespace crow
         ///
         /// The provider fills the given string with the next chunk of the body and returns
         /// `true` while more data is coming, `false` on its last invocation. Leaving the
-        /// string empty is allowed and sends no chunk.
+        /// string empty is allowed as an occasional occurrence and sends no chunk; a provider
+        /// that has no data yet should block until data is available (or finish), since
+        /// returning empty chunks in a tight loop spins the connection thread needlessly.
         using chunk_provider_t = std::function<bool(std::string&)>;
 
         /// Outcome of a single chunk provider invocation; see crow::chunk_result.
@@ -80,7 +82,9 @@ namespace crow
         ///
         /// The provider fills the given string with the next chunk of the body and returns
         /// a chunk_result describing how to proceed. Leaving the string empty is allowed
-        /// and sends no chunk.
+        /// as an occasional occurrence and sends no chunk; a provider that has no data yet
+        /// should block until data is available (or return `done`/`abort`), since returning
+        /// `more` with empty chunks in a tight loop spins the connection thread needlessly.
         using chunk_provider_ex_t = std::function<chunk_result(std::string&)>;
 
         /// Handler called once after the chunked body has been written (or writing has stopped).

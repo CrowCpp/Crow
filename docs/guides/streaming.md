@@ -15,8 +15,10 @@ bool provider(std::string& chunk);
 
 Fill `chunk` with the next piece of the body and return `#!cpp true` while more
 data is coming, `#!cpp false` on the last invocation. Leaving `chunk` empty is
-allowed and sends nothing, which is handy when the source of the data has
-produced no bytes yet.
+allowed as an occasional occurrence and sends nothing. A provider that has no
+data yet should block until data is available (or finish the transfer): the
+provider is called again immediately, so returning `#!cpp true` with an empty
+chunk in a tight loop spins the connection thread needlessly.
 
 ### Example
 
