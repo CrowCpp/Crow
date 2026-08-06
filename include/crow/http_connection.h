@@ -386,7 +386,22 @@ namespace crow
             while (result == response::chunk_result::more && !ec)
             {
                 chunk.clear();
-                result = provider(chunk);
+                // An exception from the provider must not escape into the Asio stack; it is
+                // treated as an abort: no terminating frame, forced close, completion(false).
+                try
+                {
+                    result = provider(chunk);
+                }
+                catch (const std::exception& e)
+                {
+                    CROW_LOG_ERROR << "An uncaught exception occurred in the chunk provider: " << e.what();
+                    result = response::chunk_result::abort;
+                }
+                catch (...)
+                {
+                    CROW_LOG_ERROR << "An uncaught exception occurred in the chunk provider.";
+                    result = response::chunk_result::abort;
+                }
                 if (result == response::chunk_result::abort || chunk.empty())
                 {
                     continue;

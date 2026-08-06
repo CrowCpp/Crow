@@ -2322,6 +2322,63 @@ TEST_CASE("chunked_response_completion_handler")
     app.stop();
 } // chunked_response_completion_handler
 
+TEST_CASE("chunked_response_throwing_provider")
+{
+    SimpleApp app;
+
+    auto throw_clean = std::make_shared<std::promise<bool>>();
+
+    CROW_ROUTE(app, "/throw")
+    ([throw_clean](const crow::request&, crow::response& res) {
+        int calls = 0;
+        res.set_chunked_content_provider(
+          [calls](std::string& chunk) mutable -> bool {
+              if (++calls < 3)
+              {
+                  chunk = "part" + std::to_string(calls);
+                  return true;
+              }
+              throw std::runtime_error("provider failed");
+          },
+          "text/plain");
+        res.set_chunked_completion_handler([throw_clean](bool clean) {
+            throw_clean->set_value(clean);
+        });
+        res.end();
+    });
+
+    auto _ = app.bindaddr(LOCALHOST_ADDRESS).port(45451).run_async();
+    app.wait_for_server_start();
+
+    HttpClient client(LOCALHOST_ADDRESS, 45451);
+    client.send("GET /throw HTTP/1.0\r\n\r\n");
+
+    // The exception is treated as an abort: the connection is closed without the
+    // terminating frame, so reading past the truncated body eventually throws.
+    std::string response;
+    try
+    {
+        while (true)
+            response += client.receive();
+    }
+    catch (const std::exception&)
+    {
+    }
+
+    CHECK(response.find("Transfer-Encoding: chunked") != std::string::npos);
+
+    auto body_start = response.find("\r\n\r\n");
+    REQUIRE(body_start != std::string::npos);
+    std::string chunked_body = response.substr(body_start + 4);
+    CHECK(chunked_body.find("5\r\npart1\r\n") != std::string::npos);
+    CHECK(chunked_body.find("5\r\npart2\r\n") != std::string::npos);
+    CHECK(chunked_body.find("0\r\n\r\n") == std::string::npos);
+
+    CHECK(throw_clean->get_future().get() == false);
+
+    app.stop();
+} // chunked_response_throwing_provider
+
 #ifdef CROW_ENABLE_COMPRESSION
 TEST_CASE("zlib_compression")
 {

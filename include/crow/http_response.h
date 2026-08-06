@@ -357,7 +357,9 @@ namespace crow
         ///
         /// The body is sent using `Transfer-Encoding: chunked`, so its size need not be known
         /// in advance, which makes it suitable for bodies of arbitrary or unknown length. The
-        /// provider runs on the connection thread while the response is being written.
+        /// provider runs on the connection thread while the response is being written. The
+        /// provider should not throw: an exception that escapes it is logged and treated as
+        /// an abort (the connection is closed without the terminating frame).
         void set_chunked_content_provider(chunk_provider_t provider, std::string content_type = "")
         {
             set_chunked_content_provider(
