@@ -2093,7 +2093,7 @@ TEST_CASE("chunked_response")
     app.wait_for_server_start();
 
     HttpClient client(LOCALHOST_ADDRESS, 45451);
-    client.send("GET /chunks HTTP/1.0\r\n\r\n");
+    client.send("GET /chunks HTTP/1.1\r\nHost: localhost\r\n\r\n");
 
     std::string response;
     while (response.size() < 5 || response.compare(response.size() - 5, 5, "0\r\n\r\n") != 0)
@@ -2105,6 +2105,16 @@ TEST_CASE("chunked_response")
     CHECK(response.find("5\r\npart1\r\n") != std::string::npos);
     CHECK(response.find("5\r\npart2\r\n") != std::string::npos);
     CHECK(response.find("5\r\npart3\r\n") != std::string::npos);
+
+    // The connection is kept alive after a chunked response: a second request on
+    // the same connection is served, so the connection went back to reading state.
+    client.send("GET /chunks HTTP/1.1\r\nHost: localhost\r\n\r\n");
+    std::string second;
+    while (second.size() < 5 || second.compare(second.size() - 5, 5, "0\r\n\r\n") != 0)
+        second += client.receive();
+    CHECK(second.find("Transfer-Encoding: chunked") != std::string::npos);
+    CHECK(second.find("5\r\npart1\r\n") != std::string::npos);
+    CHECK(second.find("5\r\npart3\r\n") != std::string::npos);
 
     app.stop();
 } // chunked_response
@@ -2127,7 +2137,7 @@ TEST_CASE("chunked_response_no_data")
     app.wait_for_server_start();
 
     HttpClient client(LOCALHOST_ADDRESS, 45451);
-    client.send("GET /empty HTTP/1.0\r\n\r\n");
+    client.send("GET /empty HTTP/1.1\r\nHost: localhost\r\n\r\n");
 
     std::string response;
     while (response.size() < 5 || response.compare(response.size() - 5, 5, "0\r\n\r\n") != 0)
@@ -2163,7 +2173,7 @@ TEST_CASE("chunked_response_large_body")
     app.wait_for_server_start();
 
     HttpClient client(LOCALHOST_ADDRESS, 45451);
-    client.send("GET /large HTTP/1.0\r\n\r\n");
+    client.send("GET /large HTTP/1.1\r\nHost: localhost\r\n\r\n");
 
     std::string response;
     while (response.size() < 5 || response.compare(response.size() - 5, 5, "0\r\n\r\n") != 0)
@@ -2196,7 +2206,7 @@ TEST_CASE("chunked_response_head_request")
     auto _ = app.bindaddr(LOCALHOST_ADDRESS).port(45451).run_async();
     app.wait_for_server_start();
 
-    std::string response = HttpClient::request(LOCALHOST_ADDRESS, 45451, "HEAD /chunks HTTP/1.0\r\n\r\n");
+    std::string response = HttpClient::request(LOCALHOST_ADDRESS, 45451, "HEAD /chunks HTTP/1.1\r\nHost: localhost\r\n\r\n");
 
     // Same header fields as a GET would produce: the body length is unknown, so
     // "Transfer-Encoding: chunked" is announced and "Content-Length" is absent.
@@ -2236,7 +2246,7 @@ TEST_CASE("chunked_response_abort")
     app.wait_for_server_start();
 
     HttpClient client(LOCALHOST_ADDRESS, 45451);
-    client.send("GET /abort HTTP/1.0\r\n\r\n");
+    client.send("GET /abort HTTP/1.1\r\nHost: localhost\r\n\r\n");
 
     // The server closes the connection without the terminating frame, so reading
     // past the truncated body eventually throws (end of file).
@@ -2298,7 +2308,7 @@ TEST_CASE("chunked_response_completion_handler")
 
     {
         HttpClient client(LOCALHOST_ADDRESS, 45451);
-        client.send("GET /done HTTP/1.0\r\n\r\n");
+        client.send("GET /done HTTP/1.1\r\nHost: localhost\r\n\r\n");
         std::string response;
         while (response.size() < 5 || response.compare(response.size() - 5, 5, "0\r\n\r\n") != 0)
             response += client.receive();
@@ -2307,7 +2317,7 @@ TEST_CASE("chunked_response_completion_handler")
 
     {
         HttpClient client(LOCALHOST_ADDRESS, 45451);
-        client.send("GET /abort HTTP/1.0\r\n\r\n");
+        client.send("GET /abort HTTP/1.1\r\nHost: localhost\r\n\r\n");
         try
         {
             while (true)
@@ -2351,7 +2361,7 @@ TEST_CASE("chunked_response_throwing_provider")
     app.wait_for_server_start();
 
     HttpClient client(LOCALHOST_ADDRESS, 45451);
-    client.send("GET /throw HTTP/1.0\r\n\r\n");
+    client.send("GET /throw HTTP/1.1\r\nHost: localhost\r\n\r\n");
 
     // The exception is treated as an abort: the connection is closed without the
     // terminating frame, so reading past the truncated body eventually throws.
