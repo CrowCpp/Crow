@@ -224,7 +224,9 @@ namespace crow
 #ifdef CROW_ENABLE_COMPRESSION
             compressed = r.compressed;
 #endif
-            skip_body = r.skip_body;
+            // skip_body is deliberately not copied: it marks the request side (the router
+            // sets it on the connection's response before the handler runs for a HEAD
+            // request), so a handler assigning a freshly built response must not reset it.
             manual_length_header = r.manual_length_header;
             chunk_provider_ = std::move(r.chunk_provider_);
             chunk_provider_ex_ = std::move(r.chunk_provider_ex_);
