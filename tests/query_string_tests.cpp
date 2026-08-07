@@ -44,6 +44,22 @@ TEST_CASE( "query string keys" )
     }
 }
 
+TEST_CASE("query string decoding in get_dict")
+{
+    const std::vector<std::pair<std::string, std::string>> params{
+      {"foo%5Bkey1%5D", "bar1"},
+      {"foo%5Bkey2%5D", "bar2"},
+      {"foo%5B%5D", "bar3"},
+      {"foo%5B%5D", "bar4"},
+      {"foo%5B%5Bkey%5D", "bar%5B%1%5D"}};
+    const crow::query_string query_params("params?" + buildQueryStr(params));
+    auto map = query_params.get_dict("foo");
+    REQUIRE(map["key1"] == "bar1");
+    REQUIRE(map["key2"] == "bar2");
+    REQUIRE(map[""] == "bar3");
+    REQUIRE(map["[key"] == "bar[");
+}
+
 TEST_CASE( "malformed percent encoding - trailing percent" )
 {
     // URL ending with '%' should not cause heap overflow (Issue #1126)
