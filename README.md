@@ -211,4 +211,4 @@ Crow has incorporated the following libraries into its source.
 
 ## Star History
 
-[![Star History Chart](https://api.star-history.com/svg?repos=CrowCpp/Crow,oatpp/oatpp,drogonframework/drogon&type=Date)](https://www.star-history.com/#CrowCpp/Crow&oatpp/oatpp&drogonframework/drogon&Date)
+[![Star History Chart](https://star-history.dera.page/svg?repos=CrowCpp/Crow,oatpp/oatpp,drogonframework/drogon&type=Date)](https://star-history.dera.page/#CrowCpp/Crow&oatpp/oatpp&drogonframework/drogon&Date)
