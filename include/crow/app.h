@@ -464,7 +464,7 @@ namespace crow
             return concurrency_;
         }
 
-        /// \brief Set the maximum number of concurrent connections (default is unlimited with value std::nullopt)
+        /// \brief Set the maximum number of concurrent connections (default is unlimited with value 0)
         self_t& max_connections(size_t size)
         {
             max_connections_ = size;
@@ -919,7 +919,7 @@ namespace crow
         std::uint8_t timeout_{5};
         uint16_t port_ = 80;
         unsigned int concurrency_ = 2;
-        std::optional<size_t> max_connections_;
+        size_t max_connections_{};
         std::atomic_bool is_bound_ = false;
         uint64_t max_payload_{UINT64_MAX};
         std::string server_name_ = std::string("Crow/") + VERSION;

@@ -52,7 +52,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
              std::string server_name = std::string("Crow/") + VERSION,
              std::tuple<Middlewares...>* middlewares = nullptr,
              unsigned int concurrency = 1,
-             std::optional<size_t> max_connections = std::nullopt, 
+             size_t max_connections = 0, 
              uint8_t timeout = 5,
              typename Adaptor::context* adaptor_ctx = nullptr,
              detail::socket::tcp_socket_options tcp_socket_options = {}):
@@ -322,7 +322,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                 acceptor_.raw_acceptor().async_accept(
                   p->socket(),
                   [this, p, &ic, context_idx](error_code ec) {
-                      if(max_task_queue_length_.has_value() && task_queue_length_pool_[context_idx] > max_task_queue_length_.value())
+                      if(max_task_queue_length_ > 0 && task_queue_length_pool_[context_idx] > max_task_queue_length_)
                       {
                         CROW_LOG_DEBUG << "Too many queued tasks for io context " << &ic << " {" << context_idx << "}, rejecting connection. Queue length: " << task_queue_length_pool_[context_idx];
                       }
@@ -350,7 +350,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
     private:
         unsigned int concurrency_{2};
         std::vector<std::atomic<unsigned int>> task_queue_length_pool_;
-        std::optional<size_t> max_task_queue_length_;
+        size_t max_task_queue_length_{};
         std::vector<std::unique_ptr<asio::io_context>> io_context_pool_;
         asio::io_context io_context_;
         std::vector<detail::task_timer*> task_timer_pool_;
