@@ -834,6 +834,12 @@ namespace crow
                       self->parser_.done();
                       // adaptor will close after write
                   }
+                  else if (self->async_chunk_transfer_)
+                  {
+                      // The asynchronous transfer owns the connection until it finishes.
+                      // Its completion path restores the deadline and request reading.
+                      self->need_to_start_read_after_complete_ = true;
+                  }
                   else if (!self->need_to_call_after_handlers_)
                   {
                       self->start_deadline();

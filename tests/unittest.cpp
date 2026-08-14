@@ -2126,17 +2126,25 @@ TEST_CASE("async_chunked_response_completed_from_other_threads")
     SimpleApp app;
 
     auto next_chunk = std::make_shared<std::atomic<std::size_t>>(0);
+    auto active_requests = std::make_shared<std::atomic<std::size_t>>(0);
+    auto maximum_active_requests = std::make_shared<std::atomic<std::size_t>>(0);
     auto worker_tasks = std::make_shared<std::vector<std::future<void>>>();
     auto worker_tasks_mutex = std::make_shared<std::mutex>();
     auto completion_clean = std::make_shared<std::promise<bool>>();
 
     CROW_ROUTE(app, "/async-chunks")
-    ([next_chunk, worker_tasks, worker_tasks_mutex, completion_clean](const crow::request&, crow::response& res) {
+    ([next_chunk, active_requests, maximum_active_requests, worker_tasks, worker_tasks_mutex, completion_clean](const crow::request&, crow::response& res) {
         res.set_async_chunked_content_provider(
-          [next_chunk, worker_tasks, worker_tasks_mutex](crow::response::async_chunk_completion_t complete) {
+          [next_chunk, active_requests, maximum_active_requests, worker_tasks, worker_tasks_mutex](crow::response::async_chunk_completion_t complete) {
               const std::size_t index = next_chunk->fetch_add(1);
+              const std::size_t pending = active_requests->fetch_add(1) + 1;
+              std::size_t observed_maximum = maximum_active_requests->load();
+              while (observed_maximum < pending && !maximum_active_requests->compare_exchange_weak(observed_maximum, pending))
+              {}
+
               std::lock_guard<std::mutex> lock(*worker_tasks_mutex);
-              worker_tasks->emplace_back(std::async(std::launch::async, [index, complete = std::move(complete)]() mutable {
+              worker_tasks->emplace_back(std::async(std::launch::async, [index, active_requests, complete = std::move(complete)]() mutable {
+                  active_requests->fetch_sub(1);
                   if (index < 2)
                   {
                       complete(crow::chunk_result::more, "part" + std::to_string(index + 1));
@@ -2175,12 +2183,14 @@ TEST_CASE("async_chunked_response_completed_from_other_threads")
     app.stop();
 
     CHECK(next_chunk->load() == 3);
+    CHECK(active_requests->load() == 0);
+    CHECK(maximum_active_requests->load() == 1);
     CHECK(response.find("Transfer-Encoding: chunked") != std::string::npos);
     CHECK(response.find("Content-Length") == std::string::npos);
     CHECK(response.find("Content-Type: text/plain") != std::string::npos);
-    CHECK(response.find("5\r\npart1\r\n") != std::string::npos);
-    CHECK(response.find("5\r\npart2\r\n") != std::string::npos);
-    CHECK(response.find("5\r\npart3\r\n") != std::string::npos);
+    const auto header_end = response.find("\r\n\r\n");
+    REQUIRE(header_end != std::string::npos);
+    CHECK(response.substr(header_end + 4) == "5\r\npart1\r\n5\r\npart2\r\n5\r\npart3\r\n0\r\n\r\n");
 
     auto completion = completion_clean->get_future();
     REQUIRE(completion.wait_for(std::chrono::seconds(5)) == std::future_status::ready);
@@ -2234,6 +2244,70 @@ TEST_CASE("async_chunked_response_synchronous_completion_does_not_recurse")
     CHECK(calls->load() == chunk_count + 1);
     CHECK(maximum_depth->load() == 1);
 } // async_chunked_response_synchronous_completion_does_not_recurse
+
+TEST_CASE("async_chunked_response_waits_beyond_connection_timeout")
+{
+    SimpleApp app;
+
+    auto worker_tasks = std::make_shared<std::vector<std::future<void>>>();
+    auto worker_tasks_mutex = std::make_shared<std::mutex>();
+    auto completion_clean = std::make_shared<std::promise<bool>>();
+    auto completion = completion_clean->get_future();
+
+    CROW_ROUTE(app, "/delayed-async-chunk")
+    ([worker_tasks, worker_tasks_mutex, completion_clean](const crow::request&, crow::response& res) {
+        res.set_async_chunked_content_provider(
+          [worker_tasks, worker_tasks_mutex](crow::response::async_chunk_completion_t complete) {
+              std::lock_guard<std::mutex> lock(*worker_tasks_mutex);
+              worker_tasks->emplace_back(std::async(std::launch::async, [complete = std::move(complete)]() mutable {
+                  std::this_thread::sleep_for(std::chrono::milliseconds(2500));
+                  complete(crow::chunk_result::done, "delayed");
+              }));
+          },
+          "text/plain");
+        res.set_chunked_completion_handler([completion_clean](bool clean) {
+            completion_clean->set_value(clean);
+        });
+        res.end();
+    });
+
+    auto _ = app.bindaddr(LOCALHOST_ADDRESS).timeout(1).port(45451).run_async();
+    app.wait_for_server_start();
+
+    HttpClient client(LOCALHOST_ADDRESS, 45451);
+    client.send("GET /delayed-async-chunk HTTP/1.1\r\nHost: localhost\r\n\r\n");
+
+    std::string response;
+    try
+    {
+        while (response.size() < 5 || response.compare(response.size() - 5, 5, "0\r\n\r\n") != 0)
+            response += client.receive();
+    }
+    catch (const std::exception&)
+    {
+    }
+
+    std::vector<std::future<void>> tasks;
+    {
+        std::lock_guard<std::mutex> lock(*worker_tasks_mutex);
+        tasks.swap(*worker_tasks);
+    }
+    for (auto& task : tasks)
+        task.get();
+
+    const auto completion_status = completion.wait_for(std::chrono::seconds(5));
+    const bool clean = completion_status == std::future_status::ready ? completion.get() : false;
+    app.stop();
+
+    CHECK(response.find("Transfer-Encoding: chunked") != std::string::npos);
+    CHECK(response.find("Content-Length") == std::string::npos);
+    CHECK(response.find("Content-Type: text/plain") != std::string::npos);
+    const auto header_end = response.find("\r\n\r\n");
+    REQUIRE(header_end != std::string::npos);
+    CHECK(response.substr(header_end + 4) == "7\r\ndelayed\r\n0\r\n\r\n");
+    REQUIRE(completion_status == std::future_status::ready);
+    CHECK(clean == true);
+} // async_chunked_response_waits_beyond_connection_timeout
 
 TEST_CASE("chunked_response_no_data")
 {
