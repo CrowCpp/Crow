@@ -32,1013 +32,366 @@
 #include "crow/task_timer.h"
 #include "crow/utility.h"
 
-namespace crow {
+namespace crow
+{
 #ifdef CROW_USE_BOOST
-namespace asio   = boost::asio;
-using error_code = boost::system::error_code;
+    namespace asio = boost::asio;
+    using error_code = boost::system::error_code;
 #else
-using error_code = asio::error_code;
+    using error_code = asio::error_code;
 #endif
-using tcp = asio::ip::tcp;
+    using tcp = asio::ip::tcp;
 
 #ifdef CROW_ENABLE_DEBUG
-static std::atomic<int> connectionCount;
+    static std::atomic<int> connectionCount;
 #endif
 
-namespace detail {
+    namespace detail {
 #ifdef CROW_ENABLE_ASYNC_CHUNK_PUBLICATION_TEST_HOOK
-void invoke_async_chunk_publication_test_hook();
+    void invoke_async_chunk_publication_test_hook();
 #endif
 
-template<typename ConnectionType>
-class connection_lifecycle_registry {
-public:
-    void track(const std::shared_ptr<ConnectionType>& connection) {
-        connections_[connection.get()] = connection;
-    }
-
-    void untrack(ConnectionType* connection) noexcept {
-        connections_.erase(connection);
-    }
-
-    void shutdown_all() noexcept {
-        auto connections = std::move(connections_);
-        connections_.clear();
-        for (auto& item : connections) {
-            if (auto connection = item.second.lock()) {
-                connection->shutdown_on_worker_exit();
-            }
+    template<typename ConnectionType>
+    class connection_lifecycle_registry {
+    public:
+        void track(const std::shared_ptr<ConnectionType>& connection) {
+            connections_[connection.get()] = connection;
         }
-    }
 
-private:
-    // All methods run on the worker associated with these connections.
-    std::unordered_map<ConnectionType*, std::weak_ptr<ConnectionType>> connections_;
-};
-} // namespace detail
-
-/// An HTTP connection.
-template<typename Adaptor, typename Handler, typename... Middlewares>
-class Connection : public std::enable_shared_from_this<Connection<Adaptor, Handler, Middlewares...>> {
-    friend struct crow::response;
-    template<typename>
-    friend class detail::connection_lifecycle_registry;
-
-public:
-    Connection(asio::io_context& io_context,
-               Handler* handler,
-               const std::string& server_name,
-               std::tuple<Middlewares...>* middlewares,
-               std::function<std::string()>& get_cached_date_str_f,
-               detail::task_timer& task_timer,
-               typename Adaptor::context* adaptor_ctx_,
-               std::atomic<unsigned int>& queue_length,
-               std::shared_ptr<detail::connection_lifecycle_registry<Connection>> lifecycle_registry = nullptr)
-        : adaptor_(io_context, adaptor_ctx_)
-        , handler_(handler)
-        , parser_(this)
-        , req_(parser_.req)
-        , server_name_(server_name)
-        , middlewares_(middlewares)
-        , get_cached_date_str(get_cached_date_str_f)
-        , task_timer_(task_timer)
-        , res_stream_threshold_(handler->stream_threshold())
-        , queue_length_(queue_length)
-        , lifecycle_registry_(lifecycle_registry) {
-        queue_length_++;
-#ifdef CROW_ENABLE_DEBUG
-        connectionCount++;
-        CROW_LOG_DEBUG << "Connection (" << this << ") allocated, total: " << connectionCount;
-#endif
-    }
-
-    ~Connection() {
-        destroy_async_chunk_transfer();
-        queue_length_--;
-#ifdef CROW_ENABLE_DEBUG
-        connectionCount--;
-        CROW_LOG_DEBUG << "Connection (" << this << ") freed, total: " << connectionCount;
-#endif
-    }
-
-    /// The TCP socket on top of which the connection is established.
-    decltype(std::declval<Adaptor>().raw_socket())& socket() {
-        return adaptor_.raw_socket();
-    }
-
-    void start() {
-        auto self = this->shared_from_this();
-        adaptor_.start([self](const error_code& ec) {
-            if (!ec) {
-                self->start_deadline();
-                self->parser_.clear();
-
-                self->do_read();
-            } else {
-                CROW_LOG_ERROR << "Could not start adaptor: " << ec.message();
-            }
-        });
-    }
-
-    void handle_url() {
-        routing_handle_result_ = handler_->handle_initial(req_, res);
-        // if no route is found for the request method, return the response without parsing or processing anything
-        // further.
-        if (!routing_handle_result_->rule_index && !routing_handle_result_->catch_all
-            && (req_.method != HTTPMethod::Options
-                || routing_handle_result_->method == HTTPMethod::InternalMethodCount)) {
-            parser_.done();
-            need_to_call_after_handlers_ = true;
-            complete_request();
-        }
-    }
-
-    void handle_header() {
-        // HTTP 1.1 Expect: 100-continue
-        if (req_.http_ver_major == 1 && req_.http_ver_minor == 1
-            && get_header_value(req_.headers, "expect") == "100-continue") {
-            continue_requested = true;
-            buffers_.clear();
-            static const std::string expect_100_continue = "HTTP/1.1 100 Continue\r\n\r\n";
-            buffers_.emplace_back(expect_100_continue.data(), expect_100_continue.size());
-            error_code ec = do_write_sync(buffers_);
-            if (ec) {
-                CROW_LOG_ERROR << ec
-                               << " buffer write error happened while handling sending continuation buffer header";
-            }
-        }
-        if (!routing_handle_result_->rule_index && !routing_handle_result_->catch_all
-            && req_.method == HTTPMethod::Options) {
-            parser_.done();
-            need_to_call_after_handlers_ = true;
-            complete_request();
-        }
-    }
-
-    void handle() {
-        // TODO(EDev): cancel_deadline_timer should be looked into, it might be a good idea to add it to handle_url()
-        // and then restart the timer once everything passes
-        cancel_deadline_timer();
-        bool is_invalid_request = false;
-        add_keep_alive_         = false;
-
-        // Create context
-        ctx_                      = detail::context<Middlewares...>();
-        req_.middleware_context   = static_cast<void*>(&ctx_);
-        req_.middleware_container = static_cast<void*>(middlewares_);
-        req_.io_context           = &adaptor_.get_io_context();
-        req_.remote_ip_address    = adaptor_.address();
-        add_keep_alive_           = req_.keep_alive;
-        close_connection_         = req_.close_connection;
-
-        if (req_.check_version(1, 1)) // HTTP/1.1
+        void untrack(ConnectionType* connection) noexcept
         {
-            if (!req_.headers.count("host")) {
-                is_invalid_request = true;
-                res                = response(400);
-            } else if (req_.upgrade && req_.method != HTTPMethod::Options) {
-                // h2 or h2c headers
-                if (req_.get_header_value("upgrade").find("h2") == 0) {
-                    // TODO(ipkn): HTTP/2
-                    // currently, ignore upgrade header
-                } else {
+            connections_.erase(connection);
+        }
 
-                    detail::middleware_call_helper<detail::middleware_call_criteria_only_global,
-                                                   0,
-                                                   decltype(ctx_),
-                                                   decltype(*middlewares_)>({}, *middlewares_, req_, res, ctx_);
-                    close_connection_ = true;
-                    handler_->handle_upgrade(req_, res, std::move(adaptor_));
-                    return;
+        void shutdown_all() noexcept {
+            auto connections = std::move(connections_);
+            connections_.clear();
+            for (auto& item : connections) {
+                if (auto connection = item.second.lock())
+                {
+                    connection->shutdown_on_worker_exit();
                 }
             }
         }
 
-        CROW_LOG_INFO << "Request: " << utility::lexical_cast<std::string>(adaptor_.remote_endpoint()) << " " << this
-                      << " HTTP/" << (char)(req_.http_ver_major + '0') << "." << (char)(req_.http_ver_minor + '0')
-                      << ' ' << method_name(req_.method) << " " << req_.url;
+    private:
+        // All methods run on the worker associated with these connections.
+        std::unordered_map<ConnectionType*, std::weak_ptr<ConnectionType>> connections_;
+    };
+    } // namespace detail
 
-        need_to_call_after_handlers_ = false;
-        if (!is_invalid_request) {
-            res.complete_request_handler_ = nullptr;
-            auto self                     = this->shared_from_this();
-            res.is_alive_helper_          = [self]() -> bool { return self->adaptor_.is_open(); };
+    /// An HTTP connection.
+    template<typename Adaptor, typename Handler, typename... Middlewares>
+    class Connection : public std::enable_shared_from_this<Connection<Adaptor, Handler, Middlewares...>>
+    {
+        friend struct crow::response;
+        template<typename>
+        friend class detail::connection_lifecycle_registry;
 
-            detail::middleware_call_helper<detail::middleware_call_criteria_only_global,
-                                           0,
-                                           decltype(ctx_),
-                                           decltype(*middlewares_)>({}, *middlewares_, req_, res, ctx_);
+    public:
+        Connection(asio::io_context& io_context,
+                   Handler* handler,
+                   const std::string& server_name,
+                   std::tuple<Middlewares...>* middlewares,
+                   std::function<std::string()>& get_cached_date_str_f,
+                   detail::task_timer& task_timer,
+                   typename Adaptor::context* adaptor_ctx_,
+                   std::atomic<unsigned int>& queue_length,
+                   std::shared_ptr<detail::connection_lifecycle_registry<Connection>> lifecycle_registry = nullptr):
+          adaptor_(io_context, adaptor_ctx_), handler_(handler), parser_(this), req_(parser_.req), server_name_(server_name), middlewares_(middlewares), get_cached_date_str(get_cached_date_str_f), task_timer_(task_timer), res_stream_threshold_(handler->stream_threshold()), queue_length_(queue_length), lifecycle_registry_(lifecycle_registry)
+        {
+            queue_length_++;
+#ifdef CROW_ENABLE_DEBUG
+            connectionCount++;
+            CROW_LOG_DEBUG << "Connection (" << this << ") allocated, total: " << connectionCount;
+#endif
+        }
 
-            if (!res.completed_) {
-                res.complete_request_handler_ = [self] { self->complete_request(); };
-                need_to_call_after_handlers_  = true;
-                handler_->handle(req_, res, routing_handle_result_);
-                if (add_keep_alive_)
-                    res.set_header("connection", "Keep-Alive");
-            } else {
+        ~Connection() {
+            destroy_async_chunk_transfer();
+            queue_length_--;
+#ifdef CROW_ENABLE_DEBUG
+            connectionCount--;
+            CROW_LOG_DEBUG << "Connection (" << this << ") freed, total: " << connectionCount;
+#endif
+        }
+
+        /// The TCP socket on top of which the connection is established.
+        decltype(std::declval<Adaptor>().raw_socket())& socket()
+        {
+            return adaptor_.raw_socket();
+        }
+
+        void start()
+        {
+            auto self = this->shared_from_this();
+            adaptor_.start([self](const error_code& ec) {
+                if (!ec)
+                {
+                    self->start_deadline();
+                    self->parser_.clear();
+
+                    self->do_read();
+                }
+                else
+                {
+                    CROW_LOG_ERROR << "Could not start adaptor: " << ec.message();
+                }
+            });
+        }
+
+        void handle_url()
+        {
+            routing_handle_result_ = handler_->handle_initial(req_, res);
+            // if no route is found for the request method, return the response without parsing or processing anything further.
+            if (!routing_handle_result_->rule_index && !routing_handle_result_->catch_all && (req_.method != HTTPMethod::Options || routing_handle_result_->method == HTTPMethod::InternalMethodCount))
+            {
+                parser_.done();
+                need_to_call_after_handlers_ = true;
                 complete_request();
             }
-        } else {
-            complete_request();
-        }
-    }
-
-    /// Call the after handle middleware and send the write the response to the connection.
-    void complete_request() {
-        CROW_LOG_INFO << "Response: " << this << ' ' << req_.raw_url << ' ' << res.code << ' ' << close_connection_;
-        res.is_alive_helper_ = nullptr;
-
-        if (need_to_call_after_handlers_) {
-            need_to_call_after_handlers_ = false;
-
-            // call all after_handler of middlewares
-            detail::after_handlers_call_helper<detail::middleware_call_criteria_only_global,
-                                               (static_cast<int>(sizeof...(Middlewares)) - 1),
-                                               decltype(ctx_),
-                                               decltype(*middlewares_)>({}, *middlewares_, ctx_, req_, res);
-        }
-#ifdef CROW_ENABLE_COMPRESSION
-        if (!res.body.empty() && handler_->compression_used()) {
-            std::string accept_encoding = req_.get_header_value("Accept-Encoding");
-            if (!accept_encoding.empty() && res.compressed) {
-                switch (handler_->compression_algorithm()) {
-                    case compression::DEFLATE:
-                        if (accept_encoding.find("deflate") != std::string::npos) {
-                            res.body = compression::compress_string(res.body, compression::algorithm::DEFLATE);
-                            res.set_header("Content-Encoding", "deflate");
-                        }
-                        break;
-                    case compression::GZIP:
-                        if (accept_encoding.find("gzip") != std::string::npos) {
-                            res.body = compression::compress_string(res.body, compression::algorithm::GZIP);
-                            res.set_header("Content-Encoding", "gzip");
-                        }
-                        break;
-                    default:
-                        break;
-                }
-            }
-        }
-#endif
-
-        if (req_.http_ver_major == 1 && req_.http_ver_minor == 0 && res.is_chunked_type()) {
-            reject_http_1_0_chunked_response();
-        } else if (res.skip_body && res.is_chunked_type()) {
-            res.notify_chunked_completion(true);
         }
 
-        prepare_buffers();
-        if (res.skip_body) {
-            // Header preparation may synthesize an error representation. HEAD reports
-            // its length while omitting its bytes from the response message.
-            res.body.clear();
-        }
-
-        if (res.is_static_type()) {
-            do_write_static();
-        } else if (res.is_chunked_type() && !res.skip_body) {
-            do_write_chunked();
-        } else {
-            do_write_general();
-        }
-    }
-
-private:
-    void prepare_buffers() {
-        res.complete_request_handler_ = nullptr;
-        res.is_alive_helper_          = nullptr;
-
-        if (!adaptor_.is_open()) {
-            // CROW_LOG_DEBUG << this << " delete (socket is closed) " << is_reading << ' ' << is_writing;
-            // delete this;
-            return;
-        }
-        res.write_header_into_buffer(buffers_, content_length_, add_keep_alive_, server_name_);
-    }
-
-    void reject_http_1_0_chunked_response() {
-        res.chunk_provider_       = nullptr;
-        res.chunk_provider_ex_    = nullptr;
-        res.async_chunk_provider_ = nullptr;
-        res.body_source_          = response::body_source_kind::none;
-        res.body.clear();
-        res.code                 = status::HTTP_VERSION_NOT_SUPPORTED;
-        res.manual_length_header = false;
-        res.headers.erase("Content-Length");
-        res.headers.erase("Transfer-Encoding");
-        res.headers.erase("Content-Encoding");
-        res.headers.erase("Trailer");
-        res.set_header("Connection", "close");
-        add_keep_alive_   = false;
-        close_connection_ = true;
-        res.notify_chunked_completion(false);
-    }
-
-    void do_write_static() {
-        asio::write(adaptor_.socket(), buffers_);
-
-        if (res.file_info.statResult == 0) {
-            std::ifstream is(res.file_info.path.c_str(), std::ios::in | std::ios::binary);
-            std::vector<asio::const_buffer> buffers{1};
-            char buf[16384];
-            is.read(buf, sizeof(buf));
-            while (is.gcount() > 0) {
-                buffers[0]    = asio::buffer(buf, is.gcount());
-                error_code ec = do_write_sync(buffers);
-                if (ec) {
-                    CROW_LOG_ERROR << ec << " - buffer write error happened while sending content of file "
-                                   << res.file_info.path << ". Writing stopped premature.";
-                    break;
-                }
-                is.read(buf, sizeof(buf));
-            }
-        }
-        if (close_connection_) {
-            adaptor_.shutdown_readwrite();
-            adaptor_.close();
-            CROW_LOG_DEBUG << this << " from write (static)";
-        }
-
-        res.end();
-        res.clear();
-        buffers_.clear();
-        parser_.clear();
-    }
-
-    /// Format a chunk size the way chunked transfer encoding wants it: lowercase hex.
-    static std::string chunk_size_to_hex(std::size_t value) {
-        static const char digits[] = "0123456789abcdef";
-        if (value == 0) {
-            return "0";
-        }
-        std::string out;
-        while (value != 0) {
-            out.insert(out.begin(), digits[value & 0xF]);
-            value >>= 4;
-        }
-        return out;
-    }
-
-    enum class AsyncChunkPhase {
-        writing_headers,
-        requesting_chunk,
-        writing_chunk,
-        writing_terminator,
-        completed,
-        aborted
-    };
-
-    struct AsyncChunkTransfer;
-
-    struct AsyncChunkRequest {
-        std::mutex mutex;
-        bool completed{false};
-        bool active{true};
-        asio::io_context* io_context{nullptr};
-        std::weak_ptr<Connection> connection;
-        std::weak_ptr<AsyncChunkTransfer> transfer;
-    };
-
-    template<typename CompletionHandler>
-    static void post_async_chunk_completion(asio::io_context& io_context, CompletionHandler&& handler) {
-#ifdef CROW_ENABLE_ASYNC_CHUNK_PUBLICATION_TEST_HOOK
-        detail::invoke_async_chunk_publication_test_hook();
-#endif
-        asio::post(io_context, std::forward<CompletionHandler>(handler));
-    }
-
-    static void log_async_chunk_publication_failure(const char* message, const std::exception_ptr& failure) noexcept {
-        if (!failure) {
-            return;
-        }
-
-        try {
-            try {
-                std::rethrow_exception(failure);
-            } catch (const std::exception& e) {
-                CROW_LOG_ERROR << message << ": " << e.what();
-            } catch (...) {
-                CROW_LOG_ERROR << message << ".";
-            }
-        } catch (...) {
-            // Publication errors must not escape through logging on provider threads.
-        }
-    }
-
-    struct AsyncChunkTransfer {
-        ~AsyncChunkTransfer() {
-            notify_completion(false);
-        }
-
-        void notify_completion(bool clean) noexcept {
-            response::chunk_complete_t handler;
+        void handle_header()
+        {
+            // HTTP 1.1 Expect: 100-continue
+            if (req_.http_ver_major == 1 && req_.http_ver_minor == 1 && get_header_value(req_.headers, "expect") == "100-continue")
             {
-                // Normal completion and Server worker shutdown run on the connection
-                // thread. The latch also keeps fallback destruction once-only for a
-                // Connection used without Server lifecycle tracking.
-                std::lock_guard<std::mutex> lock(completion_mutex);
-                if (completion_reported) {
-                    return;
+                continue_requested = true;
+                buffers_.clear();
+                static const std::string expect_100_continue = "HTTP/1.1 100 Continue\r\n\r\n";
+                buffers_.emplace_back(expect_100_continue.data(), expect_100_continue.size());
+                error_code ec = do_write_sync(buffers_);
+                if (ec)
+                {
+                    CROW_LOG_ERROR << ec << " buffer write error happened while handling sending continuation buffer header";
                 }
-                completion_reported = true;
-                handler             = std::move(completion_handler);
+            }
+            if (!routing_handle_result_->rule_index && !routing_handle_result_->catch_all && req_.method == HTTPMethod::Options)
+            {
+                parser_.done();
+                need_to_call_after_handlers_ = true;
+                complete_request();
+            }
+        }
+
+        void handle()
+        {
+            // TODO(EDev): cancel_deadline_timer should be looked into, it might be a good idea to add it to handle_url() and then restart the timer once everything passes
+            cancel_deadline_timer();
+            bool is_invalid_request = false;
+            add_keep_alive_ = false;
+
+            // Create context
+            ctx_ = detail::context<Middlewares...>();
+            req_.middleware_context = static_cast<void*>(&ctx_);
+            req_.middleware_container = static_cast<void*>(middlewares_);
+            req_.io_context = &adaptor_.get_io_context();
+            req_.remote_ip_address = adaptor_.address();
+            add_keep_alive_ = req_.keep_alive;
+            close_connection_ = req_.close_connection;
+
+            if (req_.check_version(1, 1)) // HTTP/1.1
+            {
+                if (!req_.headers.count("host"))
+                {
+                    is_invalid_request = true;
+                    res = response(400);
+                }
+                else if (req_.upgrade && req_.method != HTTPMethod::Options)
+                {
+                    // h2 or h2c headers
+                    if (req_.get_header_value("upgrade").find("h2")==0)
+                    {
+                        // TODO(ipkn): HTTP/2
+                        // currently, ignore upgrade header
+                    }
+                    else
+                    {
+
+                        detail::middleware_call_helper<detail::middleware_call_criteria_only_global,
+                                                       0, decltype(ctx_), decltype(*middlewares_)>({}, *middlewares_, req_, res, ctx_);
+                        close_connection_ = true;
+                        handler_->handle_upgrade(req_, res, std::move(adaptor_));
+                        return;
+                    }
+                }
             }
 
-            if (!handler) {
+            CROW_LOG_INFO << "Request: " << utility::lexical_cast<std::string>(adaptor_.remote_endpoint()) << " " << this << " HTTP/" << (char)(req_.http_ver_major + '0') << "." << (char)(req_.http_ver_minor + '0') << ' ' << method_name(req_.method) << " " << req_.url;
+
+
+            need_to_call_after_handlers_ = false;
+            if (!is_invalid_request)
+            {
+                res.complete_request_handler_ = nullptr;
+                auto self = this->shared_from_this();
+                res.is_alive_helper_ = [self]() -> bool {
+                    return self->adaptor_.is_open();
+                };
+
+                detail::middleware_call_helper<detail::middleware_call_criteria_only_global,
+                                               0, decltype(ctx_), decltype(*middlewares_)>({}, *middlewares_, req_, res, ctx_);
+
+                if (!res.completed_)
+                {
+                    res.complete_request_handler_ = [self] {
+                        self->complete_request();
+                    };
+                    need_to_call_after_handlers_ = true;
+                    handler_->handle(req_, res, routing_handle_result_);
+                    if (add_keep_alive_)
+                        res.set_header("connection", "Keep-Alive");
+                }
+                else
+                {
+                    complete_request();
+                }
+            }
+            else
+            {
+                complete_request();
+            }
+        }
+
+        /// Call the after handle middleware and send the write the response to the connection.
+        void complete_request()
+        {
+            CROW_LOG_INFO << "Response: " << this << ' ' << req_.raw_url << ' ' << res.code << ' ' << close_connection_;
+            res.is_alive_helper_ = nullptr;
+
+            if (need_to_call_after_handlers_)
+            {
+                need_to_call_after_handlers_ = false;
+
+                // call all after_handler of middlewares
+                detail::after_handlers_call_helper<
+                  detail::middleware_call_criteria_only_global,
+                  (static_cast<int>(sizeof...(Middlewares)) - 1),
+                  decltype(ctx_),
+                  decltype(*middlewares_)>({}, *middlewares_, ctx_, req_, res);
+            }
+#ifdef CROW_ENABLE_COMPRESSION
+            if (!res.body.empty() && handler_->compression_used())
+            {
+                std::string accept_encoding = req_.get_header_value("Accept-Encoding");
+                if (!accept_encoding.empty() && res.compressed)
+                {
+                    switch (handler_->compression_algorithm())
+                    {
+                        case compression::DEFLATE:
+                            if (accept_encoding.find("deflate") != std::string::npos)
+                            {
+                                res.body = compression::compress_string(res.body, compression::algorithm::DEFLATE);
+                                res.set_header("Content-Encoding", "deflate");
+                            }
+                            break;
+                        case compression::GZIP:
+                            if (accept_encoding.find("gzip") != std::string::npos)
+                            {
+                                res.body = compression::compress_string(res.body, compression::algorithm::GZIP);
+                                res.set_header("Content-Encoding", "gzip");
+                            }
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
+#endif
+
+            if (req_.http_ver_major == 1 && req_.http_ver_minor == 0 && res.is_chunked_type())
+            {
+                reject_http_1_0_chunked_response();
+            }
+            else if (res.skip_body && res.is_chunked_type())
+            {
+                res.notify_chunked_completion(true);
+            }
+
+            prepare_buffers();
+            if (res.skip_body)
+            {
+                // Header preparation may synthesize an error representation. HEAD reports
+                // its length while omitting its bytes from the response message.
+                res.body.clear();
+            }
+
+            if (res.is_static_type())
+            {
+                do_write_static();
+            }
+            else if (res.is_chunked_type() && !res.skip_body)
+            {
+                do_write_chunked();
+            }
+            else
+            {
+                do_write_general();
+            }
+        }
+
+    private:
+        void prepare_buffers()
+        {
+            res.complete_request_handler_ = nullptr;
+            res.is_alive_helper_ = nullptr;
+
+            if (!adaptor_.is_open())
+            {
+                //CROW_LOG_DEBUG << this << " delete (socket is closed) " << is_reading << ' ' << is_writing;
+                //delete this;
                 return;
             }
-
-            try {
-                handler(clean);
-            } catch (const std::exception& e) {
-                CROW_LOG_ERROR << "An uncaught exception occurred in the chunked completion handler: " << e.what();
-            } catch (...) {
-                CROW_LOG_ERROR << "An uncaught exception occurred in the chunked completion handler.";
-            }
+            res.write_header_into_buffer(buffers_, content_length_, add_keep_alive_, server_name_);
         }
 
-        AsyncChunkPhase phase{AsyncChunkPhase::writing_headers};
-        response::async_chunk_provider_t provider;
-        response::chunk_complete_t completion_handler;
-        std::string chunk;
-        std::string chunk_header;
-        std::string terminator{"0\r\n\r\n"};
-        std::vector<asio::const_buffer> buffers;
-        std::shared_ptr<AsyncChunkRequest> pending_request;
-        detail::task_timer::identifier_type lifetime_task_id{};
-        bool lifetime_task_armed{false};
-        bool read_watch_active{false};
-        bool read_watch_cancel_requested{false};
-        bool pending_result_ready{false};
-        response::chunk_result pending_result{response::chunk_result::abort};
-        std::string pending_result_chunk;
-        std::mutex completion_mutex;
-        bool completion_reported{false};
-    };
-
-    void do_write_chunked() {
-        if (res.body_source_ == response::body_source_kind::asynchronous_chunked) {
-            do_write_async_chunked();
-            return;
+        void reject_http_1_0_chunked_response()
+        {
+            res.chunk_provider_ = nullptr;
+            res.chunk_provider_ex_ = nullptr;
+            res.async_chunk_provider_ = nullptr;
+            res.body_source_ = response::body_source_kind::none;
+            res.body.clear();
+            res.code = status::HTTP_VERSION_NOT_SUPPORTED;
+            res.manual_length_header = false;
+            res.headers.erase("Content-Length");
+            res.headers.erase("Transfer-Encoding");
+            res.headers.erase("Content-Encoding");
+            res.headers.erase("Trailer");
+            res.set_header("Connection", "close");
+            add_keep_alive_ = false;
+            close_connection_ = true;
+            res.notify_chunked_completion(false);
         }
 
-        do_write_sync_chunked();
-    }
-
-    void do_write_async_chunked() {
-        cancel_deadline_timer();
-
-        auto state                = std::make_shared<AsyncChunkTransfer>();
-        state->provider           = std::move(res.async_chunk_provider_);
-        res.async_chunk_provider_ = nullptr;
-        state->completion_handler = std::move(res.chunk_complete_);
-        res.chunk_complete_       = nullptr;
-        async_chunk_transfer_     = state;
-        parser_.stop_after_message();
-
-        auto self = this->shared_from_this();
-        if (lifecycle_registry_) {
-            lifecycle_registry_->track(self);
-        }
-        asio::async_write(
-            adaptor_.socket(), buffers_, [self, state](const error_code& ec, std::size_t /*bytes_transferred*/) {
-                if (self->async_chunk_transfer_ != state) {
-                    return;
-                }
-
-                if (ec) {
-                    CROW_LOG_ERROR << ec
-                                   << " - buffer write error happened while sending response start / headers. "
-                                      "Writing stopped prematurely.";
-                    self->finish_async_chunked(state, false, true);
-                    return;
-                }
-
-                self->buffers_.clear();
-                self->request_async_chunk(state);
-            });
-    }
-
-    void arm_async_chunk_lifetime(const std::shared_ptr<AsyncChunkTransfer>& state) {
-        if (async_chunk_transfer_ != state) {
-            return;
-        }
-
-        auto self                                    = this->shared_from_this();
-        std::weak_ptr<AsyncChunkTransfer> weak_state = state;
-        // task_timer owns scheduled callbacks outside Connection and destroys them
-        // when the worker exits. Renewing the longest timer interval keeps an
-        // arbitrarily slow provider alive without imposing a provider deadline.
-        state->lifetime_task_id = task_timer_.schedule(
-            [self, weak_state] {
-                auto state = weak_state.lock();
-                if (!state) {
-                    return;
-                }
-
-                state->lifetime_task_armed = false;
-                state->lifetime_task_id    = 0;
-                if (self->async_chunk_transfer_ == state && state->phase == AsyncChunkPhase::requesting_chunk) {
-                    self->arm_async_chunk_lifetime(state);
-                }
-            },
-            std::numeric_limits<uint8_t>::max());
-        state->lifetime_task_armed = true;
-    }
-
-    void release_async_chunk_lifetime(const std::shared_ptr<AsyncChunkTransfer>& state) {
-        if (!state->lifetime_task_armed) {
-            return;
-        }
-
-        const auto task_id         = state->lifetime_task_id;
-        state->lifetime_task_armed = false;
-        state->lifetime_task_id    = 0;
-        task_timer_.cancel(task_id);
-    }
-
-    static void invalidate_async_chunk_request(const std::shared_ptr<AsyncChunkTransfer>& state) {
-        auto request = std::move(state->pending_request);
-        if (!request) {
-            return;
-        }
-
-        std::lock_guard<std::mutex> lock(request->mutex);
-        request->active     = false;
-        request->io_context = nullptr;
-        request->connection.reset();
-        request->transfer.reset();
-    }
-
-    void shutdown_on_worker_exit() noexcept {
-        shutting_down_ = true;
-        auto state     = std::move(async_chunk_transfer_);
-        buffered_input_.clear();
-        if (state) {
-            untrack_async_chunk_transfer();
-            // The worker has stopped dispatching handlers. Keep buffers referenced by
-            // outstanding writes intact until Asio releases their handlers.
-            invalidate_async_chunk_request(state);
-            release_async_chunk_lifetime(state);
-            state->phase    = AsyncChunkPhase::aborted;
-            state->provider = nullptr;
-        }
-
-        adaptor_.shutdown_readwrite();
-        adaptor_.close();
-
-        if (state) {
-            state->notify_completion(false);
-        }
-    }
-
-    void destroy_async_chunk_transfer() noexcept {
-        shutting_down_ = true;
-        auto state     = std::move(async_chunk_transfer_);
-        buffered_input_.clear();
-        if (!state) {
-            return;
-        }
-
-        untrack_async_chunk_transfer();
-
-        // No executor turn remains during worker teardown. Invalidate the request
-        // gate before closing the socket so a provider racing with destruction either
-        // posts while the executor is still valid or observes an inactive request.
-        invalidate_async_chunk_request(state);
-        state->phase    = AsyncChunkPhase::aborted;
-        state->provider = nullptr;
-        state->buffers.clear();
-
-        adaptor_.shutdown_readwrite();
-        adaptor_.close();
-        state->notify_completion(false);
-    }
-
-    void untrack_async_chunk_transfer() noexcept {
-        if (lifecycle_registry_) {
-            lifecycle_registry_->untrack(this);
-        }
-    }
-
-    void request_async_chunk(const std::shared_ptr<AsyncChunkTransfer>& state) {
-        if (async_chunk_transfer_ != state) {
-            return;
-        }
-        state->phase           = AsyncChunkPhase::requesting_chunk;
-        auto request           = std::make_shared<AsyncChunkRequest>();
-        request->io_context    = &adaptor_.get_io_context();
-        request->connection    = this->shared_from_this();
-        request->transfer      = state;
-        state->pending_request = request;
-        arm_async_chunk_lifetime(state);
-
-        response::async_chunk_completion_t complete
-            = [request](response::chunk_result result, std::string chunk) mutable -> bool {
-            std::unique_lock<std::mutex> lock(request->mutex);
-            if (request->completed) {
-                lock.unlock();
-                CROW_LOG_WARNING << "An asynchronous chunk completion callback was invoked more than once.";
-                return false;
-            }
-
-            if (!request->active) {
-                return false;
-            }
-
-            auto self = request->connection.lock();
-            if (!self) {
-                return false;
-            }
-
-            const auto publish = [request](response::chunk_result published_result, std::string published_chunk) {
-                // Posting is unconditional, including when the provider completed inline.
-                post_async_chunk_completion(*request->io_context,
-                                            [weak_self  = request->connection,
-                                             weak_state = request->transfer,
-                                             published_result,
-                                             published_chunk = std::move(published_chunk)]() mutable {
-                                                auto self  = weak_self.lock();
-                                                auto state = weak_state.lock();
-                                                if (!self || !state) {
-                                                    return;
-                                                }
-                                                self->handle_async_chunk_result(
-                                                    state, published_result, std::move(published_chunk));
-                                            });
-            };
-
-            std::exception_ptr publication_failure;
-            try {
-                publish(result, std::move(chunk));
-                request->completed = true;
-                return true;
-            } catch (...) {
-                publication_failure = std::current_exception();
-            }
-
-            std::exception_ptr abort_publication_failure;
-            try {
-                publish(response::chunk_result::abort, "");
-                request->completed = true;
-            } catch (...) {
-                abort_publication_failure = std::current_exception();
-            }
-
-            lock.unlock();
-            log_async_chunk_publication_failure(
-                "Failed to publish an asynchronous chunk completion; abort recovery was attempted",
-                publication_failure);
-            log_async_chunk_publication_failure(
-                "Failed to publish asynchronous chunk abort recovery; the transfer remains active for "
-                "shutdown cleanup",
-                abort_publication_failure);
-            return false;
-        };
-
-        try {
-            state->provider(complete);
-        } catch (const std::exception& e) {
-            CROW_LOG_ERROR << "An uncaught exception occurred in the asynchronous chunk provider: " << e.what();
-            complete(response::chunk_result::abort, "");
-        } catch (...) {
-            CROW_LOG_ERROR << "An uncaught exception occurred in the asynchronous chunk provider.";
-            complete(response::chunk_result::abort, "");
-        }
-
-        if (async_chunk_transfer_ == state && state->phase == AsyncChunkPhase::requesting_chunk) {
-            do_read(state);
-        }
-    }
-
-    void handle_async_chunk_result(const std::shared_ptr<AsyncChunkTransfer>& state,
-                                   response::chunk_result result,
-                                   std::string chunk) {
-        if (async_chunk_transfer_ != state || state->phase != AsyncChunkPhase::requesting_chunk) {
-            return;
-        }
-
-        invalidate_async_chunk_request(state);
-        release_async_chunk_lifetime(state);
-
-        if (state->read_watch_active) {
-            state->pending_result_ready        = true;
-            state->pending_result              = result;
-            state->pending_result_chunk        = std::move(chunk);
-            state->read_watch_cancel_requested = true;
-
-            error_code cancel_error;
-            // No response write is active during requesting_chunk, so the
-            // socket-wide cancellation targets only the closure watch.
-            adaptor_.raw_socket().cancel(cancel_error);
-            if (cancel_error) {
-                state->pending_result_ready = false;
-                state->pending_result_chunk.clear();
-                state->read_watch_cancel_requested = false;
-                finish_async_chunked(state, false, true);
-            }
-            return;
-        }
-
-        apply_async_chunk_result(state, result, std::move(chunk));
-    }
-
-    void apply_async_chunk_result(const std::shared_ptr<AsyncChunkTransfer>& state,
-                                  response::chunk_result result,
-                                  std::string chunk) {
-        if (async_chunk_transfer_ != state || state->phase != AsyncChunkPhase::requesting_chunk) {
-            return;
-        }
-
-        if (result == response::chunk_result::abort) {
-            finish_async_chunked(state, false, true);
-            return;
-        }
-
-        if (chunk.empty()) {
-            if (result == response::chunk_result::done) {
-                write_async_chunk_terminator(state);
-            } else {
-                request_async_chunk(state);
-            }
-            return;
-        }
-
-        state->phase        = AsyncChunkPhase::writing_chunk;
-        state->chunk        = std::move(chunk);
-        state->chunk_header = chunk_size_to_hex(state->chunk.size());
-        state->chunk_header += crlf;
-        state->buffers.clear();
-        state->buffers.reserve(3);
-        state->buffers.emplace_back(state->chunk_header.data(), state->chunk_header.size());
-        state->buffers.emplace_back(state->chunk.data(), state->chunk.size());
-        state->buffers.emplace_back(crlf.data(), crlf.size());
-
-        auto self = this->shared_from_this();
-        asio::async_write(
-            adaptor_.socket(),
-            state->buffers,
-            [self, state, result](const error_code& ec, std::size_t /*bytes_transferred*/) {
-                if (self->async_chunk_transfer_ != state) {
-                    return;
-                }
-
-                if (ec) {
-                    CROW_LOG_ERROR
-                        << ec << " - buffer write error happened while sending a chunk. Writing stopped prematurely.";
-                    self->finish_async_chunked(state, false, true);
-                    return;
-                }
-
-                state->buffers.clear();
-                state->chunk.clear();
-                state->chunk_header.clear();
-                if (result == response::chunk_result::done) {
-                    self->write_async_chunk_terminator(state);
-                } else {
-                    self->request_async_chunk(state);
-                }
-            });
-    }
-
-    void write_async_chunk_terminator(const std::shared_ptr<AsyncChunkTransfer>& state) {
-        if (async_chunk_transfer_ != state) {
-            return;
-        }
-
-        state->phase = AsyncChunkPhase::writing_terminator;
-        state->buffers.clear();
-        state->buffers.emplace_back(state->terminator.data(), state->terminator.size());
-
-        auto self = this->shared_from_this();
-        asio::async_write(
-            adaptor_.socket(), state->buffers, [self, state](const error_code& ec, std::size_t /*bytes_transferred*/) {
-                if (self->async_chunk_transfer_ != state) {
-                    return;
-                }
-
-                if (ec) {
-                    CROW_LOG_ERROR << ec << " - buffer write error happened while sending the last chunk.";
-                    self->finish_async_chunked(state, false, true);
-                    return;
-                }
-
-                self->finish_async_chunked(state, true, false);
-            });
-    }
-
-    void finish_async_chunked(const std::shared_ptr<AsyncChunkTransfer>& state, bool clean, bool force_close) {
-        if (async_chunk_transfer_ != state) {
-            return;
-        }
-
-        const bool resume_input = clean && !force_close && !close_connection_ && need_to_start_read_after_complete_;
-        state->phase            = clean ? AsyncChunkPhase::completed : AsyncChunkPhase::aborted;
-        invalidate_async_chunk_request(state);
-        release_async_chunk_lifetime(state);
-        state->provider = nullptr;
-        state->buffers.clear();
-        async_chunk_transfer_.reset();
-        untrack_async_chunk_transfer();
-
-        if (force_close) {
-            adaptor_.shutdown_readwrite();
-            adaptor_.close();
-            CROW_LOG_DEBUG << this << " from write (async chunked, aborted or write error)";
-        }
-
-        state->notify_completion(clean);
-
-        if (close_connection_ && !force_close) {
-            adaptor_.shutdown_readwrite();
-            adaptor_.close();
-            CROW_LOG_DEBUG << this << " from write (async chunked)";
-        }
-
-        res.end();
-        res.clear();
-        buffers_.clear();
-        parser_.clear();
-
-        if (resume_input) {
-            need_to_start_read_after_complete_ = false;
-            start_deadline();
-            if (buffered_input_.empty()) {
-                do_read();
-            } else {
-                process_buffered_input();
-            }
-        } else {
-            need_to_start_read_after_complete_ = false;
-            buffered_input_.clear();
-        }
-    }
-
-    void do_write_sync_chunked() {
-        error_code ec;
-        asio::write(adaptor_.socket(), buffers_, ec); // Write the response start / headers
-        if (ec) {
-            CROW_LOG_ERROR
-                << ec
-                << " - buffer write error happened while sending response start / headers. Writing stopped premature.";
-        }
-
-        // Producing the body may take arbitrarily long, so the connection must not be
-        // closed by the deadline while chunks are still on their way.
-        cancel_deadline_timer();
-
-        // do_write_sync() clears the response on every write, so the provider and the
-        // completion handler have to be taken out of it before the loop starts.
-        auto provider          = std::move(res.chunk_provider_ex_);
-        res.chunk_provider_ex_ = nullptr;
-        if (!provider && res.chunk_provider_) {
-            provider = [bool_provider = std::move(res.chunk_provider_)](std::string& chunk) {
-                return bool_provider(chunk) ? response::chunk_result::more : response::chunk_result::done;
-            };
-        }
-        res.chunk_provider_     = nullptr;
-        auto completion_handler = std::move(res.chunk_complete_);
-        res.chunk_complete_     = nullptr;
-
-        std::string chunk;
-        std::string chunk_header;
-        std::vector<asio::const_buffer> buffers{3};
-        auto result = provider ? response::chunk_result::more : response::chunk_result::done;
-        while (result == response::chunk_result::more && !ec) {
-            chunk.clear();
-            // An exception from the provider must not escape into the Asio stack; it is
-            // treated as an abort: no terminating frame, forced close, completion(false).
-            try {
-                result = provider(chunk);
-            } catch (const std::exception& e) {
-                CROW_LOG_ERROR << "An uncaught exception occurred in the chunk provider: " << e.what();
-                result = response::chunk_result::abort;
-            } catch (...) {
-                CROW_LOG_ERROR << "An uncaught exception occurred in the chunk provider.";
-                result = response::chunk_result::abort;
-            }
-            if (result == response::chunk_result::abort || chunk.empty()) {
-                continue;
-            }
-
-            chunk_header = chunk_size_to_hex(chunk.size());
-            chunk_header += crlf;
-            buffers[0] = asio::const_buffer(chunk_header.data(), chunk_header.size());
-            buffers[1] = asio::const_buffer(chunk.data(), chunk.size());
-            buffers[2] = asio::const_buffer(crlf.data(), crlf.size());
-            ec         = do_write_sync(buffers);
-            if (ec) {
-                CROW_LOG_ERROR << ec
-                               << " - buffer write error happened while sending a chunk. Writing stopped premature.";
-            }
-        }
-
-        // The terminating frame marks the body as complete, so it is only sent when the
-        // provider finished cleanly and every previous write succeeded.
-        if (result == response::chunk_result::done && !ec) {
-            static constexpr char last_chunk[] = "0\r\n\r\n";
-            std::vector<asio::const_buffer> tail{1};
-            tail[0] = asio::const_buffer(last_chunk, sizeof(last_chunk) - 1);
-            ec      = do_write_sync(tail);
-            if (ec) {
-                CROW_LOG_ERROR << ec << " - buffer write error happened while sending the last chunk.";
-            }
-        }
-
-        // A write failure leaves the message framing just as incomplete as an explicit
-        // abort (the terminating frame never made it out), so the connection policy is
-        // the same for both: force the close and never reuse the socket for keep-alive.
-        const bool aborted     = (result == response::chunk_result::abort);
-        const bool force_close = aborted || static_cast<bool>(ec);
-        if (force_close) {
-            // Close the connection forcefully, without the terminating frame, so that the
-            // client sees a truncated body instead of a seemingly complete one.
-            adaptor_.shutdown_readwrite();
-            adaptor_.close();
-            CROW_LOG_DEBUG << this << " from write (chunked, " << (aborted ? "aborted" : "write error") << ")";
-        }
-
-        if (completion_handler) {
-            // An exception from the handler must not escape into the Asio stack or skip
-            // the cleanup below; it is logged and swallowed.
-            try {
-                completion_handler(result == response::chunk_result::done && !ec);
-            } catch (const std::exception& e) {
-                CROW_LOG_ERROR << "An uncaught exception occurred in the chunked completion handler: " << e.what();
-            } catch (...) {
-                CROW_LOG_ERROR << "An uncaught exception occurred in the chunked completion handler.";
-            }
-        }
-
-        if (close_connection_ && !force_close) {
-            adaptor_.shutdown_readwrite();
-            adaptor_.close();
-            CROW_LOG_DEBUG << this << " from write (chunked)";
-        }
-
-        res.end();
-        res.clear();
-        buffers_.clear();
-        parser_.clear();
-
-        // The deadline was cancelled for the duration of the transfer, so a kept-alive
-        // connection has to be put back into reading state explicitly.
-        if (!force_close && !close_connection_ && need_to_start_read_after_complete_) {
-            need_to_start_read_after_complete_ = false;
-            start_deadline();
-            do_read();
-        }
-    }
-
-    void do_write_general() {
-        error_code ec;
-        if (res.body.length() < res_stream_threshold_) {
-            res_body_copy_.swap(res.body);
-            buffers_.emplace_back(res_body_copy_.data(), res_body_copy_.size());
-
-            ec = do_write_sync(buffers_);
-            if (ec) {
-                CROW_LOG_ERROR << ec
-                               << " - buffer write error happened while sending response. Writing stopped premature.";
-            }
-            if (close_connection_) {
-                adaptor_.shutdown_readwrite();
-                adaptor_.close();
-                CROW_LOG_DEBUG << this << " from write (res)";
-            } else if (need_to_start_read_after_complete_) {
-                need_to_start_read_after_complete_ = false;
-                start_deadline();
-                do_read();
-            }
-        } else {
-            asio::write(adaptor_.socket(), buffers_, ec); // Write the response start / headers
-            if (ec) {
-                CROW_LOG_ERROR << ec
-                               << "- buffer write error happened while sending response start / headers. Writing "
-                                  "stopped premature.";
-            }
-            cancel_deadline_timer();
-            if (res.body.length() > 0) {
+        void do_write_static()
+        {
+            asio::write(adaptor_.socket(), buffers_);
+
+            if (res.file_info.statResult == 0)
+            {
+                std::ifstream is(res.file_info.path.c_str(), std::ios::in | std::ios::binary);
                 std::vector<asio::const_buffer> buffers{1};
-                const uint8_t* data = reinterpret_cast<const uint8_t*>(res.body.data());
-                size_t length       = res.body.length();
-                for (size_t transferred = 0; transferred < length;) {
-                    size_t to_transfer = CROW_MIN(16384UL, length - transferred);
-                    buffers[0]         = asio::const_buffer(data + transferred, to_transfer);
-                    ec                 = do_write_sync(buffers);
+                char buf[16384];
+                is.read(buf, sizeof(buf));
+                while (is.gcount() > 0)
+                {
+                    buffers[0] = asio::buffer(buf, is.gcount());
+                    error_code ec = do_write_sync(buffers);
                     if (ec) {
-                        CROW_LOG_ERROR
-                            << ec << " - " << transferred
-                            << " - buffer write error happened while sending response. Writing stopped premature.";
+                        CROW_LOG_ERROR << ec << " - buffer write error happened while sending content of file "
+                                       << res.file_info.path << ". Writing stopped premature.";
                         break;
                     }
-                    transferred += to_transfer;
+                    is.read(buf, sizeof(buf));
                 }
             }
-            if (close_connection_) {
+            if (close_connection_)
+            {
                 adaptor_.shutdown_readwrite();
                 adaptor_.close();
-                CROW_LOG_DEBUG << this << " from write (res_stream)";
+                CROW_LOG_DEBUG << this << " from write (static)";
             }
 
             res.end();
@@ -1046,231 +399,1010 @@ private:
             buffers_.clear();
             parser_.clear();
         }
-    }
 
-    void do_read(std::shared_ptr<AsyncChunkTransfer> watch_state = nullptr) {
-        if (read_in_progress_ || shutting_down_ || !adaptor_.is_open()) {
-            return;
-        }
-        if (watch_state && buffered_input_.size() > max_header_size) {
-            finish_async_chunked(watch_state, false, true);
-            return;
+        /// Format a chunk size the way chunked transfer encoding wants it: lowercase hex.
+        static std::string chunk_size_to_hex(std::size_t value)
+        {
+            static const char digits[] = "0123456789abcdef";
+            if (value == 0)
+            {
+                return "0";
+            }
+            std::string out;
+            while (value != 0) {
+                out.insert(out.begin(), digits[value & 0xF]);
+                value >>= 4;
+            }
+            return out;
         }
 
-        if (watch_state) {
-            watch_state->read_watch_active = true;
+        enum class AsyncChunkPhase {
+            writing_headers,
+            requesting_chunk,
+            writing_chunk,
+            writing_terminator,
+            completed,
+            aborted
+        };
+
+        struct AsyncChunkTransfer;
+
+        struct AsyncChunkRequest {
+            std::mutex mutex;
+            bool completed{false};
+            bool active{true};
+            asio::io_context* io_context{nullptr};
+            std::weak_ptr<Connection> connection;
+            std::weak_ptr<AsyncChunkTransfer> transfer;
+        };
+
+        template<typename CompletionHandler>
+        static void post_async_chunk_completion(asio::io_context& io_context, CompletionHandler&& handler) {
+#ifdef CROW_ENABLE_ASYNC_CHUNK_PUBLICATION_TEST_HOOK
+            detail::invoke_async_chunk_publication_test_hook();
+#endif
+            asio::post(io_context, std::forward<CompletionHandler>(handler));
         }
-        read_in_progress_ = true;
-        auto self         = this->shared_from_this();
-        adaptor_.socket().async_read_some(
-            asio::buffer(buffer_),
-            [self, watch_state = std::move(watch_state)](const error_code& ec, std::size_t bytes_transferred) {
-                self->read_in_progress_ = false;
-                if (self->shutting_down_) {
-                    return;
+
+        static void log_async_chunk_publication_failure(const char* message,
+                                                        const std::exception_ptr& failure) noexcept {
+            if (!failure) {
+                return;
+            }
+
+            try {
+                try {
+                    std::rethrow_exception(failure);
+                } catch (const std::exception& e) {
+                    CROW_LOG_ERROR << message << ": " << e.what();
+                } catch (...) {
+                    CROW_LOG_ERROR << message << ".";
                 }
+            } catch (...) {
+                // Publication errors must not escape through logging on provider threads.
+            }
+        }
 
-                if (watch_state) {
-                    watch_state->read_watch_active = false;
-                    if (self->async_chunk_transfer_ == watch_state) {
-                        self->handle_async_chunk_read(watch_state, ec, bytes_transferred);
+        struct AsyncChunkTransfer {
+            ~AsyncChunkTransfer() {
+                notify_completion(false);
+            }
+
+            void notify_completion(bool clean) noexcept {
+                response::chunk_complete_t handler;
+                {
+                    // Normal completion and Server worker shutdown run on the connection
+                    // thread. The latch also keeps fallback destruction once-only for a
+                    // Connection used without Server lifecycle tracking.
+                    std::lock_guard<std::mutex> lock(completion_mutex);
+                    if (completion_reported) {
+                        return;
                     }
+                    completion_reported = true;
+                    handler             = std::move(completion_handler);
+                }
+
+                if (!handler) {
                     return;
                 }
 
-                if (!ec) {
-                    self->process_incoming_input(self->buffer_.data(), bytes_transferred);
-                    return;
+                try {
+                    handler(clean);
+                } catch (const std::exception& e) {
+                    CROW_LOG_ERROR << "An uncaught exception occurred in the chunked completion handler: " << e.what();
+                } catch (...) {
+                    CROW_LOG_ERROR << "An uncaught exception occurred in the chunked completion handler.";
+                }
+            }
+
+            AsyncChunkPhase phase{AsyncChunkPhase::writing_headers};
+            response::async_chunk_provider_t provider;
+            response::chunk_complete_t completion_handler;
+            std::string chunk;
+            std::string chunk_header;
+            std::string terminator{"0\r\n\r\n"};
+            std::vector<asio::const_buffer> buffers;
+            std::shared_ptr<AsyncChunkRequest> pending_request;
+            detail::task_timer::identifier_type lifetime_task_id{};
+            bool lifetime_task_armed{false};
+            bool read_watch_active{false};
+            bool read_watch_cancel_requested{false};
+            bool pending_result_ready{false};
+            response::chunk_result pending_result{response::chunk_result::abort};
+            std::string pending_result_chunk;
+            std::mutex completion_mutex;
+            bool completion_reported{false};
+        };
+
+        void do_write_chunked() {
+            if (res.body_source_ == response::body_source_kind::asynchronous_chunked)
+            {
+                do_write_async_chunked();
+                return;
+            }
+
+            do_write_sync_chunked();
+        }
+
+        void do_write_async_chunked() {
+            cancel_deadline_timer();
+
+            auto state                = std::make_shared<AsyncChunkTransfer>();
+            state->provider           = std::move(res.async_chunk_provider_);
+            res.async_chunk_provider_ = nullptr;
+            state->completion_handler = std::move(res.chunk_complete_);
+            res.chunk_complete_       = nullptr;
+            async_chunk_transfer_     = state;
+            parser_.stop_after_message();
+
+            auto self = this->shared_from_this();
+            if (lifecycle_registry_)
+            {
+                lifecycle_registry_->track(self);
+            }
+            asio::async_write(
+                adaptor_.socket(), buffers_, [self, state](const error_code& ec, std::size_t /*bytes_transferred*/) {
+                    if (self->async_chunk_transfer_ != state) {
+                        return;
+                    }
+
+                    if (ec) {
+                        CROW_LOG_ERROR << ec
+                                       << " - buffer write error happened while sending response start / headers. "
+                                          "Writing stopped prematurely.";
+                        self->finish_async_chunked(state, false, true);
+                        return;
+                    }
+
+                    self->buffers_.clear();
+                    self->request_async_chunk(state);
+                });
+        }
+
+        void arm_async_chunk_lifetime(const std::shared_ptr<AsyncChunkTransfer>& state) {
+            if (async_chunk_transfer_ != state) {
+                return;
+            }
+
+            auto self                                    = this->shared_from_this();
+            std::weak_ptr<AsyncChunkTransfer> weak_state = state;
+            // task_timer owns scheduled callbacks outside Connection and destroys them
+            // when the worker exits. Renewing the longest timer interval keeps an
+            // arbitrarily slow provider alive without imposing a provider deadline.
+            state->lifetime_task_id = task_timer_.schedule(
+                [self, weak_state] {
+                    auto state = weak_state.lock();
+                    if (!state) {
+                        return;
+                    }
+
+                    state->lifetime_task_armed = false;
+                    state->lifetime_task_id    = 0;
+                    if (self->async_chunk_transfer_ == state && state->phase == AsyncChunkPhase::requesting_chunk) {
+                        self->arm_async_chunk_lifetime(state);
+                    }
+                },
+                std::numeric_limits<uint8_t>::max());
+            state->lifetime_task_armed = true;
+        }
+
+        void release_async_chunk_lifetime(const std::shared_ptr<AsyncChunkTransfer>& state) {
+            if (!state->lifetime_task_armed) {
+                return;
+            }
+
+            const auto task_id         = state->lifetime_task_id;
+            state->lifetime_task_armed = false;
+            state->lifetime_task_id    = 0;
+            task_timer_.cancel(task_id);
+        }
+
+        static void invalidate_async_chunk_request(const std::shared_ptr<AsyncChunkTransfer>& state) {
+            auto request = std::move(state->pending_request);
+            if (!request) {
+                return;
+            }
+
+            std::lock_guard<std::mutex> lock(request->mutex);
+            request->active     = false;
+            request->io_context = nullptr;
+            request->connection.reset();
+            request->transfer.reset();
+        }
+
+        void shutdown_on_worker_exit() noexcept {
+            shutting_down_ = true;
+            auto state = std::move(async_chunk_transfer_);
+            buffered_input_.clear();
+            if (state) {
+                untrack_async_chunk_transfer();
+                // The worker has stopped dispatching handlers. Keep buffers referenced by
+                // outstanding writes intact until Asio releases their handlers.
+                invalidate_async_chunk_request(state);
+                release_async_chunk_lifetime(state);
+                state->phase    = AsyncChunkPhase::aborted;
+                state->provider = nullptr;
+            }
+
+            adaptor_.shutdown_readwrite();
+            adaptor_.close();
+
+            if (state) {
+                state->notify_completion(false);
+            }
+        }
+
+        void destroy_async_chunk_transfer() noexcept {
+            shutting_down_ = true;
+            auto state = std::move(async_chunk_transfer_);
+            buffered_input_.clear();
+            if (!state) {
+                return;
+            }
+
+            untrack_async_chunk_transfer();
+
+            // No executor turn remains during worker teardown. Invalidate the request
+            // gate before closing the socket so a provider racing with destruction either
+            // posts while the executor is still valid or observes an inactive request.
+            invalidate_async_chunk_request(state);
+            state->phase    = AsyncChunkPhase::aborted;
+            state->provider = nullptr;
+            state->buffers.clear();
+
+            adaptor_.shutdown_readwrite();
+            adaptor_.close();
+            state->notify_completion(false);
+        }
+
+        void untrack_async_chunk_transfer() noexcept
+        {
+            if (lifecycle_registry_)
+            {
+                lifecycle_registry_->untrack(this);
+            }
+        }
+
+        void request_async_chunk(const std::shared_ptr<AsyncChunkTransfer>& state) {
+            if (async_chunk_transfer_ != state) {
+                return;
+            }
+            state->phase           = AsyncChunkPhase::requesting_chunk;
+            auto request           = std::make_shared<AsyncChunkRequest>();
+            request->io_context    = &adaptor_.get_io_context();
+            request->connection    = this->shared_from_this();
+            request->transfer      = state;
+            state->pending_request = request;
+            arm_async_chunk_lifetime(state);
+
+            response::async_chunk_completion_t complete = [request](response::chunk_result result,
+                                                                    std::string chunk) mutable -> bool {
+                std::unique_lock<std::mutex> lock(request->mutex);
+                if (request->completed)
+                {
+                    lock.unlock();
+                    CROW_LOG_WARNING << "An asynchronous chunk completion callback was invoked more than once.";
+                    return false;
                 }
 
-                self->close_after_read_error();
-            });
-    }
+                if (!request->active)
+                {
+                    return false;
+                }
 
-    void handle_async_chunk_read(const std::shared_ptr<AsyncChunkTransfer>& state,
-                                 const error_code& ec,
-                                 std::size_t bytes_transferred) {
-        if (async_chunk_transfer_ != state) {
-            return;
+                auto self = request->connection.lock();
+                if (!self)
+                {
+                    return false;
+                }
+
+                const auto publish = [request](response::chunk_result published_result, std::string published_chunk) {
+                    // Posting is unconditional, including when the provider completed inline.
+                    post_async_chunk_completion(*request->io_context,
+                                                [weak_self  = request->connection,
+                                                 weak_state = request->transfer,
+                                                 published_result,
+                                                 published_chunk = std::move(published_chunk)]() mutable {
+                                                    auto self  = weak_self.lock();
+                                                    auto state = weak_state.lock();
+                                                    if (!self || !state) {
+                                                        return;
+                                                    }
+                                                    self->handle_async_chunk_result(
+                                                        state, published_result, std::move(published_chunk));
+                                                });
+                };
+
+                std::exception_ptr publication_failure;
+                try
+                {
+                    publish(result, std::move(chunk));
+                    request->completed = true;
+                    return true;
+                }
+                catch (...)
+                {
+                    publication_failure = std::current_exception();
+                }
+
+                std::exception_ptr abort_publication_failure;
+                try
+                {
+                    publish(response::chunk_result::abort, "");
+                    request->completed = true;
+                }
+                catch (...)
+                {
+                    abort_publication_failure = std::current_exception();
+                }
+
+                lock.unlock();
+                log_async_chunk_publication_failure(
+                    "Failed to publish an asynchronous chunk completion; abort recovery was attempted",
+                    publication_failure);
+                log_async_chunk_publication_failure(
+                    "Failed to publish asynchronous chunk abort recovery; the transfer remains active for "
+                    "shutdown cleanup",
+                    abort_publication_failure);
+                return false;
+            };
+
+            try {
+                state->provider(complete);
+            } catch (const std::exception& e) {
+                CROW_LOG_ERROR << "An uncaught exception occurred in the asynchronous chunk provider: " << e.what();
+                complete(response::chunk_result::abort, "");
+            } catch (...) {
+                CROW_LOG_ERROR << "An uncaught exception occurred in the asynchronous chunk provider.";
+                complete(response::chunk_result::abort, "");
+            }
+
+            if (async_chunk_transfer_ == state && state->phase == AsyncChunkPhase::requesting_chunk)
+            {
+                do_read(state);
+            }
         }
 
-        const bool cancel_requested        = state->read_watch_cancel_requested;
-        state->read_watch_cancel_requested = false;
+        void handle_async_chunk_result(const std::shared_ptr<AsyncChunkTransfer>& state,
+                                       response::chunk_result result,
+                                       std::string chunk) {
+            if (async_chunk_transfer_ != state || state->phase != AsyncChunkPhase::requesting_chunk) {
+                return;
+            }
 
-        if (ec && !(cancel_requested && ec == asio::error::operation_aborted)) {
-            finish_async_chunked(state, false, true);
-            return;
+            invalidate_async_chunk_request(state);
+            release_async_chunk_lifetime(state);
+
+            if (state->read_watch_active)
+            {
+                state->pending_result_ready = true;
+                state->pending_result = result;
+                state->pending_result_chunk = std::move(chunk);
+                state->read_watch_cancel_requested = true;
+
+                error_code cancel_error;
+                // No response write is active during requesting_chunk, so the
+                // socket-wide cancellation targets only the closure watch.
+                adaptor_.raw_socket().cancel(cancel_error);
+                if (cancel_error)
+                {
+                    state->pending_result_ready = false;
+                    state->pending_result_chunk.clear();
+                    state->read_watch_cancel_requested = false;
+                    finish_async_chunked(state, false, true);
+                }
+                return;
+            }
+
+            apply_async_chunk_result(state, result, std::move(chunk));
         }
 
-        if (!ec) {
-            const std::size_t retained_input_limit = max_header_size;
-            if (buffered_input_.size() > retained_input_limit
-                || bytes_transferred > retained_input_limit - buffered_input_.size()) {
+        void apply_async_chunk_result(const std::shared_ptr<AsyncChunkTransfer>& state,
+                                      response::chunk_result result,
+                                      std::string chunk)
+        {
+            if (async_chunk_transfer_ != state || state->phase != AsyncChunkPhase::requesting_chunk)
+            {
+                return;
+            }
+
+            if (result == response::chunk_result::abort) {
                 finish_async_chunked(state, false, true);
                 return;
             }
 
-            buffered_input_.append(buffer_.data(), bytes_transferred);
+            if (chunk.empty()) {
+                if (result == response::chunk_result::done) {
+                    write_async_chunk_terminator(state);
+                } else {
+                    request_async_chunk(state);
+                }
+                return;
+            }
+
+            state->phase        = AsyncChunkPhase::writing_chunk;
+            state->chunk        = std::move(chunk);
+            state->chunk_header = chunk_size_to_hex(state->chunk.size());
+            state->chunk_header += crlf;
+            state->buffers.clear();
+            state->buffers.reserve(3);
+            state->buffers.emplace_back(state->chunk_header.data(), state->chunk_header.size());
+            state->buffers.emplace_back(state->chunk.data(), state->chunk.size());
+            state->buffers.emplace_back(crlf.data(), crlf.size());
+
+            auto self = this->shared_from_this();
+            asio::async_write(
+                adaptor_.socket(),
+                state->buffers,
+                [self, state, result](const error_code& ec, std::size_t /*bytes_transferred*/) {
+                    if (self->async_chunk_transfer_ != state) {
+                        return;
+                    }
+
+                    if (ec) {
+                        CROW_LOG_ERROR
+                          << ec << " - buffer write error happened while sending a chunk. Writing stopped prematurely.";
+                        self->finish_async_chunked(state, false, true);
+                        return;
+                    }
+
+                    state->buffers.clear();
+                    state->chunk.clear();
+                    state->chunk_header.clear();
+                    if (result == response::chunk_result::done) {
+                        self->write_async_chunk_terminator(state);
+                    } else {
+                        self->request_async_chunk(state);
+                    }
+                });
         }
 
-        if (state->pending_result_ready) {
-            const auto result           = state->pending_result;
-            auto chunk                  = std::move(state->pending_result_chunk);
-            state->pending_result_ready = false;
-            apply_async_chunk_result(state, result, std::move(chunk));
-            return;
+        void write_async_chunk_terminator(const std::shared_ptr<AsyncChunkTransfer>& state) {
+            if (async_chunk_transfer_ != state) {
+                return;
+            }
+
+            state->phase = AsyncChunkPhase::writing_terminator;
+            state->buffers.clear();
+            state->buffers.emplace_back(state->terminator.data(), state->terminator.size());
+
+            auto self = this->shared_from_this();
+            asio::async_write(adaptor_.socket(),
+                              state->buffers,
+                              [self, state](const error_code& ec, std::size_t /*bytes_transferred*/) {
+                                  if (self->async_chunk_transfer_ != state) {
+                                      return;
+                                  }
+
+                                  if (ec) {
+                                      CROW_LOG_ERROR << ec
+                                                     << " - buffer write error happened while sending the last chunk.";
+                                      self->finish_async_chunked(state, false, true);
+                                      return;
+                                  }
+
+                                  self->finish_async_chunked(state, true, false);
+                              });
         }
 
-        if (async_chunk_transfer_ == state && state->phase == AsyncChunkPhase::requesting_chunk) {
-            do_read(state);
-        }
-    }
+        void finish_async_chunked(const std::shared_ptr<AsyncChunkTransfer>& state, bool clean, bool force_close) {
+            if (async_chunk_transfer_ != state) {
+                return;
+            }
 
-    void process_incoming_input(const char* data, std::size_t length) {
-        std::size_t consumed = 0;
-        const bool parsed    = parser_.feed(data, static_cast<int>(length), consumed);
-        if (parsed && consumed <= length && consumed < length) {
-            buffered_input_.assign(data + consumed, length - consumed);
+            const bool resume_input = clean && !force_close && !close_connection_ && need_to_start_read_after_complete_;
+            state->phase = clean ? AsyncChunkPhase::completed : AsyncChunkPhase::aborted;
+            invalidate_async_chunk_request(state);
+            release_async_chunk_lifetime(state);
+            state->provider = nullptr;
+            state->buffers.clear();
+            async_chunk_transfer_.reset();
+            untrack_async_chunk_transfer();
+
+            if (force_close) {
+                adaptor_.shutdown_readwrite();
+                adaptor_.close();
+                CROW_LOG_DEBUG << this << " from write (async chunked, aborted or write error)";
+            }
+
+            state->notify_completion(clean);
+
+            if (close_connection_ && !force_close) {
+                adaptor_.shutdown_readwrite();
+                adaptor_.close();
+                CROW_LOG_DEBUG << this << " from write (async chunked)";
+            }
+
+            res.end();
+            res.clear();
+            buffers_.clear();
+            parser_.clear();
+
+            if (resume_input)
+            {
+                need_to_start_read_after_complete_ = false;
+                start_deadline();
+                if (buffered_input_.empty())
+                {
+                    do_read();
+                }
+                else
+                {
+                    process_buffered_input();
+                }
+            }
+            else
+            {
+                need_to_start_read_after_complete_ = false;
+                buffered_input_.clear();
+            }
         }
 
-        if (!parsed || consumed > length || !adaptor_.is_open()) {
-            close_after_read_error();
-        } else if (close_connection_) {
+        void do_write_sync_chunked() {
+            error_code ec;
+            asio::write(adaptor_.socket(), buffers_, ec); // Write the response start / headers
+            if (ec)
+            {
+                CROW_LOG_ERROR << ec << " - buffer write error happened while sending response start / headers. Writing stopped premature.";
+            }
+
+            // Producing the body may take arbitrarily long, so the connection must not be
+            // closed by the deadline while chunks are still on their way.
+            cancel_deadline_timer();
+
+            // do_write_sync() clears the response on every write, so the provider and the
+            // completion handler have to be taken out of it before the loop starts.
+            auto provider = std::move(res.chunk_provider_ex_);
+            res.chunk_provider_ex_ = nullptr;
+            if (!provider && res.chunk_provider_)
+            {
+                provider = [bool_provider = std::move(res.chunk_provider_)](std::string& chunk) {
+                    return bool_provider(chunk) ? response::chunk_result::more : response::chunk_result::done;
+                };
+            }
+            res.chunk_provider_ = nullptr;
+            auto completion_handler = std::move(res.chunk_complete_);
+            res.chunk_complete_ = nullptr;
+
+            std::string chunk;
+            std::string chunk_header;
+            std::vector<asio::const_buffer> buffers{3};
+            auto result = provider ? response::chunk_result::more : response::chunk_result::done;
+            while (result == response::chunk_result::more && !ec)
+            {
+                chunk.clear();
+                // An exception from the provider must not escape into the Asio stack; it is
+                // treated as an abort: no terminating frame, forced close, completion(false).
+                try
+                {
+                    result = provider(chunk);
+                }
+                catch (const std::exception& e)
+                {
+                    CROW_LOG_ERROR << "An uncaught exception occurred in the chunk provider: " << e.what();
+                    result = response::chunk_result::abort;
+                }
+                catch (...)
+                {
+                    CROW_LOG_ERROR << "An uncaught exception occurred in the chunk provider.";
+                    result = response::chunk_result::abort;
+                }
+                if (result == response::chunk_result::abort || chunk.empty())
+                {
+                    continue;
+                }
+
+                chunk_header = chunk_size_to_hex(chunk.size());
+                chunk_header += crlf;
+                buffers[0] = asio::const_buffer(chunk_header.data(), chunk_header.size());
+                buffers[1] = asio::const_buffer(chunk.data(), chunk.size());
+                buffers[2] = asio::const_buffer(crlf.data(), crlf.size());
+                ec = do_write_sync(buffers);
+                if (ec)
+                {
+                    CROW_LOG_ERROR << ec << " - buffer write error happened while sending a chunk. Writing stopped premature.";
+                }
+            }
+
+            // The terminating frame marks the body as complete, so it is only sent when the
+            // provider finished cleanly and every previous write succeeded.
+            if (result == response::chunk_result::done && !ec)
+            {
+                static const std::string last_chunk = "0\r\n\r\n";
+                std::vector<asio::const_buffer> tail{1};
+                tail[0] = asio::const_buffer(last_chunk.data(), last_chunk.size());
+                ec = do_write_sync(tail);
+                if (ec)
+                {
+                    CROW_LOG_ERROR << ec << " - buffer write error happened while sending the last chunk.";
+                }
+            }
+
+            // A write failure leaves the message framing just as incomplete as an explicit
+            // abort (the terminating frame never made it out), so the connection policy is
+            // the same for both: force the close and never reuse the socket for keep-alive.
+            const bool aborted = (result == response::chunk_result::abort);
+            const bool force_close = aborted || static_cast<bool>(ec);
+            if (force_close)
+            {
+                // Close the connection forcefully, without the terminating frame, so that the
+                // client sees a truncated body instead of a seemingly complete one.
+                adaptor_.shutdown_readwrite();
+                adaptor_.close();
+                CROW_LOG_DEBUG << this << " from write (chunked, " << (aborted ? "aborted" : "write error") << ")";
+            }
+
+            if (completion_handler)
+            {
+                // An exception from the handler must not escape into the Asio stack or skip
+                // the cleanup below; it is logged and swallowed.
+                try
+                {
+                    completion_handler(result == response::chunk_result::done && !ec);
+                }
+                catch (const std::exception& e)
+                {
+                    CROW_LOG_ERROR << "An uncaught exception occurred in the chunked completion handler: " << e.what();
+                }
+                catch (...)
+                {
+                    CROW_LOG_ERROR << "An uncaught exception occurred in the chunked completion handler.";
+                }
+            }
+
+            if (close_connection_ && !force_close)
+            {
+                adaptor_.shutdown_readwrite();
+                adaptor_.close();
+                CROW_LOG_DEBUG << this << " from write (chunked)";
+            }
+
+            res.end();
+            res.clear();
+            buffers_.clear();
+            parser_.clear();
+
+            // The deadline was cancelled for the duration of the transfer, so a kept-alive
+            // connection has to be put back into reading state explicitly.
+            if (!force_close && !close_connection_ && need_to_start_read_after_complete_)
+            {
+                need_to_start_read_after_complete_ = false;
+                start_deadline();
+                do_read();
+            }
+        }
+
+        void do_write_general()
+        {
+            error_code ec;
+            if (res.body.length() < res_stream_threshold_)
+            {
+                res_body_copy_.swap(res.body);
+                buffers_.emplace_back(res_body_copy_.data(), res_body_copy_.size());
+
+                ec = do_write_sync(buffers_);
+                if (ec) {
+                    CROW_LOG_ERROR << ec << " - buffer write error happened while sending response. Writing stopped premature.";
+                }
+                if (close_connection_)
+                {
+                    adaptor_.shutdown_readwrite();
+                    adaptor_.close();
+                    CROW_LOG_DEBUG << this << " from write (res)";
+                }
+                else if (need_to_start_read_after_complete_)
+                {
+                    need_to_start_read_after_complete_ = false;
+                    start_deadline();
+                    do_read();
+                }
+            }
+            else
+            {
+                asio::write(adaptor_.socket(), buffers_,ec); // Write the response start / headers
+                if (ec) {
+                    CROW_LOG_ERROR << ec << "- buffer write error happened while sending response start / headers. Writing stopped premature.";
+                }
+                cancel_deadline_timer();
+                if (res.body.length() > 0)
+                {
+                    std::vector<asio::const_buffer> buffers{1};
+                    const uint8_t* data = reinterpret_cast<const uint8_t*>(res.body.data());
+                    size_t length = res.body.length();
+                    for (size_t transferred = 0; transferred < length;)
+                    {
+                        size_t to_transfer = CROW_MIN(16384UL, length - transferred);
+                        buffers[0] = asio::const_buffer(data + transferred, to_transfer);
+                        ec = do_write_sync(buffers);
+                        if (ec) {
+                            CROW_LOG_ERROR << ec << " - " << transferred << " - buffer write error happened while sending response. Writing stopped premature.";
+                            break;
+                        }
+                        transferred += to_transfer;
+                    }
+                }
+                if (close_connection_)
+                {
+                    adaptor_.shutdown_readwrite();
+                    adaptor_.close();
+                    CROW_LOG_DEBUG << this << " from write (res_stream)";
+                }
+
+                res.end();
+                res.clear();
+                buffers_.clear();
+                parser_.clear();
+            }
+        }
+
+        void do_read(std::shared_ptr<AsyncChunkTransfer> watch_state = nullptr)
+        {
+            if (read_in_progress_ || shutting_down_ || !adaptor_.is_open())
+            {
+                return;
+            }
+            if (watch_state && buffered_input_.size() > max_header_size)
+            {
+                finish_async_chunked(watch_state, false, true);
+                return;
+            }
+
+            if (watch_state)
+            {
+                watch_state->read_watch_active = true;
+            }
+            read_in_progress_ = true;
+            auto self = this->shared_from_this();
+            adaptor_.socket().async_read_some(
+              asio::buffer(buffer_),
+              [self, watch_state = std::move(watch_state)](const error_code& ec, std::size_t bytes_transferred) {
+                  self->read_in_progress_ = false;
+                  if (self->shutting_down_)
+                  {
+                      return;
+                  }
+
+                  if (watch_state)
+                  {
+                      watch_state->read_watch_active = false;
+                      if (self->async_chunk_transfer_ == watch_state)
+                      {
+                          self->handle_async_chunk_read(watch_state, ec, bytes_transferred);
+                      }
+                      return;
+                  }
+
+                  if (!ec)
+                  {
+                      self->process_incoming_input(self->buffer_.data(), bytes_transferred);
+                      return;
+                  }
+
+                  self->close_after_read_error();
+              });
+        }
+
+        void handle_async_chunk_read(const std::shared_ptr<AsyncChunkTransfer>& state,
+                                     const error_code& ec,
+                                     std::size_t bytes_transferred)
+        {
+            if (async_chunk_transfer_ != state)
+            {
+                return;
+            }
+
+            const bool cancel_requested = state->read_watch_cancel_requested;
+            state->read_watch_cancel_requested = false;
+
+            if (ec && !(cancel_requested && ec == asio::error::operation_aborted))
+            {
+                finish_async_chunked(state, false, true);
+                return;
+            }
+
+            if (!ec)
+            {
+                const std::size_t retained_input_limit = max_header_size;
+                if (buffered_input_.size() > retained_input_limit || bytes_transferred > retained_input_limit - buffered_input_.size())
+                {
+                    finish_async_chunked(state, false, true);
+                    return;
+                }
+
+                buffered_input_.append(buffer_.data(), bytes_transferred);
+            }
+
+            if (state->pending_result_ready)
+            {
+                const auto result = state->pending_result;
+                auto chunk = std::move(state->pending_result_chunk);
+                state->pending_result_ready = false;
+                apply_async_chunk_result(state, result, std::move(chunk));
+                return;
+            }
+
+            if (async_chunk_transfer_ == state && state->phase == AsyncChunkPhase::requesting_chunk)
+            {
+                do_read(state);
+            }
+        }
+
+        void process_incoming_input(const char* data, std::size_t length)
+        {
+            std::size_t consumed = 0;
+            const bool parsed = parser_.feed(data, static_cast<int>(length), consumed);
+            if (parsed && consumed <= length && consumed < length)
+            {
+                buffered_input_.assign(data + consumed, length - consumed);
+            }
+
+            if (!parsed || consumed > length || !adaptor_.is_open())
+            {
+                close_after_read_error();
+            }
+            else if (close_connection_)
+            {
+                buffered_input_.clear();
+                cancel_deadline_timer();
+                parser_.done();
+                // adaptor will close after write
+            }
+            else if (async_chunk_transfer_)
+            {
+                // The asynchronous transfer owns the connection until it finishes.
+                // Its completion path parses buffered input before reading the socket again.
+                need_to_start_read_after_complete_ = true;
+            }
+            else if (!need_to_call_after_handlers_)
+            {
+                start_deadline();
+                do_read();
+            }
+            else
+            {
+                // res will be completed later by user
+                need_to_start_read_after_complete_ = true;
+            }
+        }
+
+        void process_buffered_input()
+        {
+            std::string input = std::move(buffered_input_);
+            buffered_input_.clear();
+            process_incoming_input(input.data(), input.size());
+        }
+
+        void close_after_read_error()
+        {
             buffered_input_.clear();
             cancel_deadline_timer();
             parser_.done();
-            // adaptor will close after write
-        } else if (async_chunk_transfer_) {
-            // The asynchronous transfer owns the connection until it finishes.
-            // Its completion path parses buffered input before reading the socket again.
-            need_to_start_read_after_complete_ = true;
-        } else if (!need_to_call_after_handlers_) {
-            start_deadline();
-            do_read();
-        } else {
-            // res will be completed later by user
-            need_to_start_read_after_complete_ = true;
+            adaptor_.shutdown_read();
+            adaptor_.close();
+            CROW_LOG_DEBUG << this << " from read(1) with description: \""
+                           << http_errno_description(static_cast<http_errno>(parser_.http_errno)) << '\"';
         }
-    }
 
-    void process_buffered_input() {
-        std::string input = std::move(buffered_input_);
-        buffered_input_.clear();
-        process_incoming_input(input.data(), input.size());
-    }
+        void do_write()
+        {
+            auto self = this->shared_from_this();
+            asio::async_write(
+              adaptor_.socket(), buffers_,
+              [self](const error_code& ec, std::size_t /*bytes_transferred*/) {
+                  self->res.clear();
+                  self->res_body_copy_.clear();
+                  if (!self->continue_requested)
+                  {
+                      self->parser_.clear();
+                  }
+                  else
+                  {
+                      self->continue_requested = false;
+                  }
 
-    void close_after_read_error() {
-        buffered_input_.clear();
-        cancel_deadline_timer();
-        parser_.done();
-        adaptor_.shutdown_read();
-        adaptor_.close();
-        CROW_LOG_DEBUG << this << " from read(1) with description: \""
-                       << http_errno_description(static_cast<http_errno>(parser_.http_errno)) << '\"';
-    }
+                  if (!ec)
+                  {
+                      if (self->close_connection_)
+                      {
+                          self->adaptor_.shutdown_write();
+                          self->adaptor_.close();
+                          CROW_LOG_DEBUG << self << " from write(1)";
+                      }
+                  }
+                  else
+                  {
+                      CROW_LOG_DEBUG << self << " from write(2)";
+                  }
+              });
+        }
 
-    void do_write() {
-        auto self = this->shared_from_this();
-        asio::async_write(adaptor_.socket(), buffers_, [self](const error_code& ec, std::size_t /*bytes_transferred*/) {
-            self->res.clear();
-            self->res_body_copy_.clear();
-            if (!self->continue_requested) {
-                self->parser_.clear();
-            } else {
-                self->continue_requested = false;
+        inline error_code do_write_sync(std::vector<asio::const_buffer>& buffers)
+        {
+            error_code ec;
+            asio::write(adaptor_.socket(), buffers, ec);
+            if (ec)
+            {
+                // CROW_LOG_ERROR << ec << " - happened while sending buffers";
+                CROW_LOG_DEBUG << this << " from write (sync)(2)";
             }
 
-            if (!ec) {
-                if (self->close_connection_) {
-                    self->adaptor_.shutdown_write();
-                    self->adaptor_.close();
-                    CROW_LOG_DEBUG << self << " from write(1)";
+            this->res.clear();
+            this->res_body_copy_.clear();
+            if (this->continue_requested)
+            {
+                this->continue_requested = false;
+            }
+            else
+            {
+                this->parser_.clear();
+            }
+
+            return ec;
+        }
+
+        void cancel_deadline_timer()
+        {
+            CROW_LOG_DEBUG << this << " timer cancelled: " << &task_timer_ << ' ' << task_id_;
+            task_timer_.cancel(task_id_);
+        }
+
+        void start_deadline(/*int timeout = 5*/)
+        {
+            cancel_deadline_timer();
+
+            auto self = this->shared_from_this();
+            task_id_ = task_timer_.schedule([self] {
+                if (!self->adaptor_.is_open())
+                {
+                    return;
                 }
-            } else {
-                CROW_LOG_DEBUG << self << " from write(2)";
-            }
-        });
-    }
-
-    inline error_code do_write_sync(std::vector<asio::const_buffer>& buffers) {
-        error_code ec;
-        asio::write(adaptor_.socket(), buffers, ec);
-        if (ec) {
-            // CROW_LOG_ERROR << ec << " - happened while sending buffers";
-            CROW_LOG_DEBUG << this << " from write (sync)(2)";
+                self->adaptor_.shutdown_readwrite();
+                self->adaptor_.close();
+            });
+            CROW_LOG_DEBUG << this << " timer added: " << &task_timer_ << ' ' << task_id_;
         }
 
-        this->res.clear();
-        this->res_body_copy_.clear();
-        if (this->continue_requested) {
-            this->continue_requested = false;
-        } else {
-            this->parser_.clear();
-        }
+    private:
+        Adaptor adaptor_;
+        Handler* handler_;
 
-        return ec;
-    }
+        std::array<char, 4096> buffer_;
+        std::string buffered_input_;
 
-    void cancel_deadline_timer() {
-        CROW_LOG_DEBUG << this << " timer cancelled: " << &task_timer_ << ' ' << task_id_;
-        task_timer_.cancel(task_id_);
-    }
+        HTTPParser<Connection> parser_;
+        std::unique_ptr<routing_handle_result> routing_handle_result_;
+        request& req_;
+        response res;
 
-    void start_deadline(/*int timeout = 5*/) {
-        cancel_deadline_timer();
+        bool close_connection_ = false;
 
-        auto self = this->shared_from_this();
-        task_id_  = task_timer_.schedule([self] {
-            if (!self->adaptor_.is_open()) {
-                return;
-            }
-            self->adaptor_.shutdown_readwrite();
-            self->adaptor_.close();
-        });
-        CROW_LOG_DEBUG << this << " timer added: " << &task_timer_ << ' ' << task_id_;
-    }
+        const std::string& server_name_;
+        std::vector<asio::const_buffer> buffers_;
 
-private:
-    Adaptor adaptor_;
-    Handler* handler_;
+        std::string content_length_;
+        std::string date_str_;
+        std::string res_body_copy_;
+        std::shared_ptr<AsyncChunkTransfer> async_chunk_transfer_;
 
-    std::array<char, 4096> buffer_;
-    std::string buffered_input_;
+        detail::task_timer::identifier_type task_id_{};
 
-    HTTPParser<Connection> parser_;
-    std::unique_ptr<routing_handle_result> routing_handle_result_;
-    request& req_;
-    response res;
+        bool continue_requested{};
+        bool need_to_call_after_handlers_{};
+        bool need_to_start_read_after_complete_{};
+        bool add_keep_alive_{};
+        bool read_in_progress_{};
+        bool shutting_down_{};
 
-    bool close_connection_ = false;
+        std::tuple<Middlewares...>* middlewares_;
+        detail::context<Middlewares...> ctx_;
 
-    const std::string& server_name_;
-    std::vector<asio::const_buffer> buffers_;
+        std::function<std::string()>& get_cached_date_str;
+        detail::task_timer& task_timer_;
 
-    std::string content_length_;
-    std::string date_str_;
-    std::string res_body_copy_;
-    std::shared_ptr<AsyncChunkTransfer> async_chunk_transfer_;
+        size_t res_stream_threshold_;
 
-    detail::task_timer::identifier_type task_id_{};
-
-    bool continue_requested{};
-    bool need_to_call_after_handlers_{};
-    bool need_to_start_read_after_complete_{};
-    bool add_keep_alive_{};
-    bool read_in_progress_{};
-    bool shutting_down_{};
-
-    std::tuple<Middlewares...>* middlewares_;
-    detail::context<Middlewares...> ctx_;
-
-    std::function<std::string()>& get_cached_date_str;
-    detail::task_timer& task_timer_;
-
-    size_t res_stream_threshold_;
-
-    std::atomic<unsigned int>& queue_length_;
-    std::shared_ptr<detail::connection_lifecycle_registry<Connection>> lifecycle_registry_;
-};
+        std::atomic<unsigned int>& queue_length_;
+        std::shared_ptr<detail::connection_lifecycle_registry<Connection>> lifecycle_registry_;
+    };
 
 } // namespace crow
