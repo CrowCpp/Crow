@@ -242,6 +242,35 @@ bool has_complete_http_response(const std::string& response) {
 
 class PausingSocketContext {
 public:
+    void observe_next_read()
+    {
+        observe_next_read_.store(true);
+    }
+
+    bool report_read_started()
+    {
+        if (!observe_next_read_.exchange(false))
+            return false;
+
+        observed_read_started_.set_value();
+        return true;
+    }
+
+    void report_read_completed(std::size_t bytes_transferred)
+    {
+        observed_read_completed_.set_value(bytes_transferred);
+    }
+
+    std::future<void> observed_read_started_future()
+    {
+        return observed_read_started_.get_future();
+    }
+
+    std::future<std::size_t> observed_read_completed_future()
+    {
+        return observed_read_completed_.get_future();
+    }
+
     void pause_next_write() {
         pause_next_write_.store(true);
     }
@@ -298,9 +327,12 @@ public:
     }
 
 private:
+    std::atomic<bool> observe_next_read_{false};
     std::atomic<bool> pause_next_write_{false};
     std::atomic<bool> fail_next_write_{false};
     std::atomic<bool> started_connection_destruction_reported_{false};
+    std::promise<void> observed_read_started_;
+    std::promise<std::size_t> observed_read_completed_;
     std::promise<void> write_pending_;
     std::promise<void> started_connection_destroyed_;
     std::mutex mutex_;
@@ -378,7 +410,15 @@ public:
 
     template<typename MutableBufferSequence, typename ReadHandler>
     void async_read_some(const MutableBufferSequence& buffers, ReadHandler&& handler) {
-        socket_.async_read_some(buffers, std::forward<ReadHandler>(handler));
+        const bool observed = context_ && context_->report_read_started();
+        socket_.async_read_some(
+          buffers,
+          [context = context_, observed, handler = std::forward<ReadHandler>(handler)](
+            const asio_error_code& ec, std::size_t bytes_transferred) mutable {
+              if (observed)
+                  context->report_read_completed(bytes_transferred);
+              handler(ec, bytes_transferred);
+          });
     }
 
     template<typename ConstBufferSequence>
@@ -488,8 +528,7 @@ public:
             return false;
         }
 
-        complete(result, std::move(chunk));
-        return true;
+        return complete(result, std::move(chunk));
     }
 
 private:
@@ -3317,6 +3356,202 @@ TEST_CASE("async_chunked_response_preserves_pipelined_request_bytes_until_clean_
     CHECK(post_observation->first_body_correct.load());
 } // async_chunked_response_preserves_pipelined_request_bytes_until_clean_completion
 
+TEST_CASE("async_chunked_response_retains_input_read_while_provider_waits")
+{
+    SimpleApp app;
+
+    auto observation = std::make_shared<PipelinedAsyncObservation>();
+    PausingSocketContext socket_context;
+    auto waiting_read_started = socket_context.observed_read_started_future();
+    auto waiting_read_completed = socket_context.observed_read_completed_future();
+
+    CROW_ROUTE(app, "/waiting-pipeline")
+    ([observation, &socket_context](const crow::request&, crow::response& res) {
+        observation->first_route_calls.fetch_add(1);
+        res.set_header("X-Pipeline-Response", "waiting");
+        res.set_async_chunked_content_provider(
+          [observation, &socket_context](crow::response::async_chunk_completion_t complete) {
+              observation->provider_calls.fetch_add(1);
+              socket_context.observe_next_read();
+              observation->provider_completion.capture(std::move(complete));
+          });
+        res.set_chunked_completion_handler([observation](bool clean) {
+            observation->first_completion_seen.store(true);
+            observation->completion.record(clean);
+        });
+        res.end();
+    });
+
+    CROW_ROUTE(app, "/after-waiting-pipeline")
+    ([observation](const crow::request&, crow::response& res) {
+        observation->second_route_calls.fetch_add(1);
+        if (!observation->first_completion_seen.load())
+            observation->second_route_overlapped.store(true);
+        res.end("after-wait");
+    });
+
+    app.validate();
+    std::tuple<> middlewares;
+    using ObservedReadServer = crow::Server<crow::SimpleApp, crow::TCPAcceptor, PausingSocketAdaptor>;
+    ObservedReadServer server(&app,
+                              asio::ip::tcp::endpoint(asio::ip::make_address(LOCALHOST_ADDRESS), 45451),
+                              "Crow/Test",
+                              &middlewares,
+                              2,
+                              5,
+                              &socket_context);
+    auto server_task = std::async(std::launch::async, [&server] {
+        server.run();
+    });
+    BoundedServerShutdown server_shutdown(server_task, [&server] {
+        server.stop();
+    });
+    REQUIRE(server.wait_for_start(std::chrono::steady_clock::now() + std::chrono::seconds(3)) == std::cv_status::no_timeout);
+
+    asio::io_context io_context;
+    asio::ip::tcp::socket client(io_context);
+    client.connect(asio::ip::tcp::endpoint(asio::ip::make_address(LOCALHOST_ADDRESS), 45451));
+    const std::string first_request = "GET /waiting-pipeline HTTP/1.1\r\nHost: localhost\r\n\r\n";
+    asio::write(client, asio::buffer(first_request));
+
+    auto completion_result = observation->completion.first_result();
+    const auto provider_status = observation->provider_completion.wait_for(std::chrono::seconds(5));
+    const auto read_start_status = waiting_read_started.wait_for(std::chrono::seconds(1));
+    const std::string second_request = "GET /after-waiting-pipeline HTTP/1.1\r\nHost: localhost\r\nConnection: close\r\n\r\n";
+    asio_error_code pipeline_write_error;
+    asio::write(client, asio::buffer(second_request), pipeline_write_error);
+    const auto read_completion_status = waiting_read_completed.wait_for(std::chrono::seconds(1));
+    const std::size_t retained_bytes = read_completion_status == std::future_status::ready ? waiting_read_completed.get() : 0;
+    const bool second_route_called_while_waiting = observation->second_route_calls.load() != 0;
+    const bool result_accepted = provider_status == std::future_status::ready ? observation->provider_completion.complete(crow::chunk_result::done, "waiting") : false;
+
+    std::string response;
+    const bool connection_closed = receive_until_closed_with_deadline(client, response, std::chrono::seconds(5));
+    const auto completion_status = completion_result.wait_for(std::chrono::seconds(1));
+    const bool clean = completion_status == std::future_status::ready ? completion_result.get() : false;
+
+    asio_error_code close_error;
+    client.close(close_error);
+    server_shutdown.shutdown();
+
+    REQUIRE(provider_status == std::future_status::ready);
+    REQUIRE(read_start_status == std::future_status::ready);
+    CHECK_FALSE(pipeline_write_error);
+    REQUIRE(read_completion_status == std::future_status::ready);
+    CHECK(retained_bytes > 0);
+    CHECK(retained_bytes <= second_request.size());
+    CHECK_FALSE(second_route_called_while_waiting);
+    CHECK(result_accepted);
+    REQUIRE(connection_closed);
+    REQUIRE(completion_status == std::future_status::ready);
+    CHECK(clean);
+    CHECK(observation->first_route_calls.load() == 1);
+    CHECK(observation->provider_calls.load() == 1);
+    CHECK(observation->completion.calls() == 1);
+    CHECK(observation->second_route_calls.load() == 1);
+    CHECK_FALSE(observation->second_route_overlapped.load());
+
+    const auto first_header_end = response.find("\r\n\r\n");
+    REQUIRE(first_header_end != std::string::npos);
+    const auto first_body_begin = first_header_end + 4;
+    const std::string first_body = "7\r\nwaiting\r\n0\r\n\r\n";
+    REQUIRE(response.compare(first_body_begin, first_body.size(), first_body) == 0);
+    const auto second_status = response.find("HTTP/1.1 200 OK\r\n", first_body_begin);
+    REQUIRE(second_status == first_body_begin + first_body.size());
+    const auto second_header_end = response.find("\r\n\r\n", second_status);
+    REQUIRE(second_header_end != std::string::npos);
+    CHECK(response.substr(second_header_end + 4) == "after-wait");
+} // async_chunked_response_retains_input_read_while_provider_waits
+
+TEST_CASE("async_chunked_response_closes_when_waiting_input_exceeds_parser_limit")
+{
+    SimpleApp app;
+
+    auto provider_started_promise = std::make_shared<std::promise<void>>();
+    auto provider_started = provider_started_promise->get_future();
+    auto provider_lifetime_promise = std::make_shared<std::promise<std::weak_ptr<int>>>();
+    auto provider_lifetime_result = provider_lifetime_promise->get_future();
+    auto completion_observation = std::make_shared<ChunkCompletionObservation>();
+    auto completion_result = completion_observation->first_result();
+    PausingSocketContext socket_context;
+    auto waiting_read_started = socket_context.observed_read_started_future();
+
+    CROW_ROUTE(app, "/bounded-waiting-input")
+    ([provider_started_promise,
+      provider_lifetime_promise,
+      completion_observation,
+      &socket_context](const crow::request&, crow::response& res) {
+        auto provider_lifetime = std::make_shared<int>(0);
+        provider_lifetime_promise->set_value(std::weak_ptr<int>(provider_lifetime));
+        res.set_async_chunked_content_provider(
+          [provider_started_promise, provider_lifetime, &socket_context](
+            crow::response::async_chunk_completion_t complete) {
+              static_cast<void>(complete);
+              static_cast<void>(provider_lifetime);
+              socket_context.observe_next_read();
+              provider_started_promise->set_value();
+          });
+        res.set_chunked_completion_handler(
+          [completion_observation](bool clean) {
+              completion_observation->record(clean);
+          });
+        res.end();
+    });
+
+    app.validate();
+    std::tuple<> middlewares;
+    using BoundedInputServer = crow::Server<crow::SimpleApp, crow::TCPAcceptor, PausingSocketAdaptor>;
+    BoundedInputServer server(&app,
+                              asio::ip::tcp::endpoint(asio::ip::make_address(LOCALHOST_ADDRESS), 45451),
+                              "Crow/Test",
+                              &middlewares,
+                              2,
+                              5,
+                              &socket_context);
+    auto server_task = std::async(std::launch::async, [&server] {
+        server.run();
+    });
+    BoundedServerShutdown server_shutdown(server_task, [&server] {
+        server.stop();
+    });
+    REQUIRE(server.wait_for_start(std::chrono::steady_clock::now() + std::chrono::seconds(3)) == std::cv_status::no_timeout);
+
+    asio::io_context io_context;
+    asio::ip::tcp::socket client(io_context);
+    client.connect(asio::ip::tcp::endpoint(asio::ip::make_address(LOCALHOST_ADDRESS), 45451));
+    const std::string request = "GET /bounded-waiting-input HTTP/1.1\r\nHost: localhost\r\n\r\n";
+    asio::write(client, asio::buffer(request));
+
+    const auto provider_status = provider_started.wait_for(std::chrono::seconds(5));
+    const auto read_start_status = waiting_read_started.wait_for(std::chrono::seconds(1));
+    std::weak_ptr<int> provider_lifetime;
+    if (provider_status == std::future_status::ready)
+        provider_lifetime = provider_lifetime_result.get();
+    const bool retained_before_overflow = !provider_lifetime.expired();
+
+    const std::string excessive_input(CROW_HTTP_MAX_HEADER_SIZE + 1, 'x');
+    asio_error_code send_error;
+    asio::write(client, asio::buffer(excessive_input), send_error);
+    const auto completion_status = completion_result.wait_for(std::chrono::seconds(2));
+    const bool clean = completion_status == std::future_status::ready ? completion_result.get() : true;
+    const bool released_after_overflow = provider_lifetime.expired();
+    std::string response;
+    const bool connection_closed = receive_until_closed_with_deadline(client, response, std::chrono::seconds(2));
+
+    asio_error_code close_error;
+    client.close(close_error);
+    server_shutdown.shutdown();
+
+    REQUIRE(provider_status == std::future_status::ready);
+    REQUIRE(read_start_status == std::future_status::ready);
+    CHECK(retained_before_overflow);
+    REQUIRE(completion_status == std::future_status::ready);
+    CHECK_FALSE(clean);
+    CHECK(released_after_overflow);
+    CHECK(completion_observation->calls() == 1);
+    CHECK(connection_closed);
+} // async_chunked_response_closes_when_waiting_input_exceeds_parser_limit
+
 TEST_CASE("async_chunked_response_completed_from_other_threads") {
     SimpleApp app;
 
@@ -3766,7 +4001,7 @@ TEST_CASE("async_chunked_response_recovers_abort_after_foreign_thread_publicatio
     auto publication_attempts      = std::make_shared<std::atomic<std::size_t>>(0);
     auto transfer_lifetime_promise = std::make_shared<std::promise<std::weak_ptr<int>>>();
     auto transfer_lifetime_result  = transfer_lifetime_promise->get_future();
-    auto worker_task_promise       = std::make_shared<std::promise<std::future<void>>>();
+    auto worker_task_promise = std::make_shared<std::promise<std::future<bool>>>();
     auto worker_task_result        = worker_task_promise->get_future();
     auto connection_thread_promise = std::make_shared<std::promise<std::thread::id>>();
     auto connection_thread_result  = connection_thread_promise->get_future();
@@ -3800,7 +4035,7 @@ TEST_CASE("async_chunked_response_recovers_abort_after_foreign_thread_publicatio
                 worker_task_promise->set_value(
                     std::async(std::launch::async, [provider_thread_promise, complete = std::move(complete)]() mutable {
                         provider_thread_promise->set_value(std::this_thread::get_id());
-                        complete(crow::chunk_result::done, "discarded");
+                        return complete(crow::chunk_result::done, "discarded");
                     }));
             },
             "text/plain");
@@ -3835,15 +4070,16 @@ TEST_CASE("async_chunked_response_recovers_abort_after_foreign_thread_publicatio
     std::string response;
     const bool connection_closed  = receive_until_closed_with_deadline(client, response, std::chrono::seconds(5));
     const auto worker_task_status = worker_task_result.wait_for(std::chrono::seconds(1));
-    std::future<void> worker_task;
+    std::future<bool> worker_task;
     if (worker_task_status == std::future_status::ready)
         worker_task = worker_task_result.get();
     const auto worker_completion_status
         = worker_task.valid() ? worker_task.wait_for(std::chrono::seconds(1)) : std::future_status::deferred;
     std::exception_ptr worker_exception;
+    bool publication_accepted = true;
     if (worker_completion_status == std::future_status::ready) {
         try {
-            worker_task.get();
+            publication_accepted = worker_task.get();
         } catch (...) {
             worker_exception = std::current_exception();
         }
@@ -3882,6 +4118,7 @@ TEST_CASE("async_chunked_response_recovers_abort_after_foreign_thread_publicatio
     REQUIRE(worker_task_status == std::future_status::ready);
     REQUIRE(worker_completion_status == std::future_status::ready);
     CHECK(!worker_exception);
+    CHECK_FALSE(publication_accepted);
     REQUIRE(connection_thread_status == std::future_status::ready);
     REQUIRE(provider_thread_status == std::future_status::ready);
     REQUIRE(completion_thread_status == std::future_status::ready);
@@ -3899,7 +4136,7 @@ TEST_CASE("async_chunked_response_contains_abort_publication_failure_until_shutd
     auto publication_attempts      = std::make_shared<std::atomic<std::size_t>>(0);
     auto transfer_lifetime_promise = std::make_shared<std::promise<std::weak_ptr<int>>>();
     auto transfer_lifetime_result  = transfer_lifetime_promise->get_future();
-    auto worker_task_promise       = std::make_shared<std::promise<std::future<void>>>();
+    auto worker_task_promise = std::make_shared<std::promise<std::future<bool>>>();
     auto worker_task_result        = worker_task_promise->get_future();
     auto completion_observation    = std::make_shared<ChunkCompletionObservation>();
     auto completion_result         = completion_observation->first_result();
@@ -3921,9 +4158,9 @@ TEST_CASE("async_chunked_response_contains_abort_publication_failure_until_shutd
                 static_cast<void>(transfer_lifetime);
                 provider_calls->fetch_add(1);
                 worker_task_promise->set_value(
-                    std::async(std::launch::async, [complete = std::move(complete)]() mutable {
-                        complete(crow::chunk_result::done, "discarded");
-                    }));
+                  std::async(std::launch::async, [complete = std::move(complete)]() mutable {
+                      return complete(crow::chunk_result::done, "discarded");
+                  }));
             },
             "text/plain");
         res.set_chunked_completion_handler([completion_observation, transfer_lifetime](bool clean) {
@@ -3955,15 +4192,16 @@ TEST_CASE("async_chunked_response_contains_abort_publication_failure_until_shutd
     asio::write(client, asio::buffer(request));
 
     const auto worker_task_status = worker_task_result.wait_for(std::chrono::seconds(5));
-    std::future<void> worker_task;
+    std::future<bool> worker_task;
     if (worker_task_status == std::future_status::ready)
         worker_task = worker_task_result.get();
     const auto worker_completion_status
         = worker_task.valid() ? worker_task.wait_for(std::chrono::seconds(1)) : std::future_status::deferred;
     std::exception_ptr worker_exception;
+    bool publication_accepted = true;
     if (worker_completion_status == std::future_status::ready) {
         try {
-            worker_task.get();
+            publication_accepted = worker_task.get();
         } catch (...) {
             worker_exception = std::current_exception();
         }
@@ -3989,6 +4227,7 @@ TEST_CASE("async_chunked_response_contains_abort_publication_failure_until_shutd
     REQUIRE(worker_task_status == std::future_status::ready);
     REQUIRE(worker_completion_status == std::future_status::ready);
     CHECK(!worker_exception);
+    CHECK_FALSE(publication_accepted);
     CHECK(publication_attempts->load() == 2);
     CHECK(completion_status_before_shutdown == std::future_status::timeout);
     REQUIRE(transfer_lifetime_status == std::future_status::ready);
@@ -4010,24 +4249,37 @@ TEST_CASE("async_chunked_response_ignores_duplicate_request_completion") {
     SimpleApp app;
 
     auto provider_calls         = std::make_shared<std::atomic<std::size_t>>(0);
+    auto first_result_accepted = std::make_shared<std::atomic<int>>(-1);
+    auto duplicate_accepted = std::make_shared<std::atomic<int>>(-1);
+    auto final_result_accepted = std::make_shared<std::atomic<int>>(-1);
     auto completion_observation = std::make_shared<ChunkCompletionObservation>();
     auto completion_result      = completion_observation->first_result();
 
     CROW_ROUTE(app, "/duplicate-async-completion")
-    ([provider_calls, completion_observation](const crow::request&, crow::response& res) {
+    ([provider_calls,
+      first_result_accepted,
+      duplicate_accepted,
+      final_result_accepted,
+      completion_observation](const crow::request&, crow::response& res) {
         res.set_async_chunked_content_provider(
-            [provider_calls](crow::response::async_chunk_completion_t complete) {
-                const std::size_t call = provider_calls->fetch_add(1);
-                if (call == 0) {
-                    complete(crow::chunk_result::more, "");
-                    complete(crow::chunk_result::done, "duplicate");
-                } else if (call == 1) {
-                    complete(crow::chunk_result::done, "final");
-                } else {
-                    complete(crow::chunk_result::abort, "");
-                }
-            },
-            "text/plain");
+          [provider_calls, first_result_accepted, duplicate_accepted, final_result_accepted](
+            crow::response::async_chunk_completion_t complete) {
+              const std::size_t call = provider_calls->fetch_add(1);
+              if (call == 0)
+              {
+                  first_result_accepted->store(complete(crow::chunk_result::more, ""));
+                  duplicate_accepted->store(complete(crow::chunk_result::done, "duplicate"));
+              }
+              else if (call == 1)
+              {
+                  final_result_accepted->store(complete(crow::chunk_result::done, "final"));
+              }
+              else
+              {
+                  complete(crow::chunk_result::abort, "");
+              }
+          },
+          "text/plain");
         res.set_chunked_completion_handler(
             [completion_observation](bool clean) { completion_observation->record(clean); });
         res.end();
@@ -4061,6 +4313,9 @@ TEST_CASE("async_chunked_response_ignores_duplicate_request_completion") {
     REQUIRE(header_end != std::string::npos);
     CHECK(response.substr(header_end + 4) == "5\r\nfinal\r\n0\r\n\r\n");
     CHECK(provider_calls->load() == 2);
+    CHECK(first_result_accepted->load() == 1);
+    CHECK(duplicate_accepted->load() == 0);
+    CHECK(final_result_accepted->load() == 1);
     REQUIRE(completion_status == std::future_status::ready);
     CHECK(clean == true);
     CHECK(completion_observation->calls() == 1);
@@ -4079,27 +4334,32 @@ TEST_CASE("async_chunked_response_discards_late_completion_after_peer_close") {
     auto completion_result         = completion_observation->first_result();
     PausingSocketContext socket_context;
     auto connection_destroyed = socket_context.started_connection_destroyed_future();
+    auto waiting_read_started = socket_context.observed_read_started_future();
 
     CROW_ROUTE(app, "/late-async-completion")
     ([provider_started_promise,
       transfer_lifetime_promise,
       delayed_completion,
       delayed_completion_mutex,
-      completion_observation](const crow::request&, crow::response& res) {
+      completion_observation,
+      &socket_context](const crow::request&, crow::response& res) {
         auto transfer_lifetime = std::make_shared<int>(0);
         transfer_lifetime_promise->set_value(std::weak_ptr<int>(transfer_lifetime));
         res.set_async_chunked_content_provider(
-            [provider_started_promise, delayed_completion, delayed_completion_mutex, transfer_lifetime](
-                crow::response::async_chunk_completion_t complete) {
-                static_cast<void>(transfer_lifetime);
-                {
-                    std::lock_guard<std::mutex> lock(*delayed_completion_mutex);
-                    *delayed_completion = std::move(complete);
-                }
-                provider_started_promise->set_value();
-            });
-        res.set_chunked_completion_handler([completion_observation, transfer_lifetime](bool clean) {
-            static_cast<void>(transfer_lifetime);
+          [provider_started_promise,
+           delayed_completion,
+           delayed_completion_mutex,
+           transfer_lifetime,
+           &socket_context](crow::response::async_chunk_completion_t complete) {
+              static_cast<void>(transfer_lifetime);
+              socket_context.observe_next_read();
+              {
+                  std::lock_guard<std::mutex> lock(*delayed_completion_mutex);
+                  *delayed_completion = std::move(complete);
+              }
+              provider_started_promise->set_value();
+          });
+        res.set_chunked_completion_handler([completion_observation](bool clean) {
             completion_observation->record(clean);
         });
         res.end();
@@ -4130,13 +4390,14 @@ TEST_CASE("async_chunked_response_discards_late_completion_after_peer_close") {
     std::weak_ptr<int> transfer_lifetime;
     if (provider_status == std::future_status::ready)
         transfer_lifetime = transfer_lifetime_result.get();
+    const auto read_start_status = waiting_read_started.wait_for(std::chrono::seconds(1));
     const bool retained_before_peer_close                = !transfer_lifetime.expired();
     const std::size_t completion_calls_before_peer_close = completion_observation->calls();
     const auto connection_status_before_peer_close       = connection_destroyed.wait_for(std::chrono::seconds(0));
 
     asio_error_code close_error;
+    client.shutdown(asio::socket_base::shutdown_both, close_error);
     client.close(close_error);
-    server_shutdown.shutdown();
 
     const auto connection_destroyed_status = connection_destroyed.wait_for(std::chrono::seconds(1));
     const auto completion_status           = completion_result.wait_for(std::chrono::seconds(1));
@@ -4148,10 +4409,19 @@ TEST_CASE("async_chunked_response_discards_late_completion_after_peer_close") {
         std::lock_guard<std::mutex> lock(*delayed_completion_mutex);
         complete = std::move(*delayed_completion);
     }
+    bool late_result_accepted = true;
+    bool source_continued = false;
     if (complete)
-        complete(crow::chunk_result::done, "late");
+    {
+        late_result_accepted = complete(crow::chunk_result::more, "late");
+        if (late_result_accepted)
+            source_continued = true;
+    }
+
+    server_shutdown.shutdown();
 
     REQUIRE(provider_status == std::future_status::ready);
+    REQUIRE(read_start_status == std::future_status::ready);
     CHECK(retained_before_peer_close);
     CHECK(completion_calls_before_peer_close == 0);
     CHECK(connection_status_before_peer_close == std::future_status::timeout);
@@ -4161,6 +4431,8 @@ TEST_CASE("async_chunked_response_discards_late_completion_after_peer_close") {
     CHECK(released_before_late_completion);
     CHECK(transfer_lifetime.expired());
     CHECK(completion_observation->calls() == 1);
+    CHECK_FALSE(late_result_accepted);
+    CHECK_FALSE(source_continued);
 } // async_chunked_response_discards_late_completion_after_peer_close
 
 TEST_CASE("async_chunked_response_shutdown_releases_never_completing_provider") {
