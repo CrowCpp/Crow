@@ -82,30 +82,25 @@ public:
     }
 };
 
-class BoundedServerShutdown
-{
+class BoundedServerShutdown {
 public:
-    BoundedServerShutdown(std::future<void>& server_task, std::function<void()> stop):
-      server_task_(server_task), stop_(std::move(stop))
-    {}
+    BoundedServerShutdown(std::future<void>& server_task, std::function<void()> stop)
+        : server_task_(server_task)
+        , stop_(std::move(stop)) {
+    }
 
-    ~BoundedServerShutdown()
-    {
+    ~BoundedServerShutdown() {
         shutdown();
     }
 
-    void shutdown() noexcept
-    {
+    void shutdown() noexcept {
         if (stopped_)
             return;
 
         stopped_ = true;
-        try
-        {
+        try {
             stop_();
-        }
-        catch (...)
-        {
+        } catch (...) {
             std::terminate();
         }
 
@@ -2644,44 +2639,42 @@ TEST_CASE("async_chunked_response_clean_completion_restores_keep_alive_reading")
     CHECK(second_route_calls->load() == 1);
 } // async_chunked_response_clean_completion_restores_keep_alive_reading
 
-TEST_CASE("async_chunked_response_completed_from_other_threads")
-{
+TEST_CASE("async_chunked_response_completed_from_other_threads") {
     SimpleApp app;
 
-    auto next_chunk = std::make_shared<std::atomic<std::size_t>>(0);
-    auto active_requests = std::make_shared<std::atomic<std::size_t>>(0);
+    auto next_chunk              = std::make_shared<std::atomic<std::size_t>>(0);
+    auto active_requests         = std::make_shared<std::atomic<std::size_t>>(0);
     auto maximum_active_requests = std::make_shared<std::atomic<std::size_t>>(0);
-    auto worker_tasks = std::make_shared<std::vector<std::future<void>>>();
-    auto worker_tasks_mutex = std::make_shared<std::mutex>();
-    auto completion_clean = std::make_shared<std::promise<bool>>();
+    auto worker_tasks            = std::make_shared<std::vector<std::future<void>>>();
+    auto worker_tasks_mutex      = std::make_shared<std::mutex>();
+    auto completion_clean        = std::make_shared<std::promise<bool>>();
 
     CROW_ROUTE(app, "/async-chunks")
-    ([next_chunk, active_requests, maximum_active_requests, worker_tasks, worker_tasks_mutex, completion_clean](const crow::request&, crow::response& res) {
+    ([next_chunk, active_requests, maximum_active_requests, worker_tasks, worker_tasks_mutex, completion_clean](
+         const crow::request&, crow::response& res) {
         res.set_async_chunked_content_provider(
-          [next_chunk, active_requests, maximum_active_requests, worker_tasks, worker_tasks_mutex](crow::response::async_chunk_completion_t complete) {
-              const std::size_t index = next_chunk->fetch_add(1);
-              const std::size_t pending = active_requests->fetch_add(1) + 1;
-              std::size_t observed_maximum = maximum_active_requests->load();
-              while (observed_maximum < pending && !maximum_active_requests->compare_exchange_weak(observed_maximum, pending))
-              {}
+            [next_chunk, active_requests, maximum_active_requests, worker_tasks, worker_tasks_mutex](
+                crow::response::async_chunk_completion_t complete) {
+                const std::size_t index      = next_chunk->fetch_add(1);
+                const std::size_t pending    = active_requests->fetch_add(1) + 1;
+                std::size_t observed_maximum = maximum_active_requests->load();
+                while (observed_maximum < pending
+                       && !maximum_active_requests->compare_exchange_weak(observed_maximum, pending)) {
+                }
 
-              std::lock_guard<std::mutex> lock(*worker_tasks_mutex);
-              worker_tasks->emplace_back(std::async(std::launch::async, [index, active_requests, complete = std::move(complete)]() mutable {
-                  active_requests->fetch_sub(1);
-                  if (index < 2)
-                  {
-                      complete(crow::chunk_result::more, "part" + std::to_string(index + 1));
-                  }
-                  else
-                  {
-                      complete(crow::chunk_result::done, "part3");
-                  }
-              }));
-          },
-          "text/plain");
-        res.set_chunked_completion_handler([completion_clean](bool clean) {
-            completion_clean->set_value(clean);
-        });
+                std::lock_guard<std::mutex> lock(*worker_tasks_mutex);
+                worker_tasks->emplace_back(
+                    std::async(std::launch::async, [index, active_requests, complete = std::move(complete)]() mutable {
+                        active_requests->fetch_sub(1);
+                        if (index < 2) {
+                            complete(crow::chunk_result::more, "part" + std::to_string(index + 1));
+                        } else {
+                            complete(crow::chunk_result::done, "part3");
+                        }
+                    }));
+            },
+            "text/plain");
+        res.set_chunked_completion_handler([completion_clean](bool clean) { completion_clean->set_value(clean); });
         res.end();
     });
 
@@ -2720,35 +2713,31 @@ TEST_CASE("async_chunked_response_completed_from_other_threads")
     CHECK(completion.get() == true);
 } // async_chunked_response_completed_from_other_threads
 
-TEST_CASE("async_chunked_response_synchronous_completion_does_not_recurse")
-{
+TEST_CASE("async_chunked_response_synchronous_completion_does_not_recurse") {
     SimpleApp app;
 
     const std::size_t chunk_count = 256;
-    auto calls = std::make_shared<std::atomic<std::size_t>>(0);
-    auto current_depth = std::make_shared<std::atomic<std::size_t>>(0);
-    auto maximum_depth = std::make_shared<std::atomic<std::size_t>>(0);
+    auto calls                    = std::make_shared<std::atomic<std::size_t>>(0);
+    auto current_depth            = std::make_shared<std::atomic<std::size_t>>(0);
+    auto maximum_depth            = std::make_shared<std::atomic<std::size_t>>(0);
 
     CROW_ROUTE(app, "/synchronous-async-chunks")
     ([calls, current_depth, maximum_depth, chunk_count](const crow::request&, crow::response& res) {
         res.set_async_chunked_content_provider(
-          [calls, current_depth, maximum_depth, chunk_count](crow::response::async_chunk_completion_t complete) {
-              const std::size_t depth = current_depth->fetch_add(1) + 1;
-              std::size_t observed_maximum = maximum_depth->load();
-              while (observed_maximum < depth && !maximum_depth->compare_exchange_weak(observed_maximum, depth))
-              {}
+            [calls, current_depth, maximum_depth, chunk_count](crow::response::async_chunk_completion_t complete) {
+                const std::size_t depth      = current_depth->fetch_add(1) + 1;
+                std::size_t observed_maximum = maximum_depth->load();
+                while (observed_maximum < depth && !maximum_depth->compare_exchange_weak(observed_maximum, depth)) {
+                }
 
-              const std::size_t index = calls->fetch_add(1);
-              if (index < chunk_count)
-              {
-                  complete(crow::chunk_result::more, "");
-              }
-              else
-              {
-                  complete(crow::chunk_result::done, "");
-              }
-              current_depth->fetch_sub(1);
-          });
+                const std::size_t index = calls->fetch_add(1);
+                if (index < chunk_count) {
+                    complete(crow::chunk_result::more, "");
+                } else {
+                    complete(crow::chunk_result::done, "");
+                }
+                current_depth->fetch_sub(1);
+            });
         res.end();
     });
 
@@ -2768,29 +2757,26 @@ TEST_CASE("async_chunked_response_synchronous_completion_does_not_recurse")
     CHECK(maximum_depth->load() == 1);
 } // async_chunked_response_synchronous_completion_does_not_recurse
 
-TEST_CASE("async_chunked_response_waits_beyond_connection_timeout")
-{
+TEST_CASE("async_chunked_response_waits_beyond_connection_timeout") {
     SimpleApp app;
 
-    auto worker_tasks = std::make_shared<std::vector<std::future<void>>>();
+    auto worker_tasks       = std::make_shared<std::vector<std::future<void>>>();
     auto worker_tasks_mutex = std::make_shared<std::mutex>();
-    auto completion_clean = std::make_shared<std::promise<bool>>();
-    auto completion = completion_clean->get_future();
+    auto completion_clean   = std::make_shared<std::promise<bool>>();
+    auto completion         = completion_clean->get_future();
 
     CROW_ROUTE(app, "/delayed-async-chunk")
     ([worker_tasks, worker_tasks_mutex, completion_clean](const crow::request&, crow::response& res) {
         res.set_async_chunked_content_provider(
-          [worker_tasks, worker_tasks_mutex](crow::response::async_chunk_completion_t complete) {
-              std::lock_guard<std::mutex> lock(*worker_tasks_mutex);
-              worker_tasks->emplace_back(std::async(std::launch::async, [complete = std::move(complete)]() mutable {
-                  std::this_thread::sleep_for(std::chrono::milliseconds(2500));
-                  complete(crow::chunk_result::done, "delayed");
-              }));
-          },
-          "text/plain");
-        res.set_chunked_completion_handler([completion_clean](bool clean) {
-            completion_clean->set_value(clean);
-        });
+            [worker_tasks, worker_tasks_mutex](crow::response::async_chunk_completion_t complete) {
+                std::lock_guard<std::mutex> lock(*worker_tasks_mutex);
+                worker_tasks->emplace_back(std::async(std::launch::async, [complete = std::move(complete)]() mutable {
+                    std::this_thread::sleep_for(std::chrono::milliseconds(2500));
+                    complete(crow::chunk_result::done, "delayed");
+                }));
+            },
+            "text/plain");
+        res.set_chunked_completion_handler([completion_clean](bool clean) { completion_clean->set_value(clean); });
         res.end();
     });
 
@@ -2801,13 +2787,10 @@ TEST_CASE("async_chunked_response_waits_beyond_connection_timeout")
     client.send("GET /delayed-async-chunk HTTP/1.1\r\nHost: localhost\r\n\r\n");
 
     std::string response;
-    try
-    {
+    try {
         while (response.size() < 5 || response.compare(response.size() - 5, 5, "0\r\n\r\n") != 0)
             response += client.receive();
-    }
-    catch (const std::exception&)
-    {
+    } catch (const std::exception&) {
     }
 
     std::vector<std::future<void>> tasks;
@@ -2819,7 +2802,7 @@ TEST_CASE("async_chunked_response_waits_beyond_connection_timeout")
         task.get();
 
     const auto completion_status = completion.wait_for(std::chrono::seconds(5));
-    const bool clean = completion_status == std::future_status::ready ? completion.get() : false;
+    const bool clean             = completion_status == std::future_status::ready ? completion.get() : false;
     app.stop();
 
     CHECK(response.find("Transfer-Encoding: chunked") != std::string::npos);
@@ -2832,33 +2815,31 @@ TEST_CASE("async_chunked_response_waits_beyond_connection_timeout")
     CHECK(clean == true);
 } // async_chunked_response_waits_beyond_connection_timeout
 
-TEST_CASE("async_chunked_response_wait_does_not_block_other_routes")
-{
+TEST_CASE("async_chunked_response_wait_does_not_block_other_routes") {
     SimpleApp app;
 
     auto provider_started_promise = std::make_shared<std::promise<void>>();
-    auto provider_started = provider_started_promise->get_future();
-    auto completion_mutex = std::make_shared<std::mutex>();
-    auto delayed_completion = std::make_shared<crow::response::async_chunk_completion_t>();
+    auto provider_started         = provider_started_promise->get_future();
+    auto completion_mutex         = std::make_shared<std::mutex>();
+    auto delayed_completion       = std::make_shared<crow::response::async_chunk_completion_t>();
 
     CROW_ROUTE(app, "/waiting-async-chunk")
     ([provider_started_promise, completion_mutex, delayed_completion](const crow::request&, crow::response& res) {
         res.set_async_chunked_content_provider(
-          [provider_started_promise, completion_mutex, delayed_completion](crow::response::async_chunk_completion_t complete) {
-              {
-                  std::lock_guard<std::mutex> lock(*completion_mutex);
-                  *delayed_completion = std::move(complete);
-              }
-              provider_started_promise->set_value();
-          },
-          "text/plain");
+            [provider_started_promise, completion_mutex, delayed_completion](
+                crow::response::async_chunk_completion_t complete) {
+                {
+                    std::lock_guard<std::mutex> lock(*completion_mutex);
+                    *delayed_completion = std::move(complete);
+                }
+                provider_started_promise->set_value();
+            },
+            "text/plain");
         res.end();
     });
 
     CROW_ROUTE(app, "/ready-while-stream-waits")
-    ([] {
-        return "ready";
-    });
+    ([] { return "ready"; });
 
     auto server_task = app.bindaddr(LOCALHOST_ADDRESS).concurrency(2).port(45451).run_async();
     BoundedServerShutdown server_shutdown(server_task, [&app, completion_mutex, delayed_completion] {
@@ -2883,14 +2864,15 @@ TEST_CASE("async_chunked_response_wait_does_not_block_other_routes")
 
     asio::ip::tcp::socket regular_client(io_context);
     regular_client.connect(asio::ip::tcp::endpoint(asio::ip::make_address(LOCALHOST_ADDRESS), 45451));
-    const std::string regular_request = "GET /ready-while-stream-waits HTTP/1.1\r\nHost: localhost\r\nConnection: close\r\n\r\n";
+    const std::string regular_request
+        = "GET /ready-while-stream-waits HTTP/1.1\r\nHost: localhost\r\nConnection: close\r\n\r\n";
     asio::write(regular_client, asio::buffer(regular_request));
     std::string regular_response;
-    const bool regular_response_complete = receive_with_deadline(regular_client, regular_response, std::chrono::seconds(1), has_complete_http_response);
+    const bool regular_response_complete
+        = receive_with_deadline(regular_client, regular_response, std::chrono::seconds(1), has_complete_http_response);
 
     crow::response::async_chunk_completion_t complete;
-    if (provider_status == std::future_status::ready)
-    {
+    if (provider_status == std::future_status::ready) {
         std::lock_guard<std::mutex> lock(*completion_mutex);
         complete = std::move(*delayed_completion);
     }
@@ -2901,7 +2883,8 @@ TEST_CASE("async_chunked_response_wait_does_not_block_other_routes")
         return response.size() >= 5 && response.compare(response.size() - 5, 5, "0\r\n\r\n") == 0;
     };
     std::string streaming_response;
-    const bool streaming_response_complete = receive_with_deadline(streaming_client, streaming_response, std::chrono::seconds(5), has_chunk_terminator);
+    const bool streaming_response_complete
+        = receive_with_deadline(streaming_client, streaming_response, std::chrono::seconds(5), has_chunk_terminator);
 
     asio_error_code close_error;
     regular_client.close(close_error);
@@ -2920,48 +2903,52 @@ TEST_CASE("async_chunked_response_wait_does_not_block_other_routes")
     CHECK(streaming_response.substr(header_end + 4) == "7\r\ndelayed\r\n0\r\n\r\n");
 } // async_chunked_response_wait_does_not_block_other_routes
 
-TEST_CASE("async_chunked_response_backpressures_provider_until_prior_write_completes")
-{
+TEST_CASE("async_chunked_response_backpressures_provider_until_prior_write_completes") {
     SimpleApp app;
 
-    auto provider_calls = std::make_shared<std::atomic<std::size_t>>(0);
-    auto active_provider_calls = std::make_shared<std::atomic<std::size_t>>(0);
+    auto provider_calls                = std::make_shared<std::atomic<std::size_t>>(0);
+    auto active_provider_calls         = std::make_shared<std::atomic<std::size_t>>(0);
     auto maximum_active_provider_calls = std::make_shared<std::atomic<std::size_t>>(0);
-    auto second_provider_call_promise = std::make_shared<std::promise<void>>();
-    auto second_provider_call = second_provider_call_promise->get_future();
+    auto second_provider_call_promise  = std::make_shared<std::promise<void>>();
+    auto second_provider_call          = second_provider_call_promise->get_future();
     auto connection_io_context_promise = std::make_shared<std::promise<asio::io_context*>>();
-    auto connection_io_context = connection_io_context_promise->get_future();
+    auto connection_io_context         = connection_io_context_promise->get_future();
     PausingSocketContext socket_context;
     auto pending_write = socket_context.pending_write_future();
 
     CROW_ROUTE(app, "/backpressured-async-chunks")
-    ([provider_calls, active_provider_calls, maximum_active_provider_calls, second_provider_call_promise, connection_io_context_promise, &socket_context](const crow::request& req, crow::response& res) {
+    ([provider_calls,
+      active_provider_calls,
+      maximum_active_provider_calls,
+      second_provider_call_promise,
+      connection_io_context_promise,
+      &socket_context](const crow::request& req, crow::response& res) {
         connection_io_context_promise->set_value(req.io_context);
         res.set_async_chunked_content_provider(
-          [provider_calls, active_provider_calls, maximum_active_provider_calls, second_provider_call_promise, &socket_context](crow::response::async_chunk_completion_t complete) {
-              const std::size_t active = active_provider_calls->fetch_add(1) + 1;
-              std::size_t observed_maximum = maximum_active_provider_calls->load();
-              while (observed_maximum < active && !maximum_active_provider_calls->compare_exchange_weak(observed_maximum, active))
-              {}
+            [provider_calls,
+             active_provider_calls,
+             maximum_active_provider_calls,
+             second_provider_call_promise,
+             &socket_context](crow::response::async_chunk_completion_t complete) {
+                const std::size_t active     = active_provider_calls->fetch_add(1) + 1;
+                std::size_t observed_maximum = maximum_active_provider_calls->load();
+                while (observed_maximum < active
+                       && !maximum_active_provider_calls->compare_exchange_weak(observed_maximum, active)) {
+                }
 
-              const std::size_t call = provider_calls->fetch_add(1);
-              if (call == 0)
-              {
-                  socket_context.pause_next_write();
-                  complete(crow::chunk_result::more, "first");
-              }
-              else if (call == 1)
-              {
-                  second_provider_call_promise->set_value();
-                  complete(crow::chunk_result::done, "");
-              }
-              else
-              {
-                  complete(crow::chunk_result::abort, "");
-              }
-              active_provider_calls->fetch_sub(1);
-          },
-          "application/octet-stream");
+                const std::size_t call = provider_calls->fetch_add(1);
+                if (call == 0) {
+                    socket_context.pause_next_write();
+                    complete(crow::chunk_result::more, "first");
+                } else if (call == 1) {
+                    second_provider_call_promise->set_value();
+                    complete(crow::chunk_result::done, "");
+                } else {
+                    complete(crow::chunk_result::abort, "");
+                }
+                active_provider_calls->fetch_sub(1);
+            },
+            "application/octet-stream");
         res.end();
     });
 
@@ -2970,15 +2957,18 @@ TEST_CASE("async_chunked_response_backpressures_provider_until_prior_write_compl
     using BackpressureServer = crow::Server<crow::SimpleApp, crow::TCPAcceptor, PausingSocketAdaptor>;
     BackpressureServer server(&app,
                               asio::ip::tcp::endpoint(asio::ip::make_address(LOCALHOST_ADDRESS), 45451),
-                              "Crow/Test", &middlewares, 2, 5, &socket_context);
-    auto server_task = std::async(std::launch::async, [&server] {
-        server.run();
-    });
+                              "Crow/Test",
+                              &middlewares,
+                              2,
+                              5,
+                              &socket_context);
+    auto server_task = std::async(std::launch::async, [&server] { server.run(); });
     BoundedServerShutdown server_shutdown(server_task, [&server, &socket_context] {
         socket_context.resume_pending_write();
         server.stop();
     });
-    REQUIRE(server.wait_for_start(std::chrono::steady_clock::now() + std::chrono::seconds(3)) == std::cv_status::no_timeout);
+    REQUIRE(server.wait_for_start(std::chrono::steady_clock::now() + std::chrono::seconds(3))
+            == std::cv_status::no_timeout);
 
     asio::io_context io_context;
     asio::ip::tcp::socket client(io_context);
@@ -2986,20 +2976,17 @@ TEST_CASE("async_chunked_response_backpressures_provider_until_prior_write_compl
     const std::string request = "GET /backpressured-async-chunks HTTP/1.1\r\nHost: localhost\r\n\r\n";
     asio::write(client, asio::buffer(request));
 
-    const auto pending_write_status = pending_write.wait_for(std::chrono::seconds(5));
+    const auto pending_write_status         = pending_write.wait_for(std::chrono::seconds(5));
     const auto connection_io_context_status = connection_io_context.wait_for(std::chrono::seconds(5));
-    auto executor_barrier_promise = std::make_shared<std::promise<void>>();
-    auto executor_barrier = executor_barrier_promise->get_future();
-    if (connection_io_context_status == std::future_status::ready)
-    {
+    auto executor_barrier_promise           = std::make_shared<std::promise<void>>();
+    auto executor_barrier                   = executor_barrier_promise->get_future();
+    if (connection_io_context_status == std::future_status::ready) {
         auto* executor = connection_io_context.get();
         asio::post(*executor, [executor, executor_barrier_promise] {
-            asio::post(*executor, [executor_barrier_promise] {
-                executor_barrier_promise->set_value();
-            });
+            asio::post(*executor, [executor_barrier_promise] { executor_barrier_promise->set_value(); });
         });
     }
-    const auto executor_barrier_status = executor_barrier.wait_for(std::chrono::seconds(5));
+    const auto executor_barrier_status                       = executor_barrier.wait_for(std::chrono::seconds(5));
     const std::size_t provider_calls_before_write_completion = provider_calls->load();
 
     socket_context.resume_pending_write();
@@ -3008,7 +2995,8 @@ TEST_CASE("async_chunked_response_backpressures_provider_until_prior_write_compl
         return response.size() >= 5 && response.compare(response.size() - 5, 5, "0\r\n\r\n") == 0;
     };
     std::string response;
-    const bool response_complete = receive_with_deadline(client, response, std::chrono::seconds(5), has_chunk_terminator);
+    const bool response_complete
+        = receive_with_deadline(client, response, std::chrono::seconds(5), has_chunk_terminator);
 
     const auto second_call_after_prior_write = second_provider_call.wait_for(std::chrono::seconds(5));
     asio_error_code close_error;

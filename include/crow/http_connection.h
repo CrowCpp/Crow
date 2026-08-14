@@ -757,8 +757,7 @@ namespace crow
             }
         }
 
-        void do_write_sync_chunked()
-        {
+        void do_write_sync_chunked() {
             error_code ec;
             asio::write(adaptor_.socket(), buffers_, ec); // Write the response start / headers
             if (ec)
@@ -978,20 +977,14 @@ namespace crow
                       self->cancel_deadline_timer();
                       self->parser_.done();
                       // adaptor will close after write
-                  }
-                  else if (self->async_chunk_transfer_)
-                  {
+                  } else if (self->async_chunk_transfer_) {
                       // The asynchronous transfer owns the connection until it finishes.
                       // Its completion path restores the deadline and request reading.
                       self->need_to_start_read_after_complete_ = true;
-                  }
-                  else if (!self->need_to_call_after_handlers_)
-                  {
+                  } else if (!self->need_to_call_after_handlers_) {
                       self->start_deadline();
                       self->do_read();
-                  }
-                  else
-                  {
+                  } else {
                       // res will be completed later by user
                       self->need_to_start_read_after_complete_ = true;
                   }

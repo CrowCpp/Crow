@@ -380,7 +380,8 @@ namespace crow
         /// Check whether the response body is produced by a chunk provider.
         bool is_chunked_type() const
         {
-            return static_cast<bool>(chunk_provider_) || static_cast<bool>(chunk_provider_ex_) || static_cast<bool>(async_chunk_provider_);
+            return static_cast<bool>(chunk_provider_) || static_cast<bool>(chunk_provider_ex_)
+                   || static_cast<bool>(async_chunk_provider_);
         }
 
         /// Send the response body in chunks produced on demand, without holding it in memory.
@@ -413,15 +414,14 @@ namespace crow
         void set_chunked_content_provider(chunk_provider_ex_t provider, std::string content_type = "")
         {
             chunk_provider_ex_ = std::move(provider);
-            chunk_provider_ = nullptr;
+            chunk_provider_       = nullptr;
             async_chunk_provider_ = nullptr;
-            file_info = static_file_info{};
+            file_info             = static_file_info{};
             body.clear();
             manual_length_header = true;
             headers.erase("Content-Length");
             set_header("Transfer-Encoding", "chunked");
-            if (!content_type.empty())
-            {
+            if (!content_type.empty()) {
                 set_header("Content-Type", std::move(content_type));
             }
         }
@@ -436,11 +436,10 @@ namespace crow
         /// requested until the preceding chunk has been written. An exception from the provider
         /// is treated as `abort`. Installing this provider discards a string body, static file,
         /// or synchronous chunk provider that was configured earlier.
-        void set_async_chunked_content_provider(async_chunk_provider_t provider, std::string content_type = "")
-        {
+        void set_async_chunked_content_provider(async_chunk_provider_t provider, std::string content_type = "") {
             async_chunk_provider_ = std::move(provider);
-            chunk_provider_ = nullptr;
-            chunk_provider_ex_ = nullptr;
+            chunk_provider_       = nullptr;
+            chunk_provider_ex_    = nullptr;
             file_info = static_file_info{};
             body.clear();
             manual_length_header = true;
