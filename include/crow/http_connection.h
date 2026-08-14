@@ -1008,9 +1008,9 @@ namespace crow
             // provider finished cleanly and every previous write succeeded.
             if (result == response::chunk_result::done && !ec)
             {
-                static const std::string last_chunk = "0\r\n\r\n";
+                static constexpr char last_chunk[] = "0\r\n\r\n";
                 std::vector<asio::const_buffer> tail{1};
-                tail[0] = asio::const_buffer(last_chunk.data(), last_chunk.size());
+                tail[0] = asio::const_buffer(last_chunk, sizeof(last_chunk) - 1);
                 ec = do_write_sync(tail);
                 if (ec)
                 {
