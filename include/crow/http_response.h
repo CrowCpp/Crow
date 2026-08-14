@@ -430,8 +430,12 @@ namespace crow
 
         ///
         /// Crow invokes the provider once for each requested chunk. The provider must return
-        /// promptly and invoke its completion callback exactly once, either before or after it
-        /// returns. The callback may be invoked from any thread.
+        /// promptly and invoke its completion callback exactly once with `more`, `done`, or
+        /// `abort`, either before or after it returns. The callback may be invoked from any
+        /// thread; Crow posts the result to the connection executor. The next chunk is not
+        /// requested until the preceding chunk has been written. An exception from the provider
+        /// is treated as `abort`. Installing this provider discards a string body, static file,
+        /// or synchronous chunk provider that was configured earlier.
         void set_async_chunked_content_provider(async_chunk_provider_t provider, std::string content_type = "")
         {
             async_chunk_provider_ = std::move(provider);
@@ -451,13 +455,14 @@ namespace crow
         /// Set a handler called once after the chunked body has been written (or writing has stopped).
 
         ///
-        /// The handler runs on the connection thread before the response is finalized. Its
-        /// `clean` argument is `true` when the provider finished normally (`chunk_result::done`,
-        /// or `false` from the `chunk_provider_t` overload) and every write succeeded. For a
-        /// HEAD request the body is skipped and the provider is never called, but the handler
-        /// still runs (with `clean == true`) when the response ends, so it remains a reliable
-        /// place to release the source of the data. The handler should not throw: an exception
-        /// that escapes it is logged and swallowed.
+        /// The handler runs exactly once. Its `clean` argument is `true` when the provider
+        /// finished normally (`chunk_result::done`, or `false` from the `chunk_provider_t`
+        /// overload) and every write succeeded. It is `false` after `abort`, a provider
+        /// exception, a write error, or shutdown during an active asynchronous transfer. Normal
+        /// completion and server worker shutdown invoke it on the connection thread. For a HEAD
+        /// request the body is skipped and the provider is never called, but the handler still
+        /// runs with `clean == true`. The handler should not throw: an exception that escapes it
+        /// is logged and swallowed.
         void set_chunked_completion_handler(chunk_complete_t handler)
         {
             chunk_complete_ = std::move(handler);

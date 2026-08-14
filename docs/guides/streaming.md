@@ -74,6 +74,65 @@ CROW_ROUTE(app, "/file")
 });
 ```
 
+## Asynchronous provider
+
+Use `#!cpp set_async_chunked_content_provider` when the data source becomes
+ready asynchronously. The provider receives a completion callback for one
+requested chunk:
+
+```cpp
+void provider(crow::response::async_chunk_completion_t complete);
+```
+
+The provider must return promptly and call `complete` exactly once for that
+invocation. It may call `complete` inline before returning, or later from any
+thread. Pass `#!cpp crow::chunk_result::more` when more data remains,
+`#!cpp crow::chunk_result::done` for the final chunk, or
+`#!cpp crow::chunk_result::abort` when the body cannot be completed. A nonempty
+chunk passed with `done` is written before the terminating frame. `more` with
+an empty chunk requests another chunk without writing a frame; `done` with an
+empty chunk writes only the terminating frame. `abort` discards its chunk.
+
+```cpp
+auto source = open_async_source_somehow();
+
+CROW_ROUTE(app, "/events")
+([source](const crow::request&, crow::response& res) {
+    res.set_async_chunked_content_provider(
+      [source](crow::response::async_chunk_completion_t complete) {
+          source->read_next(
+            [complete = std::move(complete)](std::error_code error,
+                                             std::string data,
+                                             bool finished) mutable {
+                if (error) {
+                    complete(crow::chunk_result::abort, "");
+                    return;
+                }
+                complete(finished ? crow::chunk_result::done
+                                  : crow::chunk_result::more,
+                         std::move(data));
+            });
+      },
+      "text/event-stream");
+    res.set_chunked_completion_handler([](bool clean) {
+        if (!clean)
+            CROW_LOG_WARNING << "asynchronous transfer did not finish cleanly";
+    });
+    res.end();
+});
+```
+
+Crow posts every completion result to the connection executor, including a
+result delivered inline. At most one provider request and one socket write are
+pending, and Crow requests the next chunk only after the preceding write has
+finished. This bounds the transfer to one current payload chunk and provides
+backpressure without an unbounded queue.
+
+Calling `set_async_chunked_content_provider` discards any string body, static
+file, or synchronous provider already configured on the response. Calling a
+synchronous provider setter or a static-file setter afterward releases the
+asynchronous provider. The response therefore has one body source.
+
 ## Completion handler
 
 To find out how the transfer ended (to release the source of the data, or to log
@@ -86,14 +145,21 @@ res.set_chunked_completion_handler([](bool clean) {
 });
 ```
 
-`clean` is `#!cpp true` when the provider finished normally
-(`#!cpp crow::chunk_result::done`, or `#!cpp false` from the `bool` provider)
-and every write succeeded; it is `#!cpp false` when the provider aborted or a
-write error occurred. The handler runs on the connection's thread, after the
-last write and before the response is finalized. For a `HEAD` request the
-provider is never called, but the handler still runs (with `clean == true`)
-when the response ends, so it is a reliable place to release the source of
-the data. The handler should not throw: an exception that escapes it is
+The handler is called exactly once. `clean` is `#!cpp true` when the provider
+finished normally (`#!cpp crow::chunk_result::done`, or `#!cpp false` from the
+`bool` provider) and every write succeeded; it is `#!cpp false` when the
+provider aborted or a write error occurred. An exception raised before provider
+completion is treated as an abort. An asynchronous transfer that is still
+active during server shutdown completes with `clean == false`.
+
+During normal completion, the handler runs on the connection's thread after the
+last body write and before the response is finalized. Server worker shutdown
+also invokes it on that connection worker before the worker exits. If a
+`Connection` is owned directly outside the server lifecycle, destruction is the
+fallback cleanup path and invokes the handler on the destruction thread. For a
+`HEAD` request the provider is never called, but the handler still runs with
+`clean == true` when the response ends, so it is a reliable place to release
+the data source. The handler should not throw: an exception that escapes it is
 logged and swallowed.
 
 ## Notes
@@ -102,7 +168,9 @@ logged and swallowed.
 
     The provider runs on the connection's thread while the response is being
     written, so a provider that blocks keeps that thread busy for the whole
-    transfer.
+    transfer. This note applies to `set_chunked_content_provider`. An
+    asynchronous provider must return promptly and signal readiness through its
+    completion callback.
 
 !!! note
 
@@ -112,12 +180,22 @@ logged and swallowed.
 
 !!! note
 
-    A response to a `HEAD` request never calls the provider: the headers are sent
-    and the body is skipped. The completion handler still runs, with
-    `clean == true`.
+    A response to a `HEAD` request releases the provider without calling it: the
+    headers are sent and the body is skipped. The completion handler still runs,
+    with `clean == true`. Chunked framing remains represented in the headers,
+    with `Transfer-Encoding: chunked` retained and `Content-Length` omitted.
 
 !!! note
 
     A write error in the middle of the transfer is treated like `abort` as far
     as the connection is concerned: the terminating frame is not sent and the
     connection is closed instead of being reused for keep-alive.
+
+!!! note
+
+    Clean completion writes the terminating frame before the response is
+    finalized. If the request permits keep-alive, Crow clears the completed
+    response and parser state, restores the connection deadline, and reads the
+    next request from the same connection. `abort`, provider exceptions, and
+    write errors close the connection without a terminating frame. A late or
+    repeated asynchronous completion result is ignored.
