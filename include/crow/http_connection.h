@@ -9,12 +9,12 @@
 #include <asio.hpp>
 #endif
 
-#include <algorithm>
 #include <atomic>
 #include <chrono>
 #include <limits>
 #include <memory>
 #include <mutex>
+#include <unordered_map>
 #include <vector>
 
 #include "crow/http_parser_merged.h"
@@ -49,25 +49,28 @@ namespace crow
     class connection_lifecycle_registry {
     public:
         void track(const std::shared_ptr<ConnectionType>& connection) {
-            connections_.erase(std::remove_if(connections_.begin(),
-                                              connections_.end(),
-                                              [](const std::weak_ptr<ConnectionType>& item) { return item.expired(); }),
-                               connections_.end());
-            connections_.emplace_back(connection);
+            connections_[connection.get()] = connection;
+        }
+
+        void untrack(ConnectionType* connection) noexcept
+        {
+            connections_.erase(connection);
         }
 
         void shutdown_all() noexcept {
             auto connections = std::move(connections_);
+            connections_.clear();
             for (auto& item : connections) {
-                if (auto connection = item.lock()) {
+                if (auto connection = item.second.lock())
+                {
                     connection->shutdown_on_worker_exit();
                 }
             }
         }
 
     private:
-        // Both methods run on the worker associated with these connections.
-        std::vector<std::weak_ptr<ConnectionType>> connections_;
+        // All methods run on the worker associated with these connections.
+        std::unordered_map<ConnectionType*, std::weak_ptr<ConnectionType>> connections_;
     };
     } // namespace detail
 
@@ -88,18 +91,9 @@ namespace crow
                    detail::task_timer& task_timer,
                    typename Adaptor::context* adaptor_ctx_,
                    std::atomic<unsigned int>& queue_length,
-                   detail::connection_lifecycle_registry<Connection>* lifecycle_registry = nullptr)
-            : adaptor_(io_context, adaptor_ctx_)
-            , handler_(handler)
-            , parser_(this)
-            , req_(parser_.req)
-            , server_name_(server_name)
-            , middlewares_(middlewares)
-            , get_cached_date_str(get_cached_date_str_f)
-            , task_timer_(task_timer)
-            , res_stream_threshold_(handler->stream_threshold())
-            , queue_length_(queue_length)
-            , lifecycle_registry_(lifecycle_registry) {
+                   std::shared_ptr<detail::connection_lifecycle_registry<Connection>> lifecycle_registry = nullptr):
+          adaptor_(io_context, adaptor_ctx_), handler_(handler), parser_(this), req_(parser_.req), server_name_(server_name), middlewares_(middlewares), get_cached_date_str(get_cached_date_str_f), task_timer_(task_timer), res_stream_threshold_(handler->stream_threshold()), queue_length_(queue_length), lifecycle_registry_(lifecycle_registry)
+        {
             queue_length_++;
 #ifdef CROW_ENABLE_DEBUG
             connectionCount++;
@@ -125,9 +119,6 @@ namespace crow
         void start()
         {
             auto self = this->shared_from_this();
-            if (lifecycle_registry_) {
-                lifecycle_registry_->track(self);
-            }
             adaptor_.start([self](const error_code& ec) {
                 if (!ec)
                 {
@@ -303,13 +294,22 @@ namespace crow
             }
 #endif
 
+            if (req_.http_ver_major == 1 && req_.http_ver_minor == 0 && res.is_chunked_type())
+            {
+                reject_http_1_0_chunked_response();
+            }
+            else if (res.skip_body && res.is_chunked_type())
+            {
+                res.notify_chunked_completion(true);
+            }
+
             prepare_buffers();
 
             if (res.is_static_type())
             {
                 do_write_static();
             }
-            else if (res.is_chunked_type())
+            else if (res.is_chunked_type() && !res.skip_body)
             {
                 do_write_chunked();
             }
@@ -332,6 +332,23 @@ namespace crow
                 return;
             }
             res.write_header_into_buffer(buffers_, content_length_, add_keep_alive_, server_name_);
+        }
+
+        void reject_http_1_0_chunked_response()
+        {
+            res.chunk_provider_ = nullptr;
+            res.chunk_provider_ex_ = nullptr;
+            res.async_chunk_provider_ = nullptr;
+            res.body_source_ = response::body_source_kind::none;
+            res.body.clear();
+            res.code = 505;
+            res.manual_length_header = false;
+            res.headers.erase("Content-Length");
+            res.headers.erase("Transfer-Encoding");
+            res.set_header("Connection", "close");
+            add_keep_alive_ = false;
+            close_connection_ = true;
+            res.notify_chunked_completion(false);
         }
 
         void do_write_static()
@@ -452,7 +469,8 @@ namespace crow
         };
 
         void do_write_chunked() {
-            if (res.async_chunk_provider_) {
+            if (res.body_source_ == response::body_source_kind::asynchronous_chunked)
+            {
                 do_write_async_chunked();
                 return;
             }
@@ -471,6 +489,10 @@ namespace crow
             async_chunk_transfer_     = state;
 
             auto self = this->shared_from_this();
+            if (lifecycle_registry_)
+            {
+                lifecycle_registry_->track(self);
+            }
             asio::async_write(
                 adaptor_.socket(), buffers_, [self, state](const error_code& ec, std::size_t /*bytes_transferred*/) {
                     if (self->async_chunk_transfer_ != state) {
@@ -480,7 +502,7 @@ namespace crow
                     if (ec) {
                         CROW_LOG_ERROR << ec
                                        << " - buffer write error happened while sending response start / headers. "
-                                          "Writing stopped premature.";
+                                          "Writing stopped prematurely.";
                         self->finish_async_chunked(state, false, true);
                         return;
                     }
@@ -544,6 +566,7 @@ namespace crow
         void shutdown_on_worker_exit() noexcept {
             auto state = std::move(async_chunk_transfer_);
             if (state) {
+                untrack_async_chunk_transfer();
                 // The worker has stopped dispatching handlers. Keep buffers referenced by
                 // outstanding writes intact until Asio releases their handlers.
                 invalidate_async_chunk_request(state);
@@ -566,6 +589,8 @@ namespace crow
                 return;
             }
 
+            untrack_async_chunk_transfer();
+
             // No executor turn remains during worker teardown. Invalidate the request
             // gate before closing the socket so a provider racing with destruction either
             // posts while the executor is still valid or observes an inactive request.
@@ -577,6 +602,14 @@ namespace crow
             adaptor_.shutdown_readwrite();
             adaptor_.close();
             state->notify_completion(false);
+        }
+
+        void untrack_async_chunk_transfer() noexcept
+        {
+            if (lifecycle_registry_)
+            {
+                lifecycle_registry_->untrack(this);
+            }
         }
 
         void request_async_chunk(const std::shared_ptr<AsyncChunkTransfer>& state) {
@@ -675,7 +708,7 @@ namespace crow
 
                     if (ec) {
                         CROW_LOG_ERROR
-                            << ec << " - buffer write error happened while sending a chunk. Writing stopped premature.";
+                          << ec << " - buffer write error happened while sending a chunk. Writing stopped prematurely.";
                         self->finish_async_chunked(state, false, true);
                         return;
                     }
@@ -730,6 +763,7 @@ namespace crow
             state->provider = nullptr;
             state->buffers.clear();
             async_chunk_transfer_.reset();
+            untrack_async_chunk_transfer();
 
             if (force_close) {
                 adaptor_.shutdown_readwrite();
@@ -903,7 +937,13 @@ namespace crow
                 if (ec) {
                     CROW_LOG_ERROR << ec << " - buffer write error happened while sending response. Writing stopped premature.";
                 }
-                if (need_to_start_read_after_complete_)
+                if (close_connection_)
+                {
+                    adaptor_.shutdown_readwrite();
+                    adaptor_.close();
+                    CROW_LOG_DEBUG << this << " from write (res)";
+                }
+                else if (need_to_start_read_after_complete_)
                 {
                     need_to_start_read_after_complete_ = false;
                     start_deadline();
@@ -1107,7 +1147,7 @@ namespace crow
         size_t res_stream_threshold_;
 
         std::atomic<unsigned int>& queue_length_;
-        detail::connection_lifecycle_registry<Connection>* lifecycle_registry_;
+        std::shared_ptr<detail::connection_lifecycle_registry<Connection>> lifecycle_registry_;
     };
 
 } // namespace crow

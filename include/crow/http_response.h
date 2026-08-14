@@ -1,4 +1,5 @@
 #pragma once
+#include <exception>
 #include <string>
 #include <unordered_map>
 #include <ios>
@@ -54,6 +55,15 @@ namespace crow
 
         friend class Router;
 
+    private:
+        enum class body_source_kind
+        {
+            none,
+            synchronous_chunked,
+            asynchronous_chunked
+        };
+
+    public:
         int code{200};    ///< The Status code for the response.
         std::string body; ///< The actual payload containing the response data.
         ci_map headers;   ///< HTTP headers.
@@ -238,6 +248,8 @@ namespace crow
             chunk_provider_ex_ = std::move(r.chunk_provider_ex_);
             async_chunk_provider_ = std::move(r.async_chunk_provider_);
             chunk_complete_ = std::move(r.chunk_complete_);
+            body_source_ = r.body_source_;
+            r.body_source_ = body_source_kind::none;
             return *this;
         }
 
@@ -258,6 +270,7 @@ namespace crow
             chunk_provider_ex_ = nullptr;
             async_chunk_provider_ = nullptr;
             chunk_complete_ = nullptr;
+            body_source_ = body_source_kind::none;
         }
 
         /// Return a "Temporary Redirect" response.
@@ -320,27 +333,13 @@ namespace crow
                         // "Transfer-Encoding: chunked" is kept and "Content-Length" is not
                         // set (RFC 7230 forbids sending both at once). The body itself is
                         // skipped, so the provider is dropped without being called. The
-                        // completion handler is still invoked (with clean == true) so that
-                        // it remains the single release point for the data source no matter
-                        // which method the client used.
+                        // completion handler is retained for the connection to invoke after
+                        // applying its HTTP-version policy.
                         chunk_provider_ = nullptr;
                         chunk_provider_ex_ = nullptr;
                         async_chunk_provider_ = nullptr;
                         body = "";
                         manual_length_header = true;
-                        if (chunk_complete_)
-                        {
-                            auto completion_handler = std::move(chunk_complete_);
-                            chunk_complete_ = nullptr;
-                            try
-                            {
-                                completion_handler(true);
-                            }
-                            catch (...)
-                            {
-                                CROW_LOG_ERROR << "An uncaught exception occurred in the chunked completion handler.";
-                            }
-                        }
                     }
                     else
                     {
@@ -380,8 +379,7 @@ namespace crow
         /// Check whether the response body is produced by a chunk provider.
         bool is_chunked_type() const
         {
-            return static_cast<bool>(chunk_provider_) || static_cast<bool>(chunk_provider_ex_)
-                   || static_cast<bool>(async_chunk_provider_);
+            return body_source_ != body_source_kind::none;
         }
 
         /// Send the response body in chunks produced on demand, without holding it in memory.
@@ -416,6 +414,7 @@ namespace crow
             chunk_provider_ex_ = std::move(provider);
             chunk_provider_       = nullptr;
             async_chunk_provider_ = nullptr;
+            body_source_ = body_source_kind::synchronous_chunked;
             file_info             = static_file_info{};
             body.clear();
             manual_length_header = true;
@@ -435,11 +434,14 @@ namespace crow
         /// thread; Crow posts the result to the connection executor. The next chunk is not
         /// requested until the preceding chunk has been written. An exception from the provider
         /// is treated as `abort`. Installing this provider discards a string body, static file,
-        /// or synchronous chunk provider that was configured earlier.
+        /// or synchronous chunk provider that was configured earlier. An empty provider still
+        /// selects asynchronous streaming; Crow treats its invocation as an abort, closes the
+        /// connection without a terminating frame, and reports unclean completion once.
         void set_async_chunked_content_provider(async_chunk_provider_t provider, std::string content_type = "") {
             async_chunk_provider_ = std::move(provider);
             chunk_provider_       = nullptr;
             chunk_provider_ex_    = nullptr;
+            body_source_ = body_source_kind::asynchronous_chunked;
             file_info = static_file_info{};
             body.clear();
             manual_length_header = true;
@@ -460,8 +462,9 @@ namespace crow
         /// exception, a write error, or shutdown during an active asynchronous transfer. Normal
         /// completion and server worker shutdown invoke it on the connection thread. For a HEAD
         /// request the body is skipped and the provider is never called, but the handler still
-        /// runs with `clean == true`. The handler should not throw: an exception that escapes it
-        /// is logged and swallowed.
+        /// runs with `clean == true`. An HTTP/1.0 request rejects either kind of provider before
+        /// invocation and runs the handler with `clean == false`. The handler should not throw:
+        /// an exception that escapes it is logged and swallowed.
         void set_chunked_completion_handler(chunk_complete_t handler)
         {
             chunk_complete_ = std::move(handler);
@@ -497,6 +500,7 @@ namespace crow
             chunk_provider_ex_ = nullptr;
             async_chunk_provider_ = nullptr;
             chunk_complete_ = nullptr;
+            body_source_ = body_source_kind::none;
             headers.erase("Transfer-Encoding");
             manual_length_header = false;
             file_info.path = path;
@@ -583,9 +587,10 @@ namespace crow
               {status::BAD_GATEWAY, "HTTP/1.1 502 Bad Gateway\r\n"},
               {status::SERVICE_UNAVAILABLE, "HTTP/1.1 503 Service Unavailable\r\n"},
               {status::GATEWAY_TIMEOUT, "HTTP/1.1 504 Gateway Timeout\r\n"},
+              {505, "HTTP/1.1 505 HTTP Version Not Supported\r\n"},
               {status::VARIANT_ALSO_NEGOTIATES, "HTTP/1.1 506 Variant Also Negotiates\r\n"},
-              {status::WEBDAV_INSUFFICIENT_STORAGE,  "HTTP/1.1 507 Insufficient Storage\r\n"},
-              };
+              {status::WEBDAV_INSUFFICIENT_STORAGE, "HTTP/1.1 507 Insufficient Storage\r\n"},
+            };
 
             static const std::string seperator = ": ";
 
@@ -655,5 +660,31 @@ namespace crow
         chunk_provider_ex_t chunk_provider_ex_;
         async_chunk_provider_t async_chunk_provider_;
         chunk_complete_t chunk_complete_;
+
+    private:
+        void notify_chunked_completion(bool clean) noexcept
+        {
+            auto completion_handler = std::move(chunk_complete_);
+            chunk_complete_ = nullptr;
+            if (!completion_handler)
+            {
+                return;
+            }
+
+            try
+            {
+                completion_handler(clean);
+            }
+            catch (const std::exception& e)
+            {
+                CROW_LOG_ERROR << "An uncaught exception occurred in the chunked completion handler: " << e.what();
+            }
+            catch (...)
+            {
+                CROW_LOG_ERROR << "An uncaught exception occurred in the chunked completion handler.";
+            }
+        }
+
+        body_source_kind body_source_{body_source_kind::none};
     };
 } // namespace crow

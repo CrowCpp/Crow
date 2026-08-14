@@ -133,6 +133,11 @@ file, or synchronous provider already configured on the response. Calling a
 synchronous provider setter or a static-file setter afterward releases the
 asynchronous provider. The response therefore has one body source.
 
+Installing an empty `async_chunk_provider_t` still selects asynchronous
+streaming. When Crow reaches the provider invocation, it treats the missing
+callable as a provider failure: the connection closes without a terminating
+frame, and the completion handler runs exactly once with `clean == false`.
+
 ## Completion handler
 
 To find out how the transfer ended (to release the source of the data, or to log
@@ -190,6 +195,15 @@ logged and swallowed.
     A write error in the middle of the transfer is treated like `abort` as far
     as the connection is concerned: the terminating frame is not sent and the
     connection is closed instead of being reused for keep-alive.
+
+!!! note
+
+    Chunked providers require HTTP/1.1. When a handler configures either a
+    synchronous or asynchronous chunk provider for an HTTP/1.0 request, Crow
+    does not invoke the provider. It replaces the streaming response with a
+    finite `505 HTTP Version Not Supported` response, removes
+    `Transfer-Encoding`, adds `Content-Length`, closes the connection, and
+    invokes the completion handler exactly once with `clean == false`.
 
 !!! note
 

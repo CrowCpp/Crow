@@ -136,7 +136,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
             uint16_t worker_thread_count = concurrency_ - 1;
             for (int i = 0; i < worker_thread_count; i++) {
                 io_context_pool_.emplace_back(new asio::io_context());
-                connection_lifecycle_registry_pool_.emplace_back(new connection_lifecycle_registry_type());
+                connection_lifecycle_registry_pool_.emplace_back(std::make_shared<connection_lifecycle_registry_type>());
             }
             get_cached_date_str_pool_.resize(worker_thread_count);
             task_timer_pool_.resize(worker_thread_count);
@@ -318,16 +318,16 @@ namespace crow // NOTE: Already documented in "crow/app.h"
             {
                 size_t context_idx = pick_io_context_idx();
                 asio::io_context& ic = *io_context_pool_[context_idx];
-                auto p               = std::make_shared<Connection<Adaptor, Handler, Middlewares...>>(
-                    ic,
-                    handler_,
-                    server_name_,
-                    middlewares_,
-                    get_cached_date_str_pool_[context_idx],
-                    *task_timer_pool_[context_idx],
-                    adaptor_ctx_,
-                    task_queue_length_pool_[context_idx],
-                    connection_lifecycle_registry_pool_[context_idx].get());
+                auto p = std::make_shared<Connection<Adaptor, Handler, Middlewares...>>(
+                  ic,
+                  handler_,
+                  server_name_,
+                  middlewares_,
+                  get_cached_date_str_pool_[context_idx],
+                  *task_timer_pool_[context_idx],
+                  adaptor_ctx_,
+                  task_queue_length_pool_[context_idx],
+                  connection_lifecycle_registry_pool_[context_idx]);
 
                 CROW_LOG_DEBUG << &ic << " {" << context_idx << "} queue length: " << task_queue_length_pool_[context_idx];
 
@@ -361,7 +361,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         std::vector<std::unique_ptr<asio::io_context>> io_context_pool_;
         asio::io_context io_context_;
         std::vector<detail::task_timer*> task_timer_pool_;
-        std::vector<std::unique_ptr<connection_lifecycle_registry_type>> connection_lifecycle_registry_pool_;
+        std::vector<std::shared_ptr<connection_lifecycle_registry_type>> connection_lifecycle_registry_pool_;
         std::vector<std::function<std::string()>> get_cached_date_str_pool_;
         Acceptor acceptor_;
         bool shutting_down_ = false;
