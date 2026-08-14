@@ -44,33 +44,62 @@ namespace crow
     static std::atomic<int> connectionCount;
 #endif
 
+    namespace detail {
+    template<typename ConnectionType>
+    class connection_lifecycle_registry {
+    public:
+        void track(const std::shared_ptr<ConnectionType>& connection) {
+            connections_.erase(std::remove_if(connections_.begin(),
+                                              connections_.end(),
+                                              [](const std::weak_ptr<ConnectionType>& item) { return item.expired(); }),
+                               connections_.end());
+            connections_.emplace_back(connection);
+        }
+
+        void shutdown_all() noexcept {
+            auto connections = std::move(connections_);
+            for (auto& item : connections) {
+                if (auto connection = item.lock()) {
+                    connection->shutdown_on_worker_exit();
+                }
+            }
+        }
+
+    private:
+        // Both methods run on the worker associated with these connections.
+        std::vector<std::weak_ptr<ConnectionType>> connections_;
+    };
+    } // namespace detail
+
     /// An HTTP connection.
     template<typename Adaptor, typename Handler, typename... Middlewares>
     class Connection : public std::enable_shared_from_this<Connection<Adaptor, Handler, Middlewares...>>
     {
         friend struct crow::response;
+        template<typename>
+        friend class detail::connection_lifecycle_registry;
 
     public:
-        Connection(
-          asio::io_context& io_context,
-          Handler* handler,
-          const std::string& server_name,
-          std::tuple<Middlewares...>* middlewares,
-          std::function<std::string()>& get_cached_date_str_f,
-          detail::task_timer& task_timer,
-          typename Adaptor::context* adaptor_ctx_,
-          std::atomic<unsigned int>& queue_length):
-          adaptor_(io_context, adaptor_ctx_),
-          handler_(handler),
-          parser_(this),
-          req_(parser_.req),
-          server_name_(server_name),
-          middlewares_(middlewares),
-          get_cached_date_str(get_cached_date_str_f),
-          task_timer_(task_timer),
-          res_stream_threshold_(handler->stream_threshold()),
-          queue_length_(queue_length)
-        {
+        Connection(asio::io_context& io_context,
+                   Handler* handler,
+                   const std::string& server_name,
+                   std::tuple<Middlewares...>* middlewares,
+                   std::function<std::string()>& get_cached_date_str_f,
+                   detail::task_timer& task_timer,
+                   typename Adaptor::context* adaptor_ctx_,
+                   std::atomic<unsigned int>& queue_length,
+                   detail::connection_lifecycle_registry<Connection>* lifecycle_registry = nullptr)
+            : adaptor_(io_context, adaptor_ctx_)
+            , handler_(handler)
+            , parser_(this)
+            , req_(parser_.req)
+            , server_name_(server_name)
+            , middlewares_(middlewares)
+            , get_cached_date_str(get_cached_date_str_f)
+            , task_timer_(task_timer)
+            , res_stream_threshold_(handler->stream_threshold())
+            , queue_length_(queue_length)
+            , lifecycle_registry_(lifecycle_registry) {
             queue_length_++;
 #ifdef CROW_ENABLE_DEBUG
             connectionCount++;
@@ -96,6 +125,9 @@ namespace crow
         void start()
         {
             auto self = this->shared_from_this();
+            if (lifecycle_registry_) {
+                lifecycle_registry_->track(self);
+            }
             adaptor_.start([self](const error_code& ec) {
                 if (!ec)
                 {
@@ -381,10 +413,9 @@ namespace crow
             void notify_completion(bool clean) noexcept {
                 response::chunk_complete_t handler;
                 {
-                    // Normal completion runs on the connection executor. Teardown may run
-                    // while that executor is stopped, so the shared handler needs its own
-                    // once-only synchronization. In that fallback, the handler runs on the
-                    // thread releasing the final connection owner.
+                    // Normal completion and Server worker shutdown run on the connection
+                    // thread. The latch also keeps fallback destruction once-only for a
+                    // Connection used without Server lifecycle tracking.
                     std::lock_guard<std::mutex> lock(completion_mutex);
                     if (completion_reported) {
                         return;
@@ -442,6 +473,10 @@ namespace crow
             auto self = this->shared_from_this();
             asio::async_write(
                 adaptor_.socket(), buffers_, [self, state](const error_code& ec, std::size_t /*bytes_transferred*/) {
+                    if (self->async_chunk_transfer_ != state) {
+                        return;
+                    }
+
                     if (ec) {
                         CROW_LOG_ERROR << ec
                                        << " - buffer write error happened while sending response start / headers. "
@@ -504,6 +539,25 @@ namespace crow
             request->io_context = nullptr;
             request->connection.reset();
             request->transfer.reset();
+        }
+
+        void shutdown_on_worker_exit() noexcept {
+            auto state = std::move(async_chunk_transfer_);
+            if (state) {
+                // The worker has stopped dispatching handlers. Keep buffers referenced by
+                // outstanding writes intact until Asio releases their handlers.
+                invalidate_async_chunk_request(state);
+                release_async_chunk_lifetime(state);
+                state->phase    = AsyncChunkPhase::aborted;
+                state->provider = nullptr;
+            }
+
+            adaptor_.shutdown_readwrite();
+            adaptor_.close();
+
+            if (state) {
+                state->notify_completion(false);
+            }
         }
 
         void destroy_async_chunk_transfer() noexcept {
@@ -615,6 +669,10 @@ namespace crow
                 adaptor_.socket(),
                 state->buffers,
                 [self, state, result](const error_code& ec, std::size_t /*bytes_transferred*/) {
+                    if (self->async_chunk_transfer_ != state) {
+                        return;
+                    }
+
                     if (ec) {
                         CROW_LOG_ERROR
                             << ec << " - buffer write error happened while sending a chunk. Writing stopped premature.";
@@ -646,6 +704,10 @@ namespace crow
             asio::async_write(adaptor_.socket(),
                               state->buffers,
                               [self, state](const error_code& ec, std::size_t /*bytes_transferred*/) {
+                                  if (self->async_chunk_transfer_ != state) {
+                                      return;
+                                  }
+
                                   if (ec) {
                                       CROW_LOG_ERROR << ec
                                                      << " - buffer write error happened while sending the last chunk.";
@@ -1052,6 +1114,7 @@ namespace crow
         size_t res_stream_threshold_;
 
         std::atomic<unsigned int>& queue_length_;
+        detail::connection_lifecycle_registry<Connection>* lifecycle_registry_;
     };
 
 } // namespace crow

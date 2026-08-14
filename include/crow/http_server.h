@@ -45,6 +45,9 @@ namespace crow // NOTE: Already documented in "crow/app.h"
     template<typename Handler, typename Acceptor = TCPAcceptor, typename Adaptor = SocketAdaptor, typename... Middlewares>
     class Server
     {
+        using connection_type                    = Connection<Adaptor, Handler, Middlewares...>;
+        using connection_lifecycle_registry_type = detail::connection_lifecycle_registry<connection_type>;
+
     public:
       Server(Handler* handler,
              typename Acceptor::endpoint endpoint, 
@@ -131,8 +134,10 @@ namespace crow // NOTE: Already documented in "crow/app.h"
             }
 
             uint16_t worker_thread_count = concurrency_ - 1;
-            for (int i = 0; i < worker_thread_count; i++)
+            for (int i = 0; i < worker_thread_count; i++) {
                 io_context_pool_.emplace_back(new asio::io_context());
+                connection_lifecycle_registry_pool_.emplace_back(new connection_lifecycle_registry_type());
+            }
             get_cached_date_str_pool_.resize(worker_thread_count);
             task_timer_pool_.resize(worker_thread_count);
 
@@ -191,6 +196,9 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                                 CROW_LOG_ERROR << "Worker Crash: An uncaught exception occurred: " << e.what();
                             }
                         }
+                        // run() has stopped dispatching, but this is still the connection
+                        // worker. Finish tracked transfers before the worker future becomes ready.
+                        connection_lifecycle_registry_pool_[i]->shutdown_all();
                     }));
 
             if (tick_function_ && tick_interval_.count() > 0)
@@ -310,10 +318,17 @@ namespace crow // NOTE: Already documented in "crow/app.h"
             {
                 size_t context_idx = pick_io_context_idx();
                 asio::io_context& ic = *io_context_pool_[context_idx];
-                auto p = std::make_shared<Connection<Adaptor, Handler, Middlewares...>>(
-                    ic, handler_, server_name_, middlewares_,
-                    get_cached_date_str_pool_[context_idx], *task_timer_pool_[context_idx], adaptor_ctx_, task_queue_length_pool_[context_idx]);
-                    
+                auto p               = std::make_shared<Connection<Adaptor, Handler, Middlewares...>>(
+                    ic,
+                    handler_,
+                    server_name_,
+                    middlewares_,
+                    get_cached_date_str_pool_[context_idx],
+                    *task_timer_pool_[context_idx],
+                    adaptor_ctx_,
+                    task_queue_length_pool_[context_idx],
+                    connection_lifecycle_registry_pool_[context_idx].get());
+
                 CROW_LOG_DEBUG << &ic << " {" << context_idx << "} queue length: " << task_queue_length_pool_[context_idx];
 
                 acceptor_.raw_acceptor().async_accept(
@@ -346,6 +361,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         std::vector<std::unique_ptr<asio::io_context>> io_context_pool_;
         asio::io_context io_context_;
         std::vector<detail::task_timer*> task_timer_pool_;
+        std::vector<std::unique_ptr<connection_lifecycle_registry_type>> connection_lifecycle_registry_pool_;
         std::vector<std::function<std::string()>> get_cached_date_str_pool_;
         Acceptor acceptor_;
         bool shutting_down_ = false;
