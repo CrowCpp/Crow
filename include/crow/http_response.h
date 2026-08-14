@@ -112,8 +112,10 @@ namespace crow
         /// Handler called once after the chunked body has been written (or writing has stopped).
 
         ///
-        /// `clean` is `true` when the provider finished with `chunk_result::done` and every
-        /// write succeeded, `false` when the provider aborted or a write error occurred.
+        /// `clean` is `true` when the provider finished normally and every write succeeded.
+        /// It is `false` after a provider abort or exception, publication failure, downstream
+        /// peer closure, read failure or unexpected cancellation, retained-input overflow,
+        /// write failure or cancellation, or server shutdown during an active transfer.
         using chunk_complete_t = std::function<void(bool clean)>;
 
         /// Set the value of an existing header in the response.
