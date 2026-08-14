@@ -495,6 +495,7 @@ namespace crow
             state->completion_handler = std::move(res.chunk_complete_);
             res.chunk_complete_       = nullptr;
             async_chunk_transfer_     = state;
+            parser_.stop_after_message();
 
             auto self = this->shared_from_this();
             if (lifecycle_registry_)
@@ -573,6 +574,7 @@ namespace crow
 
         void shutdown_on_worker_exit() noexcept {
             auto state = std::move(async_chunk_transfer_);
+            buffered_input_.clear();
             if (state) {
                 untrack_async_chunk_transfer();
                 // The worker has stopped dispatching handlers. Keep buffers referenced by
@@ -593,6 +595,7 @@ namespace crow
 
         void destroy_async_chunk_transfer() noexcept {
             auto state = std::move(async_chunk_transfer_);
+            buffered_input_.clear();
             if (!state) {
                 return;
             }
@@ -792,10 +795,24 @@ namespace crow
             buffers_.clear();
             parser_.clear();
 
-            if (!force_close && !close_connection_ && need_to_start_read_after_complete_) {
+            const bool resume_input = clean && !force_close && !close_connection_ && need_to_start_read_after_complete_;
+            if (resume_input)
+            {
                 need_to_start_read_after_complete_ = false;
                 start_deadline();
-                do_read();
+                if (buffered_input_.empty())
+                {
+                    do_read();
+                }
+                else
+                {
+                    process_buffered_input();
+                }
+            }
+            else
+            {
+                need_to_start_read_after_complete_ = false;
+                buffered_input_.clear();
             }
         }
 
@@ -1002,41 +1019,70 @@ namespace crow
             adaptor_.socket().async_read_some(
               asio::buffer(buffer_),
               [self](const error_code& ec, std::size_t bytes_transferred) {
-                  bool error_while_reading = true;
                   if (!ec)
                   {
-                      bool ret = self->parser_.feed(self->buffer_.data(), bytes_transferred);
-                      if (ret && self->adaptor_.is_open())
-                      {
-                          error_while_reading = false;
-                      }
+                      self->process_incoming_input(self->buffer_.data(), bytes_transferred);
+                      return;
                   }
 
-                  if (error_while_reading)
-                  {
-                      self->cancel_deadline_timer();
-                      self->parser_.done();
-                      self->adaptor_.shutdown_read();
-                      self->adaptor_.close();
-                      CROW_LOG_DEBUG << self << " from read(1) with description: \"" << http_errno_description(static_cast<http_errno>(self->parser_.http_errno)) << '\"';
-                  }
-                  else if (self->close_connection_)
-                  {
-                      self->cancel_deadline_timer();
-                      self->parser_.done();
-                      // adaptor will close after write
-                  } else if (self->async_chunk_transfer_) {
-                      // The asynchronous transfer owns the connection until it finishes.
-                      // Its completion path restores the deadline and request reading.
-                      self->need_to_start_read_after_complete_ = true;
-                  } else if (!self->need_to_call_after_handlers_) {
-                      self->start_deadline();
-                      self->do_read();
-                  } else {
-                      // res will be completed later by user
-                      self->need_to_start_read_after_complete_ = true;
-                  }
+                  self->close_after_read_error();
               });
+        }
+
+        void process_incoming_input(const char* data, std::size_t length)
+        {
+            std::size_t consumed = 0;
+            const bool parsed = parser_.feed(data, static_cast<int>(length), consumed);
+            if (parsed && consumed <= length && consumed < length)
+            {
+                buffered_input_.assign(data + consumed, length - consumed);
+            }
+
+            if (!parsed || consumed > length || !adaptor_.is_open())
+            {
+                close_after_read_error();
+            }
+            else if (close_connection_)
+            {
+                buffered_input_.clear();
+                cancel_deadline_timer();
+                parser_.done();
+                // adaptor will close after write
+            }
+            else if (async_chunk_transfer_)
+            {
+                // The asynchronous transfer owns the connection until it finishes.
+                // Its completion path parses buffered input before reading the socket again.
+                need_to_start_read_after_complete_ = true;
+            }
+            else if (!need_to_call_after_handlers_)
+            {
+                start_deadline();
+                do_read();
+            }
+            else
+            {
+                // res will be completed later by user
+                need_to_start_read_after_complete_ = true;
+            }
+        }
+
+        void process_buffered_input()
+        {
+            std::string input = std::move(buffered_input_);
+            buffered_input_.clear();
+            process_incoming_input(input.data(), input.size());
+        }
+
+        void close_after_read_error()
+        {
+            buffered_input_.clear();
+            cancel_deadline_timer();
+            parser_.done();
+            adaptor_.shutdown_read();
+            adaptor_.close();
+            CROW_LOG_DEBUG << this << " from read(1) with description: \""
+                           << http_errno_description(static_cast<http_errno>(parser_.http_errno)) << '\"';
         }
 
         void do_write()
@@ -1123,6 +1169,7 @@ namespace crow
         Handler* handler_;
 
         std::array<char, 4096> buffer_;
+        std::string buffered_input_;
 
         HTTPParser<Connection> parser_;
         std::unique_ptr<routing_handle_result> routing_handle_result_;

@@ -335,12 +335,17 @@ namespace crow
                         // set (RFC 7230 forbids sending both at once). The body itself is
                         // skipped, so the provider is dropped without being called. The
                         // completion handler is retained for the connection to invoke after
-                        // applying its HTTP-version policy.
+                        // applying its HTTP-version policy. A directly managed response has
+                        // no connection lifecycle helper, so it completes cleanly here.
                         chunk_provider_ = nullptr;
                         chunk_provider_ex_ = nullptr;
                         async_chunk_provider_ = nullptr;
                         body = "";
                         manual_length_header = true;
+                        if (!complete_request_handler_ && !is_alive_helper_)
+                        {
+                            notify_chunked_completion(true);
+                        }
                     }
                     else
                     {

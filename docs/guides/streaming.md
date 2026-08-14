@@ -128,6 +128,12 @@ pending, and Crow requests the next chunk only after the preceding write has
 finished. This bounds the transfer to one current payload chunk and provides
 backpressure without an unbounded queue.
 
+If a socket read also contains bytes for a later pipelined request, Crow keeps
+only that already received remainder while the asynchronous response is active.
+After clean completion, it parses the saved bytes on the connection executor
+before reading the socket again. An aborted or failed transfer closes the
+connection and discards the remainder.
+
 Calling `set_async_chunked_content_provider` discards any string body, static
 file, or synchronous provider already configured on the response. Calling a
 synchronous provider setter or a static-file setter afterward releases the
@@ -194,6 +200,8 @@ logged and swallowed.
     headers are sent and the body is skipped. The completion handler still runs,
     with `clean == true`. Chunked framing remains represented in the headers,
     with `Transfer-Encoding: chunked` retained and `Content-Length` omitted.
+    This completion behavior also applies when a `response` object is ended
+    directly, without a server connection.
 
 !!! note
 
