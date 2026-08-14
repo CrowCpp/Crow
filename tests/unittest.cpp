@@ -2309,6 +2309,140 @@ TEST_CASE("async_chunked_response_waits_beyond_connection_timeout")
     CHECK(clean == true);
 } // async_chunked_response_waits_beyond_connection_timeout
 
+TEST_CASE("async_chunked_response_wait_does_not_block_other_routes")
+{
+    SimpleApp app;
+
+    auto completion_promise = std::make_shared<std::promise<crow::response::async_chunk_completion_t>>();
+    auto completion_future = completion_promise->get_future();
+
+    CROW_ROUTE(app, "/waiting-async-chunk")
+    ([completion_promise](const crow::request&, crow::response& res) {
+        res.set_async_chunked_content_provider(
+          [completion_promise](crow::response::async_chunk_completion_t complete) {
+              completion_promise->set_value(std::move(complete));
+          },
+          "text/plain");
+        res.end();
+    });
+
+    CROW_ROUTE(app, "/ready-while-stream-waits")
+    ([] {
+        return "ready";
+    });
+
+    auto _ = app.bindaddr(LOCALHOST_ADDRESS).concurrency(2).port(45451).run_async();
+    app.wait_for_server_start();
+
+    HttpClient streaming_client(LOCALHOST_ADDRESS, 45451);
+    streaming_client.send("GET /waiting-async-chunk HTTP/1.1\r\nHost: localhost\r\n\r\n");
+
+    REQUIRE(completion_future.wait_for(std::chrono::seconds(5)) == std::future_status::ready);
+    auto complete = completion_future.get();
+
+    auto regular_response_future = std::async(std::launch::async, [] {
+        return HttpClient::request(LOCALHOST_ADDRESS, 45451, "GET /ready-while-stream-waits HTTP/1.1\r\nHost: localhost\r\n\r\n");
+    });
+    const auto regular_response_status = regular_response_future.wait_for(std::chrono::seconds(1));
+
+    complete(crow::chunk_result::done, "delayed");
+
+    std::string streaming_response;
+    while (streaming_response.size() < 5 || streaming_response.compare(streaming_response.size() - 5, 5, "0\r\n\r\n") != 0)
+        streaming_response += streaming_client.receive();
+
+    const std::string regular_response = regular_response_future.get();
+    app.stop();
+
+    CHECK(regular_response_status == std::future_status::ready);
+    CHECK(regular_response.find("ready") != std::string::npos);
+    const auto header_end = streaming_response.find("\r\n\r\n");
+    REQUIRE(header_end != std::string::npos);
+    CHECK(streaming_response.substr(header_end + 4) == "7\r\ndelayed\r\n0\r\n\r\n");
+} // async_chunked_response_wait_does_not_block_other_routes
+
+TEST_CASE("async_chunked_response_backpressures_provider_until_prior_write_completes")
+{
+    SimpleApp app;
+
+    constexpr std::size_t payload_size = 8 * 1024 * 1024;
+    auto provider_calls = std::make_shared<std::atomic<std::size_t>>(0);
+    auto active_provider_calls = std::make_shared<std::atomic<std::size_t>>(0);
+    auto maximum_active_provider_calls = std::make_shared<std::atomic<std::size_t>>(0);
+    auto second_provider_call_promise = std::make_shared<std::promise<void>>();
+    auto second_provider_call = second_provider_call_promise->get_future();
+    auto payload = std::make_shared<std::string>(payload_size, 'x');
+
+    CROW_ROUTE(app, "/backpressured-async-chunks")
+    ([provider_calls, active_provider_calls, maximum_active_provider_calls, second_provider_call_promise, payload](const crow::request&, crow::response& res) {
+        res.set_async_chunked_content_provider(
+          [provider_calls, active_provider_calls, maximum_active_provider_calls, second_provider_call_promise, payload](crow::response::async_chunk_completion_t complete) {
+              const std::size_t active = active_provider_calls->fetch_add(1) + 1;
+              std::size_t observed_maximum = maximum_active_provider_calls->load();
+              while (observed_maximum < active && !maximum_active_provider_calls->compare_exchange_weak(observed_maximum, active))
+              {}
+
+              const std::size_t call = provider_calls->fetch_add(1);
+              if (call == 0)
+              {
+                  complete(crow::chunk_result::more, std::move(*payload));
+              }
+              else
+              {
+                  second_provider_call_promise->set_value();
+                  complete(crow::chunk_result::done, "");
+              }
+              active_provider_calls->fetch_sub(1);
+          },
+          "application/octet-stream");
+        res.end();
+    });
+
+    auto _ = app.bindaddr(LOCALHOST_ADDRESS).port(45451).run_async();
+    app.wait_for_server_start();
+
+    asio::io_context io_context;
+    asio::ip::tcp::socket client(io_context);
+    client.open(asio::ip::tcp::v4());
+    client.set_option(asio::socket_base::receive_buffer_size(1024));
+    client.connect(asio::ip::tcp::endpoint(asio::ip::make_address(LOCALHOST_ADDRESS), 45451));
+    const std::string request = "GET /backpressured-async-chunks HTTP/1.1\r\nHost: localhost\r\n\r\n";
+    client.send(asio::buffer(request));
+
+    std::string response;
+    while (response.find("\r\n\r\n800000\r\nx") == std::string::npos)
+    {
+        char buffer[2048];
+        const std::size_t received = client.receive(asio::buffer(buffer, sizeof(buffer)));
+        response.append(buffer, received);
+    }
+
+    const auto second_call_while_client_is_not_reading = second_provider_call.wait_for(std::chrono::milliseconds(250));
+
+    while (response.size() < 5 || response.compare(response.size() - 5, 5, "0\r\n\r\n") != 0)
+    {
+        char buffer[65536];
+        const std::size_t received = client.receive(asio::buffer(buffer, sizeof(buffer)));
+        response.append(buffer, received);
+    }
+
+    const auto second_call_after_prior_write = second_provider_call.wait_for(std::chrono::seconds(5));
+    app.stop();
+
+    CHECK(second_call_while_client_is_not_reading == std::future_status::timeout);
+    REQUIRE(second_call_after_prior_write == std::future_status::ready);
+    CHECK(provider_calls->load() == 2);
+    CHECK(active_provider_calls->load() == 0);
+    CHECK(maximum_active_provider_calls->load() == 1);
+
+    const auto header_end = response.find("\r\n\r\n");
+    REQUIRE(header_end != std::string::npos);
+    const std::string encoded_body = response.substr(header_end + 4);
+    CHECK(encoded_body.size() == std::string("800000\r\n").size() + payload_size + std::string("\r\n0\r\n\r\n").size());
+    CHECK(encoded_body.compare(0, 8, "800000\r\n") == 0);
+    CHECK(encoded_body.compare(encoded_body.size() - 7, 7, "\r\n0\r\n\r\n") == 0);
+} // async_chunked_response_backpressures_provider_until_prior_write_completes
+
 TEST_CASE("chunked_response_no_data")
 {
     SimpleApp app;
