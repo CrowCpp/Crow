@@ -87,6 +87,12 @@ namespace crow
         /// `more` with empty chunks in a tight loop spins the connection thread needlessly.
         using chunk_provider_ex_t = std::function<chunk_result(std::string&)>;
 
+        /// Completion callback for one asynchronous chunk provider invocation.
+        using async_chunk_completion_t = std::function<void(chunk_result result, std::string chunk)>;
+
+        /// Provider that asynchronously supplies one response body chunk per invocation.
+        using async_chunk_provider_t = std::function<void(async_chunk_completion_t complete)>;
+
         /// Handler called once after the chunked body has been written (or writing has stopped).
 
         ///
@@ -230,6 +236,7 @@ namespace crow
             manual_length_header = r.manual_length_header;
             chunk_provider_ = std::move(r.chunk_provider_);
             chunk_provider_ex_ = std::move(r.chunk_provider_ex_);
+            async_chunk_provider_ = std::move(r.async_chunk_provider_);
             chunk_complete_ = std::move(r.chunk_complete_);
             return *this;
         }
@@ -249,6 +256,7 @@ namespace crow
             file_info = static_file_info{};
             chunk_provider_ = nullptr;
             chunk_provider_ex_ = nullptr;
+            async_chunk_provider_ = nullptr;
             chunk_complete_ = nullptr;
         }
 
@@ -317,6 +325,7 @@ namespace crow
                         // which method the client used.
                         chunk_provider_ = nullptr;
                         chunk_provider_ex_ = nullptr;
+                        async_chunk_provider_ = nullptr;
                         body = "";
                         manual_length_header = true;
                         if (chunk_complete_)
@@ -371,7 +380,7 @@ namespace crow
         /// Check whether the response body is produced by a chunk provider.
         bool is_chunked_type() const
         {
-            return static_cast<bool>(chunk_provider_) || static_cast<bool>(chunk_provider_ex_);
+            return static_cast<bool>(chunk_provider_) || static_cast<bool>(chunk_provider_ex_) || static_cast<bool>(async_chunk_provider_);
         }
 
         /// Send the response body in chunks produced on demand, without holding it in memory.
@@ -404,6 +413,30 @@ namespace crow
         void set_chunked_content_provider(chunk_provider_ex_t provider, std::string content_type = "")
         {
             chunk_provider_ex_ = std::move(provider);
+            chunk_provider_ = nullptr;
+            async_chunk_provider_ = nullptr;
+            file_info = static_file_info{};
+            body.clear();
+            manual_length_header = true;
+            headers.erase("Content-Length");
+            set_header("Transfer-Encoding", "chunked");
+            if (!content_type.empty())
+            {
+                set_header("Content-Type", std::move(content_type));
+            }
+        }
+
+        /// Send response body chunks supplied asynchronously without holding the body in memory.
+
+        ///
+        /// Crow invokes the provider once for each requested chunk. The provider must return
+        /// promptly and invoke its completion callback exactly once, either before or after it
+        /// returns. The callback may be invoked from any thread.
+        void set_async_chunked_content_provider(async_chunk_provider_t provider, std::string content_type = "")
+        {
+            async_chunk_provider_ = std::move(provider);
+            chunk_provider_ = nullptr;
+            chunk_provider_ex_ = nullptr;
             file_info = static_file_info{};
             body.clear();
             manual_length_header = true;
@@ -458,6 +491,7 @@ namespace crow
             // sent side by side while the raw file bytes go out unframed.
             chunk_provider_ = nullptr;
             chunk_provider_ex_ = nullptr;
+            async_chunk_provider_ = nullptr;
             chunk_complete_ = nullptr;
             headers.erase("Transfer-Encoding");
             manual_length_header = false;
@@ -615,6 +649,7 @@ namespace crow
         static_file_info file_info;
         chunk_provider_t chunk_provider_;
         chunk_provider_ex_t chunk_provider_ex_;
+        async_chunk_provider_t async_chunk_provider_;
         chunk_complete_t chunk_complete_;
     };
 } // namespace crow

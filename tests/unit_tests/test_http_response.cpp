@@ -48,14 +48,17 @@ TEST_CASE("simple_response")
     CHECK("text/css" == response(500, "css", "Internal Error?").get_header_value("Content-Type"));
 }
 
-TEST_CASE("async_chunked_provider_owns_the_response_body_source") {
-    SECTION("installation replaces static file and string body") {
+TEST_CASE("async_chunked_provider_owns_the_response_body_source")
+{
+    SECTION("installation replaces static file and string body")
+    {
         response res;
         res.set_static_file_info("tests/img/cat.jpg");
         res.body = "leftover";
 
-        response::async_chunk_provider_t provider
-            = [](response::async_chunk_completion_t complete) { complete(response::chunk_result::done, ""); };
+        response::async_chunk_provider_t provider = [](response::async_chunk_completion_t complete) {
+            complete(response::chunk_result::done, "");
+        };
         res.set_async_chunked_content_provider(std::move(provider), "text/plain");
 
         CHECK(res.is_chunked_type());
@@ -66,22 +69,28 @@ TEST_CASE("async_chunked_provider_owns_the_response_body_source") {
         CHECK(res.get_header_value("Content-Type") == "text/plain");
     }
 
-    SECTION("installation releases synchronous provider") {
+    SECTION("installation releases synchronous provider")
+    {
         response res;
-        auto synchronous_marker                        = std::make_shared<int>(1);
+        auto synchronous_marker = std::make_shared<int>(1);
         std::weak_ptr<int> synchronous_marker_observer = synchronous_marker;
-        res.set_chunked_content_provider([synchronous_marker](std::string&) { return response::chunk_result::done; });
+        res.set_chunked_content_provider([synchronous_marker](std::string&) {
+            return response::chunk_result::done;
+        });
         synchronous_marker.reset();
 
         res.set_async_chunked_content_provider(
-            [](response::async_chunk_completion_t complete) { complete(response::chunk_result::done, ""); });
+          [](response::async_chunk_completion_t complete) {
+              complete(response::chunk_result::done, "");
+          });
 
         CHECK(synchronous_marker_observer.expired());
     }
 
-    SECTION("static file releases asynchronous provider") {
+    SECTION("static file releases asynchronous provider")
+    {
         response res;
-        auto asynchronous_marker                        = std::make_shared<int>(1);
+        auto asynchronous_marker = std::make_shared<int>(1);
         std::weak_ptr<int> asynchronous_marker_observer = asynchronous_marker;
         res.set_async_chunked_content_provider([asynchronous_marker](response::async_chunk_completion_t complete) {
             complete(response::chunk_result::done, "");
@@ -96,24 +105,28 @@ TEST_CASE("async_chunked_provider_owns_the_response_body_source") {
         CHECK(res.get_header_value("Transfer-Encoding").empty());
     }
 
-    SECTION("synchronous provider releases asynchronous provider") {
+    SECTION("synchronous provider releases asynchronous provider")
+    {
         response res;
-        auto asynchronous_marker                        = std::make_shared<int>(1);
+        auto asynchronous_marker = std::make_shared<int>(1);
         std::weak_ptr<int> asynchronous_marker_observer = asynchronous_marker;
         res.set_async_chunked_content_provider([asynchronous_marker](response::async_chunk_completion_t complete) {
             complete(response::chunk_result::done, "");
         });
         asynchronous_marker.reset();
 
-        res.set_chunked_content_provider([](std::string&) { return response::chunk_result::done; });
+        res.set_chunked_content_provider([](std::string&) {
+            return response::chunk_result::done;
+        });
 
         CHECK(asynchronous_marker_observer.expired());
         CHECK(res.is_chunked_type());
     }
 
-    SECTION("clear releases moved asynchronous provider") {
+    SECTION("clear releases moved asynchronous provider")
+    {
         response source;
-        auto asynchronous_marker                        = std::make_shared<int>(1);
+        auto asynchronous_marker = std::make_shared<int>(1);
         std::weak_ptr<int> asynchronous_marker_observer = asynchronous_marker;
         source.set_async_chunked_content_provider([asynchronous_marker](response::async_chunk_completion_t complete) {
             complete(response::chunk_result::done, "");
