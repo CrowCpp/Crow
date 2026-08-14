@@ -2,6 +2,7 @@
 #define CROW_LOG_LEVEL 0
 #include <sys/stat.h>
 
+#include <array>
 #include <atomic>
 #include <exception>
 #include <future>
@@ -119,42 +120,77 @@ private:
 };
 
 template<typename Predicate>
-bool receive_with_deadline(asio::ip::tcp::socket& socket, std::string& response, std::chrono::milliseconds timeout, Predicate complete)
-{
-    asio_error_code ec;
-    socket.non_blocking(true, ec);
-    if (ec)
-        return false;
+bool receive_with_deadline(asio::ip::tcp::socket& socket,
+                           std::string& response,
+                           std::chrono::milliseconds timeout,
+                           Predicate complete,
+                           bool* peer_closed = nullptr) {
+    if (peer_closed)
+        *peer_closed = false;
+    if (complete(response))
+        return true;
 
-    const auto deadline = std::chrono::steady_clock::now() + timeout;
-    while (!complete(response) && std::chrono::steady_clock::now() < deadline)
-    {
-        char buffer[65536];
-        const std::size_t received = socket.read_some(asio::buffer(buffer, sizeof(buffer)), ec);
-        if (!ec)
-        {
-            response.append(buffer, received);
-            continue;
-        }
+    auto& io_context = GET_IO_CONTEXT(socket);
+#if (defined(CROW_USE_BOOST) && BOOST_VERSION >= 107000) || (ASIO_VERSION >= 101008)
+    io_context.restart();
+#else
+    io_context.reset();
+#endif
+    asio::steady_timer timer(io_context);
+    std::array<char, 65536> buffer;
+    bool timed_out = false;
+    std::function<void()> read_next;
 
-        if (ec != asio::error::would_block && ec != asio::error::try_again)
-            return complete(response);
+    read_next = [&] {
+        socket.async_read_some(asio::buffer(buffer), [&](const asio_error_code& ec, std::size_t received) {
+            if (!ec) {
+                response.append(buffer.data(), received);
+                if (complete(response)) {
+                    asio_error_code cancel_error;
+                    timer.cancel(cancel_error);
+                } else {
+                    read_next();
+                }
+                return;
+            }
 
-        ec.clear();
-        std::this_thread::sleep_for(std::chrono::milliseconds(1));
-    }
+            if (!timed_out && peer_closed)
+                *peer_closed = true;
+            asio_error_code cancel_error;
+            timer.cancel(cancel_error);
+        });
+    };
+
+    timer.expires_after(timeout);
+    timer.async_wait([&](const asio_error_code& ec) {
+        if (ec)
+            return;
+
+        timed_out = true;
+        asio_error_code cancel_error;
+        socket.cancel(cancel_error);
+    });
+    read_next();
+    io_context.run();
 
     return complete(response);
 }
 
-bool has_complete_http_response(const std::string& response)
-{
+bool receive_until_closed_with_deadline(asio::ip::tcp::socket& socket,
+                                        std::string& response,
+                                        std::chrono::milliseconds timeout) {
+    bool peer_closed = false;
+    receive_with_deadline(socket, response, timeout, [](const std::string&) { return false; }, &peer_closed);
+    return peer_closed;
+}
+
+bool has_complete_http_response(const std::string& response) {
     const auto header_end = response.find("\r\n\r\n");
     if (header_end == std::string::npos)
         return false;
 
     const std::string content_length_name = "Content-Length:";
-    const auto content_length_header = response.find(content_length_name);
+    const auto content_length_header      = response.find(content_length_name);
     if (content_length_header == std::string::npos || content_length_header > header_end)
         return false;
 
@@ -165,8 +201,7 @@ bool has_complete_http_response(const std::string& response)
         return false;
 
     std::size_t content_length = 0;
-    while (value < header_end && response[value] >= '0' && response[value] <= '9')
-    {
+    while (value < header_end && response[value] >= '0' && response[value] <= '9') {
         content_length = content_length * 10 + static_cast<std::size_t>(response[value] - '0');
         ++value;
     }
@@ -174,21 +209,25 @@ bool has_complete_http_response(const std::string& response)
     return response.size() >= header_end + 4 + content_length;
 }
 
-class PausingSocketContext
-{
+class PausingSocketContext {
 public:
-    void pause_next_write()
-    {
+    void pause_next_write() {
         pause_next_write_.store(true);
     }
 
-    bool take_pause_request()
-    {
+    bool take_pause_request() {
         return pause_next_write_.exchange(false);
     }
 
-    void set_pending_write(std::function<void()> resume)
-    {
+    void fail_next_write() {
+        fail_next_write_.store(true);
+    }
+
+    bool take_failure_request() {
+        return fail_next_write_.exchange(false);
+    }
+
+    void set_pending_write(std::function<void()> resume) {
         {
             std::lock_guard<std::mutex> lock(mutex_);
             resume_write_ = std::move(resume);
@@ -196,8 +235,7 @@ public:
         write_pending_.set_value();
     }
 
-    void resume_pending_write()
-    {
+    void resume_pending_write() {
         std::function<void()> resume;
         {
             std::lock_guard<std::mutex> lock(mutex_);
@@ -207,124 +245,136 @@ public:
             resume();
     }
 
-    std::future<void> pending_write_future()
-    {
+    std::future<void> pending_write_future() {
         return write_pending_.get_future();
+    }
+
+    std::future<void> started_connection_destroyed_future() {
+        return started_connection_destroyed_.get_future();
+    }
+
+    void report_started_connection_destroyed() {
+        if (!started_connection_destruction_reported_.exchange(true))
+            started_connection_destroyed_.set_value();
     }
 
 private:
     std::atomic<bool> pause_next_write_{false};
+    std::atomic<bool> fail_next_write_{false};
+    std::atomic<bool> started_connection_destruction_reported_{false};
     std::promise<void> write_pending_;
+    std::promise<void> started_connection_destroyed_;
     std::mutex mutex_;
     std::function<void()> resume_write_;
 };
 
-class PausingSocketAdaptor : public crow::SocketAdaptor
-{
+class PausingSocketAdaptor : public crow::SocketAdaptor {
 public:
-    using context = PausingSocketContext;
+    using context       = PausingSocketContext;
     using executor_type = asio::ip::tcp::socket::executor_type;
 
-    PausingSocketAdaptor(asio::io_context& io_context, context* context):
-      crow::SocketAdaptor(io_context, nullptr), context_(context)
-    {}
+    PausingSocketAdaptor(asio::io_context& io_context, context* context)
+        : crow::SocketAdaptor(io_context, nullptr)
+        , context_(context) {
+    }
 
-    executor_type get_executor() noexcept
-    {
+    ~PausingSocketAdaptor() {
+        if (started_ && context_)
+            context_->report_started_connection_destroyed();
+    }
+
+    executor_type get_executor() noexcept {
         return socket_.get_executor();
     }
 
-    asio::io_context& get_io_context()
-    {
+    asio::io_context& get_io_context() {
         return GET_IO_CONTEXT(socket_);
     }
 
-    asio::ip::tcp::socket& raw_socket()
-    {
+    asio::ip::tcp::socket& raw_socket() {
         return socket_;
     }
 
-    PausingSocketAdaptor& socket()
-    {
+    PausingSocketAdaptor& socket() {
         return *this;
     }
 
-    asio::ip::tcp::endpoint remote_endpoint() const
-    {
+    asio::ip::tcp::endpoint remote_endpoint() const {
         return socket_.remote_endpoint();
     }
 
-    std::string address() const
-    {
+    std::string address() const {
         return socket_.remote_endpoint().address().to_string();
     }
 
-    bool is_open() const
-    {
+    bool is_open() const {
         return socket_.is_open();
     }
 
-    void close()
-    {
+    void close() {
         asio_error_code ec;
         socket_.close(ec);
     }
 
-    void shutdown_readwrite()
-    {
+    void shutdown_readwrite() {
         asio_error_code ec;
         socket_.shutdown(asio::socket_base::shutdown_both, ec);
     }
 
-    void shutdown_write()
-    {
+    void shutdown_write() {
         asio_error_code ec;
         socket_.shutdown(asio::socket_base::shutdown_send, ec);
     }
 
-    void shutdown_read()
-    {
+    void shutdown_read() {
         asio_error_code ec;
         socket_.shutdown(asio::socket_base::shutdown_receive, ec);
     }
 
     template<typename F>
-    void start(F complete)
-    {
+    void start(F complete) {
+        started_ = true;
         complete(asio_error_code());
     }
 
     template<typename MutableBufferSequence, typename ReadHandler>
-    void async_read_some(const MutableBufferSequence& buffers, ReadHandler&& handler)
-    {
+    void async_read_some(const MutableBufferSequence& buffers, ReadHandler&& handler) {
         socket_.async_read_some(buffers, std::forward<ReadHandler>(handler));
     }
 
     template<typename ConstBufferSequence>
-    std::size_t write_some(const ConstBufferSequence& buffers)
-    {
+    std::size_t write_some(const ConstBufferSequence& buffers) {
         return socket_.write_some(buffers);
     }
 
     template<typename ConstBufferSequence>
-    std::size_t write_some(const ConstBufferSequence& buffers, asio_error_code& ec)
-    {
+    std::size_t write_some(const ConstBufferSequence& buffers, asio_error_code& ec) {
         return socket_.write_some(buffers, ec);
     }
 
     template<typename ConstBufferSequence, typename WriteHandler>
-    void async_write_some(const ConstBufferSequence& buffers, WriteHandler&& handler)
-    {
-        if (!context_ || !context_->take_pause_request())
-        {
+    void async_write_some(const ConstBufferSequence& buffers, WriteHandler&& handler) {
+        if (context_ && context_->take_failure_request()) {
+            auto copied_handler
+                = std::make_shared<typename std::decay<WriteHandler>::type>(std::forward<WriteHandler>(handler));
+            asio::post(get_io_context(), [copied_handler]() mutable {
+                const asio_error_code ec = asio::error::operation_aborted;
+                (*copied_handler)(ec, 0);
+            });
+            return;
+        }
+
+        if (!context_ || !context_->take_pause_request()) {
             socket_.async_write_some(buffers, std::forward<WriteHandler>(handler));
             return;
         }
 
         auto copied_buffers = std::make_shared<std::vector<asio::const_buffer>>();
-        for (auto iterator = asio::buffer_sequence_begin(buffers); iterator != asio::buffer_sequence_end(buffers); ++iterator)
+        for (auto iterator = asio::buffer_sequence_begin(buffers); iterator != asio::buffer_sequence_end(buffers);
+             ++iterator)
             copied_buffers->emplace_back(*iterator);
-        auto copied_handler = std::make_shared<typename std::decay<WriteHandler>::type>(std::forward<WriteHandler>(handler));
+        auto copied_handler
+            = std::make_shared<typename std::decay<WriteHandler>::type>(std::forward<WriteHandler>(handler));
 
         context_->set_pending_write([this, copied_buffers, copied_handler]() mutable {
             asio::post(get_io_context(), [this, copied_buffers, copied_handler]() mutable {
@@ -335,13 +385,32 @@ public:
 
 private:
     context* context_;
+    bool started_{false};
 };
 
-bool is_tcp_nodelay_enabled_for_connection_after_apply(const crow::detail::socket::tcp_socket_options& options)
-{
+class ChunkCompletionObservation {
+public:
+    std::future<bool> first_result() {
+        return first_result_.get_future();
+    }
+
+    void record(bool clean) {
+        if (calls_.fetch_add(1) == 0)
+            first_result_.set_value(clean);
+    }
+
+    std::size_t calls() const {
+        return calls_.load();
+    }
+
+private:
+    std::atomic<std::size_t> calls_{0};
+    std::promise<bool> first_result_;
+};
+
+bool is_tcp_nodelay_enabled_for_connection_after_apply(const crow::detail::socket::tcp_socket_options& options) {
     asio::io_context io_context;
-    asio::ip::tcp::acceptor acceptor(io_context,
-                                     asio::ip::tcp::endpoint(asio::ip::make_address(LOCALHOST_ADDRESS), 0));
+    asio::ip::tcp::acceptor acceptor(io_context, asio::ip::tcp::endpoint(asio::ip::make_address(LOCALHOST_ADDRESS), 0));
 
     asio::ip::tcp::socket client_socket(io_context);
     client_socket.connect(acceptor.local_endpoint());
@@ -2765,8 +2834,429 @@ TEST_CASE("async_chunked_response_backpressures_provider_until_prior_write_compl
     CHECK(encoded_body == "5\r\nfirst\r\n0\r\n\r\n");
 } // async_chunked_response_backpressures_provider_until_prior_write_completes
 
-TEST_CASE("chunked_response_no_data")
-{
+TEST_CASE("async_chunked_response_abort_closes_without_terminator_and_completes_once_unclean") {
+    SimpleApp app;
+
+    auto completion_observation = std::make_shared<ChunkCompletionObservation>();
+    auto completion_result      = completion_observation->first_result();
+
+    CROW_ROUTE(app, "/aborted-async-chunks")
+    ([completion_observation](const crow::request&, crow::response& res) {
+        res.set_async_chunked_content_provider([](crow::response::async_chunk_completion_t complete) {
+            complete(crow::chunk_result::abort, "discarded");
+        });
+        res.set_chunked_completion_handler(
+            [completion_observation](bool clean) { completion_observation->record(clean); });
+        res.end();
+    });
+
+    auto server_task = app.bindaddr(LOCALHOST_ADDRESS).port(45451).run_async();
+    BoundedServerShutdown server_shutdown(server_task, [&app] { app.stop(); });
+    REQUIRE(app.wait_for_server_start() == std::cv_status::no_timeout);
+
+    asio::io_context io_context;
+    asio::ip::tcp::socket client(io_context);
+    client.connect(asio::ip::tcp::endpoint(asio::ip::make_address(LOCALHOST_ADDRESS), 45451));
+    const std::string request = "GET /aborted-async-chunks HTTP/1.1\r\nHost: localhost\r\n\r\n";
+    asio::write(client, asio::buffer(request));
+
+    std::string response;
+    const bool connection_closed = receive_until_closed_with_deadline(client, response, std::chrono::seconds(5));
+    const auto completion_status = completion_result.wait_for(std::chrono::seconds(1));
+    const bool clean             = completion_status == std::future_status::ready ? completion_result.get() : true;
+
+    asio_error_code close_error;
+    client.close(close_error);
+    server_shutdown.shutdown();
+
+    REQUIRE(connection_closed);
+    const auto header_end = response.find("\r\n\r\n");
+    REQUIRE(header_end != std::string::npos);
+    CHECK(response.substr(header_end + 4).find("0\r\n\r\n") == std::string::npos);
+    CHECK(response.find("discarded") == std::string::npos);
+    REQUIRE(completion_status == std::future_status::ready);
+    CHECK(clean == false);
+    CHECK(completion_observation->calls() == 1);
+} // async_chunked_response_abort_closes_without_terminator_and_completes_once_unclean
+
+TEST_CASE("async_chunked_response_ignores_duplicate_request_completion") {
+    SimpleApp app;
+
+    auto provider_calls         = std::make_shared<std::atomic<std::size_t>>(0);
+    auto completion_observation = std::make_shared<ChunkCompletionObservation>();
+    auto completion_result      = completion_observation->first_result();
+
+    CROW_ROUTE(app, "/duplicate-async-completion")
+    ([provider_calls, completion_observation](const crow::request&, crow::response& res) {
+        res.set_async_chunked_content_provider(
+            [provider_calls](crow::response::async_chunk_completion_t complete) {
+                const std::size_t call = provider_calls->fetch_add(1);
+                if (call == 0) {
+                    complete(crow::chunk_result::more, "");
+                    complete(crow::chunk_result::done, "duplicate");
+                } else if (call == 1) {
+                    complete(crow::chunk_result::done, "final");
+                } else {
+                    complete(crow::chunk_result::abort, "");
+                }
+            },
+            "text/plain");
+        res.set_chunked_completion_handler(
+            [completion_observation](bool clean) { completion_observation->record(clean); });
+        res.end();
+    });
+
+    auto server_task = app.bindaddr(LOCALHOST_ADDRESS).port(45451).run_async();
+    BoundedServerShutdown server_shutdown(server_task, [&app] { app.stop(); });
+    REQUIRE(app.wait_for_server_start() == std::cv_status::no_timeout);
+
+    asio::io_context io_context;
+    asio::ip::tcp::socket client(io_context);
+    client.connect(asio::ip::tcp::endpoint(asio::ip::make_address(LOCALHOST_ADDRESS), 45451));
+    const std::string request = "GET /duplicate-async-completion HTTP/1.1\r\nHost: localhost\r\n\r\n";
+    asio::write(client, asio::buffer(request));
+
+    const auto has_chunk_terminator = [](const std::string& response) {
+        return response.size() >= 5 && response.compare(response.size() - 5, 5, "0\r\n\r\n") == 0;
+    };
+    std::string response;
+    const bool response_complete
+        = receive_with_deadline(client, response, std::chrono::seconds(5), has_chunk_terminator);
+    const auto completion_status = completion_result.wait_for(std::chrono::seconds(1));
+    const bool clean             = completion_status == std::future_status::ready ? completion_result.get() : false;
+
+    asio_error_code close_error;
+    client.close(close_error);
+    server_shutdown.shutdown();
+
+    REQUIRE(response_complete);
+    const auto header_end = response.find("\r\n\r\n");
+    REQUIRE(header_end != std::string::npos);
+    CHECK(response.substr(header_end + 4) == "5\r\nfinal\r\n0\r\n\r\n");
+    CHECK(provider_calls->load() == 2);
+    REQUIRE(completion_status == std::future_status::ready);
+    CHECK(clean == true);
+    CHECK(completion_observation->calls() == 1);
+} // async_chunked_response_ignores_duplicate_request_completion
+
+TEST_CASE("async_chunked_response_discards_late_completion_after_peer_close") {
+    SimpleApp app;
+
+    auto provider_started_promise  = std::make_shared<std::promise<void>>();
+    auto provider_started          = provider_started_promise->get_future();
+    auto transfer_lifetime_promise = std::make_shared<std::promise<std::weak_ptr<int>>>();
+    auto transfer_lifetime_result  = transfer_lifetime_promise->get_future();
+    auto delayed_completion        = std::make_shared<crow::response::async_chunk_completion_t>();
+    auto delayed_completion_mutex  = std::make_shared<std::mutex>();
+    auto completion_observation    = std::make_shared<ChunkCompletionObservation>();
+    auto completion_result         = completion_observation->first_result();
+    PausingSocketContext socket_context;
+    auto connection_destroyed = socket_context.started_connection_destroyed_future();
+
+    CROW_ROUTE(app, "/late-async-completion")
+    ([provider_started_promise,
+      transfer_lifetime_promise,
+      delayed_completion,
+      delayed_completion_mutex,
+      completion_observation](const crow::request&, crow::response& res) {
+        auto transfer_lifetime = std::make_shared<int>(0);
+        transfer_lifetime_promise->set_value(std::weak_ptr<int>(transfer_lifetime));
+        res.set_async_chunked_content_provider(
+            [provider_started_promise, delayed_completion, delayed_completion_mutex, transfer_lifetime](
+                crow::response::async_chunk_completion_t complete) {
+                static_cast<void>(transfer_lifetime);
+                {
+                    std::lock_guard<std::mutex> lock(*delayed_completion_mutex);
+                    *delayed_completion = std::move(complete);
+                }
+                provider_started_promise->set_value();
+            });
+        res.set_chunked_completion_handler([completion_observation, transfer_lifetime](bool clean) {
+            static_cast<void>(transfer_lifetime);
+            completion_observation->record(clean);
+        });
+        res.end();
+    });
+
+    app.validate();
+    std::tuple<> middlewares;
+    using LifetimeServer = crow::Server<crow::SimpleApp, crow::TCPAcceptor, PausingSocketAdaptor>;
+    LifetimeServer server(&app,
+                          asio::ip::tcp::endpoint(asio::ip::make_address(LOCALHOST_ADDRESS), 45451),
+                          "Crow/Test",
+                          &middlewares,
+                          2,
+                          5,
+                          &socket_context);
+    auto server_task = std::async(std::launch::async, [&server] { server.run(); });
+    BoundedServerShutdown server_shutdown(server_task, [&server] { server.stop(); });
+    REQUIRE(server.wait_for_start(std::chrono::steady_clock::now() + std::chrono::seconds(3))
+            == std::cv_status::no_timeout);
+
+    asio::io_context io_context;
+    asio::ip::tcp::socket client(io_context);
+    client.connect(asio::ip::tcp::endpoint(asio::ip::make_address(LOCALHOST_ADDRESS), 45451));
+    const std::string request = "GET /late-async-completion HTTP/1.1\r\nHost: localhost\r\n\r\n";
+    asio::write(client, asio::buffer(request));
+
+    const auto provider_status = provider_started.wait_for(std::chrono::seconds(5));
+    std::weak_ptr<int> transfer_lifetime;
+    if (provider_status == std::future_status::ready)
+        transfer_lifetime = transfer_lifetime_result.get();
+    const bool retained_before_peer_close                = !transfer_lifetime.expired();
+    const std::size_t completion_calls_before_peer_close = completion_observation->calls();
+    const auto connection_status_before_peer_close       = connection_destroyed.wait_for(std::chrono::seconds(0));
+
+    asio_error_code close_error;
+    client.close(close_error);
+    server_shutdown.shutdown();
+
+    const auto connection_destroyed_status = connection_destroyed.wait_for(std::chrono::seconds(1));
+    const auto completion_status           = completion_result.wait_for(std::chrono::seconds(1));
+    const bool clean = completion_status == std::future_status::ready ? completion_result.get() : true;
+    const bool released_before_late_completion = transfer_lifetime.expired();
+
+    crow::response::async_chunk_completion_t complete;
+    {
+        std::lock_guard<std::mutex> lock(*delayed_completion_mutex);
+        complete = std::move(*delayed_completion);
+    }
+    if (complete)
+        complete(crow::chunk_result::done, "late");
+
+    REQUIRE(provider_status == std::future_status::ready);
+    CHECK(retained_before_peer_close);
+    CHECK(completion_calls_before_peer_close == 0);
+    CHECK(connection_status_before_peer_close == std::future_status::timeout);
+    REQUIRE(connection_destroyed_status == std::future_status::ready);
+    REQUIRE(completion_status == std::future_status::ready);
+    CHECK(clean == false);
+    CHECK(released_before_late_completion);
+    CHECK(transfer_lifetime.expired());
+    CHECK(completion_observation->calls() == 1);
+} // async_chunked_response_discards_late_completion_after_peer_close
+
+TEST_CASE("async_chunked_response_shutdown_releases_never_completing_provider") {
+    SimpleApp app;
+
+    auto provider_started_promise  = std::make_shared<std::promise<void>>();
+    auto provider_started          = provider_started_promise->get_future();
+    auto transfer_lifetime_promise = std::make_shared<std::promise<std::weak_ptr<int>>>();
+    auto transfer_lifetime_result  = transfer_lifetime_promise->get_future();
+    auto completion_observation    = std::make_shared<ChunkCompletionObservation>();
+    auto completion_result         = completion_observation->first_result();
+    PausingSocketContext socket_context;
+    auto connection_destroyed = socket_context.started_connection_destroyed_future();
+
+    CROW_ROUTE(app, "/never-completing-async-chunk")
+    ([provider_started_promise, transfer_lifetime_promise, completion_observation](const crow::request&,
+                                                                                   crow::response& res) {
+        auto transfer_lifetime = std::make_shared<int>(0);
+        transfer_lifetime_promise->set_value(std::weak_ptr<int>(transfer_lifetime));
+        res.set_async_chunked_content_provider(
+            [provider_started_promise, transfer_lifetime](crow::response::async_chunk_completion_t complete) {
+                static_cast<void>(complete);
+                static_cast<void>(transfer_lifetime);
+                provider_started_promise->set_value();
+            });
+        res.set_chunked_completion_handler([completion_observation, transfer_lifetime](bool clean) {
+            static_cast<void>(transfer_lifetime);
+            completion_observation->record(clean);
+        });
+        res.end();
+    });
+
+    app.validate();
+    std::tuple<> middlewares;
+    using LifetimeServer = crow::Server<crow::SimpleApp, crow::TCPAcceptor, PausingSocketAdaptor>;
+    LifetimeServer server(&app,
+                          asio::ip::tcp::endpoint(asio::ip::make_address(LOCALHOST_ADDRESS), 45451),
+                          "Crow/Test",
+                          &middlewares,
+                          2,
+                          5,
+                          &socket_context);
+    auto server_task = std::async(std::launch::async, [&server] { server.run(); });
+    BoundedServerShutdown server_shutdown(server_task, [&server] { server.stop(); });
+    REQUIRE(server.wait_for_start(std::chrono::steady_clock::now() + std::chrono::seconds(3))
+            == std::cv_status::no_timeout);
+
+    asio::io_context io_context;
+    asio::ip::tcp::socket client(io_context);
+    client.connect(asio::ip::tcp::endpoint(asio::ip::make_address(LOCALHOST_ADDRESS), 45451));
+    const std::string request = "GET /never-completing-async-chunk HTTP/1.1\r\nHost: localhost\r\n\r\n";
+    asio::write(client, asio::buffer(request));
+
+    const auto provider_status = provider_started.wait_for(std::chrono::seconds(5));
+    std::weak_ptr<int> transfer_lifetime;
+    if (provider_status == std::future_status::ready)
+        transfer_lifetime = transfer_lifetime_result.get();
+    const bool retained_before_shutdown                = !transfer_lifetime.expired();
+    const std::size_t completion_calls_before_shutdown = completion_observation->calls();
+    const auto connection_status_before_shutdown       = connection_destroyed.wait_for(std::chrono::seconds(0));
+
+    server_shutdown.shutdown();
+    asio_error_code close_error;
+    client.close(close_error);
+
+    const auto completion_status = completion_result.wait_for(std::chrono::seconds(1));
+    const bool clean             = completion_status == std::future_status::ready ? completion_result.get() : true;
+    const auto connection_destroyed_status = connection_destroyed.wait_for(std::chrono::seconds(1));
+
+    REQUIRE(provider_status == std::future_status::ready);
+    CHECK(retained_before_shutdown);
+    CHECK(completion_calls_before_shutdown == 0);
+    CHECK(connection_status_before_shutdown == std::future_status::timeout);
+    REQUIRE(connection_destroyed_status == std::future_status::ready);
+    REQUIRE(completion_status == std::future_status::ready);
+    CHECK(clean == false);
+    CHECK(transfer_lifetime.expired());
+    CHECK(completion_observation->calls() == 1);
+} // async_chunked_response_shutdown_releases_never_completing_provider
+
+TEST_CASE("async_chunked_response_shutdown_discards_queued_completion") {
+    SimpleApp app;
+
+    auto provider_stopped_context_promise = std::make_shared<std::promise<void>>();
+    auto provider_stopped_context         = provider_stopped_context_promise->get_future();
+    auto transfer_lifetime_promise        = std::make_shared<std::promise<std::weak_ptr<int>>>();
+    auto transfer_lifetime_result         = transfer_lifetime_promise->get_future();
+    auto completion_observation           = std::make_shared<ChunkCompletionObservation>();
+    auto completion_result                = completion_observation->first_result();
+    PausingSocketContext socket_context;
+    auto connection_destroyed = socket_context.started_connection_destroyed_future();
+
+    CROW_ROUTE(app, "/queued-async-completion")
+    ([provider_stopped_context_promise, transfer_lifetime_promise, completion_observation](const crow::request& req,
+                                                                                           crow::response& res) {
+        auto transfer_lifetime = std::make_shared<int>(0);
+        transfer_lifetime_promise->set_value(std::weak_ptr<int>(transfer_lifetime));
+        auto* connection_io_context = req.io_context;
+        res.set_async_chunked_content_provider(
+            [provider_stopped_context_promise, transfer_lifetime, connection_io_context](
+                crow::response::async_chunk_completion_t complete) {
+                static_cast<void>(transfer_lifetime);
+                complete(crow::chunk_result::done, "queued");
+                connection_io_context->stop();
+                provider_stopped_context_promise->set_value();
+            });
+        res.set_chunked_completion_handler([completion_observation, transfer_lifetime](bool clean) {
+            static_cast<void>(transfer_lifetime);
+            completion_observation->record(clean);
+        });
+        res.end();
+    });
+
+    app.validate();
+    std::tuple<> middlewares;
+    using LifetimeServer = crow::Server<crow::SimpleApp, crow::TCPAcceptor, PausingSocketAdaptor>;
+    LifetimeServer server(&app,
+                          asio::ip::tcp::endpoint(asio::ip::make_address(LOCALHOST_ADDRESS), 45451),
+                          "Crow/Test",
+                          &middlewares,
+                          2,
+                          5,
+                          &socket_context);
+    auto server_task = std::async(std::launch::async, [&server] { server.run(); });
+    BoundedServerShutdown server_shutdown(server_task, [&server] { server.stop(); });
+    REQUIRE(server.wait_for_start(std::chrono::steady_clock::now() + std::chrono::seconds(3))
+            == std::cv_status::no_timeout);
+
+    asio::io_context io_context;
+    asio::ip::tcp::socket client(io_context);
+    client.connect(asio::ip::tcp::endpoint(asio::ip::make_address(LOCALHOST_ADDRESS), 45451));
+    const std::string request = "GET /queued-async-completion HTTP/1.1\r\nHost: localhost\r\n\r\n";
+    asio::write(client, asio::buffer(request));
+
+    const auto provider_status = provider_stopped_context.wait_for(std::chrono::seconds(5));
+    std::weak_ptr<int> transfer_lifetime;
+    if (provider_status == std::future_status::ready)
+        transfer_lifetime = transfer_lifetime_result.get();
+
+    server_shutdown.shutdown();
+
+    std::string response;
+    const bool connection_closed = receive_until_closed_with_deadline(client, response, std::chrono::seconds(1));
+    const auto completion_status = completion_result.wait_for(std::chrono::seconds(1));
+    const bool clean             = completion_status == std::future_status::ready ? completion_result.get() : true;
+    const auto connection_destroyed_status = connection_destroyed.wait_for(std::chrono::seconds(1));
+
+    asio_error_code close_error;
+    client.close(close_error);
+
+    REQUIRE(provider_status == std::future_status::ready);
+    REQUIRE(connection_closed);
+    REQUIRE(connection_destroyed_status == std::future_status::ready);
+    CHECK(response.find("queued") == std::string::npos);
+    CHECK(response.find("0\r\n\r\n") == std::string::npos);
+    REQUIRE(completion_status == std::future_status::ready);
+    CHECK(clean == false);
+    CHECK(transfer_lifetime.expired());
+    CHECK(completion_observation->calls() == 1);
+} // async_chunked_response_shutdown_discards_queued_completion
+
+TEST_CASE("async_chunked_response_write_error_completes_once_unclean") {
+    SimpleApp app;
+
+    auto provider_calls         = std::make_shared<std::atomic<std::size_t>>(0);
+    auto completion_observation = std::make_shared<ChunkCompletionObservation>();
+    auto completion_result      = completion_observation->first_result();
+    PausingSocketContext socket_context;
+
+    CROW_ROUTE(app, "/failing-async-chunk-write")
+    ([provider_calls, completion_observation, &socket_context](const crow::request&, crow::response& res) {
+        res.set_async_chunked_content_provider(
+            [provider_calls, &socket_context](crow::response::async_chunk_completion_t complete) {
+                provider_calls->fetch_add(1);
+                socket_context.fail_next_write();
+                complete(crow::chunk_result::done, "unwritten");
+            });
+        res.set_chunked_completion_handler(
+            [completion_observation](bool clean) { completion_observation->record(clean); });
+        res.end();
+    });
+
+    app.validate();
+    std::tuple<> middlewares;
+    using WriteErrorServer = crow::Server<crow::SimpleApp, crow::TCPAcceptor, PausingSocketAdaptor>;
+    WriteErrorServer server(&app,
+                            asio::ip::tcp::endpoint(asio::ip::make_address(LOCALHOST_ADDRESS), 45451),
+                            "Crow/Test",
+                            &middlewares,
+                            2,
+                            5,
+                            &socket_context);
+    auto server_task = std::async(std::launch::async, [&server] { server.run(); });
+    BoundedServerShutdown server_shutdown(server_task, [&server] { server.stop(); });
+    REQUIRE(server.wait_for_start(std::chrono::steady_clock::now() + std::chrono::seconds(3))
+            == std::cv_status::no_timeout);
+
+    asio::io_context io_context;
+    asio::ip::tcp::socket client(io_context);
+    client.connect(asio::ip::tcp::endpoint(asio::ip::make_address(LOCALHOST_ADDRESS), 45451));
+    const std::string request = "GET /failing-async-chunk-write HTTP/1.1\r\nHost: localhost\r\n\r\n";
+    asio::write(client, asio::buffer(request));
+
+    std::string response;
+    const bool connection_closed = receive_until_closed_with_deadline(client, response, std::chrono::seconds(5));
+    const auto completion_status = completion_result.wait_for(std::chrono::seconds(1));
+    const bool clean             = completion_status == std::future_status::ready ? completion_result.get() : true;
+
+    asio_error_code close_error;
+    client.close(close_error);
+    server_shutdown.shutdown();
+
+    REQUIRE(connection_closed);
+    const auto header_end = response.find("\r\n\r\n");
+    REQUIRE(header_end != std::string::npos);
+    CHECK(response.substr(header_end + 4).empty());
+    CHECK(provider_calls->load() == 1);
+    REQUIRE(completion_status == std::future_status::ready);
+    CHECK(clean == false);
+    CHECK(completion_observation->calls() == 1);
+} // async_chunked_response_write_error_completes_once_unclean
+
+TEST_CASE("chunked_response_no_data") {
     SimpleApp app;
 
     CROW_ROUTE(app, "/empty")
