@@ -81,6 +81,262 @@ public:
     }
 };
 
+class BoundedServerShutdown
+{
+public:
+    BoundedServerShutdown(std::future<void>& server_task, std::function<void()> stop):
+      server_task_(server_task), stop_(std::move(stop))
+    {}
+
+    ~BoundedServerShutdown()
+    {
+        shutdown();
+    }
+
+    void shutdown() noexcept
+    {
+        if (stopped_)
+            return;
+
+        stopped_ = true;
+        try
+        {
+            stop_();
+        }
+        catch (...)
+        {
+            std::terminate();
+        }
+
+        if (server_task_.valid() && server_task_.wait_for(std::chrono::seconds(5)) != std::future_status::ready)
+            std::terminate();
+    }
+
+private:
+    std::future<void>& server_task_;
+    std::function<void()> stop_;
+    bool stopped_{false};
+};
+
+template<typename Predicate>
+bool receive_with_deadline(asio::ip::tcp::socket& socket, std::string& response, std::chrono::milliseconds timeout, Predicate complete)
+{
+    asio_error_code ec;
+    socket.non_blocking(true, ec);
+    if (ec)
+        return false;
+
+    const auto deadline = std::chrono::steady_clock::now() + timeout;
+    while (!complete(response) && std::chrono::steady_clock::now() < deadline)
+    {
+        char buffer[65536];
+        const std::size_t received = socket.read_some(asio::buffer(buffer, sizeof(buffer)), ec);
+        if (!ec)
+        {
+            response.append(buffer, received);
+            continue;
+        }
+
+        if (ec != asio::error::would_block && ec != asio::error::try_again)
+            return complete(response);
+
+        ec.clear();
+        std::this_thread::sleep_for(std::chrono::milliseconds(1));
+    }
+
+    return complete(response);
+}
+
+bool has_complete_http_response(const std::string& response)
+{
+    const auto header_end = response.find("\r\n\r\n");
+    if (header_end == std::string::npos)
+        return false;
+
+    const std::string content_length_name = "Content-Length:";
+    const auto content_length_header = response.find(content_length_name);
+    if (content_length_header == std::string::npos || content_length_header > header_end)
+        return false;
+
+    auto value = content_length_header + content_length_name.size();
+    while (value < header_end && response[value] == ' ')
+        ++value;
+    if (value == header_end || response[value] < '0' || response[value] > '9')
+        return false;
+
+    std::size_t content_length = 0;
+    while (value < header_end && response[value] >= '0' && response[value] <= '9')
+    {
+        content_length = content_length * 10 + static_cast<std::size_t>(response[value] - '0');
+        ++value;
+    }
+
+    return response.size() >= header_end + 4 + content_length;
+}
+
+class PausingSocketContext
+{
+public:
+    void pause_next_write()
+    {
+        pause_next_write_.store(true);
+    }
+
+    bool take_pause_request()
+    {
+        return pause_next_write_.exchange(false);
+    }
+
+    void set_pending_write(std::function<void()> resume)
+    {
+        {
+            std::lock_guard<std::mutex> lock(mutex_);
+            resume_write_ = std::move(resume);
+        }
+        write_pending_.set_value();
+    }
+
+    void resume_pending_write()
+    {
+        std::function<void()> resume;
+        {
+            std::lock_guard<std::mutex> lock(mutex_);
+            resume = std::move(resume_write_);
+        }
+        if (resume)
+            resume();
+    }
+
+    std::future<void> pending_write_future()
+    {
+        return write_pending_.get_future();
+    }
+
+private:
+    std::atomic<bool> pause_next_write_{false};
+    std::promise<void> write_pending_;
+    std::mutex mutex_;
+    std::function<void()> resume_write_;
+};
+
+class PausingSocketAdaptor : public crow::SocketAdaptor
+{
+public:
+    using context = PausingSocketContext;
+    using executor_type = asio::ip::tcp::socket::executor_type;
+
+    PausingSocketAdaptor(asio::io_context& io_context, context* context):
+      crow::SocketAdaptor(io_context, nullptr), context_(context)
+    {}
+
+    executor_type get_executor() noexcept
+    {
+        return socket_.get_executor();
+    }
+
+    asio::io_context& get_io_context()
+    {
+        return GET_IO_CONTEXT(socket_);
+    }
+
+    asio::ip::tcp::socket& raw_socket()
+    {
+        return socket_;
+    }
+
+    PausingSocketAdaptor& socket()
+    {
+        return *this;
+    }
+
+    asio::ip::tcp::endpoint remote_endpoint() const
+    {
+        return socket_.remote_endpoint();
+    }
+
+    std::string address() const
+    {
+        return socket_.remote_endpoint().address().to_string();
+    }
+
+    bool is_open() const
+    {
+        return socket_.is_open();
+    }
+
+    void close()
+    {
+        asio_error_code ec;
+        socket_.close(ec);
+    }
+
+    void shutdown_readwrite()
+    {
+        asio_error_code ec;
+        socket_.shutdown(asio::socket_base::shutdown_both, ec);
+    }
+
+    void shutdown_write()
+    {
+        asio_error_code ec;
+        socket_.shutdown(asio::socket_base::shutdown_send, ec);
+    }
+
+    void shutdown_read()
+    {
+        asio_error_code ec;
+        socket_.shutdown(asio::socket_base::shutdown_receive, ec);
+    }
+
+    template<typename F>
+    void start(F complete)
+    {
+        complete(asio_error_code());
+    }
+
+    template<typename MutableBufferSequence, typename ReadHandler>
+    void async_read_some(const MutableBufferSequence& buffers, ReadHandler&& handler)
+    {
+        socket_.async_read_some(buffers, std::forward<ReadHandler>(handler));
+    }
+
+    template<typename ConstBufferSequence>
+    std::size_t write_some(const ConstBufferSequence& buffers)
+    {
+        return socket_.write_some(buffers);
+    }
+
+    template<typename ConstBufferSequence>
+    std::size_t write_some(const ConstBufferSequence& buffers, asio_error_code& ec)
+    {
+        return socket_.write_some(buffers, ec);
+    }
+
+    template<typename ConstBufferSequence, typename WriteHandler>
+    void async_write_some(const ConstBufferSequence& buffers, WriteHandler&& handler)
+    {
+        if (!context_ || !context_->take_pause_request())
+        {
+            socket_.async_write_some(buffers, std::forward<WriteHandler>(handler));
+            return;
+        }
+
+        auto copied_buffers = std::make_shared<std::vector<asio::const_buffer>>();
+        for (auto iterator = asio::buffer_sequence_begin(buffers); iterator != asio::buffer_sequence_end(buffers); ++iterator)
+            copied_buffers->emplace_back(*iterator);
+        auto copied_handler = std::make_shared<typename std::decay<WriteHandler>::type>(std::forward<WriteHandler>(handler));
+
+        context_->set_pending_write([this, copied_buffers, copied_handler]() mutable {
+            asio::post(get_io_context(), [this, copied_buffers, copied_handler]() mutable {
+                socket_.async_write_some(*copied_buffers, std::move(*copied_handler));
+            });
+        });
+    }
+
+private:
+    context* context_;
+};
+
 bool is_tcp_nodelay_enabled_for_connection_after_apply(const crow::detail::socket::tcp_socket_options& options)
 {
     asio::io_context io_context;
@@ -2313,14 +2569,20 @@ TEST_CASE("async_chunked_response_wait_does_not_block_other_routes")
 {
     SimpleApp app;
 
-    auto completion_promise = std::make_shared<std::promise<crow::response::async_chunk_completion_t>>();
-    auto completion_future = completion_promise->get_future();
+    auto provider_started_promise = std::make_shared<std::promise<void>>();
+    auto provider_started = provider_started_promise->get_future();
+    auto completion_mutex = std::make_shared<std::mutex>();
+    auto delayed_completion = std::make_shared<crow::response::async_chunk_completion_t>();
 
     CROW_ROUTE(app, "/waiting-async-chunk")
-    ([completion_promise](const crow::request&, crow::response& res) {
+    ([provider_started_promise, completion_mutex, delayed_completion](const crow::request&, crow::response& res) {
         res.set_async_chunked_content_provider(
-          [completion_promise](crow::response::async_chunk_completion_t complete) {
-              completion_promise->set_value(std::move(complete));
+          [provider_started_promise, completion_mutex, delayed_completion](crow::response::async_chunk_completion_t complete) {
+              {
+                  std::lock_guard<std::mutex> lock(*completion_mutex);
+                  *delayed_completion = std::move(complete);
+              }
+              provider_started_promise->set_value();
           },
           "text/plain");
         res.end();
@@ -2331,31 +2593,61 @@ TEST_CASE("async_chunked_response_wait_does_not_block_other_routes")
         return "ready";
     });
 
-    auto _ = app.bindaddr(LOCALHOST_ADDRESS).concurrency(2).port(45451).run_async();
-    app.wait_for_server_start();
-
-    HttpClient streaming_client(LOCALHOST_ADDRESS, 45451);
-    streaming_client.send("GET /waiting-async-chunk HTTP/1.1\r\nHost: localhost\r\n\r\n");
-
-    REQUIRE(completion_future.wait_for(std::chrono::seconds(5)) == std::future_status::ready);
-    auto complete = completion_future.get();
-
-    auto regular_response_future = std::async(std::launch::async, [] {
-        return HttpClient::request(LOCALHOST_ADDRESS, 45451, "GET /ready-while-stream-waits HTTP/1.1\r\nHost: localhost\r\n\r\n");
+    auto server_task = app.bindaddr(LOCALHOST_ADDRESS).concurrency(2).port(45451).run_async();
+    BoundedServerShutdown server_shutdown(server_task, [&app, completion_mutex, delayed_completion] {
+        crow::response::async_chunk_completion_t complete;
+        {
+            std::lock_guard<std::mutex> lock(*completion_mutex);
+            complete = std::move(*delayed_completion);
+        }
+        if (complete)
+            complete(crow::chunk_result::abort, "");
+        app.stop();
     });
-    const auto regular_response_status = regular_response_future.wait_for(std::chrono::seconds(1));
+    REQUIRE(app.wait_for_server_start() == std::cv_status::no_timeout);
 
-    complete(crow::chunk_result::done, "delayed");
+    asio::io_context io_context;
+    asio::ip::tcp::socket streaming_client(io_context);
+    streaming_client.connect(asio::ip::tcp::endpoint(asio::ip::make_address(LOCALHOST_ADDRESS), 45451));
+    const std::string streaming_request = "GET /waiting-async-chunk HTTP/1.1\r\nHost: localhost\r\n\r\n";
+    asio::write(streaming_client, asio::buffer(streaming_request));
 
+    const auto provider_status = provider_started.wait_for(std::chrono::seconds(5));
+
+    asio::ip::tcp::socket regular_client(io_context);
+    regular_client.connect(asio::ip::tcp::endpoint(asio::ip::make_address(LOCALHOST_ADDRESS), 45451));
+    const std::string regular_request = "GET /ready-while-stream-waits HTTP/1.1\r\nHost: localhost\r\nConnection: close\r\n\r\n";
+    asio::write(regular_client, asio::buffer(regular_request));
+    std::string regular_response;
+    const bool regular_response_complete = receive_with_deadline(regular_client, regular_response, std::chrono::seconds(1), has_complete_http_response);
+
+    crow::response::async_chunk_completion_t complete;
+    if (provider_status == std::future_status::ready)
+    {
+        std::lock_guard<std::mutex> lock(*completion_mutex);
+        complete = std::move(*delayed_completion);
+    }
+    if (complete)
+        complete(crow::chunk_result::done, "delayed");
+
+    const auto has_chunk_terminator = [](const std::string& response) {
+        return response.size() >= 5 && response.compare(response.size() - 5, 5, "0\r\n\r\n") == 0;
+    };
     std::string streaming_response;
-    while (streaming_response.size() < 5 || streaming_response.compare(streaming_response.size() - 5, 5, "0\r\n\r\n") != 0)
-        streaming_response += streaming_client.receive();
+    const bool streaming_response_complete = receive_with_deadline(streaming_client, streaming_response, std::chrono::seconds(5), has_chunk_terminator);
 
-    const std::string regular_response = regular_response_future.get();
-    app.stop();
+    asio_error_code close_error;
+    regular_client.close(close_error);
+    streaming_client.close(close_error);
+    server_shutdown.shutdown();
 
-    CHECK(regular_response_status == std::future_status::ready);
-    CHECK(regular_response.find("ready") != std::string::npos);
+    REQUIRE(provider_status == std::future_status::ready);
+    REQUIRE(regular_response_complete);
+    const auto regular_header_end = regular_response.find("\r\n\r\n");
+    REQUIRE(regular_header_end != std::string::npos);
+    CHECK(regular_response.substr(regular_header_end + 4) == "ready");
+
+    REQUIRE(streaming_response_complete);
     const auto header_end = streaming_response.find("\r\n\r\n");
     REQUIRE(header_end != std::string::npos);
     CHECK(streaming_response.substr(header_end + 4) == "7\r\ndelayed\r\n0\r\n\r\n");
@@ -2365,18 +2657,21 @@ TEST_CASE("async_chunked_response_backpressures_provider_until_prior_write_compl
 {
     SimpleApp app;
 
-    constexpr std::size_t payload_size = 8 * 1024 * 1024;
     auto provider_calls = std::make_shared<std::atomic<std::size_t>>(0);
     auto active_provider_calls = std::make_shared<std::atomic<std::size_t>>(0);
     auto maximum_active_provider_calls = std::make_shared<std::atomic<std::size_t>>(0);
     auto second_provider_call_promise = std::make_shared<std::promise<void>>();
     auto second_provider_call = second_provider_call_promise->get_future();
-    auto payload = std::make_shared<std::string>(payload_size, 'x');
+    auto connection_io_context_promise = std::make_shared<std::promise<asio::io_context*>>();
+    auto connection_io_context = connection_io_context_promise->get_future();
+    PausingSocketContext socket_context;
+    auto pending_write = socket_context.pending_write_future();
 
     CROW_ROUTE(app, "/backpressured-async-chunks")
-    ([provider_calls, active_provider_calls, maximum_active_provider_calls, second_provider_call_promise, payload](const crow::request&, crow::response& res) {
+    ([provider_calls, active_provider_calls, maximum_active_provider_calls, second_provider_call_promise, connection_io_context_promise, &socket_context](const crow::request& req, crow::response& res) {
+        connection_io_context_promise->set_value(req.io_context);
         res.set_async_chunked_content_provider(
-          [provider_calls, active_provider_calls, maximum_active_provider_calls, second_provider_call_promise, payload](crow::response::async_chunk_completion_t complete) {
+          [provider_calls, active_provider_calls, maximum_active_provider_calls, second_provider_call_promise, &socket_context](crow::response::async_chunk_completion_t complete) {
               const std::size_t active = active_provider_calls->fetch_add(1) + 1;
               std::size_t observed_maximum = maximum_active_provider_calls->load();
               while (observed_maximum < active && !maximum_active_provider_calls->compare_exchange_weak(observed_maximum, active))
@@ -2385,12 +2680,17 @@ TEST_CASE("async_chunked_response_backpressures_provider_until_prior_write_compl
               const std::size_t call = provider_calls->fetch_add(1);
               if (call == 0)
               {
-                  complete(crow::chunk_result::more, std::move(*payload));
+                  socket_context.pause_next_write();
+                  complete(crow::chunk_result::more, "first");
               }
-              else
+              else if (call == 1)
               {
                   second_provider_call_promise->set_value();
                   complete(crow::chunk_result::done, "");
+              }
+              else
+              {
+                  complete(crow::chunk_result::abort, "");
               }
               active_provider_calls->fetch_sub(1);
           },
@@ -2398,38 +2698,61 @@ TEST_CASE("async_chunked_response_backpressures_provider_until_prior_write_compl
         res.end();
     });
 
-    auto _ = app.bindaddr(LOCALHOST_ADDRESS).port(45451).run_async();
-    app.wait_for_server_start();
+    app.validate();
+    std::tuple<> middlewares;
+    using BackpressureServer = crow::Server<crow::SimpleApp, crow::TCPAcceptor, PausingSocketAdaptor>;
+    BackpressureServer server(&app,
+                              asio::ip::tcp::endpoint(asio::ip::make_address(LOCALHOST_ADDRESS), 45451),
+                              "Crow/Test", &middlewares, 2, 5, &socket_context);
+    auto server_task = std::async(std::launch::async, [&server] {
+        server.run();
+    });
+    BoundedServerShutdown server_shutdown(server_task, [&server, &socket_context] {
+        socket_context.resume_pending_write();
+        server.stop();
+    });
+    REQUIRE(server.wait_for_start(std::chrono::steady_clock::now() + std::chrono::seconds(3)) == std::cv_status::no_timeout);
 
     asio::io_context io_context;
     asio::ip::tcp::socket client(io_context);
-    client.open(asio::ip::tcp::v4());
-    client.set_option(asio::socket_base::receive_buffer_size(1024));
     client.connect(asio::ip::tcp::endpoint(asio::ip::make_address(LOCALHOST_ADDRESS), 45451));
     const std::string request = "GET /backpressured-async-chunks HTTP/1.1\r\nHost: localhost\r\n\r\n";
-    client.send(asio::buffer(request));
+    asio::write(client, asio::buffer(request));
 
+    const auto pending_write_status = pending_write.wait_for(std::chrono::seconds(5));
+    const auto connection_io_context_status = connection_io_context.wait_for(std::chrono::seconds(5));
+    auto executor_barrier_promise = std::make_shared<std::promise<void>>();
+    auto executor_barrier = executor_barrier_promise->get_future();
+    if (connection_io_context_status == std::future_status::ready)
+    {
+        auto* executor = connection_io_context.get();
+        asio::post(*executor, [executor, executor_barrier_promise] {
+            asio::post(*executor, [executor_barrier_promise] {
+                executor_barrier_promise->set_value();
+            });
+        });
+    }
+    const auto executor_barrier_status = executor_barrier.wait_for(std::chrono::seconds(5));
+    const std::size_t provider_calls_before_write_completion = provider_calls->load();
+
+    socket_context.resume_pending_write();
+
+    const auto has_chunk_terminator = [](const std::string& response) {
+        return response.size() >= 5 && response.compare(response.size() - 5, 5, "0\r\n\r\n") == 0;
+    };
     std::string response;
-    while (response.find("\r\n\r\n800000\r\nx") == std::string::npos)
-    {
-        char buffer[2048];
-        const std::size_t received = client.receive(asio::buffer(buffer, sizeof(buffer)));
-        response.append(buffer, received);
-    }
-
-    const auto second_call_while_client_is_not_reading = second_provider_call.wait_for(std::chrono::milliseconds(250));
-
-    while (response.size() < 5 || response.compare(response.size() - 5, 5, "0\r\n\r\n") != 0)
-    {
-        char buffer[65536];
-        const std::size_t received = client.receive(asio::buffer(buffer, sizeof(buffer)));
-        response.append(buffer, received);
-    }
+    const bool response_complete = receive_with_deadline(client, response, std::chrono::seconds(5), has_chunk_terminator);
 
     const auto second_call_after_prior_write = second_provider_call.wait_for(std::chrono::seconds(5));
-    app.stop();
+    asio_error_code close_error;
+    client.close(close_error);
+    server_shutdown.shutdown();
 
-    CHECK(second_call_while_client_is_not_reading == std::future_status::timeout);
+    REQUIRE(pending_write_status == std::future_status::ready);
+    REQUIRE(connection_io_context_status == std::future_status::ready);
+    REQUIRE(executor_barrier_status == std::future_status::ready);
+    CHECK(provider_calls_before_write_completion == 1);
+    REQUIRE(response_complete);
     REQUIRE(second_call_after_prior_write == std::future_status::ready);
     CHECK(provider_calls->load() == 2);
     CHECK(active_provider_calls->load() == 0);
@@ -2438,9 +2761,8 @@ TEST_CASE("async_chunked_response_backpressures_provider_until_prior_write_compl
     const auto header_end = response.find("\r\n\r\n");
     REQUIRE(header_end != std::string::npos);
     const std::string encoded_body = response.substr(header_end + 4);
-    CHECK(encoded_body.size() == std::string("800000\r\n").size() + payload_size + std::string("\r\n0\r\n\r\n").size());
-    CHECK(encoded_body.compare(0, 8, "800000\r\n") == 0);
-    CHECK(encoded_body.compare(encoded_body.size() - 7, 7, "\r\n0\r\n\r\n") == 0);
+    REQUIRE(encoded_body.size() == std::string("5\r\nfirst\r\n0\r\n\r\n").size());
+    CHECK(encoded_body == "5\r\nfirst\r\n0\r\n\r\n");
 } // async_chunked_response_backpressures_provider_until_prior_write_completes
 
 TEST_CASE("chunked_response_no_data")
