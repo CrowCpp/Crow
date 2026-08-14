@@ -15,6 +15,7 @@
 #include <memory>
 #include <mutex>
 #include <unordered_map>
+#include <utility>
 #include <vector>
 
 #include "crow/http_parser_merged.h"
@@ -423,12 +424,25 @@ namespace crow
 
         struct AsyncChunkRequest {
             std::mutex mutex;
-            std::atomic<bool> completed{false};
+            bool completed{false};
             bool active{true};
             asio::io_context* io_context{nullptr};
             std::weak_ptr<Connection> connection;
             std::weak_ptr<AsyncChunkTransfer> transfer;
         };
+
+        template<typename CurrentAdaptor, typename CompletionHandler>
+        static auto
+        post_async_chunk_completion(CurrentAdaptor& adaptor, asio::io_context&, CompletionHandler&& handler, int)
+            -> decltype(adaptor.post_async_chunk_completion(std::forward<CompletionHandler>(handler)), void()) {
+            adaptor.post_async_chunk_completion(std::forward<CompletionHandler>(handler));
+        }
+
+        template<typename CurrentAdaptor, typename CompletionHandler>
+        static void
+        post_async_chunk_completion(CurrentAdaptor&, asio::io_context& io_context, CompletionHandler&& handler, long) {
+            asio::post(io_context, std::forward<CompletionHandler>(handler));
+        }
 
         struct AsyncChunkTransfer {
             ~AsyncChunkTransfer() {
@@ -638,29 +652,39 @@ namespace crow
 
             response::async_chunk_completion_t complete
                 = [request](response::chunk_result result, std::string chunk) mutable {
-                      if (request->completed.exchange(true)) {
+                      std::unique_lock<std::mutex> lock(request->mutex);
+                      if (request->completed) {
+                          lock.unlock();
                           CROW_LOG_WARNING << "An asynchronous chunk completion callback was invoked more than once.";
                           return;
                       }
 
-                      std::lock_guard<std::mutex> lock(request->mutex);
                       if (!request->active) {
                           return;
                       }
 
+                      auto self = request->connection.lock();
+                      if (!self) {
+                          return;
+                      }
+
                       // Posting is unconditional, including when the provider completed inline.
-                      asio::post(*request->io_context,
-                                 [weak_self  = request->connection,
-                                  weak_state = request->transfer,
-                                  result,
-                                  chunk = std::move(chunk)]() mutable {
-                                     auto self  = weak_self.lock();
-                                     auto state = weak_state.lock();
-                                     if (!self || !state) {
-                                         return;
-                                     }
-                                     self->handle_async_chunk_result(state, result, std::move(chunk));
-                                 });
+                      self->post_async_chunk_completion(
+                          self->adaptor_,
+                          *request->io_context,
+                          [weak_self  = request->connection,
+                           weak_state = request->transfer,
+                           result,
+                           chunk = std::move(chunk)]() mutable {
+                              auto self  = weak_self.lock();
+                              auto state = weak_state.lock();
+                              if (!self || !state) {
+                                  return;
+                              }
+                              self->handle_async_chunk_result(state, result, std::move(chunk));
+                          },
+                          0);
+                      request->completed = true;
                   };
 
             try {
