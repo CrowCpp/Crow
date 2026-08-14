@@ -2606,6 +2606,8 @@ TEST_CASE("http_1_0_rejects_synchronous_and_asynchronous_chunk_providers")
               return crow::chunk_result::done;
           },
           "text/plain");
+        res.set_header("Content-Encoding", "gzip");
+        res.set_header("Trailer", "Digest");
         res.set_chunked_completion_handler(
           [synchronous_completion](bool clean) {
               synchronous_completion->record(clean);
@@ -2621,6 +2623,8 @@ TEST_CASE("http_1_0_rejects_synchronous_and_asynchronous_chunk_providers")
               complete(crow::chunk_result::done, "async");
           },
           "text/plain");
+        res.set_header("Content-Encoding", "gzip");
+        res.set_header("Trailer", "Digest");
         res.set_chunked_completion_handler(
           [asynchronous_completion](bool clean) {
               asynchronous_completion->record(clean);
@@ -2664,6 +2668,10 @@ TEST_CASE("http_1_0_rejects_synchronous_and_asynchronous_chunk_providers")
     CHECK(asynchronous_response.find("HTTP/1.1 505 HTTP Version Not Supported") != std::string::npos);
     CHECK(synchronous_response.find("Transfer-Encoding") == std::string::npos);
     CHECK(asynchronous_response.find("Transfer-Encoding") == std::string::npos);
+    CHECK(synchronous_response.find("Content-Encoding") == std::string::npos);
+    CHECK(asynchronous_response.find("Content-Encoding") == std::string::npos);
+    CHECK(synchronous_response.find("Trailer") == std::string::npos);
+    CHECK(asynchronous_response.find("Trailer") == std::string::npos);
     CHECK(synchronous_response.find("Content-Length") != std::string::npos);
     CHECK(asynchronous_response.find("Content-Length") != std::string::npos);
     CHECK(synchronous_provider_calls->load() == 0);
@@ -2675,6 +2683,184 @@ TEST_CASE("http_1_0_rejects_synchronous_and_asynchronous_chunk_providers")
     CHECK(synchronous_completion->calls() == 1);
     CHECK(asynchronous_completion->calls() == 1);
 } // http_1_0_rejects_synchronous_and_asynchronous_chunk_providers
+
+TEST_CASE("http_1_0_rejects_head_chunk_providers_without_sending_the_error_body")
+{
+    SimpleApp app;
+
+    auto synchronous_provider_calls = std::make_shared<std::atomic<std::size_t>>(0);
+    auto asynchronous_provider_calls = std::make_shared<std::atomic<std::size_t>>(0);
+    auto synchronous_completion = std::make_shared<ChunkCompletionObservation>();
+    auto asynchronous_completion = std::make_shared<ChunkCompletionObservation>();
+    auto synchronous_result = synchronous_completion->first_result();
+    auto asynchronous_result = asynchronous_completion->first_result();
+
+    CROW_ROUTE(app, "/http-1-0-head-sync-chunks")
+      .methods("GET"_method,
+               "HEAD"_method)([synchronous_provider_calls, synchronous_completion](const crow::request&,
+                                                                                   crow::response& res) {
+          res.set_chunked_content_provider([synchronous_provider_calls](std::string& chunk) {
+              synchronous_provider_calls->fetch_add(1);
+              chunk = "sync";
+              return crow::chunk_result::done;
+          });
+          res.set_header("Content-Encoding", "gzip");
+          res.set_header("Trailer", "Digest");
+          res.set_chunked_completion_handler(
+            [synchronous_completion](bool clean) {
+                synchronous_completion->record(clean);
+            });
+          res.end();
+      });
+
+    CROW_ROUTE(app, "/http-1-0-head-async-chunks")
+      .methods("GET"_method,
+               "HEAD"_method)([asynchronous_provider_calls, asynchronous_completion](const crow::request&,
+                                                                                     crow::response& res) {
+          res.set_async_chunked_content_provider(
+            [asynchronous_provider_calls](crow::response::async_chunk_completion_t complete) {
+                asynchronous_provider_calls->fetch_add(1);
+                complete(crow::chunk_result::done, "async");
+            });
+          res.set_header("Content-Encoding", "gzip");
+          res.set_header("Trailer", "Digest");
+          res.set_chunked_completion_handler(
+            [asynchronous_completion](bool clean) {
+                asynchronous_completion->record(clean);
+            });
+          res.end();
+      });
+
+    auto server_task = app.bindaddr(LOCALHOST_ADDRESS).port(45451).run_async();
+    BoundedServerShutdown server_shutdown(server_task, [&app] {
+        app.stop();
+    });
+    REQUIRE(app.wait_for_server_start() == std::cv_status::no_timeout);
+
+    HttpClient synchronous_client(LOCALHOST_ADDRESS, 45451);
+    synchronous_client.send("HEAD /http-1-0-head-sync-chunks HTTP/1.0\r\n\r\n");
+    std::string synchronous_response;
+    const bool synchronous_connection_closed = receive_until_closed_with_deadline(
+      synchronous_client.socket(), synchronous_response, std::chrono::seconds(5));
+
+    HttpClient asynchronous_client(LOCALHOST_ADDRESS, 45451);
+    asynchronous_client.send("HEAD /http-1-0-head-async-chunks HTTP/1.0\r\n\r\n");
+    std::string asynchronous_response;
+    const bool asynchronous_connection_closed = receive_until_closed_with_deadline(
+      asynchronous_client.socket(), asynchronous_response, std::chrono::seconds(5));
+
+    const auto synchronous_completion_status = synchronous_result.wait_for(std::chrono::seconds(1));
+    const bool synchronous_clean = synchronous_completion_status == std::future_status::ready ? synchronous_result.get() : true;
+    const auto asynchronous_completion_status = asynchronous_result.wait_for(std::chrono::seconds(1));
+    const bool asynchronous_clean = asynchronous_completion_status == std::future_status::ready ? asynchronous_result.get() : true;
+
+    asio_error_code close_error;
+    synchronous_client.socket().close(close_error);
+    asynchronous_client.socket().close(close_error);
+    server_shutdown.shutdown();
+
+    REQUIRE(synchronous_connection_closed);
+    REQUIRE(asynchronous_connection_closed);
+    const auto synchronous_header_end = synchronous_response.find("\r\n\r\n");
+    const auto asynchronous_header_end = asynchronous_response.find("\r\n\r\n");
+    REQUIRE(synchronous_header_end != std::string::npos);
+    REQUIRE(asynchronous_header_end != std::string::npos);
+    CHECK(synchronous_response.find("HTTP/1.1 505 HTTP Version Not Supported") != std::string::npos);
+    CHECK(asynchronous_response.find("HTTP/1.1 505 HTTP Version Not Supported") != std::string::npos);
+    CHECK(synchronous_response.find("Content-Length: 32") != std::string::npos);
+    CHECK(asynchronous_response.find("Content-Length: 32") != std::string::npos);
+    CHECK(synchronous_response.find("Connection: close") != std::string::npos);
+    CHECK(asynchronous_response.find("Connection: close") != std::string::npos);
+    CHECK(synchronous_response.find("Transfer-Encoding") == std::string::npos);
+    CHECK(asynchronous_response.find("Transfer-Encoding") == std::string::npos);
+    CHECK(synchronous_response.find("Content-Encoding") == std::string::npos);
+    CHECK(asynchronous_response.find("Content-Encoding") == std::string::npos);
+    CHECK(synchronous_response.find("Trailer") == std::string::npos);
+    CHECK(asynchronous_response.find("Trailer") == std::string::npos);
+    CHECK(synchronous_response.substr(synchronous_header_end + 4).empty());
+    CHECK(asynchronous_response.substr(asynchronous_header_end + 4).empty());
+    CHECK(synchronous_provider_calls->load() == 0);
+    CHECK(asynchronous_provider_calls->load() == 0);
+    REQUIRE(synchronous_completion_status == std::future_status::ready);
+    REQUIRE(asynchronous_completion_status == std::future_status::ready);
+    CHECK(synchronous_clean == false);
+    CHECK(asynchronous_clean == false);
+    CHECK(synchronous_completion->calls() == 1);
+    CHECK(asynchronous_completion->calls() == 1);
+} // http_1_0_rejects_head_chunk_providers_without_sending_the_error_body
+
+TEST_CASE("clear_after_chunk_provider_restores_content_length_and_keep_alive_boundaries")
+{
+    SimpleApp app;
+
+    auto synchronous_provider_calls = std::make_shared<std::atomic<std::size_t>>(0);
+    auto asynchronous_provider_calls = std::make_shared<std::atomic<std::size_t>>(0);
+
+    CROW_ROUTE(app, "/clear-sync-chunks")
+    ([synchronous_provider_calls](const crow::request&, crow::response& res) {
+        res.set_chunked_content_provider([synchronous_provider_calls](std::string& chunk) {
+            synchronous_provider_calls->fetch_add(1);
+            chunk = "unused";
+            return crow::chunk_result::done;
+        });
+        res.clear();
+        res.end("sync-body");
+    });
+
+    CROW_ROUTE(app, "/clear-async-chunks")
+    ([asynchronous_provider_calls](const crow::request&, crow::response& res) {
+        res.set_async_chunked_content_provider(
+          [asynchronous_provider_calls](crow::response::async_chunk_completion_t complete) {
+              asynchronous_provider_calls->fetch_add(1);
+              complete(crow::chunk_result::done, "unused");
+          });
+        res.clear();
+        res.end("async-body");
+    });
+
+    auto server_task = app.bindaddr(LOCALHOST_ADDRESS).port(45451).run_async();
+    BoundedServerShutdown server_shutdown(server_task, [&app] {
+        app.stop();
+    });
+    REQUIRE(app.wait_for_server_start() == std::cv_status::no_timeout);
+
+    HttpClient client(LOCALHOST_ADDRESS, 45451);
+    client.send("GET /clear-sync-chunks HTTP/1.1\r\nHost: localhost\r\n\r\n");
+    std::string synchronous_response;
+    const bool synchronous_complete = receive_with_deadline(client.socket(),
+                                                            synchronous_response,
+                                                            std::chrono::seconds(5),
+                                                            has_complete_http_response);
+
+    std::string asynchronous_response;
+    bool asynchronous_connection_closed = false;
+    if (synchronous_complete)
+    {
+        client.send(
+          "GET /clear-async-chunks HTTP/1.1\r\nHost: localhost\r\nConnection: close\r\n\r\n");
+        asynchronous_connection_closed = receive_until_closed_with_deadline(
+          client.socket(), asynchronous_response, std::chrono::seconds(5));
+    }
+
+    asio_error_code close_error;
+    client.socket().close(close_error);
+    server_shutdown.shutdown();
+
+    REQUIRE(synchronous_complete);
+    REQUIRE(asynchronous_connection_closed);
+    const auto synchronous_header_end = synchronous_response.find("\r\n\r\n");
+    const auto asynchronous_header_end = asynchronous_response.find("\r\n\r\n");
+    REQUIRE(synchronous_header_end != std::string::npos);
+    REQUIRE(asynchronous_header_end != std::string::npos);
+    CHECK(synchronous_response.find("Content-Length: 9") != std::string::npos);
+    CHECK(asynchronous_response.find("Content-Length: 10") != std::string::npos);
+    CHECK(synchronous_response.find("Transfer-Encoding") == std::string::npos);
+    CHECK(asynchronous_response.find("Transfer-Encoding") == std::string::npos);
+    CHECK(synchronous_response.substr(synchronous_header_end + 4) == "sync-body");
+    CHECK(asynchronous_response.substr(asynchronous_header_end + 4) == "async-body");
+    CHECK(synchronous_provider_calls->load() == 0);
+    CHECK(asynchronous_provider_calls->load() == 0);
+} // clear_after_chunk_provider_restores_content_length_and_keep_alive_boundaries
 
 TEST_CASE("throwing_async_chunk_provider_closes_without_terminator_and_completes_once_unclean")
 {
@@ -3711,6 +3897,145 @@ TEST_CASE("async_chunked_response_server_stop_finishes_paused_write_on_worker") 
     REQUIRE(header_end != std::string::npos);
     CHECK(response.substr(header_end + 4).find("0\r\n\r\n") == std::string::npos);
 } // async_chunked_response_server_stop_finishes_paused_write_on_worker
+
+TEST_CASE("async_chunked_response_header_write_error_completes_once_unclean")
+{
+    SimpleApp app;
+
+    auto provider_calls = std::make_shared<std::atomic<std::size_t>>(0);
+    auto completion_observation = std::make_shared<ChunkCompletionObservation>();
+    auto completion_result = completion_observation->first_result();
+    PausingSocketContext socket_context;
+
+    CROW_ROUTE(app, "/failing-async-chunk-header")
+    ([provider_calls, completion_observation, &socket_context](const crow::request&, crow::response& res) {
+        socket_context.fail_next_write();
+        res.set_async_chunked_content_provider(
+          [provider_calls](crow::response::async_chunk_completion_t complete) {
+              provider_calls->fetch_add(1);
+              complete(crow::chunk_result::done, "unwritten");
+          });
+        res.set_chunked_completion_handler(
+          [completion_observation](bool clean) {
+              completion_observation->record(clean);
+          });
+        res.end();
+    });
+
+    app.validate();
+    std::tuple<> middlewares;
+    using HeaderWriteErrorServer = crow::Server<crow::SimpleApp, crow::TCPAcceptor, PausingSocketAdaptor>;
+    HeaderWriteErrorServer server(&app,
+                                  asio::ip::tcp::endpoint(asio::ip::make_address(LOCALHOST_ADDRESS), 45451),
+                                  "Crow/Test",
+                                  &middlewares,
+                                  2,
+                                  5,
+                                  &socket_context);
+    auto server_task = std::async(std::launch::async, [&server] {
+        server.run();
+    });
+    BoundedServerShutdown server_shutdown(server_task, [&server] {
+        server.stop();
+    });
+    REQUIRE(server.wait_for_start(std::chrono::steady_clock::now() + std::chrono::seconds(3)) == std::cv_status::no_timeout);
+
+    asio::io_context io_context;
+    asio::ip::tcp::socket client(io_context);
+    client.connect(asio::ip::tcp::endpoint(asio::ip::make_address(LOCALHOST_ADDRESS), 45451));
+    const std::string request = "GET /failing-async-chunk-header HTTP/1.1\r\nHost: localhost\r\n\r\n";
+    asio::write(client, asio::buffer(request));
+
+    std::string response;
+    const bool connection_closed = receive_until_closed_with_deadline(client, response, std::chrono::seconds(5));
+    const auto completion_status = completion_result.wait_for(std::chrono::seconds(1));
+    const bool clean = completion_status == std::future_status::ready ? completion_result.get() : true;
+
+    asio_error_code close_error;
+    client.close(close_error);
+    server_shutdown.shutdown();
+
+    REQUIRE(connection_closed);
+    CHECK(response.find("0\r\n\r\n") == std::string::npos);
+    CHECK(provider_calls->load() == 0);
+    REQUIRE(completion_status == std::future_status::ready);
+    CHECK(clean == false);
+    CHECK(completion_observation->calls() == 1);
+} // async_chunked_response_header_write_error_completes_once_unclean
+
+TEST_CASE("async_chunked_response_terminator_write_error_completes_once_unclean")
+{
+    SimpleApp app;
+
+    auto provider_calls = std::make_shared<std::atomic<std::size_t>>(0);
+    auto completion_observation = std::make_shared<ChunkCompletionObservation>();
+    auto completion_result = completion_observation->first_result();
+    PausingSocketContext socket_context;
+
+    CROW_ROUTE(app, "/failing-async-chunk-terminator")
+    ([provider_calls, completion_observation, &socket_context](const crow::request&, crow::response& res) {
+        res.set_async_chunked_content_provider(
+          [provider_calls, &socket_context](crow::response::async_chunk_completion_t complete) {
+              const auto call = provider_calls->fetch_add(1);
+              if (call == 0)
+              {
+                  complete(crow::chunk_result::more, "written");
+                  return;
+              }
+
+              socket_context.fail_next_write();
+              complete(crow::chunk_result::done, "");
+          });
+        res.set_chunked_completion_handler(
+          [completion_observation](bool clean) {
+              completion_observation->record(clean);
+          });
+        res.end();
+    });
+
+    app.validate();
+    std::tuple<> middlewares;
+    using TerminatorWriteErrorServer = crow::Server<crow::SimpleApp, crow::TCPAcceptor, PausingSocketAdaptor>;
+    TerminatorWriteErrorServer server(&app,
+                                      asio::ip::tcp::endpoint(asio::ip::make_address(LOCALHOST_ADDRESS), 45451),
+                                      "Crow/Test",
+                                      &middlewares,
+                                      2,
+                                      5,
+                                      &socket_context);
+    auto server_task = std::async(std::launch::async, [&server] {
+        server.run();
+    });
+    BoundedServerShutdown server_shutdown(server_task, [&server] {
+        server.stop();
+    });
+    REQUIRE(server.wait_for_start(std::chrono::steady_clock::now() + std::chrono::seconds(3)) == std::cv_status::no_timeout);
+
+    asio::io_context io_context;
+    asio::ip::tcp::socket client(io_context);
+    client.connect(asio::ip::tcp::endpoint(asio::ip::make_address(LOCALHOST_ADDRESS), 45451));
+    const std::string request = "GET /failing-async-chunk-terminator HTTP/1.1\r\nHost: localhost\r\n\r\n";
+    asio::write(client, asio::buffer(request));
+
+    std::string response;
+    const bool connection_closed = receive_until_closed_with_deadline(client, response, std::chrono::seconds(5));
+    const auto completion_status = completion_result.wait_for(std::chrono::seconds(1));
+    const bool clean = completion_status == std::future_status::ready ? completion_result.get() : true;
+
+    asio_error_code close_error;
+    client.close(close_error);
+    server_shutdown.shutdown();
+
+    REQUIRE(connection_closed);
+    const auto header_end = response.find("\r\n\r\n");
+    REQUIRE(header_end != std::string::npos);
+    CHECK(response.substr(header_end + 4) == "7\r\nwritten\r\n");
+    CHECK(response.find("0\r\n\r\n") == std::string::npos);
+    CHECK(provider_calls->load() == 2);
+    REQUIRE(completion_status == std::future_status::ready);
+    CHECK(clean == false);
+    CHECK(completion_observation->calls() == 1);
+} // async_chunked_response_terminator_write_error_completes_once_unclean
 
 TEST_CASE("async_chunked_response_write_error_completes_once_unclean") {
     SimpleApp app;

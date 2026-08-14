@@ -39,6 +39,7 @@ TEST_CASE("simple_response")
     CHECK(100 == response(100).code);
     CHECK(200 == response("Hello there").code);
     CHECK(500 == response(500, "Internal Error?").code);
+    CHECK(505 == response(static_cast<int>(status::HTTP_VERSION_NOT_SUPPORTED)).code);
 
     CHECK(100 == response(100, "xml", "").code);
     CHECK("text/xml" == response(100, "xml", "").get_header_value("Content-Type"));
@@ -46,6 +47,48 @@ TEST_CASE("simple_response")
     CHECK("text/html" == response(200, "html", "").get_header_value("Content-Type"));
     CHECK(500 == response(500, "html", "Internal Error?").code);
     CHECK("text/css" == response(500, "css", "Internal Error?").get_header_value("Content-Type"));
+}
+
+TEST_CASE("clear_restores_ordinary_body_framing_after_chunk_provider")
+{
+    SECTION("synchronous provider")
+    {
+        response res;
+        res.set_chunked_content_provider([](std::string&) {
+            return response::chunk_result::done;
+        });
+
+        REQUIRE(res.manual_length_header);
+        res.clear();
+        res.write("sync-body");
+        res.end();
+
+        CHECK_FALSE(res.manual_length_header);
+        CHECK_FALSE(res.is_chunked_type());
+        CHECK(res.get_header_value("Transfer-Encoding").empty());
+        CHECK(res.body == "sync-body");
+        CHECK(res.is_completed());
+    }
+
+    SECTION("asynchronous provider")
+    {
+        response res;
+        res.set_async_chunked_content_provider(
+          [](response::async_chunk_completion_t complete) {
+              complete(response::chunk_result::done, "");
+          });
+
+        REQUIRE(res.manual_length_header);
+        res.clear();
+        res.write("async-body");
+        res.end();
+
+        CHECK_FALSE(res.manual_length_header);
+        CHECK_FALSE(res.is_chunked_type());
+        CHECK(res.get_header_value("Transfer-Encoding").empty());
+        CHECK(res.body == "async-body");
+        CHECK(res.is_completed());
+    }
 }
 
 TEST_CASE("async_chunked_provider_owns_the_response_body_source") {
