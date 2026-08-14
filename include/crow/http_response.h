@@ -271,6 +271,7 @@ namespace crow
             async_chunk_provider_ = nullptr;
             chunk_complete_ = nullptr;
             body_source_ = body_source_kind::none;
+            manual_length_header = false;
         }
 
         /// Return a "Temporary Redirect" response.
@@ -587,7 +588,7 @@ namespace crow
               {status::BAD_GATEWAY, "HTTP/1.1 502 Bad Gateway\r\n"},
               {status::SERVICE_UNAVAILABLE, "HTTP/1.1 503 Service Unavailable\r\n"},
               {status::GATEWAY_TIMEOUT, "HTTP/1.1 504 Gateway Timeout\r\n"},
-              {505, "HTTP/1.1 505 HTTP Version Not Supported\r\n"},
+              {status::HTTP_VERSION_NOT_SUPPORTED, "HTTP/1.1 505 HTTP Version Not Supported\r\n"},
               {status::VARIANT_ALSO_NEGOTIATES, "HTTP/1.1 506 Variant Also Negotiates\r\n"},
               {status::WEBDAV_INSUFFICIENT_STORAGE, "HTTP/1.1 507 Insufficient Storage\r\n"},
             };

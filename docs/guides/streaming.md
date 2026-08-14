@@ -133,6 +133,11 @@ file, or synchronous provider already configured on the response. Calling a
 synchronous provider setter or a static-file setter afterward releases the
 asynchronous provider. The response therefore has one body source.
 
+Calling `clear()` releases either kind of chunk provider and resets its framing
+state. If the response is then given an ordinary string body, Crow generates
+the corresponding `Content-Length` normally, including on a keep-alive
+connection.
+
 Installing an empty `async_chunk_provider_t` still selects asynchronous
 streaming. When Crow reaches the provider invocation, it treats the missing
 callable as a provider failure: the connection closes without a terminating
@@ -202,8 +207,10 @@ logged and swallowed.
     synchronous or asynchronous chunk provider for an HTTP/1.0 request, Crow
     does not invoke the provider. It replaces the streaming response with a
     finite `505 HTTP Version Not Supported` response, removes
-    `Transfer-Encoding`, adds `Content-Length`, closes the connection, and
-    invokes the completion handler exactly once with `clean == false`.
+    `Transfer-Encoding`, `Content-Encoding`, and `Trailer`, adds
+    `Content-Length`, closes the connection, and invokes the completion handler
+    exactly once with `clean == false`. A `HEAD` request reports the length of
+    that finite error representation while sending no response body.
 
 !!! note
 

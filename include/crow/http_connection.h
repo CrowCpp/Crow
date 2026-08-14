@@ -304,6 +304,12 @@ namespace crow
             }
 
             prepare_buffers();
+            if (res.skip_body)
+            {
+                // Header preparation may synthesize an error representation. HEAD reports
+                // its length while omitting its bytes from the response message.
+                res.body.clear();
+            }
 
             if (res.is_static_type())
             {
@@ -341,10 +347,12 @@ namespace crow
             res.async_chunk_provider_ = nullptr;
             res.body_source_ = response::body_source_kind::none;
             res.body.clear();
-            res.code = 505;
+            res.code = status::HTTP_VERSION_NOT_SUPPORTED;
             res.manual_length_header = false;
             res.headers.erase("Content-Length");
             res.headers.erase("Transfer-Encoding");
+            res.headers.erase("Content-Encoding");
+            res.headers.erase("Trailer");
             res.set_header("Connection", "close");
             add_keep_alive_ = false;
             close_connection_ = true;
