@@ -352,7 +352,267 @@ namespace crow
             return out;
         }
 
+        enum class AsyncChunkPhase
+        {
+            writing_headers,
+            requesting_chunk,
+            writing_chunk,
+            writing_terminator,
+            completed,
+            aborted
+        };
+
+        struct AsyncChunkTransfer
+        {
+            AsyncChunkPhase phase{AsyncChunkPhase::writing_headers};
+            response::async_chunk_provider_t provider;
+            response::chunk_complete_t completion_handler;
+            std::string chunk;
+            std::string chunk_header;
+            std::string terminator{"0\r\n\r\n"};
+            std::vector<asio::const_buffer> buffers;
+            std::shared_ptr<Connection> pending_owner;
+        };
+
         void do_write_chunked()
+        {
+            if (res.async_chunk_provider_)
+            {
+                do_write_async_chunked();
+                return;
+            }
+
+            do_write_sync_chunked();
+        }
+
+        void do_write_async_chunked()
+        {
+            cancel_deadline_timer();
+
+            auto state = std::make_shared<AsyncChunkTransfer>();
+            state->provider = std::move(res.async_chunk_provider_);
+            res.async_chunk_provider_ = nullptr;
+            state->completion_handler = std::move(res.chunk_complete_);
+            res.chunk_complete_ = nullptr;
+            async_chunk_transfer_ = state;
+
+            auto self = this->shared_from_this();
+            asio::async_write(
+              adaptor_.socket(), buffers_,
+              [self, state](const error_code& ec, std::size_t /*bytes_transferred*/) {
+                  if (ec)
+                  {
+                      CROW_LOG_ERROR << ec << " - buffer write error happened while sending response start / headers. Writing stopped premature.";
+                      self->finish_async_chunked(state, false, true);
+                      return;
+                  }
+
+                  self->buffers_.clear();
+                  self->request_async_chunk(state);
+              });
+        }
+
+        void request_async_chunk(const std::shared_ptr<AsyncChunkTransfer>& state)
+        {
+            if (async_chunk_transfer_ != state)
+            {
+                return;
+            }
+
+            state->phase = AsyncChunkPhase::requesting_chunk;
+            // A pending provider has no Asio operation to own the connection. Keep it alive
+            // until the first accepted completion has been posted back to this executor.
+            state->pending_owner = this->shared_from_this();
+
+            auto completed = std::make_shared<std::atomic<bool>>(false);
+            std::weak_ptr<Connection> weak_self = this->shared_from_this();
+            std::weak_ptr<AsyncChunkTransfer> weak_state = state;
+            response::async_chunk_completion_t complete =
+              [weak_self, weak_state, completed](response::chunk_result result, std::string chunk) mutable {
+                  if (completed->exchange(true))
+                  {
+                      CROW_LOG_WARNING << "An asynchronous chunk completion callback was invoked more than once.";
+                      return;
+                  }
+
+                  auto self = weak_self.lock();
+                  auto state = weak_state.lock();
+                  if (!self || !state)
+                  {
+                      return;
+                  }
+
+                  // Posting is unconditional, including when the provider completed inline.
+                  asio::post(
+                    self->adaptor_.get_io_context(),
+                    [self, state, result, chunk = std::move(chunk)]() mutable {
+                        self->handle_async_chunk_result(state, result, std::move(chunk));
+                    });
+              };
+
+            try
+            {
+                state->provider(complete);
+            }
+            catch (const std::exception& e)
+            {
+                CROW_LOG_ERROR << "An uncaught exception occurred in the asynchronous chunk provider: " << e.what();
+                complete(response::chunk_result::abort, "");
+            }
+            catch (...)
+            {
+                CROW_LOG_ERROR << "An uncaught exception occurred in the asynchronous chunk provider.";
+                complete(response::chunk_result::abort, "");
+            }
+        }
+
+        void handle_async_chunk_result(const std::shared_ptr<AsyncChunkTransfer>& state, response::chunk_result result, std::string chunk)
+        {
+            if (async_chunk_transfer_ != state || state->phase != AsyncChunkPhase::requesting_chunk)
+            {
+                return;
+            }
+
+            state->pending_owner.reset();
+
+            if (result == response::chunk_result::abort)
+            {
+                finish_async_chunked(state, false, true);
+                return;
+            }
+
+            if (chunk.empty())
+            {
+                if (result == response::chunk_result::done)
+                {
+                    write_async_chunk_terminator(state);
+                }
+                else
+                {
+                    request_async_chunk(state);
+                }
+                return;
+            }
+
+            state->phase = AsyncChunkPhase::writing_chunk;
+            state->chunk = std::move(chunk);
+            state->chunk_header = chunk_size_to_hex(state->chunk.size());
+            state->chunk_header += crlf;
+            state->buffers.clear();
+            state->buffers.reserve(3);
+            state->buffers.emplace_back(state->chunk_header.data(), state->chunk_header.size());
+            state->buffers.emplace_back(state->chunk.data(), state->chunk.size());
+            state->buffers.emplace_back(crlf.data(), crlf.size());
+
+            auto self = this->shared_from_this();
+            asio::async_write(
+              adaptor_.socket(), state->buffers,
+              [self, state, result](const error_code& ec, std::size_t /*bytes_transferred*/) {
+                  if (ec)
+                  {
+                      CROW_LOG_ERROR << ec << " - buffer write error happened while sending a chunk. Writing stopped premature.";
+                      self->finish_async_chunked(state, false, true);
+                      return;
+                  }
+
+                  state->buffers.clear();
+                  state->chunk.clear();
+                  state->chunk_header.clear();
+                  if (result == response::chunk_result::done)
+                  {
+                      self->write_async_chunk_terminator(state);
+                  }
+                  else
+                  {
+                      self->request_async_chunk(state);
+                  }
+              });
+        }
+
+        void write_async_chunk_terminator(const std::shared_ptr<AsyncChunkTransfer>& state)
+        {
+            if (async_chunk_transfer_ != state)
+            {
+                return;
+            }
+
+            state->phase = AsyncChunkPhase::writing_terminator;
+            state->buffers.clear();
+            state->buffers.emplace_back(state->terminator.data(), state->terminator.size());
+
+            auto self = this->shared_from_this();
+            asio::async_write(
+              adaptor_.socket(), state->buffers,
+              [self, state](const error_code& ec, std::size_t /*bytes_transferred*/) {
+                  if (ec)
+                  {
+                      CROW_LOG_ERROR << ec << " - buffer write error happened while sending the last chunk.";
+                      self->finish_async_chunked(state, false, true);
+                      return;
+                  }
+
+                  self->finish_async_chunked(state, true, false);
+              });
+        }
+
+        void finish_async_chunked(const std::shared_ptr<AsyncChunkTransfer>& state, bool clean, bool force_close)
+        {
+            if (async_chunk_transfer_ != state)
+            {
+                return;
+            }
+
+            state->phase = clean ? AsyncChunkPhase::completed : AsyncChunkPhase::aborted;
+            state->pending_owner.reset();
+            state->provider = nullptr;
+            state->buffers.clear();
+            async_chunk_transfer_.reset();
+
+            if (force_close)
+            {
+                adaptor_.shutdown_readwrite();
+                adaptor_.close();
+                CROW_LOG_DEBUG << this << " from write (async chunked, aborted or write error)";
+            }
+
+            auto completion_handler = std::move(state->completion_handler);
+            if (completion_handler)
+            {
+                try
+                {
+                    completion_handler(clean);
+                }
+                catch (const std::exception& e)
+                {
+                    CROW_LOG_ERROR << "An uncaught exception occurred in the chunked completion handler: " << e.what();
+                }
+                catch (...)
+                {
+                    CROW_LOG_ERROR << "An uncaught exception occurred in the chunked completion handler.";
+                }
+            }
+
+            if (close_connection_ && !force_close)
+            {
+                adaptor_.shutdown_readwrite();
+                adaptor_.close();
+                CROW_LOG_DEBUG << this << " from write (async chunked)";
+            }
+
+            res.end();
+            res.clear();
+            buffers_.clear();
+            parser_.clear();
+
+            if (!force_close && !close_connection_ && need_to_start_read_after_complete_)
+            {
+                need_to_start_read_after_complete_ = false;
+                start_deadline();
+                do_read();
+            }
+        }
+
+        void do_write_sync_chunked()
         {
             error_code ec;
             asio::write(adaptor_.socket(), buffers_, ec); // Write the response start / headers
@@ -685,6 +945,7 @@ namespace crow
         std::string content_length_;
         std::string date_str_;
         std::string res_body_copy_;
+        std::shared_ptr<AsyncChunkTransfer> async_chunk_transfer_;
 
         detail::task_timer::identifier_type task_id_{};
 
