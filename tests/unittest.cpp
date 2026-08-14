@@ -428,6 +428,64 @@ private:
     std::promise<bool> first_result_;
 };
 
+class DeferredChunkCompletion
+{
+public:
+    std::future_status wait_for(std::chrono::milliseconds timeout)
+    {
+        return captured_.wait_for(timeout);
+    }
+
+    void capture(crow::response::async_chunk_completion_t complete)
+    {
+        if (capture_reported_.exchange(true))
+        {
+            return;
+        }
+
+        {
+            std::lock_guard<std::mutex> lock(mutex_);
+            complete_ = std::move(complete);
+        }
+        captured_promise_.set_value();
+    }
+
+    bool complete(crow::chunk_result result, std::string chunk)
+    {
+        crow::response::async_chunk_completion_t complete;
+        {
+            std::lock_guard<std::mutex> lock(mutex_);
+            complete = std::move(complete_);
+        }
+        if (!complete)
+        {
+            return false;
+        }
+
+        complete(result, std::move(chunk));
+        return true;
+    }
+
+private:
+    std::promise<void> captured_promise_;
+    std::future<void> captured_{captured_promise_.get_future()};
+    std::atomic<bool> capture_reported_{false};
+    std::mutex mutex_;
+    crow::response::async_chunk_completion_t complete_;
+};
+
+struct PipelinedAsyncObservation
+{
+    std::atomic<std::size_t> first_route_calls{0};
+    std::atomic<std::size_t> provider_calls{0};
+    std::atomic<std::size_t> second_route_calls{0};
+    std::atomic<bool> first_completion_seen{false};
+    std::atomic<bool> second_route_overlapped{false};
+    std::atomic<bool> first_body_correct{true};
+    DeferredChunkCompletion provider_completion;
+    ChunkCompletionObservation completion;
+};
+
 class LifecycleRegistryProbe
 {
 public:
@@ -3062,6 +3120,176 @@ TEST_CASE("async_chunked_response_clean_completion_restores_keep_alive_reading")
     CHECK(second_response.substr(second_header_end + 4) == "second");
     CHECK(second_route_calls->load() == 1);
 } // async_chunked_response_clean_completion_restores_keep_alive_reading
+
+TEST_CASE("async_chunked_response_preserves_pipelined_request_bytes_until_clean_completion")
+{
+    SimpleApp app;
+
+    auto get_observation = std::make_shared<PipelinedAsyncObservation>();
+    auto post_observation = std::make_shared<PipelinedAsyncObservation>();
+
+    CROW_ROUTE(app, "/pipelined-async-get")
+    ([get_observation](const crow::request&, crow::response& res) {
+        get_observation->first_route_calls.fetch_add(1);
+        res.set_header("X-Pipeline-Response", "first-get");
+        res.set_async_chunked_content_provider(
+          [get_observation](crow::response::async_chunk_completion_t complete) {
+              get_observation->provider_calls.fetch_add(1);
+              get_observation->provider_completion.capture(std::move(complete));
+          });
+        res.set_chunked_completion_handler([get_observation](bool clean) {
+            get_observation->first_completion_seen.store(true);
+            get_observation->completion.record(clean);
+        });
+        res.end();
+    });
+
+    CROW_ROUTE(app, "/after-pipelined-async-get")
+    ([get_observation](const crow::request&, crow::response& res) {
+        get_observation->second_route_calls.fetch_add(1);
+        if (!get_observation->first_completion_seen.load())
+        {
+            get_observation->second_route_overlapped.store(true);
+        }
+        res.set_header("X-Pipeline-Response", "second-get");
+        res.end("second-get");
+    });
+
+    CROW_ROUTE(app, "/pipelined-async-post")
+      .methods("POST"_method)([post_observation](const crow::request& req, crow::response& res) {
+          post_observation->first_route_calls.fetch_add(1);
+          post_observation->first_body_correct.store(req.body == "payload");
+          res.set_header("X-Pipeline-Response", "first-post");
+          res.set_async_chunked_content_provider(
+            [post_observation](crow::response::async_chunk_completion_t complete) {
+                post_observation->provider_calls.fetch_add(1);
+                post_observation->provider_completion.capture(std::move(complete));
+            });
+          res.set_chunked_completion_handler([post_observation](bool clean) {
+              post_observation->first_completion_seen.store(true);
+              post_observation->completion.record(clean);
+          });
+          res.end();
+      });
+
+    CROW_ROUTE(app, "/after-pipelined-async-post")
+    ([post_observation](const crow::request&, crow::response& res) {
+        post_observation->second_route_calls.fetch_add(1);
+        if (!post_observation->first_completion_seen.load())
+        {
+            post_observation->second_route_overlapped.store(true);
+        }
+        res.set_header("X-Pipeline-Response", "second-post");
+        res.end("second-post");
+    });
+
+    auto server_task = app.bindaddr(LOCALHOST_ADDRESS).port(45451).run_async();
+    BoundedServerShutdown server_shutdown(server_task, [&app] {
+        app.stop();
+    });
+    REQUIRE(app.wait_for_server_start() == std::cv_status::no_timeout);
+
+    struct ExchangeResult
+    {
+        std::future_status provider_status{std::future_status::timeout};
+        bool second_route_called_before_completion{false};
+        bool provider_released{false};
+        bool connection_closed{false};
+        std::future_status completion_status{std::future_status::timeout};
+        bool clean{false};
+        std::string response;
+    };
+
+    const auto exchange = [](const std::shared_ptr<PipelinedAsyncObservation>& observation,
+                             const std::string& requests,
+                             const std::string& first_chunk) {
+        ExchangeResult result;
+        auto completion_result = observation->completion.first_result();
+
+        asio::io_context io_context;
+        asio::ip::tcp::socket client(io_context);
+        client.connect(asio::ip::tcp::endpoint(asio::ip::make_address(LOCALHOST_ADDRESS), 45451));
+        asio::write(client, asio::buffer(requests));
+
+        result.provider_status = observation->provider_completion.wait_for(std::chrono::seconds(5));
+        result.second_route_called_before_completion = observation->second_route_calls.load() != 0;
+        if (result.provider_status == std::future_status::ready)
+        {
+            result.provider_released = observation->provider_completion.complete(crow::chunk_result::done, first_chunk);
+        }
+
+        result.connection_closed = receive_until_closed_with_deadline(client, result.response, std::chrono::seconds(5));
+        result.completion_status = completion_result.wait_for(std::chrono::seconds(1));
+        if (result.completion_status == std::future_status::ready)
+        {
+            result.clean = completion_result.get();
+        }
+
+        asio_error_code close_error;
+        client.close(close_error);
+        return result;
+    };
+
+    const std::string get_requests = "GET /pipelined-async-get HTTP/1.1\r\nHost: localhost\r\n\r\n"
+                                     "GET /after-pipelined-async-get HTTP/1.1\r\nHost: localhost\r\nConnection: close\r\n\r\n";
+    const auto get_result = exchange(get_observation, get_requests, "first-get");
+
+    const std::string post_requests = "POST /pipelined-async-post HTTP/1.1\r\nHost: localhost\r\nContent-Length: 7\r\n\r\npayload"
+                                      "GET /after-pipelined-async-post HTTP/1.1\r\nHost: localhost\r\nConnection: close\r\n\r\n";
+    const auto post_result = exchange(post_observation, post_requests, "first-post");
+
+    get_observation->provider_completion.complete(crow::chunk_result::abort, "");
+    post_observation->provider_completion.complete(crow::chunk_result::abort, "");
+    server_shutdown.shutdown();
+
+    const auto verify_exchange = [](const std::shared_ptr<PipelinedAsyncObservation>& observation,
+                                    const ExchangeResult& result,
+                                    const std::string& first_header_value,
+                                    const std::string& encoded_first_body,
+                                    const std::string& second_header_value,
+                                    const std::string& second_body) {
+        REQUIRE(result.provider_status == std::future_status::ready);
+        REQUIRE(result.provider_released);
+        REQUIRE(result.connection_closed);
+        REQUIRE(result.completion_status == std::future_status::ready);
+        CHECK(result.clean);
+        CHECK_FALSE(result.second_route_called_before_completion);
+        CHECK(observation->first_route_calls.load() == 1);
+        CHECK(observation->provider_calls.load() == 1);
+        CHECK(observation->completion.calls() == 1);
+        CHECK(observation->second_route_calls.load() == 1);
+        CHECK_FALSE(observation->second_route_overlapped.load());
+
+        const auto first_status = result.response.find("HTTP/1.1 200 OK\r\n");
+        const auto first_header_end = result.response.find("\r\n\r\n", first_status);
+        REQUIRE(first_status == 0);
+        REQUIRE(first_header_end != std::string::npos);
+        CHECK(result.response.find("X-Pipeline-Response: " + first_header_value, first_status) < first_header_end);
+        const auto first_body_begin = first_header_end + 4;
+        REQUIRE(result.response.compare(first_body_begin, encoded_first_body.size(), encoded_first_body) == 0);
+        const auto second_status = result.response.find("HTTP/1.1 200 OK\r\n", first_body_begin);
+        REQUIRE(second_status == first_body_begin + encoded_first_body.size());
+        const auto second_header_end = result.response.find("\r\n\r\n", second_status);
+        REQUIRE(second_header_end != std::string::npos);
+        CHECK(result.response.find("X-Pipeline-Response: " + second_header_value, second_status) < second_header_end);
+        CHECK(result.response.substr(second_header_end + 4) == second_body);
+        CHECK(result.response.find("HTTP/1.1 200 OK\r\n", second_status + 1) == std::string::npos);
+    };
+
+    verify_exchange(get_observation,
+                    get_result,
+                    "first-get",
+                    "9\r\nfirst-get\r\n0\r\n\r\n",
+                    "second-get",
+                    "second-get");
+    verify_exchange(post_observation,
+                    post_result,
+                    "first-post",
+                    "a\r\nfirst-post\r\n0\r\n\r\n",
+                    "second-post",
+                    "second-post");
+    CHECK(post_observation->first_body_correct.load());
+} // async_chunked_response_preserves_pipelined_request_bytes_until_clean_completion
 
 TEST_CASE("async_chunked_response_completed_from_other_threads") {
     SimpleApp app;

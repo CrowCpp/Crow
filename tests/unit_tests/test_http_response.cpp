@@ -91,6 +91,58 @@ TEST_CASE("clear_restores_ordinary_body_framing_after_chunk_provider")
     }
 }
 
+TEST_CASE("direct_head_response_completes_chunk_provider_once_clean")
+{
+    SECTION("synchronous provider")
+    {
+        response res;
+        std::size_t provider_calls = 0;
+        std::size_t completion_calls = 0;
+        bool completion_clean = false;
+        res.skip_body = true;
+        res.set_chunked_content_provider([&provider_calls](std::string&) {
+            ++provider_calls;
+            return response::chunk_result::done;
+        });
+        res.set_chunked_completion_handler([&](bool clean) {
+            ++completion_calls;
+            completion_clean = clean;
+        });
+
+        res.end();
+        res.end();
+
+        CHECK(provider_calls == 0);
+        CHECK(completion_calls == 1);
+        CHECK(completion_clean);
+    }
+
+    SECTION("asynchronous provider")
+    {
+        response res;
+        std::size_t provider_calls = 0;
+        std::size_t completion_calls = 0;
+        bool completion_clean = false;
+        res.skip_body = true;
+        res.set_async_chunked_content_provider(
+          [&provider_calls](response::async_chunk_completion_t complete) {
+              ++provider_calls;
+              complete(response::chunk_result::done, "unused");
+          });
+        res.set_chunked_completion_handler([&](bool clean) {
+            ++completion_calls;
+            completion_clean = clean;
+        });
+
+        res.end();
+        res.end();
+
+        CHECK(provider_calls == 0);
+        CHECK(completion_calls == 1);
+        CHECK(completion_clean);
+    }
+}
+
 TEST_CASE("async_chunked_provider_owns_the_response_body_source") {
     SECTION("installation replaces static file and string body") {
         response res;
