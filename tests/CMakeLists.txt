@@ -32,6 +32,7 @@ set(TEST_SRCS
 )
 
 add_executable(unittest ${TEST_SRCS})
+target_compile_definitions(unittest PRIVATE CROW_ENABLE_ASYNC_CHUNK_PUBLICATION_TEST_HOOK)
 target_link_libraries(unittest Crow::Crow Catch2::Catch2WithMain)
 add_warnings_optimizations(unittest)
 add_sanitizer_flags(unittest)

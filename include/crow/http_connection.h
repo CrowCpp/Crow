@@ -11,6 +11,7 @@
 
 #include <atomic>
 #include <chrono>
+#include <exception>
 #include <limits>
 #include <memory>
 #include <mutex>
@@ -46,6 +47,10 @@ namespace crow
 #endif
 
     namespace detail {
+#ifdef CROW_ENABLE_ASYNC_CHUNK_PUBLICATION_TEST_HOOK
+    void invoke_async_chunk_publication_test_hook();
+#endif
+
     template<typename ConnectionType>
     class connection_lifecycle_registry {
     public:
@@ -431,17 +436,31 @@ namespace crow
             std::weak_ptr<AsyncChunkTransfer> transfer;
         };
 
-        template<typename CurrentAdaptor, typename CompletionHandler>
-        static auto
-        post_async_chunk_completion(CurrentAdaptor& adaptor, asio::io_context&, CompletionHandler&& handler, int)
-            -> decltype(adaptor.post_async_chunk_completion(std::forward<CompletionHandler>(handler)), void()) {
-            adaptor.post_async_chunk_completion(std::forward<CompletionHandler>(handler));
+        template<typename CompletionHandler>
+        static void post_async_chunk_completion(asio::io_context& io_context, CompletionHandler&& handler) {
+#ifdef CROW_ENABLE_ASYNC_CHUNK_PUBLICATION_TEST_HOOK
+            detail::invoke_async_chunk_publication_test_hook();
+#endif
+            asio::post(io_context, std::forward<CompletionHandler>(handler));
         }
 
-        template<typename CurrentAdaptor, typename CompletionHandler>
-        static void
-        post_async_chunk_completion(CurrentAdaptor&, asio::io_context& io_context, CompletionHandler&& handler, long) {
-            asio::post(io_context, std::forward<CompletionHandler>(handler));
+        static void log_async_chunk_publication_failure(const char* message,
+                                                        const std::exception_ptr& failure) noexcept {
+            if (!failure) {
+                return;
+            }
+
+            try {
+                try {
+                    std::rethrow_exception(failure);
+                } catch (const std::exception& e) {
+                    CROW_LOG_ERROR << message << ": " << e.what();
+                } catch (...) {
+                    CROW_LOG_ERROR << message << ".";
+                }
+            } catch (...) {
+                // Publication errors must not escape through logging on provider threads.
+            }
         }
 
         struct AsyncChunkTransfer {
@@ -650,42 +669,67 @@ namespace crow
             state->pending_request = request;
             arm_async_chunk_lifetime(state);
 
-            response::async_chunk_completion_t complete
-                = [request](response::chunk_result result, std::string chunk) mutable {
-                      std::unique_lock<std::mutex> lock(request->mutex);
-                      if (request->completed) {
-                          lock.unlock();
-                          CROW_LOG_WARNING << "An asynchronous chunk completion callback was invoked more than once.";
-                          return;
-                      }
+            response::async_chunk_completion_t complete = [request](response::chunk_result result,
+                                                                    std::string chunk) mutable {
+                std::unique_lock<std::mutex> lock(request->mutex);
+                if (request->completed) {
+                    lock.unlock();
+                    CROW_LOG_WARNING << "An asynchronous chunk completion callback was invoked more than once.";
+                    return;
+                }
 
-                      if (!request->active) {
-                          return;
-                      }
+                if (!request->active) {
+                    return;
+                }
 
-                      auto self = request->connection.lock();
-                      if (!self) {
-                          return;
-                      }
+                auto self = request->connection.lock();
+                if (!self) {
+                    return;
+                }
 
-                      // Posting is unconditional, including when the provider completed inline.
-                      self->post_async_chunk_completion(
-                          self->adaptor_,
-                          *request->io_context,
-                          [weak_self  = request->connection,
-                           weak_state = request->transfer,
-                           result,
-                           chunk = std::move(chunk)]() mutable {
-                              auto self  = weak_self.lock();
-                              auto state = weak_state.lock();
-                              if (!self || !state) {
-                                  return;
-                              }
-                              self->handle_async_chunk_result(state, result, std::move(chunk));
-                          },
-                          0);
-                      request->completed = true;
-                  };
+                const auto publish = [request](response::chunk_result published_result, std::string published_chunk) {
+                    // Posting is unconditional, including when the provider completed inline.
+                    post_async_chunk_completion(*request->io_context,
+                                                [weak_self  = request->connection,
+                                                 weak_state = request->transfer,
+                                                 published_result,
+                                                 published_chunk = std::move(published_chunk)]() mutable {
+                                                    auto self  = weak_self.lock();
+                                                    auto state = weak_state.lock();
+                                                    if (!self || !state) {
+                                                        return;
+                                                    }
+                                                    self->handle_async_chunk_result(
+                                                        state, published_result, std::move(published_chunk));
+                                                });
+                };
+
+                std::exception_ptr publication_failure;
+                try {
+                    publish(result, std::move(chunk));
+                    request->completed = true;
+                    return;
+                } catch (...) {
+                    publication_failure = std::current_exception();
+                }
+
+                std::exception_ptr abort_publication_failure;
+                try {
+                    publish(response::chunk_result::abort, "");
+                    request->completed = true;
+                } catch (...) {
+                    abort_publication_failure = std::current_exception();
+                }
+
+                lock.unlock();
+                log_async_chunk_publication_failure(
+                    "Failed to publish an asynchronous chunk completion; abort recovery was attempted",
+                    publication_failure);
+                log_async_chunk_publication_failure(
+                    "Failed to publish asynchronous chunk abort recovery; the transfer remains active for "
+                    "shutdown cleanup",
+                    abort_publication_failure);
+            };
 
             try {
                 state->provider(complete);
