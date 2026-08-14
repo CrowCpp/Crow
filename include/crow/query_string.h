@@ -234,6 +234,31 @@ inline std::unique_ptr<std::pair<std::string, std::string>> qs_dict_name2kv(cons
                 skip_to_brace_open++;
             skip_to_brace_close = strcspn(qs_kv[i], "]");
 
+            // Encoded brackets: page%5Bsize%5D=3 should match page[size]=3 (#1109).
+            if ( skip_to_brace_open == strlen(qs_kv[i]) )
+            {
+                const char* open = strstr(qs_kv[i] + name_len, "%5B");
+                if (!open)
+                    open = strstr(qs_kv[i] + name_len, "%5b");
+                if ( open && open == qs_kv[i] + name_len )
+                {
+                    const char* close = strstr(open + 3, "%5D");
+                    if (!close)
+                        close = strstr(open + 3, "%5d");
+                    if ( close && nth == 0 )
+                    {
+                        auto key = std::string(open + 3, static_cast<size_t>(close - (open + 3)));
+                        auto value = std::string(qs_kv[i] + skip_to_eq);
+                        return std::unique_ptr<std::pair<std::string, std::string>>(new std::pair<std::string, std::string>(key, value));
+                    }
+                    else if ( close )
+                    {
+                        --nth;
+                        continue;
+                    }
+                }
+            }
+
             if ( skip_to_brace_open <= skip_to_brace_close &&
                  skip_to_brace_open > 0 &&
                  skip_to_brace_close > 0 &&
