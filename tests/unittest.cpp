@@ -70,6 +70,11 @@ public:
         return rval;
     }
 
+    asio::ip::tcp::socket& socket()
+    {
+        return c;
+    }
+
     /** static method for making a request
      * @returns the received response string */
     static std::string request(const std::string& address,
@@ -177,6 +182,11 @@ bool receive_until_closed_with_deadline(asio::ip::tcp::socket& socket,
     bool peer_closed = false;
     receive_with_deadline(socket, response, timeout, [](const std::string&) { return false; }, &peer_closed);
     return peer_closed;
+}
+
+bool has_chunk_terminator(const std::string& response)
+{
+    return response.size() >= 5 && response.compare(response.size() - 5, 5, "0\r\n\r\n") == 0;
 }
 
 bool has_complete_http_response(const std::string& response) {
@@ -416,6 +426,23 @@ private:
     std::atomic<std::size_t> calls_{0};
     std::promise<std::thread::id> first_thread_;
     std::promise<bool> first_result_;
+};
+
+class LifecycleRegistryProbe
+{
+public:
+    void shutdown_on_worker_exit() noexcept
+    {
+        shutdown_calls_.fetch_add(1);
+    }
+
+    std::size_t shutdown_calls() const
+    {
+        return shutdown_calls_.load();
+    }
+
+private:
+    std::atomic<std::size_t> shutdown_calls_{0};
 };
 
 bool is_tcp_nodelay_enabled_for_connection_after_apply(const crow::detail::socket::tcp_socket_options& options) {
@@ -2488,6 +2515,217 @@ TEST_CASE("async_chunked_response_move_assignment_releases_destination_provider"
     CHECK(!destination.is_chunked_type());
 } // async_chunked_response_move_assignment_releases_destination_provider
 
+TEST_CASE("async_chunk_transfer_registry_ignores_ordinary_connections_and_unregisters_completed_transfers")
+{
+    crow::detail::connection_lifecycle_registry<LifecycleRegistryProbe> registry;
+    auto ordinary_connection = std::make_shared<LifecycleRegistryProbe>();
+    auto active_transfer = std::make_shared<LifecycleRegistryProbe>();
+
+    registry.shutdown_all();
+
+    CHECK(ordinary_connection->shutdown_calls() == 0);
+    CHECK(active_transfer->shutdown_calls() == 0);
+
+    registry.track(active_transfer);
+    registry.untrack(active_transfer.get());
+    registry.shutdown_all();
+
+    CHECK(active_transfer->shutdown_calls() == 0);
+
+    registry.track(active_transfer);
+    registry.shutdown_all();
+    registry.shutdown_all();
+
+    CHECK(active_transfer->shutdown_calls() == 1);
+} // async_chunk_transfer_registry_ignores_ordinary_connections_and_unregisters_completed_transfers
+
+TEST_CASE("empty_async_chunk_provider_closes_without_terminator_and_completes_once_unclean")
+{
+    SimpleApp app;
+
+    auto completion_observation = std::make_shared<ChunkCompletionObservation>();
+    auto completion_result = completion_observation->first_result();
+
+    CROW_ROUTE(app, "/empty-async-chunk-provider")
+    ([completion_observation](const crow::request&, crow::response& res) {
+        crow::response::async_chunk_provider_t empty_provider;
+        res.set_async_chunked_content_provider(std::move(empty_provider), "text/plain");
+        res.set_chunked_completion_handler(
+          [completion_observation](bool clean) {
+              completion_observation->record(clean);
+          });
+        res.end();
+    });
+
+    auto server_task = app.bindaddr(LOCALHOST_ADDRESS).port(45451).run_async();
+    BoundedServerShutdown server_shutdown(server_task, [&app] {
+        app.stop();
+    });
+    REQUIRE(app.wait_for_server_start() == std::cv_status::no_timeout);
+
+    HttpClient client(LOCALHOST_ADDRESS, 45451);
+    client.send("GET /empty-async-chunk-provider HTTP/1.1\r\nHost: localhost\r\n\r\n");
+
+    std::string response;
+    const bool connection_closed = receive_until_closed_with_deadline(client.socket(), response, std::chrono::seconds(5));
+    const auto completion_status = completion_result.wait_for(std::chrono::seconds(1));
+    const bool clean = completion_status == std::future_status::ready ? completion_result.get() : true;
+
+    asio_error_code close_error;
+    client.socket().close(close_error);
+    server_shutdown.shutdown();
+
+    REQUIRE(connection_closed);
+    const auto header_end = response.find("\r\n\r\n");
+    REQUIRE(header_end != std::string::npos);
+    CHECK(response.find("Transfer-Encoding: chunked") != std::string::npos);
+    CHECK(response.find("Content-Length") == std::string::npos);
+    CHECK(response.substr(header_end + 4).find("0\r\n\r\n") == std::string::npos);
+    REQUIRE(completion_status == std::future_status::ready);
+    CHECK(clean == false);
+    CHECK(completion_observation->calls() == 1);
+} // empty_async_chunk_provider_closes_without_terminator_and_completes_once_unclean
+
+TEST_CASE("http_1_0_rejects_synchronous_and_asynchronous_chunk_providers")
+{
+    SimpleApp app;
+
+    auto synchronous_provider_calls = std::make_shared<std::atomic<std::size_t>>(0);
+    auto asynchronous_provider_calls = std::make_shared<std::atomic<std::size_t>>(0);
+    auto synchronous_completion = std::make_shared<ChunkCompletionObservation>();
+    auto asynchronous_completion = std::make_shared<ChunkCompletionObservation>();
+    auto synchronous_result = synchronous_completion->first_result();
+    auto asynchronous_result = asynchronous_completion->first_result();
+
+    CROW_ROUTE(app, "/http-1-0-sync-chunks")
+    ([synchronous_provider_calls, synchronous_completion](const crow::request&, crow::response& res) {
+        res.set_chunked_content_provider(
+          [synchronous_provider_calls](std::string& chunk) {
+              synchronous_provider_calls->fetch_add(1);
+              chunk = "sync";
+              return crow::chunk_result::done;
+          },
+          "text/plain");
+        res.set_chunked_completion_handler(
+          [synchronous_completion](bool clean) {
+              synchronous_completion->record(clean);
+          });
+        res.end();
+    });
+
+    CROW_ROUTE(app, "/http-1-0-async-chunks")
+    ([asynchronous_provider_calls, asynchronous_completion](const crow::request&, crow::response& res) {
+        res.set_async_chunked_content_provider(
+          [asynchronous_provider_calls](crow::response::async_chunk_completion_t complete) {
+              asynchronous_provider_calls->fetch_add(1);
+              complete(crow::chunk_result::done, "async");
+          },
+          "text/plain");
+        res.set_chunked_completion_handler(
+          [asynchronous_completion](bool clean) {
+              asynchronous_completion->record(clean);
+          });
+        res.end();
+    });
+
+    auto server_task = app.bindaddr(LOCALHOST_ADDRESS).port(45451).run_async();
+    BoundedServerShutdown server_shutdown(server_task, [&app] {
+        app.stop();
+    });
+    REQUIRE(app.wait_for_server_start() == std::cv_status::no_timeout);
+
+    HttpClient synchronous_client(LOCALHOST_ADDRESS, 45451);
+    synchronous_client.send("GET /http-1-0-sync-chunks HTTP/1.0\r\n\r\n");
+    std::string synchronous_response;
+    const bool synchronous_connection_closed = receive_until_closed_with_deadline(
+      synchronous_client.socket(), synchronous_response, std::chrono::seconds(5));
+
+    HttpClient asynchronous_client(LOCALHOST_ADDRESS, 45451);
+    asynchronous_client.send("GET /http-1-0-async-chunks HTTP/1.0\r\n\r\n");
+    std::string asynchronous_response;
+    const bool asynchronous_connection_closed = receive_until_closed_with_deadline(
+      asynchronous_client.socket(), asynchronous_response, std::chrono::seconds(5));
+
+    const auto synchronous_completion_status = synchronous_result.wait_for(std::chrono::seconds(1));
+    const bool synchronous_clean = synchronous_completion_status == std::future_status::ready ? synchronous_result.get() : true;
+    const auto asynchronous_completion_status = asynchronous_result.wait_for(std::chrono::seconds(1));
+    const bool asynchronous_clean = asynchronous_completion_status == std::future_status::ready ? asynchronous_result.get() : true;
+
+    asio_error_code close_error;
+    synchronous_client.socket().close(close_error);
+    asynchronous_client.socket().close(close_error);
+    server_shutdown.shutdown();
+
+    REQUIRE(synchronous_connection_closed);
+    REQUIRE(asynchronous_connection_closed);
+    CHECK(has_complete_http_response(synchronous_response));
+    CHECK(has_complete_http_response(asynchronous_response));
+    CHECK(synchronous_response.find("HTTP/1.1 505 HTTP Version Not Supported") != std::string::npos);
+    CHECK(asynchronous_response.find("HTTP/1.1 505 HTTP Version Not Supported") != std::string::npos);
+    CHECK(synchronous_response.find("Transfer-Encoding") == std::string::npos);
+    CHECK(asynchronous_response.find("Transfer-Encoding") == std::string::npos);
+    CHECK(synchronous_response.find("Content-Length") != std::string::npos);
+    CHECK(asynchronous_response.find("Content-Length") != std::string::npos);
+    CHECK(synchronous_provider_calls->load() == 0);
+    CHECK(asynchronous_provider_calls->load() == 0);
+    REQUIRE(synchronous_completion_status == std::future_status::ready);
+    REQUIRE(asynchronous_completion_status == std::future_status::ready);
+    CHECK(synchronous_clean == false);
+    CHECK(asynchronous_clean == false);
+    CHECK(synchronous_completion->calls() == 1);
+    CHECK(asynchronous_completion->calls() == 1);
+} // http_1_0_rejects_synchronous_and_asynchronous_chunk_providers
+
+TEST_CASE("throwing_async_chunk_provider_closes_without_terminator_and_completes_once_unclean")
+{
+    SimpleApp app;
+
+    auto provider_calls = std::make_shared<std::atomic<std::size_t>>(0);
+    auto completion_observation = std::make_shared<ChunkCompletionObservation>();
+    auto completion_result = completion_observation->first_result();
+
+    CROW_ROUTE(app, "/throwing-async-chunk-provider")
+    ([provider_calls, completion_observation](const crow::request&, crow::response& res) {
+        res.set_async_chunked_content_provider(
+          [provider_calls](crow::response::async_chunk_completion_t) {
+              provider_calls->fetch_add(1);
+              throw std::runtime_error("asynchronous provider failure");
+          });
+        res.set_chunked_completion_handler(
+          [completion_observation](bool clean) {
+              completion_observation->record(clean);
+          });
+        res.end();
+    });
+
+    auto server_task = app.bindaddr(LOCALHOST_ADDRESS).port(45451).run_async();
+    BoundedServerShutdown server_shutdown(server_task, [&app] {
+        app.stop();
+    });
+    REQUIRE(app.wait_for_server_start() == std::cv_status::no_timeout);
+
+    HttpClient client(LOCALHOST_ADDRESS, 45451);
+    client.send("GET /throwing-async-chunk-provider HTTP/1.1\r\nHost: localhost\r\n\r\n");
+
+    std::string response;
+    const bool connection_closed = receive_until_closed_with_deadline(client.socket(), response, std::chrono::seconds(5));
+    const auto completion_status = completion_result.wait_for(std::chrono::seconds(1));
+    const bool clean = completion_status == std::future_status::ready ? completion_result.get() : true;
+
+    asio_error_code close_error;
+    client.socket().close(close_error);
+    server_shutdown.shutdown();
+
+    REQUIRE(connection_closed);
+    const auto header_end = response.find("\r\n\r\n");
+    REQUIRE(header_end != std::string::npos);
+    CHECK(response.substr(header_end + 4).find("0\r\n\r\n") == std::string::npos);
+    CHECK(provider_calls->load() == 1);
+    REQUIRE(completion_status == std::future_status::ready);
+    CHECK(clean == false);
+    CHECK(completion_observation->calls() == 1);
+} // throwing_async_chunk_provider_closes_without_terminator_and_completes_once_unclean
+
 TEST_CASE("async_chunked_response_head_suppresses_provider_and_completes_once_clean") {
     SimpleApp app;
 
@@ -2678,15 +2916,17 @@ TEST_CASE("async_chunked_response_completed_from_other_threads") {
         res.end();
     });
 
-    auto _ = app.bindaddr(LOCALHOST_ADDRESS).port(45451).run_async();
-    app.wait_for_server_start();
+    auto server_task = app.bindaddr(LOCALHOST_ADDRESS).port(45451).run_async();
+    BoundedServerShutdown server_shutdown(server_task, [&app] {
+        app.stop();
+    });
+    REQUIRE(app.wait_for_server_start() == std::cv_status::no_timeout);
 
     HttpClient client(LOCALHOST_ADDRESS, 45451);
     client.send("GET /async-chunks HTTP/1.1\r\nHost: localhost\r\n\r\n");
 
     std::string response;
-    while (response.size() < 5 || response.compare(response.size() - 5, 5, "0\r\n\r\n") != 0)
-        response += client.receive();
+    const bool response_complete = receive_with_deadline(client.socket(), response, std::chrono::seconds(5), has_chunk_terminator);
 
     std::vector<std::future<void>> tasks;
     {
@@ -2696,8 +2936,15 @@ TEST_CASE("async_chunked_response_completed_from_other_threads") {
     for (auto& task : tasks)
         task.get();
 
-    app.stop();
+    auto completion = completion_clean->get_future();
+    const auto completion_status = completion.wait_for(std::chrono::seconds(5));
+    const bool clean = completion_status == std::future_status::ready ? completion.get() : false;
 
+    asio_error_code close_error;
+    client.socket().close(close_error);
+    server_shutdown.shutdown();
+
+    REQUIRE(response_complete);
     CHECK(next_chunk->load() == 3);
     CHECK(active_requests->load() == 0);
     CHECK(maximum_active_requests->load() == 1);
@@ -2708,9 +2955,8 @@ TEST_CASE("async_chunked_response_completed_from_other_threads") {
     REQUIRE(header_end != std::string::npos);
     CHECK(response.substr(header_end + 4) == "5\r\npart1\r\n5\r\npart2\r\n5\r\npart3\r\n0\r\n\r\n");
 
-    auto completion = completion_clean->get_future();
-    REQUIRE(completion.wait_for(std::chrono::seconds(5)) == std::future_status::ready);
-    CHECK(completion.get() == true);
+    REQUIRE(completion_status == std::future_status::ready);
+    CHECK(clean == true);
 } // async_chunked_response_completed_from_other_threads
 
 TEST_CASE("async_chunked_response_synchronous_completion_does_not_recurse") {
@@ -2741,18 +2987,23 @@ TEST_CASE("async_chunked_response_synchronous_completion_does_not_recurse") {
         res.end();
     });
 
-    auto _ = app.bindaddr(LOCALHOST_ADDRESS).port(45451).run_async();
-    app.wait_for_server_start();
+    auto server_task = app.bindaddr(LOCALHOST_ADDRESS).port(45451).run_async();
+    BoundedServerShutdown server_shutdown(server_task, [&app] {
+        app.stop();
+    });
+    REQUIRE(app.wait_for_server_start() == std::cv_status::no_timeout);
 
     HttpClient client(LOCALHOST_ADDRESS, 45451);
     client.send("GET /synchronous-async-chunks HTTP/1.1\r\nHost: localhost\r\n\r\n");
 
     std::string response;
-    while (response.size() < 5 || response.compare(response.size() - 5, 5, "0\r\n\r\n") != 0)
-        response += client.receive();
+    const bool response_complete = receive_with_deadline(client.socket(), response, std::chrono::seconds(5), has_chunk_terminator);
 
-    app.stop();
+    asio_error_code close_error;
+    client.socket().close(close_error);
+    server_shutdown.shutdown();
 
+    REQUIRE(response_complete);
     CHECK(calls->load() == chunk_count + 1);
     CHECK(maximum_depth->load() == 1);
 } // async_chunked_response_synchronous_completion_does_not_recurse
@@ -2780,18 +3031,17 @@ TEST_CASE("async_chunked_response_waits_beyond_connection_timeout") {
         res.end();
     });
 
-    auto _ = app.bindaddr(LOCALHOST_ADDRESS).timeout(1).port(45451).run_async();
-    app.wait_for_server_start();
+    auto server_task = app.bindaddr(LOCALHOST_ADDRESS).timeout(1).port(45451).run_async();
+    BoundedServerShutdown server_shutdown(server_task, [&app] {
+        app.stop();
+    });
+    REQUIRE(app.wait_for_server_start() == std::cv_status::no_timeout);
 
     HttpClient client(LOCALHOST_ADDRESS, 45451);
     client.send("GET /delayed-async-chunk HTTP/1.1\r\nHost: localhost\r\n\r\n");
 
     std::string response;
-    try {
-        while (response.size() < 5 || response.compare(response.size() - 5, 5, "0\r\n\r\n") != 0)
-            response += client.receive();
-    } catch (const std::exception&) {
-    }
+    const bool response_complete = receive_with_deadline(client.socket(), response, std::chrono::seconds(5), has_chunk_terminator);
 
     std::vector<std::future<void>> tasks;
     {
@@ -2803,8 +3053,12 @@ TEST_CASE("async_chunked_response_waits_beyond_connection_timeout") {
 
     const auto completion_status = completion.wait_for(std::chrono::seconds(5));
     const bool clean             = completion_status == std::future_status::ready ? completion.get() : false;
-    app.stop();
 
+    asio_error_code close_error;
+    client.socket().close(close_error);
+    server_shutdown.shutdown();
+
+    REQUIRE(response_complete);
     CHECK(response.find("Transfer-Encoding: chunked") != std::string::npos);
     CHECK(response.find("Content-Length") == std::string::npos);
     CHECK(response.find("Content-Type: text/plain") != std::string::npos);

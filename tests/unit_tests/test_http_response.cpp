@@ -79,6 +79,26 @@ TEST_CASE("async_chunked_provider_owns_the_response_body_source") {
         CHECK(synchronous_marker_observer.expired());
     }
 
+    SECTION("an empty callable still selects the asynchronous body source")
+    {
+        response source;
+        response::async_chunk_provider_t empty_provider;
+
+        source.set_async_chunked_content_provider(std::move(empty_provider));
+
+        CHECK(source.is_chunked_type());
+        CHECK(source.get_header_value("Transfer-Encoding") == "chunked");
+
+        response destination(std::move(source));
+
+        CHECK(destination.is_chunked_type());
+        CHECK(!source.is_chunked_type());
+
+        destination.clear();
+
+        CHECK(!destination.is_chunked_type());
+    }
+
     SECTION("static file releases asynchronous provider") {
         response res;
         auto asynchronous_marker                        = std::make_shared<int>(1);
