@@ -505,6 +505,11 @@ namespace crow
             std::shared_ptr<AsyncChunkRequest> pending_request;
             detail::task_timer::identifier_type lifetime_task_id{};
             bool lifetime_task_armed{false};
+            bool read_watch_active{false};
+            bool read_watch_cancel_requested{false};
+            bool pending_result_ready{false};
+            response::chunk_result pending_result{response::chunk_result::abort};
+            std::string pending_result_chunk;
             std::mutex completion_mutex;
             bool completion_reported{false};
         };
@@ -606,6 +611,7 @@ namespace crow
         }
 
         void shutdown_on_worker_exit() noexcept {
+            shutting_down_ = true;
             auto state = std::move(async_chunk_transfer_);
             buffered_input_.clear();
             if (state) {
@@ -627,6 +633,7 @@ namespace crow
         }
 
         void destroy_async_chunk_transfer() noexcept {
+            shutting_down_ = true;
             auto state = std::move(async_chunk_transfer_);
             buffered_input_.clear();
             if (!state) {
@@ -660,7 +667,6 @@ namespace crow
             if (async_chunk_transfer_ != state) {
                 return;
             }
-
             state->phase           = AsyncChunkPhase::requesting_chunk;
             auto request           = std::make_shared<AsyncChunkRequest>();
             request->io_context    = &adaptor_.get_io_context();
@@ -670,21 +676,24 @@ namespace crow
             arm_async_chunk_lifetime(state);
 
             response::async_chunk_completion_t complete = [request](response::chunk_result result,
-                                                                    std::string chunk) mutable {
+                                                                    std::string chunk) mutable -> bool {
                 std::unique_lock<std::mutex> lock(request->mutex);
-                if (request->completed) {
+                if (request->completed)
+                {
                     lock.unlock();
                     CROW_LOG_WARNING << "An asynchronous chunk completion callback was invoked more than once.";
-                    return;
+                    return false;
                 }
 
-                if (!request->active) {
-                    return;
+                if (!request->active)
+                {
+                    return false;
                 }
 
                 auto self = request->connection.lock();
-                if (!self) {
-                    return;
+                if (!self)
+                {
+                    return false;
                 }
 
                 const auto publish = [request](response::chunk_result published_result, std::string published_chunk) {
@@ -705,19 +714,25 @@ namespace crow
                 };
 
                 std::exception_ptr publication_failure;
-                try {
+                try
+                {
                     publish(result, std::move(chunk));
                     request->completed = true;
-                    return;
-                } catch (...) {
+                    return true;
+                }
+                catch (...)
+                {
                     publication_failure = std::current_exception();
                 }
 
                 std::exception_ptr abort_publication_failure;
-                try {
+                try
+                {
                     publish(response::chunk_result::abort, "");
                     request->completed = true;
-                } catch (...) {
+                }
+                catch (...)
+                {
                     abort_publication_failure = std::current_exception();
                 }
 
@@ -729,6 +744,7 @@ namespace crow
                     "Failed to publish asynchronous chunk abort recovery; the transfer remains active for "
                     "shutdown cleanup",
                     abort_publication_failure);
+                return false;
             };
 
             try {
@@ -739,6 +755,11 @@ namespace crow
             } catch (...) {
                 CROW_LOG_ERROR << "An uncaught exception occurred in the asynchronous chunk provider.";
                 complete(response::chunk_result::abort, "");
+            }
+
+            if (async_chunk_transfer_ == state && state->phase == AsyncChunkPhase::requesting_chunk)
+            {
+                do_read(state);
             }
         }
 
@@ -751,6 +772,39 @@ namespace crow
 
             invalidate_async_chunk_request(state);
             release_async_chunk_lifetime(state);
+
+            if (state->read_watch_active)
+            {
+                state->pending_result_ready = true;
+                state->pending_result = result;
+                state->pending_result_chunk = std::move(chunk);
+                state->read_watch_cancel_requested = true;
+
+                error_code cancel_error;
+                // No response write is active during requesting_chunk, so the
+                // socket-wide cancellation targets only the closure watch.
+                adaptor_.raw_socket().cancel(cancel_error);
+                if (cancel_error)
+                {
+                    state->pending_result_ready = false;
+                    state->pending_result_chunk.clear();
+                    state->read_watch_cancel_requested = false;
+                    finish_async_chunked(state, false, true);
+                }
+                return;
+            }
+
+            apply_async_chunk_result(state, result, std::move(chunk));
+        }
+
+        void apply_async_chunk_result(const std::shared_ptr<AsyncChunkTransfer>& state,
+                                      response::chunk_result result,
+                                      std::string chunk)
+        {
+            if (async_chunk_transfer_ != state || state->phase != AsyncChunkPhase::requesting_chunk)
+            {
+                return;
+            }
 
             if (result == response::chunk_result::abort) {
                 finish_async_chunked(state, false, true);
@@ -836,6 +890,7 @@ namespace crow
                 return;
             }
 
+            const bool resume_input = clean && !force_close && !close_connection_ && need_to_start_read_after_complete_;
             state->phase = clean ? AsyncChunkPhase::completed : AsyncChunkPhase::aborted;
             invalidate_async_chunk_request(state);
             release_async_chunk_lifetime(state);
@@ -863,7 +918,6 @@ namespace crow
             buffers_.clear();
             parser_.clear();
 
-            const bool resume_input = clean && !force_close && !close_connection_ && need_to_start_read_after_complete_;
             if (resume_input)
             {
                 need_to_start_read_after_complete_ = false;
@@ -1081,12 +1135,43 @@ namespace crow
             }
         }
 
-        void do_read()
+        void do_read(std::shared_ptr<AsyncChunkTransfer> watch_state = nullptr)
         {
+            if (read_in_progress_ || shutting_down_ || !adaptor_.is_open())
+            {
+                return;
+            }
+            if (watch_state && buffered_input_.size() > max_header_size)
+            {
+                finish_async_chunked(watch_state, false, true);
+                return;
+            }
+
+            if (watch_state)
+            {
+                watch_state->read_watch_active = true;
+            }
+            read_in_progress_ = true;
             auto self = this->shared_from_this();
             adaptor_.socket().async_read_some(
               asio::buffer(buffer_),
-              [self](const error_code& ec, std::size_t bytes_transferred) {
+              [self, watch_state = std::move(watch_state)](const error_code& ec, std::size_t bytes_transferred) {
+                  self->read_in_progress_ = false;
+                  if (self->shutting_down_)
+                  {
+                      return;
+                  }
+
+                  if (watch_state)
+                  {
+                      watch_state->read_watch_active = false;
+                      if (self->async_chunk_transfer_ == watch_state)
+                      {
+                          self->handle_async_chunk_read(watch_state, ec, bytes_transferred);
+                      }
+                      return;
+                  }
+
                   if (!ec)
                   {
                       self->process_incoming_input(self->buffer_.data(), bytes_transferred);
@@ -1095,6 +1180,51 @@ namespace crow
 
                   self->close_after_read_error();
               });
+        }
+
+        void handle_async_chunk_read(const std::shared_ptr<AsyncChunkTransfer>& state,
+                                     const error_code& ec,
+                                     std::size_t bytes_transferred)
+        {
+            if (async_chunk_transfer_ != state)
+            {
+                return;
+            }
+
+            const bool cancel_requested = state->read_watch_cancel_requested;
+            state->read_watch_cancel_requested = false;
+
+            if (ec && !(cancel_requested && ec == asio::error::operation_aborted))
+            {
+                finish_async_chunked(state, false, true);
+                return;
+            }
+
+            if (!ec)
+            {
+                const std::size_t retained_input_limit = max_header_size;
+                if (buffered_input_.size() > retained_input_limit || bytes_transferred > retained_input_limit - buffered_input_.size())
+                {
+                    finish_async_chunked(state, false, true);
+                    return;
+                }
+
+                buffered_input_.append(buffer_.data(), bytes_transferred);
+            }
+
+            if (state->pending_result_ready)
+            {
+                const auto result = state->pending_result;
+                auto chunk = std::move(state->pending_result_chunk);
+                state->pending_result_ready = false;
+                apply_async_chunk_result(state, result, std::move(chunk));
+                return;
+            }
+
+            if (async_chunk_transfer_ == state && state->phase == AsyncChunkPhase::requesting_chunk)
+            {
+                do_read(state);
+            }
         }
 
         void process_incoming_input(const char* data, std::size_t length)
@@ -1260,6 +1390,8 @@ namespace crow
         bool need_to_call_after_handlers_{};
         bool need_to_start_read_after_complete_{};
         bool add_keep_alive_{};
+        bool read_in_progress_{};
+        bool shutting_down_{};
 
         std::tuple<Middlewares...>* middlewares_;
         detail::context<Middlewares...> ctx_;

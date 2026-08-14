@@ -98,7 +98,13 @@ namespace crow
         using chunk_provider_ex_t = std::function<chunk_result(std::string&)>;
 
         /// Completion callback for one asynchronous chunk provider invocation.
-        using async_chunk_completion_t = std::function<void(chunk_result result, std::string chunk)>;
+
+        ///
+        /// Returns `true` when Crow accepts the result for publication on the
+        /// connection executor. Returns `false` for inactive or repeated results and
+        /// when publication fails. A provider may use a `false` result to stop its
+        /// source after attempting to publish `chunk_result::more`.
+        using async_chunk_completion_t = std::function<bool(chunk_result result, std::string chunk)>;
 
         /// Provider that asynchronously supplies one response body chunk per invocation.
         using async_chunk_provider_t = std::function<void(async_chunk_completion_t complete)>;

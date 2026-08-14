@@ -93,6 +93,25 @@ chunk passed with `done` is written before the terminating frame. `more` with
 an empty chunk requests another chunk without writing a frame; `done` with an
 empty chunk writes only the terminating frame. `abort` discards its chunk.
 
+`complete` returns `#!cpp true` only when Crow accepts that result for
+publication on the connection executor. It returns `#!cpp false` for a repeated
+or inactive result and whenever the requested publication fails. Recovery may
+still publish an internal abort after such a failure; the requested result
+remains rejected and the return value remains `#!cpp false`. The callback does
+not let publication exceptions escape through the provider thread.
+
+A source that produces a `more` result can use the return value to stop work
+after the client disconnects or the transfer otherwise becomes inactive:
+
+```cpp
+if (!complete(crow::chunk_result::more, std::move(data))) {
+    source->cancel();
+    return;
+}
+```
+
+Existing providers may ignore the return value.
+
 ```cpp
 auto source = open_async_source_somehow();
 
@@ -122,17 +141,22 @@ CROW_ROUTE(app, "/events")
 });
 ```
 
-Crow posts every completion result to the connection executor, including a
-result delivered inline. At most one provider request and one socket write are
-pending, and Crow requests the next chunk only after the preceding write has
-finished. This bounds the transfer to one current payload chunk and provides
-backpressure without an unbounded queue.
+Crow posts every accepted completion result to the connection executor,
+including a result delivered inline. At most one provider request and one
+socket write are pending, and Crow requests the next chunk only after the
+preceding write has finished. This bounds the transfer to one current payload
+chunk and provides backpressure without an unbounded queue.
 
-If a socket read also contains bytes for a later pipelined request, Crow keeps
-only that already received remainder while the asynchronous response is active.
-After clean completion, it parses the saved bytes on the connection executor
-before reading the socket again. An aborted or failed transfer closes the
-connection and discards the remainder.
+While a provider request is pending, Crow reads the connection to detect peer
+closure and retains bytes for later pipelined requests without parsing them.
+Retained input is limited to Crow's current HTTP parser header limit, whose
+compile-time default is `CROW_HTTP_MAX_HEADER_SIZE`; exceeding that limit aborts
+the transfer and closes the connection. After clean completion, Crow parses the
+saved bytes on the connection executor in arrival order before starting another
+socket read. An aborted or failed transfer closes the connection and discards
+the retained input. A peer closure while the provider is pending ends the
+transfer promptly with `clean == false` and releases the provider; a late
+provider result is rejected by returning `false`.
 
 Calling `set_async_chunked_content_provider` discards any string body, static
 file, or synchronous provider already configured on the response. Calling a
@@ -164,9 +188,10 @@ res.set_chunked_completion_handler([](bool clean) {
 The handler is called exactly once. `clean` is `#!cpp true` when the provider
 finished normally (`#!cpp crow::chunk_result::done`, or `#!cpp false` from the
 `bool` provider) and every write succeeded; it is `#!cpp false` when the
-provider aborted or a write error occurred. An exception raised before provider
-completion is treated as an abort. An asynchronous transfer that is still
-active during server shutdown completes with `clean == false`.
+provider aborted, the peer closed, retained input exceeded its limit, or a write
+error occurred. An exception raised before provider completion is treated as an
+abort. An asynchronous transfer that is still active during server shutdown
+completes with `clean == false`.
 
 During normal completion, the handler runs on the connection's thread after the
 last body write and before the response is finalized. Server worker shutdown
