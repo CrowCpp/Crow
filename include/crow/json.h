@@ -956,6 +956,52 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         }
 
 
+        // needed in addition to the "int"/"long long" overloads above because on LP64 platforms
+        // (Linux, macOS, ...) "long" is a distinct 64-bit type, while on LLP64 platforms (Windows)
+        // it is a distinct 32-bit type; without this overload, a plain "long" argument is ambiguous
+        // between the "int", "unsigned int", "long long", "bool" and "double" overloads.
+        inline bool operator==(const rvalue& l, long r)
+        {
+            return l.i() == r;
+        }
+
+        inline bool operator==(long l, const rvalue& r)
+        {
+            return l == r.i();
+        }
+
+        inline bool operator!=(const rvalue& l, long r)
+        {
+            return l.i() != r;
+        }
+
+        inline bool operator!=(long l, const rvalue& r)
+        {
+            return l != r.i();
+        }
+
+
+        inline bool operator==(const rvalue& l, unsigned long r)
+        {
+            return l.u() == r;
+        }
+
+        inline bool operator==(unsigned long l, const rvalue& r)
+        {
+            return l == r.u();
+        }
+
+        inline bool operator!=(const rvalue& l, unsigned long r)
+        {
+            return l.u() != r;
+        }
+
+        inline bool operator!=(unsigned long l, const rvalue& r)
+        {
+            return l != r.u();
+        }
+
+
         inline bool operator==(const rvalue& l, bool r)
         {
             return l.b() == r;
@@ -977,6 +1023,14 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         }
 
 
+        // Comparing the underlying doubles for exact equality is intentional here (the caller is
+        // asking whether the JSON value equals a specific number), so silence -Wfloat-equal for
+        // these operators specifically instead of the usual "compare with an epsilon" advice.
+#if defined(__GNUC__) || defined(__clang__)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wfloat-equal"
+#endif
+
         inline bool operator==(const rvalue& l, double r)
         {
             return l.d() == r;
@@ -996,6 +1050,10 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         {
             return l != r.d();
         }
+
+#if defined(__GNUC__) || defined(__clang__)
+#pragma GCC diagnostic pop
+#endif
 
 
         inline rvalue load_nocopy_internal(char* data, size_t size)
