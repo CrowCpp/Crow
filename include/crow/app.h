@@ -70,6 +70,21 @@
 #define CROW_ROUTE(app, url) app.template route<crow::black_magic::get_parameter_tag(url)>(url)
 
 /**
+ * \def CROW_STATIC_FILE(app, url, internalPath)
+ * \brief Creates a static route for app for given url to internalPath.
+ *
+ *
+ * ```cpp
+ * auto app = crow::SimpleApp(); // or crow::App()
+ * CROW_STATIC_FILE(app, "/home", "home.html");
+ * CROW_STATIC_FILE(app, "/favicon.ico", "favicon.png");
+ * ```
+ *
+ */
+#define CROW_STATIC_FILE(app, url, internalPath) app.static_file(url, internalPath)
+
+
+/**
  * \def CROW_BP_ROUTE(blueprint, url)
  * \brief Creates a route for a blueprint using a rule.
  *
@@ -209,6 +224,32 @@ namespace crow
         /// \brief An HTTP server that runs on SSL with an SSLAdaptor
         using ssl_server_t = Server<Crow, TCPAcceptor, SSLAdaptor, Middlewares...>;
 #endif
+        /// \brief WebSocket rule type used in this application.
+        ///
+        /// Usefull during WebSocket route definition.
+        /// Usage:
+        ///
+        /// ```cpp
+        ///     crow::SimpleApp::WebSocketRule_t& ws = CROW_WEBSOCKET_ROUTE(app, "/ws");
+        ///
+        ///     ws.onaccept([](const crow::request& /*conn*/, void** userData) -> bool
+        ///     {
+        ///         // ...
+        ///         return true;
+        ///     });
+        ///     ws.onopen([](crow::websocket::connection& conn) {
+        ///         // ...
+        ///     });
+        ///     ws.onclose([](crow::websocket::connection& conn, const std::string& /*reason*/, uint16_t){
+        ///         // ...
+        ///     });
+        ///     ws.onmessage([](crow::websocket::connection& conn, const std::string& msgData, bool is_binary) {
+        ///         // ...
+        ///     });
+        /// ```
+        ///
+        using WebSocketRule_t = WebSocketRule<Crow<Middlewares...>>;
+
         Crow()
         {}
 
@@ -259,6 +300,34 @@ namespace crow
           -> typename std::invoke_result<decltype(&Router::new_rule_tagged<Tag>), Router, const std::string&>::type
         {
             return router_.new_rule_tagged<Tag>(rule);
+        }
+
+        /// \brief Create a static route to given url
+        ///
+        /// \param url          public URL
+        /// \return             The rule
+        ///
+        StaticRule& route_static(const std::string& url)
+        {
+            return router_.new_rule<StaticRule>(url);
+        }
+
+        /// \brief Creates a static route for given url to internalPath.
+        ///
+        /// \param url          public URL
+        /// \param internalPath internal path to reach te file
+        /// \return             The rule
+        ///
+        StaticRule& static_file(std::string_view url, std::string_view internalPath){
+            StaticRule& rt = route_static(std::string(url));
+
+            // make a copy of given view of internalPath
+            rt([=,localFile=std::string(internalPath)](crow::response& resp) -> void {
+                    resp.set_static_file_info(localFile);
+                    resp.end();
+                });
+
+            return rt;
         }
 
         /// \brief Create a route for any requests without a proper route (**Use CROW_CATCHALL_ROUTE instead**)
@@ -409,6 +478,33 @@ namespace crow
             return *this;
         }
 
+        /// \brief Enable or disable TCP_NODELAY for accepted TCP connections.
+        self_t& tcp_nodelay(bool enabled = true)
+        {
+            tcp_socket_options_.no_delay = enabled;
+            return *this;
+        }
+
+        /// \brief Get the TCP_NODELAY setting for HTTP connections.
+        detail::socket::tcp_socket_options tcp_socket_options() const
+        {
+            return tcp_socket_options_;
+        }
+
+        /// \brief Enable or disable TCP_NODELAY for WebSocket connections.
+        /// We also have to differentiate between socket options for http server socket and websocket server socket.
+        self_t& websocket_tcp_nodelay(bool enabled = true)
+        {
+            websocket_tcp_socket_options_.no_delay = enabled;
+            return *this;
+        }
+
+        /// \brief Get the TCP_NODELAY setting for WebSocket connections.
+        detail::socket::tcp_socket_options websocket_tcp_socket_options() const
+        {
+            return websocket_tcp_socket_options_;
+        }
+
         /// \brief Set the response body size (in bytes) beyond which Crow automatically streams responses (Default is 1MiB)
         ///
         /// Any streamed response is unaffected by Crow's timer, and therefore won't timeout before a response is fully sent.
@@ -543,7 +639,7 @@ namespace crow
                 }
                 tcp::endpoint endpoint(addr, port_);
                 router_.using_ssl = true;
-                ssl_server_ = std::move(std::unique_ptr<ssl_server_t>(new ssl_server_t(this, endpoint, server_name_, &middlewares_, concurrency_, timeout_, &ssl_context_)));
+                ssl_server_ = std::move(std::unique_ptr<ssl_server_t>(new ssl_server_t(this, endpoint, server_name_, &middlewares_, concurrency_, timeout_, &ssl_context_, tcp_socket_options_)));
                 ssl_server_->set_tick_function(tick_interval_, tick_function_);
                 ssl_server_->signal_clear();
                 for (auto snum : signals_)
@@ -577,7 +673,7 @@ namespace crow
                         return;
                     }
                     TCPAcceptor::endpoint endpoint(addr, port_);
-                    server_ = std::move(std::unique_ptr<server_t>(new server_t(this, endpoint, server_name_, &middlewares_, concurrency_, timeout_, nullptr)));
+                    server_ = std::move(std::unique_ptr<server_t>(new server_t(this, endpoint, server_name_, &middlewares_, concurrency_, timeout_, nullptr, tcp_socket_options_)));
                     server_->set_tick_function(tick_interval_, tick_function_);
                     for (auto snum : signals_)
                     {
@@ -821,6 +917,8 @@ namespace crow
         std::string server_name_ = std::string("Crow/") + VERSION;
         std::string bindaddr_ = "0.0.0.0";
         bool use_unix_ = false;
+        detail::socket::tcp_socket_options tcp_socket_options_{};
+        detail::socket::tcp_socket_options websocket_tcp_socket_options_{};
         size_t res_stream_threshold_ = 1048576;
         Router router_;
         bool static_routes_added_{false};

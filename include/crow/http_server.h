@@ -30,6 +30,7 @@
 #include "crow/logging.h"
 #include "crow/task_timer.h"
 #include "crow/socket_acceptors.h"
+#include "crow/tcp_socket_options.h"
 
 
 namespace crow // NOTE: Already documented in "crow/app.h"
@@ -53,7 +54,8 @@ namespace crow // NOTE: Already documented in "crow/app.h"
              std::tuple<Middlewares...>* middlewares = nullptr,
              unsigned int concurrency = 1,
              uint8_t timeout = 5,
-             typename Adaptor::context* adaptor_ctx = nullptr):
+             typename Adaptor::context* adaptor_ctx = nullptr,
+             detail::socket::tcp_socket_options tcp_socket_options = {}):
           concurrency_(concurrency),
           task_queue_length_pool_(concurrency_ - 1),
           acceptor_(io_context_),
@@ -63,7 +65,8 @@ namespace crow // NOTE: Already documented in "crow/app.h"
           timeout_(timeout),
           server_name_(server_name),
           middlewares_(middlewares),
-          adaptor_ctx_(adaptor_ctx)
+          adaptor_ctx_(adaptor_ctx),
+          tcp_socket_options_(tcp_socket_options)
         {
             if (startup_failed_) {
                 CROW_LOG_ERROR << "Startup failed; not running server.";
@@ -330,6 +333,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                                 CROW_LOG_ERROR << "Failed to set FD_CLOEXEC on accepted socket: " << std::strerror(errno);
                             }
 
+                          detail::socket::apply_tcp_socket_options(p->socket(), tcp_socket_options_);
                           asio::post(ic,
                             [p] {
                                 p->start();
@@ -376,5 +380,6 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         std::tuple<Middlewares...>* middlewares_;
 
         typename Adaptor::context* adaptor_ctx_;
+        detail::socket::tcp_socket_options tcp_socket_options_;
     };
 } // namespace crow

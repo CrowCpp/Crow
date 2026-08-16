@@ -193,13 +193,17 @@ namespace crow
                     // +2 is the CRLF.
                     // We don't check it and delete it so that the same delimiter can be used for The last delimiter (--delimiter--CRLF).
                     body.erase(0, found + delimiter.length() + 2);
-                    if (!section.empty())
-                    {
+                    if (!section.empty()) {
                         part parsed_section(parse_section(section));
-                        part_map.emplace(
-                          (get_header_object(parsed_section.headers, "Content-Disposition").params.find("name")->second),
-                          parsed_section);
-                        parts.push_back(std::move(parsed_section));
+                        const auto section_params_headers = get_header_object(
+                            parsed_section.headers, "Content-Disposition").params;
+                        const auto name_header = section_params_headers.find("name");
+                        if (name_header == section_params_headers.end()) {
+                            throw bad_request("Unable to find header 'name' in multipart section. Probably ill-formed body.");
+                        } else {
+                            part_map.emplace(name_header->second, parsed_section);
+                            parts.push_back(std::move(parsed_section));
+                        }
                     }
                 }
             }

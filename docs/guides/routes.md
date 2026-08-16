@@ -111,6 +111,7 @@ Crow defines the following status codes:
 204 No Content
 205 Reset Content
 206 Partial Content
+207 Multi-Status (WebDav)
 
 300 Multiple Choices
 301 Moved Permanently
@@ -129,10 +130,18 @@ Crow defines the following status codes:
 407 Proxy Authentication Required
 409 Conflict
 410 Gone
+
+412 Precondition Failed (WebDav)
+422 Unprocessable Entity (WebDav)
+              
 413 Payload Too Large
+414 Request-URI Too Long (WebDav)
 415 Unsupported Media Type
 416 Range Not Satisfiable
 417 Expectation Failed
+423 Locked (WebDav)
+424 Failed Dependency (WebDav)
+
 428 Precondition Required
 429 Too Many Requests
 451 Unavailable For Legal Reasons
@@ -143,6 +152,8 @@ Crow defines the following status codes:
 503 Service Unavailable
 504 Gateway Timeout
 506 Variant Also Negotiates
+507 Insufficient Storage (WebDav)
+
 ```
 
 !!! note

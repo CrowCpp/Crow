@@ -24,6 +24,11 @@
 using std::isinf;
 using std::isnan;
 
+#ifdef __CHAR_UNSIGNED__
+#define IS_CONTROL_ASCII(c) (c < 0x20)
+#else
+#define IS_CONTROL_ASCII(c) ((c >= 0) && (c < 0x20))
+#endif
 
 namespace crow // NOTE: Already documented in "crow/app.h"
 {
@@ -57,7 +62,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                     case '\r': ret += "\\r"; break;
                     case '\t': ret += "\\t"; break;
                     default:
-                        if (c >= 0 && c < 0x20)
+                        if (IS_CONTROL_ASCII(c))
                         {
                             ret += "\\u00";
                             ret += to_hex(c / 16);
@@ -136,11 +141,17 @@ namespace crow // NOTE: Already documented in "crow/app.h"
 
                 r_string(r_string&& r)
                 {
-                    *this = r;
+                    *this = std::move(r);
                 }
 
                 r_string& operator=(r_string&& r)
                 {
+                    if (this == &r)
+                        return *this;
+
+                    if (owned_)
+                        delete[] s_;
+
                     s_ = r.s_;
                     e_ = r.e_;
                     owned_ = r.owned_;
@@ -151,6 +162,9 @@ namespace crow // NOTE: Already documented in "crow/app.h"
 
                 r_string& operator=(const r_string& r)
                 {
+                    if (this == &r)
+                        return *this;
+
                     s_ = r.s_;
                     e_ = r.e_;
                     owned_ = 0;
@@ -1862,14 +1876,14 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                 out.push_back('"');
             }
 
-            inline void dump_indentation_part(std::string& out, const int indent, const char separator, const int indent_level) const
+            inline void dump_indentation_part(std::string& out, const size_t indent, const char separator, const int indent_level) const
             {
                 out.push_back('\n');
                 out.append(indent_level * indent, separator);
             }
 
 
-            inline void dump_internal(const wvalue& v, std::string& out, const int indent, const char separator, const int indent_level = 0) const
+            inline void dump_internal(const wvalue& v, std::string& out, const size_t indent, const char separator, const int indent_level = 0) const
             {
                 switch (v.t_)
                 {
@@ -1890,7 +1904,8 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                             {
                                 start,
                                 decp, // Decimal point
-                                zero
+                                zero,
+                                exp // in the exponent
                             } f_state;
                             char outbuf[128];
                             if (v.nt == num_type::Double_precision_floating_point)
@@ -1911,6 +1926,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                             }
                             char* p = &outbuf[0];
                             char* pos_first_trailing_0 = nullptr;
+                            char* pos_exponent = nullptr;
                             f_state = start;
                             while (*p != '\0')
                             {
@@ -1934,20 +1950,39 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                                             f_state = zero;
                                             pos_first_trailing_0 = p;
                                         }
+                                        else if (ch == 'e')
+                                        {
+                                            pos_exponent = p;
+                                            f_state = exp;
+                                        }
                                         p++;
                                         break;
                                     case zero: // if a non 0 is found (e.g. 1.00004) remove the earlier recorded 0 position and look for more trailing 0s
-                                        if (ch != '0')
+                                        if (ch == 'e')
+                                        {
+                                            pos_exponent = p;
+                                            f_state = exp;
+                                        }
+                                        else if (ch != '0')
                                         {
                                             pos_first_trailing_0 = nullptr;
                                             f_state = decp;
                                         }
                                         p++;
                                         break;
+                                    case exp: // if an 'e' has been found, one is in the exponent; no more looking for trailing zeroes
+                                        p++;
+                                        break;
                                 }
                             }
                             if (pos_first_trailing_0 != nullptr) // if any trailing 0s are found, terminate the string where they begin
+                            {
                                 *pos_first_trailing_0 = '\0';
+                                if (pos_exponent != nullptr) // if there is an exponent, include it
+                                {
+                                    strcpy(pos_first_trailing_0, pos_exponent);
+                                }
+                            }
                             out += outbuf;
                         }
                         else if (v.nt == num_type::Signed_integer)
@@ -1965,7 +2000,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                     {
                         out.push_back('[');
 
-                        if (indent >= 0)
+                        if (indent !=std::string::npos)
                         {
                             dump_indentation_part(out, indent, separator, indent_level + 1);
                         }
@@ -1979,7 +2014,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                                 {
                                     out.push_back(',');
 
-                                    if (indent >= 0)
+                                    if (indent != std::string::npos)
                                     {
                                         dump_indentation_part(out, indent, separator, indent_level + 1);
                                     }
@@ -1989,7 +2024,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                             }
                         }
 
-                        if (indent >= 0)
+                        if (indent !=std::string::npos)
                         {
                             dump_indentation_part(out, indent, separator, indent_level);
                         }
@@ -2001,7 +2036,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                     {
                         out.push_back('{');
 
-                        if (indent >= 0)
+                        if (indent != std::string::npos)
                         {
                             dump_indentation_part(out, indent, separator, indent_level + 1);
                         }
@@ -2014,7 +2049,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                                 if (!first)
                                 {
                                     out.push_back(',');
-                                    if (indent >= 0)
+                                    if (indent != std::string::npos)
                                     {
                                         dump_indentation_part(out, indent, separator, indent_level + 1);
                                     }
@@ -2023,7 +2058,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                                 dump_string(kv.first, out);
                                 out.push_back(':');
 
-                                if (indent >= 0)
+                                if (indent != std::string::npos)
                                 {
                                     out.push_back(' ');
                                 }
@@ -2032,7 +2067,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                             }
                         }
 
-                        if (indent >= 0)
+                        if (indent != std::string::npos)
                         {
                             dump_indentation_part(out, indent, separator, indent_level);
                         }
@@ -2048,7 +2083,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
             }
 
         public:
-            std::string dump(const int indent, const char separator = ' ') const
+            std::string dump(const size_t indent, const char separator = ' ') const
             {
                 std::string ret;
                 ret.reserve(estimate_length());
@@ -2058,7 +2093,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
 
             std::string dump() const override
             {
-                static constexpr int DontIndent = -1;
+                static constexpr size_t DontIndent = std::string::npos;
 
                 return dump(DontIndent);
             }

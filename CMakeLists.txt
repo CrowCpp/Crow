@@ -68,7 +68,7 @@ if(CROW_GENERATE_SBOM)
   CPMAddPackage(
     NAME cmake-sbom
     GITHUB_REPOSITORY DEMCON/cmake-sbom
-    GIT_TAG v1.4.0
+    GIT_TAG v1.5.0
     DOWNLOAD_ONLY YES
   )
   list(APPEND CMAKE_MODULE_PATH "${CMAKE_BINARY_DIR}/_deps/cmake-sbom-src/cmake")
