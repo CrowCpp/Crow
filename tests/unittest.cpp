@@ -172,8 +172,7 @@ bool receive_with_deadline(asio::ip::tcp::socket& socket,
             if (!ec) {
                 response.append(buffer.data(), received);
                 if (complete(response)) {
-                    asio_error_code cancel_error;
-                    timer.cancel(cancel_error);
+                    timer.cancel();
                 } else {
                     read_next();
                 }
@@ -182,8 +181,7 @@ bool receive_with_deadline(asio::ip::tcp::socket& socket,
 
             if (!timed_out && peer_closed)
                 *peer_closed = true;
-            asio_error_code cancel_error;
-            timer.cancel(cancel_error);
+            timer.cancel();
         });
     };
 
@@ -271,6 +269,48 @@ public:
         return observed_read_completed_.get_future();
     }
 
+    void pause_read_completion_after(std::size_t byte_count)
+    {
+        observed_read_bytes_.store(0);
+        pause_read_completion_after_.store(byte_count);
+    }
+
+    bool take_read_completion_pause(std::size_t bytes_transferred)
+    {
+        const auto total = observed_read_bytes_.fetch_add(bytes_transferred) + bytes_transferred;
+        const auto limit = pause_read_completion_after_.load();
+        if (limit == 0 || total <= limit)
+            return false;
+
+        pause_read_completion_after_.store(0);
+        return true;
+    }
+
+    void set_pending_read(std::function<void()> resume)
+    {
+        {
+            std::lock_guard<std::mutex> lock(mutex_);
+            resume_read_ = std::move(resume);
+        }
+        read_pending_.set_value();
+    }
+
+    void resume_pending_read()
+    {
+        std::function<void()> resume;
+        {
+            std::lock_guard<std::mutex> lock(mutex_);
+            resume = std::move(resume_read_);
+        }
+        if (resume)
+            resume();
+    }
+
+    std::future<void> pending_read_future()
+    {
+        return read_pending_.get_future();
+    }
+
     void pause_next_write() {
         pause_next_write_.store(true);
     }
@@ -328,15 +368,19 @@ public:
 
 private:
     std::atomic<bool> observe_next_read_{false};
+    std::atomic<std::size_t> observed_read_bytes_{0};
+    std::atomic<std::size_t> pause_read_completion_after_{0};
     std::atomic<bool> pause_next_write_{false};
     std::atomic<bool> fail_next_write_{false};
     std::atomic<bool> started_connection_destruction_reported_{false};
     std::promise<void> observed_read_started_;
     std::promise<std::size_t> observed_read_completed_;
+    std::promise<void> read_pending_;
     std::promise<void> write_pending_;
     std::promise<void> started_connection_destroyed_;
     std::mutex mutex_;
     std::function<void()> resume_write_;
+    std::function<void()> resume_read_;
 };
 
 class PausingSocketAdaptor : public crow::SocketAdaptor {
@@ -411,12 +455,24 @@ public:
     template<typename MutableBufferSequence, typename ReadHandler>
     void async_read_some(const MutableBufferSequence& buffers, ReadHandler&& handler) {
         const bool observed = context_ && context_->report_read_started();
+        auto* io_context = &get_io_context();
         socket_.async_read_some(
           buffers,
-          [context = context_, observed, handler = std::forward<ReadHandler>(handler)](
+          [context = context_, io_context, observed, handler = std::forward<ReadHandler>(handler)](
             const asio_error_code& ec, std::size_t bytes_transferred) mutable {
               if (observed)
                   context->report_read_completed(bytes_transferred);
+              if (context && context->take_read_completion_pause(bytes_transferred))
+              {
+                  context->set_pending_read(
+                    [io_context, handler = std::move(handler), ec, bytes_transferred]() mutable {
+                        asio::post(*io_context,
+                                   [handler = std::move(handler), ec, bytes_transferred]() mutable {
+                                       handler(ec, bytes_transferred);
+                                   });
+                    });
+                  return;
+              }
               handler(ec, bytes_transferred);
           });
     }
@@ -3551,6 +3607,81 @@ TEST_CASE("async_chunked_response_closes_when_waiting_input_exceeds_parser_limit
     CHECK(completion_observation->calls() == 1);
     CHECK(connection_closed);
 } // async_chunked_response_closes_when_waiting_input_exceeds_parser_limit
+
+TEST_CASE("async_chunked_response_finishes_cleanly_when_done_precedes_retained_input_overflow")
+{
+    SimpleApp app;
+
+    auto provider_completion = std::make_shared<DeferredChunkCompletion>();
+    auto completion_observation = std::make_shared<ChunkCompletionObservation>();
+    auto completion_result = completion_observation->first_result();
+    PausingSocketContext socket_context;
+    auto pending_read = socket_context.pending_read_future();
+
+    CROW_ROUTE(app, "/done-before-retained-input-overflow")
+    ([provider_completion, completion_observation, &socket_context](const crow::request&, crow::response& res) {
+        res.set_async_chunked_content_provider(
+          [provider_completion, &socket_context](crow::response::async_chunk_completion_t complete) {
+              socket_context.pause_read_completion_after(CROW_HTTP_MAX_HEADER_SIZE);
+              provider_completion->capture(std::move(complete));
+          });
+        res.set_chunked_completion_handler([completion_observation](bool clean) {
+            completion_observation->record(clean);
+        });
+        res.end();
+    });
+
+    app.validate();
+    std::tuple<> middlewares;
+    using PausedReadServer = crow::Server<crow::SimpleApp, crow::TCPAcceptor, PausingSocketAdaptor>;
+    PausedReadServer server(&app,
+                            asio::ip::tcp::endpoint(asio::ip::make_address(LOCALHOST_ADDRESS), 45451),
+                            "Crow/Test",
+                            &middlewares,
+                            2,
+                            5,
+                            &socket_context);
+    auto server_task = std::async(std::launch::async, [&server] {
+        server.run();
+    });
+    BoundedServerShutdown server_shutdown(server_task, [&server] {
+        server.stop();
+    });
+    REQUIRE(server.wait_for_start(std::chrono::steady_clock::now() + std::chrono::seconds(3)) == std::cv_status::no_timeout);
+
+    asio::io_context io_context;
+    asio::ip::tcp::socket client(io_context);
+    client.connect(asio::ip::tcp::endpoint(asio::ip::make_address(LOCALHOST_ADDRESS), 45451));
+    const std::string request = "GET /done-before-retained-input-overflow HTTP/1.1\r\nHost: localhost\r\n\r\n";
+    asio::write(client, asio::buffer(request));
+
+    REQUIRE(provider_completion->wait_for(std::chrono::seconds(5)) == std::future_status::ready);
+    const std::string excessive_input(CROW_HTTP_MAX_HEADER_SIZE + 4096, 'x');
+    asio_error_code send_error;
+    asio::write(client, asio::buffer(excessive_input), send_error);
+    REQUIRE(pending_read.wait_for(std::chrono::seconds(5)) == std::future_status::ready);
+    const bool result_accepted = provider_completion->complete(crow::chunk_result::done, "final");
+    socket_context.resume_pending_read();
+
+    std::string response;
+    const bool response_complete = receive_with_deadline(client, response, std::chrono::seconds(5), has_chunk_terminator);
+    const auto completion_status = completion_result.wait_for(std::chrono::seconds(1));
+    const bool clean = completion_status == std::future_status::ready ? completion_result.get() : false;
+
+    asio_error_code close_error;
+    client.close(close_error);
+    server_shutdown.shutdown();
+
+    CHECK_FALSE(send_error);
+    CHECK(result_accepted);
+    REQUIRE(response_complete);
+    const auto header_end = response.find("\r\n\r\n");
+    REQUIRE(header_end != std::string::npos);
+    CHECK(response.substr(header_end + 4) == "5\r\nfinal\r\n0\r\n\r\n");
+    REQUIRE(completion_status == std::future_status::ready);
+    CHECK(clean);
+    CHECK(completion_observation->calls() == 1);
+} // async_chunked_response_finishes_cleanly_when_done_precedes_retained_input_overflow
 
 TEST_CASE("async_chunked_response_completed_from_other_threads") {
     SimpleApp app;
