@@ -337,14 +337,8 @@ namespace crow
                 {
                     if (is_chunked_type())
                     {
-                        // A response to HEAD must carry the same header fields a GET would
-                        // produce; with a chunk provider the body length is unknown, so
-                        // "Transfer-Encoding: chunked" is kept and "Content-Length" is not
-                        // set (RFC 7230 forbids sending both at once). The body itself is
-                        // skipped, so the provider is dropped without being called. The
-                        // completion handler is retained for the connection to invoke after
-                        // applying its HTTP-version policy. A directly managed response has
-                        // no connection lifecycle helper, so it completes cleanly here.
+                        // HEAD keeps "Transfer-Encoding: chunked" and omits "Content-Length".
+                        // The connection invokes completion after checking the HTTP version.
                         chunk_provider_ = nullptr;
                         chunk_provider_ex_ = nullptr;
                         async_chunk_provider_ = nullptr;

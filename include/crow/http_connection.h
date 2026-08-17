@@ -500,13 +500,13 @@ namespace crow
             response::chunk_complete_t completion_handler;
             std::string chunk;
             std::string chunk_header;
-            std::string terminator{"0\r\n\r\n"};
             std::vector<asio::const_buffer> buffers;
             std::shared_ptr<AsyncChunkRequest> pending_request;
             detail::task_timer::identifier_type lifetime_task_id{};
             bool lifetime_task_armed{false};
             bool read_watch_active{false};
             bool read_watch_cancel_requested{false};
+            bool retained_input_overflow{false};
             bool pending_result_ready{false};
             response::chunk_result pending_result{response::chunk_result::abort};
             std::string pending_result_chunk;
@@ -665,6 +665,11 @@ namespace crow
 
         void request_async_chunk(const std::shared_ptr<AsyncChunkTransfer>& state) {
             if (async_chunk_transfer_ != state) {
+                return;
+            }
+            if (state->retained_input_overflow)
+            {
+                finish_async_chunked(state, false, true);
                 return;
             }
             state->phase           = AsyncChunkPhase::requesting_chunk;
@@ -862,9 +867,10 @@ namespace crow
                 return;
             }
 
+            static constexpr char terminator[] = "0\r\n\r\n";
             state->phase = AsyncChunkPhase::writing_terminator;
             state->buffers.clear();
-            state->buffers.emplace_back(state->terminator.data(), state->terminator.size());
+            state->buffers.emplace_back(terminator, sizeof(terminator) - 1);
 
             auto self = this->shared_from_this();
             asio::async_write(adaptor_.socket(),
@@ -1203,13 +1209,21 @@ namespace crow
             if (!ec)
             {
                 const std::size_t retained_input_limit = max_header_size;
-                if (buffered_input_.size() > retained_input_limit || bytes_transferred > retained_input_limit - buffered_input_.size())
+                const bool retained_input_overflow = buffered_input_.size() > retained_input_limit || bytes_transferred > retained_input_limit - buffered_input_.size();
+                if (retained_input_overflow && !state->pending_result_ready)
                 {
                     finish_async_chunked(state, false, true);
                     return;
                 }
 
-                buffered_input_.append(buffer_.data(), bytes_transferred);
+                if (retained_input_overflow)
+                {
+                    state->retained_input_overflow = true;
+                }
+                else
+                {
+                    buffered_input_.append(buffer_.data(), bytes_transferred);
+                }
             }
 
             if (state->pending_result_ready)
