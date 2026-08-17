@@ -51,14 +51,21 @@ namespace crow
     void invoke_async_chunk_publication_test_hook();
 #endif
 
-    template<typename ConnectionType>
     class connection_lifecycle_registry {
     public:
-        void track(const std::shared_ptr<ConnectionType>& connection) {
-            connections_[connection.get()] = connection;
+        template<typename ConnectionType>
+        void track(const std::shared_ptr<ConnectionType>& connection)
+        {
+            std::weak_ptr<ConnectionType> weak_connection = connection;
+            connections_[connection.get()] = [weak_connection] {
+                if (auto connection = weak_connection.lock())
+                {
+                    connection->shutdown_on_worker_exit();
+                }
+            };
         }
 
-        void untrack(ConnectionType* connection) noexcept
+        void untrack(const void* connection) noexcept
         {
             connections_.erase(connection);
         }
@@ -67,16 +74,13 @@ namespace crow
             auto connections = std::move(connections_);
             connections_.clear();
             for (auto& item : connections) {
-                if (auto connection = item.second.lock())
-                {
-                    connection->shutdown_on_worker_exit();
-                }
+                item.second();
             }
         }
 
     private:
         // All methods run on the worker associated with these connections.
-        std::unordered_map<ConnectionType*, std::weak_ptr<ConnectionType>> connections_;
+        std::unordered_map<const void*, std::function<void()>> connections_;
     };
     } // namespace detail
 
@@ -85,7 +89,6 @@ namespace crow
     class Connection : public std::enable_shared_from_this<Connection<Adaptor, Handler, Middlewares...>>
     {
         friend struct crow::response;
-        template<typename>
         friend class detail::connection_lifecycle_registry;
 
     public:
@@ -97,7 +100,7 @@ namespace crow
                    detail::task_timer& task_timer,
                    typename Adaptor::context* adaptor_ctx_,
                    std::atomic<unsigned int>& queue_length,
-                   std::shared_ptr<detail::connection_lifecycle_registry<Connection>> lifecycle_registry = nullptr):
+                   std::shared_ptr<detail::connection_lifecycle_registry> lifecycle_registry = nullptr):
           adaptor_(io_context, adaptor_ctx_), handler_(handler), parser_(this), req_(parser_.req), server_name_(server_name), middlewares_(middlewares), get_cached_date_str(get_cached_date_str_f), task_timer_(task_timer), res_stream_threshold_(handler->stream_threshold()), queue_length_(queue_length), lifecycle_registry_(lifecycle_registry)
         {
             queue_length_++;
@@ -240,7 +243,9 @@ namespace crow
                     };
                     need_to_call_after_handlers_ = true;
                     handler_->handle(req_, res, routing_handle_result_);
-                    if (add_keep_alive_)
+                    if (res.is_chunked_type())
+                        parser_.stop_after_message();
+                    if (add_keep_alive_ && !res.completed_)
                         res.set_header("connection", "Keep-Alive");
                 }
                 else
@@ -471,9 +476,7 @@ namespace crow
             void notify_completion(bool clean) noexcept {
                 response::chunk_complete_t handler;
                 {
-                    // Normal completion and Server worker shutdown run on the connection
-                    // thread. The latch also keeps fallback destruction once-only for a
-                    // Connection used without Server lifecycle tracking.
+                    // Once-only: completion may run from the worker or from destruction.
                     std::lock_guard<std::mutex> lock(completion_mutex);
                     if (completion_reported) {
                         return;
@@ -642,9 +645,7 @@ namespace crow
 
             untrack_async_chunk_transfer();
 
-            // No executor turn remains during worker teardown. Invalidate the request
-            // gate before closing the socket so a provider racing with destruction either
-            // posts while the executor is still valid or observes an inactive request.
+            // Invalidate before destruction so racing completion cannot post to a dead executor.
             invalidate_async_chunk_request(state);
             state->phase    = AsyncChunkPhase::aborted;
             state->provider = nullptr;
@@ -887,7 +888,7 @@ namespace crow
                                       return;
                                   }
 
-                                  self->finish_async_chunked(state, true, false);
+                                  self->finish_async_chunked(state, true, state->retained_input_overflow);
                               });
         }
 
@@ -1416,7 +1417,7 @@ namespace crow
         size_t res_stream_threshold_;
 
         std::atomic<unsigned int>& queue_length_;
-        std::shared_ptr<detail::connection_lifecycle_registry<Connection>> lifecycle_registry_;
+        std::shared_ptr<detail::connection_lifecycle_registry> lifecycle_registry_;
     };
 
 } // namespace crow

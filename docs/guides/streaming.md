@@ -150,8 +150,10 @@ chunk and provides backpressure without an unbounded queue.
 While a provider request is pending, Crow reads the connection to detect peer
 closure and retains bytes for later pipelined requests without parsing them.
 Retained input is limited to Crow's current HTTP parser header limit, whose
-compile-time default is `CROW_HTTP_MAX_HEADER_SIZE`; exceeding that limit aborts
-the transfer and closes the connection. After clean completion, Crow parses the
+compile-time default is `CROW_HTTP_MAX_HEADER_SIZE`. Exceeding that limit while
+the provider is pending aborts the transfer and closes the connection. If a
+terminal result is already pending, Crow finishes that response cleanly and then
+closes the connection. After clean completion without overflow, Crow parses the
 saved bytes on the connection executor in arrival order before starting another
 socket read. An aborted or failed transfer closes the connection and discards
 the retained input. A peer closure while the provider is pending ends the
@@ -188,8 +190,8 @@ res.set_chunked_completion_handler([](bool clean) {
 The handler is called exactly once. `clean` is `#!cpp true` when the provider
 finished normally (`#!cpp crow::chunk_result::done`, or `#!cpp false` from the
 `bool` provider) and every write succeeded; it is `#!cpp false` when the
-provider aborted, the peer closed, retained input exceeded its limit, or a write
-error occurred. An exception raised before provider completion is treated as an
+provider aborted, the peer closed, retained input exceeded its limit while no
+terminal result was pending, or a write error occurred. An exception raised before provider completion is treated as an
 abort. An asynchronous transfer that is still active during server shutdown
 completes with `clean == false`.
 

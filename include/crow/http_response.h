@@ -114,8 +114,8 @@ namespace crow
         ///
         /// `clean` is `true` when the provider finished normally and every write succeeded.
         /// It is `false` after a provider abort or exception, publication failure, downstream
-        /// peer closure, read failure or unexpected cancellation, retained-input overflow,
-        /// write failure or cancellation, or server shutdown during an active transfer.
+        /// peer closure, read failure or unexpected cancellation, retained-input overflow
+        /// before terminal completion, write failure or cancellation, or server shutdown.
         using chunk_complete_t = std::function<void(bool clean)>;
 
         /// Set the value of an existing header in the response.
