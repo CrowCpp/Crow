@@ -3589,6 +3589,57 @@ TEST_CASE("deferred_head_chunked_response_replays_pipelined_input")
     CHECK(response.find("second") != std::string::npos);
 } // deferred_head_chunked_response_replays_pipelined_input
 
+TEST_CASE("deferred_chunked_response_replaced_by_static_file_replays_pipelined_input")
+{
+    SimpleApp app;
+    auto deferred_end_promise = std::make_shared<std::promise<std::function<void()>>>();
+    auto deferred_end = deferred_end_promise->get_future();
+    auto provider_calls = std::make_shared<std::atomic<std::size_t>>(0);
+    auto second_route_calls = std::make_shared<std::atomic<std::size_t>>(0);
+
+    CROW_ROUTE(app, "/deferred-static-boundary")
+    ([deferred_end_promise, provider_calls](const crow::request&, crow::response& res) {
+        res.set_async_chunked_content_provider(
+          [provider_calls](crow::response::async_chunk_completion_t) {
+              provider_calls->fetch_add(1);
+          });
+        deferred_end_promise->set_value([&res] {
+            res.set_static_file_info("tests/img/cat.jpg");
+            res.end();
+        });
+    });
+    CROW_ROUTE(app, "/after-deferred-static-boundary")
+    ([second_route_calls](const crow::request&, crow::response& res) {
+        second_route_calls->fetch_add(1);
+        res.end("second-static");
+    });
+
+    auto server_task = app.bindaddr(LOCALHOST_ADDRESS).port(45451).run_async();
+    BoundedServerShutdown server_shutdown(server_task, [&app] {
+        app.stop();
+    });
+    asio::io_context io_context;
+    asio::ip::tcp::socket client(io_context);
+    client.connect(asio::ip::tcp::endpoint(asio::ip::make_address(LOCALHOST_ADDRESS), 45451));
+    const std::string requests = "GET /deferred-static-boundary HTTP/1.1\r\nHost: localhost\r\n\r\n"
+                                 "GET /after-deferred-static-boundary HTTP/1.1\r\nHost: localhost\r\nConnection: close\r\n\r\n";
+    asio::write(client, asio::buffer(requests));
+
+    REQUIRE(deferred_end.wait_for(std::chrono::seconds(5)) == std::future_status::ready);
+    CHECK(second_route_calls->load() == 0);
+    deferred_end.get()();
+    std::string response;
+    const bool connection_closed = receive_until_closed_with_deadline(client, response, std::chrono::seconds(5));
+    asio_error_code close_error;
+    client.close(close_error);
+    server_shutdown.shutdown();
+
+    REQUIRE(connection_closed);
+    CHECK(provider_calls->load() == 0);
+    CHECK(second_route_calls->load() == 1);
+    CHECK(response.find("second-static") != std::string::npos);
+} // deferred_chunked_response_replaced_by_static_file_replays_pipelined_input
+
 TEST_CASE("async_chunked_response_retains_input_read_while_provider_waits")
 {
     SimpleApp app;

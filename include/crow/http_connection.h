@@ -385,9 +385,15 @@ namespace crow
 
         void do_write_static()
         {
-            asio::write(adaptor_.socket(), buffers_);
+            error_code ec;
+            asio::write(adaptor_.socket(), buffers_, ec);
+            bool write_failed = static_cast<bool>(ec);
+            if (ec)
+            {
+                CROW_LOG_ERROR << ec << " - buffer write error happened while sending static response headers.";
+            }
 
-            if (res.file_info.statResult == 0)
+            if (!write_failed && res.file_info.statResult == 0)
             {
                 std::ifstream is(res.file_info.path.c_str(), std::ios::in | std::ios::binary);
                 std::vector<asio::const_buffer> buffers{1};
@@ -396,8 +402,9 @@ namespace crow
                 while (is.gcount() > 0)
                 {
                     buffers[0] = asio::buffer(buf, is.gcount());
-                    error_code ec = do_write_sync(buffers);
+                    ec = do_write_sync(buffers);
                     if (ec) {
+                        write_failed = true;
                         CROW_LOG_ERROR << ec << " - buffer write error happened while sending content of file "
                                        << res.file_info.path << ". Writing stopped premature.";
                         break;
@@ -405,7 +412,7 @@ namespace crow
                     is.read(buf, sizeof(buf));
                 }
             }
-            if (close_connection_)
+            if (close_connection_ || write_failed)
             {
                 adaptor_.shutdown_readwrite();
                 adaptor_.close();
@@ -416,6 +423,16 @@ namespace crow
             res.clear();
             buffers_.clear();
             parser_.clear();
+
+            if (!close_connection_ && !write_failed && need_to_start_read_after_complete_)
+            {
+                resume_input_after_response();
+            }
+            else if (write_failed)
+            {
+                need_to_start_read_after_complete_ = false;
+                buffered_input_.clear();
+            }
         }
 
         /// Format a chunk size the way chunked transfer encoding wants it: lowercase hex.
