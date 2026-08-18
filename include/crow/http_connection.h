@@ -54,32 +54,45 @@ namespace crow
     class connection_lifecycle_registry {
     public:
         template<typename ConnectionType>
-        void track(const std::shared_ptr<ConnectionType>& connection)
+        bool track(const std::shared_ptr<ConnectionType>& connection)
         {
             std::weak_ptr<ConnectionType> weak_connection = connection;
+            std::lock_guard<std::mutex> lock(mutex_);
+            if (shutting_down_)
+            {
+                return false;
+            }
             connections_[connection.get()] = [weak_connection] {
                 if (auto connection = weak_connection.lock())
                 {
                     connection->shutdown_on_worker_exit();
                 }
             };
+            return true;
         }
 
         void untrack(const void* connection) noexcept
         {
+            std::lock_guard<std::mutex> lock(mutex_);
             connections_.erase(connection);
         }
 
         void shutdown_all() noexcept {
-            auto connections = std::move(connections_);
-            connections_.clear();
+            std::unordered_map<const void*, std::function<void()>> connections;
+            {
+                std::lock_guard<std::mutex> lock(mutex_);
+                shutting_down_ = true;
+                connections = std::move(connections_);
+                connections_.clear();
+            }
             for (auto& item : connections) {
                 item.second();
             }
         }
 
     private:
-        // All methods run on the worker associated with these connections.
+        std::mutex mutex_;
+        bool shutting_down_{false};
         std::unordered_map<const void*, std::function<void()>> connections_;
     };
     } // namespace detail
@@ -541,7 +554,11 @@ namespace crow
             auto self = this->shared_from_this();
             if (lifecycle_registry_)
             {
-                lifecycle_registry_->track(self);
+                if (!lifecycle_registry_->track(self))
+                {
+                    shutdown_on_worker_exit();
+                    return;
+                }
             }
             asio::async_write(
                 adaptor_.socket(), buffers_, [self, state](const error_code& ec, std::size_t /*bytes_transferred*/) {
@@ -927,21 +944,26 @@ namespace crow
 
             if (resume_input)
             {
-                need_to_start_read_after_complete_ = false;
-                start_deadline();
-                if (buffered_input_.empty())
-                {
-                    do_read();
-                }
-                else
-                {
-                    process_buffered_input();
-                }
+                resume_input_after_response();
             }
             else
             {
                 need_to_start_read_after_complete_ = false;
                 buffered_input_.clear();
+            }
+        }
+
+        void resume_input_after_response()
+        {
+            need_to_start_read_after_complete_ = false;
+            start_deadline();
+            if (buffered_input_.empty())
+            {
+                do_read();
+            }
+            else
+            {
+                process_buffered_input();
             }
         }
 
@@ -1073,9 +1095,7 @@ namespace crow
             // connection has to be put back into reading state explicitly.
             if (!force_close && !close_connection_ && need_to_start_read_after_complete_)
             {
-                need_to_start_read_after_complete_ = false;
-                start_deadline();
-                do_read();
+                resume_input_after_response();
             }
         }
 
@@ -1099,9 +1119,7 @@ namespace crow
                 }
                 else if (need_to_start_read_after_complete_)
                 {
-                    need_to_start_read_after_complete_ = false;
-                    start_deadline();
-                    do_read();
+                    resume_input_after_response();
                 }
             }
             else

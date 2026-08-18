@@ -2696,27 +2696,50 @@ TEST_CASE("async_chunked_response_move_assignment_releases_destination_provider"
 
 TEST_CASE("async_chunk_transfer_registry_ignores_ordinary_connections_and_unregisters_completed_transfers")
 {
-    crow::detail::connection_lifecycle_registry<LifecycleRegistryProbe> registry;
+    crow::detail::connection_lifecycle_registry registry;
     auto ordinary_connection = std::make_shared<LifecycleRegistryProbe>();
     auto active_transfer = std::make_shared<LifecycleRegistryProbe>();
 
-    registry.shutdown_all();
-
-    CHECK(ordinary_connection->shutdown_calls() == 0);
-    CHECK(active_transfer->shutdown_calls() == 0);
-
-    registry.track(active_transfer);
+    CHECK(registry.track(active_transfer));
     registry.untrack(active_transfer.get());
     registry.shutdown_all();
 
     CHECK(active_transfer->shutdown_calls() == 0);
 
-    registry.track(active_transfer);
+    CHECK_FALSE(registry.track(active_transfer));
+
+    CHECK(active_transfer->shutdown_calls() == 0);
+    CHECK(ordinary_connection->shutdown_calls() == 0);
+} // async_chunk_transfer_registry_ignores_ordinary_connections_and_unregisters_completed_transfers
+
+TEST_CASE("async_chunk_transfer_registry_shuts_down_tracked_connections_once")
+{
+    crow::detail::connection_lifecycle_registry registry;
+    auto active_transfer = std::make_shared<LifecycleRegistryProbe>();
+
+    CHECK(registry.track(active_transfer));
     registry.shutdown_all();
     registry.shutdown_all();
 
     CHECK(active_transfer->shutdown_calls() == 1);
-} // async_chunk_transfer_registry_ignores_ordinary_connections_and_unregisters_completed_transfers
+    CHECK_FALSE(registry.track(active_transfer));
+} // async_chunk_transfer_registry_shuts_down_tracked_connections_once
+
+TEST_CASE("async_chunk_transfer_registry_serializes_untrack_with_shutdown")
+{
+    crow::detail::connection_lifecycle_registry registry;
+    auto active_transfer = std::make_shared<LifecycleRegistryProbe>();
+    REQUIRE(registry.track(active_transfer));
+
+    auto shutdown = std::async(std::launch::async, [&registry] {
+        registry.shutdown_all();
+    });
+    registry.untrack(active_transfer.get());
+    shutdown.get();
+
+    CHECK(active_transfer->shutdown_calls() <= 1);
+    CHECK_FALSE(registry.track(active_transfer));
+} // async_chunk_transfer_registry_serializes_untrack_with_shutdown
 
 TEST_CASE("empty_async_chunk_provider_closes_without_terminator_and_completes_once_unclean")
 {
@@ -3465,6 +3488,106 @@ TEST_CASE("deferred_chunked_response_stops_parsing_at_its_request_boundary")
     CHECK(response.find("5\r\nfirst\r\n0\r\n\r\n") != std::string::npos);
     CHECK(response.find("second") != std::string::npos);
 } // deferred_chunked_response_stops_parsing_at_its_request_boundary
+
+TEST_CASE("deferred_synchronous_chunked_response_replays_pipelined_input")
+{
+    SimpleApp app;
+    auto deferred_end_promise = std::make_shared<std::promise<std::function<void()>>>();
+    auto deferred_end = deferred_end_promise->get_future();
+    auto second_route_calls = std::make_shared<std::atomic<std::size_t>>(0);
+
+    CROW_ROUTE(app, "/deferred-sync-boundary")
+    ([deferred_end_promise](const crow::request&, crow::response& res) {
+        res.set_chunked_content_provider([](std::string& chunk) {
+            chunk = "first";
+            return crow::chunk_result::done;
+        });
+        deferred_end_promise->set_value([&res] {
+            res.end();
+        });
+    });
+    CROW_ROUTE(app, "/after-deferred-sync-boundary")
+    ([second_route_calls](const crow::request&, crow::response& res) {
+        second_route_calls->fetch_add(1);
+        res.end("second");
+    });
+
+    auto server_task = app.bindaddr(LOCALHOST_ADDRESS).port(45451).run_async();
+    BoundedServerShutdown server_shutdown(server_task, [&app] {
+        app.stop();
+    });
+    asio::io_context io_context;
+    asio::ip::tcp::socket client(io_context);
+    client.connect(asio::ip::tcp::endpoint(asio::ip::make_address(LOCALHOST_ADDRESS), 45451));
+    const std::string requests = "GET /deferred-sync-boundary HTTP/1.1\r\nHost: localhost\r\n\r\n"
+                                 "GET /after-deferred-sync-boundary HTTP/1.1\r\nHost: localhost\r\nConnection: close\r\n\r\n";
+    asio::write(client, asio::buffer(requests));
+
+    REQUIRE(deferred_end.wait_for(std::chrono::seconds(5)) == std::future_status::ready);
+    CHECK(second_route_calls->load() == 0);
+    deferred_end.get()();
+    std::string response;
+    const bool connection_closed = receive_until_closed_with_deadline(client, response, std::chrono::seconds(5));
+    asio_error_code close_error;
+    client.close(close_error);
+    server_shutdown.shutdown();
+
+    REQUIRE(connection_closed);
+    CHECK(second_route_calls->load() == 1);
+    CHECK(response.find("5\r\nfirst\r\n0\r\n\r\n") != std::string::npos);
+    CHECK(response.find("second") != std::string::npos);
+} // deferred_synchronous_chunked_response_replays_pipelined_input
+
+TEST_CASE("deferred_head_chunked_response_replays_pipelined_input")
+{
+    SimpleApp app;
+    auto deferred_end_promise = std::make_shared<std::promise<std::function<void()>>>();
+    auto deferred_end = deferred_end_promise->get_future();
+    auto provider_calls = std::make_shared<std::atomic<std::size_t>>(0);
+    auto second_route_calls = std::make_shared<std::atomic<std::size_t>>(0);
+
+    CROW_ROUTE(app, "/deferred-head-boundary")
+    ([deferred_end_promise, provider_calls](const crow::request&, crow::response& res) {
+        res.set_async_chunked_content_provider(
+          [provider_calls](crow::response::async_chunk_completion_t) {
+              provider_calls->fetch_add(1);
+          });
+        deferred_end_promise->set_value([&res] {
+            res.end();
+        });
+    });
+    CROW_ROUTE(app, "/after-deferred-head-boundary")
+    ([second_route_calls](const crow::request&, crow::response& res) {
+        second_route_calls->fetch_add(1);
+        res.end("second");
+    });
+
+    auto server_task = app.bindaddr(LOCALHOST_ADDRESS).port(45451).run_async();
+    BoundedServerShutdown server_shutdown(server_task, [&app] {
+        app.stop();
+    });
+    asio::io_context io_context;
+    asio::ip::tcp::socket client(io_context);
+    client.connect(asio::ip::tcp::endpoint(asio::ip::make_address(LOCALHOST_ADDRESS), 45451));
+    const std::string requests = "HEAD /deferred-head-boundary HTTP/1.1\r\nHost: localhost\r\n\r\n"
+                                 "GET /after-deferred-head-boundary HTTP/1.1\r\nHost: localhost\r\nConnection: close\r\n\r\n";
+    asio::write(client, asio::buffer(requests));
+
+    REQUIRE(deferred_end.wait_for(std::chrono::seconds(5)) == std::future_status::ready);
+    CHECK(second_route_calls->load() == 0);
+    deferred_end.get()();
+    std::string response;
+    const bool connection_closed = receive_until_closed_with_deadline(client, response, std::chrono::seconds(5));
+    asio_error_code close_error;
+    client.close(close_error);
+    server_shutdown.shutdown();
+
+    REQUIRE(connection_closed);
+    CHECK(provider_calls->load() == 0);
+    CHECK(second_route_calls->load() == 1);
+    CHECK(response.find("Transfer-Encoding: chunked") != std::string::npos);
+    CHECK(response.find("second") != std::string::npos);
+} // deferred_head_chunked_response_replays_pipelined_input
 
 TEST_CASE("async_chunked_response_retains_input_read_while_provider_waits")
 {
