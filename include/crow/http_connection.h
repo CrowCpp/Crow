@@ -252,7 +252,7 @@ namespace crow
                 if (!res.completed_)
                 {
                     res.complete_request_handler_ = [self] {
-                        self->complete_request();
+                        asio::dispatch(self->adaptor_.get_io_context(), [self] { self->complete_request(); });
                     };
                     need_to_call_after_handlers_ = true;
                     handler_->handle(req_, res, routing_handle_result_);
@@ -366,7 +366,6 @@ namespace crow
 
         void reject_http_1_0_chunked_response()
         {
-            res.chunk_provider_ = nullptr;
             res.chunk_provider_ex_ = nullptr;
             res.async_chunk_provider_ = nullptr;
             res.body_source_ = response::body_source_kind::none;
@@ -495,6 +494,14 @@ namespace crow
                 }
             } catch (...) {
                 // Publication errors must not escape through logging on provider threads.
+            }
+        }
+
+        static void log_duplicate_async_chunk_completion() noexcept {
+            try {
+                CROW_LOG_WARNING << "An asynchronous chunk completion callback was invoked more than once.";
+            } catch (...) {
+                // Logging must not throw through the provider thread.
             }
         }
 
@@ -721,7 +728,7 @@ namespace crow
                 if (request->completed)
                 {
                     lock.unlock();
-                    CROW_LOG_WARNING << "An asynchronous chunk completion callback was invoked more than once.";
+                    log_duplicate_async_chunk_completion();
                     return false;
                 }
 
@@ -998,15 +1005,8 @@ namespace crow
 
             // do_write_sync() clears the response on every write, so the provider and the
             // completion handler have to be taken out of it before the loop starts.
-            auto provider = std::move(res.chunk_provider_ex_);
+            auto provider           = std::move(res.chunk_provider_ex_);
             res.chunk_provider_ex_ = nullptr;
-            if (!provider && res.chunk_provider_)
-            {
-                provider = [bool_provider = std::move(res.chunk_provider_)](std::string& chunk) {
-                    return bool_provider(chunk) ? response::chunk_result::more : response::chunk_result::done;
-                };
-            }
-            res.chunk_provider_ = nullptr;
             auto completion_handler = std::move(res.chunk_complete_);
             res.chunk_complete_ = nullptr;
 

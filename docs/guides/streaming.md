@@ -147,6 +147,11 @@ socket write are pending, and Crow requests the next chunk only after the
 preceding write has finished. This bounds the transfer to one current payload
 chunk and provides backpressure without an unbounded queue.
 
+When `response::end()` completes a deferred response from another thread, Crow
+dispatches response finalization to the connection executor. Synchronous providers,
+socket writes, retained-input processing, and normal completion callbacks
+therefore keep connection-executor affinity.
+
 While a provider request is pending, Crow reads the connection to detect peer
 closure and retains bytes for later pipelined requests without parsing them.
 Retained input is limited to Crow's current HTTP parser header limit, whose

@@ -252,11 +252,13 @@ namespace crow
             // sets it on the connection's response before the handler runs for a HEAD
             // request), so a handler assigning a freshly built response must not reset it.
             manual_length_header = r.manual_length_header;
-            chunk_provider_ = std::move(r.chunk_provider_);
             chunk_provider_ex_ = std::move(r.chunk_provider_ex_);
             async_chunk_provider_ = std::move(r.async_chunk_provider_);
             chunk_complete_ = std::move(r.chunk_complete_);
             body_source_ = r.body_source_;
+            r.chunk_provider_ex_    = nullptr;
+            r.async_chunk_provider_ = nullptr;
+            r.chunk_complete_       = nullptr;
             r.body_source_ = body_source_kind::none;
             return *this;
         }
@@ -274,7 +276,6 @@ namespace crow
             headers.clear();
             completed_ = false;
             file_info = static_file_info{};
-            chunk_provider_ = nullptr;
             chunk_provider_ex_ = nullptr;
             async_chunk_provider_ = nullptr;
             chunk_complete_ = nullptr;
@@ -339,7 +340,6 @@ namespace crow
                     {
                         // HEAD keeps "Transfer-Encoding: chunked" and omits "Content-Length".
                         // The connection invokes completion after checking the HTTP version.
-                        chunk_provider_ = nullptr;
                         chunk_provider_ex_ = nullptr;
                         async_chunk_provider_ = nullptr;
                         body = "";
@@ -420,7 +420,6 @@ namespace crow
         void set_chunked_content_provider(chunk_provider_ex_t provider, std::string content_type = "")
         {
             chunk_provider_ex_ = std::move(provider);
-            chunk_provider_       = nullptr;
             async_chunk_provider_ = nullptr;
             body_source_ = body_source_kind::synchronous_chunked;
             file_info             = static_file_info{};
@@ -447,7 +446,6 @@ namespace crow
         /// connection without a terminating frame, and reports unclean completion once.
         void set_async_chunked_content_provider(async_chunk_provider_t provider, std::string content_type = "") {
             async_chunk_provider_ = std::move(provider);
-            chunk_provider_       = nullptr;
             chunk_provider_ex_    = nullptr;
             body_source_ = body_source_kind::asynchronous_chunked;
             file_info = static_file_info{};
@@ -504,7 +502,6 @@ namespace crow
             // previously configured chunk provider together with its framing header,
             // otherwise "Transfer-Encoding: chunked" and "Content-Length" would be
             // sent side by side while the raw file bytes go out unframed.
-            chunk_provider_ = nullptr;
             chunk_provider_ex_ = nullptr;
             async_chunk_provider_ = nullptr;
             chunk_complete_ = nullptr;
@@ -664,7 +661,6 @@ namespace crow
         std::function<void()> complete_request_handler_;
         std::function<bool()> is_alive_helper_;
         static_file_info file_info;
-        chunk_provider_t chunk_provider_;
         chunk_provider_ex_t chunk_provider_ex_;
         async_chunk_provider_t async_chunk_provider_;
         chunk_complete_t chunk_complete_;
