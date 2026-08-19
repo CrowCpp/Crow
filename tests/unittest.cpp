@@ -3654,12 +3654,14 @@ TEST_CASE("deferred_chunked_response_replaced_by_large_body_replays_pipelined_in
     auto first_body           = std::make_shared<std::string>(20000, 'x');
 
     CROW_ROUTE(app, "/deferred-large-body-boundary")
-    ([deferred_end_promise, provider_calls, first_body](const crow::request&, crow::response& res) {
+    ([deferred_end_promise, provider_calls, first_body](const crow::request& req, crow::response& res) {
         res.set_async_chunked_content_provider(
             [provider_calls](crow::response::async_chunk_completion_t) { provider_calls->fetch_add(1); });
-        deferred_end_promise->set_value([&res, first_body] {
-            res.clear();
-            res.end(*first_body);
+        asio::post(*req.io_context, [deferred_end_promise, &res, first_body] {
+            deferred_end_promise->set_value([&res, first_body] {
+                res.clear();
+                res.end(*first_body);
+            });
         });
     });
     CROW_ROUTE(app, "/after-deferred-large-body-boundary")
@@ -3702,12 +3704,14 @@ TEST_CASE("failed_regular_response_discards_retained_pipelined_input") {
     PausingSocketContext socket_context;
 
     CROW_ROUTE(app, "/failing-regular-response")
-    ([deferred_end_promise, &socket_context](const crow::request&, crow::response& res) {
+    ([deferred_end_promise, &socket_context](const crow::request& req, crow::response& res) {
         res.set_async_chunked_content_provider([](crow::response::async_chunk_completion_t) {});
-        deferred_end_promise->set_value([&res, &socket_context] {
-            res.clear();
-            socket_context.fail_next_write();
-            res.end("first");
+        asio::post(*req.io_context, [deferred_end_promise, &res, &socket_context] {
+            deferred_end_promise->set_value([&res, &socket_context] {
+                res.clear();
+                socket_context.fail_next_write();
+                res.end("first");
+            });
         });
     });
     CROW_ROUTE(app, "/after-failing-regular-response")
