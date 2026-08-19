@@ -3609,8 +3609,13 @@ TEST_CASE("deferred_head_chunked_response_replays_pipelined_input")
     REQUIRE(connection_closed);
     CHECK(provider_calls->load() == 0);
     CHECK(second_route_calls->load() == 1);
-    CHECK(response.find("Transfer-Encoding: chunked") != std::string::npos);
-    CHECK(response.find("second") != std::string::npos);
+    const auto first_header_end = response.find("\r\n\r\n");
+    REQUIRE(first_header_end != std::string::npos);
+    const auto first_headers = response.substr(0, first_header_end + 4);
+    CHECK(first_headers.find("Transfer-Encoding: chunked") != std::string::npos);
+    CHECK(first_headers.find("Content-Length:") == std::string::npos);
+    CHECK(response.compare(first_header_end + 4, 8, "HTTP/1.1") == 0);
+    CHECK(response.find("second", first_header_end + 4) != std::string::npos);
 } // deferred_head_chunked_response_replays_pipelined_input
 
 TEST_CASE("deferred_chunked_response_replaced_by_static_file_replays_pipelined_input")
