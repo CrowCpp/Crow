@@ -359,8 +359,6 @@ namespace crow
                 if (complete_request_handler_)
                 {
                     complete_request_handler_();
-                    manual_length_header = false;
-                    skip_body = false;
                 }
             }
         }

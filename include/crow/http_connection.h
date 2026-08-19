@@ -347,6 +347,12 @@ namespace crow
             {
                 do_write_general();
             }
+
+            // These request-specific flags must only be reset after response finalization
+            // has consumed them on the connection executor. response::end() can be called
+            // from another thread and may only queue complete_request().
+            res.manual_length_header = false;
+            res.skip_body = false;
         }
 
     private:
