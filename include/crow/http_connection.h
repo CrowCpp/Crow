@@ -1119,35 +1119,29 @@ namespace crow
         void do_write_general()
         {
             error_code ec;
+            bool write_failed = false;
             if (res.body.length() < res_stream_threshold_)
             {
                 res_body_copy_.swap(res.body);
                 buffers_.emplace_back(res_body_copy_.data(), res_body_copy_.size());
 
                 ec = do_write_sync(buffers_);
-                if (ec) {
+                write_failed = static_cast<bool>(ec);
+                if (write_failed) {
                     CROW_LOG_ERROR << ec << " - buffer write error happened while sending response. Writing stopped premature.";
-                }
-                if (close_connection_)
-                {
-                    adaptor_.shutdown_readwrite();
-                    adaptor_.close();
-                    CROW_LOG_DEBUG << this << " from write (res)";
-                }
-                else if (need_to_start_read_after_complete_)
-                {
-                    resume_input_after_response();
                 }
             }
             else
             {
-                asio::write(adaptor_.socket(), buffers_,ec); // Write the response start / headers
-                if (ec) {
-                    CROW_LOG_ERROR << ec << "- buffer write error happened while sending response start / headers. Writing stopped premature.";
+                asio::write(adaptor_.socket(), buffers_, ec); // Write the response start / headers
+                write_failed = static_cast<bool>(ec);
+                if (write_failed) {
+                    CROW_LOG_ERROR << ec
+                                   << " - buffer write error happened while sending response start / headers. Writing "
+                                      "stopped premature.";
                 }
                 cancel_deadline_timer();
-                if (res.body.length() > 0)
-                {
+                if (!write_failed && !res.body.empty()) {
                     std::vector<asio::const_buffer> buffers{1};
                     const uint8_t* data = reinterpret_cast<const uint8_t*>(res.body.data());
                     size_t length = res.body.length();
@@ -1155,25 +1149,30 @@ namespace crow
                     {
                         size_t to_transfer = CROW_MIN(16384UL, length - transferred);
                         buffers[0] = asio::const_buffer(data + transferred, to_transfer);
-                        ec = do_write_sync(buffers);
+                        asio::write(adaptor_.socket(), buffers, ec);
                         if (ec) {
+                            write_failed = true;
                             CROW_LOG_ERROR << ec << " - " << transferred << " - buffer write error happened while sending response. Writing stopped premature.";
                             break;
                         }
                         transferred += to_transfer;
                     }
                 }
-                if (close_connection_)
-                {
-                    adaptor_.shutdown_readwrite();
-                    adaptor_.close();
-                    CROW_LOG_DEBUG << this << " from write (res_stream)";
-                }
 
                 res.end();
                 res.clear();
                 buffers_.clear();
                 parser_.clear();
+            }
+
+            if (close_connection_ || write_failed) {
+                adaptor_.shutdown_readwrite();
+                adaptor_.close();
+                need_to_start_read_after_complete_ = false;
+                buffered_input_.clear();
+                CROW_LOG_DEBUG << this << " from write (res" << (write_failed ? ", write error" : "") << ")";
+            } else if (need_to_start_read_after_complete_) {
+                resume_input_after_response();
             }
         }
 

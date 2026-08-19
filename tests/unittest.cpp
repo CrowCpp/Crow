@@ -3651,14 +3651,15 @@ TEST_CASE("deferred_chunked_response_replaced_by_large_body_replays_pipelined_in
     auto deferred_end         = deferred_end_promise->get_future();
     auto provider_calls       = std::make_shared<std::atomic<std::size_t>>(0);
     auto second_route_calls   = std::make_shared<std::atomic<std::size_t>>(0);
+    auto first_body           = std::make_shared<std::string>(20000, 'x');
 
     CROW_ROUTE(app, "/deferred-large-body-boundary")
-    ([deferred_end_promise, provider_calls](const crow::request&, crow::response& res) {
+    ([deferred_end_promise, provider_calls, first_body](const crow::request&, crow::response& res) {
         res.set_async_chunked_content_provider(
             [provider_calls](crow::response::async_chunk_completion_t) { provider_calls->fetch_add(1); });
-        deferred_end_promise->set_value([&res] {
+        deferred_end_promise->set_value([&res, first_body] {
             res.clear();
-            res.end("large-body");
+            res.end(*first_body);
         });
     });
     CROW_ROUTE(app, "/after-deferred-large-body-boundary")
@@ -3689,7 +3690,7 @@ TEST_CASE("deferred_chunked_response_replaced_by_large_body_replays_pipelined_in
     REQUIRE(connection_closed);
     CHECK(provider_calls->load() == 0);
     CHECK(second_route_calls->load() == 1);
-    CHECK(response.find("large-body") != std::string::npos);
+    CHECK(response.find(*first_body) != std::string::npos);
     CHECK(response.find("second-large-body") != std::string::npos);
 } // deferred_chunked_response_replaced_by_large_body_replays_pipelined_input
 
