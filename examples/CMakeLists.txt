@@ -97,6 +97,10 @@ add_executable(example_unix_socket example_unix_socket.cpp)
 add_warnings_optimizations(example_unix_socket)
 target_link_libraries(example_unix_socket PUBLIC Crow::Crow)
 
+add_executable(example_html_lib example_html_lib.cpp)
+add_warnings_optimizations(example_html_lib)
+target_link_libraries(example_html_lib PUBLIC Crow::Crow)
+
 if(MSVC)
   add_executable(example_vs example_vs.cpp)
   add_warnings_optimizations(example_vs)
