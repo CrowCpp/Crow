@@ -3468,6 +3468,7 @@ TEST_CASE("deferred_chunked_response_stops_parsing_at_its_request_boundary")
     BoundedServerShutdown server_shutdown(server_task, [&app] {
         app.stop();
     });
+    app.wait_for_server_start();
 
     asio::io_context io_context;
     asio::ip::tcp::socket client(io_context);
@@ -3499,13 +3500,24 @@ TEST_CASE("deferred_synchronous_chunked_response_replays_pipelined_input")
     auto deferred_end_promise = std::make_shared<std::promise<std::function<void()>>>();
     auto deferred_end = deferred_end_promise->get_future();
     auto second_route_calls = std::make_shared<std::atomic<std::size_t>>(0);
+    auto worker_thread_promise     = std::make_shared<std::promise<std::thread::id>>();
+    auto worker_thread             = worker_thread_promise->get_future();
+    auto provider_thread_promise   = std::make_shared<std::promise<std::thread::id>>();
+    auto provider_thread           = provider_thread_promise->get_future();
+    auto completion_thread_promise = std::make_shared<std::promise<std::thread::id>>();
+    auto completion_thread         = completion_thread_promise->get_future();
 
     CROW_ROUTE(app, "/deferred-sync-boundary")
-    ([deferred_end_promise](const crow::request&, crow::response& res) {
-        res.set_chunked_content_provider([](std::string& chunk) {
+    ([deferred_end_promise, worker_thread_promise, provider_thread_promise, completion_thread_promise](
+         const crow::request&, crow::response& res) {
+        worker_thread_promise->set_value(std::this_thread::get_id());
+        res.set_chunked_content_provider([provider_thread_promise](std::string& chunk) {
+            provider_thread_promise->set_value(std::this_thread::get_id());
             chunk = "first";
             return crow::chunk_result::done;
         });
+        res.set_chunked_completion_handler(
+            [completion_thread_promise](bool) { completion_thread_promise->set_value(std::this_thread::get_id()); });
         deferred_end_promise->set_value([&res] {
             res.end();
         });
@@ -3520,6 +3532,7 @@ TEST_CASE("deferred_synchronous_chunked_response_replays_pipelined_input")
     BoundedServerShutdown server_shutdown(server_task, [&app] {
         app.stop();
     });
+    app.wait_for_server_start();
     asio::io_context io_context;
     asio::ip::tcp::socket client(io_context);
     client.connect(asio::ip::tcp::endpoint(asio::ip::make_address(LOCALHOST_ADDRESS), 45451));
@@ -3537,6 +3550,12 @@ TEST_CASE("deferred_synchronous_chunked_response_replays_pipelined_input")
     server_shutdown.shutdown();
 
     REQUIRE(connection_closed);
+    REQUIRE(worker_thread.wait_for(std::chrono::seconds(1)) == std::future_status::ready);
+    REQUIRE(provider_thread.wait_for(std::chrono::seconds(1)) == std::future_status::ready);
+    REQUIRE(completion_thread.wait_for(std::chrono::seconds(1)) == std::future_status::ready);
+    const auto expected_thread = worker_thread.get();
+    CHECK(provider_thread.get() == expected_thread);
+    CHECK(completion_thread.get() == expected_thread);
     CHECK(second_route_calls->load() == 1);
     CHECK(response.find("5\r\nfirst\r\n0\r\n\r\n") != std::string::npos);
     CHECK(response.find("second") != std::string::npos);
@@ -3570,6 +3589,7 @@ TEST_CASE("deferred_head_chunked_response_replays_pipelined_input")
     BoundedServerShutdown server_shutdown(server_task, [&app] {
         app.stop();
     });
+    app.wait_for_server_start();
     asio::io_context io_context;
     asio::ip::tcp::socket client(io_context);
     client.connect(asio::ip::tcp::endpoint(asio::ip::make_address(LOCALHOST_ADDRESS), 45451));
@@ -3622,6 +3642,7 @@ TEST_CASE("deferred_chunked_response_replaced_by_static_file_replays_pipelined_i
     BoundedServerShutdown server_shutdown(server_task, [&app] {
         app.stop();
     });
+    app.wait_for_server_start();
     asio::io_context io_context;
     asio::ip::tcp::socket client(io_context);
     client.connect(asio::ip::tcp::endpoint(asio::ip::make_address(LOCALHOST_ADDRESS), 45451));
@@ -3672,6 +3693,7 @@ TEST_CASE("deferred_chunked_response_replaced_by_large_body_replays_pipelined_in
 
     auto server_task = app.bindaddr(LOCALHOST_ADDRESS).port(45451).run_async();
     BoundedServerShutdown server_shutdown(server_task, [&app] { app.stop(); });
+    app.wait_for_server_start();
     asio::io_context io_context;
     asio::ip::tcp::socket client(io_context);
     client.connect(asio::ip::tcp::endpoint(asio::ip::make_address(LOCALHOST_ADDRESS), 45451));
