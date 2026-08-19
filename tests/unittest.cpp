@@ -484,6 +484,10 @@ public:
 
     template<typename ConstBufferSequence>
     std::size_t write_some(const ConstBufferSequence& buffers, asio_error_code& ec) {
+        if (context_ && context_->take_failure_request()) {
+            ec = asio::error::operation_aborted;
+            return 0;
+        }
         return socket_.write_some(buffers, ec);
     }
 
@@ -3639,6 +3643,114 @@ TEST_CASE("deferred_chunked_response_replaced_by_static_file_replays_pipelined_i
     CHECK(second_route_calls->load() == 1);
     CHECK(response.find("second-static") != std::string::npos);
 } // deferred_chunked_response_replaced_by_static_file_replays_pipelined_input
+
+TEST_CASE("deferred_chunked_response_replaced_by_large_body_replays_pipelined_input") {
+    SimpleApp app;
+    app.stream_threshold(8);
+    auto deferred_end_promise = std::make_shared<std::promise<std::function<void()>>>();
+    auto deferred_end         = deferred_end_promise->get_future();
+    auto provider_calls       = std::make_shared<std::atomic<std::size_t>>(0);
+    auto second_route_calls   = std::make_shared<std::atomic<std::size_t>>(0);
+
+    CROW_ROUTE(app, "/deferred-large-body-boundary")
+    ([deferred_end_promise, provider_calls](const crow::request&, crow::response& res) {
+        res.set_async_chunked_content_provider(
+            [provider_calls](crow::response::async_chunk_completion_t) { provider_calls->fetch_add(1); });
+        deferred_end_promise->set_value([&res] {
+            res.clear();
+            res.end("large-body");
+        });
+    });
+    CROW_ROUTE(app, "/after-deferred-large-body-boundary")
+    ([second_route_calls](const crow::request&, crow::response& res) {
+        second_route_calls->fetch_add(1);
+        res.end("second-large-body");
+    });
+
+    auto server_task = app.bindaddr(LOCALHOST_ADDRESS).port(45451).run_async();
+    BoundedServerShutdown server_shutdown(server_task, [&app] { app.stop(); });
+    asio::io_context io_context;
+    asio::ip::tcp::socket client(io_context);
+    client.connect(asio::ip::tcp::endpoint(asio::ip::make_address(LOCALHOST_ADDRESS), 45451));
+    const std::string requests
+        = "GET /deferred-large-body-boundary HTTP/1.1\r\nHost: localhost\r\n\r\n"
+          "GET /after-deferred-large-body-boundary HTTP/1.1\r\nHost: localhost\r\nConnection: close\r\n\r\n";
+    asio::write(client, asio::buffer(requests));
+
+    REQUIRE(deferred_end.wait_for(std::chrono::seconds(5)) == std::future_status::ready);
+    CHECK(second_route_calls->load() == 0);
+    deferred_end.get()();
+    std::string response;
+    const bool connection_closed = receive_until_closed_with_deadline(client, response, std::chrono::seconds(5));
+    asio_error_code close_error;
+    client.close(close_error);
+    server_shutdown.shutdown();
+
+    REQUIRE(connection_closed);
+    CHECK(provider_calls->load() == 0);
+    CHECK(second_route_calls->load() == 1);
+    CHECK(response.find("large-body") != std::string::npos);
+    CHECK(response.find("second-large-body") != std::string::npos);
+} // deferred_chunked_response_replaced_by_large_body_replays_pipelined_input
+
+TEST_CASE("failed_regular_response_discards_retained_pipelined_input") {
+    SimpleApp app;
+    auto deferred_end_promise = std::make_shared<std::promise<std::function<void()>>>();
+    auto deferred_end         = deferred_end_promise->get_future();
+    auto second_route_calls   = std::make_shared<std::atomic<std::size_t>>(0);
+    PausingSocketContext socket_context;
+
+    CROW_ROUTE(app, "/failing-regular-response")
+    ([deferred_end_promise, &socket_context](const crow::request&, crow::response& res) {
+        res.set_async_chunked_content_provider([](crow::response::async_chunk_completion_t) {});
+        deferred_end_promise->set_value([&res, &socket_context] {
+            res.clear();
+            socket_context.fail_next_write();
+            res.end("first");
+        });
+    });
+    CROW_ROUTE(app, "/after-failing-regular-response")
+    ([second_route_calls](const crow::request&, crow::response& res) {
+        second_route_calls->fetch_add(1);
+        res.end("unexpected");
+    });
+
+    app.validate();
+    std::tuple<> middlewares;
+    using RegularWriteErrorServer = crow::Server<crow::SimpleApp, crow::TCPAcceptor, PausingSocketAdaptor>;
+    RegularWriteErrorServer server(&app,
+                                   asio::ip::tcp::endpoint(asio::ip::make_address(LOCALHOST_ADDRESS), 45451),
+                                   "Crow/Test",
+                                   &middlewares,
+                                   2,
+                                   5,
+                                   &socket_context);
+    auto server_task = std::async(std::launch::async, [&server] { server.run(); });
+    BoundedServerShutdown server_shutdown(server_task, [&server] { server.stop(); });
+    REQUIRE(server.wait_for_start(std::chrono::steady_clock::now() + std::chrono::seconds(3))
+            == std::cv_status::no_timeout);
+
+    asio::io_context io_context;
+    asio::ip::tcp::socket client(io_context);
+    client.connect(asio::ip::tcp::endpoint(asio::ip::make_address(LOCALHOST_ADDRESS), 45451));
+    const std::string requests
+        = "GET /failing-regular-response HTTP/1.1\r\nHost: localhost\r\n\r\n"
+          "GET /after-failing-regular-response HTTP/1.1\r\nHost: localhost\r\nConnection: close\r\n\r\n";
+    asio::write(client, asio::buffer(requests));
+
+    REQUIRE(deferred_end.wait_for(std::chrono::seconds(5)) == std::future_status::ready);
+    CHECK(second_route_calls->load() == 0);
+    deferred_end.get()();
+    std::string response;
+    const bool connection_closed = receive_until_closed_with_deadline(client, response, std::chrono::seconds(5));
+    asio_error_code close_error;
+    client.close(close_error);
+    server_shutdown.shutdown();
+
+    REQUIRE(connection_closed);
+    CHECK(second_route_calls->load() == 0);
+    CHECK(response.find("unexpected") == std::string::npos);
+} // failed_regular_response_discards_retained_pipelined_input
 
 TEST_CASE("async_chunked_response_retains_input_read_while_provider_waits")
 {
