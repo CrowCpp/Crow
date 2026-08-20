@@ -4,7 +4,10 @@
 
 #include <array>
 #include <atomic>
+#include <chrono>
+#include <cstdio>
 #include <exception>
+#include <fstream>
 #include <future>
 #include <iostream>
 #include <mutex>
@@ -4150,6 +4153,57 @@ TEST_CASE("deferred_chunked_response_replaced_by_static_file_replays_pipelined_i
     CHECK(completion_result.get() == true);
     CHECK(completion_observation->calls() == 1);
 } // deferred_chunked_response_replaced_by_static_file_replays_pipelined_input
+
+TEST_CASE("static_file_failure_reports_unclean_chunk_completion")
+{
+    const auto unique_suffix = std::chrono::steady_clock::now().time_since_epoch().count();
+    const std::string file_path = "crow-static-completion-" + std::to_string(unique_suffix) + ".tmp";
+    {
+        std::ofstream file(file_path, std::ios::binary);
+        REQUIRE(file.good());
+        file << "static-body";
+    }
+
+    SimpleApp app;
+    auto completion_observation = std::make_shared<ChunkCompletionObservation>();
+    auto completion_result = completion_observation->first_result();
+    auto removal_result = std::make_shared<std::atomic<int>>(-1);
+
+    CROW_ROUTE(app, "/missing-static")
+    ([file_path, completion_observation, removal_result](crow::response& res) {
+        res.set_async_chunked_content_provider([](crow::response::async_chunk_completion_t) {});
+        res.set_chunked_completion_handler(
+          [completion_observation](bool clean) {
+              completion_observation->record(clean);
+          });
+        res.set_static_file_info_unsafe(file_path);
+        removal_result->store(std::remove(file_path.c_str()));
+        res.end();
+    });
+
+    auto server_task = app.bindaddr(LOCALHOST_ADDRESS).port(45463).run_async();
+    BoundedServerShutdown server_shutdown(server_task, [&app] {
+        app.stop();
+    });
+    app.wait_for_server_start();
+    asio::io_context io_context;
+    asio::ip::tcp::socket client(io_context);
+    client.connect(asio::ip::tcp::endpoint(asio::ip::make_address(LOCALHOST_ADDRESS), 45463));
+    const std::string request = "GET /missing-static HTTP/1.1\r\nHost: localhost\r\nConnection: close\r\n\r\n";
+    asio::write(client, asio::buffer(request));
+
+    std::string response;
+    const bool connection_closed = receive_until_closed_with_deadline(client, response, std::chrono::seconds(5));
+    asio_error_code close_error;
+    client.close(close_error);
+    server_shutdown.shutdown();
+
+    REQUIRE(connection_closed);
+    CHECK(removal_result->load() == 0);
+    REQUIRE(completion_result.wait_for(std::chrono::seconds(1)) == std::future_status::ready);
+    CHECK(completion_result.get() == false);
+    CHECK(completion_observation->calls() == 1);
+} // static_file_failure_reports_unclean_chunk_completion
 
 TEST_CASE("deferred_chunked_response_replaced_by_large_body_replays_pipelined_input") {
     SimpleApp app;
