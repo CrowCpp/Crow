@@ -117,21 +117,47 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         }
 
         virtual void handle(request&, response&, const routing_params&) = 0;
-        virtual void handle_upgrade(const request&, response& res, SocketAdaptor&&)
+
+        /// \brief Upgrade entry point that carries parsed route parameters.
+        virtual void handle_upgrade(const request&, response& res, SocketAdaptor&&, const routing_params&)
         {
             res = response(404);
             res.end();
         }
-        virtual void handle_upgrade(const request&, response& res, UnixSocketAdaptor&&)
+
+        /// \brief Backward-compatible upgrade entry point without explicit route params.
+        virtual void handle_upgrade(const request& req, response& res, SocketAdaptor&& adaptor)
+        {
+            routing_params empty_routing_params{};
+            handle_upgrade(req, res, std::move(adaptor), empty_routing_params);
+        }
+
+        /// \brief Upgrade entry point that carries parsed route parameters.
+        virtual void handle_upgrade(const request&, response& res, UnixSocketAdaptor&&, const routing_params&)
         {
             res = response(404);
             res.end();
+        }
+
+        /// \brief Backward-compatible Unix upgrade entry point without explicit route params.
+        virtual void handle_upgrade(const request& req, response& res, UnixSocketAdaptor&& adaptor)
+        {
+            routing_params empty_routing_params{};
+            handle_upgrade(req, res, std::move(adaptor), empty_routing_params);
         }
 #ifdef CROW_ENABLE_SSL
-        virtual void handle_upgrade(const request&, response& res, SSLAdaptor&&)
+        /// \brief Upgrade entry point that carries parsed route parameters.
+        virtual void handle_upgrade(const request&, response& res, SSLAdaptor&&, const routing_params&)
         {
             res = response(404);
             res.end();
+        }
+
+        /// \brief Backward-compatible SSL upgrade entry point without explicit route params.
+        virtual void handle_upgrade(const request& req, response& res, SSLAdaptor&& adaptor)
+        {
+            routing_params empty_routing_params{};
+            handle_upgrade(req, res, std::move(adaptor), empty_routing_params);
         }
 #endif
 
@@ -338,6 +364,85 @@ namespace crow // NOTE: Already documented in "crow/app.h"
             };
 
         } // namespace routing_handler_call_helper
+
+        namespace websocket_handler_call_helper
+        {
+            /// \brief Maps a websocket onaccept argument type to its index in routing_params.
+            template<typename T, int ParamIndex>
+            struct call_pair
+            {
+                using type = T;
+                static const int param_index = ParamIndex;
+            };
+
+            /// \brief Aggregates context needed to invoke websocket onaccept handler.
+            template<typename H1>
+            struct call_params
+            {
+                H1& handler;
+                const routing_params& params;
+                const request& req;
+                std::optional<response>& res;
+                void** userdata;
+            };
+
+            template<typename F, int NInt, int NUint, int NDouble, int NString, typename S1, typename S2>
+            struct call
+            {};
+
+            template<typename F, int NInt, int NUint, int NDouble, int NString, typename... Args1, typename... Args2>
+            struct call<F, NInt, NUint, NDouble, NString, black_magic::S<int64_t, Args1...>, black_magic::S<Args2...>>
+            {
+                void operator()(F cparams)
+                {
+                    using pushed = typename black_magic::S<Args2...>::template push_back<call_pair<int64_t, NInt>>;
+                    call<F, NInt + 1, NUint, NDouble, NString, black_magic::S<Args1...>, pushed>()(cparams);
+                }
+            };
+
+            template<typename F, int NInt, int NUint, int NDouble, int NString, typename... Args1, typename... Args2>
+            struct call<F, NInt, NUint, NDouble, NString, black_magic::S<uint64_t, Args1...>, black_magic::S<Args2...>>
+            {
+                void operator()(F cparams)
+                {
+                    using pushed = typename black_magic::S<Args2...>::template push_back<call_pair<uint64_t, NUint>>;
+                    call<F, NInt, NUint + 1, NDouble, NString, black_magic::S<Args1...>, pushed>()(cparams);
+                }
+            };
+
+            template<typename F, int NInt, int NUint, int NDouble, int NString, typename... Args1, typename... Args2>
+            struct call<F, NInt, NUint, NDouble, NString, black_magic::S<double, Args1...>, black_magic::S<Args2...>>
+            {
+                void operator()(F cparams)
+                {
+                    using pushed = typename black_magic::S<Args2...>::template push_back<call_pair<double, NDouble>>;
+                    call<F, NInt, NUint, NDouble + 1, NString, black_magic::S<Args1...>, pushed>()(cparams);
+                }
+            };
+
+            template<typename F, int NInt, int NUint, int NDouble, int NString, typename... Args1, typename... Args2>
+            struct call<F, NInt, NUint, NDouble, NString, black_magic::S<std::string, Args1...>, black_magic::S<Args2...>>
+            {
+                void operator()(F cparams)
+                {
+                    using pushed = typename black_magic::S<Args2...>::template push_back<call_pair<std::string, NString>>;
+                    call<F, NInt, NUint, NDouble, NString + 1, black_magic::S<Args1...>, pushed>()(cparams);
+                }
+            };
+
+            template<typename F, int NInt, int NUint, int NDouble, int NString, typename... Args1>
+            struct call<F, NInt, NUint, NDouble, NString, black_magic::S<>, black_magic::S<Args1...>>
+            {
+                void operator()(F cparams)
+                {
+                    cparams.handler(
+                      cparams.req,
+                      cparams.res,
+                      cparams.userdata,
+                      cparams.params.template get<typename Args1::type>(Args1::param_index)...);
+                }
+            };
+        } // namespace websocket_handler_call_helper
     }     // namespace detail
 
 
@@ -441,22 +546,25 @@ namespace crow // NOTE: Already documented in "crow/app.h"
             res.end();
         }
 
-        void handle_upgrade(const request& req, response&, SocketAdaptor&& adaptor) override
+        /// \brief WebSocket upgrade handler receiving parsed route parameters.
+        void handle_upgrade(const request& req, response&, SocketAdaptor&& adaptor, const routing_params& params) override
         {
             max_payload_ = max_payload_override_ ? max_payload_ : app_->websocket_max_payload();
-            crow::websocket::Connection<SocketAdaptor, App>::create(req, std::move(adaptor), app_, max_payload_, subprotocols_, open_handler_, message_handler_, close_handler_, error_handler_, accept_handler_, mirror_protocols_, app_->websocket_tcp_socket_options());
+            crow::websocket::Connection<SocketAdaptor, App>::create(req, std::move(adaptor), app_, max_payload_, subprotocols_, open_handler_, message_handler_, close_handler_, error_handler_, accept_handler_, mirror_protocols_, params, app_->websocket_tcp_socket_options());
         }
 
-        void handle_upgrade(const request& req, response&, UnixSocketAdaptor&& adaptor) override
+        /// \brief WebSocket Unix-socket upgrade handler receiving parsed route parameters.
+        void handle_upgrade(const request& req, response&, UnixSocketAdaptor&& adaptor, const routing_params& params) override
         {
             max_payload_ = max_payload_override_ ? max_payload_ : app_->websocket_max_payload();
-            crow::websocket::Connection<UnixSocketAdaptor, App>::create(req, std::move(adaptor), app_, max_payload_, subprotocols_, open_handler_, message_handler_, close_handler_, error_handler_, accept_handler_, mirror_protocols_, app_->websocket_tcp_socket_options());
+            crow::websocket::Connection<UnixSocketAdaptor, App>::create(req, std::move(adaptor), app_, max_payload_, subprotocols_, open_handler_, message_handler_, close_handler_, error_handler_, accept_handler_, mirror_protocols_, params, app_->websocket_tcp_socket_options());
         }
 
 #ifdef CROW_ENABLE_SSL
-        void handle_upgrade(const request& req, response&, SSLAdaptor&& adaptor) override
+        /// \brief WebSocket SSL upgrade handler receiving parsed route parameters.
+        void handle_upgrade(const request& req, response&, SSLAdaptor&& adaptor, const routing_params& params) override
         {
-            crow::websocket::Connection<SSLAdaptor, App>::create(req, std::move(adaptor), app_, max_payload_, subprotocols_, open_handler_, message_handler_, close_handler_, error_handler_, accept_handler_, mirror_protocols_, app_->websocket_tcp_socket_options());
+            crow::websocket::Connection<SSLAdaptor, App>::create(req, std::move(adaptor), app_, max_payload_, subprotocols_, open_handler_, message_handler_, close_handler_, error_handler_, accept_handler_, mirror_protocols_, params, app_->websocket_tcp_socket_options());
         }
 #endif
 
@@ -534,7 +642,9 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         ///
         self_t& onaccept(std::function<void(const crow::request&, std::optional<crow::response>&, void**)>&& callback)
         {
-            accept_handler_ = std::move(callback);
+            accept_handler_ = [callback = std::move(callback)](const crow::request& req, std::optional<crow::response>& res, void** userdata, const routing_params&) {
+                callback(req, res, userdata);
+            };
             return *this;
         }
 
@@ -555,6 +665,18 @@ namespace crow // NOTE: Already documented in "crow/app.h"
             return *this;
         }
 
+            /// \brief Generic onaccept setter that supports optional route parameters.
+            template<typename Func>
+            self_t& onaccept(Func callback)
+            {
+#ifdef CROW_MSVC_WORKAROUND
+                using function_t = utility::function_traits<decltype(&Func::operator())>;
+#else
+                using function_t = utility::function_traits<Func>;
+#endif
+                return onaccept_impl<function_t>(std::move(callback), std::is_same<typename function_t::result_type, void>{});
+            }
+
         self_t& mirrorprotocols(bool mirror_protocols = true)
         {
             mirror_protocols_ = mirror_protocols;
@@ -567,11 +689,98 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         std::function<void(crow::websocket::connection&, const std::string&, bool)> message_handler_;
         std::function<void(crow::websocket::connection&, const std::string&, uint16_t)> close_handler_;
         std::function<void(crow::websocket::connection&, const std::string&)> error_handler_;
-        std::function<void(const crow::request&, std::optional<crow::response>&, void**)> accept_handler_;
+        std::function<void(const crow::request&, std::optional<crow::response>&, void**, const routing_params&)> accept_handler_;
         bool mirror_protocols_ = false;
         uint64_t max_payload_;
         bool max_payload_override_ = false;
         std::vector<std::string> subprotocols_;
+
+    private:
+        static constexpr std::size_t websocket_onaccept_min_void_args = 3;
+        static constexpr std::size_t websocket_onaccept_min_bool_args = 2;
+
+        template<typename FunctionTraits, typename Func>
+        self_t& onaccept_impl(Func callback, std::true_type)
+        {
+            static_assert(FunctionTraits::arity >= websocket_onaccept_min_void_args,
+                          "websocket route: onaccept handler must accept (const crow::request&, std::optional<crow::response>&, void**) optionally followed by route parameters");
+            static_assert(std::is_same<typename std::decay<typename FunctionTraits::template arg<0>>::type, crow::request>::value,
+                          "websocket route: onaccept first argument must be const crow::request&");
+            static_assert(std::is_same<typename FunctionTraits::template arg<1>, std::optional<crow::response>&>::value,
+                          "websocket route: onaccept second argument must be std::optional<crow::response>&");
+            static_assert(std::is_same<typename FunctionTraits::template arg<2>, void**>::value,
+                          "websocket route: onaccept third argument must be void**");
+            return setup_onaccept_with_response<FunctionTraits>(std::move(callback), black_magic::gen_seq<FunctionTraits::arity - websocket_onaccept_min_void_args>());
+        }
+
+        template<typename FunctionTraits, typename Func>
+        self_t& onaccept_impl(Func callback, std::false_type)
+        {
+            static_assert(std::is_same<typename FunctionTraits::result_type, bool>::value,
+                          "websocket route: onaccept must return void or bool");
+            static_assert(FunctionTraits::arity >= websocket_onaccept_min_bool_args,
+                          "websocket route: bool onaccept handler must accept (const crow::request&, void**) optionally followed by route parameters");
+            static_assert(std::is_same<typename std::decay<typename FunctionTraits::template arg<0>>::type, crow::request>::value,
+                          "websocket route: bool onaccept first argument must be const crow::request&");
+            static_assert(std::is_same<typename FunctionTraits::template arg<1>, void**>::value,
+                          "websocket route: bool onaccept second argument must be void**");
+            return setup_onaccept_bool<FunctionTraits>(std::move(callback), black_magic::gen_seq<FunctionTraits::arity - websocket_onaccept_min_bool_args>());
+        }
+
+        template<typename FunctionTraits, typename Func, unsigned... Indices>
+        self_t& setup_onaccept_with_response(Func callback, black_magic::seq<Indices...>)
+        {
+            using tail_args = black_magic::S<typename black_magic::promote_t<typename std::decay<typename FunctionTraits::template arg<Indices + 3>>::type>...>;
+            if (!black_magic::is_parameter_tag_compatible(
+                  black_magic::get_parameter_tag_runtime(rule_.c_str()),
+                  black_magic::compute_parameter_tag_from_args_list<
+                    typename std::decay<typename FunctionTraits::template arg<Indices + 3>>::type...>::value))
+            {
+                throw std::runtime_error("websocket route: onaccept handler type is mismatched with URL parameters: " + rule_);
+            }
+
+            accept_handler_ = [callback = std::move(callback)](const crow::request& req, std::optional<crow::response>& res, void** userdata, const routing_params& params) mutable {
+                detail::websocket_handler_call_helper::call<
+                  detail::websocket_handler_call_helper::call_params<Func>,
+                  0, 0, 0, 0,
+                  tail_args,
+                  black_magic::S<>>()(
+                  detail::websocket_handler_call_helper::call_params<Func>{callback, params, req, res, userdata});
+            };
+
+            return *this;
+        }
+
+        template<typename FunctionTraits, typename Func, unsigned... Indices>
+        self_t& setup_onaccept_bool(Func callback, black_magic::seq<Indices...>)
+        {
+            using tail_args = black_magic::S<typename black_magic::promote_t<typename std::decay<typename FunctionTraits::template arg<Indices + 2>>::type>...>;
+            if (!black_magic::is_parameter_tag_compatible(
+                  black_magic::get_parameter_tag_runtime(rule_.c_str()),
+                  black_magic::compute_parameter_tag_from_args_list<
+                    typename std::decay<typename FunctionTraits::template arg<Indices + 2>>::type...>::value))
+            {
+                throw std::runtime_error("websocket route: onaccept handler type is mismatched with URL parameters: " + rule_);
+            }
+
+            auto callback_with_response = [callback = std::move(callback)](const crow::request& req, std::optional<crow::response>& res, void** userdata, typename FunctionTraits::template arg<Indices + 2>... args) mutable {
+                if (!callback(req, userdata, std::forward<typename FunctionTraits::template arg<Indices + 2>>(args)...))
+                {
+                    res = crow::response(400);
+                }
+            };
+
+            accept_handler_ = [callback_with_response = std::move(callback_with_response)](const crow::request& req, std::optional<crow::response>& res, void** userdata, const routing_params& params) mutable {
+                detail::websocket_handler_call_helper::call<
+                  detail::websocket_handler_call_helper::call_params<decltype(callback_with_response)>,
+                  0, 0, 0, 0,
+                  tail_args,
+                  black_magic::S<>>()(
+                  detail::websocket_handler_call_helper::call_params<decltype(callback_with_response)>{callback_with_response, params, req, res, userdata});
+            };
+
+            return *this;
+        }
     };
 
     /// Allows the user to assign parameters using functions.
@@ -1478,7 +1687,8 @@ namespace crow // NOTE: Already documented in "crow/app.h"
 
             auto& per_method = per_methods_[static_cast<int>(req.method)];
             auto& rules = per_method.rules;
-            size_t rule_index = per_method.trie.find(req.url).rule_index;
+            auto found = per_method.trie.find(req.url);
+            size_t rule_index = found.rule_index;
 
             if (!rule_index)
             {
@@ -1517,7 +1727,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
 
             try
             {
-                rules[rule_index]->handle_upgrade(req, res, std::move(adaptor));
+                rules[rule_index]->handle_upgrade(req, res, std::move(adaptor), found.r_params);
             }
             catch (...)
             {

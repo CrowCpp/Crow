@@ -121,8 +121,9 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                                std::function<void(crow::websocket::connection&, const std::string&, bool)> message_handler,
                                std::function<void(crow::websocket::connection&, const std::string&, uint16_t)> close_handler,
                                std::function<void(crow::websocket::connection&, const std::string&)> error_handler,
-                               std::function<void(const crow::request&, std::optional<crow::response>&, void**)> accept_handler,
+                               std::function<void(const crow::request&, std::optional<crow::response>&, void**, const routing_params&)> accept_handler,
                                bool mirror_protocols,
+                               const routing_params& params,
                                const detail::socket::tcp_socket_options& tcp_options = {})
             {
                 auto conn = std::shared_ptr<Connection>(new Connection(std::move(adaptor), 
@@ -163,7 +164,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                 {
                     void* ud = nullptr;
                     std::optional<crow::response> res;
-                    conn->accept_handler_(req, res, &ud);
+                    conn->accept_handler_(req, res, &ud, params);
                     if (res)
                     {
                         std::vector<asio::const_buffer> buffers;
@@ -810,7 +811,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                        std::function<void(crow::websocket::connection&, const std::string&, bool)> message_handler,
                        std::function<void(crow::websocket::connection&, const std::string&, uint16_t)> close_handler,
                        std::function<void(crow::websocket::connection&, const std::string&)> error_handler,
-                       std::function<void(const crow::request&, std::optional<crow::response>&, void**)> accept_handler):
+                       std::function<void(const crow::request&, std::optional<crow::response>&, void**, const routing_params&)> accept_handler):
               adaptor_(std::move(adaptor)),
               handler_(handler),
               max_payload_bytes_(max_payload),
@@ -853,7 +854,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
             std::function<void(crow::websocket::connection&, const std::string&, bool)> message_handler_;
             std::function<void(crow::websocket::connection&, const std::string&, uint16_t status_code)> close_handler_;
             std::function<void(crow::websocket::connection&, const std::string&)> error_handler_;
-            std::function<void(const crow::request&, std::optional<crow::response>&, void**)> accept_handler_;
+            std::function<void(const crow::request&, std::optional<crow::response>&, void**, const routing_params&)> accept_handler_;
         };
     } // namespace websocket
 } // namespace crow
