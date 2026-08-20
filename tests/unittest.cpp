@@ -3701,6 +3701,55 @@ TEST_CASE("unmatched_head_does_not_emit_a_body")
     CHECK(response.size() == first_header_end + 4);
 } // unmatched_head_does_not_emit_a_body
 
+TEST_CASE("ordinary_deferred_response_preserves_pipelined_order")
+{
+    SimpleApp app;
+    auto deferred_end_promise = std::make_shared<std::promise<std::function<void()>>>();
+    auto deferred_end = deferred_end_promise->get_future();
+    auto second_route_calls = std::make_shared<std::atomic<std::size_t>>(0);
+
+    CROW_ROUTE(app, "/ordinary-deferred-first")
+    ([deferred_end_promise](const crow::request&, crow::response& res) {
+        deferred_end_promise->set_value([&res] {
+            res.end("first");
+        });
+    });
+    CROW_ROUTE(app, "/ordinary-deferred-second")
+    ([second_route_calls] {
+        second_route_calls->fetch_add(1);
+        return "second";
+    });
+
+    auto server_task = app.bindaddr(LOCALHOST_ADDRESS).port(45451).run_async();
+    BoundedServerShutdown server_shutdown(server_task, [&app] {
+        app.stop();
+    });
+    app.wait_for_server_start();
+    asio::io_context io_context;
+    asio::ip::tcp::socket client(io_context);
+    client.connect(asio::ip::tcp::endpoint(asio::ip::make_address(LOCALHOST_ADDRESS), 45451));
+    const std::string requests = "GET /ordinary-deferred-first HTTP/1.1\r\nHost: localhost\r\n\r\n"
+                                 "GET /ordinary-deferred-second HTTP/1.1\r\nHost: localhost\r\nConnection: close\r\n\r\n";
+    asio::write(client, asio::buffer(requests));
+
+    REQUIRE(deferred_end.wait_for(std::chrono::seconds(5)) == std::future_status::ready);
+    CHECK(second_route_calls->load() == 0);
+    deferred_end.get()();
+    std::string response;
+    const bool connection_closed = receive_until_closed_with_deadline(client, response, std::chrono::seconds(5));
+    asio_error_code close_error;
+    client.close(close_error);
+    server_shutdown.shutdown();
+
+    REQUIRE(connection_closed);
+    CHECK(second_route_calls->load() == 1);
+    const auto first_body = response.find("first");
+    const auto second_body = response.find("second");
+    REQUIRE(first_body != std::string::npos);
+    REQUIRE(second_body != std::string::npos);
+    CHECK(first_body < second_body);
+} // ordinary_deferred_response_preserves_pipelined_order
+
 TEST_CASE("deferred_chunked_response_replaced_by_static_file_replays_pipelined_input")
 {
     SimpleApp app;
