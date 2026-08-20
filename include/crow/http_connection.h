@@ -332,11 +332,6 @@ namespace crow
             {
                 suppress_response_body_for_status();
             }
-            else if (res.skip_body && res.is_chunked_type())
-            {
-                res.notify_chunked_completion(true);
-            }
-
             prepare_buffers();
             if (res.skip_body)
             {
@@ -372,12 +367,12 @@ namespace crow
     private:
         bool response_status_allows_body() const noexcept
         {
-            return res.code >= 200 && res.code != status::NO_CONTENT && res.code != status::NOT_MODIFIED;
+            return res.code != status::CONTINUE && res.code != status::SWITCHING_PROTOCOLS &&
+                   res.code != status::NO_CONTENT && res.code != status::NOT_MODIFIED;
         }
 
         void suppress_response_body_for_status()
         {
-            const bool was_chunked = res.is_chunked_type();
             res.body.clear();
             res.file_info = response::static_file_info{};
             res.chunk_provider_ex_ = nullptr;
@@ -391,10 +386,6 @@ namespace crow
                 res.headers.erase("Transfer-Encoding");
             }
 
-            if (was_chunked)
-            {
-                res.notify_chunked_completion(true);
-            }
         }
 
         void prepare_buffers()
@@ -1189,6 +1180,8 @@ namespace crow
         {
             error_code ec;
             bool write_failed = false;
+            auto completion_handler = std::move(res.chunk_complete_);
+            res.chunk_complete_ = nullptr;
             if (res.body.length() < res_stream_threshold_)
             {
                 res_body_copy_.swap(res.body);
@@ -1232,6 +1225,22 @@ namespace crow
                 res.clear();
                 buffers_.clear();
                 parser_.clear();
+            }
+
+            if (completion_handler)
+            {
+                try
+                {
+                    completion_handler(!write_failed);
+                }
+                catch (const std::exception& e)
+                {
+                    CROW_LOG_ERROR << "An uncaught exception occurred in the chunked completion handler: " << e.what();
+                }
+                catch (...)
+                {
+                    CROW_LOG_ERROR << "An uncaught exception occurred in the chunked completion handler.";
+                }
             }
 
             if (close_connection_ || write_failed) {

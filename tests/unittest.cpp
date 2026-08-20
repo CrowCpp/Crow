@@ -3758,7 +3758,7 @@ TEST_CASE("unsupported_informational_status_uses_normalized_framing")
     server_shutdown.shutdown();
 
     CHECK(response.find("HTTP/1.1 500 Internal Server Error\r\n") == 0);
-    CHECK(response.find("Content-Length: 26\r\n") != std::string::npos);
+    CHECK(response.find("Content-Length: 27\r\n") != std::string::npos);
     const auto second_response = response.find("HTTP/1.1 200 OK\r\n");
     REQUIRE(second_response != std::string::npos);
     CHECK(response.substr(0, second_response).find("500 Internal Server Error\r\n") != std::string::npos);

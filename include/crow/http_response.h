@@ -351,7 +351,10 @@ namespace crow
                     }
                     else
                     {
-                        set_header("Content-Length", std::to_string(body.size()));
+                        if (!is_static_type())
+                        {
+                            set_header("Content-Length", std::to_string(body.size()));
+                        }
                         body = "";
                         manual_length_header = true;
                     }
