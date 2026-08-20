@@ -351,12 +351,16 @@ namespace crow
                     }
                     else
                     {
-                        if (!is_static_type())
+                        if (!is_static_type() && !body.empty())
                         {
                             set_header("Content-Length", std::to_string(body.size()));
+                            manual_length_header = true;
                         }
                         body = "";
-                        manual_length_header = true;
+                        if (is_static_type())
+                        {
+                            manual_length_header = true;
+                        }
                     }
                 }
                 if (complete_request_handler_)

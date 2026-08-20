@@ -385,7 +385,6 @@ namespace crow
                 res.headers.erase("Content-Length");
                 res.headers.erase("Transfer-Encoding");
             }
-
         }
 
         void prepare_buffers()

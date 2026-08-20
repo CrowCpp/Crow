@@ -3698,6 +3698,7 @@ TEST_CASE("unmatched_head_does_not_emit_a_body")
     REQUIRE(connection_closed);
     const auto first_header_end = response.find("\r\n\r\n");
     REQUIRE(first_header_end != std::string::npos);
+    CHECK(response.find("Content-Length: 15\r\n") != std::string::npos);
     CHECK(response.size() == first_header_end + 4);
 } // unmatched_head_does_not_emit_a_body
 
