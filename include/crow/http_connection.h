@@ -328,6 +328,10 @@ namespace crow
             {
                 reject_http_1_0_chunked_response();
             }
+            else if (!response_status_allows_body())
+            {
+                suppress_response_body_for_status();
+            }
             else if (res.skip_body && res.is_chunked_type())
             {
                 res.notify_chunked_completion(true);
@@ -341,7 +345,7 @@ namespace crow
                 res.body.clear();
             }
 
-            const bool write_static = res.is_static_type();
+            const bool write_static = res.is_static_type() && !res.skip_body;
             const bool write_chunked = res.is_chunked_type() && !res.skip_body;
 
             // A synchronous write can immediately parse a pipelined request. Reset the
@@ -366,6 +370,33 @@ namespace crow
         }
 
     private:
+        bool response_status_allows_body() const noexcept
+        {
+            return res.code >= 200 && res.code != status::NO_CONTENT && res.code != status::NOT_MODIFIED;
+        }
+
+        void suppress_response_body_for_status()
+        {
+            const bool was_chunked = res.is_chunked_type();
+            res.body.clear();
+            res.file_info = response::static_file_info{};
+            res.chunk_provider_ex_ = nullptr;
+            res.async_chunk_provider_ = nullptr;
+            res.body_source_ = response::body_source_kind::none;
+            res.manual_length_header = true;
+
+            if (res.code < 200 || res.code == status::NO_CONTENT)
+            {
+                res.headers.erase("Content-Length");
+                res.headers.erase("Transfer-Encoding");
+            }
+
+            if (was_chunked)
+            {
+                res.notify_chunked_completion(true);
+            }
+        }
+
         void prepare_buffers()
         {
             res.complete_request_handler_ = nullptr;
