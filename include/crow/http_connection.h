@@ -9,9 +9,12 @@
 #include <asio.hpp>
 #endif
 
+#include <algorithm>
 #include <atomic>
 #include <chrono>
+#include <cstdint>
 #include <exception>
+#include <fstream>
 #include <limits>
 #include <memory>
 #include <mutex>
@@ -428,6 +431,8 @@ namespace crow
         {
             auto completion_handler = std::move(res.chunk_complete_);
             res.chunk_complete_ = nullptr;
+            const std::string file_path = res.file_info.path;
+            const auto expected_file_size = static_cast<std::uintmax_t>(res.file_info.statbuf.st_size);
             error_code ec;
             asio::write(adaptor_.socket(), buffers_, ec);
             bool write_failed = static_cast<bool>(ec);
@@ -438,21 +443,43 @@ namespace crow
 
             if (!write_failed && res.file_info.statResult == 0)
             {
-                std::ifstream is(res.file_info.path.c_str(), std::ios::in | std::ios::binary);
+                std::ifstream is(file_path.c_str(), std::ios::in | std::ios::binary);
                 std::vector<asio::const_buffer> buffers{1};
                 char buf[16384];
-                is.read(buf, sizeof(buf));
-                while (is.gcount() > 0)
+                std::uintmax_t bytes_read = 0;
+                if (!is)
                 {
-                    buffers[0] = asio::buffer(buf, is.gcount());
-                    ec = do_write_sync(buffers);
-                    if (ec) {
+                    write_failed = true;
+                    CROW_LOG_ERROR << "Unable to open static response file " << file_path << ".";
+                }
+                while (!write_failed && bytes_read < expected_file_size)
+                {
+                    const auto remaining = expected_file_size - bytes_read;
+                    const auto read_size = static_cast<std::streamsize>(std::min<std::uintmax_t>(sizeof(buf), remaining));
+                    is.read(buf, read_size);
+                    const auto count = is.gcount();
+                    if (count <= 0)
+                    {
                         write_failed = true;
-                        CROW_LOG_ERROR << ec << " - buffer write error happened while sending content of file "
-                                       << res.file_info.path << ". Writing stopped premature.";
+                        CROW_LOG_ERROR << "Static response file " << file_path
+                                       << " ended before its advertised Content-Length.";
                         break;
                     }
-                    is.read(buf, sizeof(buf));
+                    buffers[0] = asio::buffer(buf, is.gcount());
+                    ec = do_write_sync(buffers);
+                    if (ec)
+                    {
+                        write_failed = true;
+                        CROW_LOG_ERROR << ec << " - buffer write error happened while sending content of file "
+                                       << file_path << ". Writing stopped premature.";
+                        break;
+                    }
+                    bytes_read += static_cast<std::uintmax_t>(count);
+                }
+                if (!write_failed && (is.bad() || bytes_read != expected_file_size))
+                {
+                    write_failed = true;
+                    CROW_LOG_ERROR << "Unable to read the complete static response file " << file_path << ".";
                 }
             }
             if (close_connection_ || write_failed)
