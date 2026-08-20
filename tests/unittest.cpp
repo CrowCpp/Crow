@@ -3817,6 +3817,133 @@ TEST_CASE("server_stop_cleans_up_queued_deferred_finalization")
     client.socket().close(close_error);
 } // server_stop_cleans_up_queued_deferred_finalization
 
+TEST_CASE("bodyless_statuses_do_not_invoke_chunk_providers")
+{
+    SimpleApp app;
+    auto sync_204_calls = std::make_shared<std::atomic<std::size_t>>(0);
+    auto async_204_calls = std::make_shared<std::atomic<std::size_t>>(0);
+    auto sync_304_calls = std::make_shared<std::atomic<std::size_t>>(0);
+    auto async_304_calls = std::make_shared<std::atomic<std::size_t>>(0);
+    auto sync_204_completion = std::make_shared<ChunkCompletionObservation>();
+    auto async_204_completion = std::make_shared<ChunkCompletionObservation>();
+    auto sync_304_completion = std::make_shared<ChunkCompletionObservation>();
+    auto async_304_completion = std::make_shared<ChunkCompletionObservation>();
+    auto sync_204_result = sync_204_completion->first_result();
+    auto async_204_result = async_204_completion->first_result();
+    auto sync_304_result = sync_304_completion->first_result();
+    auto async_304_result = async_304_completion->first_result();
+
+    CROW_ROUTE(app, "/sync-204")
+    ([sync_204_calls, sync_204_completion](const crow::request&, crow::response& res) {
+        res.code = 204;
+        res.set_chunked_content_provider([sync_204_calls](std::string& chunk) {
+            sync_204_calls->fetch_add(1);
+            chunk = "forbidden";
+            return false;
+        });
+        res.set_chunked_completion_handler(
+          [sync_204_completion](bool clean) {
+              sync_204_completion->record(clean);
+          });
+        res.end();
+    });
+    CROW_ROUTE(app, "/async-204")
+    ([async_204_calls, async_204_completion](const crow::request&, crow::response& res) {
+        res.code = 204;
+        res.set_async_chunked_content_provider(
+          [async_204_calls](crow::response::async_chunk_completion_t complete) {
+              async_204_calls->fetch_add(1);
+              complete(crow::chunk_result::done, "forbidden");
+          });
+        res.set_chunked_completion_handler(
+          [async_204_completion](bool clean) {
+              async_204_completion->record(clean);
+          });
+        res.end();
+    });
+    CROW_ROUTE(app, "/sync-304")
+    ([sync_304_calls, sync_304_completion](const crow::request&, crow::response& res) {
+        res.code = 304;
+        res.set_chunked_content_provider([sync_304_calls](std::string& chunk) {
+            sync_304_calls->fetch_add(1);
+            chunk = "forbidden";
+            return false;
+        });
+        res.set_chunked_completion_handler(
+          [sync_304_completion](bool clean) {
+              sync_304_completion->record(clean);
+          });
+        res.end();
+    });
+    CROW_ROUTE(app, "/async-304")
+    ([async_304_calls, async_304_completion](const crow::request&, crow::response& res) {
+        res.code = 304;
+        res.set_async_chunked_content_provider(
+          [async_304_calls](crow::response::async_chunk_completion_t complete) {
+              async_304_calls->fetch_add(1);
+              complete(crow::chunk_result::done, "forbidden");
+          });
+        res.set_chunked_completion_handler(
+          [async_304_completion](bool clean) {
+              async_304_completion->record(clean);
+          });
+        res.end();
+    });
+
+    auto server_task = app.bindaddr(LOCALHOST_ADDRESS).port(45451).run_async();
+    BoundedServerShutdown server_shutdown(server_task, [&app] {
+        app.stop();
+    });
+    app.wait_for_server_start();
+
+    const auto request = [](const std::string& path) {
+        HttpClient client(LOCALHOST_ADDRESS, 45451);
+        client.send("GET " + path + " HTTP/1.1\r\nHost: localhost\r\nConnection: close\r\n\r\n");
+        std::string response;
+        const bool closed = receive_until_closed_with_deadline(client.socket(), response, std::chrono::seconds(5));
+        asio_error_code close_error;
+        client.socket().close(close_error);
+        REQUIRE(closed);
+        return response;
+    };
+
+    const auto sync_204_response = request("/sync-204");
+    const auto async_204_response = request("/async-204");
+    const auto sync_304_response = request("/sync-304");
+    const auto async_304_response = request("/async-304");
+    server_shutdown.shutdown();
+
+    const auto check_bodyless = [](const std::string& response) {
+        const auto header_end = response.find("\r\n\r\n");
+        REQUIRE(header_end != std::string::npos);
+        CHECK(response.size() == header_end + 4);
+    };
+    check_bodyless(sync_204_response);
+    check_bodyless(async_204_response);
+    check_bodyless(sync_304_response);
+    check_bodyless(async_304_response);
+    CHECK(sync_204_response.find("Transfer-Encoding:") == std::string::npos);
+    CHECK(async_204_response.find("Transfer-Encoding:") == std::string::npos);
+    CHECK(sync_304_response.find("Transfer-Encoding: chunked") != std::string::npos);
+    CHECK(async_304_response.find("Transfer-Encoding: chunked") != std::string::npos);
+    CHECK(sync_204_calls->load() == 0);
+    CHECK(async_204_calls->load() == 0);
+    CHECK(sync_304_calls->load() == 0);
+    CHECK(async_304_calls->load() == 0);
+    CHECK(sync_204_completion->calls() == 1);
+    CHECK(async_204_completion->calls() == 1);
+    CHECK(sync_304_completion->calls() == 1);
+    CHECK(async_304_completion->calls() == 1);
+    REQUIRE(sync_204_result.wait_for(std::chrono::seconds(1)) == std::future_status::ready);
+    REQUIRE(async_204_result.wait_for(std::chrono::seconds(1)) == std::future_status::ready);
+    REQUIRE(sync_304_result.wait_for(std::chrono::seconds(1)) == std::future_status::ready);
+    REQUIRE(async_304_result.wait_for(std::chrono::seconds(1)) == std::future_status::ready);
+    CHECK(sync_204_result.get() == true);
+    CHECK(async_204_result.get() == true);
+    CHECK(sync_304_result.get() == true);
+    CHECK(async_304_result.get() == true);
+} // bodyless_statuses_do_not_invoke_chunk_providers
+
 TEST_CASE("deferred_chunked_response_replaced_by_static_file_replays_pipelined_input")
 {
     SimpleApp app;
