@@ -335,11 +335,20 @@ namespace crow
                 res.body.clear();
             }
 
-            if (res.is_static_type())
+            const bool write_static = res.is_static_type();
+            const bool write_chunked = res.is_chunked_type() && !res.skip_body;
+
+            // A synchronous write can immediately parse a pipelined request. Reset the
+            // completed request's flags before entering any write path so reentrant
+            // routing sees independent response state.
+            res.manual_length_header = false;
+            res.skip_body = false;
+
+            if (write_static)
             {
                 do_write_static();
             }
-            else if (res.is_chunked_type() && !res.skip_body)
+            else if (write_chunked)
             {
                 do_write_chunked();
             }
@@ -348,11 +357,6 @@ namespace crow
                 do_write_general();
             }
 
-            // These request-specific flags must only be reset after response finalization
-            // has consumed them on the connection executor. response::end() can be called
-            // from another thread and may only queue complete_request().
-            res.manual_length_header = false;
-            res.skip_body = false;
         }
 
     private:
