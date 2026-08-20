@@ -261,7 +261,7 @@ namespace crow
                     };
                     need_to_call_after_handlers_ = true;
                     handler_->handle(req_, res, routing_handle_result_);
-                    if (res.is_chunked_type() || !res.completed_)
+                    if (need_to_call_after_handlers_)
                         parser_.stop_after_message();
                     if (add_keep_alive_ && !res.completed_)
                         res.set_header("connection", "Keep-Alive");
