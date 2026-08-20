@@ -56,17 +56,13 @@ namespace crow
         template<typename ConnectionType>
         bool track(const std::shared_ptr<ConnectionType>& connection)
         {
-            std::weak_ptr<ConnectionType> weak_connection = connection;
             std::lock_guard<std::mutex> lock(mutex_);
             if (shutting_down_)
             {
                 return false;
             }
-            connections_[connection.get()] = [weak_connection] {
-                if (auto tracked_connection = weak_connection.lock())
-                {
-                    tracked_connection->shutdown_on_worker_exit();
-                }
+            connections_[connection.get()] = [connection] {
+                connection->shutdown_on_worker_exit();
             };
             return true;
         }
@@ -78,15 +74,23 @@ namespace crow
         }
 
         void shutdown_all() noexcept {
-            std::unordered_map<const void*, std::function<void()>> connections;
+            std::vector<std::function<void()>> shutdown_callbacks;
             {
                 std::lock_guard<std::mutex> lock(mutex_);
+                if (shutting_down_)
+                {
+                    return;
+                }
                 shutting_down_ = true;
-                connections = std::move(connections_);
-                connections_.clear();
+                shutdown_callbacks.reserve(connections_.size());
+                for (const auto& item : connections_)
+                {
+                    shutdown_callbacks.push_back(item.second);
+                }
             }
-            for (auto& item : connections) {
-                item.second();
+            for (auto& shutdown : shutdown_callbacks)
+            {
+                shutdown();
             }
         }
 
@@ -116,6 +120,7 @@ namespace crow
                    std::shared_ptr<detail::connection_lifecycle_registry> lifecycle_registry = nullptr):
           adaptor_(io_context, adaptor_ctx_), handler_(handler), parser_(this), req_(parser_.req), server_name_(server_name), middlewares_(middlewares), get_cached_date_str(get_cached_date_str_f), task_timer_(task_timer), res_stream_threshold_(handler->stream_threshold()), queue_length_(queue_length), lifecycle_registry_(lifecycle_registry)
         {
+            res.deferred_lifecycle_ = std::make_shared<response::deferred_response_lifecycle>();
             queue_length_++;
 #ifdef CROW_ENABLE_DEBUG
             connectionCount++;
@@ -421,6 +426,8 @@ namespace crow
 
         void do_write_static()
         {
+            auto completion_handler = std::move(res.chunk_complete_);
+            res.chunk_complete_ = nullptr;
             error_code ec;
             asio::write(adaptor_.socket(), buffers_, ec);
             bool write_failed = static_cast<bool>(ec);
@@ -454,6 +461,8 @@ namespace crow
                 adaptor_.close();
                 CROW_LOG_DEBUG << this << " from write (static)";
             }
+
+            response::invoke_chunked_completion(std::move(completion_handler), !write_failed);
 
             res.end();
             res.clear();
@@ -692,7 +701,6 @@ namespace crow
 
         void shutdown_on_worker_exit() noexcept {
             shutting_down_ = true;
-            lifecycle_tracked_ = false;
             auto state = std::move(async_chunk_transfer_);
             buffered_input_.clear();
             if (state) {
@@ -708,15 +716,36 @@ namespace crow
             adaptor_.close();
 
             if (state) {
+                untrack_connection_lifecycle();
                 state->notify_completion(false);
             }
             else
             {
-                res.complete_request_handler_ = nullptr;
-                res.is_alive_helper_ = nullptr;
-                res.notify_chunked_completion(false);
+                std::unique_lock<std::recursive_mutex> lifecycle_lock(res.deferred_lifecycle_->mutex);
+                res.deferred_lifecycle_->stopped = true;
+                auto completion_handler = std::move(res.chunk_complete_);
+                res.chunk_complete_ = nullptr;
                 res.clear();
+                res.is_alive_helper_ = nullptr;
+                std::weak_ptr<Connection> weak_self = this->shared_from_this();
+                res.complete_request_handler_ = [weak_self] {
+                    if (auto self = weak_self.lock())
+                    {
+                        self->release_stopped_deferred_response();
+                    }
+                };
+                lifecycle_lock.unlock();
+                response::invoke_chunked_completion(std::move(completion_handler), false);
             }
+        }
+
+        void release_stopped_deferred_response() noexcept
+        {
+            {
+                std::lock_guard<std::recursive_mutex> lifecycle_lock(res.deferred_lifecycle_->mutex);
+                res.complete_request_handler_ = nullptr;
+            }
+            untrack_connection_lifecycle();
         }
 
         void destroy_async_chunk_transfer() noexcept {
@@ -742,11 +771,12 @@ namespace crow
 
         bool track_connection_lifecycle()
         {
-            if (!lifecycle_registry_ || lifecycle_tracked_)
+            auto lifecycle_registry = lifecycle_registry_.lock();
+            if (!lifecycle_registry || lifecycle_tracked_)
             {
                 return true;
             }
-            if (!lifecycle_registry_->track(this->shared_from_this()))
+            if (!lifecycle_registry->track(this->shared_from_this()))
             {
                 return false;
             }
@@ -756,9 +786,10 @@ namespace crow
 
         void untrack_connection_lifecycle() noexcept
         {
-            if (lifecycle_registry_ && lifecycle_tracked_)
+            auto lifecycle_registry = lifecycle_registry_.lock();
+            if (lifecycle_registry && lifecycle_tracked_)
             {
-                lifecycle_registry_->untrack(this);
+                lifecycle_registry->untrack(this);
                 lifecycle_tracked_ = false;
             }
         }
@@ -1529,7 +1560,7 @@ namespace crow
         size_t res_stream_threshold_;
 
         std::atomic<unsigned int>& queue_length_;
-        std::shared_ptr<detail::connection_lifecycle_registry> lifecycle_registry_;
+        std::weak_ptr<detail::connection_lifecycle_registry> lifecycle_registry_;
     };
 
 } // namespace crow

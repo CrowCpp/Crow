@@ -1,5 +1,7 @@
 #pragma once
 #include <exception>
+#include <memory>
+#include <mutex>
 #include <string>
 #include <unordered_map>
 #include <ios>
@@ -56,6 +58,12 @@ namespace crow
         friend class Router;
 
     private:
+        struct deferred_response_lifecycle
+        {
+            std::recursive_mutex mutex;
+            bool stopped{false};
+        };
+
         enum class body_source_kind
         {
             none,
@@ -331,6 +339,22 @@ namespace crow
         /// Set the response completion flag and call the handler (to send the response).
         void end()
         {
+            std::unique_lock<std::recursive_mutex> lifecycle_lock;
+            if (deferred_lifecycle_)
+            {
+                lifecycle_lock = std::unique_lock<std::recursive_mutex>(deferred_lifecycle_->mutex);
+                if (deferred_lifecycle_->stopped)
+                {
+                    completed_ = true;
+                    auto stopped_handler = complete_request_handler_;
+                    lifecycle_lock.unlock();
+                    if (stopped_handler)
+                    {
+                        stopped_handler();
+                    }
+                    return;
+                }
+            }
             if (!completed_)
             {
                 completed_ = true;
@@ -363,9 +387,14 @@ namespace crow
                         }
                     }
                 }
-                if (complete_request_handler_)
+                auto completion_handler = complete_request_handler_;
+                if (lifecycle_lock.owns_lock())
                 {
-                    complete_request_handler_();
+                    lifecycle_lock.unlock();
+                }
+                if (completion_handler)
+                {
+                    completion_handler();
                 }
             }
         }
@@ -373,6 +402,11 @@ namespace crow
         /// Same as end() except it adds a body part right before ending.
         void end(const std::string& body_part)
         {
+            std::unique_lock<std::recursive_mutex> lifecycle_lock;
+            if (deferred_lifecycle_)
+            {
+                lifecycle_lock = std::unique_lock<std::recursive_mutex>(deferred_lifecycle_->mutex);
+            }
             body += body_part;
             end();
         }
@@ -509,7 +543,6 @@ namespace crow
             // sent side by side while the raw file bytes go out unframed.
             chunk_provider_ex_ = nullptr;
             async_chunk_provider_ = nullptr;
-            chunk_complete_ = nullptr;
             body_source_ = body_source_kind::none;
             headers.erase("Transfer-Encoding");
             manual_length_header = false;
@@ -665,6 +698,7 @@ namespace crow
         bool completed_{};
         std::function<void()> complete_request_handler_;
         std::function<bool()> is_alive_helper_;
+        std::shared_ptr<deferred_response_lifecycle> deferred_lifecycle_;
         static_file_info file_info;
         chunk_provider_ex_t chunk_provider_ex_;
         async_chunk_provider_t async_chunk_provider_;
@@ -675,6 +709,11 @@ namespace crow
         {
             auto completion_handler = std::move(chunk_complete_);
             chunk_complete_ = nullptr;
+            invoke_chunked_completion(std::move(completion_handler), clean);
+        }
+
+        static void invoke_chunked_completion(chunk_complete_t completion_handler, bool clean) noexcept
+        {
             if (!completion_handler)
             {
                 return;
