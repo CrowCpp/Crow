@@ -251,6 +251,11 @@ namespace crow
 
                 if (!res.completed_)
                 {
+                    if (!track_connection_lifecycle())
+                    {
+                        shutdown_on_worker_exit();
+                        return;
+                    }
                     res.complete_request_handler_ = [self] {
                         asio::dispatch(self->adaptor_.get_io_context(), [self] { self->complete_request(); });
                     };
@@ -275,6 +280,7 @@ namespace crow
         /// Call the after handle middleware and send the write the response to the connection.
         void complete_request()
         {
+            untrack_connection_lifecycle();
             CROW_LOG_INFO << "Response: " << this << ' ' << req_.raw_url << ' ' << res.code << ' ' << close_connection_;
             res.is_alive_helper_ = nullptr;
 
@@ -586,13 +592,10 @@ namespace crow
             parser_.stop_after_message();
 
             auto self = this->shared_from_this();
-            if (lifecycle_registry_)
+            if (!track_connection_lifecycle())
             {
-                if (!lifecycle_registry_->track(self))
-                {
-                    shutdown_on_worker_exit();
-                    return;
-                }
+                shutdown_on_worker_exit();
+                return;
             }
             asio::async_write(
                 adaptor_.socket(), buffers_, [self, state](const error_code& ec, std::size_t /*bytes_transferred*/) {
@@ -666,10 +669,10 @@ namespace crow
 
         void shutdown_on_worker_exit() noexcept {
             shutting_down_ = true;
+            lifecycle_tracked_ = false;
             auto state = std::move(async_chunk_transfer_);
             buffered_input_.clear();
             if (state) {
-                untrack_async_chunk_transfer();
                 // The worker has stopped dispatching handlers. Keep buffers referenced by
                 // outstanding writes intact until Asio releases their handlers.
                 invalidate_async_chunk_request(state);
@@ -684,6 +687,13 @@ namespace crow
             if (state) {
                 state->notify_completion(false);
             }
+            else
+            {
+                res.complete_request_handler_ = nullptr;
+                res.is_alive_helper_ = nullptr;
+                res.notify_chunked_completion(false);
+                res.clear();
+            }
         }
 
         void destroy_async_chunk_transfer() noexcept {
@@ -694,7 +704,7 @@ namespace crow
                 return;
             }
 
-            untrack_async_chunk_transfer();
+            untrack_connection_lifecycle();
 
             // Invalidate before destruction so racing completion cannot post to a dead executor.
             invalidate_async_chunk_request(state);
@@ -707,11 +717,26 @@ namespace crow
             state->notify_completion(false);
         }
 
-        void untrack_async_chunk_transfer() noexcept
+        bool track_connection_lifecycle()
         {
-            if (lifecycle_registry_)
+            if (!lifecycle_registry_ || lifecycle_tracked_)
+            {
+                return true;
+            }
+            if (!lifecycle_registry_->track(this->shared_from_this()))
+            {
+                return false;
+            }
+            lifecycle_tracked_ = true;
+            return true;
+        }
+
+        void untrack_connection_lifecycle() noexcept
+        {
+            if (lifecycle_registry_ && lifecycle_tracked_)
             {
                 lifecycle_registry_->untrack(this);
+                lifecycle_tracked_ = false;
             }
         }
 
@@ -955,7 +980,7 @@ namespace crow
             state->provider = nullptr;
             state->buffers.clear();
             async_chunk_transfer_.reset();
-            untrack_async_chunk_transfer();
+            untrack_connection_lifecycle();
 
             if (force_close) {
                 adaptor_.shutdown_readwrite();
@@ -1451,6 +1476,7 @@ namespace crow
         bool add_keep_alive_{};
         bool read_in_progress_{};
         bool shutting_down_{};
+        bool lifecycle_tracked_{};
 
         std::tuple<Middlewares...>* middlewares_;
         detail::context<Middlewares...> ctx_;
