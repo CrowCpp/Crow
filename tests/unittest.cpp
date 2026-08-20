@@ -3618,6 +3618,62 @@ TEST_CASE("deferred_head_chunked_response_replays_pipelined_input")
     CHECK(response.find("second", first_header_end + 4) != std::string::npos);
 } // deferred_head_chunked_response_replays_pipelined_input
 
+TEST_CASE("deferred_head_response_does_not_clear_pipelined_head_state")
+{
+    SimpleApp app;
+    auto first_end_promise = std::make_shared<std::promise<std::function<void()>>>();
+    auto first_end = first_end_promise->get_future();
+    auto second_end_promise = std::make_shared<std::promise<std::function<void()>>>();
+    auto second_end = second_end_promise->get_future();
+
+    CROW_ROUTE(app, "/first-deferred-head")
+    ([first_end_promise](const crow::request&, crow::response& res) {
+        res.set_async_chunked_content_provider([](crow::response::async_chunk_completion_t) {});
+        first_end_promise->set_value([&res] {
+            res.end();
+        });
+    });
+    CROW_ROUTE(app, "/second-deferred-head")
+    ([second_end_promise](const crow::request&, crow::response& res) {
+        second_end_promise->set_value([&res] {
+            res.end("second");
+        });
+    });
+
+    auto server_task = app.bindaddr(LOCALHOST_ADDRESS).port(45451).run_async();
+    BoundedServerShutdown server_shutdown(server_task, [&app] {
+        app.stop();
+    });
+    app.wait_for_server_start();
+    asio::io_context io_context;
+    asio::ip::tcp::socket client(io_context);
+    client.connect(asio::ip::tcp::endpoint(asio::ip::make_address(LOCALHOST_ADDRESS), 45451));
+    const std::string requests = "HEAD /first-deferred-head HTTP/1.1\r\nHost: localhost\r\n\r\n"
+                                 "HEAD /second-deferred-head HTTP/1.1\r\nHost: localhost\r\nConnection: close\r\n\r\n";
+    asio::write(client, asio::buffer(requests));
+
+    REQUIRE(first_end.wait_for(std::chrono::seconds(5)) == std::future_status::ready);
+    first_end.get()();
+    REQUIRE(second_end.wait_for(std::chrono::seconds(5)) == std::future_status::ready);
+    second_end.get()();
+    std::string response;
+    const bool connection_closed = receive_until_closed_with_deadline(client, response, std::chrono::seconds(5));
+    asio_error_code close_error;
+    client.close(close_error);
+    server_shutdown.shutdown();
+
+    REQUIRE(connection_closed);
+    const auto first_header_end = response.find("\r\n\r\n");
+    REQUIRE(first_header_end != std::string::npos);
+    const auto second_header_start = first_header_end + 4;
+    REQUIRE(response.compare(second_header_start, 8, "HTTP/1.1") == 0);
+    const auto second_header_end = response.find("\r\n\r\n", second_header_start);
+    REQUIRE(second_header_end != std::string::npos);
+    const auto second_headers = response.substr(second_header_start, second_header_end + 4 - second_header_start);
+    CHECK(second_headers.find("Content-Length: 6") != std::string::npos);
+    CHECK(response.size() == second_header_end + 4);
+} // deferred_head_response_does_not_clear_pipelined_head_state
+
 TEST_CASE("deferred_chunked_response_replaced_by_static_file_replays_pipelined_input")
 {
     SimpleApp app;
