@@ -747,14 +747,14 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         {
             inline std::string& get_template_base_directory_ref()
             {
-                static std::string template_base_directory = "templates";
+                static thread_local std::string template_base_directory = "templates";
                 return template_base_directory;
             }
 
             /// A base directory not related to any blueprint
             inline std::string& get_global_template_base_directory_ref()
             {
-                static std::string template_base_directory = "templates";
+                static thread_local std::string template_base_directory = "templates";
                 return template_base_directory;
             }
         } // namespace detail
