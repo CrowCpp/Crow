@@ -63,9 +63,9 @@ namespace crow
                 return false;
             }
             connections_[connection.get()] = [weak_connection] {
-                if (auto connection = weak_connection.lock())
+                if (auto tracked_connection = weak_connection.lock())
                 {
-                    connection->shutdown_on_worker_exit();
+                    tracked_connection->shutdown_on_worker_exit();
                 }
             };
             return true;
@@ -658,19 +658,21 @@ namespace crow
             // when the worker exits. Renewing the longest timer interval keeps an
             // arbitrarily slow provider alive without imposing a provider deadline.
             state->lifetime_task_id = task_timer_.schedule(
-                [self, weak_state] {
-                    auto state = weak_state.lock();
-                    if (!state) {
-                        return;
-                    }
+              [self, weak_state] {
+                  auto active_state = weak_state.lock();
+                  if (!active_state)
+                  {
+                      return;
+                  }
 
-                    state->lifetime_task_armed = false;
-                    state->lifetime_task_id    = 0;
-                    if (self->async_chunk_transfer_ == state && state->phase == AsyncChunkPhase::requesting_chunk) {
-                        self->arm_async_chunk_lifetime(state);
-                    }
-                },
-                std::numeric_limits<uint8_t>::max());
+                  active_state->lifetime_task_armed = false;
+                  active_state->lifetime_task_id = 0;
+                  if (self->async_chunk_transfer_ == active_state && active_state->phase == AsyncChunkPhase::requesting_chunk)
+                  {
+                      self->arm_async_chunk_lifetime(active_state);
+                  }
+              },
+              std::numeric_limits<uint8_t>::max());
             state->lifetime_task_armed = true;
         }
 
@@ -812,17 +814,18 @@ namespace crow
                 const auto publish = [request](response::chunk_result published_result, std::string published_chunk) {
                     // Posting is unconditional, including when the provider completed inline.
                     post_async_chunk_completion(*request->io_context,
-                                                [weak_self  = request->connection,
+                                                [weak_self = request->connection,
                                                  weak_state = request->transfer,
                                                  published_result,
                                                  published_chunk = std::move(published_chunk)]() mutable {
-                                                    auto self  = weak_self.lock();
-                                                    auto state = weak_state.lock();
-                                                    if (!self || !state) {
+                                                    auto active_connection = weak_self.lock();
+                                                    auto active_state = weak_state.lock();
+                                                    if (!active_connection || !active_state)
+                                                    {
                                                         return;
                                                     }
-                                                    self->handle_async_chunk_result(
-                                                        state, published_result, std::move(published_chunk));
+                                                    active_connection->handle_async_chunk_result(
+                                                      active_state, published_result, std::move(published_chunk));
                                                 });
                 };
 

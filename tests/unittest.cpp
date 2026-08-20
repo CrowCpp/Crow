@@ -388,9 +388,9 @@ public:
     using context       = PausingSocketContext;
     using executor_type = asio::ip::tcp::socket::executor_type;
 
-    PausingSocketAdaptor(asio::io_context& io_context, context* context)
-        : crow::SocketAdaptor(io_context, nullptr)
-        , context_(context) {
+    PausingSocketAdaptor(asio::io_context& io_context, context* socket_context):
+      crow::SocketAdaptor(io_context, nullptr), context_(socket_context)
+    {
     }
 
     ~PausingSocketAdaptor() {
