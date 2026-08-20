@@ -3674,6 +3674,33 @@ TEST_CASE("deferred_head_response_does_not_clear_pipelined_head_state")
     CHECK(response.size() == second_header_end + 4);
 } // deferred_head_response_does_not_clear_pipelined_head_state
 
+TEST_CASE("unmatched_head_does_not_emit_a_body")
+{
+    SimpleApp app;
+
+    auto server_task = app.bindaddr(LOCALHOST_ADDRESS).port(45451).run_async();
+    BoundedServerShutdown server_shutdown(server_task, [&app] {
+        app.stop();
+    });
+    app.wait_for_server_start();
+    asio::io_context io_context;
+    asio::ip::tcp::socket client(io_context);
+    client.connect(asio::ip::tcp::endpoint(asio::ip::make_address(LOCALHOST_ADDRESS), 45451));
+    const std::string request = "HEAD /missing HTTP/1.1\r\nHost: localhost\r\nConnection: close\r\n\r\n";
+    asio::write(client, asio::buffer(request));
+
+    std::string response;
+    const bool connection_closed = receive_until_closed_with_deadline(client, response, std::chrono::seconds(5));
+    asio_error_code close_error;
+    client.close(close_error);
+    server_shutdown.shutdown();
+
+    REQUIRE(connection_closed);
+    const auto first_header_end = response.find("\r\n\r\n");
+    REQUIRE(first_header_end != std::string::npos);
+    CHECK(response.size() == first_header_end + 4);
+} // unmatched_head_does_not_emit_a_body
+
 TEST_CASE("deferred_chunked_response_replaced_by_static_file_replays_pipelined_input")
 {
     SimpleApp app;
