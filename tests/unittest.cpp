@@ -3750,6 +3750,73 @@ TEST_CASE("ordinary_deferred_response_preserves_pipelined_order")
     CHECK(first_body < second_body);
 } // ordinary_deferred_response_preserves_pipelined_order
 
+TEST_CASE("server_stop_cleans_up_queued_deferred_finalization")
+{
+    SimpleApp app;
+    auto deferred_end_promise = std::make_shared<std::promise<std::function<void()>>>();
+    auto deferred_end = deferred_end_promise->get_future();
+    auto blocker_started_promise = std::make_shared<std::promise<void>>();
+    auto blocker_started = blocker_started_promise->get_future();
+    auto blocker_release_promise = std::make_shared<std::promise<void>>();
+    auto blocker_release = blocker_release_promise->get_future().share();
+    auto provider_calls = std::make_shared<std::atomic<std::size_t>>(0);
+    auto completion_observation = std::make_shared<ChunkCompletionObservation>();
+    auto completion_result = completion_observation->first_result();
+    auto provider_marker_holder = std::make_shared<std::shared_ptr<int>>(std::make_shared<int>(1));
+    std::weak_ptr<int> provider_marker_observer = *provider_marker_holder;
+
+    CROW_ROUTE(app, "/queued-deferred-finalization")
+    ([deferred_end_promise,
+      blocker_started_promise,
+      blocker_release,
+      provider_calls,
+      completion_observation,
+      provider_marker_holder](const crow::request& req, crow::response& res) {
+        auto provider_marker = std::move(*provider_marker_holder);
+        res.set_async_chunked_content_provider(
+          [provider_calls, provider_marker](crow::response::async_chunk_completion_t) {
+              provider_calls->fetch_add(1);
+          });
+        res.set_chunked_completion_handler(
+          [completion_observation](bool clean) {
+              completion_observation->record(clean);
+          });
+        asio::post(*req.io_context, [blocker_started_promise, blocker_release] {
+            blocker_started_promise->set_value();
+            blocker_release.wait();
+        });
+        deferred_end_promise->set_value([&res] {
+            res.end();
+        });
+    });
+    auto server_task = app.bindaddr(LOCALHOST_ADDRESS).port(45451).run_async();
+    BoundedServerShutdown server_shutdown(server_task, [&app] {
+        app.stop();
+    });
+    app.wait_for_server_start();
+    HttpClient client(LOCALHOST_ADDRESS, 45451);
+    client.send("GET /queued-deferred-finalization HTTP/1.1\r\nHost: localhost\r\n\r\n");
+
+    REQUIRE(deferred_end.wait_for(std::chrono::seconds(5)) == std::future_status::ready);
+    REQUIRE(blocker_started.wait_for(std::chrono::seconds(5)) == std::future_status::ready);
+    deferred_end.get()();
+    app.stop();
+    blocker_release_promise->set_value();
+
+    REQUIRE(server_task.wait_for(std::chrono::seconds(5)) == std::future_status::ready);
+    const auto completion_status = completion_result.wait_for(std::chrono::seconds(1));
+    CHECK(completion_status == std::future_status::ready);
+    if (completion_status == std::future_status::ready)
+    {
+        CHECK(completion_result.get() == false);
+    }
+    CHECK(completion_observation->calls() == 1);
+    CHECK(provider_calls->load() == 0);
+    CHECK(provider_marker_observer.expired());
+    asio_error_code close_error;
+    client.socket().close(close_error);
+} // server_stop_cleans_up_queued_deferred_finalization
+
 TEST_CASE("deferred_chunked_response_replaced_by_static_file_replays_pipelined_input")
 {
     SimpleApp app;
