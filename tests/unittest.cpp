@@ -2729,6 +2729,24 @@ TEST_CASE("async_chunk_transfer_registry_shuts_down_tracked_connections_once")
     CHECK_FALSE(registry.track(active_transfer));
 } // async_chunk_transfer_registry_shuts_down_tracked_connections_once
 
+TEST_CASE("async_chunk_transfer_registry_retains_connections_until_untracked")
+{
+    crow::detail::connection_lifecycle_registry registry;
+    auto connection = std::make_shared<LifecycleRegistryProbe>();
+    auto* connection_key = connection.get();
+    std::weak_ptr<LifecycleRegistryProbe> connection_observer = connection;
+
+    REQUIRE(registry.track(connection));
+    connection.reset();
+    registry.shutdown_all();
+
+    REQUIRE_FALSE(connection_observer.expired());
+    CHECK(connection_observer.lock()->shutdown_calls() == 1);
+
+    registry.untrack(connection_key);
+    CHECK(connection_observer.expired());
+} // async_chunk_transfer_registry_retains_connections_until_untracked
+
 TEST_CASE("async_chunk_transfer_registry_serializes_untrack_with_shutdown")
 {
     crow::detail::connection_lifecycle_registry registry;
@@ -3881,6 +3899,70 @@ TEST_CASE("server_stop_cleans_up_queued_deferred_finalization")
     client.socket().close(close_error);
 } // server_stop_cleans_up_queued_deferred_finalization
 
+TEST_CASE("deferred_end_after_worker_shutdown_is_safe")
+{
+    SimpleApp app;
+    auto deferred_end_promise = std::make_shared<std::promise<std::function<void()>>>();
+    auto deferred_end = deferred_end_promise->get_future();
+    auto completion_observation = std::make_shared<ChunkCompletionObservation>();
+    auto completion_result = completion_observation->first_result();
+    auto provider_marker_holder = std::make_shared<std::shared_ptr<int>>(std::make_shared<int>(1));
+    std::weak_ptr<int> provider_marker_observer = *provider_marker_holder;
+    PausingSocketContext socket_context;
+    auto connection_destroyed = socket_context.started_connection_destroyed_future();
+
+    CROW_ROUTE(app, "/late-deferred-end")
+    ([deferred_end_promise, completion_observation, provider_marker_holder](const crow::request&, crow::response& res) {
+        auto provider_marker = std::move(*provider_marker_holder);
+        res.set_async_chunked_content_provider(
+          [provider_marker](crow::response::async_chunk_completion_t) {
+              static_cast<void>(provider_marker);
+          });
+        res.set_chunked_completion_handler(
+          [completion_observation](bool clean) {
+              completion_observation->record(clean);
+          });
+        deferred_end_promise->set_value([&res] {
+            res.end();
+        });
+    });
+
+    app.validate();
+    std::tuple<> middlewares;
+    using DeferredServer = crow::Server<crow::SimpleApp, crow::TCPAcceptor, PausingSocketAdaptor>;
+    DeferredServer server(&app,
+                          asio::ip::tcp::endpoint(asio::ip::make_address(LOCALHOST_ADDRESS), 45451),
+                          "Crow/Test",
+                          &middlewares,
+                          2,
+                          5,
+                          &socket_context);
+    auto server_task = std::async(std::launch::async, [&server] {
+        server.run();
+    });
+    BoundedServerShutdown server_shutdown(server_task, [&server] {
+        server.stop();
+    });
+    REQUIRE(server.wait_for_start(std::chrono::steady_clock::now() + std::chrono::seconds(3)) == std::cv_status::no_timeout);
+    HttpClient client(LOCALHOST_ADDRESS, 45451);
+    client.send("GET /late-deferred-end HTTP/1.1\r\nHost: localhost\r\n\r\n");
+
+    REQUIRE(deferred_end.wait_for(std::chrono::seconds(5)) == std::future_status::ready);
+    server.stop();
+    REQUIRE(server_task.wait_for(std::chrono::seconds(5)) == std::future_status::ready);
+    REQUIRE(completion_result.wait_for(std::chrono::seconds(1)) == std::future_status::ready);
+    CHECK(completion_result.get() == false);
+    CHECK(provider_marker_observer.expired());
+    CHECK(connection_destroyed.wait_for(std::chrono::milliseconds(100)) == std::future_status::timeout);
+
+    deferred_end.get()();
+    CHECK(completion_observation->calls() == 1);
+    CHECK(connection_destroyed.wait_for(std::chrono::seconds(1)) == std::future_status::ready);
+
+    asio_error_code close_error;
+    client.socket().close(close_error);
+} // deferred_end_after_worker_shutdown_is_safe
+
 TEST_CASE("bodyless_statuses_do_not_invoke_chunk_providers")
 {
     SimpleApp app;
@@ -4015,12 +4097,18 @@ TEST_CASE("deferred_chunked_response_replaced_by_static_file_replays_pipelined_i
     auto deferred_end = deferred_end_promise->get_future();
     auto provider_calls = std::make_shared<std::atomic<std::size_t>>(0);
     auto second_route_calls = std::make_shared<std::atomic<std::size_t>>(0);
+    auto completion_observation = std::make_shared<ChunkCompletionObservation>();
+    auto completion_result = completion_observation->first_result();
 
     CROW_ROUTE(app, "/deferred-static-boundary")
-    ([deferred_end_promise, provider_calls](const crow::request&, crow::response& res) {
+    ([deferred_end_promise, provider_calls, completion_observation](const crow::request&, crow::response& res) {
         res.set_async_chunked_content_provider(
           [provider_calls](crow::response::async_chunk_completion_t) {
               provider_calls->fetch_add(1);
+          });
+        res.set_chunked_completion_handler(
+          [completion_observation](bool clean) {
+              completion_observation->record(clean);
           });
         deferred_end_promise->set_value([&res] {
             res.set_static_file_info("tests/img/cat.jpg");
@@ -4058,6 +4146,9 @@ TEST_CASE("deferred_chunked_response_replaced_by_static_file_replays_pipelined_i
     CHECK(provider_calls->load() == 0);
     CHECK(second_route_calls->load() == 1);
     CHECK(response.find("second-static") != std::string::npos);
+    REQUIRE(completion_result.wait_for(std::chrono::seconds(1)) == std::future_status::ready);
+    CHECK(completion_result.get() == true);
+    CHECK(completion_observation->calls() == 1);
 } // deferred_chunked_response_replaced_by_static_file_replays_pipelined_input
 
 TEST_CASE("deferred_chunked_response_replaced_by_large_body_replays_pipelined_input") {
