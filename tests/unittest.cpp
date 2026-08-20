@@ -3701,6 +3701,69 @@ TEST_CASE("unmatched_head_does_not_emit_a_body")
     CHECK(response.size() == first_header_end + 4);
 } // unmatched_head_does_not_emit_a_body
 
+TEST_CASE("static_head_preserves_representation_length")
+{
+    SimpleApp app;
+    struct stat file_status
+    {};
+    REQUIRE(stat("tests/img/cat.jpg", &file_status) == 0);
+
+    CROW_ROUTE(app, "/static-head")
+    ([](const crow::request&, crow::response& res) {
+        res.set_static_file_info("tests/img/cat.jpg");
+        res.end();
+    });
+
+    auto server_task = app.bindaddr(LOCALHOST_ADDRESS).port(45451).run_async();
+    BoundedServerShutdown server_shutdown(server_task, [&app] {
+        app.stop();
+    });
+    app.wait_for_server_start();
+    const auto response = HttpClient::request(
+      LOCALHOST_ADDRESS, 45451, "HEAD /static-head HTTP/1.1\r\nHost: localhost\r\nConnection: close\r\n\r\n");
+    server_shutdown.shutdown();
+
+    const auto header_end = response.find("\r\n\r\n");
+    REQUIRE(header_end != std::string::npos);
+    CHECK(response.find("Content-Length: " + std::to_string(file_status.st_size)) != std::string::npos);
+    CHECK(response.size() == header_end + 4);
+} // static_head_preserves_representation_length
+
+TEST_CASE("unsupported_informational_status_uses_normalized_framing")
+{
+    SimpleApp app;
+    CROW_ROUTE(app, "/unsupported-status")
+    ([](const crow::request&, crow::response& res) {
+        res.code = 199;
+        res.end();
+    });
+    CROW_ROUTE(app, "/after-unsupported-status")
+    ([] {
+        return "second";
+    });
+
+    auto server_task = app.bindaddr(LOCALHOST_ADDRESS).port(45451).run_async();
+    BoundedServerShutdown server_shutdown(server_task, [&app] {
+        app.stop();
+    });
+    app.wait_for_server_start();
+    asio::io_context io_context;
+    asio::ip::tcp::socket client(io_context);
+    client.connect(asio::ip::tcp::endpoint(asio::ip::make_address(LOCALHOST_ADDRESS), 45451));
+    const std::string requests = "GET /unsupported-status HTTP/1.1\r\nHost: localhost\r\n\r\n"
+                                 "GET /after-unsupported-status HTTP/1.1\r\nHost: localhost\r\nConnection: close\r\n\r\n";
+    asio::write(client, asio::buffer(requests));
+    std::string response;
+    REQUIRE(receive_until_closed_with_deadline(client, response, std::chrono::seconds(5)));
+    server_shutdown.shutdown();
+
+    CHECK(response.find("HTTP/1.1 500 Internal Server Error\r\n") == 0);
+    CHECK(response.find("Content-Length: 26\r\n") != std::string::npos);
+    const auto second_response = response.find("HTTP/1.1 200 OK\r\n");
+    REQUIRE(second_response != std::string::npos);
+    CHECK(response.substr(0, second_response).find("500 Internal Server Error\r\n") != std::string::npos);
+} // unsupported_informational_status_uses_normalized_framing
+
 TEST_CASE("ordinary_deferred_response_preserves_pipelined_order")
 {
     SimpleApp app;
@@ -5618,6 +5681,58 @@ TEST_CASE("async_chunked_response_header_write_error_completes_once_unclean")
     CHECK(clean == false);
     CHECK(completion_observation->calls() == 1);
 } // async_chunked_response_header_write_error_completes_once_unclean
+
+TEST_CASE("skipped_chunk_provider_header_write_error_completes_once_unclean")
+{
+    SimpleApp app;
+    auto provider_calls = std::make_shared<std::atomic<std::size_t>>(0);
+    auto completion_observation = std::make_shared<ChunkCompletionObservation>();
+    auto completion_result = completion_observation->first_result();
+    PausingSocketContext socket_context;
+
+    CROW_ROUTE(app, "/failing-bodyless-header")
+    ([provider_calls, completion_observation, &socket_context](const crow::request&, crow::response& res) {
+        socket_context.fail_next_write();
+        res.code = 204;
+        res.set_async_chunked_content_provider(
+          [provider_calls](crow::response::async_chunk_completion_t) {
+              provider_calls->fetch_add(1);
+          });
+        res.set_chunked_completion_handler(
+          [completion_observation](bool clean) {
+              completion_observation->record(clean);
+          });
+        res.end();
+    });
+
+    app.validate();
+    std::tuple<> middlewares;
+    using HeaderWriteErrorServer = crow::Server<crow::SimpleApp, crow::TCPAcceptor, PausingSocketAdaptor>;
+    HeaderWriteErrorServer server(&app,
+                                  asio::ip::tcp::endpoint(asio::ip::make_address(LOCALHOST_ADDRESS), 45451),
+                                  "Crow/Test",
+                                  &middlewares,
+                                  2,
+                                  5,
+                                  &socket_context);
+    auto server_task = std::async(std::launch::async, [&server] {
+        server.run();
+    });
+    BoundedServerShutdown server_shutdown(server_task, [&server] {
+        server.stop();
+    });
+    REQUIRE(server.wait_for_start(std::chrono::steady_clock::now() + std::chrono::seconds(3)) == std::cv_status::no_timeout);
+
+    HttpClient client(LOCALHOST_ADDRESS, 45451);
+    client.send("GET /failing-bodyless-header HTTP/1.1\r\nHost: localhost\r\n\r\n");
+    std::string response;
+    REQUIRE(receive_until_closed_with_deadline(client.socket(), response, std::chrono::seconds(5)));
+    REQUIRE(completion_result.wait_for(std::chrono::seconds(1)) == std::future_status::ready);
+    CHECK(completion_result.get() == false);
+    CHECK(completion_observation->calls() == 1);
+    CHECK(provider_calls->load() == 0);
+    server_shutdown.shutdown();
+} // skipped_chunk_provider_header_write_error_completes_once_unclean
 
 TEST_CASE("async_chunked_response_terminator_write_error_completes_once_unclean")
 {
