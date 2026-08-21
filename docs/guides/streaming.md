@@ -103,18 +103,26 @@ CROW_ROUTE(app, "/events")
 `#!cpp set_chunked_completion_handler(void (bool clean))` runs exactly once
 after writing stops, on every path: normal completion, abort, provider
 exception, write error or timeout, peer disconnect, server shutdown, and, as
-the last resort, connection destruction. `clean` is `#!cpp true` only when the
-provider finished normally and every write succeeded. Release the data source
-here.
+the last resort, connection destruction. `clean` is `#!cpp true` when the
+provider finished normally and every write succeeded, and also when the
+response was written without invoking the provider at all (HEAD, a bodyless
+status, or a body source configured after the provider): the handler reports
+the outcome of whatever response write replaced the stream. Release the data
+source here.
 
 ## Connection lifecycle
 
 - **Keep-alive.** After a cleanly finished stream the connection serves the
-  next sequential request as usual.
-- **Pipelining.** Bytes that arrive while a streamed (or deferred) response is
-  still in progress are not served: the current response finishes correctly
-  and the connection then closes. Clients that pipeline must reconnect;
-  sequential keep-alive clients are unaffected.
+  next sequential request as usual. An application-supplied
+  `Connection: close` header commits the server: the full body and terminator
+  are written first, then the connection closes.
+- **Pipelining.** While a stream is in flight, arriving bytes are never
+  served: the stream finishes correctly and the connection then closes. The
+  same applies to bytes that follow a deferred response's request in the same
+  read. A request that arrives in a later packet while an ordinary deferred
+  response is pending is served after it, as a normal sequential request.
+  Clients should not pipeline behind a streamed response; sequential
+  keep-alive clients are unaffected.
 - **Peer disconnect.** Crow keeps a read armed while streaming, so a client
   that goes away aborts the transfer even while the provider is idle.
 - **Deferred end().** Installing a provider and calling `#!cpp res.end()`
@@ -122,12 +130,17 @@ here.
   connection's executor.
 - **HEAD** responds with `Transfer-Encoding: chunked`, no `Content-Length`,
   and no body; the provider is not invoked and the completion handler reports
-  `clean == true`. **1xx/204/304** suppress the provider with correct bodyless
-  framing. **HTTP/1.0** clients receive a finite `505` (chunked coding needs
-  HTTP/1.1).
-- **Framing.** A response has exactly one body source (the one configured
-  last wins), and the wire carries exactly one `Transfer-Encoding: chunked`
-  and no `Content-Length`, regardless of headers set around the provider.
+  `clean == true`. **204/205/304** suppress the provider with correct bodyless
+  framing (a `205` carries `Content-Length: 0`), and a handler-returned **1xx**
+  is normalized to a `500` server error (an interim status cannot be a final
+  response). **HTTP/1.0** clients receive a finite `505`: Crow refuses to
+  downgrade a chunked stream to close-delimited output.
+- **Framing.** A response has exactly one body source: among the configured
+  sources (providers, static file), the one configured last wins, while a
+  plain `body` assignment or `#!cpp write()` does not replace an installed
+  provider. The wire carries exactly one `Transfer-Encoding: chunked`, no
+  `Content-Length`, and no `Trailer`, regardless of headers set around the
+  provider.
 
 ## Time and size bounds
 
@@ -150,9 +163,16 @@ here.
 Stopping the server aborts active streams: the provider is released, the
 completion handler reports `clean == false` exactly once, and a late
 `#!cpp end()` from an application thread is a safe no-op release. Providers
-and handlers should not throw; an exception that escapes is logged and treated
-as an abort.
+and handlers should not throw; a provider exception that escapes before a
+result is reported is logged and treated as an abort, and an exception that
+escapes the completion handler is logged and swallowed (the transfer has
+already finished).
 
-A response belongs to the connection once `#!cpp end()` has been called:
-calling any setter, `#!cpp write()`, or a second `#!cpp end()` on it after
-that point is not supported.
+A response belongs to the connection once `#!cpp end()` has been called: a
+second `#!cpp end()` is a latched no-op, and calling any setter or
+`#!cpp write()` after that point is not supported. Build the response,
+providers included, inside the route handler: after the handler returns with
+the response deferred, the connection (and worker shutdown) may access it
+concurrently, and the only operations safe to call from any thread are
+`#!cpp end()`, `#!cpp end(body)`, `#!cpp is_completed()`, and
+`#!cpp is_alive()`.

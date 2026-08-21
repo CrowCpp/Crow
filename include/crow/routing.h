@@ -1803,15 +1803,43 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                     return;
                 }
 
-                res.complete_request_handler_ = [&rule, &ctx, &container, &req, &res, glob_completion_handler] {
-                    detail::middleware_call_criteria_dynamic<true> crit_bwd(rule.mw_indices_.indices());
+                // Route-local after handlers touch the request, the response,
+                // and the middleware context, so they must run on the
+                // connection executor even when end() is called from a foreign
+                // thread; a throwing after handler must not swallow the
+                // completion. The executor pointer is captured now, while the
+                // request is still being routed on that executor.
+                asio::io_context* handler_io_context = req.io_context;
+                res.complete_request_handler_ = [&rule, &ctx, &container, &req, &res, glob_completion_handler, handler_io_context] {
+                    auto run_after_handlers = [&rule, &ctx, &container, &req, &res, glob_completion_handler] {
+                        detail::middleware_call_criteria_dynamic<true> crit_bwd(rule.mw_indices_.indices());
 
-                    detail::after_handlers_call_helper<
-                      decltype(crit_bwd),
-                      std::tuple_size<typename App::mw_container_t>::value - 1,
-                      typename App::context_t,
-                      typename App::mw_container_t>(crit_bwd, container, ctx, req, res);
-                    glob_completion_handler();
+                        try
+                        {
+                            detail::after_handlers_call_helper<
+                              decltype(crit_bwd),
+                              std::tuple_size<typename App::mw_container_t>::value - 1,
+                              typename App::context_t,
+                              typename App::mw_container_t>(crit_bwd, container, ctx, req, res);
+                        }
+                        catch (const std::exception& e)
+                        {
+                            CROW_LOG_ERROR << "An uncaught exception occurred in a route-local after handler: " << e.what();
+                        }
+                        catch (...)
+                        {
+                            CROW_LOG_ERROR << "An uncaught exception occurred in a route-local after handler.";
+                        }
+                        glob_completion_handler();
+                    };
+                    if (handler_io_context)
+                    {
+                        asio::dispatch(*handler_io_context, std::move(run_after_handlers));
+                    }
+                    else
+                    {
+                        run_after_handlers();
+                    }
                 };
             }
             rule.handle(req, res, rp);

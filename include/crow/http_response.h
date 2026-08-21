@@ -388,7 +388,8 @@ namespace crow
                         }
                     }
                 }
-                auto completion_handler = complete_request_handler_;
+                auto completion_handler = std::move(complete_request_handler_);
+                complete_request_handler_ = nullptr;
                 if (completion_handler)
                 {
                     completion_handler();
@@ -408,11 +409,14 @@ namespace crow
                 std::function<void()> completion_handler;
                 {
                     std::lock_guard<std::mutex> lifecycle_lock(lifecycle->mutex);
-                    if (completed_.exchange(true))
+                    if (completed_)
                     {
                         return;
                     }
+                    // Append before latching: a throwing append leaves the
+                    // response incomplete instead of completed-but-stuck.
                     body += body_part;
+                    completed_ = true;
                     completion_handler = std::move(complete_request_handler_);
                     complete_request_handler_ = nullptr;
                 }
@@ -427,9 +431,24 @@ namespace crow
         }
 
         /// Check if the connection is still alive (usually by checking the socket status).
+        ///
+        /// Callable from any thread until end(); the helper reads shared
+        /// atomic connection state, and its swap is serialized with the
+        /// connection through the lifecycle mutex.
         bool is_alive()
         {
-            return is_alive_helper_ && is_alive_helper_();
+            std::function<bool()> helper;
+            auto lifecycle = deferred_lifecycle_;
+            if (lifecycle)
+            {
+                std::lock_guard<std::mutex> lifecycle_lock(lifecycle->mutex);
+                helper = is_alive_helper_;
+            }
+            else
+            {
+                helper = is_alive_helper_;
+            }
+            return helper && helper();
         }
 
         /// Check whether the response has a static file defined.
@@ -473,10 +492,8 @@ namespace crow
         /// body source, and the one configured last wins.
         void set_chunked_content_provider(chunk_provider_ex_t provider, std::string content_type = "")
         {
-            // The synchronous provider drives the same engine as the
-            // asynchronous one: it runs on the connection executor and its
-            // result is completed inline, while socket writes stay
-            // asynchronous, so a slow client never blocks a worker.
+            // Reuse the asynchronous write path so socket backpressure never
+            // blocks a worker.
             async_chunk_provider_ = [provider = std::move(provider)](async_chunk_completion_t complete) {
                 std::string chunk;
                 const auto result = provider(chunk);
@@ -500,8 +517,9 @@ namespace crow
         /// promptly and invoke its completion callback exactly once with `more`, `done`, or
         /// `abort`, either before or after it returns. The callback may be invoked from any
         /// thread; Crow posts the result to the connection executor. The next chunk is not
-        /// requested until the preceding chunk has been written. An exception from the provider
-        /// is treated as `abort`. Installing this provider discards a string body, static file,
+        /// requested until the preceding chunk has been written. An exception that escapes the
+        /// provider before it reports a result is treated as `abort`; a result that was already
+        /// reported stands. Installing this provider discards a string body, static file,
         /// or synchronous chunk provider that was configured earlier. An empty provider still
         /// selects asynchronous streaming; Crow treats its invocation as an abort, closes the
         /// connection without a terminating frame, and reports unclean completion once.

@@ -15,7 +15,6 @@
 #include <cstdint>
 #include <exception>
 #include <fstream>
-#include <limits>
 #include <memory>
 #include <mutex>
 #include <unordered_map>
@@ -76,7 +75,10 @@ namespace crow
             connections_.erase(connection);
         }
 
-        void shutdown_all() noexcept {
+        // Not noexcept: copying the tracked callbacks can allocate, and a rare
+        // failure must reach the worker future instead of std::terminate.
+        void shutdown_all()
+        {
             std::vector<std::function<void()>> shutdown_callbacks;
             {
                 std::lock_guard<std::mutex> lock(mutex_);
@@ -253,8 +255,11 @@ namespace crow
             {
                 res.complete_request_handler_ = nullptr;
                 auto self = this->shared_from_this();
-                res.is_alive_helper_ = [self]() -> bool {
-                    return self->adaptor_.is_open();
+                // The helper must stay callable from foreign threads while the
+                // executor closes the socket, so it reads shared atomic state
+                // instead of the socket.
+                res.is_alive_helper_ = [flag = peer_open_]() -> bool {
+                    return flag->load();
                 };
 
                 detail::middleware_call_helper<detail::middleware_call_criteria_only_global,
@@ -299,34 +304,13 @@ namespace crow
             {
                 return;
             }
-            if (res.completed_ && res.skip_body)
-            {
-                // Finalization of an end()ed HEAD response, moved out of end()
-                // so it runs on the connection executor.
-                if (res.is_chunked_type())
-                {
-                    // HEAD keeps "Transfer-Encoding: chunked" and omits "Content-Length".
-                    res.async_chunk_provider_ = nullptr;
-                    res.body = "";
-                    res.manual_length_header = true;
-                }
-                else
-                {
-                    if (!res.is_static_type() && !res.body.empty())
-                    {
-                        res.set_header("Content-Length", std::to_string(res.body.size()));
-                        res.manual_length_header = true;
-                    }
-                    res.body = "";
-                    if (res.is_static_type())
-                    {
-                        res.manual_length_header = true;
-                    }
-                }
-            }
             untrack_connection_lifecycle();
             CROW_LOG_INFO << "Response: " << this << ' ' << req_.raw_url << ' ' << res.code << ' ' << close_connection_;
-            res.is_alive_helper_ = nullptr;
+            {
+                // Serialized with foreign-thread is_alive() readers.
+                std::lock_guard<std::mutex> lifecycle_lock(res.deferred_lifecycle_->mutex);
+                res.is_alive_helper_ = nullptr;
+            }
 
             if (need_to_call_after_handlers_)
             {
@@ -340,7 +324,9 @@ namespace crow
                   decltype(*middlewares_)>({}, *middlewares_, ctx_, req_, res);
             }
 #ifdef CROW_ENABLE_COMPRESSION
-            if (!res.body.empty() && handler_->compression_used())
+            // A chunked response discards res.body, so compressing it would
+            // only stamp a stale Content-Encoding onto uncompressed chunks.
+            if (!res.is_chunked_type() && !res.body.empty() && handler_->compression_used())
             {
                 std::string accept_encoding = req_.get_header_value("Accept-Encoding");
                 if (!accept_encoding.empty() && res.compressed)
@@ -368,21 +354,87 @@ namespace crow
             }
 #endif
 
-            if (req_.http_ver_major == 1 && req_.http_ver_minor == 0 && res.is_chunked_type())
+            if (res.code < 200)
             {
-                reject_http_1_0_chunked_response();
+                // An interim (1xx) status cannot be a final response: the
+                // client would keep waiting for the real one. The dedicated
+                // 100-continue and upgrade paths write interim responses
+                // directly; here the status is a handler mistake.
+                res.code = 500;
+                res.body.clear();
+                res.file_info = response::static_file_info{};
+                res.async_chunk_provider_ = nullptr;
+                res.body_source_ = response::body_source_kind::none;
+                res.headers.erase("Content-Length");
+                res.headers.erase("Transfer-Encoding");
+                res.manual_length_header = false;
             }
-            else if (!response_status_allows_body())
+
+            if (res.completed_ && res.skip_body)
+            {
+                // HEAD representation metadata is captured after middleware and
+                // compression, so it matches what the equivalent GET would send.
+                if (res.is_chunked_type())
+                {
+                    // HEAD keeps "Transfer-Encoding: chunked" and omits "Content-Length".
+                    res.async_chunk_provider_ = nullptr;
+                    res.body = "";
+                    res.manual_length_header = true;
+                }
+                else
+                {
+                    if (!res.is_static_type() && !res.body.empty())
+                    {
+                        res.set_header("Content-Length", std::to_string(res.body.size()));
+                        res.manual_length_header = true;
+                    }
+                    res.body = "";
+                    if (res.is_static_type())
+                    {
+                        res.manual_length_header = true;
+                    }
+                }
+            }
+
+            // An application-supplied "Connection: close" commits the server
+            // to closing after this response (RFC 9112 §9.6), and a closing
+            // connection must not advertise Keep-Alive.
+            if (!close_connection_ && response_connection_header_requests_close())
+            {
+                close_connection_ = true;
+            }
+            if (close_connection_)
+            {
+                add_keep_alive_ = false;
+                if (!req_.close_connection && !res.headers.count("connection"))
+                {
+                    // A server-initiated close is made explicit when the
+                    // application did not; a client that itself asked for
+                    // close needs no echo.
+                    res.set_header("Connection", "close");
+                }
+            }
+
+            // Bodyless statuses neutralize the provider first: a bodyless
+            // response needs no chunked coding, so HTTP/1.0 clients can
+            // receive it instead of the chunked-coding rejection.
+            if (!response_status_allows_body())
             {
                 suppress_response_body_for_status();
+            }
+            else if (req_.http_ver_major == 1 && req_.http_ver_minor == 0 && res.is_chunked_type())
+            {
+                reject_http_1_0_chunked_response();
             }
             if (res.is_chunked_type())
             {
                 // Framing headers may have been touched after the provider was
                 // installed; a chunked body carries exactly one Transfer-Encoding
-                // and no Content-Length.
+                // and no Content-Length. Crow never sends trailer fields, so an
+                // application "Trailer" header must not survive either.
                 res.headers.erase("Content-Length");
                 res.headers.erase("Transfer-Encoding");
+                res.headers.erase("Trailer");
                 res.set_header("Transfer-Encoding", "chunked");
                 res.manual_length_header = true;
             }
@@ -409,7 +461,7 @@ namespace crow
             }
             else if (write_chunked)
             {
-                do_write_chunked();
+                do_write_async_chunked();
             }
             else
             {
@@ -421,8 +473,34 @@ namespace crow
     private:
         bool response_status_allows_body() const noexcept
         {
-            return res.code != status::CONTINUE && res.code != status::SWITCHING_PROTOCOLS &&
-                   res.code != status::NO_CONTENT && res.code != status::NOT_MODIFIED;
+            // 1xx statuses were already normalized away by complete_request().
+            return res.code != status::NO_CONTENT && res.code != status::RESET_CONTENT &&
+                   res.code != status::NOT_MODIFIED;
+        }
+
+        bool response_connection_header_requests_close() const
+        {
+            const auto connection_headers = res.headers.equal_range("connection");
+            for (auto field = connection_headers.first; field != connection_headers.second; ++field)
+            {
+                const std::string& value = field->second;
+                std::size_t token_start = 0;
+                while (token_start <= value.size())
+                {
+                    std::size_t token_end = value.find(',', token_start);
+                    if (token_end == std::string::npos)
+                        token_end = value.size();
+                    const std::size_t begin = value.find_first_not_of(" \t", token_start);
+                    if (begin != std::string::npos && begin < token_end)
+                    {
+                        const std::size_t end = value.find_last_not_of(" \t", token_end - 1) + 1;
+                        if (utility::string_equals(std::string_view(value.data() + begin, end - begin), "close"))
+                            return true;
+                    }
+                    token_start = token_end + 1;
+                }
+            }
+            return false;
         }
 
         void suppress_response_body_for_status()
@@ -433,10 +511,19 @@ namespace crow
             res.body_source_ = response::body_source_kind::none;
             res.manual_length_header = true;
 
-            if (res.code < 200 || res.code == status::NO_CONTENT)
+            if (res.code == status::NO_CONTENT)
             {
                 res.headers.erase("Content-Length");
                 res.headers.erase("Transfer-Encoding");
+            }
+            else if (res.code == status::RESET_CONTENT)
+            {
+                // 205 forbids content but is framed as an empty representation:
+                // without an explicit zero length a keep-alive client would
+                // wait for close-delimited content.
+                res.headers.erase("Transfer-Encoding");
+                res.headers.erase("Content-Length");
+                res.set_header("Content-Length", "0");
             }
             else
             {
@@ -449,8 +536,12 @@ namespace crow
 
         void prepare_buffers()
         {
-            res.complete_request_handler_ = nullptr;
-            res.is_alive_helper_ = nullptr;
+            {
+                // Serialized with foreign-thread is_alive() readers.
+                std::lock_guard<std::mutex> lifecycle_lock(res.deferred_lifecycle_->mutex);
+                res.complete_request_handler_ = nullptr;
+                res.is_alive_helper_ = nullptr;
+            }
 
             if (!adaptor_.is_open())
             {
@@ -536,7 +627,7 @@ namespace crow
             if (close_connection_ || write_failed)
             {
                 adaptor_.shutdown_readwrite();
-                adaptor_.close();
+                close_adaptor();
                 CROW_LOG_DEBUG << this << " from write (static)";
             }
 
@@ -672,10 +763,6 @@ namespace crow
             bool completion_reported{false};
         };
 
-        void do_write_chunked() {
-            do_write_async_chunked();
-        }
-
         void do_write_async_chunked() {
             // Every socket write of the transfer runs under the connection
             // deadline; only the provider wait is unbounded by default.
@@ -697,15 +784,26 @@ namespace crow
             }
             // The header buffers point into res.headers; the transfer owns a copy
             // so nothing aliases user-reachable state while the write is in flight.
-            std::size_t header_size = 0;
-            for (const auto& buffer : buffers_)
+            try
             {
-                header_size += buffer.size();
+                std::size_t header_size = 0;
+                for (const auto& buffer : buffers_)
+                {
+                    header_size += buffer.size();
+                }
+                state->header_bytes.reserve(header_size);
+                for (const auto& buffer : buffers_)
+                {
+                    state->header_bytes.append(static_cast<const char*>(buffer.data()), buffer.size());
+                }
             }
-            state->header_bytes.reserve(header_size);
-            for (const auto& buffer : buffers_)
+            catch (...)
             {
-                state->header_bytes.append(static_cast<const char*>(buffer.data()), buffer.size());
+                // A failed header copy must not strand the tracked transfer.
+                CROW_LOG_ERROR << "Failed to prepare the response header. Closing connection.";
+                buffers_.clear();
+                finish_async_chunked(state, false, true);
+                return;
             }
             buffers_.clear();
             asio::async_write(
@@ -796,7 +894,7 @@ namespace crow
             }
 
             adaptor_.shutdown_readwrite();
-            adaptor_.close();
+            close_adaptor();
 
             if (state) {
                 untrack_connection_lifecycle();
@@ -805,6 +903,7 @@ namespace crow
             else
             {
                 response::chunk_complete_t completion_handler;
+                bool release_registry_entry = false;
                 {
                     std::lock_guard<std::mutex> lifecycle_lock(res.deferred_lifecycle_->mutex);
                     completion_handler = std::move(res.chunk_complete_);
@@ -814,13 +913,37 @@ namespace crow
                     res.async_chunk_provider_ = nullptr;
                     res.body_source_ = response::body_source_kind::none;
                     res.is_alive_helper_ = nullptr;
-                    std::weak_ptr<Connection> weak_self = this->shared_from_this();
-                    res.complete_request_handler_ = [weak_self] {
-                        if (auto self = weak_self.lock())
+                    if (res.completed_)
+                    {
+                        // end() already latched, so no later call can release
+                        // the registry entry; release it here instead.
+                        res.complete_request_handler_ = nullptr;
+                        release_registry_entry = true;
+                    }
+                    else
+                    {
+                        std::weak_ptr<Connection> weak_self = this->shared_from_this();
+                        try
                         {
-                            self->release_stopped_deferred_response();
+                            res.complete_request_handler_ = [weak_self] {
+                                if (auto self = weak_self.lock())
+                                {
+                                    self->release_stopped_deferred_response();
+                                }
+                            };
                         }
-                    };
+                        catch (...)
+                        {
+                            // On allocation failure the latch still protects a
+                            // late end(); the entry is released below.
+                            res.complete_request_handler_ = nullptr;
+                            release_registry_entry = true;
+                        }
+                    }
+                }
+                if (release_registry_entry)
+                {
+                    untrack_connection_lifecycle();
                 }
                 response::invoke_chunked_completion(std::move(completion_handler), false);
             }
@@ -854,7 +977,7 @@ namespace crow
             state->buffers.clear();
 
             adaptor_.shutdown_readwrite();
-            adaptor_.close();
+            close_adaptor();
             state->notify_completion(false);
         }
 
@@ -1040,15 +1163,25 @@ namespace crow
                 return;
             }
 
-            state->phase        = AsyncChunkPhase::writing_chunk;
-            state->chunk        = std::move(chunk);
-            state->chunk_header = chunk_size_to_hex(state->chunk.size());
-            state->chunk_header += crlf;
-            state->buffers.clear();
-            state->buffers.reserve(3);
-            state->buffers.emplace_back(state->chunk_header.data(), state->chunk_header.size());
-            state->buffers.emplace_back(state->chunk.data(), state->chunk.size());
-            state->buffers.emplace_back(crlf.data(), crlf.size());
+            state->phase = AsyncChunkPhase::writing_chunk;
+            try
+            {
+                state->chunk = std::move(chunk);
+                state->chunk_header = chunk_size_to_hex(state->chunk.size());
+                state->chunk_header += crlf;
+                state->buffers.clear();
+                state->buffers.reserve(3);
+                state->buffers.emplace_back(state->chunk_header.data(), state->chunk_header.size());
+                state->buffers.emplace_back(state->chunk.data(), state->chunk.size());
+                state->buffers.emplace_back(crlf.data(), crlf.size());
+            }
+            catch (...)
+            {
+                // A failed frame build must not strand the tracked transfer.
+                CROW_LOG_ERROR << "Failed to prepare a chunk frame. Closing connection.";
+                finish_async_chunked(state, false, true);
+                return;
+            }
 
             auto self = this->shared_from_this();
             start_deadline();
@@ -1127,7 +1260,7 @@ namespace crow
 
             if (force_close) {
                 adaptor_.shutdown_readwrite();
-                adaptor_.close();
+                close_adaptor();
                 CROW_LOG_DEBUG << this << " from write (async chunked, aborted or write error)";
             }
 
@@ -1135,7 +1268,7 @@ namespace crow
 
             if (close_connection_ && !force_close) {
                 adaptor_.shutdown_readwrite();
-                adaptor_.close();
+                close_adaptor();
                 CROW_LOG_DEBUG << this << " from write (async chunked)";
             }
 
@@ -1230,7 +1363,7 @@ namespace crow
 
             if (close_connection_ || write_failed) {
                 adaptor_.shutdown_readwrite();
-                adaptor_.close();
+                close_adaptor();
                 need_to_start_read_after_complete_ = false;
                 CROW_LOG_DEBUG << this << " from write (res" << (write_failed ? ", write error" : "") << ")";
             } else if (need_to_start_read_after_complete_) {
@@ -1257,9 +1390,9 @@ namespace crow
 
                   if (auto state = self->async_chunk_transfer_)
                   {
-                      // While a transfer is active this read is the peer
-                      // watch; after a clean transfer the same read carries
-                      // the next request.
+                      // Peer watch while a transfer is active: an error aborts
+                      // the stream, extra bytes only mark the connection to
+                      // close after it finishes, and the watch stays armed.
                       if (ec)
                       {
                           self->finish_async_chunked(state, false, true);
@@ -1304,7 +1437,12 @@ namespace crow
             }
             else if (close_connection_)
             {
-                cancel_deadline_timer();
+                // An in-flight transfer keeps its write deadline until it
+                // finishes; close-after-response is decided by the flag alone.
+                if (!async_chunk_transfer_)
+                {
+                    cancel_deadline_timer();
+                }
                 parser_.done();
                 // adaptor will close after write
             }
@@ -1326,12 +1464,20 @@ namespace crow
             }
         }
 
+        void close_adaptor()
+        {
+            // The flag feeds response::is_alive() from any thread; the socket
+            // itself is only touched on the connection executor.
+            peer_open_->store(false);
+            adaptor_.close();
+        }
+
         void close_after_read_error()
         {
             cancel_deadline_timer();
             parser_.done();
             adaptor_.shutdown_read();
-            adaptor_.close();
+            close_adaptor();
             CROW_LOG_DEBUG << this << " from read(1) with description: \""
                            << http_errno_description(static_cast<http_errno>(parser_.http_errno)) << '\"';
         }
@@ -1358,7 +1504,7 @@ namespace crow
                       if (self->close_connection_)
                       {
                           self->adaptor_.shutdown_write();
-                          self->adaptor_.close();
+                          self->close_adaptor();
                           CROW_LOG_DEBUG << self << " from write(1)";
                       }
                   }
@@ -1418,7 +1564,7 @@ namespace crow
                     return;
                 }
                 self->adaptor_.shutdown_readwrite();
-                self->adaptor_.close();
+                self->close_adaptor();
             });
             deadline_armed_ = true;
             CROW_LOG_DEBUG << this << " timer added: " << &task_timer_ << ' ' << task_id_;
@@ -1436,6 +1582,9 @@ namespace crow
         response res;
 
         bool close_connection_ = false;
+        // Read by response::is_alive() from any thread; written on the
+        // connection executor when the socket closes.
+        std::shared_ptr<std::atomic<bool>> peer_open_{std::make_shared<std::atomic<bool>>(true)};
 
         const std::string& server_name_;
         std::vector<asio::const_buffer> buffers_;

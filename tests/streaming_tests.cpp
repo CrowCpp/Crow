@@ -769,6 +769,68 @@ TEST_CASE("chunked_response_times_out_writing_to_a_stalled_client")
 } // chunked_response_times_out_writing_to_a_stalled_client
 
 
+TEST_CASE("close_marked_transfers_keep_the_write_deadline")
+{
+    SimpleApp app;
+    auto request_close_completion = std::make_shared<ChunkCompletionObservation>();
+    auto request_close_result = request_close_completion->first_result();
+    auto response_close_completion = std::make_shared<ChunkCompletionObservation>();
+    auto response_close_result = response_close_completion->first_result();
+
+    const auto endless_stream = [](const std::shared_ptr<ChunkCompletionObservation>& completion, crow::response& res) {
+        res.set_chunked_content_provider(
+          [](std::string& chunk) -> bool {
+              chunk.assign(8u * 1024u * 1024u, 'x');
+              return true;
+          },
+          "application/octet-stream");
+        res.set_chunked_completion_handler([completion](bool clean) {
+            completion->record(clean);
+        });
+        res.end();
+    };
+    CROW_ROUTE(app, "/stalled-close-request")
+    ([endless_stream, request_close_completion](const crow::request&, crow::response& res) {
+        endless_stream(request_close_completion, res);
+    });
+    CROW_ROUTE(app, "/stalled-close-response")
+    ([endless_stream, response_close_completion](const crow::request&, crow::response& res) {
+        res.set_header("Connection", "close");
+        endless_stream(response_close_completion, res);
+    });
+
+    auto server_task = app.bindaddr(LOCALHOST_ADDRESS).port(45451).timeout(1).run_async();
+    BoundedServerShutdown server_shutdown(server_task, [&app] {
+        app.stop();
+    });
+    app.wait_for_server_start();
+
+    const auto stall = [](const std::string& request_text, std::future<bool>& result) {
+        asio::io_context io_context;
+        asio::ip::tcp::socket stalled_client(io_context);
+        stalled_client.connect(asio::ip::tcp::endpoint(asio::ip::make_address(LOCALHOST_ADDRESS), 45451));
+        asio::write(stalled_client, asio::buffer(request_text));
+        // The client never reads: the write deadline must abort the transfer
+        // even though the connection is already marked to close.
+        const auto completion_status = result.wait_for(std::chrono::seconds(5));
+        asio_error_code close_error;
+        stalled_client.close(close_error);
+        REQUIRE(completion_status == std::future_status::ready);
+        return result.get();
+    };
+
+    // A request-side "Connection: close" marks the connection before the
+    // in-flight transfer submits its first write.
+    CHECK(stall("GET /stalled-close-request HTTP/1.1\r\nHost: localhost\r\nConnection: close\r\n\r\n", request_close_result) == false);
+    // An application-supplied "Connection: close" marks it during finalization.
+    CHECK(stall("GET /stalled-close-response HTTP/1.1\r\nHost: localhost\r\n\r\n", response_close_result) == false);
+    server_shutdown.shutdown();
+
+    CHECK(request_close_completion->calls() == 1);
+    CHECK(response_close_completion->calls() == 1);
+} // close_marked_transfers_keep_the_write_deadline
+
+
 TEST_CASE("async_chunked_response_aborts_an_idle_provider_when_configured")
 {
     SimpleApp app;
@@ -1647,10 +1709,15 @@ TEST_CASE("static_head_preserves_representation_length")
         app.stop();
     });
     app.wait_for_server_start();
-    const auto response = HttpClient::request(
-      LOCALHOST_ADDRESS, 45451, "HEAD /static-head HTTP/1.1\r\nHost: localhost\r\nConnection: close\r\n\r\n");
+    HttpClient client(LOCALHOST_ADDRESS, 45451);
+    client.send("HEAD /static-head HTTP/1.1\r\nHost: localhost\r\nConnection: close\r\n\r\n");
+    std::string response;
+    const bool closed = receive_until_closed_with_deadline(client.socket(), response, std::chrono::seconds(5));
+    asio_error_code close_error;
+    client.socket().close(close_error);
     server_shutdown.shutdown();
 
+    REQUIRE(closed);
     const auto header_end = response.find("\r\n\r\n");
     REQUIRE(header_end != std::string::npos);
     CHECK(response.find("Content-Length: " + std::to_string(file_status.st_size)) != std::string::npos);
@@ -1661,9 +1728,26 @@ TEST_CASE("static_head_preserves_representation_length")
 TEST_CASE("unsupported_informational_status_uses_normalized_framing")
 {
     SimpleApp app;
+    auto interim_provider_calls = std::make_shared<std::atomic<std::size_t>>(0);
+    auto interim_completion = std::make_shared<ChunkCompletionObservation>();
+    auto interim_result = interim_completion->first_result();
     CROW_ROUTE(app, "/unsupported-status")
     ([](const crow::request&, crow::response& res) {
         res.code = 199;
+        res.end();
+    });
+    CROW_ROUTE(app, "/interim-status")
+    ([interim_provider_calls, interim_completion](const crow::request&, crow::response& res) {
+        res.code = 101;
+        res.set_chunked_content_provider([interim_provider_calls](std::string& chunk) {
+            interim_provider_calls->fetch_add(1);
+            chunk = "forbidden";
+            return false;
+        });
+        res.set_chunked_completion_handler(
+          [interim_completion](bool clean) {
+              interim_completion->record(clean);
+          });
         res.end();
     });
     CROW_ROUTE(app, "/after-unsupported-status")
@@ -1680,6 +1764,7 @@ TEST_CASE("unsupported_informational_status_uses_normalized_framing")
     asio::ip::tcp::socket client(io_context);
     client.connect(asio::ip::tcp::endpoint(asio::ip::make_address(LOCALHOST_ADDRESS), 45451));
     const std::string requests = "GET /unsupported-status HTTP/1.1\r\nHost: localhost\r\n\r\n"
+                                 "GET /interim-status HTTP/1.1\r\nHost: localhost\r\n\r\n"
                                  "GET /after-unsupported-status HTTP/1.1\r\nHost: localhost\r\nConnection: close\r\n\r\n";
     asio::write(client, asio::buffer(requests));
     std::string response;
@@ -1688,9 +1773,18 @@ TEST_CASE("unsupported_informational_status_uses_normalized_framing")
 
     CHECK(response.find("HTTP/1.1 500 Internal Server Error\r\n") == 0);
     CHECK(response.find("Content-Length: 27\r\n") != std::string::npos);
+    // A handler-returned interim status is normalized to a final 500 as well,
+    // its provider is suppressed, and the completion handler still reports.
+    const auto interim_response = response.find("HTTP/1.1 500 Internal Server Error\r\n", 1);
+    REQUIRE(interim_response != std::string::npos);
+    CHECK(response.find("Transfer-Encoding:") == std::string::npos);
+    CHECK(interim_provider_calls->load() == 0);
+    REQUIRE(interim_result.wait_for(std::chrono::seconds(1)) == std::future_status::ready);
+    CHECK(interim_result.get() == true);
+    CHECK(interim_completion->calls() == 1);
     const auto second_response = response.find("HTTP/1.1 200 OK\r\n");
     REQUIRE(second_response != std::string::npos);
-    CHECK(response.substr(0, second_response).find("500 Internal Server Error\r\n") != std::string::npos);
+    CHECK(second_response > interim_response);
 } // unsupported_informational_status_uses_normalized_framing
 
 
@@ -1989,14 +2083,20 @@ TEST_CASE("bodyless_statuses_do_not_invoke_chunk_providers")
     auto async_204_calls = std::make_shared<std::atomic<std::size_t>>(0);
     auto sync_304_calls = std::make_shared<std::atomic<std::size_t>>(0);
     auto async_304_calls = std::make_shared<std::atomic<std::size_t>>(0);
+    auto sync_205_calls = std::make_shared<std::atomic<std::size_t>>(0);
+    auto async_205_calls = std::make_shared<std::atomic<std::size_t>>(0);
     auto sync_204_completion = std::make_shared<ChunkCompletionObservation>();
     auto async_204_completion = std::make_shared<ChunkCompletionObservation>();
     auto sync_304_completion = std::make_shared<ChunkCompletionObservation>();
     auto async_304_completion = std::make_shared<ChunkCompletionObservation>();
+    auto sync_205_completion = std::make_shared<ChunkCompletionObservation>();
+    auto async_205_completion = std::make_shared<ChunkCompletionObservation>();
     auto sync_204_result = sync_204_completion->first_result();
     auto async_204_result = async_204_completion->first_result();
     auto sync_304_result = sync_304_completion->first_result();
     auto async_304_result = async_304_completion->first_result();
+    auto sync_205_result = sync_205_completion->first_result();
+    auto async_205_result = async_205_completion->first_result();
 
     CROW_ROUTE(app, "/sync-204")
     ([sync_204_calls, sync_204_completion](const crow::request&, crow::response& res) {
@@ -2054,6 +2154,34 @@ TEST_CASE("bodyless_statuses_do_not_invoke_chunk_providers")
           });
         res.end();
     });
+    CROW_ROUTE(app, "/sync-205")
+    ([sync_205_calls, sync_205_completion](const crow::request&, crow::response& res) {
+        res.code = 205;
+        res.set_chunked_content_provider([sync_205_calls](std::string& chunk) {
+            sync_205_calls->fetch_add(1);
+            chunk = "forbidden";
+            return false;
+        });
+        res.set_chunked_completion_handler(
+          [sync_205_completion](bool clean) {
+              sync_205_completion->record(clean);
+          });
+        res.end();
+    });
+    CROW_ROUTE(app, "/async-205")
+    ([async_205_calls, async_205_completion](const crow::request&, crow::response& res) {
+        res.code = 205;
+        res.set_async_chunked_content_provider(
+          [async_205_calls](crow::response::async_chunk_completion_t complete) {
+              async_205_calls->fetch_add(1);
+              complete(crow::chunk_result::done, "forbidden");
+          });
+        res.set_chunked_completion_handler(
+          [async_205_completion](bool clean) {
+              async_205_completion->record(clean);
+          });
+        res.end();
+    });
 
     auto server_task = app.bindaddr(LOCALHOST_ADDRESS).port(45451).run_async();
     BoundedServerShutdown server_shutdown(server_task, [&app] {
@@ -2076,6 +2204,18 @@ TEST_CASE("bodyless_statuses_do_not_invoke_chunk_providers")
     const auto async_204_response = request("/async-204");
     const auto sync_304_response = request("/sync-304");
     const auto async_304_response = request("/async-304");
+    const auto sync_205_response = request("/sync-205");
+    const auto async_205_response = request("/async-205");
+
+    // A 205 with a provider on HTTP/1.0 is normalized to a bodyless 205, so the
+    // chunked-coding rejection must not fire.
+    HttpClient http_1_0_client(LOCALHOST_ADDRESS, 45451);
+    http_1_0_client.send("GET /sync-205 HTTP/1.0\r\nHost: localhost\r\n\r\n");
+    std::string http_1_0_response;
+    const bool http_1_0_closed = receive_until_closed_with_deadline(http_1_0_client.socket(), http_1_0_response, std::chrono::seconds(5));
+    asio_error_code http_1_0_close_error;
+    http_1_0_client.socket().close(http_1_0_close_error);
+    REQUIRE(http_1_0_closed);
     server_shutdown.shutdown();
 
     const auto check_bodyless = [](const std::string& response) {
@@ -2087,26 +2227,46 @@ TEST_CASE("bodyless_statuses_do_not_invoke_chunk_providers")
     check_bodyless(async_204_response);
     check_bodyless(sync_304_response);
     check_bodyless(async_304_response);
+    check_bodyless(sync_205_response);
+    check_bodyless(async_205_response);
+    check_bodyless(http_1_0_response);
     CHECK(sync_204_response.find("Transfer-Encoding:") == std::string::npos);
     CHECK(async_204_response.find("Transfer-Encoding:") == std::string::npos);
     CHECK(sync_304_response.find("Transfer-Encoding:") == std::string::npos);
     CHECK(async_304_response.find("Transfer-Encoding:") == std::string::npos);
+    CHECK(sync_205_response.find("Transfer-Encoding:") == std::string::npos);
+    CHECK(async_205_response.find("Transfer-Encoding:") == std::string::npos);
+    CHECK(http_1_0_response.find("Transfer-Encoding:") == std::string::npos);
+    // 205 is empty rather than self-delimiting: without an explicit zero
+    // length a keep-alive client would wait for close-delimited content.
+    CHECK(sync_205_response.find("Content-Length: 0") != std::string::npos);
+    CHECK(async_205_response.find("Content-Length: 0") != std::string::npos);
+    CHECK(http_1_0_response.find(" 205 ") != std::string::npos);
     CHECK(sync_204_calls->load() == 0);
     CHECK(async_204_calls->load() == 0);
     CHECK(sync_304_calls->load() == 0);
     CHECK(async_304_calls->load() == 0);
+    CHECK(sync_205_calls->load() == 0);
+    CHECK(async_205_calls->load() == 0);
     CHECK(sync_204_completion->calls() == 1);
     CHECK(async_204_completion->calls() == 1);
     CHECK(sync_304_completion->calls() == 1);
     CHECK(async_304_completion->calls() == 1);
+    // The sync-205 route was requested twice (HTTP/1.1 and HTTP/1.0).
+    CHECK(sync_205_completion->calls() == 2);
+    CHECK(async_205_completion->calls() == 1);
     REQUIRE(sync_204_result.wait_for(std::chrono::seconds(1)) == std::future_status::ready);
     REQUIRE(async_204_result.wait_for(std::chrono::seconds(1)) == std::future_status::ready);
     REQUIRE(sync_304_result.wait_for(std::chrono::seconds(1)) == std::future_status::ready);
     REQUIRE(async_304_result.wait_for(std::chrono::seconds(1)) == std::future_status::ready);
+    REQUIRE(sync_205_result.wait_for(std::chrono::seconds(1)) == std::future_status::ready);
+    REQUIRE(async_205_result.wait_for(std::chrono::seconds(1)) == std::future_status::ready);
     CHECK(sync_204_result.get() == true);
     CHECK(async_204_result.get() == true);
     CHECK(sync_304_result.get() == true);
     CHECK(async_304_result.get() == true);
+    CHECK(sync_205_result.get() == true);
+    CHECK(async_205_result.get() == true);
 } // bodyless_statuses_do_not_invoke_chunk_providers
 
 
@@ -2309,6 +2469,393 @@ TEST_CASE("keep_alive_emission_respects_an_application_connection_header")
     asio_error_code close_error;
     client.socket().close(close_error);
 } // keep_alive_emission_respects_an_application_connection_header
+
+TEST_CASE("application_connection_close_closes_the_connection")
+{
+    SimpleApp app;
+    auto stream_completion = std::make_shared<ChunkCompletionObservation>();
+    auto stream_result = stream_completion->first_result();
+
+    CROW_ROUTE(app, "/plain-close")
+    ([](const crow::request&, crow::response& res) {
+        res.set_header("Connection", "Close");
+        res.end("owned");
+    });
+    CROW_ROUTE(app, "/list-close")
+    ([](const crow::request&, crow::response& res) {
+        res.set_header("Connection", "keep-alive, Close");
+        res.end("listed");
+    });
+    CROW_ROUTE(app, "/stream-close")
+    ([stream_completion](const crow::request&, crow::response& res) {
+        res.set_header("Connection", "close");
+        int remaining = 1;
+        res.set_chunked_content_provider(
+          [remaining](std::string& chunk) mutable -> bool {
+              if (remaining == 0)
+                  return false;
+              chunk = "payload";
+              --remaining;
+              return true;
+          });
+        res.set_chunked_completion_handler(
+          [stream_completion](bool clean) {
+              stream_completion->record(clean);
+          });
+        res.end();
+    });
+
+    auto server_task = app.bindaddr(LOCALHOST_ADDRESS).port(45451).run_async();
+    BoundedServerShutdown server_shutdown(server_task, [&app] {
+        app.stop();
+    });
+    REQUIRE(app.wait_for_server_start() == std::cv_status::no_timeout);
+
+    const auto closed_response = [](const std::string& request_text) {
+        HttpClient client(LOCALHOST_ADDRESS, 45451);
+        client.send(request_text);
+        std::string response;
+        const bool closed = receive_until_closed_with_deadline(client.socket(), response, std::chrono::seconds(5));
+        asio_error_code close_error;
+        client.socket().close(close_error);
+        REQUIRE(closed);
+        return response;
+    };
+
+    // A keep-alive HTTP/1.1 request: the application-supplied header alone
+    // must close the connection after the response.
+    const auto plain_response = closed_response("GET /plain-close HTTP/1.1\r\nHost: localhost\r\n\r\n");
+    CHECK(plain_response.find("owned") != std::string::npos);
+
+    // HTTP/1.0 with request-side keep-alive: the response header still wins.
+    const auto http_1_0_response = closed_response("GET /plain-close HTTP/1.0\r\nHost: localhost\r\nConnection: keep-alive\r\n\r\n");
+    CHECK(http_1_0_response.find("owned") != std::string::npos);
+
+    // The close token is honored inside a comma-separated list too.
+    const auto list_response = closed_response("GET /list-close HTTP/1.1\r\nHost: localhost\r\n\r\n");
+    CHECK(list_response.find("listed") != std::string::npos);
+
+    // The chunked path delivers the whole body and terminator, then closes.
+    const auto stream_response = closed_response("GET /stream-close HTTP/1.1\r\nHost: localhost\r\n\r\n");
+    CHECK(stream_response.find("7\r\npayload\r\n") != std::string::npos);
+    CHECK(stream_response.find("0\r\n\r\n") != std::string::npos);
+    server_shutdown.shutdown();
+
+    REQUIRE(stream_result.wait_for(std::chrono::seconds(1)) == std::future_status::ready);
+    CHECK(stream_result.get() == true);
+    CHECK(stream_completion->calls() == 1);
+} // application_connection_close_closes_the_connection
+
+
+TEST_CASE("later_packet_request_is_served_after_an_ordinary_deferred_response")
+{
+    SimpleApp app;
+    auto deferred_end_promise = std::make_shared<std::promise<std::function<void()>>>();
+    auto deferred_end = deferred_end_promise->get_future();
+
+    CROW_ROUTE(app, "/later-packet-first")
+    ([deferred_end_promise](const crow::request&, crow::response& res) {
+        deferred_end_promise->set_value([&res] {
+            res.end("first");
+        });
+    });
+    CROW_ROUTE(app, "/later-packet-second")
+    ([] {
+        return "second";
+    });
+
+    auto server_task = app.bindaddr(LOCALHOST_ADDRESS).port(45451).run_async();
+    BoundedServerShutdown server_shutdown(server_task, [&app] {
+        app.stop();
+    });
+    app.wait_for_server_start();
+
+    HttpClient client(LOCALHOST_ADDRESS, 45451);
+    client.send("GET /later-packet-first HTTP/1.1\r\nHost: localhost\r\n\r\n");
+    REQUIRE(deferred_end.wait_for(std::chrono::seconds(3)) == std::future_status::ready);
+
+    // The second request arrives in a separate packet while the first
+    // response is deferred: it is served afterwards as a sequential request.
+    client.send("GET /later-packet-second HTTP/1.1\r\nHost: localhost\r\nConnection: close\r\n\r\n");
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    deferred_end.get()();
+
+    std::string response;
+    REQUIRE(receive_until_closed_with_deadline(client.socket(), response, std::chrono::seconds(5)));
+    asio_error_code close_error;
+    client.socket().close(close_error);
+    server_shutdown.shutdown();
+
+    const auto first_at = response.find("first");
+    const auto second_at = response.find("second");
+    REQUIRE(first_at != std::string::npos);
+    REQUIRE(second_at != std::string::npos);
+    CHECK(first_at < second_at);
+} // later_packet_request_is_served_after_an_ordinary_deferred_response
+
+
+struct ExecutorStampLocalMiddleware : crow::ILocalMiddleware
+{
+    struct context
+    {};
+    static inline std::shared_ptr<std::promise<std::thread::id>> after_handle_thread;
+    void before_handle(crow::request&, crow::response&, context&) {}
+    void after_handle(crow::request&, crow::response&, context&)
+    {
+        if (auto stamp = after_handle_thread)
+        {
+            after_handle_thread = nullptr;
+            stamp->set_value(std::this_thread::get_id());
+        }
+    }
+};
+
+struct ThrowingLocalMiddleware : crow::ILocalMiddleware
+{
+    struct context
+    {};
+    void before_handle(crow::request&, crow::response&, context&) {}
+    void after_handle(crow::request&, crow::response&, context&)
+    {
+        throw std::runtime_error("after_handle failure");
+    }
+};
+
+TEST_CASE("route_local_after_handlers_run_on_the_connection_executor")
+{
+    crow::App<ExecutorStampLocalMiddleware, ThrowingLocalMiddleware> app;
+    ExecutorStampLocalMiddleware::after_handle_thread = std::make_shared<std::promise<std::thread::id>>();
+    auto after_handle_thread = ExecutorStampLocalMiddleware::after_handle_thread->get_future();
+    auto handler_thread_promise = std::make_shared<std::promise<std::thread::id>>();
+    auto handler_thread = handler_thread_promise->get_future();
+    auto deferred_end_promise = std::make_shared<std::promise<std::function<void()>>>();
+    auto deferred_end = deferred_end_promise->get_future();
+
+    CROW_ROUTE(app, "/local-mw-deferred")
+      .middlewares<decltype(app), ExecutorStampLocalMiddleware>()(
+        [handler_thread_promise, deferred_end_promise](const crow::request&, crow::response& res) {
+            handler_thread_promise->set_value(std::this_thread::get_id());
+            deferred_end_promise->set_value([&res] {
+                res.end("deferred");
+            });
+        });
+
+    auto server_task = app.bindaddr(LOCALHOST_ADDRESS).port(45451).concurrency(1).run_async();
+    BoundedServerShutdown server_shutdown(server_task, [&app] {
+        app.stop();
+    });
+    app.wait_for_server_start();
+
+    HttpClient client(LOCALHOST_ADDRESS, 45451);
+    client.send("GET /local-mw-deferred HTTP/1.1\r\nHost: localhost\r\nConnection: close\r\n\r\n");
+    REQUIRE(deferred_end.wait_for(std::chrono::seconds(3)) == std::future_status::ready);
+
+    // end() runs on a foreign thread; the route-local after handler must not.
+    std::thread foreign_end_thread([&deferred_end] {
+        deferred_end.get()();
+    });
+    const auto foreign_thread_id = foreign_end_thread.get_id();
+
+    std::string response;
+    REQUIRE(receive_until_closed_with_deadline(client.socket(), response, std::chrono::seconds(5)));
+    asio_error_code close_error;
+    client.socket().close(close_error);
+    foreign_end_thread.join();
+    server_shutdown.shutdown();
+
+    CHECK(response.find("deferred") != std::string::npos);
+    REQUIRE(after_handle_thread.wait_for(std::chrono::seconds(1)) == std::future_status::ready);
+    const auto after_thread_id = after_handle_thread.get();
+    CHECK(after_thread_id != foreign_thread_id);
+    REQUIRE(handler_thread.wait_for(std::chrono::seconds(1)) == std::future_status::ready);
+    CHECK(after_thread_id == handler_thread.get());
+} // route_local_after_handlers_run_on_the_connection_executor
+
+
+TEST_CASE("throwing_route_local_after_handler_still_completes_the_response")
+{
+    crow::App<ExecutorStampLocalMiddleware, ThrowingLocalMiddleware> app;
+
+    CROW_ROUTE(app, "/local-mw-throwing")
+      .middlewares<decltype(app), ThrowingLocalMiddleware>()(
+        [](const crow::request&, crow::response& res) {
+            res.end("survived");
+        });
+
+    auto server_task = app.bindaddr(LOCALHOST_ADDRESS).port(45451).run_async();
+    BoundedServerShutdown server_shutdown(server_task, [&app] {
+        app.stop();
+    });
+    app.wait_for_server_start();
+
+    HttpClient client(LOCALHOST_ADDRESS, 45451);
+    client.send("GET /local-mw-throwing HTTP/1.1\r\nHost: localhost\r\nConnection: close\r\n\r\n");
+    std::string response;
+    REQUIRE(receive_until_closed_with_deadline(client.socket(), response, std::chrono::seconds(5)));
+    asio_error_code close_error;
+    client.socket().close(close_error);
+    server_shutdown.shutdown();
+
+    CHECK(response.find("survived") != std::string::npos);
+} // throwing_route_local_after_handler_still_completes_the_response
+
+
+TEST_CASE("is_alive_is_readable_from_a_foreign_thread_while_deferred")
+{
+    SimpleApp app;
+    auto deferred_response_promise = std::make_shared<std::promise<crow::response*>>();
+    auto deferred_response = deferred_response_promise->get_future();
+
+    CROW_ROUTE(app, "/deferred-is-alive")
+    ([deferred_response_promise](const crow::request&, crow::response& res) {
+        deferred_response_promise->set_value(&res);
+    });
+
+    auto server_task = app.bindaddr(LOCALHOST_ADDRESS).port(45451).run_async();
+    BoundedServerShutdown server_shutdown(server_task, [&app] {
+        app.stop();
+    });
+    app.wait_for_server_start();
+
+    HttpClient client(LOCALHOST_ADDRESS, 45451);
+    client.send("GET /deferred-is-alive HTTP/1.1\r\nHost: localhost\r\nConnection: close\r\n\r\n");
+    REQUIRE(deferred_response.wait_for(std::chrono::seconds(3)) == std::future_status::ready);
+    crow::response* res = deferred_response.get();
+
+    // The documented any-thread window: after the handler returned with the
+    // response deferred and before end().
+    std::atomic<std::size_t> alive_observations{0};
+    std::thread poller([res, &alive_observations] {
+        for (int i = 0; i < 100; ++i)
+        {
+            if (res->is_alive())
+                alive_observations.fetch_add(1);
+        }
+    });
+    poller.join();
+    res->end("polled");
+
+    std::string response;
+    REQUIRE(receive_until_closed_with_deadline(client.socket(), response, std::chrono::seconds(5)));
+    asio_error_code close_error;
+    client.socket().close(close_error);
+    server_shutdown.shutdown();
+
+    CHECK(response.find("polled") != std::string::npos);
+    CHECK(alive_observations.load() == 100);
+} // is_alive_is_readable_from_a_foreign_thread_while_deferred
+
+
+struct BodyStampMiddleware
+{
+    struct context
+    {};
+    void before_handle(crow::request&, crow::response&, context&) {}
+    void after_handle(crow::request&, crow::response& res, context&)
+    {
+        res.body += "-stamped";
+    }
+};
+
+TEST_CASE("head_content_length_matches_the_post_middleware_representation")
+{
+    crow::App<BodyStampMiddleware> app;
+
+    CROW_ROUTE(app, "/stamped")
+      .methods("GET"_method, "HEAD"_method)([](const crow::request&, crow::response& res) {
+          res.end("base");
+      });
+
+    auto server_task = app.bindaddr(LOCALHOST_ADDRESS).port(45451).run_async();
+    BoundedServerShutdown server_shutdown(server_task, [&app] {
+        app.stop();
+    });
+    app.wait_for_server_start();
+
+    const auto request = [](const std::string& method) {
+        HttpClient client(LOCALHOST_ADDRESS, 45451);
+        client.send(method + " /stamped HTTP/1.1\r\nHost: localhost\r\nConnection: close\r\n\r\n");
+        std::string response;
+        const bool closed = receive_until_closed_with_deadline(client.socket(), response, std::chrono::seconds(5));
+        asio_error_code close_error;
+        client.socket().close(close_error);
+        REQUIRE(closed);
+        return response;
+    };
+
+    const auto get_response = request("GET");
+    const auto head_response = request("HEAD");
+    server_shutdown.shutdown();
+
+    // Middleware appended to the body, so HEAD must report the length of the
+    // representation the equivalent GET actually sends.
+    CHECK(get_response.find("base-stamped") != std::string::npos);
+    CHECK(get_response.find("Content-Length: 12\r\n") != std::string::npos);
+    CHECK(head_response.find("Content-Length: 12\r\n") != std::string::npos);
+    const auto head_header_end = head_response.find("\r\n\r\n");
+    REQUIRE(head_header_end != std::string::npos);
+    CHECK(head_response.size() == head_header_end + 4);
+} // head_content_length_matches_the_post_middleware_representation
+
+
+TEST_CASE("chunked_header_write_runs_under_the_write_deadline")
+{
+    SimpleApp app;
+    PausingSocketContext socket_context;
+    socket_context.pause_next_write();
+    auto header_write_pending = socket_context.pending_write_future();
+    auto completion_observation = std::make_shared<ChunkCompletionObservation>();
+    auto completion_result = completion_observation->first_result();
+
+    CROW_ROUTE(app, "/paused-header-stream")
+    ([completion_observation](const crow::request&, crow::response& res) {
+        res.set_async_chunked_content_provider(
+          [](crow::response::async_chunk_completion_t) {
+              // The provider stays idle: the header write is the phase under test.
+          });
+        res.set_chunked_completion_handler([completion_observation](bool clean) {
+            completion_observation->record(clean);
+        });
+        res.end();
+    });
+
+    app.validate();
+    std::tuple<> middlewares;
+    using PausedWriteServer = crow::Server<crow::SimpleApp, crow::TCPAcceptor, PausingSocketAdaptor>;
+    PausedWriteServer server(&app,
+                             asio::ip::tcp::endpoint(asio::ip::make_address(LOCALHOST_ADDRESS), 45451),
+                             "Crow/Test",
+                             &middlewares,
+                             2,
+                             1,
+                             &socket_context);
+    auto server_task = std::async(std::launch::async, [&server] {
+        server.run();
+    });
+    BoundedServerShutdown server_shutdown(server_task, [&server] {
+        server.stop();
+    });
+    REQUIRE(server.wait_for_start(std::chrono::steady_clock::now() + std::chrono::seconds(3)) == std::cv_status::no_timeout);
+
+    asio::io_context io_context;
+    asio::ip::tcp::socket client(io_context);
+    client.connect(asio::ip::tcp::endpoint(asio::ip::make_address(LOCALHOST_ADDRESS), 45451));
+    asio::write(client, asio::buffer(std::string("GET /paused-header-stream HTTP/1.1\r\nHost: localhost\r\n\r\n")));
+    REQUIRE(header_write_pending.wait_for(std::chrono::seconds(3)) == std::future_status::ready);
+
+    // The parked header write runs under the connection deadline: the timer
+    // closes the socket, so the client observes EOF instead of a silent hang.
+    std::string response;
+    REQUIRE(receive_until_closed_with_deadline(client, response, std::chrono::seconds(5)));
+    asio_error_code close_error;
+    client.close(close_error);
+
+    socket_context.resume_pending_write();
+    REQUIRE(completion_result.wait_for(std::chrono::seconds(3)) == std::future_status::ready);
+    CHECK(completion_result.get() == false);
+    CHECK(completion_observation->calls() == 1);
+    server_shutdown.shutdown();
+} // chunked_header_write_runs_under_the_write_deadline
 
 TEST_CASE("concurrent_end_calls_deliver_exactly_one_body")
 {

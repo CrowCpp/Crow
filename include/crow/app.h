@@ -507,7 +507,10 @@ namespace crow
 
         /// \brief Set the response body size (in bytes) beyond which Crow automatically streams responses (Default is 1MiB)
         ///
-        /// Any streamed response is unaffected by Crow's timer, and therefore won't timeout before a response is fully sent.
+        /// This threshold applies to string and static-file bodies with a known
+        /// length; a body streamed this way is unaffected by Crow's timer. Chunk
+        /// providers are configured separately, and each of their socket writes
+        /// runs under timeout().
         self_t& stream_threshold(size_t threshold)
         {
             res_stream_threshold_ = threshold;
