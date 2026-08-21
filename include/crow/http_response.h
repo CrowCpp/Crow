@@ -339,11 +339,14 @@ namespace crow
         /// Set the response completion flag and call the handler (to send the response).
         void end()
         {
+            // The completion handler may release the connection that owns this
+            // response; the local reference keeps the mutex alive until return.
+            auto lifecycle = deferred_lifecycle_;
             std::unique_lock<std::recursive_mutex> lifecycle_lock;
-            if (deferred_lifecycle_)
+            if (lifecycle)
             {
-                lifecycle_lock = std::unique_lock<std::recursive_mutex>(deferred_lifecycle_->mutex);
-                if (deferred_lifecycle_->stopped)
+                lifecycle_lock = std::unique_lock<std::recursive_mutex>(lifecycle->mutex);
+                if (lifecycle->stopped)
                 {
                     completed_ = true;
                     auto stopped_handler = complete_request_handler_;
@@ -402,12 +405,18 @@ namespace crow
         /// Same as end() except it adds a body part right before ending.
         void end(const std::string& body_part)
         {
-            std::unique_lock<std::recursive_mutex> lifecycle_lock;
-            if (deferred_lifecycle_)
+            // The lock only guards the body append and must not be held across
+            // end(): its completion handler may release the connection that
+            // owns this response, destroying the mutex a caller still holds.
+            auto lifecycle = deferred_lifecycle_;
             {
-                lifecycle_lock = std::unique_lock<std::recursive_mutex>(deferred_lifecycle_->mutex);
+                std::unique_lock<std::recursive_mutex> lifecycle_lock;
+                if (lifecycle)
+                {
+                    lifecycle_lock = std::unique_lock<std::recursive_mutex>(lifecycle->mutex);
+                }
+                body += body_part;
             }
-            body += body_part;
             end();
         }
 
