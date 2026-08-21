@@ -2768,6 +2768,135 @@ TEST_CASE("sync_chunked_response_does_not_block_the_worker_for_a_stalled_client"
     CHECK(ping_response.find("pong") != std::string::npos);
 } // sync_chunked_response_does_not_block_the_worker_for_a_stalled_client
 
+TEST_CASE("chunked_response_times_out_writing_to_a_stalled_client")
+{
+    SimpleApp app;
+    auto completion_observation = std::make_shared<ChunkCompletionObservation>();
+    auto completion_result = completion_observation->first_result();
+
+    CROW_ROUTE(app, "/stalled-write-deadline")
+    ([completion_observation](const crow::request&, crow::response& res) {
+        res.set_chunked_content_provider(
+          [sent = false](std::string& chunk) mutable -> bool {
+              if (sent)
+                  return false;
+              chunk.assign(8u * 1024u * 1024u, 'x');
+              sent = true;
+              return true;
+          },
+          "application/octet-stream");
+        res.set_chunked_completion_handler([completion_observation](bool clean) {
+            completion_observation->record(clean);
+        });
+        res.end();
+    });
+
+    auto server_task = app.bindaddr(LOCALHOST_ADDRESS).port(45451).timeout(1).run_async();
+    BoundedServerShutdown server_shutdown(server_task, [&app] {
+        app.stop();
+    });
+    app.wait_for_server_start();
+
+    asio::io_context io_context;
+    asio::ip::tcp::socket stalled_client(io_context);
+    stalled_client.connect(asio::ip::tcp::endpoint(asio::ip::make_address(LOCALHOST_ADDRESS), 45451));
+    const std::string request = "GET /stalled-write-deadline HTTP/1.1\r\nHost: localhost\r\n\r\n";
+    asio::write(stalled_client, asio::buffer(request));
+
+    // A client that stops reading trips the write deadline: the transfer is
+    // aborted and reported unclean instead of pinning the buffers forever.
+    const auto completion_status = completion_result.wait_for(std::chrono::seconds(5));
+    REQUIRE(completion_status == std::future_status::ready);
+    CHECK(completion_result.get() == false);
+    CHECK(completion_observation->calls() == 1);
+
+    asio_error_code close_error;
+    stalled_client.close(close_error);
+} // chunked_response_times_out_writing_to_a_stalled_client
+
+TEST_CASE("async_chunked_response_aborts_an_idle_provider_when_configured")
+{
+    SimpleApp app;
+    auto completion_observation = std::make_shared<ChunkCompletionObservation>();
+    auto completion_result = completion_observation->first_result();
+    auto provider_calls = std::make_shared<std::atomic<std::size_t>>(0);
+
+    CROW_ROUTE(app, "/idle-provider")
+    ([completion_observation, provider_calls](const crow::request&, crow::response& res) {
+        res.set_async_chunked_content_provider(
+          [provider_calls](crow::response::async_chunk_completion_t) {
+              provider_calls->fetch_add(1);
+          });
+        res.set_chunked_completion_handler([completion_observation](bool clean) {
+            completion_observation->record(clean);
+        });
+        res.end();
+    });
+
+    auto server_task = app.bindaddr(LOCALHOST_ADDRESS).port(45451).stream_idle_timeout(1).run_async();
+    BoundedServerShutdown server_shutdown(server_task, [&app] {
+        app.stop();
+    });
+    app.wait_for_server_start();
+
+    HttpClient client(LOCALHOST_ADDRESS, 45451);
+    client.send("GET /idle-provider HTTP/1.1\r\nHost: localhost\r\n\r\n");
+
+    std::string response;
+    const bool connection_closed = receive_until_closed_with_deadline(client.socket(), response, std::chrono::seconds(5));
+
+    const auto completion_status = completion_result.wait_for(std::chrono::seconds(1));
+    REQUIRE(completion_status == std::future_status::ready);
+    CHECK(completion_result.get() == false);
+    CHECK(completion_observation->calls() == 1);
+    CHECK(provider_calls->load() == 1);
+    REQUIRE(connection_closed);
+    CHECK(response.find("0\r\n\r\n") == std::string::npos);
+
+    asio_error_code close_error;
+    client.socket().close(close_error);
+} // async_chunked_response_aborts_an_idle_provider_when_configured
+
+TEST_CASE("async_chunked_response_aborts_oversized_chunks")
+{
+    SimpleApp app;
+    auto completion_observation = std::make_shared<ChunkCompletionObservation>();
+    auto completion_result = completion_observation->first_result();
+
+    CROW_ROUTE(app, "/oversized-chunk")
+    ([completion_observation](const crow::request&, crow::response& res) {
+        res.set_async_chunked_content_provider(
+          [](crow::response::async_chunk_completion_t complete) {
+              complete(crow::chunk_result::done, std::string(2048, 'x'));
+          });
+        res.set_chunked_completion_handler([completion_observation](bool clean) {
+            completion_observation->record(clean);
+        });
+        res.end();
+    });
+
+    auto server_task = app.bindaddr(LOCALHOST_ADDRESS).port(45451).max_stream_chunk_size(1024).run_async();
+    BoundedServerShutdown server_shutdown(server_task, [&app] {
+        app.stop();
+    });
+    app.wait_for_server_start();
+
+    HttpClient client(LOCALHOST_ADDRESS, 45451);
+    client.send("GET /oversized-chunk HTTP/1.1\r\nHost: localhost\r\n\r\n");
+
+    std::string response;
+    const bool connection_closed = receive_until_closed_with_deadline(client.socket(), response, std::chrono::seconds(5));
+
+    const auto completion_status = completion_result.wait_for(std::chrono::seconds(1));
+    REQUIRE(completion_status == std::future_status::ready);
+    CHECK(completion_result.get() == false);
+    REQUIRE(connection_closed);
+    CHECK(response.find("0\r\n\r\n") == std::string::npos);
+
+    asio_error_code close_error;
+    client.socket().close(close_error);
+} // async_chunked_response_aborts_oversized_chunks
+
 TEST_CASE("async_chunked_response_move_assignment_releases_destination_provider") {
     response destination;
     auto destination_marker                        = std::make_shared<int>(1);

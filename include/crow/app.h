@@ -520,6 +520,39 @@ namespace crow
             return res_stream_threshold_;
         }
 
+        /// \brief Limit how long a chunk provider may stay idle between chunks (in seconds; 0 disables the limit)
+        ///
+        /// Unlimited by default: an idle provider is normal for long-lived streams
+        /// such as server-sent events. When set, a stream whose provider produces
+        /// no result within the limit is aborted and reported unclean.
+        self_t& stream_idle_timeout(uint8_t seconds)
+        {
+            stream_idle_timeout_ = seconds;
+            return *this;
+        }
+
+        /// \brief Get the chunk provider idle limit (in seconds; 0 = unlimited)
+        uint8_t stream_idle_timeout()
+        {
+            return stream_idle_timeout_;
+        }
+
+        /// \brief Cap the size (in bytes) of a single chunk supplied by a chunk provider (default 16 MiB)
+        ///
+        /// A chunk above the cap aborts the stream: the connection closes without
+        /// the terminating frame and completion is reported unclean.
+        self_t& max_stream_chunk_size(size_t bytes)
+        {
+            max_stream_chunk_size_ = bytes;
+            return *this;
+        }
+
+        /// \brief Get the cap on a single provider-supplied chunk (in bytes)
+        size_t max_stream_chunk_size()
+        {
+            return max_stream_chunk_size_;
+        }
+
 
         self_t& register_blueprint(Blueprint& blueprint)
         {
@@ -920,6 +953,8 @@ namespace crow
         detail::socket::tcp_socket_options tcp_socket_options_{};
         detail::socket::tcp_socket_options websocket_tcp_socket_options_{};
         size_t res_stream_threshold_ = 1048576;
+        uint8_t stream_idle_timeout_ = 0;
+        size_t max_stream_chunk_size_ = 16 * 1048576;
         Router router_;
         bool static_routes_added_{false};
 

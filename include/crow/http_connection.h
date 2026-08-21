@@ -124,7 +124,7 @@ namespace crow
                    typename Adaptor::context* adaptor_ctx_,
                    std::atomic<unsigned int>& queue_length,
                    std::shared_ptr<detail::connection_lifecycle_registry> lifecycle_registry = nullptr):
-          adaptor_(io_context, adaptor_ctx_), handler_(handler), parser_(this), req_(parser_.req), server_name_(server_name), middlewares_(middlewares), get_cached_date_str(get_cached_date_str_f), task_timer_(task_timer), res_stream_threshold_(handler->stream_threshold()), queue_length_(queue_length), lifecycle_registry_(lifecycle_registry)
+          adaptor_(io_context, adaptor_ctx_), handler_(handler), parser_(this), req_(parser_.req), server_name_(server_name), middlewares_(middlewares), get_cached_date_str(get_cached_date_str_f), task_timer_(task_timer), res_stream_threshold_(handler->stream_threshold()), stream_idle_timeout_(handler->stream_idle_timeout()), max_stream_chunk_size_(handler->max_stream_chunk_size()), queue_length_(queue_length), lifecycle_registry_(lifecycle_registry)
         {
             res.deferred_lifecycle_ = std::make_shared<response::deferred_response_lifecycle>();
             queue_length_++;
@@ -652,8 +652,8 @@ namespace crow
             std::string chunk_header;
             std::vector<asio::const_buffer> buffers;
             std::shared_ptr<AsyncChunkRequest> pending_request;
-            detail::task_timer::identifier_type lifetime_task_id{};
-            bool lifetime_task_armed{false};
+            detail::task_timer::identifier_type idle_task_id{};
+            bool idle_task_armed{false};
             std::mutex completion_mutex;
             bool completion_reported{false};
         };
@@ -663,7 +663,9 @@ namespace crow
         }
 
         void do_write_async_chunked() {
-            cancel_deadline_timer();
+            // Every socket write of the transfer runs under the connection
+            // deadline; only the provider wait is unbounded by default.
+            start_deadline();
 
             auto state                = std::make_shared<AsyncChunkTransfer>();
             state->provider           = std::move(res.async_chunk_provider_);
@@ -709,21 +711,21 @@ namespace crow
                   }
 
                   state->header_bytes.clear();
+                  self->cancel_deadline_timer();
                   self->request_async_chunk(state);
               });
         }
 
-        void arm_async_chunk_lifetime(const std::shared_ptr<AsyncChunkTransfer>& state) {
-            if (async_chunk_transfer_ != state) {
+        void arm_provider_idle_timeout(const std::shared_ptr<AsyncChunkTransfer>& state)
+        {
+            if (stream_idle_timeout_ == 0 || async_chunk_transfer_ != state)
+            {
                 return;
             }
 
             auto self                                    = this->shared_from_this();
             std::weak_ptr<AsyncChunkTransfer> weak_state = state;
-            // task_timer owns scheduled callbacks outside Connection and destroys them
-            // when the worker exits. Renewing the longest timer interval keeps an
-            // arbitrarily slow provider alive without imposing a provider deadline.
-            state->lifetime_task_id = task_timer_.schedule(
+            state->idle_task_id = task_timer_.schedule(
               [self, weak_state] {
                   auto active_state = weak_state.lock();
                   if (!active_state)
@@ -731,25 +733,26 @@ namespace crow
                       return;
                   }
 
-                  active_state->lifetime_task_armed = false;
-                  active_state->lifetime_task_id = 0;
+                  active_state->idle_task_armed = false;
                   if (self->async_chunk_transfer_ == active_state && active_state->phase == AsyncChunkPhase::requesting_chunk)
                   {
-                      self->arm_async_chunk_lifetime(active_state);
+                      CROW_LOG_WARNING << "Chunk provider exceeded the stream idle limit; aborting the transfer.";
+                      self->finish_async_chunked(active_state, false, true);
                   }
               },
-              std::numeric_limits<uint8_t>::max());
-            state->lifetime_task_armed = true;
+              stream_idle_timeout_);
+            state->idle_task_armed = true;
         }
 
-        void release_async_chunk_lifetime(const std::shared_ptr<AsyncChunkTransfer>& state) {
-            if (!state->lifetime_task_armed) {
+        void cancel_provider_idle_timeout(const std::shared_ptr<AsyncChunkTransfer>& state)
+        {
+            if (!state->idle_task_armed)
+            {
                 return;
             }
 
-            const auto task_id         = state->lifetime_task_id;
-            state->lifetime_task_armed = false;
-            state->lifetime_task_id    = 0;
+            const auto task_id = state->idle_task_id;
+            state->idle_task_armed = false;
             task_timer_.cancel(task_id);
         }
 
@@ -773,7 +776,7 @@ namespace crow
                 // The worker has stopped dispatching handlers. Keep buffers referenced by
                 // outstanding writes intact until Asio releases their handlers.
                 invalidate_async_chunk_request(state);
-                release_async_chunk_lifetime(state);
+                cancel_provider_idle_timeout(state);
                 state->phase    = AsyncChunkPhase::aborted;
                 state->provider = nullptr;
             }
@@ -876,7 +879,7 @@ namespace crow
             request->connection    = this->shared_from_this();
             request->transfer      = state;
             state->pending_request = request;
-            arm_async_chunk_lifetime(state);
+            arm_provider_idle_timeout(state);
 
             response::async_chunk_completion_t complete = [request](response::chunk_result result,
                                                                     std::string chunk) mutable -> bool {
@@ -975,7 +978,7 @@ namespace crow
             }
 
             invalidate_async_chunk_request(state);
-            release_async_chunk_lifetime(state);
+            cancel_provider_idle_timeout(state);
 
             // The peer watch read stays outstanding: one read and one write may
             // be in flight concurrently on the connection executor.
@@ -1005,6 +1008,14 @@ namespace crow
                 return;
             }
 
+            if (chunk.size() > max_stream_chunk_size_)
+            {
+                CROW_LOG_ERROR << "Chunk provider supplied " << chunk.size()
+                               << " bytes, above the configured cap; aborting the transfer.";
+                finish_async_chunked(state, false, true);
+                return;
+            }
+
             state->phase        = AsyncChunkPhase::writing_chunk;
             state->chunk        = std::move(chunk);
             state->chunk_header = chunk_size_to_hex(state->chunk.size());
@@ -1016,6 +1027,7 @@ namespace crow
             state->buffers.emplace_back(crlf.data(), crlf.size());
 
             auto self = this->shared_from_this();
+            start_deadline();
             asio::async_write(
                 adaptor_.socket(),
                 state->buffers,
@@ -1031,6 +1043,7 @@ namespace crow
                         return;
                     }
 
+                    self->cancel_deadline_timer();
                     state->buffers.clear();
                     state->chunk.clear();
                     state->chunk_header.clear();
@@ -1053,6 +1066,7 @@ namespace crow
             state->buffers.emplace_back(terminator, sizeof(terminator) - 1);
 
             auto self = this->shared_from_this();
+            start_deadline();
             asio::async_write(adaptor_.socket(),
                               state->buffers,
                               [self, state](const error_code& ec, std::size_t /*bytes_transferred*/) {
@@ -1067,6 +1081,7 @@ namespace crow
                                       return;
                                   }
 
+                                  self->cancel_deadline_timer();
                                   self->finish_async_chunked(state, true, false);
                               });
         }
@@ -1079,7 +1094,7 @@ namespace crow
             const bool resume_input = clean && !force_close && !close_connection_ && need_to_start_read_after_complete_;
             state->phase = clean ? AsyncChunkPhase::completed : AsyncChunkPhase::aborted;
             invalidate_async_chunk_request(state);
-            release_async_chunk_lifetime(state);
+            cancel_provider_idle_timeout(state);
             state->provider = nullptr;
             state->buffers.clear();
             async_chunk_transfer_.reset();
@@ -1412,6 +1427,8 @@ namespace crow
         detail::task_timer& task_timer_;
 
         size_t res_stream_threshold_;
+        uint8_t stream_idle_timeout_;
+        size_t max_stream_chunk_size_;
 
         std::atomic<unsigned int>& queue_length_;
         std::weak_ptr<detail::connection_lifecycle_registry> lifecycle_registry_;
