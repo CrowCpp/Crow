@@ -4030,6 +4030,60 @@ TEST_CASE("deferred_end_with_body_after_worker_shutdown_is_safe")
     client.socket().close(close_error);
 } // deferred_end_with_body_after_worker_shutdown_is_safe
 
+namespace crow
+{
+    struct connection_test_access
+    {
+        template<typename Connection>
+        static response& res(Connection& connection)
+        {
+            return connection.res;
+        }
+    };
+} // namespace crow
+
+TEST_CASE("connection_destruction_reports_unstarted_deferred_completion")
+{
+    SimpleApp app;
+    asio::io_context io_context;
+    crow::detail::task_timer task_timer(io_context);
+    std::function<std::string()> date_str_getter = [] {
+        return std::string("Tue, 01 Jan 2030 00:00:00 GMT");
+    };
+    std::tuple<> middlewares;
+    std::atomic<unsigned int> queue_length{0};
+    auto completion_observation = std::make_shared<ChunkCompletionObservation>();
+    auto completion_result = completion_observation->first_result();
+
+    using DirectConnection = crow::Connection<crow::SocketAdaptor, crow::SimpleApp>;
+    {
+        auto connection = std::make_shared<DirectConnection>(io_context,
+                                                             &app,
+                                                             "Crow/Test",
+                                                             &middlewares,
+                                                             date_str_getter,
+                                                             task_timer,
+                                                             nullptr,
+                                                             queue_length);
+        auto& res = crow::connection_test_access::res(*connection);
+        res.set_async_chunked_content_provider(
+          [](crow::response::async_chunk_completion_t) {});
+        res.set_chunked_completion_handler(
+          [completion_observation](bool clean) {
+              completion_observation->record(clean);
+          });
+    }
+
+    const auto completion_status = completion_result.wait_for(std::chrono::milliseconds(100));
+    CHECK(completion_status == std::future_status::ready);
+    if (completion_status == std::future_status::ready)
+    {
+        CHECK(completion_result.get() == false);
+    }
+    CHECK(completion_observation->calls() == 1);
+    CHECK(queue_length.load() == 0);
+} // connection_destruction_reports_unstarted_deferred_completion
+
 TEST_CASE("bodyless_statuses_do_not_invoke_chunk_providers")
 {
     SimpleApp app;

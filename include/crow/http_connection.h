@@ -110,6 +110,9 @@ namespace crow
     {
         friend struct crow::response;
         friend class detail::connection_lifecycle_registry;
+#ifdef CROW_ENABLE_ASYNC_CHUNK_PUBLICATION_TEST_HOOK
+        friend struct connection_test_access;
+#endif
 
     public:
         Connection(asio::io_context& io_context,
