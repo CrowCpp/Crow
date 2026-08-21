@@ -2714,6 +2714,60 @@ TEST_CASE("chunked_response_canonicalizes_framing_headers")
     app.stop();
 } // chunked_response_canonicalizes_framing_headers
 
+TEST_CASE("sync_chunked_response_does_not_block_the_worker_for_a_stalled_client")
+{
+    SimpleApp app;
+
+    CROW_ROUTE(app, "/stalled-stream")
+    ([](const crow::request&, crow::response& res) {
+        res.set_chunked_content_provider(
+          [sent = false](std::string& chunk) mutable -> bool {
+              if (sent)
+                  return false;
+              // Larger than any default socket buffer pair, so the write
+              // cannot complete while the client refuses to read.
+              chunk.assign(64u * 1024u * 1024u, 'x');
+              sent = true;
+              return true;
+          },
+          "application/octet-stream");
+        res.end();
+    });
+    CROW_ROUTE(app, "/ping")
+    ([] {
+        return "pong";
+    });
+
+    auto server_task = app.bindaddr(LOCALHOST_ADDRESS).port(45451).concurrency(1).run_async();
+    BoundedServerShutdown server_shutdown(server_task, [&app] {
+        app.stop();
+    });
+    app.wait_for_server_start();
+
+    // The stalled client requests the stream and never reads the body.
+    asio::io_context io_context;
+    asio::ip::tcp::socket stalled_client(io_context);
+    stalled_client.connect(asio::ip::tcp::endpoint(asio::ip::make_address(LOCALHOST_ADDRESS), 45451));
+    const std::string stream_request = "GET /stalled-stream HTTP/1.1\r\nHost: localhost\r\n\r\n";
+    asio::write(stalled_client, asio::buffer(stream_request));
+
+    // Give the worker time to enter the stalled transfer.
+    std::this_thread::sleep_for(std::chrono::milliseconds(200));
+
+    // The single worker must still serve another connection.
+    HttpClient ping_client(LOCALHOST_ADDRESS, 45451);
+    ping_client.send("GET /ping HTTP/1.1\r\nHost: localhost\r\nConnection: close\r\n\r\n");
+    std::string ping_response;
+    const bool ping_answered = receive_until_closed_with_deadline(ping_client.socket(), ping_response, std::chrono::seconds(3));
+
+    asio_error_code close_error;
+    stalled_client.close(close_error);
+    ping_client.socket().close(close_error);
+
+    REQUIRE(ping_answered);
+    CHECK(ping_response.find("pong") != std::string::npos);
+} // sync_chunked_response_does_not_block_the_worker_for_a_stalled_client
+
 TEST_CASE("async_chunked_response_move_assignment_releases_destination_provider") {
     response destination;
     auto destination_marker                        = std::make_shared<int>(1);

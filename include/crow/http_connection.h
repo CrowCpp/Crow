@@ -299,7 +299,6 @@ namespace crow
                 if (res.is_chunked_type())
                 {
                     // HEAD keeps "Transfer-Encoding: chunked" and omits "Content-Length".
-                    res.chunk_provider_ex_ = nullptr;
                     res.async_chunk_provider_ = nullptr;
                     res.body = "";
                     res.manual_length_header = true;
@@ -423,7 +422,6 @@ namespace crow
         {
             res.body.clear();
             res.file_info = response::static_file_info{};
-            res.chunk_provider_ex_ = nullptr;
             res.async_chunk_provider_ = nullptr;
             res.body_source_ = response::body_source_kind::none;
             res.manual_length_header = true;
@@ -451,7 +449,6 @@ namespace crow
 
         void reject_http_1_0_chunked_response()
         {
-            res.chunk_provider_ex_ = nullptr;
             res.async_chunk_provider_ = nullptr;
             res.body_source_ = response::body_source_kind::none;
             res.body.clear();
@@ -662,13 +659,7 @@ namespace crow
         };
 
         void do_write_chunked() {
-            if (res.body_source_ == response::body_source_kind::asynchronous_chunked)
-            {
-                do_write_async_chunked();
-                return;
-            }
-
-            do_write_sync_chunked();
+            do_write_async_chunked();
         }
 
         void do_write_async_chunked() {
@@ -803,7 +794,6 @@ namespace crow
                     res.chunk_complete_ = nullptr;
                     // Release the application's providers; the response is
                     // otherwise left alone for a late end() to observe.
-                    res.chunk_provider_ex_ = nullptr;
                     res.async_chunk_provider_ = nullptr;
                     res.body_source_ = response::body_source_kind::none;
                     res.is_alive_helper_ = nullptr;
@@ -1129,131 +1119,6 @@ namespace crow
             need_to_start_read_after_complete_ = false;
             start_deadline();
             do_read();
-        }
-
-        void do_write_sync_chunked() {
-            error_code ec;
-            asio::write(adaptor_.socket(), buffers_, ec); // Write the response start / headers
-            if (ec)
-            {
-                CROW_LOG_ERROR << ec << " - buffer write error happened while sending response start / headers. Writing stopped premature.";
-            }
-
-            // Producing the body may take arbitrarily long, so the connection must not be
-            // closed by the deadline while chunks are still on their way.
-            cancel_deadline_timer();
-
-            // do_write_sync() clears the response on every write, so the provider and the
-            // completion handler have to be taken out of it before the loop starts.
-            auto provider           = std::move(res.chunk_provider_ex_);
-            res.chunk_provider_ex_ = nullptr;
-            auto completion_handler = std::move(res.chunk_complete_);
-            res.chunk_complete_ = nullptr;
-
-            std::string chunk;
-            std::string chunk_header;
-            std::vector<asio::const_buffer> buffers{3};
-            auto result = provider ? response::chunk_result::more : response::chunk_result::done;
-            while (result == response::chunk_result::more && !ec)
-            {
-                chunk.clear();
-                // An exception from the provider must not escape into the Asio stack; it is
-                // treated as an abort: no terminating frame, forced close, completion(false).
-                try
-                {
-                    result = provider(chunk);
-                }
-                catch (const std::exception& e)
-                {
-                    CROW_LOG_ERROR << "An uncaught exception occurred in the chunk provider: " << e.what();
-                    result = response::chunk_result::abort;
-                }
-                catch (...)
-                {
-                    CROW_LOG_ERROR << "An uncaught exception occurred in the chunk provider.";
-                    result = response::chunk_result::abort;
-                }
-                if (result == response::chunk_result::abort || chunk.empty())
-                {
-                    continue;
-                }
-
-                chunk_header = chunk_size_to_hex(chunk.size());
-                chunk_header += crlf;
-                buffers[0] = asio::const_buffer(chunk_header.data(), chunk_header.size());
-                buffers[1] = asio::const_buffer(chunk.data(), chunk.size());
-                buffers[2] = asio::const_buffer(crlf.data(), crlf.size());
-                ec = do_write_sync(buffers);
-                if (ec)
-                {
-                    CROW_LOG_ERROR << ec << " - buffer write error happened while sending a chunk. Writing stopped premature.";
-                }
-            }
-
-            // The terminating frame marks the body as complete, so it is only sent when the
-            // provider finished cleanly and every previous write succeeded.
-            if (result == response::chunk_result::done && !ec)
-            {
-                static constexpr char last_chunk[] = "0\r\n\r\n";
-                std::vector<asio::const_buffer> tail{1};
-                tail[0] = asio::const_buffer(last_chunk, sizeof(last_chunk) - 1);
-                ec = do_write_sync(tail);
-                if (ec)
-                {
-                    CROW_LOG_ERROR << ec << " - buffer write error happened while sending the last chunk.";
-                }
-            }
-
-            // A write failure leaves the message framing just as incomplete as an explicit
-            // abort (the terminating frame never made it out), so the connection policy is
-            // the same for both: force the close and never reuse the socket for keep-alive.
-            const bool aborted = (result == response::chunk_result::abort);
-            const bool force_close = aborted || static_cast<bool>(ec);
-            if (force_close)
-            {
-                // Close the connection forcefully, without the terminating frame, so that the
-                // client sees a truncated body instead of a seemingly complete one.
-                adaptor_.shutdown_readwrite();
-                adaptor_.close();
-                CROW_LOG_DEBUG << this << " from write (chunked, " << (aborted ? "aborted" : "write error") << ")";
-            }
-
-            if (completion_handler)
-            {
-                // An exception from the handler must not escape into the Asio stack or skip
-                // the cleanup below; it is logged and swallowed.
-                try
-                {
-                    completion_handler(result == response::chunk_result::done && !ec);
-                }
-                catch (const std::exception& e)
-                {
-                    CROW_LOG_ERROR << "An uncaught exception occurred in the chunked completion handler: " << e.what();
-                }
-                catch (...)
-                {
-                    CROW_LOG_ERROR << "An uncaught exception occurred in the chunked completion handler.";
-                }
-            }
-
-            if (close_connection_ && !force_close)
-            {
-                adaptor_.shutdown_readwrite();
-                adaptor_.close();
-                CROW_LOG_DEBUG << this << " from write (chunked)";
-            }
-
-            res.end();
-            res.clear();
-            buffers_.clear();
-            parser_.clear();
-
-            // The deadline was cancelled for the duration of the transfer, so a kept-alive
-            // connection has to be put back into reading state explicitly.
-            if (!force_close && !close_connection_ && need_to_start_read_after_complete_)
-            {
-                resume_input_after_response();
-            }
         }
 
         void do_write_general()
