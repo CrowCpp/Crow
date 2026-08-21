@@ -2669,6 +2669,51 @@ TEST_CASE("chunked_response")
     app.stop();
 } // chunked_response
 
+TEST_CASE("chunked_response_canonicalizes_framing_headers")
+{
+    SimpleApp app;
+
+    CROW_ROUTE(app, "/late-framing-headers")
+    ([](const crow::request&, crow::response& res) {
+        res.set_chunked_content_provider(
+          [sent = false](std::string& chunk) mutable -> bool {
+              if (sent)
+                  return false;
+              chunk = "payload";
+              sent = true;
+              return true;
+          },
+          "text/plain");
+        // Application code may still touch the framing headers after the
+        // provider is installed; the wire must carry exactly one
+        // Transfer-Encoding and no Content-Length regardless.
+        res.set_header("Content-Length", "999");
+        res.add_header("Transfer-Encoding", "chunked");
+        res.end();
+    });
+
+    auto _ = app.bindaddr(LOCALHOST_ADDRESS).port(45451).run_async();
+    app.wait_for_server_start();
+
+    HttpClient client(LOCALHOST_ADDRESS, 45451);
+    client.send("GET /late-framing-headers HTTP/1.1\r\nHost: localhost\r\n\r\n");
+
+    std::string response;
+    while (response.size() < 5 || response.compare(response.size() - 5, 5, "0\r\n\r\n") != 0)
+        response += client.receive();
+
+    CHECK(response.find("Content-Length") == std::string::npos);
+    std::size_t transfer_encoding_count = 0;
+    for (std::size_t at = response.find("Transfer-Encoding");
+         at != std::string::npos;
+         at = response.find("Transfer-Encoding", at + 1))
+        ++transfer_encoding_count;
+    CHECK(transfer_encoding_count == 1);
+    CHECK(response.find("7\r\npayload\r\n") != std::string::npos);
+
+    app.stop();
+} // chunked_response_canonicalizes_framing_headers
+
 TEST_CASE("async_chunked_response_move_assignment_releases_destination_provider") {
     response destination;
     auto destination_marker                        = std::make_shared<int>(1);

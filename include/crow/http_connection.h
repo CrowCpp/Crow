@@ -343,6 +343,16 @@ namespace crow
             {
                 suppress_response_body_for_status();
             }
+            if (res.is_chunked_type())
+            {
+                // Framing headers may have been touched after the provider was
+                // installed; a chunked body carries exactly one Transfer-Encoding
+                // and no Content-Length.
+                res.headers.erase("Content-Length");
+                res.headers.erase("Transfer-Encoding");
+                res.set_header("Transfer-Encoding", "chunked");
+                res.manual_length_header = true;
+            }
             prepare_buffers();
             if (res.skip_body)
             {
@@ -614,6 +624,7 @@ namespace crow
             AsyncChunkPhase phase{AsyncChunkPhase::writing_headers};
             response::async_chunk_provider_t provider;
             response::chunk_complete_t completion_handler;
+            std::string header_bytes;
             std::string chunk;
             std::string chunk_header;
             std::vector<asio::const_buffer> buffers;
@@ -657,23 +668,38 @@ namespace crow
                 shutdown_on_worker_exit();
                 return;
             }
+            // The header buffers point into res.headers; the transfer owns a copy
+            // so nothing aliases user-reachable state while the write is in flight.
+            std::size_t header_size = 0;
+            for (const auto& buffer : buffers_)
+            {
+                header_size += buffer.size();
+            }
+            state->header_bytes.reserve(header_size);
+            for (const auto& buffer : buffers_)
+            {
+                state->header_bytes.append(static_cast<const char*>(buffer.data()), buffer.size());
+            }
+            buffers_.clear();
             asio::async_write(
-                adaptor_.socket(), buffers_, [self, state](const error_code& ec, std::size_t /*bytes_transferred*/) {
-                    if (self->async_chunk_transfer_ != state) {
-                        return;
-                    }
+              adaptor_.socket(), asio::buffer(state->header_bytes), [self, state](const error_code& ec, std::size_t /*bytes_transferred*/) {
+                  if (self->async_chunk_transfer_ != state)
+                  {
+                      return;
+                  }
 
-                    if (ec) {
-                        CROW_LOG_ERROR << ec
-                                       << " - buffer write error happened while sending response start / headers. "
-                                          "Writing stopped prematurely.";
-                        self->finish_async_chunked(state, false, true);
-                        return;
-                    }
+                  if (ec)
+                  {
+                      CROW_LOG_ERROR << ec
+                                     << " - buffer write error happened while sending response start / headers. "
+                                        "Writing stopped prematurely.";
+                      self->finish_async_chunked(state, false, true);
+                      return;
+                  }
 
-                    self->buffers_.clear();
-                    self->request_async_chunk(state);
-                });
+                  state->header_bytes.clear();
+                  self->request_async_chunk(state);
+              });
         }
 
         void arm_async_chunk_lifetime(const std::shared_ptr<AsyncChunkTransfer>& state) {
