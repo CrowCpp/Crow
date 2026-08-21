@@ -120,9 +120,9 @@ namespace crow
 
         ///
         /// `clean` is `true` when the provider finished normally and every write succeeded.
-        /// It is `false` after a provider abort or exception, publication failure, downstream
-        /// peer closure, read failure or unexpected cancellation, retained-input overflow
-        /// before terminal completion, write failure or cancellation, or server shutdown.
+        /// It is `false` after a provider abort or exception, publication failure, peer
+        /// closure, a write failure or timeout, an oversized or overdue chunk, or server
+        /// shutdown.
         using chunk_complete_t = std::function<void(bool clean)>;
 
         /// Set the value of an existing header in the response.
@@ -399,22 +399,30 @@ namespace crow
         /// Same as end() except it adds a body part right before ending.
         void end(const std::string& body_part)
         {
-            // The lock only guards the body append and must not be held across
-            // end(): its completion handler may release the connection that
-            // owns this response, destroying the mutex a caller still holds.
+            // The latch and the body append form one critical section, so
+            // concurrent calls deliver exactly one body; the lock is released
+            // before the handler runs.
             auto lifecycle = deferred_lifecycle_;
             if (lifecycle)
             {
-                std::lock_guard<std::mutex> lifecycle_lock(lifecycle->mutex);
-                if (!completed_)
+                std::function<void()> completion_handler;
                 {
+                    std::lock_guard<std::mutex> lifecycle_lock(lifecycle->mutex);
+                    if (completed_.exchange(true))
+                    {
+                        return;
+                    }
                     body += body_part;
+                    completion_handler = std::move(complete_request_handler_);
+                    complete_request_handler_ = nullptr;
                 }
+                if (completion_handler)
+                {
+                    completion_handler();
+                }
+                return;
             }
-            else
-            {
-                body += body_part;
-            }
+            body += body_part;
             end();
         }
 
@@ -697,7 +705,7 @@ namespace crow
                 buffers.emplace_back(date_str_.data(), date_str_.size());
                 buffers.emplace_back(crlf.data(), crlf.size());
             }*/
-            if (add_keep_alive)
+            if (add_keep_alive && !headers.count("connection"))
             {
                 static std::string keep_alive_tag = "Connection: Keep-Alive";
                 buffers.emplace_back(keep_alive_tag.data(), keep_alive_tag.size());

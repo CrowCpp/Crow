@@ -520,7 +520,7 @@ namespace crow
             return res_stream_threshold_;
         }
 
-        /// \brief Limit how long a chunk provider may stay idle between chunks (in seconds; 0 disables the limit)
+        /// \brief Limit how long a chunk provider may stay idle between chunks (in seconds, at most 255; 0 disables the limit)
         ///
         /// Unlimited by default: an idle provider is normal for long-lived streams
         /// such as server-sent events. When set, a stream whose provider produces
@@ -537,7 +537,7 @@ namespace crow
             return stream_idle_timeout_;
         }
 
-        /// \brief Cap the size (in bytes) of a single chunk supplied by a chunk provider (default 16 MiB)
+        /// \brief Cap the size (in bytes) of a single chunk supplied by a chunk provider (default 16 MiB; 0 disables the cap)
         ///
         /// A chunk above the cap aborts the stream: the connection closes without
         /// the terminating frame and completion is reported unclean.

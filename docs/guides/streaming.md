@@ -72,6 +72,32 @@ if (!complete(crow::chunk_result::more, std::move(data))) {
 }
 ```
 
+A complete route: an event stream that forwards messages from a queue and
+truncates the body when the source fails.
+
+```cpp
+auto queue = std::make_shared<EventQueue>();
+
+CROW_ROUTE(app, "/events")
+([queue](const crow::request&, crow::response& res) {
+    res.set_async_chunked_content_provider(
+      [queue](crow::response::async_chunk_completion_t complete) {
+          queue->async_pop([complete = std::move(complete)](Event event) {
+              if (event.failed)
+              {
+                  complete(crow::chunk_result::abort, "");
+                  return;
+              }
+              complete(event.last ? crow::chunk_result::done : crow::chunk_result::more,
+                       std::move(event.payload));
+          });
+      },
+      "text/event-stream");
+    res.set_chunked_completion_handler([queue](bool) { queue->close(); });
+    res.end();
+});
+```
+
 ## Completion handler
 
 `#!cpp set_chunked_completion_handler(void (bool clean))` runs exactly once
@@ -110,9 +136,14 @@ here.
   transfer is aborted unclean.
 - The wait for a provider is unlimited by default: an idle provider is normal
   for long-lived streams. `#!cpp app.stream_idle_timeout(seconds)` (0 by
-  default) aborts a stream whose provider stays silent longer than the limit.
-- `#!cpp app.max_stream_chunk_size(bytes)` (16 MiB by default) caps a single
-  chunk; a larger chunk aborts the transfer.
+  default, at most 255 seconds) aborts a stream whose provider stays silent
+  longer than the limit. It cannot interrupt a synchronous provider that
+  blocks the connection's executor.
+- `#!cpp app.max_stream_chunk_size(bytes)` (16 MiB by default, 0 disables the
+  cap) limits a single chunk; a larger chunk aborts the transfer. Together
+  with the write deadline it bounds each write: a chunk must be written
+  within `app.timeout(...)` seconds, so very large chunks over slow links
+  need a larger timeout or smaller chunks.
 
 ## Server shutdown
 
@@ -121,3 +152,7 @@ completion handler reports `clean == false` exactly once, and a late
 `#!cpp end()` from an application thread is a safe no-op release. Providers
 and handlers should not throw; an exception that escapes is logged and treated
 as an abort.
+
+A response belongs to the connection once `#!cpp end()` has been called:
+calling any setter, `#!cpp write()`, or a second `#!cpp end()` on it after
+that point is not supported.

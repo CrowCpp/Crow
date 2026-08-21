@@ -292,6 +292,13 @@ namespace crow
         /// Call the after handle middleware and send the write the response to the connection.
         void complete_request()
         {
+            // The IOCP scheduler can run handlers queued before io_context::stop();
+            // a stopped worker must not finalize: the connection stays tracked and
+            // worker shutdown reports the response instead.
+            if (adaptor_.get_io_context().stopped())
+            {
+                return;
+            }
             if (res.completed_ && res.skip_body)
             {
                 // Finalization of an end()ed HEAD response, moved out of end()
@@ -429,6 +436,13 @@ namespace crow
             if (res.code < 200 || res.code == status::NO_CONTENT)
             {
                 res.headers.erase("Content-Length");
+                res.headers.erase("Transfer-Encoding");
+            }
+            else
+            {
+                // 304 keeps representation metadata such as Content-Length;
+                // hop-by-hop transfer framing must not survive on a bodyless
+                // response.
                 res.headers.erase("Transfer-Encoding");
             }
         }
@@ -873,6 +887,11 @@ namespace crow
             if (async_chunk_transfer_ != state) {
                 return;
             }
+            if (adaptor_.get_io_context().stopped())
+            {
+                finish_async_chunked(state, false, true);
+                return;
+            }
             state->phase           = AsyncChunkPhase::requesting_chunk;
             auto request           = std::make_shared<AsyncChunkRequest>();
             request->io_context    = &adaptor_.get_io_context();
@@ -976,6 +995,11 @@ namespace crow
             if (async_chunk_transfer_ != state || state->phase != AsyncChunkPhase::requesting_chunk) {
                 return;
             }
+            if (adaptor_.get_io_context().stopped())
+            {
+                finish_async_chunked(state, false, true);
+                return;
+            }
 
             invalidate_async_chunk_request(state);
             cancel_provider_idle_timeout(state);
@@ -1008,7 +1032,7 @@ namespace crow
                 return;
             }
 
-            if (chunk.size() > max_stream_chunk_size_)
+            if (max_stream_chunk_size_ > 0 && chunk.size() > max_stream_chunk_size_)
             {
                 CROW_LOG_ERROR << "Chunk provider supplied " << chunk.size()
                                << " bytes, above the configured cap; aborting the transfer.";
@@ -1090,6 +1114,7 @@ namespace crow
             if (async_chunk_transfer_ != state) {
                 return;
             }
+            cancel_deadline_timer();
 
             const bool resume_input = clean && !force_close && !close_connection_ && need_to_start_read_after_complete_;
             state->phase = clean ? AsyncChunkPhase::completed : AsyncChunkPhase::aborted;
@@ -1243,10 +1268,11 @@ namespace crow
                       if (bytes_transferred > 0)
                       {
                           // Early pipelined bytes: the stream finishes
-                          // correctly, then the connection closes. Nothing is
-                          // watched any more; a dead peer surfaces as a write
-                          // error.
+                          // correctly, then the connection closes. The watch
+                          // stays armed so a peer that disconnects while the
+                          // provider is idle is still detected.
                           self->close_connection_ = true;
+                          self->do_read();
                       }
                       return;
                   }
@@ -1284,8 +1310,8 @@ namespace crow
             }
             else if (async_chunk_transfer_)
             {
-                // The asynchronous transfer owns the connection until it finishes.
-                // Its completion path parses buffered input before reading the socket again.
+                // The transfer owns the connection until it finishes; its
+                // completion path decides between keep-alive and close.
                 need_to_start_read_after_complete_ = true;
             }
             else if (!need_to_call_after_handlers_)
@@ -1369,6 +1395,13 @@ namespace crow
 
         void cancel_deadline_timer()
         {
+            // task_timer ids are reused once its task map drains; a stale id
+            // must never cancel another connection's timer.
+            if (!deadline_armed_)
+            {
+                return;
+            }
+            deadline_armed_ = false;
             CROW_LOG_DEBUG << this << " timer cancelled: " << &task_timer_ << ' ' << task_id_;
             task_timer_.cancel(task_id_);
         }
@@ -1379,6 +1412,7 @@ namespace crow
 
             auto self = this->shared_from_this();
             task_id_ = task_timer_.schedule([self] {
+                self->deadline_armed_ = false;
                 if (!self->adaptor_.is_open())
                 {
                     return;
@@ -1386,6 +1420,7 @@ namespace crow
                 self->adaptor_.shutdown_readwrite();
                 self->adaptor_.close();
             });
+            deadline_armed_ = true;
             CROW_LOG_DEBUG << this << " timer added: " << &task_timer_ << ' ' << task_id_;
         }
 
@@ -1417,6 +1452,7 @@ namespace crow
         bool need_to_start_read_after_complete_{};
         bool add_keep_alive_{};
         bool read_in_progress_{};
+        bool deadline_armed_{};
         bool shutting_down_{};
         bool lifecycle_tracked_{};
 
