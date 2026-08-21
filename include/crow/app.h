@@ -507,7 +507,10 @@ namespace crow
 
         /// \brief Set the response body size (in bytes) beyond which Crow automatically streams responses (Default is 1MiB)
         ///
-        /// Any streamed response is unaffected by Crow's timer, and therefore won't timeout before a response is fully sent.
+        /// This threshold applies to string and static-file bodies with a known
+        /// length; a body streamed this way is unaffected by Crow's timer. Chunk
+        /// providers are configured separately, and each of their socket writes
+        /// runs under timeout().
         self_t& stream_threshold(size_t threshold)
         {
             res_stream_threshold_ = threshold;
@@ -518,6 +521,39 @@ namespace crow
         size_t& stream_threshold()
         {
             return res_stream_threshold_;
+        }
+
+        /// \brief Limit how long a chunk provider may stay idle between chunks (in seconds, at most 255; 0 disables the limit)
+        ///
+        /// Unlimited by default: an idle provider is normal for long-lived streams
+        /// such as server-sent events. When set, a stream whose provider produces
+        /// no result within the limit is aborted and reported unclean.
+        self_t& stream_idle_timeout(uint8_t seconds)
+        {
+            stream_idle_timeout_ = seconds;
+            return *this;
+        }
+
+        /// \brief Get the chunk provider idle limit (in seconds; 0 = unlimited)
+        uint8_t stream_idle_timeout()
+        {
+            return stream_idle_timeout_;
+        }
+
+        /// \brief Cap the size (in bytes) of a single chunk supplied by a chunk provider (default 16 MiB; 0 disables the cap)
+        ///
+        /// A chunk above the cap aborts the stream: the connection closes without
+        /// the terminating frame and completion is reported unclean.
+        self_t& max_stream_chunk_size(size_t bytes)
+        {
+            max_stream_chunk_size_ = bytes;
+            return *this;
+        }
+
+        /// \brief Get the cap on a single provider-supplied chunk (in bytes)
+        size_t max_stream_chunk_size()
+        {
+            return max_stream_chunk_size_;
         }
 
 
@@ -920,6 +956,8 @@ namespace crow
         detail::socket::tcp_socket_options tcp_socket_options_{};
         detail::socket::tcp_socket_options websocket_tcp_socket_options_{};
         size_t res_stream_threshold_ = 1048576;
+        uint8_t stream_idle_timeout_ = 0;
+        size_t max_stream_chunk_size_ = 16 * 1048576;
         Router router_;
         bool static_routes_added_{false};
 

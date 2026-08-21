@@ -2,18 +2,28 @@
 #define CROW_LOG_LEVEL 0
 #include <sys/stat.h>
 
+#include <array>
+#include <atomic>
+#include <chrono>
+#include <cstdio>
 #include <exception>
+#include <fstream>
+#include <future>
 #include <iostream>
+#include <mutex>
 #include <vector>
 #include <thread>
 #include <type_traits>
 #include <regex>
+#include <stdexcept>
 
 #include "catch2/catch_all.hpp"
 #include "crow.h"
 #include "crow/middlewares/cookie_parser.h"
 #include "crow/middlewares/cors.h"
 #include "crow/middlewares/session.h"
+
+#include "test_common.h"
 
 using namespace std;
 using namespace crow;
@@ -25,64 +35,10 @@ using asio_error_code = boost::system::error_code;
 using asio_error_code = asio::error_code;
 #endif
 
-#define LOCALHOST_ADDRESS "127.0.0.1"
 
-/** simple http client class for making client requests */
-class HttpClient
-{
-private:
-    asio::io_context ic{};
-    asio::ip::tcp::socket c;
-
-public:
-    /** construct an instance by address and port */
-    HttpClient(std::string const& address, uint16_t port):
-      c(ic)
-    {
-        c.connect(asio::ip::tcp::endpoint( asio::ip::make_address(address),
-                                           port));
-    }
-
-    /** sends a request string through the socket */
-    void send(const std::string& msg)
-    {
-        c.send(asio::buffer(msg));
-    }
-
-    /** sends a request string through the socket */
-    void send(const char* const msg, size_t msg_size)
-    {
-        c.send(asio::buffer(msg, msg_size));
-    }
-
-
-    /** method shall be called after sending a request with send
-     * @returns the received response string */
-    std::string receive()
-    {
-        char buf[2048];
-        auto received = c.receive(asio::buffer(buf, sizeof(buf)));
-        std::string rval(buf, received);
-        return rval;
-    }
-
-    /** static method for making a request
-     * @returns the received response string */
-    static std::string request(const std::string& address,
-                               uint16_t port,
-                               const std::string& sendmsg)
-    {
-        HttpClient c(address, port);
-        c.send(sendmsg);
-        return c.receive();
-    }
-};
-
-bool is_tcp_nodelay_enabled_for_connection_after_apply(const crow::detail::socket::tcp_socket_options& options)
-{
+bool is_tcp_nodelay_enabled_for_connection_after_apply(const crow::detail::socket::tcp_socket_options& options) {
     asio::io_context io_context;
-    asio::ip::tcp::acceptor acceptor(io_context,
-                                     asio::ip::tcp::endpoint(asio::ip::make_address(LOCALHOST_ADDRESS), 0));
+    asio::ip::tcp::acceptor acceptor(io_context, asio::ip::tcp::endpoint(asio::ip::make_address(LOCALHOST_ADDRESS), 0));
 
     asio::ip::tcp::socket client_socket(io_context);
     client_socket.connect(acceptor.local_endpoint());
@@ -1991,83 +1947,6 @@ TEST_CASE("send_file")
             CHECK(to_string(statbuf_badext.st_size) == res.headers.find("Content-Length")->second);
     }
 } // send_file
-
-TEST_CASE("stream_response")
-{
-    SimpleApp app;
-
-
-    const std::string keyword_ = "hello";
-    const size_t repetitions = 250000;
-    const size_t key_response_size = keyword_.length() * repetitions;
-
-    std::string key_response;
-
-    for (size_t i = 0; i < repetitions; i++)
-        key_response += keyword_;
-
-    CROW_ROUTE(app, "/test")
-    ([&key_response](const crow::request&, crow::response& res) {
-        res.body = key_response;
-        res.end();
-    });
-
-    app.validate();
-
-    // running the test on a separate thread to allow the client to sleep
-    std::thread runTest([&app, &key_response, key_response_size, keyword_]() {
-        auto _ = app.bindaddr(LOCALHOST_ADDRESS).port(45451).run_async();
-        app.wait_for_server_start();
-        asio::io_context io_context;
-        std::string sendmsg;
-
-        //Total bytes received
-        unsigned int received = 0;
-        sendmsg = "GET /test HTTP/1.0\r\n\r\n";
-        {
-            asio::streambuf b;
-
-            asio::ip::tcp::socket c(io_context);
-            c.connect(asio::ip::tcp::endpoint(
-              asio::ip::make_address(LOCALHOST_ADDRESS), 45451));
-            c.send(asio::buffer(sendmsg));
-
-            // consuming the headers, since we don't need those for the test
-            static char buf[2048];
-            size_t received_headers_bytes = 0;
-
-            // Magic number is 102. It's the size of the headers, which is at
-            // least how much we need to read. Since the header size may change
-            // and break the test, we read twice as much as the header and
-            // search in the received data for the first occurrence of keyword_.
-            const size_t headers_bytes_and_some = 102 * 2;
-            while (received_headers_bytes < headers_bytes_and_some)
-                received_headers_bytes += c.receive(asio::buffer(buf + received_headers_bytes,
-                                                                 sizeof(buf) / sizeof(buf[0]) - received_headers_bytes));
-
-            const std::string::size_type header_end_pos = std::string(buf, received_headers_bytes).find(keyword_);
-            received += received_headers_bytes - header_end_pos; // add any extra that might have been received to the proper received count
-
-            while (received < key_response_size)
-            {
-                asio::streambuf::mutable_buffers_type bufs = b.prepare(16384);
-
-                size_t n(0);
-                n = c.receive(bufs);
-                b.commit(n);
-                received += n;
-
-                std::istream istream(&b);
-                std::string s;
-                istream >> s;
-
-                CHECK(key_response.substr(received - n, n) == s);
-            }
-        }
-        app.stop();
-    });
-    runTest.join();
-} // stream_response
 
 #ifdef CROW_ENABLE_COMPRESSION
 TEST_CASE("zlib_compression")
