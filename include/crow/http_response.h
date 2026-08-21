@@ -1,4 +1,5 @@
 #pragma once
+#include <atomic>
 #include <exception>
 #include <memory>
 #include <mutex>
@@ -60,8 +61,7 @@ namespace crow
     private:
         struct deferred_response_lifecycle
         {
-            std::recursive_mutex mutex;
-            bool stopped{false};
+            std::mutex mutex;
         };
 
         enum class body_source_kind
@@ -251,7 +251,7 @@ namespace crow
             body = std::move(r.body);
             code = r.code;
             headers = std::move(r.headers);
-            completed_ = r.completed_;
+            completed_ = r.completed_.load();
             file_info = std::move(r.file_info);
 #ifdef CROW_ENABLE_COMPRESSION
             compressed = r.compressed;
@@ -339,24 +339,28 @@ namespace crow
         /// Set the response completion flag and call the handler (to send the response).
         void end()
         {
-            // The completion handler may release the connection that owns this
-            // response; the local reference keeps the mutex alive until return.
+            // A connection-owned response is finalized on the connection's
+            // executor; any thread may request that, and only the first call
+            // takes effect. The local reference keeps the lifecycle mutex
+            // alive even if the handler releases the owning connection.
             auto lifecycle = deferred_lifecycle_;
-            std::unique_lock<std::recursive_mutex> lifecycle_lock;
             if (lifecycle)
             {
-                lifecycle_lock = std::unique_lock<std::recursive_mutex>(lifecycle->mutex);
-                if (lifecycle->stopped)
+                std::function<void()> completion_handler;
                 {
-                    completed_ = true;
-                    auto stopped_handler = complete_request_handler_;
-                    lifecycle_lock.unlock();
-                    if (stopped_handler)
+                    std::lock_guard<std::mutex> lifecycle_lock(lifecycle->mutex);
+                    if (completed_.exchange(true))
                     {
-                        stopped_handler();
+                        return;
                     }
-                    return;
+                    completion_handler = std::move(complete_request_handler_);
+                    complete_request_handler_ = nullptr;
                 }
+                if (completion_handler)
+                {
+                    completion_handler();
+                }
+                return;
             }
             if (!completed_)
             {
@@ -366,7 +370,6 @@ namespace crow
                     if (is_chunked_type())
                     {
                         // HEAD keeps "Transfer-Encoding: chunked" and omits "Content-Length".
-                        // The connection invokes completion after checking the HTTP version.
                         chunk_provider_ex_ = nullptr;
                         async_chunk_provider_ = nullptr;
                         body = "";
@@ -391,10 +394,6 @@ namespace crow
                     }
                 }
                 auto completion_handler = complete_request_handler_;
-                if (lifecycle_lock.owns_lock())
-                {
-                    lifecycle_lock.unlock();
-                }
                 if (completion_handler)
                 {
                     completion_handler();
@@ -409,12 +408,16 @@ namespace crow
             // end(): its completion handler may release the connection that
             // owns this response, destroying the mutex a caller still holds.
             auto lifecycle = deferred_lifecycle_;
+            if (lifecycle)
             {
-                std::unique_lock<std::recursive_mutex> lifecycle_lock;
-                if (lifecycle)
+                std::lock_guard<std::mutex> lifecycle_lock(lifecycle->mutex);
+                if (!completed_)
                 {
-                    lifecycle_lock = std::unique_lock<std::recursive_mutex>(lifecycle->mutex);
+                    body += body_part;
                 }
+            }
+            else
+            {
                 body += body_part;
             }
             end();
@@ -704,7 +707,7 @@ namespace crow
             buffers.emplace_back(crlf.data(), crlf.size());
         }
 
-        bool completed_{};
+        std::atomic<bool> completed_{};
         std::function<void()> complete_request_handler_;
         std::function<bool()> is_alive_helper_;
         std::shared_ptr<deferred_response_lifecycle> deferred_lifecycle_;

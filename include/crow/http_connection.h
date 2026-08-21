@@ -274,8 +274,9 @@ namespace crow
                     handler_->handle(req_, res, routing_handle_result_);
                     if (need_to_call_after_handlers_)
                         parser_.stop_after_message();
-                    if (add_keep_alive_ && !res.completed_)
-                        res.set_header("connection", "Keep-Alive");
+                    // After the handler returns the response may be deferred and
+                    // owned by another thread; the header writer emits the
+                    // keep-alive field from add_keep_alive_ instead.
                 }
                 else
                 {
@@ -291,6 +292,32 @@ namespace crow
         /// Call the after handle middleware and send the write the response to the connection.
         void complete_request()
         {
+            if (res.completed_ && res.skip_body)
+            {
+                // Finalization of an end()ed HEAD response, moved out of end()
+                // so it runs on the connection executor.
+                if (res.is_chunked_type())
+                {
+                    // HEAD keeps "Transfer-Encoding: chunked" and omits "Content-Length".
+                    res.chunk_provider_ex_ = nullptr;
+                    res.async_chunk_provider_ = nullptr;
+                    res.body = "";
+                    res.manual_length_header = true;
+                }
+                else
+                {
+                    if (!res.is_static_type() && !res.body.empty())
+                    {
+                        res.set_header("Content-Length", std::to_string(res.body.size()));
+                        res.manual_length_header = true;
+                    }
+                    res.body = "";
+                    if (res.is_static_type())
+                    {
+                        res.manual_length_header = true;
+                    }
+                }
+            }
             untrack_connection_lifecycle();
             CROW_LOG_INFO << "Response: " << this << ' ' << req_.raw_url << ' ' << res.code << ' ' << close_connection_;
             res.is_alive_helper_ = nullptr;
@@ -777,20 +804,25 @@ namespace crow
             }
             else
             {
-                std::unique_lock<std::recursive_mutex> lifecycle_lock(res.deferred_lifecycle_->mutex);
-                res.deferred_lifecycle_->stopped = true;
-                auto completion_handler = std::move(res.chunk_complete_);
-                res.chunk_complete_ = nullptr;
-                res.clear();
-                res.is_alive_helper_ = nullptr;
-                std::weak_ptr<Connection> weak_self = this->shared_from_this();
-                res.complete_request_handler_ = [weak_self] {
-                    if (auto self = weak_self.lock())
-                    {
-                        self->release_stopped_deferred_response();
-                    }
-                };
-                lifecycle_lock.unlock();
+                response::chunk_complete_t completion_handler;
+                {
+                    std::lock_guard<std::mutex> lifecycle_lock(res.deferred_lifecycle_->mutex);
+                    completion_handler = std::move(res.chunk_complete_);
+                    res.chunk_complete_ = nullptr;
+                    // Release the application's providers; the response is
+                    // otherwise left alone for a late end() to observe.
+                    res.chunk_provider_ex_ = nullptr;
+                    res.async_chunk_provider_ = nullptr;
+                    res.body_source_ = response::body_source_kind::none;
+                    res.is_alive_helper_ = nullptr;
+                    std::weak_ptr<Connection> weak_self = this->shared_from_this();
+                    res.complete_request_handler_ = [weak_self] {
+                        if (auto self = weak_self.lock())
+                        {
+                            self->release_stopped_deferred_response();
+                        }
+                    };
+                }
                 response::invoke_chunked_completion(std::move(completion_handler), false);
             }
         }
@@ -798,7 +830,7 @@ namespace crow
         void release_stopped_deferred_response() noexcept
         {
             {
-                std::lock_guard<std::recursive_mutex> lifecycle_lock(res.deferred_lifecycle_->mutex);
+                std::lock_guard<std::mutex> lifecycle_lock(res.deferred_lifecycle_->mutex);
                 res.complete_request_handler_ = nullptr;
             }
             untrack_connection_lifecycle();
