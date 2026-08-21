@@ -783,6 +783,9 @@ namespace crow
             auto state = std::move(async_chunk_transfer_);
             buffered_input_.clear();
             if (!state) {
+                // Destruction is the fallback report for a deferred response
+                // that never started writing.
+                res.notify_chunked_completion(false);
                 return;
             }
 
