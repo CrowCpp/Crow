@@ -543,7 +543,6 @@ namespace crow
             else if (write_failed)
             {
                 need_to_start_read_after_complete_ = false;
-                buffered_input_.clear();
             }
         }
 
@@ -658,12 +657,6 @@ namespace crow
             std::shared_ptr<AsyncChunkRequest> pending_request;
             detail::task_timer::identifier_type lifetime_task_id{};
             bool lifetime_task_armed{false};
-            bool read_watch_active{false};
-            bool read_watch_cancel_requested{false};
-            bool retained_input_overflow{false};
-            bool pending_result_ready{false};
-            response::chunk_result pending_result{response::chunk_result::abort};
-            std::string pending_result_chunk;
             std::mutex completion_mutex;
             bool completion_reported{false};
         };
@@ -785,7 +778,6 @@ namespace crow
         void shutdown_on_worker_exit() noexcept {
             shutting_down_ = true;
             auto state = std::move(async_chunk_transfer_);
-            buffered_input_.clear();
             if (state) {
                 // The worker has stopped dispatching handlers. Keep buffers referenced by
                 // outstanding writes intact until Asio releases their handlers.
@@ -839,7 +831,6 @@ namespace crow
         void destroy_async_chunk_transfer() noexcept {
             shutting_down_ = true;
             auto state = std::move(async_chunk_transfer_);
-            buffered_input_.clear();
             if (!state) {
                 // Destruction is the fallback report for a deferred response
                 // that never started writing.
@@ -887,11 +878,6 @@ namespace crow
 
         void request_async_chunk(const std::shared_ptr<AsyncChunkTransfer>& state) {
             if (async_chunk_transfer_ != state) {
-                return;
-            }
-            if (state->retained_input_overflow)
-            {
-                finish_async_chunked(state, false, true);
                 return;
             }
             state->phase           = AsyncChunkPhase::requesting_chunk;
@@ -987,7 +973,7 @@ namespace crow
 
             if (async_chunk_transfer_ == state && state->phase == AsyncChunkPhase::requesting_chunk)
             {
-                do_read(state);
+                do_read();
             }
         }
 
@@ -1001,27 +987,8 @@ namespace crow
             invalidate_async_chunk_request(state);
             release_async_chunk_lifetime(state);
 
-            if (state->read_watch_active)
-            {
-                state->pending_result_ready = true;
-                state->pending_result = result;
-                state->pending_result_chunk = std::move(chunk);
-                state->read_watch_cancel_requested = true;
-
-                error_code cancel_error;
-                // No response write is active during requesting_chunk, so the
-                // socket-wide cancellation targets only the closure watch.
-                adaptor_.raw_socket().cancel(cancel_error);
-                if (cancel_error)
-                {
-                    state->pending_result_ready = false;
-                    state->pending_result_chunk.clear();
-                    state->read_watch_cancel_requested = false;
-                    finish_async_chunked(state, false, true);
-                }
-                return;
-            }
-
+            // The peer watch read stays outstanding: one read and one write may
+            // be in flight concurrently on the connection executor.
             apply_async_chunk_result(state, result, std::move(chunk));
         }
 
@@ -1110,7 +1077,7 @@ namespace crow
                                       return;
                                   }
 
-                                  self->finish_async_chunked(state, true, state->retained_input_overflow);
+                                  self->finish_async_chunked(state, true, false);
                               });
         }
 
@@ -1154,7 +1121,6 @@ namespace crow
             else
             {
                 need_to_start_read_after_complete_ = false;
-                buffered_input_.clear();
             }
         }
 
@@ -1162,14 +1128,7 @@ namespace crow
         {
             need_to_start_read_after_complete_ = false;
             start_deadline();
-            if (buffered_input_.empty())
-            {
-                do_read();
-            }
-            else
-            {
-                process_buffered_input();
-            }
+            do_read();
         }
 
         void do_write_sync_chunked() {
@@ -1368,46 +1327,46 @@ namespace crow
                 adaptor_.shutdown_readwrite();
                 adaptor_.close();
                 need_to_start_read_after_complete_ = false;
-                buffered_input_.clear();
                 CROW_LOG_DEBUG << this << " from write (res" << (write_failed ? ", write error" : "") << ")";
             } else if (need_to_start_read_after_complete_) {
                 resume_input_after_response();
             }
         }
 
-        void do_read(std::shared_ptr<AsyncChunkTransfer> watch_state = nullptr)
+        void do_read()
         {
             if (read_in_progress_ || shutting_down_ || !adaptor_.is_open())
             {
                 return;
             }
-            if (watch_state && buffered_input_.size() > max_header_size)
-            {
-                finish_async_chunked(watch_state, false, true);
-                return;
-            }
-
-            if (watch_state)
-            {
-                watch_state->read_watch_active = true;
-            }
             read_in_progress_ = true;
             auto self = this->shared_from_this();
             adaptor_.socket().async_read_some(
               asio::buffer(buffer_),
-              [self, watch_state = std::move(watch_state)](const error_code& ec, std::size_t bytes_transferred) {
+              [self](const error_code& ec, std::size_t bytes_transferred) {
                   self->read_in_progress_ = false;
                   if (self->shutting_down_)
                   {
                       return;
                   }
 
-                  if (watch_state)
+                  if (auto state = self->async_chunk_transfer_)
                   {
-                      watch_state->read_watch_active = false;
-                      if (self->async_chunk_transfer_ == watch_state)
+                      // While a transfer is active this read is the peer
+                      // watch; after a clean transfer the same read carries
+                      // the next request.
+                      if (ec)
                       {
-                          self->handle_async_chunk_read(watch_state, ec, bytes_transferred);
+                          self->finish_async_chunked(state, false, true);
+                          return;
+                      }
+                      if (bytes_transferred > 0)
+                      {
+                          // Early pipelined bytes: the stream finishes
+                          // correctly, then the connection closes. Nothing is
+                          // watched any more; a dead peer surfaces as a write
+                          // error.
+                          self->close_connection_ = true;
                       }
                       return;
                   }
@@ -1422,66 +1381,15 @@ namespace crow
               });
         }
 
-        void handle_async_chunk_read(const std::shared_ptr<AsyncChunkTransfer>& state,
-                                     const error_code& ec,
-                                     std::size_t bytes_transferred)
-        {
-            if (async_chunk_transfer_ != state)
-            {
-                return;
-            }
-
-            const bool cancel_requested = state->read_watch_cancel_requested;
-            state->read_watch_cancel_requested = false;
-
-            if (ec && !(cancel_requested && ec == asio::error::operation_aborted))
-            {
-                finish_async_chunked(state, false, true);
-                return;
-            }
-
-            if (!ec)
-            {
-                const std::size_t retained_input_limit = max_header_size;
-                const bool retained_input_overflow = buffered_input_.size() > retained_input_limit || bytes_transferred > retained_input_limit - buffered_input_.size();
-                if (retained_input_overflow && !state->pending_result_ready)
-                {
-                    finish_async_chunked(state, false, true);
-                    return;
-                }
-
-                if (retained_input_overflow)
-                {
-                    state->retained_input_overflow = true;
-                }
-                else
-                {
-                    buffered_input_.append(buffer_.data(), bytes_transferred);
-                }
-            }
-
-            if (state->pending_result_ready)
-            {
-                const auto result = state->pending_result;
-                auto chunk = std::move(state->pending_result_chunk);
-                state->pending_result_ready = false;
-                apply_async_chunk_result(state, result, std::move(chunk));
-                return;
-            }
-
-            if (async_chunk_transfer_ == state && state->phase == AsyncChunkPhase::requesting_chunk)
-            {
-                do_read(state);
-            }
-        }
-
         void process_incoming_input(const char* data, std::size_t length)
         {
             std::size_t consumed = 0;
             const bool parsed = parser_.feed(data, static_cast<int>(length), consumed);
-            if (parsed && consumed <= length && consumed < length)
+            if (parsed && consumed < length)
             {
-                buffered_input_.assign(data + consumed, length - consumed);
+                // Pipelined bytes behind a deferred or streamed response: the
+                // current response finishes, then the connection closes.
+                close_connection_ = true;
             }
 
             if (!parsed || consumed > length || !adaptor_.is_open())
@@ -1490,7 +1398,6 @@ namespace crow
             }
             else if (close_connection_)
             {
-                buffered_input_.clear();
                 cancel_deadline_timer();
                 parser_.done();
                 // adaptor will close after write
@@ -1513,16 +1420,8 @@ namespace crow
             }
         }
 
-        void process_buffered_input()
-        {
-            std::string input = std::move(buffered_input_);
-            buffered_input_.clear();
-            process_incoming_input(input.data(), input.size());
-        }
-
         void close_after_read_error()
         {
-            buffered_input_.clear();
             cancel_deadline_timer();
             parser_.done();
             adaptor_.shutdown_read();
@@ -1615,7 +1514,6 @@ namespace crow
         Handler* handler_;
 
         std::array<char, 4096> buffer_;
-        std::string buffered_input_;
 
         HTTPParser<Connection> parser_;
         std::unique_ptr<routing_handle_result> routing_handle_result_;

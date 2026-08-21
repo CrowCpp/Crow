@@ -3335,176 +3335,6 @@ TEST_CASE("async_chunked_response_clean_completion_restores_keep_alive_reading")
     CHECK(second_route_calls->load() == 1);
 } // async_chunked_response_clean_completion_restores_keep_alive_reading
 
-TEST_CASE("async_chunked_response_preserves_pipelined_request_bytes_until_clean_completion")
-{
-    SimpleApp app;
-
-    auto get_observation = std::make_shared<PipelinedAsyncObservation>();
-    auto post_observation = std::make_shared<PipelinedAsyncObservation>();
-
-    CROW_ROUTE(app, "/pipelined-async-get")
-    ([get_observation](const crow::request&, crow::response& res) {
-        get_observation->first_route_calls.fetch_add(1);
-        res.set_header("X-Pipeline-Response", "first-get");
-        res.set_async_chunked_content_provider(
-          [get_observation](crow::response::async_chunk_completion_t complete) {
-              get_observation->provider_calls.fetch_add(1);
-              get_observation->provider_completion.capture(std::move(complete));
-          });
-        res.set_chunked_completion_handler([get_observation](bool clean) {
-            get_observation->first_completion_seen.store(true);
-            get_observation->completion.record(clean);
-        });
-        res.end();
-    });
-
-    CROW_ROUTE(app, "/after-pipelined-async-get")
-    ([get_observation](const crow::request&, crow::response& res) {
-        get_observation->second_route_calls.fetch_add(1);
-        if (!get_observation->first_completion_seen.load())
-        {
-            get_observation->second_route_overlapped.store(true);
-        }
-        res.set_header("X-Pipeline-Response", "second-get");
-        res.end("second-get");
-    });
-
-    CROW_ROUTE(app, "/pipelined-async-post")
-      .methods("POST"_method)([post_observation](const crow::request& req, crow::response& res) {
-          post_observation->first_route_calls.fetch_add(1);
-          post_observation->first_body_correct.store(req.body == "payload");
-          res.set_header("X-Pipeline-Response", "first-post");
-          res.set_async_chunked_content_provider(
-            [post_observation](crow::response::async_chunk_completion_t complete) {
-                post_observation->provider_calls.fetch_add(1);
-                post_observation->provider_completion.capture(std::move(complete));
-            });
-          res.set_chunked_completion_handler([post_observation](bool clean) {
-              post_observation->first_completion_seen.store(true);
-              post_observation->completion.record(clean);
-          });
-          res.end();
-      });
-
-    CROW_ROUTE(app, "/after-pipelined-async-post")
-    ([post_observation](const crow::request&, crow::response& res) {
-        post_observation->second_route_calls.fetch_add(1);
-        if (!post_observation->first_completion_seen.load())
-        {
-            post_observation->second_route_overlapped.store(true);
-        }
-        res.set_header("X-Pipeline-Response", "second-post");
-        res.end("second-post");
-    });
-
-    auto server_task = app.bindaddr(LOCALHOST_ADDRESS).port(45451).run_async();
-    BoundedServerShutdown server_shutdown(server_task, [&app] {
-        app.stop();
-    });
-    REQUIRE(app.wait_for_server_start() == std::cv_status::no_timeout);
-
-    struct ExchangeResult
-    {
-        std::future_status provider_status{std::future_status::timeout};
-        bool second_route_called_before_completion{false};
-        bool provider_released{false};
-        bool connection_closed{false};
-        std::future_status completion_status{std::future_status::timeout};
-        bool clean{false};
-        std::string response;
-    };
-
-    const auto exchange = [](const std::shared_ptr<PipelinedAsyncObservation>& observation,
-                             const std::string& requests,
-                             const std::string& first_chunk) {
-        ExchangeResult result;
-        auto completion_result = observation->completion.first_result();
-
-        asio::io_context io_context;
-        asio::ip::tcp::socket client(io_context);
-        client.connect(asio::ip::tcp::endpoint(asio::ip::make_address(LOCALHOST_ADDRESS), 45451));
-        asio::write(client, asio::buffer(requests));
-
-        result.provider_status = observation->provider_completion.wait_for(std::chrono::seconds(5));
-        result.second_route_called_before_completion = observation->second_route_calls.load() != 0;
-        if (result.provider_status == std::future_status::ready)
-        {
-            result.provider_released = observation->provider_completion.complete(crow::chunk_result::done, first_chunk);
-        }
-
-        result.connection_closed = receive_until_closed_with_deadline(client, result.response, std::chrono::seconds(5));
-        result.completion_status = completion_result.wait_for(std::chrono::seconds(1));
-        if (result.completion_status == std::future_status::ready)
-        {
-            result.clean = completion_result.get();
-        }
-
-        asio_error_code close_error;
-        client.close(close_error);
-        return result;
-    };
-
-    const std::string get_requests = "GET /pipelined-async-get HTTP/1.1\r\nHost: localhost\r\n\r\n"
-                                     "GET /after-pipelined-async-get HTTP/1.1\r\nHost: localhost\r\nConnection: close\r\n\r\n";
-    const auto get_result = exchange(get_observation, get_requests, "first-get");
-
-    const std::string post_requests = "POST /pipelined-async-post HTTP/1.1\r\nHost: localhost\r\nContent-Length: 7\r\n\r\npayload"
-                                      "GET /after-pipelined-async-post HTTP/1.1\r\nHost: localhost\r\nConnection: close\r\n\r\n";
-    const auto post_result = exchange(post_observation, post_requests, "first-post");
-
-    get_observation->provider_completion.complete(crow::chunk_result::abort, "");
-    post_observation->provider_completion.complete(crow::chunk_result::abort, "");
-    server_shutdown.shutdown();
-
-    const auto verify_exchange = [](const std::shared_ptr<PipelinedAsyncObservation>& observation,
-                                    const ExchangeResult& result,
-                                    const std::string& first_header_value,
-                                    const std::string& encoded_first_body,
-                                    const std::string& second_header_value,
-                                    const std::string& second_body) {
-        REQUIRE(result.provider_status == std::future_status::ready);
-        REQUIRE(result.provider_released);
-        REQUIRE(result.connection_closed);
-        REQUIRE(result.completion_status == std::future_status::ready);
-        CHECK(result.clean);
-        CHECK_FALSE(result.second_route_called_before_completion);
-        CHECK(observation->first_route_calls.load() == 1);
-        CHECK(observation->provider_calls.load() == 1);
-        CHECK(observation->completion.calls() == 1);
-        CHECK(observation->second_route_calls.load() == 1);
-        CHECK_FALSE(observation->second_route_overlapped.load());
-
-        const auto first_status = result.response.find("HTTP/1.1 200 OK\r\n");
-        const auto first_header_end = result.response.find("\r\n\r\n", first_status);
-        REQUIRE(first_status == 0);
-        REQUIRE(first_header_end != std::string::npos);
-        CHECK(result.response.find("X-Pipeline-Response: " + first_header_value, first_status) < first_header_end);
-        const auto first_body_begin = first_header_end + 4;
-        REQUIRE(result.response.compare(first_body_begin, encoded_first_body.size(), encoded_first_body) == 0);
-        const auto second_status = result.response.find("HTTP/1.1 200 OK\r\n", first_body_begin);
-        REQUIRE(second_status == first_body_begin + encoded_first_body.size());
-        const auto second_header_end = result.response.find("\r\n\r\n", second_status);
-        REQUIRE(second_header_end != std::string::npos);
-        CHECK(result.response.find("X-Pipeline-Response: " + second_header_value, second_status) < second_header_end);
-        CHECK(result.response.substr(second_header_end + 4) == second_body);
-        CHECK(result.response.find("HTTP/1.1 200 OK\r\n", second_status + 1) == std::string::npos);
-    };
-
-    verify_exchange(get_observation,
-                    get_result,
-                    "first-get",
-                    "9\r\nfirst-get\r\n0\r\n\r\n",
-                    "second-get",
-                    "second-get");
-    verify_exchange(post_observation,
-                    post_result,
-                    "first-post",
-                    "a\r\nfirst-post\r\n0\r\n\r\n",
-                    "second-post",
-                    "second-post");
-    CHECK(post_observation->first_body_correct.load());
-} // async_chunked_response_preserves_pipelined_request_bytes_until_clean_completion
-
 TEST_CASE("deferred_chunked_response_stops_parsing_at_its_request_boundary")
 {
     SimpleApp app;
@@ -3555,79 +3385,12 @@ TEST_CASE("deferred_chunked_response_stops_parsing_at_its_request_boundary")
     server_shutdown.shutdown();
 
     REQUIRE(connection_closed);
-    CHECK(second_route_calls->load() == 1);
+    CHECK(second_route_calls->load() == 0);
     CHECK(response.find("5\r\nfirst\r\n0\r\n\r\n") != std::string::npos);
-    CHECK(response.find("second") != std::string::npos);
+    CHECK(response.find("second") == std::string::npos);
 } // deferred_chunked_response_stops_parsing_at_its_request_boundary
 
-TEST_CASE("deferred_synchronous_chunked_response_replays_pipelined_input")
-{
-    SimpleApp app;
-    auto deferred_end_promise = std::make_shared<std::promise<std::function<void()>>>();
-    auto deferred_end = deferred_end_promise->get_future();
-    auto second_route_calls = std::make_shared<std::atomic<std::size_t>>(0);
-    auto worker_thread_promise     = std::make_shared<std::promise<std::thread::id>>();
-    auto worker_thread             = worker_thread_promise->get_future();
-    auto provider_thread_promise   = std::make_shared<std::promise<std::thread::id>>();
-    auto provider_thread           = provider_thread_promise->get_future();
-    auto completion_thread_promise = std::make_shared<std::promise<std::thread::id>>();
-    auto completion_thread         = completion_thread_promise->get_future();
-
-    CROW_ROUTE(app, "/deferred-sync-boundary")
-    ([deferred_end_promise, worker_thread_promise, provider_thread_promise, completion_thread_promise](
-         const crow::request&, crow::response& res) {
-        worker_thread_promise->set_value(std::this_thread::get_id());
-        res.set_chunked_content_provider([provider_thread_promise](std::string& chunk) {
-            provider_thread_promise->set_value(std::this_thread::get_id());
-            chunk = "first";
-            return crow::chunk_result::done;
-        });
-        res.set_chunked_completion_handler(
-            [completion_thread_promise](bool) { completion_thread_promise->set_value(std::this_thread::get_id()); });
-        deferred_end_promise->set_value([&res] {
-            res.end();
-        });
-    });
-    CROW_ROUTE(app, "/after-deferred-sync-boundary")
-    ([second_route_calls](const crow::request&, crow::response& res) {
-        second_route_calls->fetch_add(1);
-        res.end("second");
-    });
-
-    auto server_task = app.bindaddr(LOCALHOST_ADDRESS).port(45451).run_async();
-    BoundedServerShutdown server_shutdown(server_task, [&app] {
-        app.stop();
-    });
-    app.wait_for_server_start();
-    asio::io_context io_context;
-    asio::ip::tcp::socket client(io_context);
-    client.connect(asio::ip::tcp::endpoint(asio::ip::make_address(LOCALHOST_ADDRESS), 45451));
-    const std::string requests = "GET /deferred-sync-boundary HTTP/1.1\r\nHost: localhost\r\n\r\n"
-                                 "GET /after-deferred-sync-boundary HTTP/1.1\r\nHost: localhost\r\nConnection: close\r\n\r\n";
-    asio::write(client, asio::buffer(requests));
-
-    REQUIRE(deferred_end.wait_for(std::chrono::seconds(5)) == std::future_status::ready);
-    CHECK(second_route_calls->load() == 0);
-    deferred_end.get()();
-    std::string response;
-    const bool connection_closed = receive_until_closed_with_deadline(client, response, std::chrono::seconds(5));
-    asio_error_code close_error;
-    client.close(close_error);
-    server_shutdown.shutdown();
-
-    REQUIRE(connection_closed);
-    REQUIRE(worker_thread.wait_for(std::chrono::seconds(1)) == std::future_status::ready);
-    REQUIRE(provider_thread.wait_for(std::chrono::seconds(1)) == std::future_status::ready);
-    REQUIRE(completion_thread.wait_for(std::chrono::seconds(1)) == std::future_status::ready);
-    const auto expected_thread = worker_thread.get();
-    CHECK(provider_thread.get() == expected_thread);
-    CHECK(completion_thread.get() == expected_thread);
-    CHECK(second_route_calls->load() == 1);
-    CHECK(response.find("5\r\nfirst\r\n0\r\n\r\n") != std::string::npos);
-    CHECK(response.find("second") != std::string::npos);
-} // deferred_synchronous_chunked_response_replays_pipelined_input
-
-TEST_CASE("deferred_head_chunked_response_replays_pipelined_input")
+TEST_CASE("deferred_head_chunked_response_closes_after_pipelined_input")
 {
     SimpleApp app;
     auto deferred_end_promise = std::make_shared<std::promise<std::function<void()>>>();
@@ -3674,71 +3437,14 @@ TEST_CASE("deferred_head_chunked_response_replays_pipelined_input")
 
     REQUIRE(connection_closed);
     CHECK(provider_calls->load() == 0);
-    CHECK(second_route_calls->load() == 1);
+    CHECK(second_route_calls->load() == 0);
     const auto first_header_end = response.find("\r\n\r\n");
     REQUIRE(first_header_end != std::string::npos);
     const auto first_headers = response.substr(0, first_header_end + 4);
     CHECK(first_headers.find("Transfer-Encoding: chunked") != std::string::npos);
     CHECK(first_headers.find("Content-Length:") == std::string::npos);
-    CHECK(response.compare(first_header_end + 4, 8, "HTTP/1.1") == 0);
-    CHECK(response.find("second", first_header_end + 4) != std::string::npos);
-} // deferred_head_chunked_response_replays_pipelined_input
-
-TEST_CASE("deferred_head_response_does_not_clear_pipelined_head_state")
-{
-    SimpleApp app;
-    auto first_end_promise = std::make_shared<std::promise<std::function<void()>>>();
-    auto first_end = first_end_promise->get_future();
-    auto second_end_promise = std::make_shared<std::promise<std::function<void()>>>();
-    auto second_end = second_end_promise->get_future();
-
-    CROW_ROUTE(app, "/first-deferred-head")
-    ([first_end_promise](const crow::request&, crow::response& res) {
-        res.set_async_chunked_content_provider([](crow::response::async_chunk_completion_t) {});
-        first_end_promise->set_value([&res] {
-            res.end();
-        });
-    });
-    CROW_ROUTE(app, "/second-deferred-head")
-    ([second_end_promise](const crow::request&, crow::response& res) {
-        second_end_promise->set_value([&res] {
-            res.end("second");
-        });
-    });
-
-    auto server_task = app.bindaddr(LOCALHOST_ADDRESS).port(45451).run_async();
-    BoundedServerShutdown server_shutdown(server_task, [&app] {
-        app.stop();
-    });
-    app.wait_for_server_start();
-    asio::io_context io_context;
-    asio::ip::tcp::socket client(io_context);
-    client.connect(asio::ip::tcp::endpoint(asio::ip::make_address(LOCALHOST_ADDRESS), 45451));
-    const std::string requests = "HEAD /first-deferred-head HTTP/1.1\r\nHost: localhost\r\n\r\n"
-                                 "HEAD /second-deferred-head HTTP/1.1\r\nHost: localhost\r\nConnection: close\r\n\r\n";
-    asio::write(client, asio::buffer(requests));
-
-    REQUIRE(first_end.wait_for(std::chrono::seconds(5)) == std::future_status::ready);
-    first_end.get()();
-    REQUIRE(second_end.wait_for(std::chrono::seconds(5)) == std::future_status::ready);
-    second_end.get()();
-    std::string response;
-    const bool connection_closed = receive_until_closed_with_deadline(client, response, std::chrono::seconds(5));
-    asio_error_code close_error;
-    client.close(close_error);
-    server_shutdown.shutdown();
-
-    REQUIRE(connection_closed);
-    const auto first_header_end = response.find("\r\n\r\n");
-    REQUIRE(first_header_end != std::string::npos);
-    const auto second_header_start = first_header_end + 4;
-    REQUIRE(response.compare(second_header_start, 8, "HTTP/1.1") == 0);
-    const auto second_header_end = response.find("\r\n\r\n", second_header_start);
-    REQUIRE(second_header_end != std::string::npos);
-    const auto second_headers = response.substr(second_header_start, second_header_end + 4 - second_header_start);
-    CHECK(second_headers.find("Content-Length: 6") != std::string::npos);
-    CHECK(response.size() == second_header_end + 4);
-} // deferred_head_response_does_not_clear_pipelined_head_state
+    CHECK(response.size() == first_header_end + 4);
+} // deferred_head_chunked_response_closes_after_pipelined_input
 
 TEST_CASE("unmatched_head_does_not_emit_a_body")
 {
@@ -3831,7 +3537,7 @@ TEST_CASE("unsupported_informational_status_uses_normalized_framing")
     CHECK(response.substr(0, second_response).find("500 Internal Server Error\r\n") != std::string::npos);
 } // unsupported_informational_status_uses_normalized_framing
 
-TEST_CASE("ordinary_deferred_response_preserves_pipelined_order")
+TEST_CASE("ordinary_deferred_response_closes_after_pipelined_input")
 {
     SimpleApp app;
     auto deferred_end_promise = std::make_shared<std::promise<std::function<void()>>>();
@@ -3872,13 +3578,10 @@ TEST_CASE("ordinary_deferred_response_preserves_pipelined_order")
     server_shutdown.shutdown();
 
     REQUIRE(connection_closed);
-    CHECK(second_route_calls->load() == 1);
-    const auto first_body = response.find("first");
-    const auto second_body = response.find("second");
-    REQUIRE(first_body != std::string::npos);
-    REQUIRE(second_body != std::string::npos);
-    CHECK(first_body < second_body);
-} // ordinary_deferred_response_preserves_pipelined_order
+    CHECK(second_route_calls->load() == 0);
+    CHECK(response.find("first") != std::string::npos);
+    CHECK(response.find("second") == std::string::npos);
+} // ordinary_deferred_response_closes_after_pipelined_input
 
 TEST_CASE("server_stop_cleans_up_queued_deferred_finalization")
 {
@@ -4256,7 +3959,7 @@ TEST_CASE("bodyless_statuses_do_not_invoke_chunk_providers")
     CHECK(async_304_result.get() == true);
 } // bodyless_statuses_do_not_invoke_chunk_providers
 
-TEST_CASE("deferred_chunked_response_replaced_by_static_file_replays_pipelined_input")
+TEST_CASE("deferred_chunked_response_replaced_by_static_file_closes_after_pipelined_input")
 {
     SimpleApp app;
     auto deferred_end_promise = std::make_shared<std::promise<std::function<void()>>>();
@@ -4310,12 +4013,132 @@ TEST_CASE("deferred_chunked_response_replaced_by_static_file_replays_pipelined_i
 
     REQUIRE(connection_closed);
     CHECK(provider_calls->load() == 0);
-    CHECK(second_route_calls->load() == 1);
-    CHECK(response.find("second-static") != std::string::npos);
+    CHECK(second_route_calls->load() == 0);
+    CHECK(response.find("second-static") == std::string::npos);
     REQUIRE(completion_result.wait_for(std::chrono::seconds(1)) == std::future_status::ready);
     CHECK(completion_result.get() == true);
     CHECK(completion_observation->calls() == 1);
-} // deferred_chunked_response_replaced_by_static_file_replays_pipelined_input
+} // deferred_chunked_response_replaced_by_static_file_closes_after_pipelined_input
+
+TEST_CASE("async_chunked_response_closes_after_pipelined_input")
+{
+    SimpleApp app;
+    auto observation = std::make_shared<PipelinedAsyncObservation>();
+
+    CROW_ROUTE(app, "/async-close-on-pipeline")
+    ([observation](const crow::request&, crow::response& res) {
+        observation->first_route_calls.fetch_add(1);
+        res.set_async_chunked_content_provider(
+          [observation](crow::response::async_chunk_completion_t complete) {
+              observation->provider_calls.fetch_add(1);
+              observation->provider_completion.capture(std::move(complete));
+          });
+        res.set_chunked_completion_handler([observation](bool clean) {
+            observation->completion.record(clean);
+        });
+        res.end();
+    });
+    CROW_ROUTE(app, "/after-async-close-on-pipeline")
+    ([observation](const crow::request&, crow::response& res) {
+        observation->second_route_calls.fetch_add(1);
+        res.end("second");
+    });
+
+    auto server_task = app.bindaddr(LOCALHOST_ADDRESS).port(45451).run_async();
+    BoundedServerShutdown server_shutdown(server_task, [&app] {
+        app.stop();
+    });
+    REQUIRE(app.wait_for_server_start() == std::cv_status::no_timeout);
+
+    auto completion_result = observation->completion.first_result();
+    asio::io_context io_context;
+    asio::ip::tcp::socket client(io_context);
+    client.connect(asio::ip::tcp::endpoint(asio::ip::make_address(LOCALHOST_ADDRESS), 45451));
+    const std::string requests = "GET /async-close-on-pipeline HTTP/1.1\r\nHost: localhost\r\n\r\n"
+                                 "GET /after-async-close-on-pipeline HTTP/1.1\r\nHost: localhost\r\n\r\n";
+    asio::write(client, asio::buffer(requests));
+
+    REQUIRE(observation->provider_completion.wait_for(std::chrono::seconds(5)) == std::future_status::ready);
+    CHECK(observation->provider_completion.complete(crow::chunk_result::done, "payload"));
+
+    std::string response;
+    const bool connection_closed = receive_until_closed_with_deadline(client, response, std::chrono::seconds(5));
+    asio_error_code close_error;
+    client.close(close_error);
+
+    // Pipelined bytes behind a streamed response: the stream finishes
+    // correctly, then the connection closes; the second request is not served.
+    REQUIRE(connection_closed);
+    CHECK(response.find("Transfer-Encoding: chunked") != std::string::npos);
+    CHECK(response.find("7\r\npayload\r\n") != std::string::npos);
+    CHECK(response.find("0\r\n\r\n") != std::string::npos);
+    CHECK(observation->second_route_calls.load() == 0);
+    REQUIRE(completion_result.wait_for(std::chrono::seconds(1)) == std::future_status::ready);
+    CHECK(completion_result.get() == true);
+} // async_chunked_response_closes_after_pipelined_input
+
+TEST_CASE("deferred_chunked_response_closes_after_pipelined_input")
+{
+    SimpleApp app;
+    auto deferred_end_promise = std::make_shared<std::promise<std::function<void()>>>();
+    auto deferred_end = deferred_end_promise->get_future();
+    auto second_route_calls = std::make_shared<std::atomic<std::size_t>>(0);
+    auto completion_observation = std::make_shared<ChunkCompletionObservation>();
+    auto completion_result = completion_observation->first_result();
+
+    CROW_ROUTE(app, "/deferred-close-on-pipeline")
+    ([deferred_end_promise, completion_observation](const crow::request&, crow::response& res) {
+        res.set_chunked_content_provider(
+          [sent = false](std::string& chunk) mutable -> bool {
+              if (sent)
+                  return false;
+              chunk = "payload";
+              sent = true;
+              return true;
+          },
+          "text/plain");
+        res.set_chunked_completion_handler([completion_observation](bool clean) {
+            completion_observation->record(clean);
+        });
+        deferred_end_promise->set_value([&res] {
+            res.end();
+        });
+    });
+    CROW_ROUTE(app, "/after-deferred-close-on-pipeline")
+    ([second_route_calls](const crow::request&, crow::response& res) {
+        second_route_calls->fetch_add(1);
+        res.end("second");
+    });
+
+    auto server_task = app.bindaddr(LOCALHOST_ADDRESS).port(45451).run_async();
+    BoundedServerShutdown server_shutdown(server_task, [&app] {
+        app.stop();
+    });
+    REQUIRE(app.wait_for_server_start() == std::cv_status::no_timeout);
+
+    asio::io_context io_context;
+    asio::ip::tcp::socket client(io_context);
+    client.connect(asio::ip::tcp::endpoint(asio::ip::make_address(LOCALHOST_ADDRESS), 45451));
+    const std::string requests = "GET /deferred-close-on-pipeline HTTP/1.1\r\nHost: localhost\r\n\r\n"
+                                 "GET /after-deferred-close-on-pipeline HTTP/1.1\r\nHost: localhost\r\n\r\n";
+    asio::write(client, asio::buffer(requests));
+
+    REQUIRE(deferred_end.wait_for(std::chrono::seconds(5)) == std::future_status::ready);
+    deferred_end.get()();
+
+    std::string response;
+    const bool connection_closed = receive_until_closed_with_deadline(client, response, std::chrono::seconds(5));
+    asio_error_code close_error;
+    client.close(close_error);
+
+    REQUIRE(connection_closed);
+    CHECK(response.find("Transfer-Encoding: chunked") != std::string::npos);
+    CHECK(response.find("7\r\npayload\r\n") != std::string::npos);
+    CHECK(response.find("0\r\n\r\n") != std::string::npos);
+    CHECK(second_route_calls->load() == 0);
+    REQUIRE(completion_result.wait_for(std::chrono::seconds(1)) == std::future_status::ready);
+    CHECK(completion_result.get() == true);
+} // deferred_chunked_response_closes_after_pipelined_input
 
 TEST_CASE("static_file_failure_reports_unclean_chunk_completion")
 {
@@ -4368,7 +4191,8 @@ TEST_CASE("static_file_failure_reports_unclean_chunk_completion")
     CHECK(completion_observation->calls() == 1);
 } // static_file_failure_reports_unclean_chunk_completion
 
-TEST_CASE("deferred_chunked_response_replaced_by_large_body_replays_pipelined_input") {
+TEST_CASE("deferred_chunked_response_replaced_by_large_body_closes_after_pipelined_input")
+{
     SimpleApp app;
     app.stream_threshold(8);
     auto deferred_end_promise = std::make_shared<std::promise<std::function<void()>>>();
@@ -4416,10 +4240,10 @@ TEST_CASE("deferred_chunked_response_replaced_by_large_body_replays_pipelined_in
 
     REQUIRE(connection_closed);
     CHECK(provider_calls->load() == 0);
-    CHECK(second_route_calls->load() == 1);
+    CHECK(second_route_calls->load() == 0);
     CHECK(response.find(*first_body) != std::string::npos);
-    CHECK(response.find("second-large-body") != std::string::npos);
-} // deferred_chunked_response_replaced_by_large_body_replays_pipelined_input
+    CHECK(response.find("second-large-body") == std::string::npos);
+} // deferred_chunked_response_replaced_by_large_body_closes_after_pipelined_input
 
 TEST_CASE("failed_regular_response_discards_retained_pipelined_input") {
     SimpleApp app;
@@ -4482,7 +4306,7 @@ TEST_CASE("failed_regular_response_discards_retained_pipelined_input") {
     CHECK(response.find("unexpected") == std::string::npos);
 } // failed_regular_response_discards_retained_pipelined_input
 
-TEST_CASE("async_chunked_response_retains_input_read_while_provider_waits")
+TEST_CASE("async_chunked_response_closes_after_input_arrives_while_provider_waits")
 {
     SimpleApp app;
 
@@ -4574,193 +4398,15 @@ TEST_CASE("async_chunked_response_retains_input_read_while_provider_waits")
     CHECK(observation->first_route_calls.load() == 1);
     CHECK(observation->provider_calls.load() == 1);
     CHECK(observation->completion.calls() == 1);
-    CHECK(observation->second_route_calls.load() == 1);
-    CHECK_FALSE(observation->second_route_overlapped.load());
+    CHECK(observation->second_route_calls.load() == 0);
 
     const auto first_header_end = response.find("\r\n\r\n");
     REQUIRE(first_header_end != std::string::npos);
     const auto first_body_begin = first_header_end + 4;
     const std::string first_body = "7\r\nwaiting\r\n0\r\n\r\n";
     REQUIRE(response.compare(first_body_begin, first_body.size(), first_body) == 0);
-    const auto second_status = response.find("HTTP/1.1 200 OK\r\n", first_body_begin);
-    REQUIRE(second_status == first_body_begin + first_body.size());
-    const auto second_header_end = response.find("\r\n\r\n", second_status);
-    REQUIRE(second_header_end != std::string::npos);
-    CHECK(response.substr(second_header_end + 4) == "after-wait");
-} // async_chunked_response_retains_input_read_while_provider_waits
-
-TEST_CASE("async_chunked_response_closes_when_waiting_input_exceeds_parser_limit")
-{
-    SimpleApp app;
-
-    auto provider_started_promise = std::make_shared<std::promise<void>>();
-    auto provider_started = provider_started_promise->get_future();
-    auto provider_lifetime_promise = std::make_shared<std::promise<std::weak_ptr<int>>>();
-    auto provider_lifetime_result = provider_lifetime_promise->get_future();
-    auto completion_observation = std::make_shared<ChunkCompletionObservation>();
-    auto completion_result = completion_observation->first_result();
-    PausingSocketContext socket_context;
-    auto waiting_read_started = socket_context.observed_read_started_future();
-
-    CROW_ROUTE(app, "/bounded-waiting-input")
-    ([provider_started_promise,
-      provider_lifetime_promise,
-      completion_observation,
-      &socket_context](const crow::request&, crow::response& res) {
-        auto provider_lifetime = std::make_shared<int>(0);
-        provider_lifetime_promise->set_value(std::weak_ptr<int>(provider_lifetime));
-        res.set_async_chunked_content_provider(
-          [provider_started_promise, provider_lifetime, &socket_context](
-            crow::response::async_chunk_completion_t complete) {
-              static_cast<void>(complete);
-              static_cast<void>(provider_lifetime);
-              socket_context.observe_next_read();
-              provider_started_promise->set_value();
-          });
-        res.set_chunked_completion_handler(
-          [completion_observation](bool clean) {
-              completion_observation->record(clean);
-          });
-        res.end();
-    });
-
-    app.validate();
-    std::tuple<> middlewares;
-    using BoundedInputServer = crow::Server<crow::SimpleApp, crow::TCPAcceptor, PausingSocketAdaptor>;
-    BoundedInputServer server(&app,
-                              asio::ip::tcp::endpoint(asio::ip::make_address(LOCALHOST_ADDRESS), 45451),
-                              "Crow/Test",
-                              &middlewares,
-                              2,
-                              5,
-                              &socket_context);
-    auto server_task = std::async(std::launch::async, [&server] {
-        server.run();
-    });
-    BoundedServerShutdown server_shutdown(server_task, [&server] {
-        server.stop();
-    });
-    REQUIRE(server.wait_for_start(std::chrono::steady_clock::now() + std::chrono::seconds(3)) == std::cv_status::no_timeout);
-
-    asio::io_context io_context;
-    asio::ip::tcp::socket client(io_context);
-    client.connect(asio::ip::tcp::endpoint(asio::ip::make_address(LOCALHOST_ADDRESS), 45451));
-    const std::string request = "GET /bounded-waiting-input HTTP/1.1\r\nHost: localhost\r\n\r\n";
-    asio::write(client, asio::buffer(request));
-
-    const auto provider_status = provider_started.wait_for(std::chrono::seconds(5));
-    const auto read_start_status = waiting_read_started.wait_for(std::chrono::seconds(1));
-    std::weak_ptr<int> provider_lifetime;
-    if (provider_status == std::future_status::ready)
-        provider_lifetime = provider_lifetime_result.get();
-    const bool retained_before_overflow = !provider_lifetime.expired();
-
-    const std::string excessive_input(CROW_HTTP_MAX_HEADER_SIZE + 1, 'x');
-    asio_error_code send_error;
-    asio::write(client, asio::buffer(excessive_input), send_error);
-    const auto completion_status = completion_result.wait_for(std::chrono::seconds(2));
-    const bool clean = completion_status == std::future_status::ready ? completion_result.get() : true;
-    const bool released_after_overflow = provider_lifetime.expired();
-    std::string response;
-    const bool connection_closed = receive_until_closed_with_deadline(client, response, std::chrono::seconds(2));
-
-    asio_error_code close_error;
-    client.close(close_error);
-    server_shutdown.shutdown();
-
-    REQUIRE(provider_status == std::future_status::ready);
-    REQUIRE(read_start_status == std::future_status::ready);
-    CHECK(retained_before_overflow);
-    REQUIRE(completion_status == std::future_status::ready);
-    CHECK_FALSE(clean);
-    CHECK(released_after_overflow);
-    CHECK(completion_observation->calls() == 1);
-    CHECK(connection_closed);
-} // async_chunked_response_closes_when_waiting_input_exceeds_parser_limit
-
-TEST_CASE("async_chunked_response_finishes_cleanly_when_done_precedes_retained_input_overflow")
-{
-    SimpleApp app;
-
-    auto provider_completion = std::make_shared<DeferredChunkCompletion>();
-    auto completion_observation = std::make_shared<ChunkCompletionObservation>();
-    auto completion_result = completion_observation->first_result();
-    auto pipelined_route_calls = std::make_shared<std::atomic<std::size_t>>(0);
-    PausingSocketContext socket_context;
-    auto pending_read = socket_context.pending_read_future();
-
-    CROW_ROUTE(app, "/done-before-retained-input-overflow")
-    ([provider_completion, completion_observation, &socket_context](const crow::request&, crow::response& res) {
-        res.set_async_chunked_content_provider(
-          [provider_completion, &socket_context](crow::response::async_chunk_completion_t complete) {
-              socket_context.pause_read_completion_after(CROW_HTTP_MAX_HEADER_SIZE);
-              provider_completion->capture(std::move(complete));
-          });
-        res.set_chunked_completion_handler([completion_observation](bool clean) {
-            completion_observation->record(clean);
-        });
-        res.end();
-    });
-
-    CROW_ROUTE(app, "/after-done-before-overflow")
-    ([pipelined_route_calls] {
-        pipelined_route_calls->fetch_add(1);
-        return "unexpected";
-    });
-
-    app.validate();
-    std::tuple<> middlewares;
-    using PausedReadServer = crow::Server<crow::SimpleApp, crow::TCPAcceptor, PausingSocketAdaptor>;
-    PausedReadServer server(&app,
-                            asio::ip::tcp::endpoint(asio::ip::make_address(LOCALHOST_ADDRESS), 45451),
-                            "Crow/Test",
-                            &middlewares,
-                            2,
-                            5,
-                            &socket_context);
-    auto server_task = std::async(std::launch::async, [&server] {
-        server.run();
-    });
-    BoundedServerShutdown server_shutdown(server_task, [&server] {
-        server.stop();
-    });
-    REQUIRE(server.wait_for_start(std::chrono::steady_clock::now() + std::chrono::seconds(3)) == std::cv_status::no_timeout);
-
-    asio::io_context io_context;
-    asio::ip::tcp::socket client(io_context);
-    client.connect(asio::ip::tcp::endpoint(asio::ip::make_address(LOCALHOST_ADDRESS), 45451));
-    const std::string request = "GET /done-before-retained-input-overflow HTTP/1.1\r\nHost: localhost\r\n\r\n";
-    asio::write(client, asio::buffer(request));
-
-    REQUIRE(provider_completion->wait_for(std::chrono::seconds(5)) == std::future_status::ready);
-    const std::string pipelined_request = "GET /after-done-before-overflow HTTP/1.1\r\nHost: localhost\r\n\r\n";
-    const std::string excessive_input = pipelined_request + std::string(CROW_HTTP_MAX_HEADER_SIZE + 4096, 'x');
-    asio_error_code send_error;
-    asio::write(client, asio::buffer(excessive_input), send_error);
-    REQUIRE(pending_read.wait_for(std::chrono::seconds(5)) == std::future_status::ready);
-    const bool result_accepted = provider_completion->complete(crow::chunk_result::done, "final");
-    socket_context.resume_pending_read();
-
-    std::string response;
-    const bool connection_closed = receive_until_closed_with_deadline(client, response, std::chrono::seconds(5));
-    const auto completion_status = completion_result.wait_for(std::chrono::seconds(1));
-    const bool clean = completion_status == std::future_status::ready ? completion_result.get() : false;
-
-    asio_error_code close_error;
-    client.close(close_error);
-    server_shutdown.shutdown();
-
-    CHECK_FALSE(send_error);
-    CHECK(result_accepted);
-    REQUIRE(connection_closed);
-    const auto header_end = response.find("\r\n\r\n");
-    REQUIRE(header_end != std::string::npos);
-    CHECK(response.substr(header_end + 4) == "5\r\nfinal\r\n0\r\n\r\n");
-    REQUIRE(completion_status == std::future_status::ready);
-    CHECK(clean);
-    CHECK(completion_observation->calls() == 1);
-    CHECK(pipelined_route_calls->load() == 0);
-} // async_chunked_response_finishes_cleanly_when_done_precedes_retained_input_overflow
+    CHECK(response.size() == first_body_begin + first_body.size());
+} // async_chunked_response_closes_after_input_arrives_while_provider_waits
 
 TEST_CASE("async_chunked_response_keeps_header_storage_stable_after_end")
 {
