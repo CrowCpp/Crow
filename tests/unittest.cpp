@@ -3277,3 +3277,81 @@ TEST_CASE("crow_filestore_boundary_e2e")
     REQUIRE_FALSE(confirmed);
     app.stop();
 }
+
+TEST_CASE("Trailing-slash redirects")
+{
+    // this test is linked to https://github.com/CrowCpp/Crow/security/advisories/GHSA-x6vq-298x-6qgq
+
+    crow::SimpleApp app;
+    CROW_ROUTE(app, "/<path>/")([](std::string value) {
+        return "path=" + value;
+    });
+
+    app.loglevel(crow::LogLevel::Critical);
+    auto srv = app.bindaddr(LOCALHOST_ADDRESS).port(45451).run_async();
+    app.wait_for_server_start();
+
+    auto control = HttpClient::request(LOCALHOST_ADDRESS,
+                                       45451,
+                                       "GET /safe HTTP/1.1\r\n"
+                                       "Host: trusted.example\r\n"
+                                       "Connection: close\r\n\r\n");
+
+    REQUIRE(control.find("301")!=std::string::npos);
+    REQUIRE(control.find("Location: /safe/")!=std::string::npos);
+
+    auto trigger = HttpClient::request(LOCALHOST_ADDRESS,
+                                   45451,
+                                   "GET //attacker.example HTTP/1.1\r\n"
+                                   "Host: trusted.example\r\n"
+                                   "Connection: close\r\n\r\n");
+
+    REQUIRE(trigger.find("301")!=std::string::npos);
+    // trigger is protocol relative
+    REQUIRE(trigger.find("Location: //attacker.example/")==std::string::npos);
+    REQUIRE(trigger.find("Location: /attacker.example/")!=std::string::npos);
+
+    /*
+    auto trigger_encoded = HttpClient::request(LOCALHOST_ADDRESS,
+                                   45451,
+                                   "GET %2F/attacker.example HTTP/1.1\r\n"
+                                   "Host: trusted.example\r\n"
+                                   "Connection: close\r\n\r\n");
+    REQUIRE(trigger_encoded.find("301")!=std::string::npos);
+    // trigger is protocol relative
+    REQUIRE(trigger_encoded.find("Location: //attacker.example/")==std::string::npos);
+    REQUIRE(trigger_encoded.find("Location: /attacker.example/")!=std::string::npos);
+    */
+
+    /*trigger_encoded = HttpClient::request(LOCALHOST_ADDRESS,
+                                   45451,
+                                   "GET /%2Fattacker.example HTTP/1.1\r\n"
+                                   "Host: trusted.example\r\n"
+                                   "Connection: close\r\n\r\n");
+    REQUIRE(trigger_encoded.find("301")!=std::string::npos);
+    // trigger is protocol relative
+    REQUIRE(trigger_encoded.find("Location: //attacker.example/")==std::string::npos);
+    REQUIRE(trigger_encoded.find("Location: /attacker.example/")!=std::string::npos);
+    */
+
+    /*
+    trigger_encoded = HttpClient::request(LOCALHOST_ADDRESS,
+                                   45451,
+                                   "GET %2F%2Fattacker.example HTTP/1.1\r\n"
+                                   "Host: trusted.example\r\n"
+                                   "Connection: close\r\n\r\n");
+    REQUIRE(trigger_encoded.find("301")!=std::string::npos);
+    // trigger is protocol relative
+    REQUIRE(trigger_encoded.find("Location: //attacker.example/")==std::string::npos);
+    REQUIRE(trigger_encoded.find("Location: /attacker.example/")!=std::string::npos);
+    */
+
+    app.stop();
+
+
+    REQUIRE(trigger.find("301")!=std::string::npos);
+    // trigger is protocol relative
+    REQUIRE(trigger.find("Location: //attacker.example/")==std::string::npos);
+    REQUIRE(trigger.find("Location: /attacker.example/")!=std::string::npos);
+} // local_middleware
+
