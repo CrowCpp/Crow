@@ -957,6 +957,67 @@ TEST_CASE("async_chunked_response_move_assignment_releases_destination_provider"
 } // async_chunked_response_move_assignment_releases_destination_provider
 
 
+TEST_CASE("response_move_assignment_keeps_the_completion_handler_of_a_handlerless_source")
+{
+    response destination;
+    auto marker = std::make_shared<int>(1);
+    std::weak_ptr<int> marker_observer = marker;
+    auto observation = std::make_shared<ChunkCompletionObservation>();
+    destination.set_async_chunked_content_provider([](response::async_chunk_completion_t) {});
+    destination.set_chunked_completion_handler([marker, observation](bool clean) {
+        observation->record(clean);
+    });
+    marker.reset();
+
+    destination = response(500);
+
+    CHECK(destination.code == 500);
+    CHECK(!destination.is_chunked_type());
+    CHECK(destination.get_header_value("Transfer-Encoding").empty());
+    CHECK(observation->calls() == 0);
+    CHECK(!marker_observer.expired());
+
+    destination.clear();
+
+    CHECK(marker_observer.expired());
+} // response_move_assignment_keeps_the_completion_handler_of_a_handlerless_source
+
+
+TEST_CASE("response_move_assignment_takes_the_completion_handler_of_a_source_that_carries_one")
+{
+    response destination;
+    auto destination_marker = std::make_shared<int>(1);
+    std::weak_ptr<int> destination_marker_observer = destination_marker;
+    auto destination_observation = std::make_shared<ChunkCompletionObservation>();
+    destination.set_async_chunked_content_provider([](response::async_chunk_completion_t) {});
+    destination.set_chunked_completion_handler([destination_marker, destination_observation](bool clean) {
+        destination_observation->record(clean);
+    });
+    destination_marker.reset();
+
+    response source;
+    auto source_marker = std::make_shared<int>(1);
+    std::weak_ptr<int> source_marker_observer = source_marker;
+    auto source_observation = std::make_shared<ChunkCompletionObservation>();
+    source.set_async_chunked_content_provider([](response::async_chunk_completion_t) {});
+    source.set_chunked_completion_handler([source_marker, source_observation](bool clean) {
+        source_observation->record(clean);
+    });
+    source_marker.reset();
+
+    destination = std::move(source);
+
+    CHECK(destination_marker_observer.expired());
+    CHECK(destination_observation->calls() == 0);
+    CHECK(!source_marker_observer.expired());
+    CHECK(source_observation->calls() == 0);
+
+    destination.clear();
+
+    CHECK(source_marker_observer.expired());
+} // response_move_assignment_takes_the_completion_handler_of_a_source_that_carries_one
+
+
 TEST_CASE("async_chunk_transfer_registry_ignores_ordinary_connections_and_unregisters_completed_transfers")
 {
     crow::detail::connection_lifecycle_registry registry;
@@ -3150,6 +3211,52 @@ TEST_CASE("static_file_failure_reports_unclean_chunk_completion")
     CHECK(completion_result.get() == false);
     CHECK(completion_observation->calls() == 1);
 } // static_file_failure_reports_unclean_chunk_completion
+
+
+TEST_CASE("throwing_route_reports_chunk_completion_through_the_error_response")
+{
+    SimpleApp app;
+    auto completion_observation = std::make_shared<ChunkCompletionObservation>();
+    auto completion_result = completion_observation->first_result();
+    auto provider_calls = std::make_shared<std::atomic<std::size_t>>(0);
+
+    CROW_ROUTE(app, "/throws-after-installing-a-provider")
+    ([completion_observation, provider_calls](crow::response& res) {
+        res.set_async_chunked_content_provider([provider_calls](crow::response::async_chunk_completion_t) {
+            provider_calls->fetch_add(1);
+        });
+        res.set_chunked_completion_handler([completion_observation](bool clean) {
+            completion_observation->record(clean);
+        });
+        throw std::runtime_error("route failure after installing a chunk provider");
+    });
+
+    auto server_task = app.bindaddr(LOCALHOST_ADDRESS).port(45473).run_async();
+    BoundedServerShutdown server_shutdown(server_task, [&app] {
+        app.stop();
+    });
+    app.wait_for_server_start();
+    asio::io_context io_context;
+    asio::ip::tcp::socket client(io_context);
+    client.connect(asio::ip::tcp::endpoint(asio::ip::make_address(LOCALHOST_ADDRESS), 45473));
+    const std::string request =
+      "GET /throws-after-installing-a-provider HTTP/1.1\r\nHost: localhost\r\nConnection: close\r\n\r\n";
+    asio::write(client, asio::buffer(request));
+
+    std::string response;
+    const bool connection_closed = receive_until_closed_with_deadline(client, response, std::chrono::seconds(5));
+    asio_error_code close_error;
+    client.close(close_error);
+    server_shutdown.shutdown();
+
+    REQUIRE(connection_closed);
+    CHECK(response.find("HTTP/1.1 500") == 0);
+    CHECK(response.find("Transfer-Encoding") == std::string::npos);
+    CHECK(provider_calls->load() == 0);
+    REQUIRE(completion_result.wait_for(std::chrono::seconds(1)) == std::future_status::ready);
+    CHECK(completion_result.get() == true);
+    CHECK(completion_observation->calls() == 1);
+} // throwing_route_reports_chunk_completion_through_the_error_response
 
 
 TEST_CASE("deferred_chunked_response_replaced_by_large_body_closes_after_pipelined_input")

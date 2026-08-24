@@ -264,7 +264,17 @@ namespace crow
             // request), so a handler assigning a freshly built response must not reset it.
             manual_length_header = r.manual_length_header;
             async_chunk_provider_ = std::move(r.async_chunk_provider_);
-            chunk_complete_ = std::move(r.chunk_complete_);
+            // The completion handler transfers the way set_chunked_completion_handler()
+            // installs one: a source that carries a handler replaces this one, a source
+            // that carries none leaves this one in place. A freshly built response
+            // assigned over a response that streams (the default exception handler does
+            // exactly that) is not a request to drop the pending release callback: the
+            // write that replaces the stream reports through it instead, the same way a
+            // static file configured over a provider already does.
+            if (r.chunk_complete_)
+            {
+                chunk_complete_ = std::move(r.chunk_complete_);
+            }
             body_source_ = r.body_source_;
             r.async_chunk_provider_ = nullptr;
             r.chunk_complete_       = nullptr;
@@ -552,8 +562,10 @@ namespace crow
         /// completion and server worker shutdown invoke it on the connection thread. For a HEAD
         /// request the body is skipped and the provider is never called, but the handler still
         /// runs with `clean == true`. An HTTP/1.0 request rejects either kind of provider before
-        /// invocation and runs the handler with `clean == false`. The handler should not throw:
-        /// an exception that escapes it is logged and swallowed.
+        /// invocation and runs the handler with `clean == false`. Move-assigning another
+        /// response over this one follows this setter: a source that carries a handler
+        /// replaces this one, a source that carries none leaves this one in place. The
+        /// handler should not throw: an exception that escapes it is logged and swallowed.
         void set_chunked_completion_handler(chunk_complete_t handler)
         {
             chunk_complete_ = std::move(handler);

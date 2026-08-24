@@ -115,6 +115,13 @@ status, or a body source configured after the provider): the handler reports
 the outcome of whatever response write replaced the stream. Release the data
 source here.
 
+Move-assigning another response over one that carries a completion handler
+follows the setter: a source that carries a handler installs it in place of
+the existing one, and a source that carries none leaves the existing one in
+place. An error response built by a route or by Crow's exception handler
+therefore still reports through the handler that the abandoned stream
+installed.
+
 ## Connection lifecycle
 
 - **Keep-alive.** After a cleanly finished stream the connection serves the
