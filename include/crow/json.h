@@ -889,7 +889,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         inline rvalue load_nocopy_internal(char* data, size_t size)
         {
             // Defend against excessive recursion
-            static constexpr unsigned max_depth = 10000;
+            static constexpr unsigned max_depth = 1024;
 
             //static const char* escaped = "\"\\/\b\f\n\r\t";
             struct Parser
@@ -1142,6 +1142,13 @@ namespace crow // NOTE: Already documented in "crow/app.h"
 
                 rvalue decode_value(unsigned depth)
                 {
+                    if (CROW_UNLIKELY(depth > max_depth))
+                    {
+                        rvalue ret;
+                        ret.set_error();
+                        return ret;
+                    }
+
                     switch (*data)
                     {
                         case '[':

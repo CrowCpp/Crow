@@ -3141,3 +3141,53 @@ TEST_CASE("TCP_NODELAY_websocket_smoke_test")
     socket.close();
     app.stop();
 }
+
+TEST_CASE("stack overflow due to deeply nested json input")
+{
+    // this is linked to security advisory https://github.com/CrowCpp/Crow/security/advisories/GHSA-7x84-xhp8-6cqj
+    crow::SimpleApp app;
+
+    CROW_ROUTE(app, "/json").methods("POST"_method)
+        ([](const crow::request& req) {
+            auto j = crow::json::load(req.body);
+            if (!j) return crow::response(400);
+            return crow::response(200);
+        });
+
+    app.validate();
+
+    auto _ = app.bindaddr(LOCALHOST_ADDRESS).port(45451).run_async();
+    app.wait_for_server_start();
+
+    const int depth = 4000;
+
+    std::string json;
+    for (int i = 0; i < depth; i++) {
+        json += "{\"a\":";
+    }
+    json += "1";
+    for (int i = 0; i < depth; i++) {
+        json += "}";
+    }
+
+    std::string req =
+        "POST /json HTTP/1.1\r\n"
+        "Host: 127.0.0.1:45451\r\n"
+        "Content-Type: application/json\r\n"
+        "Content-Length: " + std::to_string(json.size()) + "\r\n"
+        "Connection: close\r\n\r\n" + json;
+
+    //printf("sending %d nested objects (%zu bytes)\n", depth, json.size());
+    {
+        auto resp = HttpClient::request(LOCALHOST_ADDRESS, 45451,req);
+        if (resp.empty()) {
+            FAIL("no response. server is dead.\n");
+        }
+        else {
+            // The stack depth of the json parser is now limited to 1024,
+            // it returns now correctly with failure, therefore bad request is returned
+            CHECK(resp.find("400 Bad Request") != std::string::npos);
+        }
+    }
+    app.stop();
+}
