@@ -85,10 +85,12 @@ namespace crow
 
         ///
         /// The provider fills the given string with the next chunk of the body and returns
-        /// `true` while more data is coming, `false` on its last invocation. Leaving the
-        /// string empty is allowed as an occasional occurrence and sends no chunk; a provider
-        /// that has no data yet should block until data is available (or finish), since
-        /// returning empty chunks in a tight loop spins the connection thread needlessly.
+        /// `true` while more data is coming, `false` on its last invocation. It runs on the
+        /// connection's executor and must return promptly: blocking stalls every connection
+        /// on that worker along with peer-disconnect detection and the stream timers. An
+        /// empty chunk sends nothing, but each empty result returned with `true` immediately
+        /// schedules the next invocation, so do not poll with empty chunks; when the next
+        /// chunk may not be ready at call time, use an asynchronous provider instead.
         using chunk_provider_t = std::function<bool(std::string&)>;
 
         /// Outcome of a single chunk provider invocation; see crow::chunk_result.
@@ -98,10 +100,12 @@ namespace crow
 
         ///
         /// The provider fills the given string with the next chunk of the body and returns
-        /// a chunk_result describing how to proceed. Leaving the string empty is allowed
-        /// as an occasional occurrence and sends no chunk; a provider that has no data yet
-        /// should block until data is available (or return `done`/`abort`), since returning
-        /// `more` with empty chunks in a tight loop spins the connection thread needlessly.
+        /// a chunk_result describing how to proceed. It runs on the connection's executor
+        /// and must return promptly: blocking stalls every connection on that worker along
+        /// with peer-disconnect detection and the stream timers. An empty chunk sends
+        /// nothing, but each empty `more` result immediately schedules the next invocation,
+        /// so do not poll with empty chunks; when the next chunk may not be ready at call
+        /// time, use an asynchronous provider instead.
         using chunk_provider_ex_t = std::function<chunk_result(std::string&)>;
 
         /// Completion callback for one asynchronous chunk provider invocation.
@@ -468,9 +472,10 @@ namespace crow
         ///
         /// The body is sent using `Transfer-Encoding: chunked`, so its size need not be known
         /// in advance, which makes it suitable for bodies of arbitrary or unknown length. The
-        /// provider runs on the connection thread while the response is being written. The
-        /// provider should not throw: an exception that escapes it is logged and treated as
-        /// an abort (the connection is closed without the terminating frame).
+        /// provider runs on the connection's executor while the response is being written and
+        /// must return promptly (see chunk_provider_t). The provider should not throw: an
+        /// exception that escapes it is logged and treated as an abort (the connection is
+        /// closed without the terminating frame).
         void set_chunked_content_provider(chunk_provider_t provider, std::string content_type = "")
         {
             set_chunked_content_provider(

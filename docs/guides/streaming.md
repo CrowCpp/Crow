@@ -19,9 +19,14 @@ bool provider(std::string& chunk);
 
 Fill `chunk` with the next piece and return `#!cpp true` while more data is
 coming, `#!cpp false` on the last invocation. The provider runs on the
-connection's executor. An empty chunk sends nothing; a provider with no data
-at hand should block briefly or finish the transfer rather than poll with
-empty chunks.
+connection's executor, shared with the peer-disconnect watch, the stream
+timers, and every other connection on that worker: return promptly. When the
+next chunk may not be ready at call time, use the asynchronous provider below;
+a synchronous provider that blocks stalls all of that for the duration of the
+block. An empty chunk sends nothing, but an empty chunk returned with more
+data promised immediately schedules the next provider call, so polling with
+empty chunks busy-loops the worker: wait in the asynchronous provider
+instead, or finish the transfer.
 
 ```cpp
 CROW_ROUTE(app, "/numbers")

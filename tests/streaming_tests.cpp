@@ -687,7 +687,10 @@ TEST_CASE("sync_chunked_response_does_not_block_the_worker_for_a_stalled_client"
         return "pong";
     });
 
-    auto server_task = app.bindaddr(LOCALHOST_ADDRESS).port(45451).concurrency(1).run_async();
+    // A generous write deadline: the default 5 s is within reach of this
+    // test's own waits on a slow runner, and a deadline abort would fire the
+    // completion early.
+    auto server_task = app.bindaddr(LOCALHOST_ADDRESS).port(45451).concurrency(1).timeout(30).run_async();
     BoundedServerShutdown server_shutdown(server_task, [&app] {
         app.stop();
     });
@@ -709,16 +712,21 @@ TEST_CASE("sync_chunked_response_does_not_block_the_worker_for_a_stalled_client"
     std::string ping_response;
     const bool ping_answered = receive_until_closed_with_deadline(ping_client.socket(), ping_response, std::chrono::seconds(3));
 
+    // Sampled before the sockets close: peer closure aborts the stalled
+    // transfer, and that abort can win the race to the assertion below.
+    const auto completion_status_before_close =
+      completion_result.wait_for(std::chrono::milliseconds(0));
+
     asio_error_code close_error;
     stalled_client.close(close_error);
     ping_client.socket().close(close_error);
 
     REQUIRE(ping_answered);
     CHECK(ping_response.find("pong") != std::string::npos);
-    // The stalled transfer is still in flight while the ping is served: the
+    // The stalled transfer was still in flight while the ping was served: the
     // worker was free during a genuinely stalled socket write, and the stream
     // was not aborted by the chunk-size cap.
-    CHECK(completion_result.wait_for(std::chrono::milliseconds(0)) == std::future_status::timeout);
+    CHECK(completion_status_before_close == std::future_status::timeout);
 } // sync_chunked_response_does_not_block_the_worker_for_a_stalled_client
 
 
@@ -1734,6 +1742,11 @@ TEST_CASE("unsupported_informational_status_uses_normalized_framing")
     CROW_ROUTE(app, "/unsupported-status")
     ([](const crow::request&, crow::response& res) {
         res.code = 199;
+        // Discarded together with the body: the synthesized 500 carries no
+        // coding and Crow sends no trailer section.
+        res.body = "interim details";
+        res.set_header("Content-Encoding", "gzip");
+        res.set_header("Trailer", "Digest");
         res.end();
     });
     CROW_ROUTE(app, "/interim-status")
@@ -1778,6 +1791,8 @@ TEST_CASE("unsupported_informational_status_uses_normalized_framing")
     const auto interim_response = response.find("HTTP/1.1 500 Internal Server Error\r\n", 1);
     REQUIRE(interim_response != std::string::npos);
     CHECK(response.find("Transfer-Encoding:") == std::string::npos);
+    CHECK(response.find("Content-Encoding:") == std::string::npos);
+    CHECK(response.find("Trailer:") == std::string::npos);
     CHECK(interim_provider_calls->load() == 0);
     REQUIRE(interim_result.wait_for(std::chrono::seconds(1)) == std::future_status::ready);
     CHECK(interim_result.get() == true);
@@ -2101,6 +2116,8 @@ TEST_CASE("bodyless_statuses_do_not_invoke_chunk_providers")
     CROW_ROUTE(app, "/sync-204")
     ([sync_204_calls, sync_204_completion](const crow::request&, crow::response& res) {
         res.code = 204;
+        res.set_header("Content-Encoding", "gzip");
+        res.set_header("Trailer", "Digest");
         res.set_chunked_content_provider([sync_204_calls](std::string& chunk) {
             sync_204_calls->fetch_add(1);
             chunk = "forbidden";
@@ -2129,6 +2146,8 @@ TEST_CASE("bodyless_statuses_do_not_invoke_chunk_providers")
     CROW_ROUTE(app, "/sync-304")
     ([sync_304_calls, sync_304_completion](const crow::request&, crow::response& res) {
         res.code = 304;
+        res.set_header("Content-Encoding", "gzip");
+        res.set_header("Trailer", "Digest");
         res.set_chunked_content_provider([sync_304_calls](std::string& chunk) {
             sync_304_calls->fetch_add(1);
             chunk = "forbidden";
@@ -2157,6 +2176,8 @@ TEST_CASE("bodyless_statuses_do_not_invoke_chunk_providers")
     CROW_ROUTE(app, "/sync-205")
     ([sync_205_calls, sync_205_completion](const crow::request&, crow::response& res) {
         res.code = 205;
+        res.set_header("Content-Encoding", "gzip");
+        res.set_header("Trailer", "Digest");
         res.set_chunked_content_provider([sync_205_calls](std::string& chunk) {
             sync_205_calls->fetch_add(1);
             chunk = "forbidden";
@@ -2242,6 +2263,15 @@ TEST_CASE("bodyless_statuses_do_not_invoke_chunk_providers")
     CHECK(sync_205_response.find("Content-Length: 0") != std::string::npos);
     CHECK(async_205_response.find("Content-Length: 0") != std::string::npos);
     CHECK(http_1_0_response.find(" 205 ") != std::string::npos);
+    // Crow sends no trailer section on any of these. 204 and 304 keep
+    // handler-set representation metadata; the forced-empty 205 drops a
+    // coding header that would misdescribe it.
+    CHECK(sync_204_response.find("Trailer:") == std::string::npos);
+    CHECK(sync_304_response.find("Trailer:") == std::string::npos);
+    CHECK(sync_205_response.find("Trailer:") == std::string::npos);
+    CHECK(sync_204_response.find("Content-Encoding: gzip") != std::string::npos);
+    CHECK(sync_304_response.find("Content-Encoding: gzip") != std::string::npos);
+    CHECK(sync_205_response.find("Content-Encoding:") == std::string::npos);
     CHECK(sync_204_calls->load() == 0);
     CHECK(async_204_calls->load() == 0);
     CHECK(sync_304_calls->load() == 0);
@@ -2268,6 +2298,62 @@ TEST_CASE("bodyless_statuses_do_not_invoke_chunk_providers")
     CHECK(sync_205_result.get() == true);
     CHECK(async_205_result.get() == true);
 } // bodyless_statuses_do_not_invoke_chunk_providers
+
+
+#ifdef CROW_ENABLE_COMPRESSION
+TEST_CASE("discarded_bodies_are_not_compressed")
+{
+    SimpleApp app;
+    CROW_ROUTE(app, "/interim-compressed")
+    ([](const crow::request&, crow::response& res) {
+        res.code = 199;
+        res.body = "interim details";
+        res.end();
+    });
+    CROW_ROUTE(app, "/no-content-compressed")
+    ([](const crow::request&, crow::response& res) {
+        res.code = 204;
+        res.body = "discarded";
+        res.end();
+    });
+    CROW_ROUTE(app, "/normal-compressed")
+    ([] {
+        return "full-length body that goes out compressed";
+    });
+
+    auto server_task = app.bindaddr(LOCALHOST_ADDRESS).port(45451).use_compression(compression::algorithm::GZIP).run_async();
+    BoundedServerShutdown server_shutdown(server_task, [&app] {
+        app.stop();
+    });
+    app.wait_for_server_start();
+
+    const auto request = [](const std::string& path) {
+        HttpClient client(LOCALHOST_ADDRESS, 45451);
+        client.send("GET " + path + " HTTP/1.1\r\nHost: localhost\r\nAccept-Encoding: gzip\r\nConnection: close\r\n\r\n");
+        std::string response;
+        const bool closed = receive_until_closed_with_deadline(client.socket(), response, std::chrono::seconds(5));
+        asio_error_code close_error;
+        client.socket().close(close_error);
+        REQUIRE(closed);
+        return response;
+    };
+
+    const auto interim_response = request("/interim-compressed");
+    const auto no_content_response = request("/no-content-compressed");
+    const auto normal_response = request("/normal-compressed");
+    server_shutdown.shutdown();
+
+    // A body that is about to be discarded is never compressed: the
+    // synthesized 500 and the bodyless 204 carry no Content-Encoding.
+    CHECK(interim_response.find(" 500 ") != std::string::npos);
+    CHECK(interim_response.find("Content-Encoding:") == std::string::npos);
+    CHECK(interim_response.find("Content-Length: 27\r\n") != std::string::npos);
+    CHECK(no_content_response.find(" 204 ") != std::string::npos);
+    CHECK(no_content_response.find("Content-Encoding:") == std::string::npos);
+    // The gate leaves ordinary responses untouched.
+    CHECK(normal_response.find("Content-Encoding: gzip") != std::string::npos);
+} // discarded_bodies_are_not_compressed
+#endif
 
 
 TEST_CASE("deferred_chunked_response_replaced_by_static_file_closes_after_pipelined_input")

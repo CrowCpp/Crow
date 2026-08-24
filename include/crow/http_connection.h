@@ -326,7 +326,10 @@ namespace crow
 #ifdef CROW_ENABLE_COMPRESSION
             // A chunked response discards res.body, so compressing it would
             // only stamp a stale Content-Encoding onto uncompressed chunks.
-            if (!res.is_chunked_type() && !res.body.empty() && handler_->compression_used())
+            // Interim and bodyless statuses discard res.body below for the
+            // same reason.
+            if (!res.is_chunked_type() && !res.body.empty() && handler_->compression_used() &&
+                res.code >= 200 && response_status_allows_body())
             {
                 std::string accept_encoding = req_.get_header_value("Accept-Encoding");
                 if (!accept_encoding.empty() && res.compressed)
@@ -367,6 +370,8 @@ namespace crow
                 res.body_source_ = response::body_source_kind::none;
                 res.headers.erase("Content-Length");
                 res.headers.erase("Transfer-Encoding");
+                res.headers.erase("Content-Encoding");
+                res.headers.erase("Trailer");
                 res.manual_length_header = false;
             }
 
@@ -473,7 +478,8 @@ namespace crow
     private:
         bool response_status_allows_body() const noexcept
         {
-            // 1xx statuses were already normalized away by complete_request().
+            // Callers running before the 1xx normalization in
+            // complete_request() must exclude interim statuses themselves.
             return res.code != status::NO_CONTENT && res.code != status::RESET_CONTENT &&
                    res.code != status::NOT_MODIFIED;
         }
@@ -510,6 +516,11 @@ namespace crow
             res.async_chunk_provider_ = nullptr;
             res.body_source_ = response::body_source_kind::none;
             res.manual_length_header = true;
+            // Crow never sends a trailer section, so the header must not
+            // survive on a bodyless response either. Content-Encoding stays:
+            // 204 and 304 may carry representation metadata (RFC 9110
+            // §15.3.5, §15.4.5).
+            res.headers.erase("Trailer");
 
             if (res.code == status::NO_CONTENT)
             {
@@ -520,9 +531,12 @@ namespace crow
             {
                 // 205 forbids content but is framed as an empty representation:
                 // without an explicit zero length a keep-alive client would
-                // wait for close-delimited content.
+                // wait for close-delimited content. The forced empty
+                // representation carries no coding, so a leftover
+                // Content-Encoding would misdescribe it.
                 res.headers.erase("Transfer-Encoding");
                 res.headers.erase("Content-Length");
+                res.headers.erase("Content-Encoding");
                 res.set_header("Content-Length", "0");
             }
             else
@@ -796,36 +810,37 @@ namespace crow
                 {
                     state->header_bytes.append(static_cast<const char*>(buffer.data()), buffer.size());
                 }
+                buffers_.clear();
+                asio::async_write(
+                  adaptor_.socket(), asio::buffer(state->header_bytes), [self, state](const error_code& ec, std::size_t /*bytes_transferred*/) {
+                      if (self->async_chunk_transfer_ != state)
+                      {
+                          return;
+                      }
+
+                      if (ec)
+                      {
+                          CROW_LOG_ERROR << ec
+                                         << " - buffer write error happened while sending response start / headers. "
+                                            "Writing stopped prematurely.";
+                          self->finish_async_chunked(state, false, true);
+                          return;
+                      }
+
+                      state->header_bytes.clear();
+                      self->cancel_deadline_timer();
+                      self->request_async_chunk(state);
+                  });
             }
             catch (...)
             {
-                // A failed header copy must not strand the tracked transfer.
-                CROW_LOG_ERROR << "Failed to prepare the response header. Closing connection.";
+                // A failed header copy or write start must not strand the
+                // tracked transfer.
+                CROW_LOG_ERROR << "Failed to send the response header. Closing connection.";
                 buffers_.clear();
                 finish_async_chunked(state, false, true);
                 return;
             }
-            buffers_.clear();
-            asio::async_write(
-              adaptor_.socket(), asio::buffer(state->header_bytes), [self, state](const error_code& ec, std::size_t /*bytes_transferred*/) {
-                  if (self->async_chunk_transfer_ != state)
-                  {
-                      return;
-                  }
-
-                  if (ec)
-                  {
-                      CROW_LOG_ERROR << ec
-                                     << " - buffer write error happened while sending response start / headers. "
-                                        "Writing stopped prematurely.";
-                      self->finish_async_chunked(state, false, true);
-                      return;
-                  }
-
-                  state->header_bytes.clear();
-                  self->cancel_deadline_timer();
-                  self->request_async_chunk(state);
-              });
         }
 
         void arm_provider_idle_timeout(const std::shared_ptr<AsyncChunkTransfer>& state)
@@ -1015,6 +1030,23 @@ namespace crow
                 finish_async_chunked(state, false, true);
                 return;
             }
+            try
+            {
+                request_async_chunk_impl(state);
+            }
+            catch (...)
+            {
+                // A failed request setup must not strand the tracked transfer:
+                // on the first chunk no peer watch is armed yet and the write
+                // deadline was just cancelled, so a throw here would leave the
+                // client waiting until worker shutdown.
+                CROW_LOG_ERROR << "Failed to request the next chunk. Closing connection.";
+                finish_async_chunked(state, false, true);
+            }
+        }
+
+        void request_async_chunk_impl(const std::shared_ptr<AsyncChunkTransfer>& state)
+        {
             state->phase           = AsyncChunkPhase::requesting_chunk;
             auto request           = std::make_shared<AsyncChunkRequest>();
             request->io_context    = &adaptor_.get_io_context();
@@ -1164,6 +1196,7 @@ namespace crow
             }
 
             state->phase = AsyncChunkPhase::writing_chunk;
+            auto self = this->shared_from_this();
             try
             {
                 state->chunk = std::move(chunk);
@@ -1174,42 +1207,46 @@ namespace crow
                 state->buffers.emplace_back(state->chunk_header.data(), state->chunk_header.size());
                 state->buffers.emplace_back(state->chunk.data(), state->chunk.size());
                 state->buffers.emplace_back(crlf.data(), crlf.size());
+
+                start_deadline();
+                asio::async_write(
+                  adaptor_.socket(),
+                  state->buffers,
+                  [self, state, result](const error_code& ec, std::size_t /*bytes_transferred*/) {
+                      if (self->async_chunk_transfer_ != state)
+                      {
+                          return;
+                      }
+
+                      if (ec)
+                      {
+                          CROW_LOG_ERROR
+                            << ec << " - buffer write error happened while sending a chunk. Writing stopped prematurely.";
+                          self->finish_async_chunked(state, false, true);
+                          return;
+                      }
+
+                      self->cancel_deadline_timer();
+                      state->buffers.clear();
+                      state->chunk.clear();
+                      state->chunk_header.clear();
+                      if (result == response::chunk_result::done)
+                      {
+                          self->write_async_chunk_terminator(state);
+                      }
+                      else
+                      {
+                          self->request_async_chunk(state);
+                      }
+                  });
             }
             catch (...)
             {
-                // A failed frame build must not strand the tracked transfer.
-                CROW_LOG_ERROR << "Failed to prepare a chunk frame. Closing connection.";
+                // A failed frame build or write start must not strand the
+                // tracked transfer.
+                CROW_LOG_ERROR << "Failed to send a chunk frame. Closing connection.";
                 finish_async_chunked(state, false, true);
-                return;
             }
-
-            auto self = this->shared_from_this();
-            start_deadline();
-            asio::async_write(
-                adaptor_.socket(),
-                state->buffers,
-                [self, state, result](const error_code& ec, std::size_t /*bytes_transferred*/) {
-                    if (self->async_chunk_transfer_ != state) {
-                        return;
-                    }
-
-                    if (ec) {
-                        CROW_LOG_ERROR
-                          << ec << " - buffer write error happened while sending a chunk. Writing stopped prematurely.";
-                        self->finish_async_chunked(state, false, true);
-                        return;
-                    }
-
-                    self->cancel_deadline_timer();
-                    state->buffers.clear();
-                    state->chunk.clear();
-                    state->chunk_header.clear();
-                    if (result == response::chunk_result::done) {
-                        self->write_async_chunk_terminator(state);
-                    } else {
-                        self->request_async_chunk(state);
-                    }
-                });
         }
 
         void write_async_chunk_terminator(const std::shared_ptr<AsyncChunkTransfer>& state) {
@@ -1219,28 +1256,40 @@ namespace crow
 
             static constexpr char terminator[] = "0\r\n\r\n";
             state->phase = AsyncChunkPhase::writing_terminator;
-            state->buffers.clear();
-            state->buffers.emplace_back(terminator, sizeof(terminator) - 1);
-
             auto self = this->shared_from_this();
-            start_deadline();
-            asio::async_write(adaptor_.socket(),
-                              state->buffers,
-                              [self, state](const error_code& ec, std::size_t /*bytes_transferred*/) {
-                                  if (self->async_chunk_transfer_ != state) {
-                                      return;
-                                  }
+            try
+            {
+                state->buffers.clear();
+                state->buffers.emplace_back(terminator, sizeof(terminator) - 1);
 
-                                  if (ec) {
-                                      CROW_LOG_ERROR << ec
-                                                     << " - buffer write error happened while sending the last chunk.";
-                                      self->finish_async_chunked(state, false, true);
-                                      return;
-                                  }
+                start_deadline();
+                asio::async_write(adaptor_.socket(),
+                                  state->buffers,
+                                  [self, state](const error_code& ec, std::size_t /*bytes_transferred*/) {
+                                      if (self->async_chunk_transfer_ != state)
+                                      {
+                                          return;
+                                      }
 
-                                  self->cancel_deadline_timer();
-                                  self->finish_async_chunked(state, true, false);
-                              });
+                                      if (ec)
+                                      {
+                                          CROW_LOG_ERROR << ec
+                                                         << " - buffer write error happened while sending the last chunk.";
+                                          self->finish_async_chunked(state, false, true);
+                                          return;
+                                      }
+
+                                      self->cancel_deadline_timer();
+                                      self->finish_async_chunked(state, true, false);
+                                  });
+            }
+            catch (...)
+            {
+                // A failed terminator write start must not strand the tracked
+                // transfer.
+                CROW_LOG_ERROR << "Failed to send the terminating chunk. Closing connection.";
+                finish_async_chunked(state, false, true);
+            }
         }
 
         void finish_async_chunked(const std::shared_ptr<AsyncChunkTransfer>& state, bool clean, bool force_close) {
