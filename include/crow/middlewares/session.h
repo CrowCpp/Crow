@@ -535,7 +535,14 @@ namespace crow
 
         std::string get_filename(const std::string& key, bool suffix = true)
         {
-            return utility::join_path(path_, key + (suffix ? ".json" : ""));
+            std::string filename{key};
+            // we have to sanitize here to prevent file traversal by ".." or similar
+            utility::sanitize_filename(filename);
+            if (suffix)
+            {
+                filename.append(".json");
+            }
+            return path_/filename;
         }
 
         bool contains(const std::string& key)
@@ -556,7 +563,7 @@ namespace crow
               .count();
         }
 
-        std::string path_;
+        std::filesystem::path path_;
         uint64_t expiration_seconds_;
         session::ExpirationTracker expirations_;
     };

@@ -17,6 +17,7 @@
 
 using namespace std;
 using namespace crow;
+namespace fs = std::filesystem;
 
 #ifdef CROW_USE_BOOST
 namespace asio = boost::asio;
@@ -3189,5 +3190,90 @@ TEST_CASE("stack overflow due to deeply nested json input")
             CHECK(resp.find("400 Bad Request") != std::string::npos);
         }
     }
+    app.stop();
+}
+
+static std::string http_request(const std::string& path, const std::string& cookie = "")
+{
+    std::string raw = "GET " + path + " HTTP/1.1\r\nHost: localhost\r\n";
+    if (!cookie.empty())
+        raw += "Cookie: session=" + cookie + "\r\n";
+    raw += "Connection: close\r\n\r\n";
+    std::string response = HttpClient::request(LOCALHOST_ADDRESS,45451,raw);
+
+    return response;
+}
+
+static std::string read_file(const fs::path& path)
+{
+    std::ifstream in(path, std::ios::binary);
+    std::ostringstream out;
+    out << in.rdbuf();
+    return out.str();
+}
+
+TEST_CASE("crow_filestore_boundary_e2e")
+{
+    const fs::path base = fs::current_path() / "filestore_boundary_e2e";
+    const fs::path store = base / "sessions";
+    const fs::path safe_session = store / "safecontrol.json";
+    const fs::path outside = base / "outside_admin.json";
+
+    fs::create_directories(store);
+    std::ofstream(safe_session, std::ios::trunc) << "{\"role\":\"user\",\"marker\":\"INSIDE_STORE\"}";
+    std::ofstream(outside, std::ios::trunc) << "{\"role\":\"admin\",\"marker\":\"OUTSIDE_STORE\"}";
+
+    using Session = crow::SessionMiddleware<crow::FileStore>;
+    crow::App<crow::CookieParser, Session> app{Session{crow::FileStore{store.string()}}};
+
+    CROW_ROUTE(app, "/admin")
+    ([&](const crow::request& req) {
+        auto& session = app.get_context<Session>(req);
+        if (session.string("role") != "admin")
+            return crow::response(403, "denied");
+        return crow::response(200, "PROTECTED_ADMIN_CONTENT");
+    });
+
+    CROW_ROUTE(app, "/touch")
+    ([&](const crow::request& req) {
+        auto& session = app.get_context<Session>(req);
+        session.set("touched", true);
+        return crow::response(200, "ok");
+    });
+
+    auto _ = app.bindaddr(LOCALHOST_ADDRESS).port(45451).run_async();
+    app.wait_for_server_start();
+
+    const std::string no_cookie = http_request( "/admin");
+    REQUIRE(no_cookie.find("403 Forbidden") != std::string::npos);
+
+    const std::string safe_cookie = http_request("/admin", "safecontrol");
+    REQUIRE(safe_cookie.find("403 Forbidden") != std::string::npos);
+
+    // here we try to traversal out of cookie storage directory
+    const std::string traversal_cookie = http_request( "/admin", "../outside_admin");
+    const std::string traversal_write = http_request( "/touch", "../outside_admin");
+
+    const std::string outside_after = read_file(outside);
+    const fs::path canonical_store = fs::weakly_canonical(store);
+    const fs::path canonical_outside = fs::weakly_canonical(outside);
+    const bool outside_boundary = canonical_outside.parent_path() != canonical_store;
+    REQUIRE(canonical_outside.parent_path() != canonical_store);
+
+    // as the cookie name is invalid, you should not get a valid cookie
+    // therefore you should not be able to access protected content
+    REQUIRE(traversal_cookie.find("PROTECTED_ADMIN_CONTENT") == std::string::npos);
+    // you should not be able to access protected content outside of cookies filestore base directory
+    REQUIRE(outside_after.find("\"touched\":true") == std::string::npos);
+
+    // code from PoC as cross check
+    const bool no_cookie_denied = no_cookie.find("403 Forbidden") != std::string::npos;
+    const bool safe_cookie_denied = safe_cookie.find("403 Forbidden") != std::string::npos;
+    const bool traversal_admin = traversal_cookie.find("PROTECTED_ADMIN_CONTENT") != std::string::npos;
+    const bool traversal_modified = outside_after.find("\"touched\":true") != std::string::npos;
+
+    const bool confirmed = no_cookie_denied && safe_cookie_denied && traversal_admin && traversal_modified && outside_boundary;
+
+    REQUIRE_FALSE(confirmed);
     app.stop();
 }
