@@ -3143,6 +3143,84 @@ TEST_CASE("TCP_NODELAY_websocket_smoke_test")
     app.stop();
 }
 
+TEST_CASE("Global middleware rejection ignored during WebSocket upgrade")
+{
+    struct AuthGuard
+    {
+        struct context
+        {};
+
+        void before_handle(crow::request& req,
+                           crow::response& res,
+                           context&)
+        {
+            const bool authenticated =
+              req.get_header_value("Authorization") ==
+              "Bearer valid-token";
+
+            if (!authenticated)
+            {
+                res.code = 401;
+                res.set_header("Content-Type", "text/plain");
+                res.body = "AUTHENTICATION_REQUIRED";
+                res.end();
+            }
+        }
+
+        void after_handle(crow::request& /*req*/,
+                          crow::response& /*res*/,
+                          context&)
+        {}
+    };
+
+    crow::App<AuthGuard> app;
+
+    std::atomic<bool> websocket_open_called{false};
+
+    CROW_WEBSOCKET_ROUTE(app, "/ws")
+      .onopen([&websocket_open_called](crow::websocket::connection&) {
+          websocket_open_called = true;
+      });
+
+    auto _ = app.bindaddr(LOCALHOST_ADDRESS).port(45451).run_async();
+
+    app.wait_for_server_start();
+
+    auto unauthorized_resp = HttpClient::request(LOCALHOST_ADDRESS,
+                                                 45451,
+                                                 "GET /ws HTTP/1.1\r\n"
+                                                 "Host: 127.0.0.1:18080\r\n"
+                                                 "Upgrade: websocket\r\n"
+                                                 "Connection: Upgrade\r\n"
+                                                 "Sec-WebSocket-Version: 13\r\n"
+                                                 "X-Test-ID: ws-unauth\r\n"
+                                                 "Sec-WebSocket-Key: P8RNCqS+Eui21l8qAEYczQ==\r\n\r\n");
+    // an unauthorized request to websocket url shall return status 401
+    // and not call on_open of websocket
+    CHECK(unauthorized_resp.find("HTTP/1.1 401 Unauthorized") != std::string::npos);
+    CHECK(websocket_open_called == false);
+    websocket_open_called = false;
+
+    auto authorized_resp = HttpClient::request(LOCALHOST_ADDRESS,
+                                               45451,
+                                               "GET /ws HTTP/1.1\r\n"
+                                               "Host: 127.0.0.1:18080\r\n"
+                                               "Upgrade: websocket\r\n"
+                                               "Connection: Upgrade\r\n"
+                                               "Sec-WebSocket-Version: 13\r\n"
+                                               "X-Test-ID: ws-unauth\r\n"
+                                               // we add a valid authentication token here
+                                               "Authorization: Bearer valid-token\r\n"
+                                               "Sec-WebSocket-Key: P8RNCqS+Eui21l8qAEYczQ==\r\n\r\n");
+
+    // an authorized request to websocket url shall return status 101
+    // and shall call on_open of websocket
+    CHECK(authorized_resp.find("HTTP/1.1 101 Switching Protocols") != std::string::npos);
+    CHECK(websocket_open_called == true);
+
+    app.stop();
+}
+
 TEST_CASE("stack overflow due to deeply nested json input")
 {
     // this is linked to security advisory https://github.com/CrowCpp/Crow/security/advisories/GHSA-7x84-xhp8-6cqj

@@ -181,7 +181,16 @@ namespace crow
                         detail::middleware_call_helper<detail::middleware_call_criteria_only_global,
                                                        0, decltype(ctx_), decltype(*middlewares_)>({}, *middlewares_, req_, res, ctx_);
                         close_connection_ = true;
-                        handler_->handle_upgrade(req_, res, std::move(adaptor_));
+                        if (res.is_completed())
+                        {
+                            CROW_LOG_INFO << "Request completed before websocket upgrade: " << utility::lexical_cast<std::string>(adaptor_.remote_endpoint()) << " " << this << " HTTP/" << (char)(req_.http_ver_major + '0') << "." << (char)(req_.http_ver_minor + '0') << ' ' << method_name(req_.method) << " " << req_.url;
+                            complete_request();
+
+                        }
+                        else
+                        {
+                            handler_->handle_upgrade(req_, res, std::move(adaptor_));
+                        }
                         return;
                     }
                 }
