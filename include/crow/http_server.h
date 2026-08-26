@@ -20,6 +20,7 @@
 #include <cstdint>
 #include <future>
 #include <memory>
+#include <system_error>
 #include <thread>
 #include <vector>
 
@@ -42,6 +43,20 @@ namespace crow // NOTE: Already documented in "crow/app.h"
     using tcp = asio::ip::tcp;
     using stream_protocol = asio::local::stream_protocol;
 
+    namespace detail
+    {
+        inline bool is_descriptor_exhaustion(const error_code& ec)
+        {
+#ifdef CROW_USE_BOOST
+            return ec == boost::system::errc::too_many_files_open ||
+                   ec == boost::system::errc::too_many_files_open_in_system;
+#else
+            return ec == std::errc::too_many_files_open ||
+                   ec == std::errc::too_many_files_open_in_system;
+#endif
+        }
+    } // namespace detail
+
     template<typename Handler, typename Acceptor = TCPAcceptor, typename Adaptor = SocketAdaptor, typename... Middlewares>
     class Server
     {
@@ -59,6 +74,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
           acceptor_(io_context_),
           signals_(io_context_),
           tick_timer_(io_context_),
+          accept_timer_(io_context_),
           handler_(handler),
           timeout_(timeout),
           server_name_(server_name),
@@ -247,6 +263,8 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                 }
             }
 
+            accept_timer_.cancel();
+
             for (auto& io_context : io_context_pool_)
             {
                 if (io_context != nullptr)
@@ -326,6 +344,22 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                             [p] {
                                 p->start();
                             });
+                          do_accept();
+                          return;
+                      }
+
+                      if (shutting_down_ || ec == asio::error::operation_aborted)
+                          return;
+
+                      CROW_LOG_ERROR << "Failed to accept connection: " << ec.message();
+                      if (detail::is_descriptor_exhaustion(ec))
+                      {
+                          accept_timer_.expires_after(std::chrono::milliseconds(100));
+                          accept_timer_.async_wait([this](const error_code& tec) {
+                              if (!tec)
+                                  do_accept();
+                          });
+                          return;
                       }
                       do_accept();
                   });
@@ -356,6 +390,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         asio::signal_set signals_;
 
         asio::basic_waitable_timer<std::chrono::high_resolution_clock> tick_timer_;
+        asio::steady_timer accept_timer_;
 
         Handler* handler_;
         std::uint8_t timeout_;
