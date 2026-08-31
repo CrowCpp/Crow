@@ -2,9 +2,12 @@
 
 #include <algorithm>
 #include <cstdint>
+#include <memory>
 #include <string>
 #include <unordered_map>
 
+#include "crow/body_sink.h"
+#include "crow/common.h"
 #include "crow/http_request.h"
 #include "crow/http_parser_merged.h"
 
@@ -92,10 +95,21 @@ namespace crow
                 (length > self->max_body_size_ ||
                  self->body_bytes_ > self->max_body_size_ - length))
             {
-                self->handler_->reject_payload_too_large();
+                self->handler_->reject_body(status::PAYLOAD_TOO_LARGE);
                 return 1;
             }
-            self->req.body.insert(self->req.body.end(), at, at + length);
+            if (self->body_sink_)
+            {
+                if (!self->body_sink_->write(at, length))
+                {
+                    self->handler_->reject_body(status::INTERNAL_SERVER_ERROR);
+                    return 1;
+                }
+            }
+            else
+            {
+                self->req.body.insert(self->req.body.end(), at, at + length);
+            }
             self->body_bytes_ += length;
             return 0;
         }
@@ -104,6 +118,17 @@ namespace crow
             HTTPParser* self = static_cast<HTTPParser*>(self_);
 
             self->message_complete = true;
+            if (self->body_sink_)
+            {
+                const bool ok = self->body_sink_->finish();
+                if (auto* file = dynamic_cast<FileBodySink*>(self->body_sink_.get()))
+                    self->req.body_file_path = file->path();
+                if (!ok)
+                {
+                    self->handler_->reject_body(status::INTERNAL_SERVER_ERROR);
+                    return 1;
+                }
+            }
             self->process_message();
             // Stop so leftover skipped-body bytes are not parsed as the next request.
             return self->handler_->parser_should_abort() ? 1 : 0;
@@ -113,6 +138,11 @@ namespace crow
           handler_(handler)
         {
             http_parser_init(this);
+        }
+
+        ~HTTPParser()
+        {
+            cleanup_body_sink();
         }
 
         // return false on error
@@ -148,6 +178,7 @@ namespace crow
 
         void clear()
         {
+            cleanup_body_sink();
             req = crow::request();
             header_field.clear();
             header_value.clear();
@@ -162,6 +193,22 @@ namespace crow
         void set_max_body_size(uint64_t bytes)
         {
             max_body_size_ = bytes;
+        }
+
+        bool open_body_sink(std::unique_ptr<BodySink> sink)
+        {
+            cleanup_body_sink();
+            if (!sink)
+                return false;
+            body_sink_ = std::move(sink);
+            return true;
+        }
+
+        bool has_incoming_body() const
+        {
+            if (flags & F_CHUNKED)
+                return true;
+            return content_length != CROW_ULLONG_MAX && content_length > 0;
         }
 
         inline void process_url()
@@ -204,10 +251,21 @@ namespace crow
         request req;
 
     private:
+        void cleanup_body_sink()
+        {
+            if (auto* file = dynamic_cast<FileBodySink*>(body_sink_.get()))
+            {
+                if (req.persist_body_file_)
+                    file->persist();
+            }
+            body_sink_.reset();
+        }
+
         int header_building_state = 0;
         bool message_complete = false;
         uint64_t body_bytes_{0};
         uint64_t max_body_size_{UINT64_MAX};
+        std::unique_ptr<BodySink> body_sink_;
         std::string header_field;
         std::string header_value;
 

@@ -124,7 +124,7 @@ namespace crow
         /// Apply `max_body_size` before 100-continue. Return 1 to skip the body (F_SKIPBODY).
         int handle_header()
         {
-            payload_too_large_ = false;
+            body_error_status_ = 0;
             const uint64_t limit = handler_->effective_max_body_size(*routing_handle_result_);
             parser_.set_max_body_size(limit);
 
@@ -132,11 +132,28 @@ namespace crow
             {
                 if (limit != UINT64_MAX && parser_.content_length > limit)
                 {
-                    payload_too_large_ = true;
+                    body_error_status_ = status::PAYLOAD_TOO_LARGE;
                     return 1;
                 }
                 if (parser_.content_length <= req_.body.max_size())
                     req_.body.reserve(static_cast<size_t>(parser_.content_length));
+            }
+
+            if (parser_.has_incoming_body() && handler_->uses_body_sink(*routing_handle_result_))
+            {
+                try
+                {
+                    if (!parser_.open_body_sink(handler_->make_body_sink(*routing_handle_result_, req_)))
+                    {
+                        body_error_status_ = status::INTERNAL_SERVER_ERROR;
+                        return 1;
+                    }
+                }
+                catch (...)
+                {
+                    body_error_status_ = status::INTERNAL_SERVER_ERROR;
+                    return 1;
+                }
             }
 
             // HTTP 1.1 Expect: 100-continue
@@ -161,15 +178,16 @@ namespace crow
             return 0;
         }
 
-        void reject_payload_too_large()
+        void reject_body(int code)
         {
-            payload_too_large_ = true;
+            if (body_error_status_ == 0)
+                body_error_status_ = code;
             handle();
         }
 
         bool parser_should_abort() const
         {
-            return payload_too_large_;
+            return body_error_status_ != 0;
         }
 
         void handle()
@@ -188,9 +206,9 @@ namespace crow
             add_keep_alive_ = req_.keep_alive;
             close_connection_ = req_.close_connection;
 
-            if (payload_too_large_)
+            if (body_error_status_)
             {
-                res = response(status::PAYLOAD_TOO_LARGE);
+                res = response(body_error_status_);
                 res.set_header("Connection", "close");
                 res.end();
                 close_connection_ = true;
@@ -250,7 +268,7 @@ namespace crow
                 }
                 else
                 {
-                    if (payload_too_large_)
+                    if (body_error_status_)
                         need_to_call_after_handlers_ = true;
                     complete_request();
                 }
@@ -574,7 +592,7 @@ namespace crow
         bool need_to_call_after_handlers_{};
         bool need_to_start_read_after_complete_{};
         bool add_keep_alive_{};
-        bool payload_too_large_{false};
+        int body_error_status_{0};
 
         std::tuple<Middlewares...>* middlewares_;
         detail::context<Middlewares...> ctx_;

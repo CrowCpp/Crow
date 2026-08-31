@@ -8,12 +8,15 @@
 #include <memory>
 #include <vector>
 #include <algorithm>
+#include <filesystem>
+#include <system_error>
 #include <type_traits>
 #include <optional>
 
 #include "crow/common.h"
 #include "crow/http_response.h"
 #include "crow/http_request.h"
+#include "crow/body_sink.h"
 #include "crow/utility.h"
 #include "crow/logging.h"
 #include "crow/exceptions.h"
@@ -162,6 +165,9 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         bool added_{false};
         uint64_t max_body_size_{UINT64_MAX};
         bool max_body_size_override_{false};
+        bool body_file_{false};
+        std::string body_file_directory_;
+        BodySinkFactory body_sink_factory_;
 
         std::unique_ptr<BaseRule> rule_to_upgrade_;
 
@@ -626,6 +632,34 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         {
             static_cast<self_t*>(this)->max_body_size_ = bytes;
             static_cast<self_t*>(this)->max_body_size_override_ = true;
+            return static_cast<self_t&>(*this);
+        }
+
+        /// Write the request body to a user-provided sink while it is received.
+        ///
+        /// The factory runs after headers, before the body. The route handler still
+        /// runs only after the full body has been received. `req.body` stays empty.
+        self_t& body_sink(BodySinkFactory factory)
+        {
+            static_cast<self_t*>(this)->body_sink_factory_ = std::move(factory);
+            return static_cast<self_t&>(*this);
+        }
+
+        /// Write the request body to a unique file while it is received.
+        ///
+        /// `req.body` stays empty. The handler reads `req.body_file_path`.
+        /// An empty `directory` uses `app.body_file_directory()`, or the system
+        /// temporary directory. The file is deleted after the response unless the
+        /// handler calls `req.take_body_file()`.
+        self_t& body_file(std::string directory = {})
+        {
+            static_cast<self_t*>(this)->body_file_ = true;
+            static_cast<self_t*>(this)->body_file_directory_ = std::move(directory);
+            if (!static_cast<self_t*>(this)->body_file_directory_.empty())
+            {
+                std::error_code ec;
+                std::filesystem::create_directories(static_cast<self_t*>(this)->body_file_directory_, ec);
+            }
             return static_cast<self_t&>(*this);
         }
     };
@@ -1869,6 +1903,42 @@ namespace crow // NOTE: Already documented in "crow/app.h"
             if (!rule || !rule->max_body_size_override_)
                 return app_default;
             return rule->max_body_size_;
+        }
+
+        bool uses_body_sink(const routing_handle_result& found) const
+        {
+            if (found.catch_all || found.rule_index <= RULE_SPECIAL_REDIRECT_SLASH)
+                return false;
+            if (found.method >= HTTPMethod::InternalMethodCount)
+                return false;
+            const auto& rules = per_methods_[static_cast<int>(found.method)].rules;
+            if (found.rule_index >= rules.size())
+                return false;
+            const BaseRule* rule = rules[found.rule_index];
+            return rule && (rule->body_file_ || static_cast<bool>(rule->body_sink_factory_));
+        }
+
+        std::unique_ptr<BodySink> make_body_sink(const routing_handle_result& found, const request& req,
+                                                 const std::string& app_directory) const
+        {
+            if (found.catch_all || found.rule_index <= RULE_SPECIAL_REDIRECT_SLASH)
+                return nullptr;
+            if (found.method >= HTTPMethod::InternalMethodCount)
+                return nullptr;
+            const auto& rules = per_methods_[static_cast<int>(found.method)].rules;
+            if (found.rule_index >= rules.size())
+                return nullptr;
+            const BaseRule* rule = rules[found.rule_index];
+            if (!rule)
+                return nullptr;
+            if (rule->body_sink_factory_)
+                return rule->body_sink_factory_(req);
+            if (rule->body_file_)
+            {
+                const std::string& dir = rule->body_file_directory_.empty() ? app_directory : rule->body_file_directory_;
+                return FileBodySink::create(dir);
+            }
+            return nullptr;
         }
 
         std::function<void(crow::response&)>& exception_handler()
