@@ -520,6 +520,51 @@ namespace crow
             return res_stream_threshold_;
         }
 
+        /// \brief Directory used for request body files created by routes that call `body_file()`.
+        ///
+        /// Empty (the default) uses the system temporary directory. Unique names are generated per request.
+        self_t& body_file_directory(std::string directory)
+        {
+            body_file_directory_ = std::move(directory);
+            return *this;
+        }
+
+        const std::string& body_file_directory() const
+        {
+            return body_file_directory_;
+        }
+
+        /// \brief Maximum number of bytes written to a request body file (0 = unlimited, the default).
+        ///
+        /// A body that exceeds the limit is discarded and the client receives HTTP 413.
+        /// Remaining body bytes are still consumed so a keep-alive connection stays in sync.
+        self_t& max_body_file_size(uint64_t bytes)
+        {
+            max_body_file_size_ = bytes;
+            return *this;
+        }
+
+        uint64_t max_body_file_size() const
+        {
+            return max_body_file_size_;
+        }
+
+        /// \brief Whether the matched route writes the request body to a file (used by the connection).
+        bool should_save_body_to_file(const routing_handle_result& found)
+        {
+            BaseRule* rule = router_.get_rule(found);
+            return rule && rule->stores_body_in_file();
+        }
+
+        /// \brief Create a unique path for a request body file (used by the connection).
+        std::string create_body_file_path(const routing_handle_result& found)
+        {
+            BaseRule* rule = router_.get_rule(found);
+            std::string directory = body_file_directory_;
+            if (rule && !rule->body_file_directory().empty())
+                directory = rule->body_file_directory();
+            return utility::create_temporary_file(directory);
+        }
 
         self_t& register_blueprint(Blueprint& blueprint)
         {
@@ -920,6 +965,8 @@ namespace crow
         detail::socket::tcp_socket_options tcp_socket_options_{};
         detail::socket::tcp_socket_options websocket_tcp_socket_options_{};
         size_t res_stream_threshold_ = 1048576;
+        std::string body_file_directory_;
+        uint64_t max_body_file_size_{0};
         Router router_;
         bool static_routes_added_{false};
 

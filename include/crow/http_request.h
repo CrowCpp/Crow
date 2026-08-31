@@ -51,6 +51,9 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         query_string url_params; ///< The parameters associated with the request. (everything after the `?` in the URL)
         ci_map headers;
         std::string body;
+        std::string body_file_path; ///< Path of the file that received the body, if the route used `body_file()`. Empty when the body is in `body`.
+        uint64_t body_file_size{};  ///< Number of bytes written to `body_file_path` when the body was stored on disk.
+        int body_error_code{};      ///< Non-zero when the body could not be stored (`413` or `500`); the handler is not invoked.
         std::string remote_ip_address; ///< The IP address from which the request was sent.
         unsigned char http_ver_major, http_ver_minor;
         bool keep_alive,    ///< Whether or not the server should send a `connection: Keep-Alive` header to the client.
@@ -60,6 +63,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         void* middleware_context{};
         void* middleware_container{};
         asio::io_context* io_context{};
+        mutable bool persist_body_file{false}; ///< When true, a body file is not deleted after the request. Set via `keep_body_file()`.
 
         /// Construct an empty request. (sets the method to `GET`)
         request():
@@ -91,10 +95,27 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         /// Get the body as parameters in QS format.
 
         ///
-        /// This is meant to be used with requests of type "application/x-www-form-urlencoded"
+        /// This is meant to be used with requests of type "application/x-www-form-urlencoded".
+        /// It reads `body`; it does not open `body_file_path`.
         const query_string get_body_params() const
         {
             return query_string(body, false);
+        }
+
+        /// True when the request body was written to `body_file_path` instead of `body`.
+        bool has_body_file() const
+        {
+            return !body_file_path.empty();
+        }
+
+        /// Keep the body file after the response is sent.
+
+        ///
+        /// Without this call the file is deleted once the connection is done with the request.
+        /// The handler must copy `body_file_path` if it will use the file after returning.
+        void keep_body_file() const
+        {
+            persist_body_file = true;
         }
 
         /// Send data to whoever made this request with a completion handler and return immediately.

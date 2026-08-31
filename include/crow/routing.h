@@ -154,12 +154,26 @@ namespace crow // NOTE: Already documented in "crow/app.h"
 
         const std::string& rule() { return rule_; }
 
+        /// True when this route writes the request body to a file while it is received.
+        bool stores_body_in_file() const
+        {
+            return body_file_;
+        }
+
+        /// Directory for this route's body files; empty uses the app default or the system temp directory.
+        const std::string& body_file_directory() const
+        {
+            return body_file_directory_;
+        }
+
     protected:
         uint64_t methods_{1ULL << static_cast<int>(HTTPMethod::Get)};
 
         std::string rule_;
         std::string name_;
         bool added_{false};
+        bool body_file_{false};
+        std::string body_file_directory_;
 
         std::unique_ptr<BaseRule> rule_to_upgrade_;
 
@@ -616,6 +630,20 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         self_t& middlewares()
         {
             static_cast<self_t*>(this)->mw_indices_.template push<App, Middlewares...>();
+            return static_cast<self_t&>(*this);
+        }
+
+        /// Write the request body to a unique file while it is received.
+
+        ///
+        /// `req.body` stays empty. The handler reads `req.body_file_path` instead.
+        /// An empty `directory` uses `app.body_file_directory()`, or the system
+        /// temporary directory. The file is deleted after the response unless the
+        /// handler calls `req.keep_body_file()`.
+        self_t& body_file(std::string directory = {})
+        {
+            static_cast<self_t*>(this)->body_file_ = true;
+            static_cast<self_t*>(this)->body_file_directory_ = std::move(directory);
             return static_cast<self_t&>(*this);
         }
     };
@@ -1840,6 +1868,19 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         std::vector<Blueprint*>& blueprints()
         {
             return blueprints_;
+        }
+
+        /// Matched rule for a handle_initial() result, or nullptr when no application rule applied.
+        BaseRule* get_rule(const routing_handle_result& found)
+        {
+            if (found.catch_all || found.rule_index <= RULE_SPECIAL_REDIRECT_SLASH)
+                return nullptr;
+            if (found.method >= HTTPMethod::InternalMethodCount)
+                return nullptr;
+            auto& rules = per_methods_[static_cast<int>(found.method)].rules;
+            if (found.rule_index >= rules.size())
+                return nullptr;
+            return rules[found.rule_index];
         }
 
         std::function<void(crow::response&)>& exception_handler()

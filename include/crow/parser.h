@@ -1,8 +1,13 @@
 #pragma once
 
-#include <string>
-#include <unordered_map>
 #include <algorithm>
+#include <cstdint>
+#include <filesystem>
+#include <fstream>
+#include <memory>
+#include <string>
+#include <system_error>
+#include <unordered_map>
 
 #include "crow/http_request.h"
 #include "crow/http_parser_merged.h"
@@ -88,6 +93,26 @@ namespace crow
         static int on_body(http_parser* self_, const char* at, size_t length)
         {
             HTTPParser* self = static_cast<HTTPParser*>(self_);
+            if (self->body_discard_)
+                return 0;
+            if (self->body_file_)
+            {
+                if (self->max_body_file_size_ != 0 &&
+                    (length > self->max_body_file_size_ ||
+                     self->body_bytes_ > self->max_body_file_size_ - length))
+                {
+                    self->fail_body_file(status::PAYLOAD_TOO_LARGE);
+                    return 0;
+                }
+                self->body_file_->write(at, static_cast<std::streamsize>(length));
+                if (!*self->body_file_)
+                {
+                    self->fail_body_file(status::INTERNAL_SERVER_ERROR);
+                    return 0;
+                }
+                self->body_bytes_ += length;
+                return 0;
+            }
             self->req.body.insert(self->req.body.end(), at, at + length);
             return 0;
         }
@@ -95,6 +120,9 @@ namespace crow
         {
             HTTPParser* self = static_cast<HTTPParser*>(self_);
 
+            self->close_body_file_stream();
+            if (!self->req.body_file_path.empty())
+                self->req.body_file_size = self->body_bytes_;
             self->message_complete = true;
             self->process_message();
             return 0;
@@ -104,6 +132,40 @@ namespace crow
           handler_(handler)
         {
             http_parser_init(this);
+        }
+
+        ~HTTPParser()
+        {
+            cleanup_body_file(!req.persist_body_file);
+        }
+
+        /// Open `path` and write subsequent body bytes there instead of `req.body`.
+        bool open_body_file(const std::string& path, uint64_t max_size)
+        {
+            if (path.empty())
+                return false;
+
+            cleanup_body_file(true);
+            body_file_ = std::make_unique<std::ofstream>(path, std::ios::binary | std::ios::out | std::ios::trunc);
+            if (!body_file_ || !body_file_->is_open())
+            {
+                body_file_.reset();
+                std::error_code ec;
+                std::filesystem::remove(path, ec);
+                return false;
+            }
+
+            req.body_file_path = path;
+            max_body_file_size_ = max_size;
+            body_bytes_ = 0;
+            body_discard_ = false;
+            return true;
+        }
+
+        /// Stop storing the remainder of the body (do not append it to `req.body`).
+        void discard_remaining_body()
+        {
+            body_discard_ = true;
         }
 
         // return false on error
@@ -139,12 +201,16 @@ namespace crow
 
         void clear()
         {
+            cleanup_body_file(!req.persist_body_file);
             req = crow::request();
             header_field.clear();
             header_value.clear();
             header_building_state = 0;
             qs_point = 0;
             message_complete = false;
+            body_discard_ = false;
+            body_bytes_ = 0;
+            max_body_file_size_ = 0;
             state = CROW_NEW_MESSAGE();
         }
 
@@ -188,8 +254,40 @@ namespace crow
         request req;
 
     private:
+        void close_body_file_stream()
+        {
+            if (!body_file_)
+                return;
+            body_file_->flush();
+            body_file_->close();
+            body_file_.reset();
+        }
+
+        void cleanup_body_file(bool remove_file)
+        {
+            close_body_file_stream();
+            if (remove_file && !req.body_file_path.empty())
+            {
+                std::error_code ec;
+                std::filesystem::remove(req.body_file_path, ec);
+                req.body_file_path.clear();
+                req.body_file_size = 0;
+            }
+        }
+
+        void fail_body_file(int code)
+        {
+            body_discard_ = true;
+            cleanup_body_file(true);
+            req.body_error_code = code;
+        }
+
         int header_building_state = 0;
         bool message_complete = false;
+        bool body_discard_{false};
+        uint64_t body_bytes_{0};
+        uint64_t max_body_file_size_{0};
+        std::unique_ptr<std::ofstream> body_file_;
         std::string header_field;
         std::string header_value;
 

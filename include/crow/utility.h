@@ -13,10 +13,17 @@
 #include <unordered_map>
 #include <random>
 #include <algorithm>
+#include <fstream>
+#include <system_error>
 
 #include "crow/settings.h"
 
 #include <filesystem>
+
+#ifndef _WIN32
+#include <fcntl.h>
+#include <unistd.h>
+#endif
 
 // TODO(EDev): Adding C++20's [[likely]] and [[unlikely]] attributes might be useful
 #if defined(__GNUG__) || defined(__clang__)
@@ -802,6 +809,45 @@ namespace crow
         inline static std::string join_path(std::string path, const std::string& fname)
         {
             return (std::filesystem::path(path) / fname).string();
+        }
+
+        /// Create an empty file with a unique name in `directory`.
+
+        ///
+        /// An empty `directory` uses the system temporary directory. Returns an empty
+        /// string if the file cannot be created.
+        inline static std::string create_temporary_file(const std::string& directory, const std::string& prefix = "crow-body-")
+        {
+            std::error_code ec;
+            const std::filesystem::path dir = directory.empty() ? std::filesystem::temp_directory_path(ec) : std::filesystem::path(directory);
+            if (ec)
+                return {};
+            std::filesystem::create_directories(dir, ec);
+            if (ec)
+                return {};
+
+            for (int attempt = 0; attempt < 128; ++attempt)
+            {
+                const auto path = dir / (prefix + random_alphanum(16));
+#ifndef _WIN32
+                const int fd = ::open(path.string().c_str(), O_CREAT | O_EXCL | O_WRONLY, 0600);
+                if (fd != -1)
+                {
+                    ::close(fd);
+                    return path.string();
+                }
+#else
+                if (std::filesystem::exists(path, ec))
+                    continue;
+                std::ofstream file(path, std::ios::binary | std::ios::out | std::ios::trunc);
+                if (file)
+                {
+                    file.close();
+                    return path.string();
+                }
+#endif
+            }
+            return {};
         }
 
         /**

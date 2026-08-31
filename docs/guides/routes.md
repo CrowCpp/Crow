@@ -82,6 +82,7 @@ Handlers can also use information from the request by adding it as a parameter `
 
 You can also access the URL parameters in the handler using `#!cpp req.url_params.get("param_name");`. If the parameter doesn't exist, `nullptr` is returned.<br><br>
 
+To write a large request body to a file while it is received (instead of filling `req.body`), use `#!cpp .body_file()` on the route. See [Request body files](body-file.md).
 
 !!! note "Note &nbsp;&nbsp;&nbsp;&nbsp; <span class="tag">[:octicons-feed-tag-16: master](https://github.com/CrowCpp/Crow)</span>"
 

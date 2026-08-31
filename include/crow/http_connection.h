@@ -141,6 +141,17 @@ namespace crow
                 parser_.done();
                 need_to_call_after_handlers_ = true;
                 complete_request();
+                return;
+            }
+            if (handler_->should_save_body_to_file(*routing_handle_result_))
+            {
+                const std::string path = handler_->create_body_file_path(*routing_handle_result_);
+                if (!parser_.open_body_file(path, handler_->max_body_file_size()))
+                {
+                    req_.body_error_code = status::INTERNAL_SERVER_ERROR;
+                    parser_.discard_remaining_body();
+                    CROW_LOG_ERROR << "Failed to open request body file";
+                }
             }
         }
 
@@ -160,7 +171,12 @@ namespace crow
             add_keep_alive_ = req_.keep_alive;
             close_connection_ = req_.close_connection;
 
-            if (req_.check_version(1, 1)) // HTTP/1.1
+            if (req_.body_error_code)
+            {
+                is_invalid_request = true;
+                res = response(req_.body_error_code);
+            }
+            else if (req_.check_version(1, 1)) // HTTP/1.1
             {
                 if (!req_.headers.count("host"))
                 {
