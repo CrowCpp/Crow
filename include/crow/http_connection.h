@@ -121,8 +121,24 @@ namespace crow
             }
         }
 
-        void handle_header()
+        /// Apply `max_body_size` before 100-continue. Return 1 to skip the body (F_SKIPBODY).
+        int handle_header()
         {
+            payload_too_large_ = false;
+            const uint64_t limit = handler_->effective_max_body_size(*routing_handle_result_);
+            parser_.set_max_body_size(limit);
+
+            if (parser_.content_length != CROW_ULLONG_MAX)
+            {
+                if (limit != UINT64_MAX && parser_.content_length > limit)
+                {
+                    payload_too_large_ = true;
+                    return 1;
+                }
+                if (parser_.content_length <= req_.body.max_size())
+                    req_.body.reserve(static_cast<size_t>(parser_.content_length));
+            }
+
             // HTTP 1.1 Expect: 100-continue
             if (req_.http_ver_major == 1 && req_.http_ver_minor == 1 && get_header_value(req_.headers, "expect") == "100-continue")
             {
@@ -142,6 +158,18 @@ namespace crow
                 need_to_call_after_handlers_ = true;
                 complete_request();
             }
+            return 0;
+        }
+
+        void reject_payload_too_large()
+        {
+            payload_too_large_ = true;
+            handle();
+        }
+
+        bool parser_should_abort() const
+        {
+            return payload_too_large_;
         }
 
         void handle()
@@ -160,7 +188,15 @@ namespace crow
             add_keep_alive_ = req_.keep_alive;
             close_connection_ = req_.close_connection;
 
-            if (req_.check_version(1, 1)) // HTTP/1.1
+            if (payload_too_large_)
+            {
+                res = response(status::PAYLOAD_TOO_LARGE);
+                res.set_header("Connection", "close");
+                res.end();
+                close_connection_ = true;
+                add_keep_alive_ = false;
+            }
+            else if (req_.check_version(1, 1)) // HTTP/1.1
             {
                 if (!req_.headers.count("host"))
                 {
@@ -214,6 +250,8 @@ namespace crow
                 }
                 else
                 {
+                    if (payload_too_large_)
+                        need_to_call_after_handlers_ = true;
                     complete_request();
                 }
             }
@@ -536,6 +574,7 @@ namespace crow
         bool need_to_call_after_handlers_{};
         bool need_to_start_read_after_complete_{};
         bool add_keep_alive_{};
+        bool payload_too_large_{false};
 
         std::tuple<Middlewares...>* middlewares_;
         detail::context<Middlewares...> ctx_;

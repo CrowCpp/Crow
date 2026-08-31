@@ -349,6 +349,30 @@ namespace crow
             return max_payload_;
         }
 
+        /// \brief Set the maximum request body size in bytes (`UINT64_MAX` = unlimited, the default).
+        ///
+        /// Applied to every request, including 404, 405, and slash-redirects.
+        /// Advertised `Content-Length` is checked at headers-complete, before `100 Continue`.
+        /// Chunked bodies are counted as they arrive. An over-limit request is answered 413
+        /// and the connection is closed without reading (or draining) the body.
+        self_t& max_body_size(uint64_t bytes)
+        {
+            max_body_size_ = bytes;
+            return *this;
+        }
+
+        /// \brief Get the app-wide request body size limit
+        uint64_t max_body_size() const
+        {
+            return max_body_size_;
+        }
+
+        /// \brief Effective body size limit for a routing result (used by the connection).
+        uint64_t effective_max_body_size(const routing_handle_result& found) const
+        {
+            return router_.effective_max_body_size(found, max_body_size_);
+        }
+
         self_t& signal_clear()
         {
             signals_.clear();
@@ -914,6 +938,7 @@ namespace crow
         unsigned int concurrency_ = 2;
         std::atomic_bool is_bound_ = false;
         uint64_t max_payload_{UINT64_MAX};
+        uint64_t max_body_size_{UINT64_MAX};
         std::string server_name_ = std::string("Crow/") + VERSION;
         std::string bindaddr_ = "0.0.0.0";
         bool use_unix_ = false;
