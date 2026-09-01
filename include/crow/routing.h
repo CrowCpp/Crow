@@ -639,9 +639,11 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         ///
         /// The factory runs after headers, before the body. The route handler still
         /// runs only after the full body has been received. `req.body` stays empty.
+        /// Replaces `.body_file()` if both are set on the same route.
         self_t& body_sink(BodySinkFactory factory)
         {
             static_cast<self_t*>(this)->body_sink_factory_ = std::move(factory);
+            static_cast<self_t*>(this)->body_file_ = false;
             return static_cast<self_t&>(*this);
         }
 
@@ -651,9 +653,11 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         /// An empty `directory` uses `app.body_file_directory()`, or the system
         /// temporary directory. The file is deleted after the response unless the
         /// handler calls `req.take_body_file()`.
+        /// Replaces `.body_sink()` if both are set on the same route.
         self_t& body_file(std::string directory = {})
         {
             static_cast<self_t*>(this)->body_file_ = true;
+            static_cast<self_t*>(this)->body_sink_factory_ = {};
             static_cast<self_t*>(this)->body_file_directory_ = std::move(directory);
             if (!static_cast<self_t*>(this)->body_file_directory_.empty())
             {

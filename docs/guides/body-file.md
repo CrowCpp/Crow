@@ -72,6 +72,9 @@ CROW_ROUTE(app, "/upload")
 The factory runs after headers, before the body. Each request gets its own
 sink. `req.body` stays empty.
 
+Do not set both `.body_file()` and `.body_sink()` on the same route; the last
+call wins.
+
 ## What this is not
 
 `.body_file()` / `.body_sink()` store the **raw** request body.

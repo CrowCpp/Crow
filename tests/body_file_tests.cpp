@@ -9,6 +9,7 @@
 #include <fstream>
 #include <iterator>
 #include <memory>
+#include <stdexcept>
 #include <string>
 #include <system_error>
 #include <thread>
@@ -45,6 +46,20 @@ namespace
         if (ec)
             return false;
         return it == std::filesystem::directory_iterator();
+    }
+
+    bool no_crow_body_files(const std::filesystem::path& path)
+    {
+        std::error_code ec;
+        for (const auto& entry : std::filesystem::recursive_directory_iterator(path, ec))
+        {
+            if (ec)
+                return false;
+            if (entry.is_regular_file() &&
+                entry.path().filename().string().rfind("crow-body-", 0) == 0)
+                return false;
+        }
+        return true;
     }
 
     bool response_complete(const std::string& data)
@@ -162,6 +177,18 @@ namespace
         bool finish() override { return true; }
     };
 
+    struct FailingWriteSink : BodySink
+    {
+        bool write(const char*, std::size_t) override { return false; }
+        bool finish() override { return true; }
+    };
+
+    struct FailingFinishSink : BodySink
+    {
+        bool write(const char*, std::size_t) override { return true; }
+        bool finish() override { return false; }
+    };
+
     std::string trim_crlf(std::string s)
     {
         while (!s.empty() && (s.back() == '\n' || s.back() == '\r'))
@@ -251,6 +278,18 @@ TEST_CASE("request_body_file", "[http][body_file]")
           "Host: localhost\r\n"
           "\r\n");
         CHECK(http_body(client.receive()) == "nobody");
+        CHECK(no_crow_body_files(dir.path));
+    }
+
+    {
+        TestClient client(port);
+        client.send(
+          "GET /getfile HTTP/1.1\r\n"
+          "Host: localhost\r\n"
+          "Content-Length: 0\r\n"
+          "\r\n");
+        CHECK(http_body(client.receive()) == "nobody");
+        CHECK(no_crow_body_files(dir.path));
     }
 
     {
@@ -349,6 +388,7 @@ TEST_CASE("request_body_file_too_large", "[http][body_file]")
       "123456789");
     const auto response = client.receive();
     CHECK(response.find("HTTP/1.1 413") != std::string::npos);
+    CHECK(response.find("Connection: close") != std::string::npos);
     CHECK_FALSE(handler_ran.load());
     CHECK(directory_is_empty(dir.path));
 
@@ -400,6 +440,9 @@ TEST_CASE("request_body_file_disconnect_cleans_up", "[http][body_file]")
 TEST_CASE("request_body_sink", "[http][body_file]")
 {
     auto buf = std::make_shared<std::string>();
+    std::atomic<std::size_t> body_size{999};
+    std::atomic<std::size_t> body_capacity{999};
+    std::atomic<bool> had_file{true};
     SimpleApp app;
     app.max_body_size(1024 * 1024);
 
@@ -409,7 +452,10 @@ TEST_CASE("request_body_sink", "[http][body_file]")
           auto sink = std::make_unique<VectorSink>();
           sink->buf = buf;
           return sink;
-      })([buf](const request& req) {
+      })([buf, &body_size, &body_capacity, &had_file](const request& req) {
+          body_size = req.body.size();
+          body_capacity = req.body.capacity();
+          had_file = req.has_body_file();
           return req.body.empty() ? *buf : req.body;
       });
 
@@ -422,6 +468,333 @@ TEST_CASE("request_body_sink", "[http][body_file]")
       "POST /sink HTTP/1.1\r\nHost: localhost\r\nContent-Length: " +
       std::to_string(payload.size()) + "\r\n\r\n" + payload);
     CHECK(http_body(client.receive()) == payload);
+    CHECK(body_size.load() == 0);
+    CHECK(body_capacity.load() < payload.size());
+    CHECK_FALSE(had_file.load());
+
+    app.stop();
+}
+
+TEST_CASE("request_body_file does not reserve req.body", "[http][body_file]")
+{
+    TempDir dir;
+    std::atomic<std::size_t> body_size{999};
+    std::atomic<std::size_t> body_capacity{999};
+    SimpleApp app;
+    app.body_file_directory(dir.path.string()).max_body_size(1024 * 1024);
+
+    CROW_ROUTE(app, "/upload")
+      .methods("POST"_method)
+      .body_file()([&](const request& req) {
+          body_size = req.body.size();
+          body_capacity = req.body.capacity();
+          return "ok";
+      });
+
+    auto server = app.bindaddr(LOCALHOST_ADDRESS).port(0).run_async();
+    app.wait_for_server_start();
+
+    const std::string payload(64 * 1024, 'A');
+    TestClient client(app.port());
+    client.send(
+      "POST /upload HTTP/1.1\r\n"
+      "Host: localhost\r\n"
+      "Content-Length: " +
+      std::to_string(payload.size()) +
+      "\r\n"
+      "\r\n");
+    client.send(payload.data(), payload.size());
+    const auto response = client.receive();
+    REQUIRE(response.find("HTTP/1.1 200") != std::string::npos);
+    CHECK(body_size.load() == 0);
+    CHECK(body_capacity.load() < payload.size());
+
+    app.stop();
+}
+
+TEST_CASE("request_body_sink write failure is 500", "[http][body_file]")
+{
+    std::atomic<bool> handler_ran{false};
+    SimpleApp app;
+    app.max_body_size(1024 * 1024);
+
+    CROW_ROUTE(app, "/sink")
+      .methods("POST"_method)
+      .body_sink([](const request&) {
+          return std::make_unique<FailingWriteSink>();
+      })([&handler_ran](const request&) {
+          handler_ran = true;
+          return "ran";
+      });
+
+    auto server = app.bindaddr(LOCALHOST_ADDRESS).port(0).run_async();
+    app.wait_for_server_start();
+
+    TestClient client(app.port());
+    client.send(
+      "POST /sink HTTP/1.1\r\n"
+      "Host: localhost\r\n"
+      "Content-Length: 4\r\n"
+      "\r\n"
+      "fail");
+    const auto response = client.receive();
+    CHECK(response.find("HTTP/1.1 500") != std::string::npos);
+    CHECK(response.find("Connection: close") != std::string::npos);
+    CHECK_FALSE(handler_ran.load());
+
+    app.stop();
+}
+
+TEST_CASE("request_body_sink finish failure is 500", "[http][body_file]")
+{
+    std::atomic<bool> handler_ran{false};
+    SimpleApp app;
+    app.max_body_size(1024 * 1024);
+
+    CROW_ROUTE(app, "/sink")
+      .methods("POST"_method)
+      .body_sink([](const request&) {
+          return std::make_unique<FailingFinishSink>();
+      })([&handler_ran](const request&) {
+          handler_ran = true;
+          return "ran";
+      });
+
+    auto server = app.bindaddr(LOCALHOST_ADDRESS).port(0).run_async();
+    app.wait_for_server_start();
+
+    TestClient client(app.port());
+    client.send(
+      "POST /sink HTTP/1.1\r\n"
+      "Host: localhost\r\n"
+      "Content-Length: 4\r\n"
+      "\r\n"
+      "fail");
+    const auto response = client.receive();
+    CHECK(response.find("HTTP/1.1 500") != std::string::npos);
+    CHECK(response.find("Connection: close") != std::string::npos);
+    CHECK_FALSE(handler_ran.load());
+
+    app.stop();
+}
+
+TEST_CASE("request_body_sink last call wins over body_file", "[http][body_file]")
+{
+    TempDir dir;
+    auto buf = std::make_shared<std::string>();
+    SimpleApp app;
+    app.body_file_directory(dir.path.string()).max_body_size(1024 * 1024);
+
+    CROW_ROUTE(app, "/sink-last")
+      .methods("POST"_method)
+      .body_file()
+      .body_sink([buf](const request&) {
+          auto sink = std::make_unique<VectorSink>();
+          sink->buf = buf;
+          return sink;
+      })([buf](const request& req) {
+          return req.has_body_file() ? std::string("file") : *buf;
+      });
+
+    CROW_ROUTE(app, "/file-last")
+      .methods("POST"_method)
+      .body_sink([buf](const request&) {
+          auto sink = std::make_unique<VectorSink>();
+          sink->buf = buf;
+          return sink;
+      })
+      .body_file()([](const request& req) {
+          return req.has_body_file() ? std::string("file:") + read_all(req.body_file_path) : std::string("sink");
+      });
+
+    auto server = app.bindaddr(LOCALHOST_ADDRESS).port(0).run_async();
+    app.wait_for_server_start();
+    const auto port = app.port();
+
+    {
+        TestClient client(port);
+        client.send(
+          "POST /sink-last HTTP/1.1\r\n"
+          "Host: localhost\r\n"
+          "Content-Length: 3\r\n"
+          "\r\n"
+          "abc");
+        CHECK(http_body(client.receive()) == "abc");
+        CHECK(directory_is_empty(dir.path));
+    }
+
+    {
+        TestClient client(port);
+        client.send(
+          "POST /file-last HTTP/1.1\r\n"
+          "Host: localhost\r\n"
+          "Content-Length: 3\r\n"
+          "\r\n"
+          "xyz");
+        CHECK(http_body(client.receive()) == "file:xyz");
+    }
+
+    app.stop();
+}
+
+TEST_CASE("request_body_sink open failure is 500", "[http][body_file]")
+{
+    std::atomic<bool> handler_ran{false};
+    SimpleApp app;
+    app.max_body_size(1024 * 1024);
+
+    CROW_ROUTE(app, "/null")
+      .methods("POST"_method)
+      .body_sink([](const request&) -> std::unique_ptr<BodySink> {
+          return nullptr;
+      })([&handler_ran](const request&) {
+          handler_ran = true;
+          return "ran";
+      });
+
+    CROW_ROUTE(app, "/throw")
+      .methods("POST"_method)
+      .body_sink([](const request&) -> std::unique_ptr<BodySink> {
+          throw std::runtime_error("sink open");
+      })([&handler_ran](const request&) {
+          handler_ran = true;
+          return "ran";
+      });
+
+    auto server = app.bindaddr(LOCALHOST_ADDRESS).port(0).run_async();
+    app.wait_for_server_start();
+    const auto port = app.port();
+
+    auto post_fail = [&](const std::string& target) {
+        TestClient client(port);
+        client.send(
+          "POST " + target +
+          " HTTP/1.1\r\n"
+          "Host: localhost\r\n"
+          "Content-Length: 4\r\n"
+          "\r\n"
+          "fail");
+        return client.receive();
+    };
+
+    {
+        const auto response = post_fail("/null");
+        CHECK(response.find("HTTP/1.1 500") != std::string::npos);
+        CHECK(response.find("Connection: close") != std::string::npos);
+        CHECK_FALSE(handler_ran.load());
+    }
+
+    handler_ran = false;
+    {
+        const auto response = post_fail("/throw");
+        CHECK(response.find("HTTP/1.1 500") != std::string::npos);
+        CHECK(response.find("Connection: close") != std::string::npos);
+        CHECK_FALSE(handler_ran.load());
+    }
+
+    app.stop();
+}
+
+TEST_CASE("request_body_file open failure is 500 and leaves no file", "[http][body_file]")
+{
+    TempDir dir;
+    const auto not_a_dir = dir.path / "not-a-dir";
+    {
+        std::ofstream out(not_a_dir);
+        out << "x";
+    }
+    std::atomic<bool> handler_ran{false};
+    SimpleApp app;
+    app.max_body_size(1024 * 1024);
+
+    CROW_ROUTE(app, "/upload")
+      .methods("POST"_method)
+      .body_file(not_a_dir.string())([&handler_ran](const request&) {
+          handler_ran = true;
+          return "ran";
+      });
+
+    auto server = app.bindaddr(LOCALHOST_ADDRESS).port(0).run_async();
+    app.wait_for_server_start();
+
+    TestClient client(app.port());
+    client.send(
+      "POST /upload HTTP/1.1\r\n"
+      "Host: localhost\r\n"
+      "Content-Length: 4\r\n"
+      "\r\n"
+      "fail");
+    const auto response = client.receive();
+    CHECK(response.find("HTTP/1.1 500") != std::string::npos);
+    CHECK(response.find("Connection: close") != std::string::npos);
+    CHECK_FALSE(handler_ran.load());
+
+    std::error_code ec;
+    for (const auto& entry : std::filesystem::directory_iterator(dir.path, ec))
+    {
+        CHECK(entry.path().filename() == "not-a-dir");
+    }
+
+    app.stop();
+}
+
+TEST_CASE("request_body_file concurrent uploads get distinct paths", "[http][body_file]")
+{
+    TempDir dir;
+    SimpleApp app;
+    app.body_file_directory(dir.path.string()).max_body_size(1024 * 1024);
+
+    CROW_ROUTE(app, "/keep")
+      .methods("POST"_method)
+      .body_file()([](const request& req) {
+          return req.take_body_file();
+      });
+
+    auto server = app.bindaddr(LOCALHOST_ADDRESS).port(0).run_async();
+    app.wait_for_server_start();
+    const auto port = app.port();
+
+    TestClient a(port);
+    TestClient b(port);
+    a.send(
+      "POST /keep HTTP/1.1\r\n"
+      "Host: localhost\r\n"
+      "Content-Length: 8\r\n"
+      "\r\n"
+      "AAAA");
+    b.send(
+      "POST /keep HTTP/1.1\r\n"
+      "Host: localhost\r\n"
+      "Content-Length: 8\r\n"
+      "\r\n"
+      "BBBB");
+
+    const auto deadline = std::chrono::steady_clock::now() + std::chrono::seconds(2);
+    std::size_t nfiles = 0;
+    while (std::chrono::steady_clock::now() < deadline)
+    {
+        nfiles = 0;
+        std::error_code ec;
+        for (const auto& entry : std::filesystem::directory_iterator(dir.path, ec))
+        {
+            if (!ec && entry.is_regular_file())
+                ++nfiles;
+        }
+        if (nfiles >= 2)
+            break;
+        std::this_thread::sleep_for(std::chrono::milliseconds(20));
+    }
+    REQUIRE(nfiles >= 2);
+
+    a.send("aaaa");
+    b.send("bbbb");
+    const auto path_a = trim_crlf(http_body(a.receive()));
+    const auto path_b = trim_crlf(http_body(b.receive()));
+    CHECK(path_a != path_b);
+    CHECK(read_all(path_a) == "AAAAaaaa");
+    CHECK(read_all(path_b) == "BBBBbbbb");
+    std::filesystem::remove(path_a);
+    std::filesystem::remove(path_b);
 
     app.stop();
 }
