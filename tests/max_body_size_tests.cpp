@@ -342,3 +342,102 @@ TEST_CASE("max_body_size 413 runs after-handlers", "[http][max_body_size]")
 
     app.stop();
 }
+
+TEST_CASE("max_body_size unlimited does not allocate advertised Content-Length", "[http][max_body_size]")
+{
+    SimpleApp app;
+    CROW_ROUTE(app, "/upload")
+      .methods("POST"_method)([](const request& req) {
+          return std::to_string(req.body.size());
+      });
+
+    auto server = app.bindaddr(LOCALHOST_ADDRESS).port(0).run_async();
+    app.wait_for_server_start();
+    const auto port = app.port();
+
+    // Keep this socket open so handle_header actually sees the huge advertised
+    // length. Closing immediately can hide a reserve() that only runs after
+    // the server reads the headers.
+    TestClient attacker(port);
+    attacker.send(
+      "POST /upload HTTP/1.1\r\n"
+      "Host: localhost\r\n"
+      "Content-Length: 1125899906842624\r\n"
+      "\r\n");
+    std::this_thread::sleep_for(std::chrono::milliseconds(200));
+
+    TestClient client(port);
+    client.send(
+      "POST /upload HTTP/1.1\r\n"
+      "Host: localhost\r\n"
+      "Content-Length: 4\r\n"
+      "\r\n"
+      "ping");
+    const auto resp = client.receive();
+    CHECK(status_of(resp) == 200);
+    CHECK(resp.find("4") != std::string::npos);
+
+    app.stop();
+}
+
+TEST_CASE("max_body_size 413 skips before-handlers", "[http][max_body_size]")
+{
+    struct ProbeMiddleware
+    {
+        std::atomic<bool> before{false};
+        std::atomic<bool> after{false};
+
+        struct context
+        {};
+
+        void before_handle(request& /*req*/, response& /*res*/, context& /*ctx*/)
+        {
+            before = true;
+        }
+
+        void after_handle(request& /*req*/, response& /*res*/, context& /*ctx*/)
+        {
+            after = true;
+        }
+    };
+
+    App<ProbeMiddleware> app;
+    app.max_body_size(8);
+
+    CROW_ROUTE(app, "/upload")
+      .methods("POST"_method)([] {
+          return "ok";
+      });
+
+    auto server = app.bindaddr(LOCALHOST_ADDRESS).port(0).run_async();
+    app.wait_for_server_start();
+
+    TestClient client(app.port());
+    client.send(
+      "POST /upload HTTP/1.1\r\n"
+      "Host: localhost\r\n"
+      "Content-Length: 100\r\n"
+      "\r\n" +
+      std::string(100, 'x'));
+    const auto resp = client.receive();
+    CHECK(status_of(resp) == 413);
+
+    auto& probe = app.get_middleware<ProbeMiddleware>();
+    CHECK_FALSE(probe.before.load());
+    CHECK(probe.after.load());
+
+    probe.before = false;
+    probe.after = false;
+    TestClient ok_client(app.port());
+    ok_client.send(
+      "POST /upload HTTP/1.1\r\n"
+      "Host: localhost\r\n"
+      "Content-Length: 4\r\n"
+      "\r\n"
+      "abcd");
+    CHECK(status_of(ok_client.receive()) == 200);
+    CHECK(probe.before.load());
+    CHECK(probe.after.load());
+
+    app.stop();
+}

@@ -128,18 +128,16 @@ namespace crow
             const uint64_t limit = handler_->effective_max_body_size(*routing_handle_result_);
             parser_.set_max_body_size(limit);
 
-            if (parser_.content_length != CROW_ULLONG_MAX)
+            if (parser_.content_length != CROW_ULLONG_MAX &&
+                limit != UINT64_MAX && parser_.content_length > limit)
             {
-                if (limit != UINT64_MAX && parser_.content_length > limit)
-                {
-                    body_error_status_ = status::PAYLOAD_TOO_LARGE;
-                    return 1;
-                }
-                if (parser_.content_length <= req_.body.max_size())
-                    req_.body.reserve(static_cast<size_t>(parser_.content_length));
+                body_error_status_ = status::PAYLOAD_TOO_LARGE;
+                return 1;
             }
 
-            if (parser_.has_incoming_body() && handler_->uses_body_sink(*routing_handle_result_))
+            const bool use_body_sink = parser_.has_incoming_body() &&
+                                       handler_->uses_body_sink(*routing_handle_result_);
+            if (use_body_sink)
             {
                 try
                 {
@@ -154,6 +152,14 @@ namespace crow
                     body_error_status_ = status::INTERNAL_SERVER_ERROR;
                     return 1;
                 }
+            }
+            else if (limit != UINT64_MAX &&
+                     parser_.content_length != CROW_ULLONG_MAX &&
+                     parser_.content_length <= req_.body.max_size())
+            {
+                // Finite cap only: never allocate from an untrusted Content-Length
+                // when unlimited, and never on a sink route (req.body stays empty).
+                req_.body.reserve(static_cast<size_t>(parser_.content_length));
             }
 
             // HTTP 1.1 Expect: 100-continue
@@ -213,8 +219,11 @@ namespace crow
                 res.end();
                 close_connection_ = true;
                 add_keep_alive_ = false;
+                need_to_call_after_handlers_ = true;
+                complete_request();
+                return;
             }
-            else if (req_.check_version(1, 1)) // HTTP/1.1
+            if (req_.check_version(1, 1)) // HTTP/1.1
             {
                 if (!req_.headers.count("host"))
                 {
@@ -268,8 +277,6 @@ namespace crow
                 }
                 else
                 {
-                    if (body_error_status_)
-                        need_to_call_after_handlers_ = true;
                     complete_request();
                 }
             }
