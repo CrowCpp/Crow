@@ -135,15 +135,6 @@ namespace crow
                 return 1;
             }
 
-            // Finite cap only: never allocate from an untrusted Content-Length
-            // when the default unlimited path is in effect.
-            if (limit != UINT64_MAX &&
-                parser_.content_length != CROW_ULLONG_MAX &&
-                parser_.content_length <= req_.body.max_size())
-            {
-                req_.body.reserve(static_cast<size_t>(parser_.content_length));
-            }
-
             // HTTP 1.1 Expect: 100-continue
             if (req_.http_ver_major == 1 && req_.http_ver_minor == 1 && get_header_value(req_.headers, "expect") == "100-continue")
             {
@@ -195,6 +186,7 @@ namespace crow
 
             if (payload_too_large_)
             {
+                req_.body.clear();
                 res = response(status::PAYLOAD_TOO_LARGE);
                 res.set_header("Connection", "close");
                 res.end();
@@ -452,9 +444,20 @@ namespace crow
                   {
                       self->cancel_deadline_timer();
                       self->parser_.done();
-                      self->adaptor_.shutdown_read();
-                      self->adaptor_.close();
                       CROW_LOG_DEBUG << self << " from read(1) with description: \"" << http_errno_description(static_cast<http_errno>(self->parser_.http_errno)) << '\"';
+                      if (self->payload_too_large_)
+                      {
+                          // The rejection response is already written; shut down the
+                          // write side and drain whatever the client still sends
+                          // instead of closing on unread bytes, which can RST a peer
+                          // that is still mid-upload before it reads the response.
+                          self->linger_close();
+                      }
+                      else
+                      {
+                          self->adaptor_.shutdown_read();
+                          self->adaptor_.close();
+                      }
                   }
                   else if (self->close_connection_)
                   {
@@ -471,6 +474,34 @@ namespace crow
                   {
                       // res will be completed later by user
                       self->need_to_start_read_after_complete_ = true;
+                  }
+              });
+        }
+
+        /// Shut down the write side (FIN, not RST) after a rejection response and
+        /// discard whatever the client still sends, instead of closing on unread
+        /// bytes. Bounded by the same deadline timer a slow client already gets.
+        void linger_close()
+        {
+            adaptor_.shutdown_write();
+            start_deadline();
+            do_linger_read();
+        }
+
+        void do_linger_read()
+        {
+            auto self = this->shared_from_this();
+            adaptor_.socket().async_read_some(
+              asio::buffer(buffer_),
+              [self](const error_code& ec, std::size_t /*bytes_transferred*/) {
+                  if (!ec && self->adaptor_.is_open())
+                  {
+                      self->do_linger_read();
+                  }
+                  else
+                  {
+                      self->cancel_deadline_timer();
+                      self->adaptor_.close();
                   }
               });
         }

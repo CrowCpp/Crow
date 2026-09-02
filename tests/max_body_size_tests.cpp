@@ -441,3 +441,42 @@ TEST_CASE("max_body_size 413 skips before-handlers", "[http][max_body_size]")
 
     app.stop();
 }
+
+TEST_CASE("max_body_size over-limit upload can still be written and the 413 read back", "[http][max_body_size]")
+{
+    // Regression test: a client that writes its whole over-limit body before
+    // reading must not see its write fail (e.g. with ECONNRESET). The server
+    // must linger and keep draining the socket instead of closing on unread
+    // bytes, which can RST a peer that is still mid-upload and lose the
+    // response it already sent. A small payload cannot reproduce this: it
+    // needs to be big enough that the blocking write below has to wait on
+    // the server to keep reading, rather than completing into socket buffers
+    // before the server has even reacted.
+    SimpleApp app;
+    app.max_body_size(1024);
+
+    CROW_ROUTE(app, "/upload")
+      .methods("POST"_method)([](const request& req) {
+          return req.body;
+      });
+
+    auto server = app.bindaddr(LOCALHOST_ADDRESS).port(0).run_async();
+    app.wait_for_server_start();
+    const auto port = app.port();
+
+    const std::string payload(5'000'000, 'x');
+    TestClient client(port);
+    const std::string request =
+      "POST /upload HTTP/1.1\r\n"
+      "Host: localhost\r\n"
+      "Content-Length: " +
+      std::to_string(payload.size()) +
+      "\r\n"
+      "\r\n" +
+      payload;
+
+    REQUIRE_NOTHROW(client.send(request));
+    CHECK(status_of(client.receive()) == 413);
+
+    app.stop();
+}

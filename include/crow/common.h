@@ -291,7 +291,7 @@ namespace crow
         size_t rule_index;
         std::vector<size_t> blueprint_indices;
         routing_params r_params;
-        HTTPMethod method{};
+        HTTPMethod method{HTTPMethod::InternalMethodCount};
 
         routing_handle_result() {}
 

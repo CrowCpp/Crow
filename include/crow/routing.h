@@ -160,8 +160,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         std::string rule_;
         std::string name_;
         bool added_{false};
-        uint64_t max_body_size_{UINT64_MAX};
-        bool max_body_size_override_{false};
+        std::optional<uint64_t> max_body_size_override_;
 
         std::unique_ptr<BaseRule> rule_to_upgrade_;
 
@@ -624,8 +623,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         /// Override the app-wide request body size limit for this route.
         self_t& max_body_size(uint64_t bytes)
         {
-            static_cast<self_t*>(this)->max_body_size_ = bytes;
-            static_cast<self_t*>(this)->max_body_size_override_ = true;
+            static_cast<self_t*>(this)->max_body_size_override_ = bytes;
             return static_cast<self_t&>(*this);
         }
     };
@@ -1868,7 +1866,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
             const BaseRule* rule = rules[found.rule_index];
             if (!rule || !rule->max_body_size_override_)
                 return app_default;
-            return rule->max_body_size_;
+            return *rule->max_body_size_override_;
         }
 
         std::function<void(crow::response&)>& exception_handler()
