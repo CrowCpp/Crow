@@ -10,6 +10,7 @@
 #endif
 
 #include <algorithm>
+#include <memory>
 
 #include "crow/common.h"
 #include "crow/ci_map.h"
@@ -20,6 +21,8 @@ namespace crow // NOTE: Already documented in "crow/app.h"
 #ifdef CROW_USE_BOOST
     namespace asio = boost::asio;
 #endif
+
+    struct BodySink;
 
     /// Remove CR (\r) and LF (\n) characters from a header name or value to prevent header injection.
     inline void sanitize_header_value(std::string& s)
@@ -51,7 +54,11 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         query_string url_params; ///< The parameters associated with the request. (everything after the `?` in the URL)
         ci_map headers;
         std::string body;
-        std::string body_file_path; ///< Path of the file that received the body, if the route used `body_file()`. Empty when the body is in `body`.
+        /// The sink the route diverted the body to (`.body_sink(...)`), if any. Set
+        /// before the handler runs; every copy of the request shares it, so it (and
+        /// whatever it owns, e.g. a `FileBodySink`'s file) lives as long as the last
+        /// copy. `nullptr` when the body is in `body` instead.
+        std::shared_ptr<BodySink> body_sink;
         std::string remote_ip_address; ///< The IP address from which the request was sent.
         unsigned char http_ver_major, http_ver_minor;
         bool keep_alive,    ///< Whether or not the server should send a `connection: Keep-Alive` header to the client.
@@ -61,9 +68,6 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         void* middleware_context{};
         void* middleware_container{};
         asio::io_context* io_context{};
-
-        template<typename Handler>
-        friend struct HTTPParser;
 
         /// Construct an empty request. (sets the method to `GET`)
         request():
@@ -96,23 +100,10 @@ namespace crow // NOTE: Already documented in "crow/app.h"
 
         ///
         /// This is meant to be used with requests of type "application/x-www-form-urlencoded".
-        /// It reads `body`; it does not open `body_file_path`.
+        /// It reads `body`; a route with `.body_sink(...)` leaves it empty.
         const query_string get_body_params() const
         {
             return query_string(body, false);
-        }
-
-        /// True when the request body was written to `body_file_path` instead of `body`.
-        bool has_body_file() const
-        {
-            return !body_file_path.empty();
-        }
-
-        /// Keep the body file and return its path. The parser will not delete it after the response.
-        std::string take_body_file() const
-        {
-            persist_body_file_ = true;
-            return body_file_path;
         }
 
         /// Send data to whoever made this request with a completion handler and return immediately.
@@ -128,8 +119,5 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         {
             asio::dispatch(io_context, handler);
         }
-
-    private:
-        mutable bool persist_body_file_{false};
     };
 } // namespace crow

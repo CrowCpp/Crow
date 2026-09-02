@@ -98,9 +98,18 @@ namespace crow
                 self->handler_->reject_body(status::PAYLOAD_TOO_LARGE);
                 return 1;
             }
-            if (self->body_sink_)
+            if (self->req.body_sink)
             {
-                if (!self->body_sink_->write(at, length))
+                bool ok = false;
+                try
+                {
+                    ok = self->req.body_sink->write(at, length);
+                }
+                catch (...)
+                {
+                    ok = false;
+                }
+                if (!ok)
                 {
                     self->handler_->reject_body(status::INTERNAL_SERVER_ERROR);
                     return 1;
@@ -118,11 +127,17 @@ namespace crow
             HTTPParser* self = static_cast<HTTPParser*>(self_);
 
             self->message_complete = true;
-            if (self->body_sink_)
+            if (self->req.body_sink)
             {
-                const bool ok = self->body_sink_->finish();
-                if (auto* file = dynamic_cast<FileBodySink*>(self->body_sink_.get()))
-                    self->req.body_file_path = file->path();
+                bool ok = false;
+                try
+                {
+                    ok = self->req.body_sink->finish();
+                }
+                catch (...)
+                {
+                    ok = false;
+                }
                 if (!ok)
                 {
                     self->handler_->reject_body(status::INTERNAL_SERVER_ERROR);
@@ -138,11 +153,6 @@ namespace crow
           handler_(handler)
         {
             http_parser_init(this);
-        }
-
-        ~HTTPParser()
-        {
-            cleanup_body_sink();
         }
 
         // return false on error
@@ -178,7 +188,6 @@ namespace crow
 
         void clear()
         {
-            cleanup_body_sink();
             req = crow::request();
             header_field.clear();
             header_value.clear();
@@ -195,13 +204,11 @@ namespace crow
             max_body_size_ = bytes;
         }
 
-        bool open_body_sink(std::unique_ptr<BodySink> sink)
+        /// `sink` may be null: the factory declining means "keep the body in
+        /// `req.body`", not an error. A factory that wants a 500 should throw.
+        void open_body_sink(std::unique_ptr<BodySink> sink)
         {
-            cleanup_body_sink();
-            if (!sink)
-                return false;
-            body_sink_ = std::move(sink);
-            return true;
+            req.body_sink = std::move(sink);
         }
 
         bool has_incoming_body() const
@@ -251,21 +258,10 @@ namespace crow
         request req;
 
     private:
-        void cleanup_body_sink()
-        {
-            if (auto* file = dynamic_cast<FileBodySink*>(body_sink_.get()))
-            {
-                if (req.persist_body_file_)
-                    file->persist();
-            }
-            body_sink_.reset();
-        }
-
         int header_building_state = 0;
         bool message_complete = false;
         uint64_t body_bytes_{0};
         uint64_t max_body_size_{UINT64_MAX};
-        std::unique_ptr<BodySink> body_sink_;
         std::string header_field;
         std::string header_value;
 

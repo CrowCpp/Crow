@@ -23,7 +23,6 @@
 #include <memory>
 #include <future>
 #include <cstdint>
-#include <filesystem>
 #include <system_error>
 #include <type_traits>
 #include <thread>
@@ -546,30 +545,10 @@ namespace crow
             return res_stream_threshold_;
         }
 
-        /// \brief Directory used for request body files created by routes that call `body_file()`.
-        ///
-        /// Empty (the default) uses the system temporary directory. Unique names are generated per request.
-        /// The directory is created when this is set.
-        self_t& body_file_directory(std::string directory)
-        {
-            body_file_directory_ = std::move(directory);
-            if (!body_file_directory_.empty())
-            {
-                std::error_code ec;
-                std::filesystem::create_directories(body_file_directory_, ec);
-            }
-            return *this;
-        }
-
-        const std::string& body_file_directory() const
-        {
-            return body_file_directory_;
-        }
-
         /// \brief Create a body sink for the matched route, or nullptr for in-memory `req.body`.
         std::unique_ptr<BodySink> make_body_sink(const routing_handle_result& found, const request& req) const
         {
-            return router_.make_body_sink(found, req, body_file_directory_);
+            return router_.make_body_sink(found, req);
         }
 
         bool uses_body_sink(const routing_handle_result& found) const
@@ -977,7 +956,6 @@ namespace crow
         detail::socket::tcp_socket_options tcp_socket_options_{};
         detail::socket::tcp_socket_options websocket_tcp_socket_options_{};
         size_t res_stream_threshold_ = 1048576;
-        std::string body_file_directory_;
         Router router_;
         bool static_routes_added_{false};
 

@@ -19,6 +19,7 @@
 
 #include "catch2/catch_all.hpp"
 #include "crow.h"
+#include "crow/file_body_sink.h"
 
 using namespace crow;
 
@@ -127,6 +128,17 @@ namespace
             asio::write(socket_, asio::buffer(data, size));
         }
 
+        // Reads exactly `size` more bytes into an internal buffer without
+        // waiting for the response to complete. Used to pause a client
+        // mid-response and observe server-side state while it is still
+        // streaming.
+        std::string read_some(std::size_t size)
+        {
+            std::string out(size, '\0');
+            asio::read(socket_, asio::buffer(out));
+            return out;
+        }
+
         std::string receive()
         {
             std::string response;
@@ -189,6 +201,26 @@ namespace
         bool finish() override { return false; }
     };
 
+    struct ThrowingWriteSink : BodySink
+    {
+        bool write(const char*, std::size_t) override { throw std::runtime_error("write blew up"); }
+        bool finish() override { return true; }
+    };
+
+    struct ThrowingFinishSink : BodySink
+    {
+        bool write(const char*, std::size_t) override { return true; }
+        bool finish() override { throw std::runtime_error("finish blew up"); }
+    };
+
+    // Throws something that is not a std::exception, to exercise the sink's
+    // catch(...) boundary rather than a catch(std::exception&).
+    struct NonStdThrowingWriteSink : BodySink
+    {
+        bool write(const char*, std::size_t) override { throw 42; }
+        bool finish() override { return true; }
+    };
+
     std::string trim_crlf(std::string s)
     {
         while (!s.empty() && (s.back() == '\n' || s.back() == '\r'))
@@ -201,36 +233,41 @@ TEST_CASE("request_body_file", "[http][body_file]")
 {
     TempDir dir;
     SimpleApp app;
-    app.body_file_directory(dir.path.string()).max_body_size(1024 * 1024);
+    app.max_body_size(1024 * 1024);
 
     CROW_ROUTE(app, "/memory")
       .methods("POST"_method)([](const request& req) {
-          return std::string(req.has_body_file() ? "file" : "memory") + ':' + req.body;
+          return std::string(FileBodySink::from(req) ? "file" : "memory") + ':' + req.body;
       });
 
     CROW_ROUTE(app, "/upload")
       .methods("POST"_method)
-      .body_file()([](const request& req) {
-          if (!req.has_body_file())
+      .body_sink(FileBodySink::factory(dir.path.string()))([](const request& req) {
+          auto* file = FileBodySink::from(req);
+          if (!file)
               return std::string("nobody:") + req.body;
-          return std::string("file:") + read_all(req.body_file_path);
+          return std::string("file:") + read_all(file->path());
       });
 
     CROW_ROUTE(app, "/keep")
       .methods("POST"_method)
-      .body_file()([](const request& req) {
-          return req.take_body_file();
+      .body_sink(FileBodySink::factory(dir.path.string()))([](const request& req) {
+          auto* file = FileBodySink::from(req);
+          file->keep();
+          return file->path();
       });
 
+    const auto custom_dir = dir.path / "route-dir";
+    std::filesystem::create_directories(custom_dir);
     CROW_ROUTE(app, "/custom")
       .methods("POST"_method)
-      .body_file((dir.path / "route-dir").string())([](const request& req) {
-          return req.body_file_path;
+      .body_sink(FileBodySink::factory(custom_dir.string()))([](const request& req) {
+          return FileBodySink::from(req)->path();
       });
 
     CROW_ROUTE(app, "/getfile")
-      .body_file()([](const request& req) {
-          return req.has_body_file() ? "file" : "nobody";
+      .body_sink(FileBodySink::factory(dir.path.string()))([](const request& req) {
+          return FileBodySink::from(req) ? "file" : "nobody";
       });
 
     auto server = app.bindaddr(LOCALHOST_ADDRESS).port(0).run_async();
@@ -293,6 +330,19 @@ TEST_CASE("request_body_file", "[http][body_file]")
     }
 
     {
+        // An empty *chunked* body still counts as an incoming body and opens
+        // the sink, unlike Content-Length: 0.
+        TestClient client(port);
+        client.send(
+          "POST /upload HTTP/1.1\r\n"
+          "Host: localhost\r\n"
+          "Transfer-Encoding: chunked\r\n"
+          "\r\n"
+          "0\r\n\r\n");
+        CHECK(http_body(client.receive()) == "file:");
+    }
+
+    {
         TestClient client(port);
         client.send(
           "POST /upload HTTP/1.1\r\n"
@@ -328,10 +378,12 @@ TEST_CASE("request_body_file", "[http][body_file]")
     {
         const auto response = post("/custom", "Z");
         const auto custom_path = trim_crlf(http_body(response));
-        CHECK(custom_path.find((dir.path / "route-dir").string()) != std::string::npos);
+        CHECK(custom_path.find(custom_dir.string()) != std::string::npos);
     }
 
     {
+        // Keep-alive: two uploads reusing the same socket both work, and the
+        // first upload's file is not disturbed by the second request.
         TestClient client(port);
         client.send(
           "POST /upload HTTP/1.1\r\n"
@@ -362,16 +414,110 @@ TEST_CASE("request_body_file", "[http][body_file]")
     app.stop();
 }
 
+TEST_CASE("request_body_file keep() survives a copied request", "[http][body_file]")
+{
+    // Regression test for the copy trap: the flag that used to live on
+    // `request` (persist_body_file_) was a plain bool copied by value, so
+    // calling the "keep" operation on a copy never reached the parser's own
+    // request and the file was deleted anyway. `body_sink` is a shared_ptr
+    // now, so every copy shares the same underlying FileBodySink.
+    TempDir dir;
+    SimpleApp app;
+    app.max_body_size(1024 * 1024);
+
+    CROW_ROUTE(app, "/keep-via-copy")
+      .methods("POST"_method)
+      .body_sink(FileBodySink::factory(dir.path.string()))([](const request& req) {
+          crow::request copy = req; // a distinct object, sharing body_sink
+          FileBodySink::from(copy)->keep();
+          return FileBodySink::from(req)->path();
+      });
+
+    auto server = app.bindaddr(LOCALHOST_ADDRESS).port(0).run_async();
+    app.wait_for_server_start();
+
+    TestClient client(app.port());
+    client.send(
+      "POST /keep-via-copy HTTP/1.1\r\n"
+      "Host: localhost\r\n"
+      "Content-Length: 3\r\n"
+      "\r\n"
+      "abc");
+    const auto path = trim_crlf(http_body(client.receive()));
+    REQUIRE(std::filesystem::exists(path));
+    CHECK(read_all(path) == "abc");
+    std::filesystem::remove(path);
+
+    app.stop();
+}
+
+TEST_CASE("request_body_file deleted only after the full response is sent", "[http][body_file]")
+{
+    // Regression test: the file used to be unlinked as soon as the *first*
+    // chunk of a streamed response was written (parser_.clear() ran inside
+    // the per-chunk write helper), not after the whole response. Force the
+    // streaming path with a body well above the default 1MiB threshold, then
+    // pause the client mid-response (without finishing the read) and check
+    // the file is still on disk while more of it is still in flight.
+    TempDir dir;
+    SimpleApp app;
+    app.max_body_size(1024 * 1024);
+    app.stream_threshold(1024);
+
+    const std::size_t response_body_size = 8 * 1024 * 1024;
+    CROW_ROUTE(app, "/upload")
+      .methods("POST"_method)
+      .body_sink(FileBodySink::factory(dir.path.string()))([response_body_size](const request&) {
+          return std::string(response_body_size, 'R');
+      });
+
+    auto server = app.bindaddr(LOCALHOST_ADDRESS).port(0).run_async();
+    app.wait_for_server_start();
+
+    TestClient client(app.port());
+    client.send(
+      "POST /upload HTTP/1.1\r\n"
+      "Host: localhost\r\n"
+      "Content-Length: 3\r\n"
+      "\r\n"
+      "abc");
+
+    // Read the response headers one byte at a time so nothing beyond them is
+    // consumed, note the advertised Content-Length, then read a small prefix
+    // of the body and stop — leaving the server's write loop stalled with
+    // most of the body still unsent.
+    std::string headers;
+    while (headers.find("\r\n\r\n") == std::string::npos)
+        headers += client.read_some(1);
+    const auto length_pos = headers.find("Content-Length:");
+    REQUIRE(length_pos != std::string::npos);
+    const auto content_length = static_cast<std::size_t>(std::stoul(headers.substr(length_pos + 15)));
+    REQUIRE(content_length == response_body_size);
+
+    const std::size_t prefix_size = 4096;
+    client.read_some(prefix_size);
+    std::this_thread::sleep_for(std::chrono::milliseconds(300));
+
+    CHECK_FALSE(directory_is_empty(dir.path));
+
+    // Drain exactly the rest of this one response (no more, so a bound read
+    // never blocks on the still-open keep-alive connection) so the server
+    // can finish and the test can clean up.
+    client.read_some(content_length - prefix_size);
+
+    app.stop();
+}
+
 TEST_CASE("request_body_file_too_large", "[http][body_file]")
 {
     TempDir dir;
     std::atomic<bool> handler_ran{false};
     SimpleApp app;
-    app.body_file_directory(dir.path.string()).max_body_size(8);
+    app.max_body_size(8);
 
     CROW_ROUTE(app, "/upload")
       .methods("POST"_method)
-      .body_file()([&handler_ran](const request&) {
+      .body_sink(FileBodySink::factory(dir.path.string()))([&handler_ran](const request&) {
           handler_ran = true;
           return "ran";
       });
@@ -395,16 +541,62 @@ TEST_CASE("request_body_file_too_large", "[http][body_file]")
     app.stop();
 }
 
+TEST_CASE("request_body_file_too_large chunked, over limit on a sink route", "[http][body_file]")
+{
+    // The Content-Length fast path at headers-complete can't catch a chunked
+    // body (the size isn't known yet), so this exercises the over-limit
+    // check inside on_body, after the sink has already been opened.
+    TempDir dir;
+    std::atomic<bool> handler_ran{false};
+    SimpleApp app;
+    app.max_body_size(8);
+
+    CROW_ROUTE(app, "/upload")
+      .methods("POST"_method)
+      .body_sink(FileBodySink::factory(dir.path.string()))([&handler_ran](const request&) {
+          handler_ran = true;
+          return "ran";
+      });
+
+    auto server = app.bindaddr(LOCALHOST_ADDRESS).port(0).run_async();
+    app.wait_for_server_start();
+
+    TestClient client(app.port());
+    client.send(
+      "POST /upload HTTP/1.1\r\n"
+      "Host: localhost\r\n"
+      "Transfer-Encoding: chunked\r\n"
+      "\r\n"
+      "a\r\n0123456789\r\n"
+      "0\r\n\r\n");
+    const auto response = client.receive();
+    CHECK(response.find("HTTP/1.1 413") != std::string::npos);
+    CHECK(response.find("Connection: close") != std::string::npos);
+    CHECK_FALSE(handler_ran.load());
+
+    const auto deadline = std::chrono::steady_clock::now() + std::chrono::seconds(2);
+    bool empty = false;
+    while (std::chrono::steady_clock::now() < deadline)
+    {
+        empty = directory_is_empty(dir.path);
+        if (empty)
+            break;
+        std::this_thread::sleep_for(std::chrono::milliseconds(20));
+    }
+    CHECK(empty);
+
+    app.stop();
+}
+
 TEST_CASE("request_body_file_disconnect_cleans_up", "[http][body_file]")
 {
     TempDir dir;
     std::atomic<bool> handler_ran{false};
     SimpleApp app;
-    app.body_file_directory(dir.path.string());
 
     CROW_ROUTE(app, "/upload")
       .methods("POST"_method)
-      .body_file()([&handler_ran](const request&) {
+      .body_sink(FileBodySink::factory(dir.path.string()))([&handler_ran](const request&) {
           handler_ran = true;
           return "ran";
       });
@@ -455,7 +647,7 @@ TEST_CASE("request_body_sink", "[http][body_file]")
       })([buf, &body_size, &body_capacity, &had_file](const request& req) {
           body_size = req.body.size();
           body_capacity = req.body.capacity();
-          had_file = req.has_body_file();
+          had_file = static_cast<bool>(FileBodySink::from(req));
           return req.body.empty() ? *buf : req.body;
       });
 
@@ -481,11 +673,11 @@ TEST_CASE("request_body_file does not reserve req.body", "[http][body_file]")
     std::atomic<std::size_t> body_size{999};
     std::atomic<std::size_t> body_capacity{999};
     SimpleApp app;
-    app.body_file_directory(dir.path.string()).max_body_size(1024 * 1024);
+    app.max_body_size(1024 * 1024);
 
     CROW_ROUTE(app, "/upload")
       .methods("POST"_method)
-      .body_file()([&](const request& req) {
+      .body_sink(FileBodySink::factory(dir.path.string()))([&](const request& req) {
           body_size = req.body.size();
           body_capacity = req.body.capacity();
           return "ok";
@@ -545,6 +737,52 @@ TEST_CASE("request_body_sink write failure is 500", "[http][body_file]")
     app.stop();
 }
 
+TEST_CASE("request_body_sink write failure lets a large in-flight upload finish writing before the 500 is read", "[http][body_file]")
+{
+    // Regression test: a client that writes its whole over-limit body before
+    // reading must not see its write fail (e.g. with a broken pipe). The
+    // server must linger and keep draining the socket instead of closing on
+    // unread bytes, which can RST a peer that is still mid-upload and lose
+    // the response it already sent. A small payload (4 bytes, as in the test
+    // above) cannot reproduce this: it needs to be big enough that the
+    // client's blocking send() has to wait on the server to keep reading,
+    // rather than completing into socket buffers before the server has even
+    // reacted.
+    std::atomic<bool> handler_ran{false};
+    SimpleApp app;
+    app.max_body_size(64ull * 1024 * 1024);
+
+    CROW_ROUTE(app, "/sink")
+      .methods("POST"_method)
+      .body_sink([](const request&) {
+          return std::make_unique<FailingWriteSink>();
+      })([&handler_ran](const request&) {
+          handler_ran = true;
+          return "ran";
+      });
+
+    auto server = app.bindaddr(LOCALHOST_ADDRESS).port(0).run_async();
+    app.wait_for_server_start();
+
+    const std::string payload(5'000'000, 'x');
+    TestClient client(app.port());
+    const std::string http_request =
+      "POST /sink HTTP/1.1\r\n"
+      "Host: localhost\r\n"
+      "Content-Length: " +
+      std::to_string(payload.size()) +
+      "\r\n"
+      "\r\n" +
+      payload;
+
+    REQUIRE_NOTHROW(client.send(http_request));
+    const auto response = client.receive();
+    CHECK(response.find("HTTP/1.1 500") != std::string::npos);
+    CHECK_FALSE(handler_ran.load());
+
+    app.stop();
+}
+
 TEST_CASE("request_body_sink finish failure is 500", "[http][body_file]")
 {
     std::atomic<bool> handler_ran{false};
@@ -578,84 +816,38 @@ TEST_CASE("request_body_sink finish failure is 500", "[http][body_file]")
     app.stop();
 }
 
-TEST_CASE("request_body_sink last call wins over body_file", "[http][body_file]")
+TEST_CASE("request_body_sink a throwing write() or finish() is 500", "[http][body_file]")
 {
-    TempDir dir;
-    auto buf = std::make_shared<std::string>();
-    SimpleApp app;
-    app.body_file_directory(dir.path.string()).max_body_size(1024 * 1024);
-
-    CROW_ROUTE(app, "/sink-last")
-      .methods("POST"_method)
-      .body_file()
-      .body_sink([buf](const request&) {
-          auto sink = std::make_unique<VectorSink>();
-          sink->buf = buf;
-          return sink;
-      })([buf](const request& req) {
-          return req.has_body_file() ? std::string("file") : *buf;
-      });
-
-    CROW_ROUTE(app, "/file-last")
-      .methods("POST"_method)
-      .body_sink([buf](const request&) {
-          auto sink = std::make_unique<VectorSink>();
-          sink->buf = buf;
-          return sink;
-      })
-      .body_file()([](const request& req) {
-          return req.has_body_file() ? std::string("file:") + read_all(req.body_file_path) : std::string("sink");
-      });
-
-    auto server = app.bindaddr(LOCALHOST_ADDRESS).port(0).run_async();
-    app.wait_for_server_start();
-    const auto port = app.port();
-
-    {
-        TestClient client(port);
-        client.send(
-          "POST /sink-last HTTP/1.1\r\n"
-          "Host: localhost\r\n"
-          "Content-Length: 3\r\n"
-          "\r\n"
-          "abc");
-        CHECK(http_body(client.receive()) == "abc");
-        CHECK(directory_is_empty(dir.path));
-    }
-
-    {
-        TestClient client(port);
-        client.send(
-          "POST /file-last HTTP/1.1\r\n"
-          "Host: localhost\r\n"
-          "Content-Length: 3\r\n"
-          "\r\n"
-          "xyz");
-        CHECK(http_body(client.receive()) == "file:xyz");
-    }
-
-    app.stop();
-}
-
-TEST_CASE("request_body_sink open failure is 500", "[http][body_file]")
-{
+    // Regression test: write()/finish() used to be called bare; an uncaught
+    // exception unwound into the worker loop's catch(std::exception&),
+    // logged "Worker Crash" and left the client with no response at all
+    // (and a non-std::exception ended the worker thread silently).
     std::atomic<bool> handler_ran{false};
     SimpleApp app;
     app.max_body_size(1024 * 1024);
 
-    CROW_ROUTE(app, "/null")
+    CROW_ROUTE(app, "/throw-write")
       .methods("POST"_method)
-      .body_sink([](const request&) -> std::unique_ptr<BodySink> {
-          return nullptr;
+      .body_sink([](const request&) {
+          return std::make_unique<ThrowingWriteSink>();
       })([&handler_ran](const request&) {
           handler_ran = true;
           return "ran";
       });
 
-    CROW_ROUTE(app, "/throw")
+    CROW_ROUTE(app, "/throw-finish")
       .methods("POST"_method)
-      .body_sink([](const request&) -> std::unique_ptr<BodySink> {
-          throw std::runtime_error("sink open");
+      .body_sink([](const request&) {
+          return std::make_unique<ThrowingFinishSink>();
+      })([&handler_ran](const request&) {
+          handler_ran = true;
+          return "ran";
+      });
+
+    CROW_ROUTE(app, "/throw-write-nonstd")
+      .methods("POST"_method)
+      .body_sink([](const request&) {
+          return std::make_unique<NonStdThrowingWriteSink>();
       })([&handler_ran](const request&) {
           handler_ran = true;
           return "ran";
@@ -677,39 +869,162 @@ TEST_CASE("request_body_sink open failure is 500", "[http][body_file]")
         return client.receive();
     };
 
+    for (const std::string target : {"/throw-write", "/throw-finish", "/throw-write-nonstd"})
     {
-        const auto response = post_fail("/null");
+        handler_ran = false;
+        const auto response = post_fail(target);
         CHECK(response.find("HTTP/1.1 500") != std::string::npos);
         CHECK(response.find("Connection: close") != std::string::npos);
         CHECK_FALSE(handler_ran.load());
     }
 
-    handler_ran = false;
-    {
-        const auto response = post_fail("/throw");
-        CHECK(response.find("HTTP/1.1 500") != std::string::npos);
-        CHECK(response.find("Connection: close") != std::string::npos);
-        CHECK_FALSE(handler_ran.load());
-    }
+    // The server is still responsive: a throw doesn't take down the worker.
+    TestClient probe(port);
+    probe.send(
+      "POST /throw-write HTTP/1.1\r\n"
+      "Host: localhost\r\n"
+      "Content-Length: 1\r\n"
+      "\r\n"
+      "x");
+    CHECK(probe.receive().find("HTTP/1.1 500") != std::string::npos);
 
     app.stop();
 }
 
-TEST_CASE("request_body_file open failure is 500 and leaves no file", "[http][body_file]")
+TEST_CASE("request_body_sink calling body_sink() again replaces the factory", "[http][body_file]")
 {
     TempDir dir;
+    auto buf = std::make_shared<std::string>();
+    SimpleApp app;
+    app.max_body_size(1024 * 1024);
+
+    CROW_ROUTE(app, "/last-wins")
+      .methods("POST"_method)
+      .body_sink(FileBodySink::factory(dir.path.string()))
+      .body_sink([buf](const request&) {
+          auto sink = std::make_unique<VectorSink>();
+          sink->buf = buf;
+          return sink;
+      })([buf](const request& req) {
+          return FileBodySink::from(req) ? std::string("file") : *buf;
+      });
+
+    auto server = app.bindaddr(LOCALHOST_ADDRESS).port(0).run_async();
+    app.wait_for_server_start();
+
+    TestClient client(app.port());
+    client.send(
+      "POST /last-wins HTTP/1.1\r\n"
+      "Host: localhost\r\n"
+      "Content-Length: 3\r\n"
+      "\r\n"
+      "abc");
+    CHECK(http_body(client.receive()) == "abc");
+    CHECK(directory_is_empty(dir.path));
+
+    app.stop();
+}
+
+TEST_CASE("request_body_sink a factory returning nullptr keeps the body in req.body", "[http][body_file]")
+{
+    // A user factory declining (nullptr) is not an error: unlike the file
+    // sink's own open failure, it means "use req.body as usual" for this
+    // request.
+    std::atomic<bool> handler_ran{false};
+    SimpleApp app;
+    app.max_body_size(1024 * 1024);
+
+    CROW_ROUTE(app, "/maybe")
+      .methods("POST"_method)
+      .body_sink([](const request&) -> std::unique_ptr<BodySink> {
+          return nullptr;
+      })([&handler_ran](const request& req) {
+          handler_ran = true;
+          return std::string("memory:") + req.body;
+      });
+
+    auto server = app.bindaddr(LOCALHOST_ADDRESS).port(0).run_async();
+    app.wait_for_server_start();
+
+    TestClient client(app.port());
+    client.send(
+      "POST /maybe HTTP/1.1\r\n"
+      "Host: localhost\r\n"
+      "Content-Length: 5\r\n"
+      "\r\n"
+      "hello");
+    const auto response = client.receive();
+    CHECK(response.find("HTTP/1.1 200") != std::string::npos);
+    CHECK(http_body(response) == "memory:hello");
+    CHECK(handler_ran.load());
+
+    app.stop();
+}
+
+TEST_CASE("request_body_sink a throwing factory is 500", "[http][body_file]")
+{
+    std::atomic<bool> handler_ran{false};
+    SimpleApp app;
+    app.max_body_size(1024 * 1024);
+
+    CROW_ROUTE(app, "/throw")
+      .methods("POST"_method)
+      .body_sink([](const request&) -> std::unique_ptr<BodySink> {
+          throw std::runtime_error("sink open");
+      })([&handler_ran](const request&) {
+          handler_ran = true;
+          return "ran";
+      });
+
+    auto server = app.bindaddr(LOCALHOST_ADDRESS).port(0).run_async();
+    app.wait_for_server_start();
+
+    TestClient client(app.port());
+    client.send(
+      "POST /throw HTTP/1.1\r\n"
+      "Host: localhost\r\n"
+      "Content-Length: 4\r\n"
+      "\r\n"
+      "fail");
+    const auto response = client.receive();
+    CHECK(response.find("HTTP/1.1 500") != std::string::npos);
+    CHECK(response.find("Connection: close") != std::string::npos);
+    CHECK_FALSE(handler_ran.load());
+
+    app.stop();
+}
+
+TEST_CASE("FileBodySink::factory rejects a directory that does not exist", "[http][body_file]")
+{
+    TempDir dir;
+    const auto missing = dir.path / "does-not-exist";
+    CHECK_THROWS_AS(FileBodySink::factory(missing.string()), std::filesystem::filesystem_error);
+
     const auto not_a_dir = dir.path / "not-a-dir";
     {
         std::ofstream out(not_a_dir);
         out << "x";
     }
+    CHECK_THROWS_AS(FileBodySink::factory(not_a_dir.string()), std::filesystem::filesystem_error);
+}
+
+TEST_CASE("request_body_file per-request open failure is 500 and leaves no file", "[http][body_file]")
+{
+    // The directory exists (and is required to) when the route is set up;
+    // simulate it disappearing before a request actually opens a file.
+    TempDir dir;
+    const auto vanishing = dir.path / "vanishing";
+    std::filesystem::create_directories(vanishing);
+    auto factory = FileBodySink::factory(vanishing.string());
+    std::filesystem::remove(vanishing);
+
     std::atomic<bool> handler_ran{false};
     SimpleApp app;
     app.max_body_size(1024 * 1024);
 
     CROW_ROUTE(app, "/upload")
       .methods("POST"_method)
-      .body_file(not_a_dir.string())([&handler_ran](const request&) {
+      .body_sink(std::move(factory))([&handler_ran](const request&) {
           handler_ran = true;
           return "ran";
       });
@@ -728,12 +1043,7 @@ TEST_CASE("request_body_file open failure is 500 and leaves no file", "[http][bo
     CHECK(response.find("HTTP/1.1 500") != std::string::npos);
     CHECK(response.find("Connection: close") != std::string::npos);
     CHECK_FALSE(handler_ran.load());
-
-    std::error_code ec;
-    for (const auto& entry : std::filesystem::directory_iterator(dir.path, ec))
-    {
-        CHECK(entry.path().filename() == "not-a-dir");
-    }
+    CHECK_FALSE(std::filesystem::exists(vanishing));
 
     app.stop();
 }
@@ -742,12 +1052,14 @@ TEST_CASE("request_body_file concurrent uploads get distinct paths", "[http][bod
 {
     TempDir dir;
     SimpleApp app;
-    app.body_file_directory(dir.path.string()).max_body_size(1024 * 1024);
+    app.max_body_size(1024 * 1024);
 
     CROW_ROUTE(app, "/keep")
       .methods("POST"_method)
-      .body_file()([](const request& req) {
-          return req.take_body_file();
+      .body_sink(FileBodySink::factory(dir.path.string()))([](const request& req) {
+          auto* file = FileBodySink::from(req);
+          file->keep();
+          return file->path();
       });
 
     auto server = app.bindaddr(LOCALHOST_ADDRESS).port(0).run_async();

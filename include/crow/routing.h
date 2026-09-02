@@ -8,8 +8,6 @@
 #include <memory>
 #include <vector>
 #include <algorithm>
-#include <filesystem>
-#include <system_error>
 #include <type_traits>
 #include <optional>
 
@@ -165,8 +163,6 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         bool added_{false};
         uint64_t max_body_size_{UINT64_MAX};
         bool max_body_size_override_{false};
-        bool body_file_{false};
-        std::string body_file_directory_;
         BodySinkFactory body_sink_factory_;
 
         std::unique_ptr<BaseRule> rule_to_upgrade_;
@@ -635,35 +631,17 @@ namespace crow // NOTE: Already documented in "crow/app.h"
             return static_cast<self_t&>(*this);
         }
 
-        /// Write the request body to a user-provided sink while it is received.
+        /// Write the request body to a sink while it is received, instead of
+        /// filling `req.body`.
         ///
-        /// The factory runs after headers, before the body. The route handler still
-        /// runs only after the full body has been received. `req.body` stays empty.
-        /// Replaces `.body_file()` if both are set on the same route.
+        /// The factory runs after headers, before the body; see `BodySinkFactory`.
+        /// The route handler still runs only after the full body has been
+        /// received. Calling this again (last-call-wins) replaces the factory.
+        /// `crow::FileBodySink::factory(directory)` (`crow/file_body_sink.h`,
+        /// not pulled in by this header) is the built-in file-backed sink.
         self_t& body_sink(BodySinkFactory factory)
         {
             static_cast<self_t*>(this)->body_sink_factory_ = std::move(factory);
-            static_cast<self_t*>(this)->body_file_ = false;
-            return static_cast<self_t&>(*this);
-        }
-
-        /// Write the request body to a unique file while it is received.
-        ///
-        /// `req.body` stays empty. The handler reads `req.body_file_path`.
-        /// An empty `directory` uses `app.body_file_directory()`, or the system
-        /// temporary directory. The file is deleted after the response unless the
-        /// handler calls `req.take_body_file()`.
-        /// Replaces `.body_sink()` if both are set on the same route.
-        self_t& body_file(std::string directory = {})
-        {
-            static_cast<self_t*>(this)->body_file_ = true;
-            static_cast<self_t*>(this)->body_sink_factory_ = {};
-            static_cast<self_t*>(this)->body_file_directory_ = std::move(directory);
-            if (!static_cast<self_t*>(this)->body_file_directory_.empty())
-            {
-                std::error_code ec;
-                std::filesystem::create_directories(static_cast<self_t*>(this)->body_file_directory_, ec);
-            }
             return static_cast<self_t&>(*this);
         }
     };
@@ -1890,20 +1868,27 @@ namespace crow // NOTE: Already documented in "crow/app.h"
             return blueprints_;
         }
 
+        /// The rule a `handle_initial()` result matched, or `nullptr` for 404,
+        /// 405, a slash-redirect, or an unmatched `OPTIONS`.
+        const BaseRule* matched_rule(const routing_handle_result& found) const
+        {
+            if (found.catch_all || found.rule_index <= RULE_SPECIAL_REDIRECT_SLASH)
+                return nullptr;
+            if (found.method >= HTTPMethod::InternalMethodCount)
+                return nullptr;
+            const auto& rules = per_methods_[static_cast<int>(found.method)].rules;
+            if (found.rule_index >= rules.size())
+                return nullptr;
+            return rules[found.rule_index];
+        }
+
         /// Effective request body limit for a `handle_initial()` result.
         ///
         /// 404, 405, slash-redirect, and unmatched OPTIONS use `app_default`.
         /// A matched rule uses its override when set, otherwise `app_default`.
         uint64_t effective_max_body_size(const routing_handle_result& found, uint64_t app_default) const
         {
-            if (found.catch_all || found.rule_index <= RULE_SPECIAL_REDIRECT_SLASH)
-                return app_default;
-            if (found.method >= HTTPMethod::InternalMethodCount)
-                return app_default;
-            const auto& rules = per_methods_[static_cast<int>(found.method)].rules;
-            if (found.rule_index >= rules.size())
-                return app_default;
-            const BaseRule* rule = rules[found.rule_index];
+            const BaseRule* rule = matched_rule(found);
             if (!rule || !rule->max_body_size_override_)
                 return app_default;
             return rule->max_body_size_;
@@ -1911,38 +1896,16 @@ namespace crow // NOTE: Already documented in "crow/app.h"
 
         bool uses_body_sink(const routing_handle_result& found) const
         {
-            if (found.catch_all || found.rule_index <= RULE_SPECIAL_REDIRECT_SLASH)
-                return false;
-            if (found.method >= HTTPMethod::InternalMethodCount)
-                return false;
-            const auto& rules = per_methods_[static_cast<int>(found.method)].rules;
-            if (found.rule_index >= rules.size())
-                return false;
-            const BaseRule* rule = rules[found.rule_index];
-            return rule && (rule->body_file_ || static_cast<bool>(rule->body_sink_factory_));
+            const BaseRule* rule = matched_rule(found);
+            return rule && static_cast<bool>(rule->body_sink_factory_);
         }
 
-        std::unique_ptr<BodySink> make_body_sink(const routing_handle_result& found, const request& req,
-                                                 const std::string& app_directory) const
+        std::unique_ptr<BodySink> make_body_sink(const routing_handle_result& found, const request& req) const
         {
-            if (found.catch_all || found.rule_index <= RULE_SPECIAL_REDIRECT_SLASH)
+            const BaseRule* rule = matched_rule(found);
+            if (!rule || !rule->body_sink_factory_)
                 return nullptr;
-            if (found.method >= HTTPMethod::InternalMethodCount)
-                return nullptr;
-            const auto& rules = per_methods_[static_cast<int>(found.method)].rules;
-            if (found.rule_index >= rules.size())
-                return nullptr;
-            const BaseRule* rule = rules[found.rule_index];
-            if (!rule)
-                return nullptr;
-            if (rule->body_sink_factory_)
-                return rule->body_sink_factory_(req);
-            if (rule->body_file_)
-            {
-                const std::string& dir = rule->body_file_directory_.empty() ? app_directory : rule->body_file_directory_;
-                return FileBodySink::create(dir);
-            }
-            return nullptr;
+            return rule->body_sink_factory_(req);
         }
 
         std::function<void(crow::response&)>& exception_handler()
