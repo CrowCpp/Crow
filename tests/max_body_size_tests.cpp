@@ -256,6 +256,35 @@ TEST_CASE("max_body_size chunked accumulate", "[http][max_body_size]")
     app.stop();
 }
 
+TEST_CASE("max_body_size chunked accumulate under limit succeeds", "[http][max_body_size]")
+{
+    SimpleApp app;
+    app.max_body_size(10);
+
+    CROW_ROUTE(app, "/upload")
+      .methods("POST"_method)([](const request& req) {
+          return req.body;
+      });
+
+    auto server = app.bindaddr(LOCALHOST_ADDRESS).port(0).run_async();
+    app.wait_for_server_start();
+
+    TestClient client(app.port());
+    client.send(
+      "POST /upload HTTP/1.1\r\n"
+      "Host: localhost\r\n"
+      "Transfer-Encoding: chunked\r\n"
+      "\r\n"
+      "5\r\nhello\r\n"
+      "0\r\n"
+      "\r\n");
+    const auto resp = client.receive();
+    CHECK(status_of(resp) == 200);
+    CHECK(resp.find("hello") != std::string::npos);
+
+    app.stop();
+}
+
 TEST_CASE("max_body_size per-route override", "[http][max_body_size]")
 {
     SimpleApp app;
@@ -287,6 +316,49 @@ TEST_CASE("max_body_size per-route override", "[http][max_body_size]")
         client.send(
           "POST /large HTTP/1.1\r\nHost: localhost\r\nContent-Length: 16\r\n\r\n" + payload);
         CHECK(status_of(client.receive()) == 200);
+    }
+
+    app.stop();
+}
+
+TEST_CASE("max_body_size zero limit", "[http][max_body_size]")
+{
+    SimpleApp app;
+    app.max_body_size(0);
+
+    CROW_ROUTE(app, "/upload")
+      .methods("POST"_method)([](const request& req) {
+          return std::to_string(req.body.size());
+      });
+
+    auto server = app.bindaddr(LOCALHOST_ADDRESS).port(0).run_async();
+    app.wait_for_server_start();
+    const auto port = app.port();
+
+    SECTION("empty body is accepted")
+    {
+        TestClient client(port);
+        client.send(
+          "POST /upload HTTP/1.1\r\n"
+          "Host: localhost\r\n"
+          "Content-Length: 0\r\n"
+          "\r\n");
+        const auto resp = client.receive();
+        CHECK(status_of(resp) == 200);
+        CHECK(resp.find("0") != std::string::npos);
+    }
+
+    SECTION("any non-empty body is 413")
+    {
+        TestClient client(port);
+        client.send(
+          "POST /upload HTTP/1.1\r\n"
+          "Host: localhost\r\n"
+          "Content-Length: 1\r\n"
+          "\r\n"
+          "x");
+        const auto resp = client.receive();
+        CHECK(status_of(resp) == 413);
     }
 
     app.stop();
