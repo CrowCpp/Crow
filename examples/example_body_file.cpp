@@ -13,7 +13,8 @@ int main()
     // PUT or POST the raw body; Crow writes it to disk as the bytes arrive.
     CROW_ROUTE(app, "/upload")
       .methods(crow::HTTPMethod::Put, crow::HTTPMethod::Post)
-      .body_sink(crow::FileBodySink::factory("uploads"))([](const crow::request& req) {
+      .body_sink(crow::FileBodySink::factory("uploads")) // requires ./uploads to exist
+      ([](const crow::request& req) {
           auto* file = crow::FileBodySink::from(req);
           if (!file)
           {

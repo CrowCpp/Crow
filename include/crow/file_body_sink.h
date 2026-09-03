@@ -12,7 +12,6 @@
 #include <stdexcept>
 #include <string>
 #include <system_error>
-#include <vector>
 
 #ifndef _WIN32
 #include <cerrno>
@@ -23,11 +22,11 @@
 #define WIN32_LEAN_AND_MEAN
 #endif
 #include <windows.h>
-#include "crow/utility.h"
 #endif
 
 #include "crow/body_sink.h"
 #include "crow/http_request.h"
+#include "crow/utility.h"
 
 namespace crow
 {
@@ -149,13 +148,18 @@ namespace crow
         static std::unique_ptr<FileBodySink> create(const std::string& directory)
         {
 #ifndef _WIN32
-            std::string tmpl = (std::filesystem::path(directory) / "crow-body-XXXXXX").string();
-            std::vector<char> buf(tmpl.begin(), tmpl.end());
-            buf.push_back('\0');
-            const int fd = ::mkostemp(buf.data(), O_CLOEXEC);
-            if (fd < 0)
-                throw std::system_error(errno, std::generic_category(), "crow::FileBodySink: mkostemp");
-            return std::unique_ptr<FileBodySink>(new FileBodySink(std::string(buf.data()), fd));
+            const std::filesystem::path dir(directory);
+            for (int attempt = 0; attempt < 128; ++attempt)
+            {
+                const std::string name = "crow-body-" + utility::random_alphanum(16);
+                const std::string path = (dir / name).string();
+                const int fd = ::open(path.c_str(), O_CREAT | O_EXCL | O_WRONLY | O_CLOEXEC, 0600);
+                if (fd >= 0)
+                    return std::unique_ptr<FileBodySink>(new FileBodySink(path, fd));
+                if (errno != EEXIST)
+                    throw std::system_error(errno, std::generic_category(), "crow::FileBodySink: open");
+            }
+            throw std::runtime_error("crow::FileBodySink: could not find a unique file name");
 #else
             const std::filesystem::path dir(directory);
             for (int attempt = 0; attempt < 128; ++attempt)

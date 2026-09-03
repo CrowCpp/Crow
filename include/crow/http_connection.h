@@ -516,6 +516,8 @@ namespace crow
             do_linger_read();
         }
 
+        // Reuses the normal read path's buffer_; safe here because parsing has
+        // already aborted, so nothing else reads from or writes to it.
         void do_linger_read()
         {
             auto self = this->shared_from_this();
