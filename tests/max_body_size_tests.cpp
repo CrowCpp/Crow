@@ -25,29 +25,43 @@ using asio_error_code = asio::error_code;
 
 namespace
 {
-    bool response_complete(const std::string& data)
+    // Finds the final (non-1xx) status line, skipping any interim 1xx lines
+    // (e.g. "100 Continue") that may precede it. Returns npos if the data
+    // seen so far doesn't yet contain one.
+    std::size_t find_final_status_line(const std::string& data)
     {
         auto search_from = std::size_t{0};
         while (true)
         {
             const auto status_line = data.find("HTTP/1.1 ", search_from);
             if (status_line == std::string::npos)
-                return false;
+                return std::string::npos;
             const auto code = std::atoi(data.c_str() + status_line + 9);
-            const auto header_end = data.find("\r\n\r\n", status_line);
-            if (header_end == std::string::npos)
-                return false;
             if (code >= 100 && code < 200)
             {
+                const auto header_end = data.find("\r\n\r\n", status_line);
+                if (header_end == std::string::npos)
+                    return std::string::npos;
                 search_from = header_end + 4;
                 continue;
             }
-            const auto length_pos = data.find("Content-Length:", status_line);
-            if (length_pos == std::string::npos || length_pos > header_end)
-                return true;
-            const auto length = static_cast<std::size_t>(std::stoul(data.substr(length_pos + 15)));
-            return data.size() >= header_end + 4 + length;
+            return status_line;
         }
+    }
+
+    bool response_complete(const std::string& data)
+    {
+        const auto status_line = find_final_status_line(data);
+        if (status_line == std::string::npos)
+            return false;
+        const auto header_end = data.find("\r\n\r\n", status_line);
+        if (header_end == std::string::npos)
+            return false;
+        const auto length_pos = data.find("Content-Length:", status_line);
+        if (length_pos == std::string::npos || length_pos > header_end)
+            return true;
+        const auto length = static_cast<std::size_t>(std::stoul(data.substr(length_pos + 15)));
+        return data.size() >= header_end + 4 + length;
     }
 
     class TestClient
@@ -88,20 +102,10 @@ namespace
 
     int status_of(const std::string& response)
     {
-        auto search_from = std::size_t{0};
-        while (true)
-        {
-            const auto status_line = response.find("HTTP/1.1 ", search_from);
-            if (status_line == std::string::npos)
-                return 0;
-            const auto code = std::atoi(response.c_str() + status_line + 9);
-            if (code >= 100 && code < 200)
-            {
-                search_from = status_line + 9;
-                continue;
-            }
-            return code;
-        }
+        const auto status_line = find_final_status_line(response);
+        if (status_line == std::string::npos)
+            return 0;
+        return std::atoi(response.c_str() + status_line + 9);
     }
 } // namespace
 
@@ -549,6 +553,80 @@ TEST_CASE("max_body_size over-limit upload can still be written and the 413 read
 
     REQUIRE_NOTHROW(client.send(request));
     CHECK(status_of(client.receive()) == 413);
+
+    app.stop();
+}
+
+TEST_CASE("max_body_size small over-limit response does not leak the connection", "[http][max_body_size]")
+{
+    // Regression test: a 413 for a body small enough to use the sync write
+    // path (not the streamed/large-body path) must still result in the
+    // connection being closed promptly once the client goes away, rather
+    // than being left open waiting for a read that will never complete.
+    SimpleApp app;
+    app.max_body_size(8);
+
+    CROW_ROUTE(app, "/upload")
+      .methods("POST"_method)([](const request& req) {
+          return req.body;
+      });
+
+    auto server = app.bindaddr(LOCALHOST_ADDRESS).port(0).run_async();
+    app.wait_for_server_start();
+    const auto port = app.port();
+
+    const int baseline = crow::connectionCount;
+    {
+        TestClient client(port);
+        client.send(
+          "POST /upload HTTP/1.1\r\n"
+          "Host: localhost\r\n"
+          "Content-Length: 18\r\n"
+          "\r\n"
+          "012345678901234567");
+        CHECK(status_of(client.receive()) == 413);
+    } // client socket closes here
+
+    const auto deadline = std::chrono::steady_clock::now() + std::chrono::seconds(3);
+    while (crow::connectionCount > baseline && std::chrono::steady_clock::now() < deadline)
+    {
+        std::this_thread::sleep_for(std::chrono::milliseconds(20));
+    }
+    CHECK(crow::connectionCount == baseline);
+
+    app.stop();
+}
+
+TEST_CASE("max_body_size does not apply to an unmatched HEAD/OPTIONS request", "[http][max_body_size]")
+{
+    // Documented exemption: an unmatched HEAD or OPTIONS request is answered
+    // (404/204) before headers finish parsing and before the max_body_size
+    // check runs, so an over-limit advertised length must not turn into a 413.
+    SimpleApp app;
+    app.max_body_size(8);
+
+    auto server = app.bindaddr(LOCALHOST_ADDRESS).port(0).run_async();
+    app.wait_for_server_start();
+    const auto port = app.port();
+
+    {
+        TestClient client(port);
+        client.send(
+          "HEAD /missing HTTP/1.1\r\n"
+          "Host: localhost\r\n"
+          "Content-Length: 100\r\n"
+          "\r\n");
+        CHECK(status_of(client.receive()) == 404);
+    }
+    {
+        TestClient client(port);
+        client.send(
+          "OPTIONS /missing HTTP/1.1\r\n"
+          "Host: localhost\r\n"
+          "Content-Length: 100\r\n"
+          "\r\n");
+        CHECK(status_of(client.receive()) == 404);
+    }
 
     app.stop();
 }

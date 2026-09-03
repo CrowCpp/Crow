@@ -354,7 +354,8 @@ namespace crow
         /// Applied to every request, including 404, 405, and slash-redirects.
         /// Advertised `Content-Length` is checked at headers-complete, before `100 Continue`.
         /// Chunked bodies are counted as they arrive. An over-limit request is answered 413
-        /// and the connection is closed without reading (or draining) the body.
+        /// and the connection is closed; the body is not stored, but leftover bytes are
+        /// drained and discarded rather than left unread.
         self_t& max_body_size(uint64_t bytes)
         {
             max_body_size_ = bytes;
