@@ -151,18 +151,6 @@ namespace crow
                     return 1;
                 }
             }
-            if (!req_.body_sink &&
-                limit != UINT64_MAX &&
-                parser_.content_length != CROW_ULLONG_MAX &&
-                parser_.content_length <= req_.body.max_size())
-            {
-                // Finite cap only: never allocate from an untrusted Content-Length
-                // when unlimited, and never when the body is going to a sink
-                // (req.body stays empty, whether the route always uses one or the
-                // factory declined this particular request).
-                req_.body.reserve(static_cast<size_t>(parser_.content_length));
-            }
-
             // HTTP 1.1 Expect: 100-continue
             if (req_.http_ver_major == 1 && req_.http_ver_minor == 1 && get_header_value(req_.headers, "expect") == "100-continue")
             {
@@ -214,6 +202,7 @@ namespace crow
 
             if (body_error_status_)
             {
+                req_.body.clear();
                 res = response(body_error_status_);
                 res.set_header("Connection", "close");
                 res.end();
