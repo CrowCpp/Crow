@@ -156,19 +156,36 @@ installed.
 
 ## Time and size bounds
 
-- Every socket write of a stream runs under the connection timeout
-  (`#!cpp app.timeout(...)`): a client that stops reading trips it and the
-  transfer is aborted unclean.
+- The writes of a stream run under `#!cpp app.stream_write_timeout(seconds)`
+  (60 by default, at most 255, 0 disables it), not under
+  `#!cpp app.timeout(...)`, which is the idle limit between requests and far
+  too short for a long download. The limit is measured between writes the
+  socket accepted, so a consumer that keeps taking bytes, however slowly, is
+  never cut off, while one that stops taking them releases the connection with
+  an unclean abort. Treat it as a resource-holding policy rather than a way to
+  tell what the far end is doing: the server observes the next TCP hop, which
+  is often a proxy that buffers on the client's behalf.
+- Progress is observed per completed socket write, and the operating system
+  decides how often that is. Linux wakes the writer once part of the send queue
+  drains, so a long write reports progress repeatedly; the gap between reports
+  is roughly half the send buffer divided by the consumer's rate, which is why
+  a very slow consumer still needs a generous limit. On Windows an overlapped
+  send completes only once the whole buffer reached the transport, so there is
+  no intermediate progress within one chunk and the limit degenerates to the
+  time that chunk takes: cap `#!cpp app.max_stream_chunk_size(bytes)` there
+  accordingly.
+- Behind a proxy, line up the limits: with nginx that is `send_timeout` on the
+  nginx-to-browser leg and `proxy_read_timeout` on the Crow-to-nginx leg
+  (`proxy_send_timeout` governs the request, not the response). With
+  `proxy_buffering on` nginx keeps taking the body on the client's behalf, so
+  Crow sees a stalled consumer only once the proxy's own buffers fill.
 - The wait for a provider is unlimited by default: an idle provider is normal
   for long-lived streams. `#!cpp app.stream_idle_timeout(seconds)` (0 by
   default, at most 255 seconds) aborts a stream whose provider stays silent
   longer than the limit. It cannot interrupt a synchronous provider that
   blocks the connection's executor.
 - `#!cpp app.max_stream_chunk_size(bytes)` (16 MiB by default, 0 disables the
-  cap) limits a single chunk; a larger chunk aborts the transfer. Together
-  with the write deadline it bounds each write: a chunk must be written
-  within `app.timeout(...)` seconds, so very large chunks over slow links
-  need a larger timeout or smaller chunks.
+  cap) limits a single chunk; a larger chunk aborts the transfer.
 
 ## Server shutdown
 

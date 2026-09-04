@@ -753,7 +753,9 @@ TEST_CASE("chunked_response_times_out_writing_to_a_stalled_client")
         res.end();
     });
 
-    auto server_task = app.bindaddr(LOCALHOST_ADDRESS).port(45451).timeout(1).run_async();
+    // The stream write limit governs the body, not timeout(): the latter is the
+    // idle limit between requests.
+    auto server_task = app.bindaddr(LOCALHOST_ADDRESS).port(45451).stream_write_timeout(1).run_async();
     BoundedServerShutdown server_shutdown(server_task, [&app] {
         app.stop();
     });
@@ -775,6 +777,85 @@ TEST_CASE("chunked_response_times_out_writing_to_a_stalled_client")
     asio_error_code close_error;
     stalled_client.close(close_error);
 } // chunked_response_times_out_writing_to_a_stalled_client
+
+
+TEST_CASE("chunked_response_survives_a_slow_but_progressing_client")
+{
+    SimpleApp app;
+    auto completion_observation = std::make_shared<ChunkCompletionObservation>();
+    auto completion_result = completion_observation->first_result();
+
+    CROW_ROUTE(app, "/slow-reader")
+    ([completion_observation](const crow::request&, crow::response& res) {
+        res.set_chunked_content_provider(
+          [](std::string& chunk) -> bool {
+              // One chunk takes far longer to drain than the write limit, while
+              // the socket keeps accepting parts of it all along: that is exactly
+              // the case a per-write limit would kill and a progress limit must
+              // not.
+              chunk.assign(32u * 1024u * 1024u, 'x');
+              return true;
+          },
+          "application/octet-stream");
+        res.set_chunked_completion_handler([completion_observation](bool clean) {
+            completion_observation->record(clean);
+        });
+        res.end();
+    });
+
+    // timeout() is squeezed too, so the test fails loudly if the body ever falls
+    // back to the request idle limit instead of the stream write limit.
+    auto server_task = app.bindaddr(LOCALHOST_ADDRESS)
+                         .port(45451)
+                         .timeout(2)
+                         .stream_write_timeout(2)
+                         .max_stream_chunk_size(64u * 1024u * 1024u)
+                         .run_async();
+    BoundedServerShutdown server_shutdown(server_task, [&app] {
+        app.stop();
+    });
+    app.wait_for_server_start();
+
+    asio::io_context io_context;
+    asio::ip::tcp::socket slow_client(io_context);
+    slow_client.connect(asio::ip::tcp::endpoint(asio::ip::make_address(LOCALHOST_ADDRESS), 45451));
+
+    const std::string request = "GET /slow-reader HTTP/1.1\r\nHost: localhost\r\n\r\n";
+    asio::write(slow_client, asio::buffer(request));
+
+    // Steady and unhurried: slow enough that a single chunk needs several limits
+    // to go out, brisk enough that the socket reports progress well within one.
+    std::size_t total_read = 0;
+    bool read_failed = false;
+    const auto observation_end = std::chrono::steady_clock::now() + std::chrono::seconds(6);
+    while (std::chrono::steady_clock::now() < observation_end)
+    {
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        std::array<char, 512u * 1024u> buffer{};
+        asio_error_code read_error;
+        const std::size_t bytes_read = slow_client.read_some(asio::buffer(buffer), read_error);
+        if (read_error)
+        {
+            read_failed = true;
+            break;
+        }
+        total_read += bytes_read;
+    }
+
+    // Sampled before the socket closes: closing the peer aborts the transfer, and
+    // that abort would otherwise win the race to the assertion.
+    const auto completion_status = completion_result.wait_for(std::chrono::milliseconds(0));
+
+    asio_error_code close_error;
+    slow_client.close(close_error);
+
+    // Several limits have passed while this client kept taking bytes. The reads
+    // never failed and the transfer was never completed, so the limit measured
+    // stalled progress instead of the duration of a single write.
+    CHECK(!read_failed);
+    CHECK(total_read > 0);
+    CHECK(completion_status == std::future_status::timeout);
+} // chunked_response_survives_a_slow_but_progressing_client
 
 
 TEST_CASE("close_marked_transfers_keep_the_write_deadline")
@@ -807,7 +888,7 @@ TEST_CASE("close_marked_transfers_keep_the_write_deadline")
         endless_stream(response_close_completion, res);
     });
 
-    auto server_task = app.bindaddr(LOCALHOST_ADDRESS).port(45451).timeout(1).run_async();
+    auto server_task = app.bindaddr(LOCALHOST_ADDRESS).port(45451).stream_write_timeout(1).run_async();
     BoundedServerShutdown server_shutdown(server_task, [&app] {
         app.stop();
     });
@@ -2966,6 +3047,8 @@ TEST_CASE("chunked_header_write_runs_under_the_write_deadline")
         res.end();
     });
 
+    // The header write of a stream is bounded by the stream write limit.
+    app.stream_write_timeout(1);
     app.validate();
     std::tuple<> middlewares;
     using PausedWriteServer = crow::Server<crow::SimpleApp, crow::TCPAcceptor, PausingSocketAdaptor>;
@@ -3497,6 +3580,8 @@ TEST_CASE("async_chunked_response_keeps_header_storage_stable_after_end")
         res.end();
     });
 
+    // The header write of a stream is bounded by the stream write limit.
+    app.stream_write_timeout(1);
     app.validate();
     std::tuple<> middlewares;
     using PausedWriteServer = crow::Server<crow::SimpleApp, crow::TCPAcceptor, PausingSocketAdaptor>;
@@ -4603,6 +4688,8 @@ TEST_CASE("async_chunked_response_server_stop_finishes_paused_write_on_worker") 
         res.end();
     });
 
+    // The header write of a stream is bounded by the stream write limit.
+    app.stream_write_timeout(1);
     app.validate();
     std::tuple<> middlewares;
     using PausedWriteServer = crow::Server<crow::SimpleApp, crow::TCPAcceptor, PausingSocketAdaptor>;

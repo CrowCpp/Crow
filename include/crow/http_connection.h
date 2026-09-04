@@ -126,7 +126,7 @@ namespace crow
                    typename Adaptor::context* adaptor_ctx_,
                    std::atomic<unsigned int>& queue_length,
                    std::shared_ptr<detail::connection_lifecycle_registry> lifecycle_registry = nullptr):
-          adaptor_(io_context, adaptor_ctx_), handler_(handler), parser_(this), req_(parser_.req), server_name_(server_name), middlewares_(middlewares), get_cached_date_str(get_cached_date_str_f), task_timer_(task_timer), res_stream_threshold_(handler->stream_threshold()), stream_idle_timeout_(handler->stream_idle_timeout()), max_stream_chunk_size_(handler->max_stream_chunk_size()), queue_length_(queue_length), lifecycle_registry_(lifecycle_registry)
+          adaptor_(io_context, adaptor_ctx_), handler_(handler), parser_(this), req_(parser_.req), server_name_(server_name), middlewares_(middlewares), get_cached_date_str(get_cached_date_str_f), task_timer_(task_timer), res_stream_threshold_(handler->stream_threshold()), stream_idle_timeout_(handler->stream_idle_timeout()), stream_write_timeout_(handler->stream_write_timeout()), max_stream_chunk_size_(handler->max_stream_chunk_size()), queue_length_(queue_length), lifecycle_registry_(lifecycle_registry)
         {
             res.deferred_lifecycle_ = std::make_shared<response::deferred_response_lifecycle>();
             queue_length_++;
@@ -777,10 +777,98 @@ namespace crow
             bool completion_reported{false};
         };
 
+        /// Completion condition for the transfer writes: it forwards to
+        /// `transfer_all()` and marks the moment the socket accepted more bytes.
+        ///
+        /// The write limit must measure a stalled transfer, not the wall-clock
+        /// time one write takes. A consumer that reads slowly keeps a large chunk
+        /// in flight for far longer than any sane limit while the connection is
+        /// perfectly healthy, and closing the socket underneath such a write
+        /// truncates the body without a terminating frame. Marking progress here
+        /// and judging it in the timer task keeps a stopped peer bounded while
+        /// letting a slow one take as long as it needs, and costs nothing per
+        /// write beyond a timestamp.
+        ///
+        /// `bytes_transferred` is cumulative for the whole composed operation, so
+        /// progress is a strict increase rather than a non-zero value.
+        auto mark_write_progress()
+        {
+            auto self = this->shared_from_this();
+            auto previous = std::make_shared<std::size_t>(0);
+            return [self, previous](const error_code& ec, std::size_t bytes_transferred) -> std::size_t {
+                if (!ec && bytes_transferred > *previous)
+                {
+                    *previous = bytes_transferred;
+                    self->last_write_progress_ = std::chrono::steady_clock::now();
+                }
+                return asio::transfer_all()(ec, bytes_transferred);
+            };
+        }
+
+        /// Arm the stream write limit. Zero disables it: the transfer then relies
+        /// on the peer watch and on whatever limits the body producer keeps.
+        void start_write_deadline()
+        {
+            cancel_deadline_timer();
+            if (stream_write_timeout_ == 0)
+            {
+                return;
+            }
+            last_write_progress_ = std::chrono::steady_clock::now();
+            schedule_write_deadline(stream_write_timeout_);
+        }
+
+        /// Schedules the write limit task without cancelling first, so the task
+        /// itself may re-arm: cancelling from inside the task would erase the
+        /// entry the timer is currently iterating over.
+        void schedule_write_deadline(std::uint8_t seconds)
+        {
+            auto self = this->shared_from_this();
+            task_id_ = task_timer_.schedule([self] { self->on_write_deadline(); }, seconds);
+            deadline_armed_ = true;
+        }
+
+        /// The limit expired on the calendar. If bytes moved in the meantime the
+        /// transfer is healthy and the task waits out the remainder; otherwise the
+        /// consumer stopped taking the body and the connection is released.
+        void on_write_deadline()
+        {
+            // The task has fired and the timer drops it right after this returns.
+            deadline_armed_ = false;
+            if (!adaptor_.is_open() || !async_chunk_transfer_ || stream_write_timeout_ == 0)
+            {
+                return;
+            }
+
+            const auto idle = std::chrono::duration_cast<std::chrono::seconds>(
+                                std::chrono::steady_clock::now() - last_write_progress_)
+                                .count();
+            if (idle < static_cast<std::int64_t>(stream_write_timeout_))
+            {
+                // Re-arming is posted rather than scheduled here: the timer is
+                // iterating its task list around this call, and inserting into it
+                // from inside that walk is asking for trouble.
+                const auto remaining = static_cast<std::uint8_t>(stream_write_timeout_ - idle);
+                auto self = this->shared_from_this();
+                asio::post(adaptor_.get_io_context(), [self, remaining] {
+                    if (self->adaptor_.is_open() && self->async_chunk_transfer_ && !self->deadline_armed_)
+                    {
+                        self->schedule_write_deadline(remaining);
+                    }
+                });
+                return;
+            }
+
+            CROW_LOG_ERROR << "The stream write made no progress within the limit; closing the connection.";
+            adaptor_.shutdown_readwrite();
+            close_adaptor();
+        }
+
         void do_write_async_chunked() {
-            // Every socket write of the transfer runs under the connection
-            // deadline; only the provider wait is unbounded by default.
-            start_deadline();
+            // Every socket write of the transfer runs under the stream write
+            // limit, which measures stalled progress (see mark_write_progress);
+            // only the provider wait is unbounded by default.
+            start_write_deadline();
 
             auto state                = std::make_shared<AsyncChunkTransfer>();
             state->provider           = std::move(res.async_chunk_provider_);
@@ -812,7 +900,7 @@ namespace crow
                 }
                 buffers_.clear();
                 asio::async_write(
-                  adaptor_.socket(), asio::buffer(state->header_bytes), [self, state](const error_code& ec, std::size_t /*bytes_transferred*/) {
+                  adaptor_.socket(), asio::buffer(state->header_bytes), mark_write_progress(), [self, state](const error_code& ec, std::size_t /*bytes_transferred*/) {
                       if (self->async_chunk_transfer_ != state)
                       {
                           return;
@@ -1208,10 +1296,11 @@ namespace crow
                 state->buffers.emplace_back(state->chunk.data(), state->chunk.size());
                 state->buffers.emplace_back(crlf.data(), crlf.size());
 
-                start_deadline();
+                start_write_deadline();
                 asio::async_write(
                   adaptor_.socket(),
                   state->buffers,
+                  mark_write_progress(),
                   [self, state, result](const error_code& ec, std::size_t /*bytes_transferred*/) {
                       if (self->async_chunk_transfer_ != state)
                       {
@@ -1262,9 +1351,10 @@ namespace crow
                 state->buffers.clear();
                 state->buffers.emplace_back(terminator, sizeof(terminator) - 1);
 
-                start_deadline();
+                start_write_deadline();
                 asio::async_write(adaptor_.socket(),
                                   state->buffers,
+                                  mark_write_progress(),
                                   [self, state](const error_code& ec, std::size_t /*bytes_transferred*/) {
                                       if (self->async_chunk_transfer_ != state)
                                       {
@@ -1662,6 +1752,10 @@ namespace crow
 
         size_t res_stream_threshold_;
         uint8_t stream_idle_timeout_;
+        uint8_t stream_write_timeout_;
+        /// Last moment a transfer write was accepted by the socket; the write limit
+        /// is measured from here rather than from the start of the write.
+        std::chrono::steady_clock::time_point last_write_progress_{};
         size_t max_stream_chunk_size_;
 
         std::atomic<unsigned int>& queue_length_;
