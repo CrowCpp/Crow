@@ -49,9 +49,10 @@ CROW_ROUTE(app, "/upload")
 path once, at the point you call it, and throws
 `std::filesystem::filesystem_error` if it does not already exist — Crow does
 not create it for you, and does not fail silently. Crow always generates a
-unique file name (POSIX: `mkostemp`; Windows: a retried `CREATE_NEW`), so
-concurrent requests never share a path. The descriptor is kept open until the
-body is complete; the handler then reads `file->path()`.
+unique file name (POSIX: a retried `open(O_CREAT | O_EXCL)`; Windows: a
+retried `CREATE_NEW`), so concurrent requests never share a path. The
+descriptor is kept open until the body is complete; the handler then reads
+`file->path()`.
 
 The file is deleted when the last `crow::request` copy that reached the
 handler is destroyed — normally right after the response has been fully
