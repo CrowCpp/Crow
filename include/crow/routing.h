@@ -160,6 +160,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         std::string rule_;
         std::string name_;
         bool added_{false};
+        std::optional<uint64_t> max_body_size_override_;
 
         std::unique_ptr<BaseRule> rule_to_upgrade_;
 
@@ -616,6 +617,13 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         self_t& middlewares()
         {
             static_cast<self_t*>(this)->mw_indices_.template push<App, Middlewares...>();
+            return static_cast<self_t&>(*this);
+        }
+
+        /// Override the app-wide request body size limit for this route.
+        self_t& max_body_size(uint64_t bytes)
+        {
+            static_cast<self_t*>(this)->max_body_size_override_ = bytes;
             return static_cast<self_t&>(*this);
         }
     };
@@ -1840,6 +1848,25 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         std::vector<Blueprint*>& blueprints()
         {
             return blueprints_;
+        }
+
+        /// Effective request body limit for a `handle_initial()` result.
+        ///
+        /// 404, 405, slash-redirect, and unmatched OPTIONS use `app_default`.
+        /// A matched rule uses its override when set, otherwise `app_default`.
+        uint64_t effective_max_body_size(const routing_handle_result& found, uint64_t app_default) const
+        {
+            if (found.catch_all || found.rule_index <= RULE_SPECIAL_REDIRECT_SLASH)
+                return app_default;
+            if (found.method >= HTTPMethod::InternalMethodCount)
+                return app_default;
+            const auto& rules = per_methods_[static_cast<int>(found.method)].rules;
+            if (found.rule_index >= rules.size())
+                return app_default;
+            const BaseRule* rule = rules[found.rule_index];
+            if (!rule || !rule->max_body_size_override_)
+                return app_default;
+            return *rule->max_body_size_override_;
         }
 
         std::function<void(crow::response&)>& exception_handler()
