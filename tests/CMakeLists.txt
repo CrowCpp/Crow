@@ -22,6 +22,7 @@ enable_testing()
 # list the test sources
 set(TEST_SRCS
   unittest.cpp
+  streaming_tests.cpp
   query_string_tests.cpp
   unit_tests/test_http_response.cpp
   unit_tests/test_json.cpp
@@ -32,6 +33,7 @@ set(TEST_SRCS
 )
 
 add_executable(unittest ${TEST_SRCS})
+target_compile_definitions(unittest PRIVATE CROW_ENABLE_ASYNC_CHUNK_PUBLICATION_TEST_HOOK)
 target_link_libraries(unittest Crow::Crow Catch2::Catch2WithMain)
 add_warnings_optimizations(unittest)
 add_sanitizer_flags(unittest)
