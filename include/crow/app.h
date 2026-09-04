@@ -429,6 +429,23 @@ namespace crow
             return bindaddr_;
         }
 
+        /// \brief Set the filesystem directory for implicit static file serving.
+        ///
+        /// Defaults to \ref CROW_STATIC_DIRECTORY (`"static/"`). Must be called
+        /// before \ref run() / \ref run_async(). Does not change
+        /// \ref CROW_STATIC_ENDPOINT.
+        self_t& static_directory(std::string path)
+        {
+            static_directory_ = std::move(path);
+            return *this;
+        }
+
+        /// \brief Get the filesystem directory used for implicit static files
+        std::string static_directory() const
+        {
+            return static_directory_;
+        }
+
         /// \brief Disable tcp/ip and use unix domain socket instead
         self_t& local_socket_path(std::string path)
         {
@@ -602,7 +619,7 @@ namespace crow
         void add_static_dir()
         {
             if (are_static_routes_added()) return;
-            auto static_dir_ = crow::utility::normalize_path(CROW_STATIC_DIRECTORY);
+            auto static_dir_ = crow::utility::normalize_path(static_directory_);
 
             route<crow::black_magic::get_parameter_tag(CROW_STATIC_ENDPOINT)>(CROW_STATIC_ENDPOINT)([static_dir_](crow::response& res, std::string file_path_partial) {
                 utility::sanitize_filename(file_path_partial);
@@ -615,6 +632,9 @@ namespace crow
         /// \brief A wrapper for `validate()` in the router
         void validate()
         {
+            // Always validate blueprints so routes remain available when
+            // CROW_DISABLE_STATIC_DIR skips add_blueprint()/add_static_dir().
+            router_.validate_bp();
             router_.validate();
         }
 
@@ -916,6 +936,7 @@ namespace crow
         uint64_t max_payload_{UINT64_MAX};
         std::string server_name_ = std::string("Crow/") + VERSION;
         std::string bindaddr_ = "0.0.0.0";
+        std::string static_directory_ = CROW_STATIC_DIRECTORY;
         bool use_unix_ = false;
         detail::socket::tcp_socket_options tcp_socket_options_{};
         detail::socket::tcp_socket_options websocket_tcp_socket_options_{};
