@@ -22,6 +22,8 @@ enable_testing()
 # list the test sources
 set(TEST_SRCS
   unittest.cpp
+  max_body_size_tests.cpp
+  body_file_tests.cpp
   query_string_tests.cpp
   unit_tests/test_http_response.cpp
   unit_tests/test_json.cpp

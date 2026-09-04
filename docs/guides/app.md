@@ -52,6 +52,25 @@ app.tcp_nodelay(true)
    .run();
 ```
 
+## Request body size
+<span class="tag">[:octicons-feed-tag-16: master](https://github.com/CrowCpp/Crow)</span>
+
+By default Crow accepts a request body of any size. `#!cpp app.max_body_size(bytes)` sets an app-wide limit (`UINT64_MAX` is unlimited). A route can override it with `#!cpp .max_body_size(bytes)`.
+
+The advertised `Content-Length` is checked when headers complete, before `100 Continue`. Chunked bodies are counted as they arrive. An over-limit request is answered `413 Payload Too Large`; the route handler does not run. The remaining body is drained (discarded, not parsed) and the connection is then closed, bounded by the same deadline timer (`app.timeout()`, default 5s) a slow client already gets. The same cap applies to 404, 405, and slash-redirects.
+
+```cpp
+crow::SimpleApp app;
+app.max_body_size(64ull * 1024 * 1024);
+
+CROW_ROUTE(app, "/upload")
+  .methods(crow::HTTPMethod::Post)
+  .max_body_size(8ull * 1024 * 1024)
+  ([](const crow::request& req) {
+      return crow::response(200);
+  });
+```
+
 <br><br>
 
 For more info on middlewares, check out [this page](middleware.md).<br><br>
