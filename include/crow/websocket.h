@@ -8,6 +8,7 @@
 #include "crow/logging.h"
 #include "crow/socket_adaptors.h"
 #include "crow/http_request.h"
+#include "crow/tcp_socket_options.h"
 #include "crow/TinySHA1.hpp"
 #include "crow/utility.h"
 
@@ -121,7 +122,8 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                                std::function<void(crow::websocket::connection&, const std::string&, uint16_t)> close_handler,
                                std::function<void(crow::websocket::connection&, const std::string&)> error_handler,
                                std::function<void(const crow::request&, std::optional<crow::response>&, void**)> accept_handler,
-                               bool mirror_protocols)
+                               bool mirror_protocols,
+                               const detail::socket::tcp_socket_options& tcp_options = {})
             {
                 auto conn = std::shared_ptr<Connection>(new Connection(std::move(adaptor), 
                                                                        handler, max_payload,
@@ -130,6 +132,9 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                                                                        std::move(close_handler),
                                                                        std::move(error_handler), 
                                                                        std::move(accept_handler)));
+                
+                // Apply TCP socket options to WebSocket connection
+                detail::socket::apply_tcp_socket_options(conn->adaptor_.socket(), tcp_options);
                 
                 // Perform handshake validation
                 if (!utility::string_equals(req.get_header_value("upgrade"), "websocket"))
@@ -507,7 +512,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                     }
                     break;
                     case WebSocketReadState::Mask:
-                        if (remaining_length_ > max_payload_bytes_)
+                        if ((message_.size() + remaining_length_) > max_payload_bytes_)
                         {
                             close_connection_ = true;
                             adaptor_.close();

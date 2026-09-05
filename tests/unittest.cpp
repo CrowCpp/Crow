@@ -17,6 +17,7 @@
 
 using namespace std;
 using namespace crow;
+namespace fs = std::filesystem;
 
 #ifdef CROW_USE_BOOST
 namespace asio = boost::asio;
@@ -77,6 +78,25 @@ public:
         return c.receive();
     }
 };
+
+bool is_tcp_nodelay_enabled_for_connection_after_apply(const crow::detail::socket::tcp_socket_options& options)
+{
+    asio::io_context io_context;
+    asio::ip::tcp::acceptor acceptor(io_context,
+                                     asio::ip::tcp::endpoint(asio::ip::make_address(LOCALHOST_ADDRESS), 0));
+
+    asio::ip::tcp::socket client_socket(io_context);
+    client_socket.connect(acceptor.local_endpoint());
+
+    asio::ip::tcp::socket server_socket(io_context);
+    acceptor.accept(server_socket);
+
+    crow::detail::socket::apply_tcp_socket_options(server_socket, options);
+
+    asio::ip::tcp::no_delay no_delay;
+    server_socket.get_option(no_delay);
+    return no_delay.value();
+}
 
 TEST_CASE("Rule")
 {
@@ -2885,7 +2905,7 @@ TEST_CASE("inject_header_via_set_haeder")
     crow::SimpleApp app;
 
     CROW_ROUTE(app, "/")
-    ([](const crow::request &req, crow::response &res) {
+    ([](crow::response &res) {
         res.write("Hello, world!");
         res.set_header("X-Custom", "safe\r\nInjected: yes");
         res.add_header("X-Custom2", "safe\r\nInjected: yes");
@@ -2909,4 +2929,507 @@ TEST_CASE("inject_header_via_set_haeder")
 
     app.stop();
 }
+
+// Tests the low-level apply_tcp_socket_options function to verify that
+// TCP_NODELAY can be enabled.
+TEST_CASE("TCP_NODELAY_socket_option_apply_enable")
+{
+    crow::detail::socket::tcp_socket_options enable_options;
+    enable_options.no_delay = true;
+
+    CHECK(is_tcp_nodelay_enabled_for_connection_after_apply(enable_options) == true);
+}
+
+// Tests the low-level apply_tcp_socket_options function to verify that
+// TCP_NODELAY can be disabled.
+TEST_CASE("TCP_NODELAY_socket_option_apply_disable")
+{
+    crow::detail::socket::tcp_socket_options disable_options;
+    disable_options.no_delay = false;
+
+    CHECK(is_tcp_nodelay_enabled_for_connection_after_apply(disable_options) == false);
+}
+
+// Tests that HTTP socket TCP_NODELAY defaults to false (disabled)
+TEST_CASE("TCP_NODELAY_http_api_defaults")
+{
+    crow::SimpleApp app;
+
+    CROW_ROUTE(app, "/")([] {
+        return "ok";
+    });
+
+    app.validate();
+
+    // Default should be false (no_delay disabled)
+    auto http_options = app.tcp_socket_options();
+    CHECK(http_options.no_delay == false);
+    CHECK(is_tcp_nodelay_enabled_for_connection_after_apply(http_options) == false);
+}
+
+// Tests that HTTP socket TCP_NODELAY can be enabled via tcp_nodelay(true) API
+TEST_CASE("TCP_NODELAY_http_api_enabled")
+{
+    crow::SimpleApp app;
+
+    CROW_ROUTE(app, "/")([] {
+        return "ok";
+    });
+
+    app.validate();
+
+    // Enable TCP_NODELAY
+    app.tcp_nodelay(true);
+    auto http_options = app.tcp_socket_options();
+    CHECK(http_options.no_delay == true);
+
+    CHECK(is_tcp_nodelay_enabled_for_connection_after_apply(http_options) == true);
+}
+
+// Tests that HTTP socket TCP_NODELAY can be disabled via tcp_nodelay(false) API
+TEST_CASE("TCP_NODELAY_http_api_disabled")
+{
+    crow::SimpleApp app;
+
+    CROW_ROUTE(app, "/")([] {
+        return "ok";
+    });
+
+    app.validate();
+
+    // Enable first, then disable
+    app.tcp_nodelay(true);
+    app.tcp_nodelay(false);
+    auto http_options = app.tcp_socket_options();
+    CHECK(http_options.no_delay == false);
+
+    CHECK(is_tcp_nodelay_enabled_for_connection_after_apply(http_options) == false);
+}
+
+// Tests that WebSocket socket TCP_NODELAY defaults to false (disabled)
+TEST_CASE("TCP_NODELAY_websocket_api_defaults")
+{
+    crow::SimpleApp app;
+
+    CROW_WEBSOCKET_ROUTE(app, "/ws")
+        .onopen([&](crow::websocket::connection&){})
+        .onmessage([&](crow::websocket::connection&, const std::string&, bool){});
+
+    app.validate();
+
+    // Default should be false (no_delay disabled)
+    auto ws_options = app.websocket_tcp_socket_options();
+    CHECK(ws_options.no_delay == false);
+    CHECK(is_tcp_nodelay_enabled_for_connection_after_apply(ws_options) == false);
+}
+
+// Tests that WebSocket socket TCP_NODELAY can be enabled via websocket_tcp_nodelay(true) API
+TEST_CASE("TCP_NODELAY_websocket_api_enabled")
+{
+    crow::SimpleApp app;
+
+    CROW_WEBSOCKET_ROUTE(app, "/ws")
+        .onopen([&](crow::websocket::connection&){})
+        .onmessage([&](crow::websocket::connection&, const std::string&, bool){});
+
+    app.validate();
+
+    // Enable TCP_NODELAY
+    app.websocket_tcp_nodelay(true);
+    auto ws_options = app.websocket_tcp_socket_options();
+    CHECK(ws_options.no_delay == true);
+
+    CHECK(is_tcp_nodelay_enabled_for_connection_after_apply(ws_options) == true);
+}
+
+// Tests that WebSocket socket TCP_NODELAY can be disabled via websocket_tcp_nodelay(false) API
+TEST_CASE("TCP_NODELAY_websocket_api_disabled")
+{
+    crow::SimpleApp app;
+
+    CROW_WEBSOCKET_ROUTE(app, "/ws")
+        .onopen([&](crow::websocket::connection&){})
+        .onmessage([&](crow::websocket::connection&, const std::string&, bool){});
+
+    app.validate();
+
+    // Enable first, then disable
+    app.websocket_tcp_nodelay(true);
+    app.websocket_tcp_nodelay(false);
+    auto ws_options = app.websocket_tcp_socket_options();
+    CHECK(ws_options.no_delay == false);
+
+    CHECK(is_tcp_nodelay_enabled_for_connection_after_apply(ws_options) == false);
+}
+
+// Smoke test to verify HTTP server starts and handles requests correctly
+// with TCP_NODELAY enabled on HTTP sockets
+TEST_CASE("TCP_NODELAY_http_smoke_test")
+{
+    crow::SimpleApp app;
+
+    CROW_ROUTE(app, "/")([] {
+        return "ok";
+    });
+
+    app.validate();
+
+    // Test with TCP_NODELAY enabled
+    app.tcp_nodelay(true);
+    
+    auto _ = app.bindaddr(LOCALHOST_ADDRESS).port(0).run_async();
+    app.wait_for_server_start();
+
+    auto response = HttpClient::request(LOCALHOST_ADDRESS,
+                                        app.port(),
+                                        "GET / HTTP/1.0\r\n"
+                                        "Host: localhost\r\n"
+                                        "\r\n");
+
+    app.stop();
+    CHECK(response.find("200 OK") != std::string::npos);
+    CHECK(response.find("ok") != std::string::npos);
+}
+
+// Smoke test to verify WebSocket upgrade handshake succeeds and connections work
+// correctly with TCP_NODELAY enabled on WebSocket sockets
+TEST_CASE("TCP_NODELAY_websocket_smoke_test")
+{
+    crow::SimpleApp app;
+
+    std::string received_message;
+
+    CROW_WEBSOCKET_ROUTE(app, "/ws")
+        .onopen([&](crow::websocket::connection& conn){
+            conn.send_text("Hello WebSocket");
+        })
+        .onmessage([&](crow::websocket::connection& conn, const std::string& data, bool /*is_binary*/){
+            received_message = data;
+            conn.send_text("Echo: " + data);
+        })
+        .onclose([&](crow::websocket::connection&, const std::string&, uint16_t){});
+
+    app.validate();
+
+    // Test with TCP_NODELAY enabled for WebSocket
+    app.websocket_tcp_nodelay(true);
+    
+    auto _ = app.bindaddr(LOCALHOST_ADDRESS).port(0).run_async();
+    app.wait_for_server_start();
+
+    asio::io_context ic;
+    asio::ip::tcp::socket socket(ic);
+    socket.connect(asio::ip::tcp::endpoint(asio::ip::make_address(LOCALHOST_ADDRESS), app.port()));
+
+    std::string upgrade_request =
+        "GET /ws HTTP/1.1\r\n"
+        "Host: localhost\r\n"
+        "Upgrade: websocket\r\n"
+        "Connection: Upgrade\r\n"
+        "Sec-WebSocket-Key: dGhlIHNhbXBsZSBub25jZQ==\r\n"
+        "Sec-WebSocket-Version: 13\r\n"
+        "\r\n";
+
+    socket.send(asio::buffer(upgrade_request));
+
+    std::vector<char> response_buffer(4096);
+    size_t bytes_received = socket.receive(asio::buffer(response_buffer));
+    std::string response(response_buffer.begin(), response_buffer.begin() + bytes_received);
+
+    CHECK(response.find("101") != std::string::npos);
+    CHECK(response.find("Upgrade") != std::string::npos);
+
+    socket.close();
+    app.stop();
+}
+
+TEST_CASE("Global middleware rejection ignored during WebSocket upgrade")
+{
+    struct AuthGuard
+    {
+        struct context
+        {};
+
+        void before_handle(crow::request& req,
+                           crow::response& res,
+                           context&)
+        {
+            const bool authenticated =
+              req.get_header_value("Authorization") ==
+              "Bearer valid-token";
+
+            if (!authenticated)
+            {
+                res.code = 401;
+                res.set_header("Content-Type", "text/plain");
+                res.body = "AUTHENTICATION_REQUIRED";
+                res.end();
+            }
+        }
+
+        void after_handle(crow::request& /*req*/,
+                          crow::response& /*res*/,
+                          context&)
+        {}
+    };
+
+    crow::App<AuthGuard> app;
+
+    std::atomic<bool> websocket_open_called{false};
+
+    CROW_WEBSOCKET_ROUTE(app, "/ws")
+      .onopen([&websocket_open_called](crow::websocket::connection&) {
+          websocket_open_called = true;
+      });
+
+    auto _ = app.bindaddr(LOCALHOST_ADDRESS).port(45451).run_async();
+
+    app.wait_for_server_start();
+
+    auto unauthorized_resp = HttpClient::request(LOCALHOST_ADDRESS,
+                                                 45451,
+                                                 "GET /ws HTTP/1.1\r\n"
+                                                 "Host: 127.0.0.1:18080\r\n"
+                                                 "Upgrade: websocket\r\n"
+                                                 "Connection: Upgrade\r\n"
+                                                 "Sec-WebSocket-Version: 13\r\n"
+                                                 "X-Test-ID: ws-unauth\r\n"
+                                                 "Sec-WebSocket-Key: P8RNCqS+Eui21l8qAEYczQ==\r\n\r\n");
+    // an unauthorized request to websocket url shall return status 401
+    // and not call on_open of websocket
+    CHECK(unauthorized_resp.find("HTTP/1.1 401 Unauthorized") != std::string::npos);
+    CHECK(websocket_open_called == false);
+    websocket_open_called = false;
+
+    auto authorized_resp = HttpClient::request(LOCALHOST_ADDRESS,
+                                               45451,
+                                               "GET /ws HTTP/1.1\r\n"
+                                               "Host: 127.0.0.1:18080\r\n"
+                                               "Upgrade: websocket\r\n"
+                                               "Connection: Upgrade\r\n"
+                                               "Sec-WebSocket-Version: 13\r\n"
+                                               "X-Test-ID: ws-unauth\r\n"
+                                               // we add a valid authentication token here
+                                               "Authorization: Bearer valid-token\r\n"
+                                               "Sec-WebSocket-Key: P8RNCqS+Eui21l8qAEYczQ==\r\n\r\n");
+
+    // an authorized request to websocket url shall return status 101
+    // and shall call on_open of websocket
+    CHECK(authorized_resp.find("HTTP/1.1 101 Switching Protocols") != std::string::npos);
+    CHECK(websocket_open_called == true);
+
+    app.stop();
+}
+
+TEST_CASE("stack overflow due to deeply nested json input")
+{
+    // this is linked to security advisory https://github.com/CrowCpp/Crow/security/advisories/GHSA-7x84-xhp8-6cqj
+    crow::SimpleApp app;
+
+    CROW_ROUTE(app, "/json").methods("POST"_method)
+        ([](const crow::request& req) {
+            auto j = crow::json::load(req.body);
+            if (!j) return crow::response(400);
+            return crow::response(200);
+        });
+
+    app.validate();
+
+    auto _ = app.bindaddr(LOCALHOST_ADDRESS).port(45451).run_async();
+    app.wait_for_server_start();
+
+    const int depth = 4000;
+
+    std::string json;
+    for (int i = 0; i < depth; i++) {
+        json += "{\"a\":";
+    }
+    json += "1";
+    for (int i = 0; i < depth; i++) {
+        json += "}";
+    }
+
+    std::string req =
+        "POST /json HTTP/1.1\r\n"
+        "Host: 127.0.0.1:45451\r\n"
+        "Content-Type: application/json\r\n"
+        "Content-Length: " + std::to_string(json.size()) + "\r\n"
+        "Connection: close\r\n\r\n" + json;
+
+    //printf("sending %d nested objects (%zu bytes)\n", depth, json.size());
+    {
+        auto resp = HttpClient::request(LOCALHOST_ADDRESS, 45451,req);
+        if (resp.empty()) {
+            FAIL("no response. server is dead.\n");
+        }
+        else {
+            // The stack depth of the json parser is now limited to 1024,
+            // it returns now correctly with failure, therefore bad request is returned
+            CHECK(resp.find("400 Bad Request") != std::string::npos);
+        }
+    }
+    app.stop();
+}
+
+static std::string http_request(const std::string& path, const std::string& cookie = "")
+{
+    std::string raw = "GET " + path + " HTTP/1.1\r\nHost: localhost\r\n";
+    if (!cookie.empty())
+        raw += "Cookie: session=" + cookie + "\r\n";
+    raw += "Connection: close\r\n\r\n";
+    std::string response = HttpClient::request(LOCALHOST_ADDRESS,45451,raw);
+
+    return response;
+}
+
+static std::string read_file(const fs::path& path)
+{
+    std::ifstream in(path, std::ios::binary);
+    std::ostringstream out;
+    out << in.rdbuf();
+    return out.str();
+}
+
+TEST_CASE("crow_filestore_boundary_e2e")
+{
+    const fs::path base = fs::current_path() / "filestore_boundary_e2e";
+    const fs::path store = base / "sessions";
+    const fs::path safe_session = store / "safecontrol.json";
+    const fs::path outside = base / "outside_admin.json";
+
+    fs::create_directories(store);
+    std::ofstream(safe_session, std::ios::trunc) << "{\"role\":\"user\",\"marker\":\"INSIDE_STORE\"}";
+    std::ofstream(outside, std::ios::trunc) << "{\"role\":\"admin\",\"marker\":\"OUTSIDE_STORE\"}";
+
+    using Session = crow::SessionMiddleware<crow::FileStore>;
+    crow::App<crow::CookieParser, Session> app{Session{crow::FileStore{store.string()}}};
+
+    CROW_ROUTE(app, "/admin")
+    ([&](const crow::request& req) {
+        auto& session = app.get_context<Session>(req);
+        if (session.string("role") != "admin")
+            return crow::response(403, "denied");
+        return crow::response(200, "PROTECTED_ADMIN_CONTENT");
+    });
+
+    CROW_ROUTE(app, "/touch")
+    ([&](const crow::request& req) {
+        auto& session = app.get_context<Session>(req);
+        session.set("touched", true);
+        return crow::response(200, "ok");
+    });
+
+    auto _ = app.bindaddr(LOCALHOST_ADDRESS).port(45451).run_async();
+    app.wait_for_server_start();
+
+    const std::string no_cookie = http_request( "/admin");
+    REQUIRE(no_cookie.find("403 Forbidden") != std::string::npos);
+
+    const std::string safe_cookie = http_request("/admin", "safecontrol");
+    REQUIRE(safe_cookie.find("403 Forbidden") != std::string::npos);
+
+    // here we try to traversal out of cookie storage directory
+    const std::string traversal_cookie = http_request( "/admin", "../outside_admin");
+    const std::string traversal_write = http_request( "/touch", "../outside_admin");
+
+    const std::string outside_after = read_file(outside);
+    const fs::path canonical_store = fs::weakly_canonical(store);
+    const fs::path canonical_outside = fs::weakly_canonical(outside);
+    const bool outside_boundary = canonical_outside.parent_path() != canonical_store;
+    REQUIRE(canonical_outside.parent_path() != canonical_store);
+
+    // as the cookie name is invalid, you should not get a valid cookie
+    // therefore you should not be able to access protected content
+    REQUIRE(traversal_cookie.find("PROTECTED_ADMIN_CONTENT") == std::string::npos);
+    // you should not be able to access protected content outside of cookies filestore base directory
+    REQUIRE(outside_after.find("\"touched\":true") == std::string::npos);
+
+    // code from PoC as cross check
+    const bool no_cookie_denied = no_cookie.find("403 Forbidden") != std::string::npos;
+    const bool safe_cookie_denied = safe_cookie.find("403 Forbidden") != std::string::npos;
+    const bool traversal_admin = traversal_cookie.find("PROTECTED_ADMIN_CONTENT") != std::string::npos;
+    const bool traversal_modified = outside_after.find("\"touched\":true") != std::string::npos;
+
+    const bool confirmed = no_cookie_denied && safe_cookie_denied && traversal_admin && traversal_modified && outside_boundary;
+
+    REQUIRE_FALSE(confirmed);
+    app.stop();
+}
+
+TEST_CASE("Trailing-slash redirects")
+{
+    // this test is linked to https://github.com/CrowCpp/Crow/security/advisories/GHSA-x6vq-298x-6qgq
+
+    crow::SimpleApp app;
+    CROW_ROUTE(app, "/<path>/")([](std::string value) {
+        return "path=" + value;
+    });
+
+    app.loglevel(crow::LogLevel::Critical);
+    auto srv = app.bindaddr(LOCALHOST_ADDRESS).port(45451).run_async();
+    app.wait_for_server_start();
+
+    auto control = HttpClient::request(LOCALHOST_ADDRESS,
+                                       45451,
+                                       "GET /safe HTTP/1.1\r\n"
+                                       "Host: trusted.example\r\n"
+                                       "Connection: close\r\n\r\n");
+
+    REQUIRE(control.find("301")!=std::string::npos);
+    REQUIRE(control.find("Location: /safe/")!=std::string::npos);
+
+    auto trigger = HttpClient::request(LOCALHOST_ADDRESS,
+                                   45451,
+                                   "GET //attacker.example HTTP/1.1\r\n"
+                                   "Host: trusted.example\r\n"
+                                   "Connection: close\r\n\r\n");
+
+    REQUIRE(trigger.find("301")!=std::string::npos);
+    // trigger is protocol relative
+    REQUIRE(trigger.find("Location: //attacker.example/")==std::string::npos);
+    REQUIRE(trigger.find("Location: /attacker.example/")!=std::string::npos);
+
+    /*
+    auto trigger_encoded = HttpClient::request(LOCALHOST_ADDRESS,
+                                   45451,
+                                   "GET %2F/attacker.example HTTP/1.1\r\n"
+                                   "Host: trusted.example\r\n"
+                                   "Connection: close\r\n\r\n");
+    REQUIRE(trigger_encoded.find("301")!=std::string::npos);
+    // trigger is protocol relative
+    REQUIRE(trigger_encoded.find("Location: //attacker.example/")==std::string::npos);
+    REQUIRE(trigger_encoded.find("Location: /attacker.example/")!=std::string::npos);
+    */
+
+    /*trigger_encoded = HttpClient::request(LOCALHOST_ADDRESS,
+                                   45451,
+                                   "GET /%2Fattacker.example HTTP/1.1\r\n"
+                                   "Host: trusted.example\r\n"
+                                   "Connection: close\r\n\r\n");
+    REQUIRE(trigger_encoded.find("301")!=std::string::npos);
+    // trigger is protocol relative
+    REQUIRE(trigger_encoded.find("Location: //attacker.example/")==std::string::npos);
+    REQUIRE(trigger_encoded.find("Location: /attacker.example/")!=std::string::npos);
+    */
+
+    /*
+    trigger_encoded = HttpClient::request(LOCALHOST_ADDRESS,
+                                   45451,
+                                   "GET %2F%2Fattacker.example HTTP/1.1\r\n"
+                                   "Host: trusted.example\r\n"
+                                   "Connection: close\r\n\r\n");
+    REQUIRE(trigger_encoded.find("301")!=std::string::npos);
+    // trigger is protocol relative
+    REQUIRE(trigger_encoded.find("Location: //attacker.example/")==std::string::npos);
+    REQUIRE(trigger_encoded.find("Location: /attacker.example/")!=std::string::npos);
+    */
+
+    app.stop();
+
+
+    REQUIRE(trigger.find("301")!=std::string::npos);
+    // trigger is protocol relative
+    REQUIRE(trigger.find("Location: //attacker.example/")==std::string::npos);
+    REQUIRE(trigger.find("Location: /attacker.example/")!=std::string::npos);
+} // local_middleware
 

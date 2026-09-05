@@ -24,6 +24,11 @@
 using std::isinf;
 using std::isnan;
 
+#ifdef __CHAR_UNSIGNED__
+#define IS_CONTROL_ASCII(c) (c < 0x20)
+#else
+#define IS_CONTROL_ASCII(c) ((c >= 0) && (c < 0x20))
+#endif
 
 namespace crow // NOTE: Already documented in "crow/app.h"
 {
@@ -57,7 +62,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                     case '\r': ret += "\\r"; break;
                     case '\t': ret += "\\t"; break;
                     default:
-                        if (c >= 0 && c < 0x20)
+                        if (IS_CONTROL_ASCII(c))
                         {
                             ret += "\\u00";
                             ret += to_hex(c / 16);
@@ -136,11 +141,17 @@ namespace crow // NOTE: Already documented in "crow/app.h"
 
                 r_string(r_string&& r)
                 {
-                    *this = r;
+                    *this = std::move(r);
                 }
 
                 r_string& operator=(r_string&& r)
                 {
+                    if (this == &r)
+                        return *this;
+
+                    if (owned_)
+                        delete[] s_;
+
                     s_ = r.s_;
                     e_ = r.e_;
                     owned_ = r.owned_;
@@ -151,6 +162,9 @@ namespace crow // NOTE: Already documented in "crow/app.h"
 
                 r_string& operator=(const r_string& r)
                 {
+                    if (this == &r)
+                        return *this;
+
                     s_ = r.s_;
                     e_ = r.e_;
                     owned_ = 0;
@@ -875,7 +889,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         inline rvalue load_nocopy_internal(char* data, size_t size)
         {
             // Defend against excessive recursion
-            static constexpr unsigned max_depth = 10000;
+            static constexpr unsigned max_depth = 1024;
 
             //static const char* escaped = "\"\\/\b\f\n\r\t";
             struct Parser
@@ -1128,6 +1142,13 @@ namespace crow // NOTE: Already documented in "crow/app.h"
 
                 rvalue decode_value(unsigned depth)
                 {
+                    if (CROW_UNLIKELY(depth > max_depth))
+                    {
+                        rvalue ret;
+                        ret.set_error();
+                        return ret;
+                    }
+
                     switch (*data)
                     {
                         case '[':

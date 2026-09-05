@@ -444,19 +444,19 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         void handle_upgrade(const request& req, response&, SocketAdaptor&& adaptor) override
         {
             max_payload_ = max_payload_override_ ? max_payload_ : app_->websocket_max_payload();
-            crow::websocket::Connection<SocketAdaptor, App>::create(req, std::move(adaptor), app_, max_payload_, subprotocols_, open_handler_, message_handler_, close_handler_, error_handler_, accept_handler_, mirror_protocols_);
+            crow::websocket::Connection<SocketAdaptor, App>::create(req, std::move(adaptor), app_, max_payload_, subprotocols_, open_handler_, message_handler_, close_handler_, error_handler_, accept_handler_, mirror_protocols_, app_->websocket_tcp_socket_options());
         }
 
         void handle_upgrade(const request& req, response&, UnixSocketAdaptor&& adaptor) override
         {
             max_payload_ = max_payload_override_ ? max_payload_ : app_->websocket_max_payload();
-            crow::websocket::Connection<UnixSocketAdaptor, App>::create(req, std::move(adaptor), app_, max_payload_, subprotocols_, open_handler_, message_handler_, close_handler_, error_handler_, accept_handler_, mirror_protocols_);
+            crow::websocket::Connection<UnixSocketAdaptor, App>::create(req, std::move(adaptor), app_, max_payload_, subprotocols_, open_handler_, message_handler_, close_handler_, error_handler_, accept_handler_, mirror_protocols_, app_->websocket_tcp_socket_options());
         }
 
 #ifdef CROW_ENABLE_SSL
         void handle_upgrade(const request& req, response&, SSLAdaptor&& adaptor) override
         {
-            crow::websocket::Connection<SSLAdaptor, App>::create(req, std::move(adaptor), app_, max_payload_, subprotocols_, open_handler_, message_handler_, close_handler_, error_handler_, accept_handler_, mirror_protocols_);
+            crow::websocket::Connection<SSLAdaptor, App>::create(req, std::move(adaptor), app_, max_payload_, subprotocols_, open_handler_, message_handler_, close_handler_, error_handler_, accept_handler_, mirror_protocols_, app_->websocket_tcp_socket_options());
         }
 #endif
 
@@ -1506,7 +1506,14 @@ namespace crow // NOTE: Already documented in "crow/app.h"
             {
                 CROW_LOG_INFO << "Redirecting to a url with trailing slash: " << req.url;
                 res = response(301);
-                res.add_header("Location", req.url + "/");
+                auto pos_of_first_non_slash = req.url.find_first_not_of('/');
+                if (pos_of_first_non_slash==1)
+                {
+                    res.add_header("Location", req.url + "/");
+                } else
+                {
+                   res.add_header("Location",req.url.substr(pos_of_first_non_slash-1)+"/");
+                }
                 res.end();
                 return;
             }
@@ -1764,7 +1771,14 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                 if (rule_index == RULE_SPECIAL_REDIRECT_SLASH) {
                     CROW_LOG_INFO << "Redirecting to a url with trailing slash: " << req.url;
                     res = response(301);
-                    res.add_header("Location", req.url + "/");
+                    auto pos_of_first_non_slash = req.url.find_first_not_of('/');
+                    if (pos_of_first_non_slash==1)
+                    {
+                        res.add_header("Location", req.url + "/");
+                    } else
+                    {
+                        res.add_header("Location",req.url.substr(pos_of_first_non_slash-1)+"/");
+                    }
                     res.end();
                 } else {
                     CROW_LOG_DEBUG << "Matched rule '" << rules[rule_index]->rule_ << "' " << static_cast<uint64_t>(req.
