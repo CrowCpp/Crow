@@ -204,6 +204,10 @@ namespace crow
             {
                 req_.body.clear();
                 res = response(body_error_status_);
+                // Explicit, rather than relying on response::operator=(&&) happening to
+                // omit skip_body: a HEAD request must never get a body, regardless of
+                // which error status (413, or 500 from a body_sink failure) sent it here.
+                res.skip_body = (req_.method == HTTPMethod::Head);
                 res.set_header("Connection", "close");
                 res.end();
                 close_connection_ = true;
