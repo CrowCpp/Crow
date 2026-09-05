@@ -656,41 +656,48 @@ $(document).ready(function(){initNavTree('session_8h_source.html',''); initResiz
 <div class="line"><a id="l00535" name="l00535"></a><span class="lineno">  535</span> </div>
 <div class="line"><a id="l00536" name="l00536"></a><span class="lineno">  536</span>        std::string get_filename(<span class="keyword">const</span> std::string&amp; key, <span class="keywordtype">bool</span> suffix = <span class="keyword">true</span>)</div>
 <div class="line"><a id="l00537" name="l00537"></a><span class="lineno">  537</span>        {</div>
-<div class="line"><a id="l00538" name="l00538"></a><span class="lineno">  538</span>            <span class="keywordflow">return</span> utility::join_path(path_, key + (suffix ? <span class="stringliteral">&quot;.json&quot;</span> : <span class="stringliteral">&quot;&quot;</span>));</div>
-<div class="line"><a id="l00539" name="l00539"></a><span class="lineno">  539</span>        }</div>
-<div class="line"><a id="l00540" name="l00540"></a><span class="lineno">  540</span> </div>
-<div class="line"><a id="l00541" name="l00541"></a><span class="lineno">  541</span>        <span class="keywordtype">bool</span> contains(<span class="keyword">const</span> std::string&amp; key)</div>
-<div class="line"><a id="l00542" name="l00542"></a><span class="lineno">  542</span>        {</div>
-<div class="line"><a id="l00543" name="l00543"></a><span class="lineno">  543</span>            std::ifstream file(get_filename(key));</div>
-<div class="line"><a id="l00544" name="l00544"></a><span class="lineno">  544</span>            <span class="keywordflow">return</span> file.good();</div>
-<div class="line"><a id="l00545" name="l00545"></a><span class="lineno">  545</span>        }</div>
-<div class="line"><a id="l00546" name="l00546"></a><span class="lineno">  546</span> </div>
-<div class="line"><a id="l00547" name="l00547"></a><span class="lineno">  547</span>        <span class="keywordtype">void</span> evict(<span class="keyword">const</span> std::string&amp; key)</div>
-<div class="line"><a id="l00548" name="l00548"></a><span class="lineno">  548</span>        {</div>
-<div class="line"><a id="l00549" name="l00549"></a><span class="lineno">  549</span>            std::remove(get_filename(key).c_str());</div>
-<div class="line"><a id="l00550" name="l00550"></a><span class="lineno">  550</span>        }</div>
-<div class="line"><a id="l00551" name="l00551"></a><span class="lineno">  551</span> </div>
-<div class="line"><a id="l00552" name="l00552"></a><span class="lineno">  552</span>        uint64_t chrono_time()<span class="keyword"> const</span></div>
-<div class="line"><a id="l00553" name="l00553"></a><span class="lineno">  553</span><span class="keyword">        </span>{</div>
-<div class="line"><a id="l00554" name="l00554"></a><span class="lineno">  554</span>            <span class="keywordflow">return</span> std::chrono::duration_cast&lt;std::chrono::seconds&gt;(</div>
-<div class="line"><a id="l00555" name="l00555"></a><span class="lineno">  555</span>                     std::chrono::steady_clock::now().time_since_epoch())</div>
-<div class="line"><a id="l00556" name="l00556"></a><span class="lineno">  556</span>              .count();</div>
+<div class="line"><a id="l00538" name="l00538"></a><span class="lineno">  538</span>            std::string filename{key};</div>
+<div class="line"><a id="l00539" name="l00539"></a><span class="lineno">  539</span>            <span class="comment">// we have to sanitize here to prevent file traversal by &quot;..&quot; or similar</span></div>
+<div class="line"><a id="l00540" name="l00540"></a><span class="lineno">  540</span>            utility::sanitize_filename(filename);</div>
+<div class="line"><a id="l00541" name="l00541"></a><span class="lineno">  541</span>            <span class="keywordflow">if</span> (suffix)</div>
+<div class="line"><a id="l00542" name="l00542"></a><span class="lineno">  542</span>            {</div>
+<div class="line"><a id="l00543" name="l00543"></a><span class="lineno">  543</span>                filename.append(<span class="stringliteral">&quot;.json&quot;</span>);</div>
+<div class="line"><a id="l00544" name="l00544"></a><span class="lineno">  544</span>            }</div>
+<div class="line"><a id="l00545" name="l00545"></a><span class="lineno">  545</span>            <span class="keywordflow">return</span> path_/filename;</div>
+<div class="line"><a id="l00546" name="l00546"></a><span class="lineno">  546</span>        }</div>
+<div class="line"><a id="l00547" name="l00547"></a><span class="lineno">  547</span> </div>
+<div class="line"><a id="l00548" name="l00548"></a><span class="lineno">  548</span>        <span class="keywordtype">bool</span> contains(<span class="keyword">const</span> std::string&amp; key)</div>
+<div class="line"><a id="l00549" name="l00549"></a><span class="lineno">  549</span>        {</div>
+<div class="line"><a id="l00550" name="l00550"></a><span class="lineno">  550</span>            std::ifstream file(get_filename(key));</div>
+<div class="line"><a id="l00551" name="l00551"></a><span class="lineno">  551</span>            <span class="keywordflow">return</span> file.good();</div>
+<div class="line"><a id="l00552" name="l00552"></a><span class="lineno">  552</span>        }</div>
+<div class="line"><a id="l00553" name="l00553"></a><span class="lineno">  553</span> </div>
+<div class="line"><a id="l00554" name="l00554"></a><span class="lineno">  554</span>        <span class="keywordtype">void</span> evict(<span class="keyword">const</span> std::string&amp; key)</div>
+<div class="line"><a id="l00555" name="l00555"></a><span class="lineno">  555</span>        {</div>
+<div class="line"><a id="l00556" name="l00556"></a><span class="lineno">  556</span>            std::remove(get_filename(key).c_str());</div>
 <div class="line"><a id="l00557" name="l00557"></a><span class="lineno">  557</span>        }</div>
 <div class="line"><a id="l00558" name="l00558"></a><span class="lineno">  558</span> </div>
-<div class="line"><a id="l00559" name="l00559"></a><span class="lineno">  559</span>        std::string path_;</div>
-<div class="line"><a id="l00560" name="l00560"></a><span class="lineno">  560</span>        uint64_t expiration_seconds_;</div>
-<div class="line"><a id="l00561" name="l00561"></a><span class="lineno">  561</span>        <a class="code hl_struct" href="structcrow_1_1session_1_1_expiration_tracker.html">session::ExpirationTracker</a> expirations_;</div>
-<div class="line"><a id="l00562" name="l00562"></a><span class="lineno">  562</span>    };</div>
+<div class="line"><a id="l00559" name="l00559"></a><span class="lineno">  559</span>        uint64_t chrono_time()<span class="keyword"> const</span></div>
+<div class="line"><a id="l00560" name="l00560"></a><span class="lineno">  560</span><span class="keyword">        </span>{</div>
+<div class="line"><a id="l00561" name="l00561"></a><span class="lineno">  561</span>            <span class="keywordflow">return</span> std::chrono::duration_cast&lt;std::chrono::seconds&gt;(</div>
+<div class="line"><a id="l00562" name="l00562"></a><span class="lineno">  562</span>                     std::chrono::steady_clock::now().time_since_epoch())</div>
+<div class="line"><a id="l00563" name="l00563"></a><span class="lineno">  563</span>              .count();</div>
+<div class="line"><a id="l00564" name="l00564"></a><span class="lineno">  564</span>        }</div>
+<div class="line"><a id="l00565" name="l00565"></a><span class="lineno">  565</span> </div>
+<div class="line"><a id="l00566" name="l00566"></a><span class="lineno">  566</span>        std::filesystem::path path_;</div>
+<div class="line"><a id="l00567" name="l00567"></a><span class="lineno">  567</span>        uint64_t expiration_seconds_;</div>
+<div class="line"><a id="l00568" name="l00568"></a><span class="lineno">  568</span>        <a class="code hl_struct" href="structcrow_1_1session_1_1_expiration_tracker.html">session::ExpirationTracker</a> expirations_;</div>
+<div class="line"><a id="l00569" name="l00569"></a><span class="lineno">  569</span>    };</div>
 </div>
-<div class="line"><a id="l00563" name="l00563"></a><span class="lineno">  563</span> </div>
-<div class="line"><a id="l00564" name="l00564"></a><span class="lineno">  564</span>} <span class="comment">// namespace crow</span></div>
-<div class="ttc" id="aclasscrow_1_1json_1_1rvalue_html"><div class="ttname"><a href="classcrow_1_1json_1_1rvalue.html">crow::json::rvalue</a></div><div class="ttdoc">JSON read value.</div><div class="ttdef"><b>Definition</b> json.h:278</div></div>
-<div class="ttc" id="aclasscrow_1_1json_1_1rvalue_html_a1a9a1a3616d6484bf3dcdb941cf8e6da"><div class="ttname"><a href="classcrow_1_1json_1_1rvalue.html#a1a9a1a3616d6484bf3dcdb941cf8e6da">crow::json::rvalue::i</a></div><div class="ttdeci">int64_t i() const</div><div class="ttdoc">The integer value.</div><div class="ttdef"><b>Definition</b> json.h:400</div></div>
-<div class="ttc" id="aclasscrow_1_1json_1_1rvalue_html_a4a3e33d65b812ed583814a7ac2e1f448"><div class="ttname"><a href="classcrow_1_1json_1_1rvalue.html#a4a3e33d65b812ed583814a7ac2e1f448">crow::json::rvalue::d</a></div><div class="ttdeci">double d() const</div><div class="ttdoc">The double precision floating-point number value.</div><div class="ttdef"><b>Definition</b> json.h:433</div></div>
-<div class="ttc" id="aclasscrow_1_1json_1_1rvalue_html_a775273fbbe868c7c8d3a71acdb9ee276"><div class="ttname"><a href="classcrow_1_1json_1_1rvalue.html#a775273fbbe868c7c8d3a71acdb9ee276">crow::json::rvalue::u</a></div><div class="ttdeci">uint64_t u() const</div><div class="ttdoc">The unsigned integer value.</div><div class="ttdef"><b>Definition</b> json.h:417</div></div>
-<div class="ttc" id="aclasscrow_1_1json_1_1rvalue_html_a9bf75ffd4603990be7d0eaa192ac54fb"><div class="ttname"><a href="classcrow_1_1json_1_1rvalue.html#a9bf75ffd4603990be7d0eaa192ac54fb">crow::json::rvalue::nt</a></div><div class="ttdeci">num_type nt() const</div><div class="ttdoc">The number type of the JSON value.</div><div class="ttdef"><b>Definition</b> json.h:388</div></div>
-<div class="ttc" id="aclasscrow_1_1json_1_1rvalue_html_a9c9f7242e4164f4ed690e50e3cf5f4b1"><div class="ttname"><a href="classcrow_1_1json_1_1rvalue.html#a9c9f7242e4164f4ed690e50e3cf5f4b1">crow::json::rvalue::t</a></div><div class="ttdeci">type t() const</div><div class="ttdoc">The type of the JSON value.</div><div class="ttdef"><b>Definition</b> json.h:376</div></div>
-<div class="ttc" id="aclasscrow_1_1json_1_1wvalue_html"><div class="ttname"><a href="classcrow_1_1json_1_1wvalue.html">crow::json::wvalue</a></div><div class="ttdoc">JSON write value.</div><div class="ttdef"><b>Definition</b> json.h:1291</div></div>
+<div class="line"><a id="l00570" name="l00570"></a><span class="lineno">  570</span> </div>
+<div class="line"><a id="l00571" name="l00571"></a><span class="lineno">  571</span>} <span class="comment">// namespace crow</span></div>
+<div class="ttc" id="aclasscrow_1_1json_1_1rvalue_html"><div class="ttname"><a href="classcrow_1_1json_1_1rvalue.html">crow::json::rvalue</a></div><div class="ttdoc">JSON read value.</div><div class="ttdef"><b>Definition</b> json.h:292</div></div>
+<div class="ttc" id="aclasscrow_1_1json_1_1rvalue_html_a1a9a1a3616d6484bf3dcdb941cf8e6da"><div class="ttname"><a href="classcrow_1_1json_1_1rvalue.html#a1a9a1a3616d6484bf3dcdb941cf8e6da">crow::json::rvalue::i</a></div><div class="ttdeci">int64_t i() const</div><div class="ttdoc">The integer value.</div><div class="ttdef"><b>Definition</b> json.h:414</div></div>
+<div class="ttc" id="aclasscrow_1_1json_1_1rvalue_html_a4a3e33d65b812ed583814a7ac2e1f448"><div class="ttname"><a href="classcrow_1_1json_1_1rvalue.html#a4a3e33d65b812ed583814a7ac2e1f448">crow::json::rvalue::d</a></div><div class="ttdeci">double d() const</div><div class="ttdoc">The double precision floating-point number value.</div><div class="ttdef"><b>Definition</b> json.h:447</div></div>
+<div class="ttc" id="aclasscrow_1_1json_1_1rvalue_html_a775273fbbe868c7c8d3a71acdb9ee276"><div class="ttname"><a href="classcrow_1_1json_1_1rvalue.html#a775273fbbe868c7c8d3a71acdb9ee276">crow::json::rvalue::u</a></div><div class="ttdeci">uint64_t u() const</div><div class="ttdoc">The unsigned integer value.</div><div class="ttdef"><b>Definition</b> json.h:431</div></div>
+<div class="ttc" id="aclasscrow_1_1json_1_1rvalue_html_a9bf75ffd4603990be7d0eaa192ac54fb"><div class="ttname"><a href="classcrow_1_1json_1_1rvalue.html#a9bf75ffd4603990be7d0eaa192ac54fb">crow::json::rvalue::nt</a></div><div class="ttdeci">num_type nt() const</div><div class="ttdoc">The number type of the JSON value.</div><div class="ttdef"><b>Definition</b> json.h:402</div></div>
+<div class="ttc" id="aclasscrow_1_1json_1_1rvalue_html_a9c9f7242e4164f4ed690e50e3cf5f4b1"><div class="ttname"><a href="classcrow_1_1json_1_1rvalue.html#a9c9f7242e4164f4ed690e50e3cf5f4b1">crow::json::rvalue::t</a></div><div class="ttdeci">type t() const</div><div class="ttdoc">The type of the JSON value.</div><div class="ttdef"><b>Definition</b> json.h:390</div></div>
+<div class="ttc" id="aclasscrow_1_1json_1_1wvalue_html"><div class="ttname"><a href="classcrow_1_1json_1_1wvalue.html">crow::json::wvalue</a></div><div class="ttdoc">JSON write value.</div><div class="ttdef"><b>Definition</b> json.h:1312</div></div>
 <div class="ttc" id="anamespacecrow_html"><div class="ttname"><a href="namespacecrow.html">crow</a></div><div class="ttdoc">The main namespace of the library. In this namespace is defined the most important classes and functi...</div></div>
 <div class="ttc" id="astructcrow_1_1_cookie_parser_1_1_cookie_html"><div class="ttname"><a href="structcrow_1_1_cookie_parser_1_1_cookie.html">crow::CookieParser::Cookie</a></div><div class="ttdef"><b>Definition</b> cookie_parser.h:37</div></div>
 <div class="ttc" id="astructcrow_1_1_cookie_parser_html"><div class="ttname"><a href="structcrow_1_1_cookie_parser.html">crow::CookieParser</a></div><div class="ttdef"><b>Definition</b> cookie_parser.h:34</div></div>
@@ -710,7 +717,7 @@ $(document).ready(function(){initNavTree('session_8h_source.html',''); initResiz
 			<ul>
 				<li class="navelem"><a class="el" href="dir_d44c64559bbebec7f509842c48db8b23.html">include</a></li><li class="navelem"><a class="el" href="dir_d22c1cb87b72f01e1a7f207eb3bfd1ca.html">crow</a></li><li class="navelem"><a class="el" href="dir_5bc98d550c303c0206de23cf2f7c59bb.html">middlewares</a></li><li class="navelem"><b>session.h</b></li>
 				<li class="footer">
-					Generated on Mon Jun 29 2026 for Crow by <a href="http://www.doxygen.org/index.html">
+					Generated on Sat Sep 5 2026 for Crow by <a href="http://www.doxygen.org/index.html">
 					<img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.9.8.
 					Dark theme by <a href="http://majerle.eu" target="_new">Tilen Majerle</a>. Edited by <a href="https://github.com/The-EDev" target="_new">Farook Al-Sammarraie</a>. All rights reserved.
 				</li>

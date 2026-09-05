@@ -4,9 +4,11 @@ var searchData=
   ['wait_5ffor_5fstart_1',['wait_for_start',['../classcrow_1_1_server.html#a918b1a335b8d2d4c0fd23f45d897bee9',1,'crow::Server']]],
   ['weakwrappedmessage_2',['WeakWrappedMessage',['../structcrow_1_1websocket_1_1_connection_1_1_weak_wrapped_message.html',1,'crow::websocket::Connection']]],
   ['websocket_5fmax_5fpayload_3',['websocket_max_payload',['../classcrow_1_1_crow.html#ac30b84b54096d1bfe517a9cf81d65fc7',1,'crow::Crow::websocket_max_payload(uint64_t max_payload)'],['../classcrow_1_1_crow.html#a391a488c01ce53c0ccfd502c7ad15640',1,'crow::Crow::websocket_max_payload()']]],
-  ['websocketrule_4',['WebSocketRule',['../classcrow_1_1_web_socket_rule.html',1,'crow']]],
-  ['websocketrule_5ft_5',['WebSocketRule_t',['../classcrow_1_1_crow.html#a8ce9c4e7343480097d8a8afbf911ec72',1,'crow::Crow']]],
-  ['wrapped_6',['Wrapped',['../structcrow_1_1detail_1_1routing__handler__call__helper_1_1_wrapped.html',1,'crow::detail::routing_handler_call_helper']]],
-  ['wvalue_7',['wvalue',['../classcrow_1_1json_1_1wvalue.html',1,'crow::json::wvalue'],['../classcrow_1_1json_1_1wvalue.html#a1813a29de56af96789cc76b8cdb0dbbe',1,'crow::json::wvalue::wvalue()']]],
-  ['wvalue_5freader_8',['wvalue_reader',['../structcrow_1_1json_1_1wvalue__reader.html',1,'crow::json']]]
+  ['websocket_5ftcp_5fnodelay_4',['websocket_tcp_nodelay',['../classcrow_1_1_crow.html#a717c0811ebfcadd12dbef788771ec46d',1,'crow::Crow']]],
+  ['websocket_5ftcp_5fsocket_5foptions_5',['websocket_tcp_socket_options',['../classcrow_1_1_crow.html#af7d8bd7e8b72899f3bcdae49a586c89c',1,'crow::Crow']]],
+  ['websocketrule_6',['WebSocketRule',['../classcrow_1_1_web_socket_rule.html',1,'crow']]],
+  ['websocketrule_5ft_7',['WebSocketRule_t',['../classcrow_1_1_crow.html#a8ce9c4e7343480097d8a8afbf911ec72',1,'crow::Crow']]],
+  ['wrapped_8',['Wrapped',['../structcrow_1_1detail_1_1routing__handler__call__helper_1_1_wrapped.html',1,'crow::detail::routing_handler_call_helper']]],
+  ['wvalue_9',['wvalue',['../classcrow_1_1json_1_1wvalue.html',1,'crow::json::wvalue'],['../classcrow_1_1json_1_1wvalue.html#a1813a29de56af96789cc76b8cdb0dbbe',1,'crow::json::wvalue::wvalue()']]],
+  ['wvalue_5freader_10',['wvalue_reader',['../structcrow_1_1json_1_1wvalue__reader.html',1,'crow::json']]]
 ];

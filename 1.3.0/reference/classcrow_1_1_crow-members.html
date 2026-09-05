@@ -160,6 +160,8 @@ $(document).ready(function(){initNavTree('classcrow_1_1_crow.html',''); initResi
   <tr class="even"><td class="entry"><a class="el" href="classcrow_1_1_crow.html#a0266672657128919ab9a067d93f3868f">stop</a>()</td><td class="entry"><a class="el" href="classcrow_1_1_crow.html">crow::Crow&lt; Middlewares &gt;</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
   <tr class="odd"><td class="entry"><a class="el" href="classcrow_1_1_crow.html#a058d8138c140c1073f0972c74cfa812b">stream_threshold</a>(size_t threshold)</td><td class="entry"><a class="el" href="classcrow_1_1_crow.html">crow::Crow&lt; Middlewares &gt;</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
   <tr class="even"><td class="entry"><a class="el" href="classcrow_1_1_crow.html#af35a53c39414aa79446690fea359e573">stream_threshold</a>()</td><td class="entry"><a class="el" href="classcrow_1_1_crow.html">crow::Crow&lt; Middlewares &gt;</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
+  <tr class="odd"><td class="entry"><a class="el" href="classcrow_1_1_crow.html#a851e53c7c31c97964d643c2d0cb5df7c">tcp_nodelay</a>(bool enabled=true)</td><td class="entry"><a class="el" href="classcrow_1_1_crow.html">crow::Crow&lt; Middlewares &gt;</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="classcrow_1_1_crow.html#afbf6d9db5fd6d1d2638b0b868f5ffcfa">tcp_socket_options</a>() const</td><td class="entry"><a class="el" href="classcrow_1_1_crow.html">crow::Crow&lt; Middlewares &gt;</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
   <tr class="odd"><td class="entry"><a class="el" href="classcrow_1_1_crow.html#a7d5baf439ee8c85ad500cdb022bcd3a1">tick</a>(Duration d, Func f)</td><td class="entry"><a class="el" href="classcrow_1_1_crow.html">crow::Crow&lt; Middlewares &gt;</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
   <tr class="even"><td class="entry"><a class="el" href="classcrow_1_1_crow.html#a1d69f60255f2bf1571d6570a6abb1552">timeout</a>(std::uint8_t timeout)</td><td class="entry"><a class="el" href="classcrow_1_1_crow.html">crow::Crow&lt; Middlewares &gt;</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
   <tr class="odd"><td class="entry"><a class="el" href="classcrow_1_1_crow.html#a484ab731754f45392ca3d18f7763c018">unix_server_t</a> typedef</td><td class="entry"><a class="el" href="classcrow_1_1_crow.html">crow::Crow&lt; Middlewares &gt;</a></td><td class="entry"></td></tr>
@@ -168,6 +170,8 @@ $(document).ready(function(){initNavTree('classcrow_1_1_crow.html',''); initResi
   <tr class="even"><td class="entry"><a class="el" href="classcrow_1_1_crow.html#a06b50c2039e7bc146ac134af9fe7bf7f">wait_for_server_start</a>(std::chrono::milliseconds wait_timeout=std::chrono::milliseconds(3000))</td><td class="entry"><a class="el" href="classcrow_1_1_crow.html">crow::Crow&lt; Middlewares &gt;</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
   <tr class="odd"><td class="entry"><a class="el" href="classcrow_1_1_crow.html#ac30b84b54096d1bfe517a9cf81d65fc7">websocket_max_payload</a>(uint64_t max_payload)</td><td class="entry"><a class="el" href="classcrow_1_1_crow.html">crow::Crow&lt; Middlewares &gt;</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
   <tr class="even"><td class="entry"><a class="el" href="classcrow_1_1_crow.html#a391a488c01ce53c0ccfd502c7ad15640">websocket_max_payload</a>()</td><td class="entry"><a class="el" href="classcrow_1_1_crow.html">crow::Crow&lt; Middlewares &gt;</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
+  <tr class="odd"><td class="entry"><a class="el" href="classcrow_1_1_crow.html#a717c0811ebfcadd12dbef788771ec46d">websocket_tcp_nodelay</a>(bool enabled=true)</td><td class="entry"><a class="el" href="classcrow_1_1_crow.html">crow::Crow&lt; Middlewares &gt;</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="classcrow_1_1_crow.html#af7d8bd7e8b72899f3bcdae49a586c89c">websocket_tcp_socket_options</a>() const</td><td class="entry"><a class="el" href="classcrow_1_1_crow.html">crow::Crow&lt; Middlewares &gt;</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
   <tr class="odd"><td class="entry"><a class="el" href="classcrow_1_1_crow.html#a8ce9c4e7343480097d8a8afbf911ec72">WebSocketRule_t</a> typedef</td><td class="entry"><a class="el" href="classcrow_1_1_crow.html">crow::Crow&lt; Middlewares &gt;</a></td><td class="entry"></td></tr>
 </table></div><!-- contents -->
 </div><!-- doc-content -->
@@ -175,7 +179,7 @@ $(document).ready(function(){initNavTree('classcrow_1_1_crow.html',''); initResi
 		<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
 			<ul>
 				<li class="footer">
-					Generated on Mon Jun 29 2026 for Crow by <a href="http://www.doxygen.org/index.html">
+					Generated on Sat Sep 5 2026 for Crow by <a href="http://www.doxygen.org/index.html">
 					<img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.9.8.
 					Dark theme by <a href="http://majerle.eu" target="_new">Tilen Majerle</a>. Edited by <a href="https://github.com/The-EDev" target="_new">Farook Al-Sammarraie</a>. All rights reserved.
 				</li>

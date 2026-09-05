@@ -13,6 +13,9 @@ var annotated_dup =
           [ "call_params", "structcrow_1_1detail_1_1routing__handler__call__helper_1_1call__params.html", null ],
           [ "Wrapped", "structcrow_1_1detail_1_1routing__handler__call__helper_1_1_wrapped.html", "structcrow_1_1detail_1_1routing__handler__call__helper_1_1_wrapped" ]
         ] ],
+        [ "socket", null, [
+          [ "tcp_socket_options", "structcrow_1_1detail_1_1socket_1_1tcp__socket__options.html", null ]
+        ] ],
         [ "check_after_handle_arity_3", "structcrow_1_1detail_1_1check__after__handle__arity__3.html", "structcrow_1_1detail_1_1check__after__handle__arity__3" ],
         [ "check_after_handle_arity_3_const", "structcrow_1_1detail_1_1check__after__handle__arity__3__const.html", "structcrow_1_1detail_1_1check__after__handle__arity__3__const" ],
         [ "check_before_handle_arity_3", "structcrow_1_1detail_1_1check__before__handle__arity__3.html", "structcrow_1_1detail_1_1check__before__handle__arity__3" ],

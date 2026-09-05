@@ -120,6 +120,7 @@ var hierarchy =
     [ "crow::SSLAdaptor", "structcrow_1_1_s_s_l_adaptor.html", null ],
     [ "crow::response::static_file_info", "structcrow_1_1response_1_1static__file__info.html", null ],
     [ "crow::detail::task_timer", "classcrow_1_1detail_1_1task__timer.html", null ],
+    [ "crow::detail::socket::tcp_socket_options", "structcrow_1_1detail_1_1socket_1_1tcp__socket__options.html", null ],
     [ "crow::TCPAcceptor", "structcrow_1_1_t_c_p_acceptor.html", null ],
     [ "black_magic::pop_back::template rebind", null, [
       [ "crow::detail::partial_context< Middlewares... >", "structcrow_1_1detail_1_1partial__context.html", null ],

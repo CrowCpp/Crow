@@ -27,6 +27,7 @@ var dir_d22c1cb87b72f01e1a7f207eb3bfd1ca =
     [ "socket_acceptors.h", "socket__acceptors_8h_source.html", null ],
     [ "socket_adaptors.h", "socket__adaptors_8h_source.html", null ],
     [ "task_timer.h", "task__timer_8h_source.html", null ],
+    [ "tcp_socket_options.h", "tcp__socket__options_8h_source.html", null ],
     [ "TinySHA1.hpp", "_tiny_s_h_a1_8hpp.html", "_tiny_s_h_a1_8hpp" ],
     [ "utility.h", "utility_8h_source.html", null ],
     [ "version.h", "version_8h_source.html", null ],
