@@ -57,7 +57,7 @@ app.tcp_nodelay(true)
 
 By default Crow accepts a request body of any size. `#!cpp app.max_body_size(bytes)` sets an app-wide limit (`UINT64_MAX` is unlimited). A route can override it with `#!cpp .max_body_size(bytes)`.
 
-The advertised `Content-Length` is checked when headers complete, before `100 Continue`. Chunked bodies are counted as they arrive. An over-limit request is answered `413 Payload Too Large`; the route handler does not run. The remaining body is drained (discarded, not parsed) and the connection is then closed, bounded by the same deadline timer (`app.timeout()`, default 5s) a slow client already gets. The same cap applies to 404, 405, and slash-redirects.
+The advertised `Content-Length` is checked when headers complete, before `100 Continue`. Chunked bodies are counted as they arrive. An over-limit request is answered `413 Payload Too Large`; the route handler does not run. If the request is rejected while its body is still streaming in (e.g. a chunked body that crosses the limit), the remaining bytes are drained (discarded, not parsed) before the connection closes, bounded by the same deadline timer (`app.timeout()`, default 5s) a slow client already gets. When the advertised `Content-Length` alone already exceeds the limit, there is no body yet to drain — the connection is simply closed after the 413 is written (this does not reset a peer that is still sending). The same cap applies to 404, 405, and slash-redirects.
 
 ```cpp
 crow::SimpleApp app;

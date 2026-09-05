@@ -35,6 +35,7 @@ set(TEST_SRCS
 
 add_executable(unittest ${TEST_SRCS})
 target_link_libraries(unittest Crow::Crow Catch2::Catch2WithMain)
+target_compile_definitions(unittest PRIVATE CROW_TEST_REPO_DIR="${CMAKE_SOURCE_DIR}")
 add_warnings_optimizations(unittest)
 add_sanitizer_flags(unittest)
 
