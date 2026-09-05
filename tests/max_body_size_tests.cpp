@@ -630,3 +630,51 @@ TEST_CASE("max_body_size does not apply to an unmatched HEAD/OPTIONS request", "
 
     app.stop();
 }
+
+TEST_CASE("max_body_size applies to a matched-route HEAD/OPTIONS request", "[http][max_body_size]")
+{
+    // Unlike the unmatched case above, a HEAD/OPTIONS request that matches a
+    // route reaches the max_body_size check in handle_header(). A HEAD 413
+    // must still carry no body (skip_body set explicitly in the 413 branch,
+    // not left to accident), while OPTIONS gets a normal 413 body.
+    SimpleApp app;
+    app.max_body_size(8);
+
+    CROW_ROUTE(app, "/upload")
+      .methods("GET"_method)([] {
+          return "ok";
+      });
+
+    auto server = app.bindaddr(LOCALHOST_ADDRESS).port(0).run_async();
+    app.wait_for_server_start();
+    const auto port = app.port();
+
+    {
+        TestClient client(port);
+        client.send(
+          "HEAD /upload HTTP/1.1\r\n"
+          "Host: localhost\r\n"
+          "Content-Length: 100\r\n"
+          "\r\n");
+        const auto resp = client.receive();
+        CHECK(status_of(resp) == 413);
+        CHECK(resp.find("Connection: close") != std::string::npos);
+        CHECK(resp.find("Content-Length: 0") != std::string::npos);
+        const auto header_end = resp.find("\r\n\r\n");
+        REQUIRE(header_end != std::string::npos);
+        CHECK(resp.size() == header_end + 4); // no body after the headers
+    }
+    {
+        TestClient client(port);
+        client.send(
+          "OPTIONS /upload HTTP/1.1\r\n"
+          "Host: localhost\r\n"
+          "Content-Length: 100\r\n"
+          "\r\n");
+        const auto resp = client.receive();
+        CHECK(status_of(resp) == 413);
+        CHECK(resp.find("Connection: close") != std::string::npos);
+    }
+
+    app.stop();
+}

@@ -188,6 +188,9 @@ namespace crow
             {
                 req_.body.clear();
                 res = response(status::PAYLOAD_TOO_LARGE);
+                // Explicit, rather than relying on response::operator=(&&) happening to
+                // omit skip_body: a HEAD request must never get a body, even on 413.
+                res.skip_body = (req_.method == HTTPMethod::Head);
                 res.set_header("Connection", "close");
                 res.end();
                 close_connection_ = true;
@@ -557,6 +560,10 @@ namespace crow
             }
             else
             {
+                // For a mid-chunked-body 413, the parser is still mid-message here;
+                // clearing it is a no-op in that case since the llhttp callback that
+                // triggered the reject also aborts the parse, so nothing is left to
+                // resume or re-parse against the cleared state.
                 this->parser_.clear();
             }
 
