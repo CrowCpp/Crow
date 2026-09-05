@@ -644,7 +644,7 @@ $(document).ready(function(){initNavTree('websocket_8h_source.html',''); initRes
 <div class="line"><a id="l00512" name="l00512"></a><span class="lineno">  512</span>                    }</div>
 <div class="line"><a id="l00513" name="l00513"></a><span class="lineno">  513</span>                    <span class="keywordflow">break</span>;</div>
 <div class="line"><a id="l00514" name="l00514"></a><span class="lineno">  514</span>                    <span class="keywordflow">case</span> WebSocketReadState::Mask:</div>
-<div class="line"><a id="l00515" name="l00515"></a><span class="lineno">  515</span>                        <span class="keywordflow">if</span> (remaining_length_ &gt; max_payload_bytes_)</div>
+<div class="line"><a id="l00515" name="l00515"></a><span class="lineno">  515</span>                        <span class="keywordflow">if</span> ((message_.size() + remaining_length_) &gt; max_payload_bytes_)</div>
 <div class="line"><a id="l00516" name="l00516"></a><span class="lineno">  516</span>                        {</div>
 <div class="line"><a id="l00517" name="l00517"></a><span class="lineno">  517</span>                            close_connection_ = <span class="keyword">true</span>;</div>
 <div class="line"><a id="l00518" name="l00518"></a><span class="lineno">  518</span>                            adaptor_.close();</div>
@@ -1037,7 +1037,7 @@ $(document).ready(function(){initNavTree('websocket_8h_source.html',''); initRes
 			<ul>
 				<li class="navelem"><a class="el" href="dir_d44c64559bbebec7f509842c48db8b23.html">include</a></li><li class="navelem"><a class="el" href="dir_d22c1cb87b72f01e1a7f207eb3bfd1ca.html">crow</a></li><li class="navelem"><b>websocket.h</b></li>
 				<li class="footer">
-					Generated on Fri Sep 4 2026 for Crow by <a href="http://www.doxygen.org/index.html">
+					Generated on Sat Sep 5 2026 for Crow by <a href="http://www.doxygen.org/index.html">
 					<img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.9.8.
 					Dark theme by <a href="http://majerle.eu" target="_new">Tilen Majerle</a>. Edited by <a href="https://github.com/The-EDev" target="_new">Farook Al-Sammarraie</a>. All rights reserved.
 				</li>
