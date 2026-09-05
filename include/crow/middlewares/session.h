@@ -542,7 +542,7 @@ namespace crow
             {
                 filename.append(".json");
             }
-            return path_/filename;
+            return (path_/filename).string();
         }
 
         bool contains(const std::string& key)

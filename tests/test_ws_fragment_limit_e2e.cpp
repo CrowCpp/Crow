@@ -7,15 +7,9 @@
 //
 // Loopback only. The configured maximum message payload is 16 bytes.
 
-#include <arpa/inet.h>
-#include <netinet/in.h>
-#include <sys/socket.h>
-#include <unistd.h>
-
+#include <cstdint>
 #include <atomic>
 #include <chrono>
-//#include <cstdint>
-#include <iostream>
 #include <mutex>
 #include <string>
 #include <thread>
@@ -25,6 +19,19 @@
 #include "crow.h"
 
 #include "catch2/catch_all.hpp"
+
+#ifdef _WIN32
+#include <winsock2.h>
+#include <ws2tcpip.h>
+#else
+#include <arpa/inet.h>
+#include <netinet/in.h>
+#include <sys/socket.h>
+#endif
+#ifdef _WIN32
+#define close(fd) closesocket(fd)
+#define ssize_t SSIZE_T
+#endif
 
 namespace
 {
@@ -48,7 +55,7 @@ int connect_websocket()
     ::inet_pton(AF_INET, "127.0.0.1", &address.sin_addr);
 
     timeval timeout{2, 0};
-    ::setsockopt(fd, SOL_SOCKET, SO_RCVTIMEO, &timeout, sizeof(timeout));
+    ::setsockopt(fd, SOL_SOCKET, SO_RCVTIMEO, (const char*)&timeout, sizeof(timeout));
 
     if (::connect(fd, reinterpret_cast<sockaddr*>(&address), sizeof(address)) != 0)
     {
