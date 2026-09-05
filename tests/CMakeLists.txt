@@ -29,6 +29,7 @@ set(TEST_SRCS
   unit_tests/test_utility.cpp
   unit_tests/test_websocket.cpp
   unit_tests/test_json.cpp
+  test_ws_fragment_limit_e2e.cpp
 )
 
 add_executable(unittest ${TEST_SRCS})

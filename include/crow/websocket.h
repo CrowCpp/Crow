@@ -512,7 +512,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                     }
                     break;
                     case WebSocketReadState::Mask:
-                        if (remaining_length_ > max_payload_bytes_)
+                        if ((message_.size() + remaining_length_) > max_payload_bytes_)
                         {
                             close_connection_ = true;
                             adaptor_.close();
