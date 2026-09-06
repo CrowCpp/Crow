@@ -128,6 +128,7 @@ namespace crow
             const uint64_t limit = handler_->effective_max_body_size(*routing_handle_result_);
             parser_.set_max_body_size(limit);
 
+            // limit == UINT64_MAX means unlimited, so this never rejects in the default case.
             if (parser_.content_length != CROW_ULLONG_MAX &&
                 limit != UINT64_MAX && parser_.content_length > limit)
             {
@@ -491,6 +492,9 @@ namespace crow
             do_linger_read();
         }
 
+        // Discards whatever bytes come in (the count doesn't matter - this is
+        // draining, not parsing) and keeps re-reading until the peer closes,
+        // errors, or the deadline timer set by linger_close() fires.
         void do_linger_read()
         {
             auto self = this->shared_from_this();
