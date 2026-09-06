@@ -3,6 +3,7 @@
 #include <sys/stat.h>
 
 #include <exception>
+#include <filesystem>
 #include <iostream>
 #include <vector>
 #include <thread>
@@ -1893,6 +1894,17 @@ TEST_CASE("multipart_view")
 
 TEST_CASE("send_file")
 {
+    // CROW_STATIC_FILE's internal path is deliberately relative (its sanitizer
+    // strips a leading '/' to reject Unix absolute paths), so "tests/img/..."
+    // can't be replaced with an absolute path. Instead, chdir into the
+    // CMake-provided repo root for the scope of this test, so the relative
+    // paths below resolve regardless of where `unittest` is invoked from.
+    struct ScopedCwd
+    {
+        std::filesystem::path previous = std::filesystem::current_path();
+        ScopedCwd(const std::filesystem::path& dir) { std::filesystem::current_path(dir); }
+        ~ScopedCwd() { std::filesystem::current_path(previous); }
+    } scoped_cwd(CROW_TEST_REPO_DIR);
 
     struct stat statbuf_cat;
     stat("tests/img/cat.jpg", &statbuf_cat);

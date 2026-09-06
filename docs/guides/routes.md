@@ -82,6 +82,9 @@ Handlers can also use information from the request by adding it as a parameter `
 
 You can also access the URL parameters in the handler using `#!cpp req.url_params.get("param_name");`. If the parameter doesn't exist, `nullptr` is returned.<br><br>
 
+To cap the request body for one route, use `#!cpp .max_body_size(bytes)` (see [Request body size](app.md#request-body-size)). Without a per-route value, `#!cpp app.max_body_size()` applies, including on 404 and 405.
+
+To write a large request body to a file (or a custom sink) while it is received instead of filling `req.body`, use `#!cpp .body_sink(...)`. See [Request body files](body-file.md).
 
 !!! note "Note &nbsp;&nbsp;&nbsp;&nbsp; <span class="tag">[:octicons-feed-tag-16: master](https://github.com/CrowCpp/Crow)</span>"
 
