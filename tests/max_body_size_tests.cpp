@@ -23,87 +23,8 @@ using asio_error_code = asio::error_code;
 
 #define LOCALHOST_ADDRESS "127.0.0.1"
 
-namespace
-{
-    bool response_complete(const std::string& data)
-    {
-        auto search_from = std::size_t{0};
-        while (true)
-        {
-            const auto status_line = data.find("HTTP/1.1 ", search_from);
-            if (status_line == std::string::npos)
-                return false;
-            const auto code = std::atoi(data.c_str() + status_line + 9);
-            const auto header_end = data.find("\r\n\r\n", status_line);
-            if (header_end == std::string::npos)
-                return false;
-            if (code >= 100 && code < 200)
-            {
-                search_from = header_end + 4;
-                continue;
-            }
-            const auto length_pos = data.find("Content-Length:", status_line);
-            if (length_pos == std::string::npos || length_pos > header_end)
-                return true;
-            const auto length = static_cast<std::size_t>(std::stoul(data.substr(length_pos + 15)));
-            return data.size() >= header_end + 4 + length;
-        }
-    }
-
-    class TestClient
-    {
-    public:
-        TestClient(uint16_t port):
-          socket_(io_context_)
-        {
-            socket_.connect(asio::ip::tcp::endpoint(asio::ip::make_address(LOCALHOST_ADDRESS), port));
-        }
-
-        void send(const std::string& data)
-        {
-            asio::write(socket_, asio::buffer(data));
-        }
-
-        std::string receive()
-        {
-            std::string response;
-            std::array<char, 65536> buffer{};
-            const auto deadline = std::chrono::steady_clock::now() + std::chrono::seconds(5);
-            while (!response_complete(response))
-            {
-                REQUIRE(std::chrono::steady_clock::now() < deadline);
-                asio_error_code ec;
-                const auto n = socket_.read_some(asio::buffer(buffer), ec);
-                if (ec)
-                    break;
-                response.append(buffer.data(), n);
-            }
-            return response;
-        }
-
-    private:
-        asio::io_context io_context_{};
-        asio::ip::tcp::socket socket_;
-    };
-
-    int status_of(const std::string& response)
-    {
-        auto search_from = std::size_t{0};
-        while (true)
-        {
-            const auto status_line = response.find("HTTP/1.1 ", search_from);
-            if (status_line == std::string::npos)
-                return 0;
-            const auto code = std::atoi(response.c_str() + status_line + 9);
-            if (code >= 100 && code < 200)
-            {
-                search_from = status_line + 9;
-                continue;
-            }
-            return code;
-        }
-    }
-} // namespace
+#include "http_test_utils.h"
+using namespace crow_test_utils;
 
 TEST_CASE("max_body_size advertised length", "[http][max_body_size]")
 {
@@ -486,6 +407,50 @@ TEST_CASE("max_body_size applies to a matched-route HEAD/OPTIONS request", "[htt
         CHECK(status_of(resp) == 413);
         CHECK(resp.find("Connection: close") != std::string::npos);
     }
+
+    app.stop();
+}
+
+TEST_CASE("max_body_size 413 lingers instead of closing even with a small stream_threshold", "[http][max_body_size]")
+{
+    // Regression test: complete_request() has two response-writing paths,
+    // chosen by stream_threshold(), and both used to shut the socket down
+    // outright when close_connection_ was set - including for a 413/500
+    // body-error response, racing ahead of do_read()'s linger_close() drain.
+    // A default-sized threshold (1 MiB) never routes a small error body
+    // through the streamed path, so the race was latent unless an app set a
+    // small stream_threshold(); this pins it down explicitly.
+    std::atomic<bool> handler_ran{false};
+    SimpleApp app;
+    app.max_body_size(8);
+    app.stream_threshold(1); // force even the tiny 413 body through the streamed path
+
+    CROW_ROUTE(app, "/upload")
+      .methods("POST"_method)([&handler_ran](const request& req) {
+          handler_ran = true;
+          return req.body;
+      });
+
+    auto server = app.bindaddr(LOCALHOST_ADDRESS).port(0).run_async();
+    app.wait_for_server_start();
+    const auto port = app.port();
+
+    TestClient client(port);
+    // Headers only, declaring a body well over the cap that the client sends next.
+    client.send(
+      "POST /upload HTTP/1.1\r\n"
+      "Host: localhost\r\n"
+      "Content-Length: 5000000\r\n"
+      "\r\n");
+    const auto resp = client.receive();
+    CHECK(status_of(resp) == 413);
+    CHECK_FALSE(handler_ran);
+
+    // The client can still write its whole declared body without the write
+    // failing (broken pipe / connection reset), because the server drains
+    // instead of closing on unread bytes.
+    const std::string payload(5'000'000, 'x');
+    REQUIRE_NOTHROW(client.send(payload));
 
     app.stop();
 }

@@ -32,6 +32,9 @@ using asio_error_code = asio::error_code;
 
 #define LOCALHOST_ADDRESS "127.0.0.1"
 
+#include "http_test_utils.h"
+using namespace crow_test_utils;
+
 namespace
 {
     std::string read_all(const std::string& path)
@@ -62,104 +65,6 @@ namespace
         }
         return true;
     }
-
-    bool response_complete(const std::string& data)
-    {
-        auto search_from = std::size_t{0};
-        while (true)
-        {
-            const auto status_line = data.find("HTTP/1.1 ", search_from);
-            if (status_line == std::string::npos)
-                return false;
-            const auto code = std::atoi(data.c_str() + status_line + 9);
-            const auto header_end = data.find("\r\n\r\n", status_line);
-            if (header_end == std::string::npos)
-                return false;
-            if (code >= 100 && code < 200)
-            {
-                search_from = header_end + 4;
-                continue;
-            }
-            const auto length_pos = data.find("Content-Length:", status_line);
-            if (length_pos == std::string::npos || length_pos > header_end)
-                return true;
-            const auto length = static_cast<std::size_t>(std::stoul(data.substr(length_pos + 15)));
-            return data.size() >= header_end + 4 + length;
-        }
-    }
-
-    std::string http_body(const std::string& response)
-    {
-        auto search_from = std::size_t{0};
-        while (true)
-        {
-            const auto status_line = response.find("HTTP/1.1 ", search_from);
-            if (status_line == std::string::npos)
-                return {};
-            const auto code = std::atoi(response.c_str() + status_line + 9);
-            const auto header_end = response.find("\r\n\r\n", status_line);
-            if (header_end == std::string::npos)
-                return {};
-            if (code >= 100 && code < 200)
-            {
-                search_from = header_end + 4;
-                continue;
-            }
-            return response.substr(header_end + 4);
-        }
-    }
-
-    class TestClient
-    {
-    public:
-        TestClient(uint16_t port):
-          socket_(io_context_)
-        {
-            socket_.connect(asio::ip::tcp::endpoint(asio::ip::make_address(LOCALHOST_ADDRESS), port));
-        }
-
-        void send(const std::string& data)
-        {
-            asio::write(socket_, asio::buffer(data));
-        }
-
-        void send(const char* data, std::size_t size)
-        {
-            asio::write(socket_, asio::buffer(data, size));
-        }
-
-        // Reads exactly `size` more bytes into an internal buffer without
-        // waiting for the response to complete. Used to pause a client
-        // mid-response and observe server-side state while it is still
-        // streaming.
-        std::string read_some(std::size_t size)
-        {
-            std::string out(size, '\0');
-            asio::read(socket_, asio::buffer(out));
-            return out;
-        }
-
-        std::string receive()
-        {
-            std::string response;
-            std::array<char, 65536> buffer{};
-            const auto deadline = std::chrono::steady_clock::now() + std::chrono::seconds(5);
-            while (!response_complete(response))
-            {
-                REQUIRE(std::chrono::steady_clock::now() < deadline);
-                asio_error_code ec;
-                const auto n = socket_.read_some(asio::buffer(buffer), ec);
-                if (ec)
-                    break;
-                response.append(buffer.data(), n);
-            }
-            return response;
-        }
-
-    private:
-        asio::io_context io_context_{};
-        asio::ip::tcp::socket socket_;
-    };
 
     struct TempDir
     {
@@ -491,7 +396,7 @@ TEST_CASE("request_body_file deleted only after the full response is sent", "[ht
         headers += client.read_some(1);
     const auto length_pos = headers.find("Content-Length:");
     REQUIRE(length_pos != std::string::npos);
-    const auto content_length = static_cast<std::size_t>(std::stoul(headers.substr(length_pos + 15)));
+    const auto content_length = static_cast<std::size_t>(std::stoull(headers.substr(length_pos + 15)));
     REQUIRE(content_length == response_body_size);
 
     const std::size_t prefix_size = 4096;
@@ -812,6 +717,42 @@ TEST_CASE("request_body_sink finish failure is 500", "[http][body_file]")
     CHECK(response.find("HTTP/1.1 500") != std::string::npos);
     CHECK(response.find("Connection: close") != std::string::npos);
     CHECK_FALSE(handler_ran.load());
+
+    app.stop();
+}
+
+TEST_CASE("request_body_sink finish failure sends exactly one response", "[http][body_file]")
+{
+    // Regression test: on_message_complete() must not fall through to
+    // process_message() (a second handle() call) after reject_body() already
+    // wrote the 500 for a finish() failure - that would put two status lines
+    // on one connection.
+    SimpleApp app;
+    app.max_body_size(1024 * 1024);
+
+    CROW_ROUTE(app, "/sink")
+      .methods("POST"_method)
+      .body_sink([](const request&) {
+          return std::make_unique<FailingFinishSink>();
+      })([](const request&) {
+          return "ran";
+      });
+
+    auto server = app.bindaddr(LOCALHOST_ADDRESS).port(0).run_async();
+    app.wait_for_server_start();
+
+    TestClient client(app.port());
+    client.send(
+      "POST /sink HTTP/1.1\r\n"
+      "Host: localhost\r\n"
+      "Content-Length: 4\r\n"
+      "\r\n"
+      "fail");
+    const auto response = client.receive();
+    CHECK(response.find("HTTP/1.1 500") != std::string::npos);
+
+    const auto leftover = client.read_leftover(std::chrono::milliseconds(200));
+    CHECK(leftover.empty());
 
     app.stop();
 }

@@ -374,7 +374,10 @@ namespace crow
                     is.read(buf, sizeof(buf));
                 }
             }
-            if (close_connection_)
+            // A body-error response leaves the read side open for do_read()'s
+            // linger_close() to drain instead of closing here, so a peer still
+            // mid-upload isn't RST'd before it reads the response.
+            if (close_connection_ && !body_error_status_)
             {
                 adaptor_.shutdown_readwrite();
                 adaptor_.close();
@@ -430,7 +433,9 @@ namespace crow
                         transferred += to_transfer;
                     }
                 }
-                if (close_connection_)
+                // See the matching comment in do_write_static(): leave the
+                // close to do_read()'s linger_close() on a body error.
+                if (close_connection_ && !body_error_status_)
                 {
                     adaptor_.shutdown_readwrite();
                     adaptor_.close();

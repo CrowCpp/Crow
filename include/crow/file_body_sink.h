@@ -101,6 +101,9 @@ namespace crow
             while (written < length)
             {
                 DWORD n = 0;
+                // static_cast<size_t>(MAXDWORD) is still exact on 32-bit size_t
+                // (both are 32-bit there), so this chunking is correct on 32-
+                // and 64-bit Windows alike.
                 const DWORD chunk = static_cast<DWORD>(
                   std::min<std::size_t>(length - written, static_cast<std::size_t>(MAXDWORD)));
                 if (!WriteFile(handle_, data + written, chunk, &n, nullptr) || n == 0)
