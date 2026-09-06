@@ -558,14 +558,17 @@ namespace crow
             {
                 this->continue_requested = false;
             }
-            else
+            else if (!this->payload_too_large_)
             {
-                // For a mid-chunked-body 413, the parser is still mid-message here;
-                // clearing it is a no-op in that case since the llhttp callback that
-                // triggered the reject also aborts the parse, so nothing is left to
-                // resume or re-parse against the cleared state.
                 this->parser_.clear();
             }
+            // else: this response is the 413 itself, written while the llhttp
+            // callback that triggered the reject is still on the stack
+            // (http_parser_execute has not returned yet), so clearing here would
+            // reenter the parser mid-message. The connection is always closed
+            // afterwards (never reused for another request), so there is no
+            // keep-alive state left to reset; skip the clear instead of doing it
+            // unsafely.
 
             return ec;
         }
