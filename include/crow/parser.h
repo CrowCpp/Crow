@@ -97,7 +97,7 @@ namespace crow
 
             self->message_complete = true;
             self->process_message();
-            return 0;
+            return self->stop_after_message_ ? 1 : 0;
         }
         HTTPParser(Handler* handler):
           http_parser(),
@@ -108,10 +108,17 @@ namespace crow
 
         // return false on error
         /// Parse a buffer into the different sections of an HTTP request.
-        bool feed(const char* buffer, int length)
+
+        /// `consumed` receives the exact number of input bytes processed. It can be
+        /// smaller than `length` after stop_after_message() requests a successful stop
+        /// at the current message boundary.
+        bool feed(const char* buffer, int length, std::size_t& consumed)
         {
             if (message_complete)
+            {
+                consumed = static_cast<std::size_t>(length);
                 return true;
+            }
 
             const static http_parser_settings settings_{
               on_message_begin,
@@ -124,12 +131,28 @@ namespace crow
               on_message_complete,
             };
 
-            int nparsed = http_parser_execute(this, &settings_, buffer, length);
+            const std::size_t nparsed = http_parser_execute(this, &settings_, buffer, length);
+            consumed = nparsed;
+            if (stop_after_message_ && message_complete && http_errno == CHPE_CB_message_complete)
+            {
+                // A nonzero completion callback is the parser's existing mechanism for
+                // stopping at the current byte. Treat this requested message boundary as
+                // a successful partial parse and leave the remainder to the caller.
+                http_errno = CHPE_OK;
+                return true;
+            }
             if (http_errno != CHPE_OK)
             {
                 return false;
             }
-            return nparsed == length;
+            return nparsed == static_cast<std::size_t>(length);
+        }
+
+        /// Parse a complete input buffer without requesting the consumed-byte count.
+        bool feed(const char* buffer, int length)
+        {
+            std::size_t consumed = 0;
+            return feed(buffer, length, consumed) && consumed == static_cast<std::size_t>(length);
         }
 
         bool done()
@@ -145,7 +168,14 @@ namespace crow
             header_building_state = 0;
             qs_point = 0;
             message_complete = false;
+            stop_after_message_ = false;
             state = CROW_NEW_MESSAGE();
+        }
+
+        /// Stop after the current message and report the exact consumed-byte boundary.
+        void stop_after_message()
+        {
+            stop_after_message_ = true;
         }
 
         inline void process_url()
@@ -190,6 +220,7 @@ namespace crow
     private:
         int header_building_state = 0;
         bool message_complete = false;
+        bool stop_after_message_ = false;
         std::string header_field;
         std::string header_value;
 
