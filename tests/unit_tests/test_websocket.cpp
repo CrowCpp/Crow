@@ -16,6 +16,44 @@ using asio_error_code = asio::error_code;
 
 #define LOCALHOST_ADDRESS "127.0.0.1"
 
+namespace
+{
+        void perform_ws_handshake(const std::string& http_message, uint16_t port)
+        {
+                asio::io_context io_ctx;
+                asio::ip::tcp::socket socket(io_ctx);
+                socket.connect(asio::ip::tcp::endpoint(
+                    asio::ip::make_address(LOCALHOST_ADDRESS), port));
+
+                char buf[2048];
+                std::fill_n(buf, 2048, 0);
+                socket.send(asio::buffer(http_message));
+                socket.receive(asio::buffer(buf, 2048));
+                std::this_thread::sleep_for(std::chrono::milliseconds(5));
+
+                asio_error_code ec;
+                socket.lowest_layer().shutdown(asio::socket_base::shutdown_type::shutdown_both, ec);
+        }
+
+            std::string perform_ws_handshake_with_response(const std::string& http_message, uint16_t port)
+            {
+                asio::io_context io_ctx;
+                asio::ip::tcp::socket socket(io_ctx);
+                socket.connect(asio::ip::tcp::endpoint(
+                    asio::ip::make_address(LOCALHOST_ADDRESS), port));
+
+                char buf[2048];
+                std::fill_n(buf, 2048, 0);
+                socket.send(asio::buffer(http_message));
+                const size_t received = socket.receive(asio::buffer(buf, 2048));
+                std::this_thread::sleep_for(std::chrono::milliseconds(5));
+
+                asio_error_code ec;
+                socket.lowest_layer().shutdown(asio::socket_base::shutdown_type::shutdown_both, ec);
+                return std::string(buf, buf + received);
+            }
+}
+
 TEST_CASE("websocket", "[websocket]")
 {
     static std::string http_message = 
@@ -737,4 +775,248 @@ TEST_CASE("multithreaded_websockets_open_close", "[websocket]")
 
     CROW_LOG_WARNING << "Stopping app!\n";
     app.stop();
+}
+
+TEST_CASE("websocket_onaccept_route_params", "[websocket]")
+{
+        SECTION("int parameter")
+        {
+                const std::string http_message =
+                    "GET /ws/123 HTTP/1.1\r\n"
+                    "Connection: keep-alive, Upgrade\r\n"
+                    "upgrade: websocket\r\n"
+                    "Sec-WebSocket-Key: dGhlIHNhbXBsZSBub25jZQ==\r\n"
+                    "Sec-WebSocket-Version: 13\r\n"
+                    "Host: localhost\r\n"
+                    "\r\n";
+
+                bool connected{false};
+                int64_t accepted{-1};
+                SimpleApp app;
+
+                CROW_WEBSOCKET_ROUTE(app, "/ws/<int>")
+                    .onaccept([&](const crow::request&, std::optional<crow::response>&, void**, int64_t value) {
+                            accepted = value;
+                    })
+                    .onopen([&](websocket::connection&) {
+                            connected = true;
+                    })
+                    .onclose([&](websocket::connection&, const std::string&, uint16_t) {});
+
+                app.validate();
+                auto _ = app.bindaddr(LOCALHOST_ADDRESS).port(45480).run_async();
+                app.wait_for_server_start();
+                perform_ws_handshake(http_message, 45480);
+
+                CHECK(connected);
+                CHECK(accepted == 123);
+                app.stop();
+        }
+
+        SECTION("uint parameter")
+        {
+                const std::string http_message =
+                    "GET /wsu/42 HTTP/1.1\r\n"
+                    "Connection: keep-alive, Upgrade\r\n"
+                    "upgrade: websocket\r\n"
+                    "Sec-WebSocket-Key: dGhlIHNhbXBsZSBub25jZQ==\r\n"
+                    "Sec-WebSocket-Version: 13\r\n"
+                    "Host: localhost\r\n"
+                    "\r\n";
+
+                bool connected{false};
+                uint64_t accepted{0};
+                SimpleApp app;
+
+                CROW_WEBSOCKET_ROUTE(app, "/wsu/<uint>")
+                    .onaccept([&](const crow::request&, std::optional<crow::response>&, void**, uint64_t value) {
+                            accepted = value;
+                    })
+                    .onopen([&](websocket::connection&) {
+                            connected = true;
+                    })
+                    .onclose([&](websocket::connection&, const std::string&, uint16_t) {});
+
+                app.validate();
+                auto _ = app.bindaddr(LOCALHOST_ADDRESS).port(45481).run_async();
+                app.wait_for_server_start();
+                perform_ws_handshake(http_message, 45481);
+
+                CHECK(connected);
+                CHECK(accepted == 42);
+                app.stop();
+        }
+
+        SECTION("double parameter")
+        {
+                const std::string http_message =
+                    "GET /wsd/42.25 HTTP/1.1\r\n"
+                    "Connection: keep-alive, Upgrade\r\n"
+                    "upgrade: websocket\r\n"
+                    "Sec-WebSocket-Key: dGhlIHNhbXBsZSBub25jZQ==\r\n"
+                    "Sec-WebSocket-Version: 13\r\n"
+                    "Host: localhost\r\n"
+                    "\r\n";
+
+                bool connected{false};
+                double accepted{0.0};
+                SimpleApp app;
+
+                CROW_WEBSOCKET_ROUTE(app, "/wsd/<double>")
+                    .onaccept([&](const crow::request&, std::optional<crow::response>&, void**, double value) {
+                            accepted = value;
+                    })
+                    .onopen([&](websocket::connection&) {
+                            connected = true;
+                    })
+                    .onclose([&](websocket::connection&, const std::string&, uint16_t) {});
+
+                app.validate();
+                auto _ = app.bindaddr(LOCALHOST_ADDRESS).port(45482).run_async();
+                app.wait_for_server_start();
+                perform_ws_handshake(http_message, 45482);
+
+                CHECK(connected);
+                CHECK(accepted == Catch::Approx(42.25));
+                app.stop();
+        }
+
+        SECTION("string parameter")
+        {
+                const std::string http_message =
+                    "GET /wss/alpha123 HTTP/1.1\r\n"
+                    "Connection: keep-alive, Upgrade\r\n"
+                    "upgrade: websocket\r\n"
+                    "Sec-WebSocket-Key: dGhlIHNhbXBsZSBub25jZQ==\r\n"
+                    "Sec-WebSocket-Version: 13\r\n"
+                    "Host: localhost\r\n"
+                    "\r\n";
+
+                bool connected{false};
+                std::string accepted;
+                SimpleApp app;
+
+                CROW_WEBSOCKET_ROUTE(app, "/wss/<string>")
+                    .onaccept([&](const crow::request&, std::optional<crow::response>&, void**, std::string value) {
+                            accepted = std::move(value);
+                    })
+                    .onopen([&](websocket::connection&) {
+                            connected = true;
+                    })
+                    .onclose([&](websocket::connection&, const std::string&, uint16_t) {});
+
+                app.validate();
+                auto _ = app.bindaddr(LOCALHOST_ADDRESS).port(45483).run_async();
+                app.wait_for_server_start();
+                perform_ws_handshake(http_message, 45483);
+
+                CHECK(connected);
+                CHECK(accepted == "alpha123");
+                app.stop();
+        }
+
+        SECTION("path parameter")
+        {
+                const std::string http_message =
+                    "GET /wsp/alpha/beta/gamma HTTP/1.1\r\n"
+                    "Connection: keep-alive, Upgrade\r\n"
+                    "upgrade: websocket\r\n"
+                    "Sec-WebSocket-Key: dGhlIHNhbXBsZSBub25jZQ==\r\n"
+                    "Sec-WebSocket-Version: 13\r\n"
+                    "Host: localhost\r\n"
+                    "\r\n";
+
+                bool connected{false};
+                std::string accepted;
+                SimpleApp app;
+
+                CROW_WEBSOCKET_ROUTE(app, "/wsp/<path>")
+                    .onaccept([&](const crow::request&, std::optional<crow::response>&, void**, std::string value) {
+                            accepted = std::move(value);
+                    })
+                    .onopen([&](websocket::connection&) {
+                            connected = true;
+                    })
+                    .onclose([&](websocket::connection&, const std::string&, uint16_t) {});
+
+                app.validate();
+                auto _ = app.bindaddr(LOCALHOST_ADDRESS).port(45484).run_async();
+                app.wait_for_server_start();
+                perform_ws_handshake(http_message, 45484);
+
+                CHECK(connected);
+                CHECK(accepted == "alpha/beta/gamma");
+                app.stop();
+        }
+
+        SECTION("bool onaccept with route parameter")
+        {
+                const std::string http_message =
+                    "GET /wsb/7 HTTP/1.1\r\n"
+                    "Connection: keep-alive, Upgrade\r\n"
+                    "upgrade: websocket\r\n"
+                    "Sec-WebSocket-Key: dGhlIHNhbXBsZSBub25jZQ==\r\n"
+                    "Sec-WebSocket-Version: 13\r\n"
+                    "Host: localhost\r\n"
+                    "\r\n";
+
+                bool connected{false};
+                uint64_t accepted{0};
+                SimpleApp app;
+
+                CROW_WEBSOCKET_ROUTE(app, "/wsb/<uint>")
+                    .onaccept([&](const crow::request&, void**, uint64_t value) {
+                            accepted = value;
+                            return true;
+                    })
+                    .onopen([&](websocket::connection&) {
+                            connected = true;
+                    })
+                    .onclose([&](websocket::connection&, const std::string&, uint16_t) {});
+
+                app.validate();
+                auto _ = app.bindaddr(LOCALHOST_ADDRESS).port(45485).run_async();
+                app.wait_for_server_start();
+                perform_ws_handshake(http_message, 45485);
+
+                CHECK(connected);
+                CHECK(accepted == 7);
+                app.stop();
+        }
+
+            SECTION("bool onaccept false rejects upgrade")
+            {
+                const std::string http_message =
+                    "GET /wsbf/9 HTTP/1.1\r\n"
+                    "Connection: keep-alive, Upgrade\r\n"
+                    "upgrade: websocket\r\n"
+                    "Sec-WebSocket-Key: dGhlIHNhbXBsZSBub25jZQ==\r\n"
+                    "Sec-WebSocket-Version: 13\r\n"
+                    "Host: localhost\r\n"
+                    "\r\n";
+
+                bool connected{false};
+                uint64_t accepted{0};
+                SimpleApp app;
+
+                CROW_WEBSOCKET_ROUTE(app, "/wsbf/<uint>")
+                    .onaccept([&](const crow::request&, void**, uint64_t value) {
+                        accepted = value;
+                        return false;
+                    })
+                    .onopen([&](websocket::connection&) {
+                        connected = true;
+                    })
+                    .onclose([&](websocket::connection&, const std::string&, uint16_t) {});
+
+                app.validate();
+                auto _ = app.bindaddr(LOCALHOST_ADDRESS).port(45486).run_async();
+                app.wait_for_server_start();
+                const auto response = perform_ws_handshake_with_response(http_message, 45486);
+
+                CHECK_FALSE(connected);
+                CHECK(accepted == 9);
+                CHECK(response.find("HTTP/1.1 400") != std::string::npos);
+                app.stop();
+            }
 }
