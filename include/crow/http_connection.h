@@ -121,8 +121,21 @@ namespace crow
             }
         }
 
-        void handle_header()
+        /// Apply `max_body_size` before 100-continue. Return 1 to skip the body (F_SKIPBODY).
+        int handle_header()
         {
+            payload_too_large_ = false;
+            const uint64_t limit = handler_->effective_max_body_size(*routing_handle_result_);
+            parser_.set_max_body_size(limit);
+
+            // limit == UINT64_MAX means unlimited, so this never rejects in the default case.
+            if (parser_.content_length != CROW_ULLONG_MAX &&
+                limit != UINT64_MAX && parser_.content_length > limit)
+            {
+                payload_too_large_ = true;
+                return 1;
+            }
+
             // HTTP 1.1 Expect: 100-continue
             if (req_.http_ver_major == 1 && req_.http_ver_minor == 1 && get_header_value(req_.headers, "expect") == "100-continue")
             {
@@ -142,6 +155,18 @@ namespace crow
                 need_to_call_after_handlers_ = true;
                 complete_request();
             }
+            return 0;
+        }
+
+        void reject_payload_too_large()
+        {
+            payload_too_large_ = true;
+            handle();
+        }
+
+        bool parser_should_abort() const
+        {
+            return payload_too_large_;
         }
 
         void handle()
@@ -160,6 +185,21 @@ namespace crow
             add_keep_alive_ = req_.keep_alive;
             close_connection_ = req_.close_connection;
 
+            if (payload_too_large_)
+            {
+                req_.body.clear();
+                res = response(status::PAYLOAD_TOO_LARGE);
+                // Explicit, rather than relying on response::operator=(&&) happening to
+                // omit skip_body: a HEAD request must never get a body, even on 413.
+                res.skip_body = (req_.method == HTTPMethod::Head);
+                res.set_header("Connection", "close");
+                res.end();
+                close_connection_ = true;
+                add_keep_alive_ = false;
+                need_to_call_after_handlers_ = true;
+                complete_request();
+                return;
+            }
             if (req_.check_version(1, 1)) // HTTP/1.1
             {
                 if (!req_.headers.count("host"))
@@ -417,9 +457,20 @@ namespace crow
                   {
                       self->cancel_deadline_timer();
                       self->parser_.done();
-                      self->adaptor_.shutdown_read();
-                      self->adaptor_.close();
                       CROW_LOG_DEBUG << self << " from read(1) with description: \"" << http_errno_description(static_cast<http_errno>(self->parser_.http_errno)) << '\"';
+                      if (self->payload_too_large_)
+                      {
+                          // The rejection response is already written; shut down the
+                          // write side and drain whatever the client still sends
+                          // instead of closing on unread bytes, which can RST a peer
+                          // that is still mid-upload before it reads the response.
+                          self->linger_close();
+                      }
+                      else
+                      {
+                          self->adaptor_.shutdown_read();
+                          self->adaptor_.close();
+                      }
                   }
                   else if (self->close_connection_)
                   {
@@ -436,6 +487,37 @@ namespace crow
                   {
                       // res will be completed later by user
                       self->need_to_start_read_after_complete_ = true;
+                  }
+              });
+        }
+
+        /// Shut down the write side (FIN, not RST) after a rejection response and
+        /// discard whatever the client still sends, instead of closing on unread
+        /// bytes. Bounded by the same deadline timer a slow client already gets.
+        void linger_close()
+        {
+            adaptor_.shutdown_write();
+            start_deadline();
+            do_linger_read();
+        }
+
+        // Discards whatever bytes come in (the count doesn't matter - this is
+        // draining, not parsing) and keeps re-reading until the peer closes,
+        // errors, or the deadline timer set by linger_close() fires.
+        void do_linger_read()
+        {
+            auto self = this->shared_from_this();
+            adaptor_.socket().async_read_some(
+              asio::buffer(buffer_),
+              [self](const error_code& ec, std::size_t /*bytes_transferred*/) {
+                  if (!ec && self->adaptor_.is_open())
+                  {
+                      self->do_linger_read();
+                  }
+                  else
+                  {
+                      self->cancel_deadline_timer();
+                      self->adaptor_.close();
                   }
               });
         }
@@ -489,10 +571,17 @@ namespace crow
             {
                 this->continue_requested = false;
             }
-            else
+            else if (!this->payload_too_large_)
             {
                 this->parser_.clear();
             }
+            // else: this response is the 413 itself, written while the llhttp
+            // callback that triggered the reject is still on the stack
+            // (http_parser_execute has not returned yet), so clearing here would
+            // reenter the parser mid-message. The connection is always closed
+            // afterwards (never reused for another request), so there is no
+            // keep-alive state left to reset; skip the clear instead of doing it
+            // unsafely.
 
             return ec;
         }
@@ -545,6 +634,7 @@ namespace crow
         bool need_to_call_after_handlers_{};
         bool need_to_start_read_after_complete_{};
         bool add_keep_alive_{};
+        bool payload_too_large_{false};
 
         std::tuple<Middlewares...>* middlewares_;
         detail::context<Middlewares...> ctx_;
