@@ -130,16 +130,13 @@ namespace crow
 
             bool origin_set = false;
 
-            if (req.method != HTTPMethod::Options)
+            if (allow_credentials_)
             {
-                if (allow_credentials_)
+                set_header_no_override("Access-Control-Allow-Credentials", "true", res);
+                if (origin_ == "*")
                 {
-                    set_header_no_override("Access-Control-Allow-Credentials", "true", res);
-                    if (origin_ == "*")
-                    {
-                        set_header_no_override("Access-Control-Allow-Origin", req.get_header_value("Origin"), res);
-                        origin_set = true;
-                    }
+                    set_header_no_override("Access-Control-Allow-Origin", req.get_header_value("Origin"), res);
+                    origin_set = true;
                 }
             }
 
