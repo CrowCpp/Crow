@@ -464,6 +464,13 @@ namespace crow
             return concurrency_;
         }
 
+        /// \brief Set the maximum number of concurrent connections (default is unlimited with value 0)
+        self_t& max_connections(size_t size)
+        {
+            max_connections_ = size;
+            return *this;
+        }
+
         /// \brief Set the server's log level
         ///
         /// Possible values are:
@@ -639,7 +646,7 @@ namespace crow
                 }
                 tcp::endpoint endpoint(addr, port_);
                 router_.using_ssl = true;
-                ssl_server_ = std::move(std::unique_ptr<ssl_server_t>(new ssl_server_t(this, endpoint, server_name_, &middlewares_, concurrency_, timeout_, &ssl_context_, tcp_socket_options_)));
+                ssl_server_ = std::move(std::unique_ptr<ssl_server_t>(new ssl_server_t(this, endpoint, server_name_, &middlewares_, concurrency_, max_connections_, timeout_, &ssl_context_, tcp_socket_options_)));
                 ssl_server_->set_tick_function(tick_interval_, tick_function_);
                 ssl_server_->signal_clear();
                 for (auto snum : signals_)
@@ -655,7 +662,7 @@ namespace crow
                 if (use_unix_)
                 {
                     UnixSocketAcceptor::endpoint endpoint(bindaddr_);
-                    unix_server_ = std::move(std::unique_ptr<unix_server_t>(new unix_server_t(this, endpoint, server_name_, &middlewares_, concurrency_, timeout_, nullptr)));
+                    unix_server_ = std::move(std::unique_ptr<unix_server_t>(new unix_server_t(this, endpoint, server_name_, &middlewares_, concurrency_, max_connections_, timeout_, nullptr)));
                     unix_server_->set_tick_function(tick_interval_, tick_function_);
                     for (auto snum : signals_)
                     {
@@ -673,7 +680,7 @@ namespace crow
                         return;
                     }
                     TCPAcceptor::endpoint endpoint(addr, port_);
-                    server_ = std::move(std::unique_ptr<server_t>(new server_t(this, endpoint, server_name_, &middlewares_, concurrency_, timeout_, nullptr, tcp_socket_options_)));
+                    server_ = std::move(std::unique_ptr<server_t>(new server_t(this, endpoint, server_name_, &middlewares_, concurrency_, max_connections_, timeout_, nullptr, tcp_socket_options_)));
                     server_->set_tick_function(tick_interval_, tick_function_);
                     for (auto snum : signals_)
                     {
@@ -912,6 +919,7 @@ namespace crow
         std::uint8_t timeout_{5};
         uint16_t port_ = 80;
         unsigned int concurrency_ = 2;
+        size_t max_connections_{};
         std::atomic_bool is_bound_ = false;
         uint64_t max_payload_{UINT64_MAX};
         std::string server_name_ = std::string("Crow/") + VERSION;
