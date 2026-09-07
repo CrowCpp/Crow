@@ -14,6 +14,7 @@
 #include "crow/common.h"
 #include "crow/http_response.h"
 #include "crow/http_request.h"
+#include "crow/body_sink.h"
 #include "crow/utility.h"
 #include "crow/logging.h"
 #include "crow/exceptions.h"
@@ -160,6 +161,9 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         std::string rule_;
         std::string name_;
         bool added_{false};
+        uint64_t max_body_size_{UINT64_MAX};
+        bool max_body_size_override_{false};
+        BodySinkFactory body_sink_factory_;
 
         std::unique_ptr<BaseRule> rule_to_upgrade_;
 
@@ -616,6 +620,28 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         self_t& middlewares()
         {
             static_cast<self_t*>(this)->mw_indices_.template push<App, Middlewares...>();
+            return static_cast<self_t&>(*this);
+        }
+
+        /// Override the app-wide request body size limit for this route.
+        self_t& max_body_size(uint64_t bytes)
+        {
+            static_cast<self_t*>(this)->max_body_size_ = bytes;
+            static_cast<self_t*>(this)->max_body_size_override_ = true;
+            return static_cast<self_t&>(*this);
+        }
+
+        /// Write the request body to a sink while it is received, instead of
+        /// filling `req.body`.
+        ///
+        /// The factory runs after headers, before the body; see `BodySinkFactory`.
+        /// The route handler still runs only after the full body has been
+        /// received. Calling this again (last-call-wins) replaces the factory.
+        /// `crow::FileBodySink::factory(directory)` (`crow/file_body_sink.h`,
+        /// not pulled in by this header) is the built-in file-backed sink.
+        self_t& body_sink(BodySinkFactory factory)
+        {
+            static_cast<self_t*>(this)->body_sink_factory_ = std::move(factory);
             return static_cast<self_t&>(*this);
         }
     };
@@ -1854,6 +1880,46 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         std::vector<Blueprint*>& blueprints()
         {
             return blueprints_;
+        }
+
+        /// The rule a `handle_initial()` result matched, or `nullptr` for 404,
+        /// 405, a slash-redirect, or an unmatched `OPTIONS`.
+        const BaseRule* matched_rule(const routing_handle_result& found) const
+        {
+            if (found.catch_all || found.rule_index <= RULE_SPECIAL_REDIRECT_SLASH)
+                return nullptr;
+            if (found.method >= HTTPMethod::InternalMethodCount)
+                return nullptr;
+            const auto& rules = per_methods_[static_cast<int>(found.method)].rules;
+            if (found.rule_index >= rules.size())
+                return nullptr;
+            return rules[found.rule_index];
+        }
+
+        /// Effective request body limit for a `handle_initial()` result.
+        ///
+        /// 404, 405, slash-redirect, and unmatched OPTIONS use `app_default`.
+        /// A matched rule uses its override when set, otherwise `app_default`.
+        uint64_t effective_max_body_size(const routing_handle_result& found, uint64_t app_default) const
+        {
+            const BaseRule* rule = matched_rule(found);
+            if (!rule || !rule->max_body_size_override_)
+                return app_default;
+            return rule->max_body_size_;
+        }
+
+        bool uses_body_sink(const routing_handle_result& found) const
+        {
+            const BaseRule* rule = matched_rule(found);
+            return rule && static_cast<bool>(rule->body_sink_factory_);
+        }
+
+        std::unique_ptr<BodySink> make_body_sink(const routing_handle_result& found, const request& req) const
+        {
+            const BaseRule* rule = matched_rule(found);
+            if (!rule || !rule->body_sink_factory_)
+                return nullptr;
+            return rule->body_sink_factory_(req);
         }
 
         std::function<void(crow::response&)>& exception_handler()

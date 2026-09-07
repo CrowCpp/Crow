@@ -23,6 +23,7 @@ Crow is a C++ framework for creating HTTP or Websocket web services. It uses rou
  - Middleware support for extensions.
  - HTTP/1.1 and Websocket support.
  - Multi-part request and response support.
+ - Request body size limit (`max_body_size`) and optional body-to-file / body-sink uploads.
  - Uses modern C++ (11/14)
 
 ### Still in development
