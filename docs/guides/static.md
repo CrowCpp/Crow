@@ -13,6 +13,13 @@ The static folder or endpoint can be changed by defining the macros :
 ```
 `CROW_STATIC_DIRECTORY` changes the directory in the server's file system, while `CROW_STATIC_ENDPOINT` changes the URL that the client needs to access.
 
+The static directory can also be set at runtime (before `run()`), which is useful when the path is only known when the process starts:
+```cpp
+crow::SimpleApp app;
+app.static_directory("alternative_directory/");
+```
+`CROW_STATIC_DIRECTORY` remains the default when `static_directory()` is not called.
+
 ## Explicit
 You can return a static file by using the `CROW_STATIC_FILE(<app>, <EndPoint>, <FilePath>)` macro.</br>
 Or by using `app.static_file(<EndPoint>, <FilePath>)` function of Crow::App.</br>
