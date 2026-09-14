@@ -429,6 +429,23 @@ namespace crow
             return bindaddr_;
         }
 
+        /// \brief Set the filesystem directory for implicit static file serving.
+        ///
+        /// Defaults to \ref CROW_STATIC_DIRECTORY (`"static/"`). Must be called
+        /// before \ref run() / \ref run_async(). Does not change
+        /// \ref CROW_STATIC_ENDPOINT.
+        self_t& static_directory(std::string path)
+        {
+            static_directory_ = std::move(path);
+            return *this;
+        }
+
+        /// \brief Get the filesystem directory used for implicit static files
+        std::string static_directory() const
+        {
+            return static_directory_;
+        }
+
         /// \brief Disable tcp/ip and use unix domain socket instead
         self_t& local_socket_path(std::string path)
         {
@@ -609,7 +626,7 @@ namespace crow
         void add_static_dir()
         {
             if (are_static_routes_added()) return;
-            auto static_dir_ = crow::utility::normalize_path(CROW_STATIC_DIRECTORY);
+            auto static_dir_ = crow::utility::normalize_path(static_directory_);
 
             route<crow::black_magic::get_parameter_tag(CROW_STATIC_ENDPOINT)>(CROW_STATIC_ENDPOINT)([static_dir_](crow::response& res, std::string file_path_partial) {
                 utility::sanitize_filename(file_path_partial);
@@ -622,6 +639,9 @@ namespace crow
         /// \brief A wrapper for `validate()` in the router
         void validate()
         {
+            // Always validate blueprints so routes remain available when
+            // CROW_DISABLE_STATIC_DIR skips add_blueprint()/add_static_dir().
+            router_.validate_bp();
             router_.validate();
         }
 
@@ -646,7 +666,7 @@ namespace crow
                 }
                 tcp::endpoint endpoint(addr, port_);
                 router_.using_ssl = true;
-                ssl_server_ = std::move(std::unique_ptr<ssl_server_t>(new ssl_server_t(this, endpoint, server_name_, &middlewares_, concurrency_, max_connections_, timeout_, &ssl_context_, tcp_socket_options_)));
+                ssl_server_ = std::make_unique<ssl_server_t>(this, endpoint, server_name_, &middlewares_, concurrency_, timeout_, &ssl_context_, tcp_socket_options_);
                 ssl_server_->set_tick_function(tick_interval_, tick_function_);
                 ssl_server_->signal_clear();
                 for (auto snum : signals_)
@@ -662,7 +682,7 @@ namespace crow
                 if (use_unix_)
                 {
                     UnixSocketAcceptor::endpoint endpoint(bindaddr_);
-                    unix_server_ = std::move(std::unique_ptr<unix_server_t>(new unix_server_t(this, endpoint, server_name_, &middlewares_, concurrency_, max_connections_, timeout_, nullptr)));
+                    unix_server_ = std::make_unique<unix_server_t>(this, endpoint, server_name_, &middlewares_, concurrency_, timeout_, nullptr);
                     unix_server_->set_tick_function(tick_interval_, tick_function_);
                     for (auto snum : signals_)
                     {
@@ -680,7 +700,7 @@ namespace crow
                         return;
                     }
                     TCPAcceptor::endpoint endpoint(addr, port_);
-                    server_ = std::move(std::unique_ptr<server_t>(new server_t(this, endpoint, server_name_, &middlewares_, concurrency_, max_connections_, timeout_, nullptr, tcp_socket_options_)));
+                    server_ = std::make_unique<server_t>(this, endpoint, server_name_, &middlewares_, concurrency_, timeout_, nullptr, tcp_socket_options_);
                     server_->set_tick_function(tick_interval_, tick_function_);
                     for (auto snum : signals_)
                     {
@@ -924,6 +944,7 @@ namespace crow
         uint64_t max_payload_{UINT64_MAX};
         std::string server_name_ = std::string("Crow/") + VERSION;
         std::string bindaddr_ = "0.0.0.0";
+        std::string static_directory_ = CROW_STATIC_DIRECTORY;
         bool use_unix_ = false;
         detail::socket::tcp_socket_options tcp_socket_options_{};
         detail::socket::tcp_socket_options websocket_tcp_socket_options_{};
