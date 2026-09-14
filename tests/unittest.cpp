@@ -3389,6 +3389,26 @@ TEST_CASE("Trailing-slash redirects")
     REQUIRE(trigger.find("Location: //attacker.example/")==std::string::npos);
     REQUIRE(trigger.find("Location: /attacker.example/")!=std::string::npos);
 
+    auto trigger_backslash = HttpClient::request(LOCALHOST_ADDRESS,
+                                   45451,
+                                   "GET /\\attacker.example HTTP/1.1\r\n"
+                                   "Host: trusted.example\r\n"
+                                   "Connection: close\r\n\r\n");
+
+    REQUIRE(trigger_backslash.find("301")!=std::string::npos);
+    // browsers treat a leading "/\" like "//", so this is protocol relative as well
+    REQUIRE(trigger_backslash.find("Location: /\\attacker.example/")==std::string::npos);
+    REQUIRE(trigger_backslash.find("Location: /attacker.example/")!=std::string::npos);
+
+    auto trigger_slashes_only = HttpClient::request(LOCALHOST_ADDRESS,
+                                   45451,
+                                   "GET /// HTTP/1.1\r\n"
+                                   "Host: trusted.example\r\n"
+                                   "Connection: close\r\n\r\n");
+
+    REQUIRE(trigger_slashes_only.find("301")!=std::string::npos);
+    REQUIRE(trigger_slashes_only.find("Location: /\r\n")!=std::string::npos);
+
     /*
     auto trigger_encoded = HttpClient::request(LOCALHOST_ADDRESS,
                                    45451,
