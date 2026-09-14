@@ -1540,7 +1540,7 @@ $(document).ready(function(){initNavTree('json_8h_source.html',''); initResizabl
 <div class="line"><a id="l01407" name="l01407"></a><span class="lineno"> 1407</span>              returnable(<span class="stringliteral">&quot;application/json&quot;</span>)</div>
 <div class="line"><a id="l01408" name="l01408"></a><span class="lineno"> 1408</span>            {</div>
 <div class="line"><a id="l01409" name="l01409"></a><span class="lineno"> 1409</span>                t_ = type::List;</div>
-<div class="line"><a id="l01410" name="l01410"></a><span class="lineno"> 1410</span>                l = std::unique_ptr&lt;list&gt;(<span class="keyword">new</span> list{});</div>
+<div class="line"><a id="l01410" name="l01410"></a><span class="lineno"> 1410</span>                l = std::make_unique&lt;list&gt;();</div>
 <div class="line"><a id="l01411" name="l01411"></a><span class="lineno"> 1411</span>                l-&gt;reserve(r.size());</div>
 <div class="line"><a id="l01412" name="l01412"></a><span class="lineno"> 1412</span>                <span class="keywordflow">for</span> (<span class="keyword">auto</span> it = r.begin(); it != r.end(); ++it)</div>
 <div class="line"><a id="l01413" name="l01413"></a><span class="lineno"> 1413</span>                    l-&gt;emplace_back(*it);</div>
@@ -1549,7 +1549,7 @@ $(document).ready(function(){initNavTree('json_8h_source.html',''); initResizabl
 <div class="line"><a id="l01416" name="l01416"></a><span class="lineno"> 1416</span>              returnable(<span class="stringliteral">&quot;application/json&quot;</span>)</div>
 <div class="line"><a id="l01417" name="l01417"></a><span class="lineno"> 1417</span>            {</div>
 <div class="line"><a id="l01418" name="l01418"></a><span class="lineno"> 1418</span>                t_ = type::List;</div>
-<div class="line"><a id="l01419" name="l01419"></a><span class="lineno"> 1419</span>                l = std::unique_ptr&lt;list&gt;(<span class="keyword">new</span> list{});</div>
+<div class="line"><a id="l01419" name="l01419"></a><span class="lineno"> 1419</span>                l = std::make_unique&lt;list&gt;();</div>
 <div class="line"><a id="l01420" name="l01420"></a><span class="lineno"> 1420</span>                l-&gt;reserve(r.size());</div>
 <div class="line"><a id="l01421" name="l01421"></a><span class="lineno"> 1421</span>                <span class="keywordflow">for</span> (<span class="keyword">auto</span> it = r.begin(); it != r.end(); ++it)</div>
 <div class="line"><a id="l01422" name="l01422"></a><span class="lineno"> 1422</span>                    l-&gt;emplace_back(*it);</div>
@@ -1581,13 +1581,13 @@ $(document).ready(function(){initNavTree('json_8h_source.html',''); initResizabl
 <div class="line"><a id="l01447" name="l01447"></a><span class="lineno"> 1447</span>                        s = r.<a class="code hl_function" href="classcrow_1_1json_1_1rvalue.html#ad94f27a14e60af841219279f70290858">s</a>();</div>
 <div class="line"><a id="l01448" name="l01448"></a><span class="lineno"> 1448</span>                        <span class="keywordflow">return</span>;</div>
 <div class="line"><a id="l01449" name="l01449"></a><span class="lineno"> 1449</span>                    <span class="keywordflow">case</span> type::List:</div>
-<div class="line"><a id="l01450" name="l01450"></a><span class="lineno"> 1450</span>                        l = std::unique_ptr&lt;list&gt;(<span class="keyword">new</span> list{});</div>
+<div class="line"><a id="l01450" name="l01450"></a><span class="lineno"> 1450</span>                        l = std::make_unique&lt;list&gt;();</div>
 <div class="line"><a id="l01451" name="l01451"></a><span class="lineno"> 1451</span>                        l-&gt;reserve(r.size());</div>
 <div class="line"><a id="l01452" name="l01452"></a><span class="lineno"> 1452</span>                        <span class="keywordflow">for</span> (<span class="keyword">auto</span> it = r.begin(); it != r.end(); ++it)</div>
 <div class="line"><a id="l01453" name="l01453"></a><span class="lineno"> 1453</span>                            l-&gt;emplace_back(*it);</div>
 <div class="line"><a id="l01454" name="l01454"></a><span class="lineno"> 1454</span>                        <span class="keywordflow">return</span>;</div>
 <div class="line"><a id="l01455" name="l01455"></a><span class="lineno"> 1455</span>                    <span class="keywordflow">case</span> type::Object:</div>
-<div class="line"><a id="l01456" name="l01456"></a><span class="lineno"> 1456</span>                        o = std::unique_ptr&lt;object&gt;(<span class="keyword">new</span> <span class="keywordtype">object</span>{});</div>
+<div class="line"><a id="l01456" name="l01456"></a><span class="lineno"> 1456</span>                        o = std::make_unique&lt;object&gt;();</div>
 <div class="line"><a id="l01457" name="l01457"></a><span class="lineno"> 1457</span>                        <span class="keywordflow">for</span> (<span class="keyword">auto</span> it = r.begin(); it != r.end(); ++it)</div>
 <div class="line"><a id="l01458" name="l01458"></a><span class="lineno"> 1458</span>                            o-&gt;emplace(it-&gt;key(), *it);</div>
 <div class="line"><a id="l01459" name="l01459"></a><span class="lineno"> 1459</span>                        <span class="keywordflow">return</span>;</div>
@@ -1618,13 +1618,13 @@ $(document).ready(function(){initNavTree('json_8h_source.html',''); initResizabl
 <div class="line"><a id="l01483" name="l01483"></a><span class="lineno"> 1483</span>                        s = r.s;</div>
 <div class="line"><a id="l01484" name="l01484"></a><span class="lineno"> 1484</span>                        <span class="keywordflow">return</span>;</div>
 <div class="line"><a id="l01485" name="l01485"></a><span class="lineno"> 1485</span>                    <span class="keywordflow">case</span> type::List:</div>
-<div class="line"><a id="l01486" name="l01486"></a><span class="lineno"> 1486</span>                        l = std::unique_ptr&lt;list&gt;(<span class="keyword">new</span> list{});</div>
+<div class="line"><a id="l01486" name="l01486"></a><span class="lineno"> 1486</span>                        l = std::make_unique&lt;list&gt;();</div>
 <div class="line"><a id="l01487" name="l01487"></a><span class="lineno"> 1487</span>                        l-&gt;reserve(r.<a class="code hl_function" href="classcrow_1_1json_1_1wvalue.html#a1ded929c63fcb6e3c53be38e9b54c672">size</a>());</div>
 <div class="line"><a id="l01488" name="l01488"></a><span class="lineno"> 1488</span>                        <span class="keywordflow">for</span> (<span class="keyword">auto</span> it = r.l-&gt;begin(); it != r.l-&gt;end(); ++it)</div>
 <div class="line"><a id="l01489" name="l01489"></a><span class="lineno"> 1489</span>                            l-&gt;emplace_back(*it);</div>
 <div class="line"><a id="l01490" name="l01490"></a><span class="lineno"> 1490</span>                        <span class="keywordflow">return</span>;</div>
 <div class="line"><a id="l01491" name="l01491"></a><span class="lineno"> 1491</span>                    <span class="keywordflow">case</span> type::Object:</div>
-<div class="line"><a id="l01492" name="l01492"></a><span class="lineno"> 1492</span>                        o = std::unique_ptr&lt;object&gt;(<span class="keyword">new</span> <span class="keywordtype">object</span>{});</div>
+<div class="line"><a id="l01492" name="l01492"></a><span class="lineno"> 1492</span>                        o = std::make_unique&lt;object&gt;();</div>
 <div class="line"><a id="l01493" name="l01493"></a><span class="lineno"> 1493</span>                        o-&gt;insert(r.o-&gt;begin(), r.o-&gt;end());</div>
 <div class="line"><a id="l01494" name="l01494"></a><span class="lineno"> 1494</span>                        <span class="keywordflow">return</span>;</div>
 <div class="line"><a id="l01495" name="l01495"></a><span class="lineno"> 1495</span>                    <span class="keywordflow">case</span> type::Function:</div>
@@ -1791,7 +1791,7 @@ $(document).ready(function(){initNavTree('json_8h_source.html',''); initResizabl
 <div class="line"><a id="l01654" name="l01654"></a><span class="lineno"> 1654</span>                    reset();</div>
 <div class="line"><a id="l01655" name="l01655"></a><span class="lineno"> 1655</span>                t_ = type::List;</div>
 <div class="line"><a id="l01656" name="l01656"></a><span class="lineno"> 1656</span>                <span class="keywordflow">if</span> (!l)</div>
-<div class="line"><a id="l01657" name="l01657"></a><span class="lineno"> 1657</span>                    l = std::unique_ptr&lt;list&gt;(<span class="keyword">new</span> list{});</div>
+<div class="line"><a id="l01657" name="l01657"></a><span class="lineno"> 1657</span>                    l = std::make_unique&lt;list&gt;();</div>
 <div class="line"><a id="l01658" name="l01658"></a><span class="lineno"> 1658</span>                l-&gt;clear();</div>
 <div class="line"><a id="l01659" name="l01659"></a><span class="lineno"> 1659</span>                l-&gt;resize(v.size());</div>
 <div class="line"><a id="l01660" name="l01660"></a><span class="lineno"> 1660</span>                <span class="keywordtype">size_t</span> idx = 0;</div>
@@ -1809,7 +1809,7 @@ $(document).ready(function(){initNavTree('json_8h_source.html',''); initResizabl
 <div class="line"><a id="l01672" name="l01672"></a><span class="lineno"> 1672</span>                    reset();</div>
 <div class="line"><a id="l01673" name="l01673"></a><span class="lineno"> 1673</span>                t_ = type::List;</div>
 <div class="line"><a id="l01674" name="l01674"></a><span class="lineno"> 1674</span>                <span class="keywordflow">if</span> (!l)</div>
-<div class="line"><a id="l01675" name="l01675"></a><span class="lineno"> 1675</span>                    l = std::unique_ptr&lt;list&gt;(<span class="keyword">new</span> list{});</div>
+<div class="line"><a id="l01675" name="l01675"></a><span class="lineno"> 1675</span>                    l = std::make_unique&lt;list&gt;();</div>
 <div class="line"><a id="l01676" name="l01676"></a><span class="lineno"> 1676</span>                l-&gt;clear();</div>
 <div class="line"><a id="l01677" name="l01677"></a><span class="lineno"> 1677</span>                l-&gt;resize(v.size());</div>
 <div class="line"><a id="l01678" name="l01678"></a><span class="lineno"> 1678</span>                <span class="keywordtype">size_t</span> idx = 0;</div>
@@ -1826,12 +1826,12 @@ $(document).ready(function(){initNavTree('json_8h_source.html',''); initResizabl
 <div class="line"><a id="l01689" name="l01689"></a><span class="lineno"> 1689</span>                {</div>
 <div class="line"><a id="l01690" name="l01690"></a><span class="lineno"> 1690</span>                    reset();</div>
 <div class="line"><a id="l01691" name="l01691"></a><span class="lineno"> 1691</span>                    t_ = type::Object;</div>
-<div class="line"><a id="l01692" name="l01692"></a><span class="lineno"> 1692</span>                    o = std::unique_ptr&lt;object&gt;(<span class="keyword">new</span> <span class="keywordtype">object</span>(initializer_list));</div>
+<div class="line"><a id="l01692" name="l01692"></a><span class="lineno"> 1692</span>                    o = std::make_unique&lt;object&gt;(initializer_list);</div>
 <div class="line"><a id="l01693" name="l01693"></a><span class="lineno"> 1693</span>                }</div>
 <div class="line"><a id="l01694" name="l01694"></a><span class="lineno"> 1694</span>                <span class="keywordflow">else</span></div>
 <div class="line"><a id="l01695" name="l01695"></a><span class="lineno"> 1695</span>                {</div>
 <div class="line"><a id="l01696" name="l01696"></a><span class="lineno"> 1696</span><span class="preprocessor">#if defined(__APPLE__) || defined(__MACH__) || defined(__FreeBSD__) || defined(__ANDROID__) || defined(_LIBCPP_VERSION)</span></div>
-<div class="line"><a id="l01697" name="l01697"></a><span class="lineno"> 1697</span>                    o = std::unique_ptr&lt;object&gt;(<span class="keyword">new</span> <span class="keywordtype">object</span>(initializer_list));</div>
+<div class="line"><a id="l01697" name="l01697"></a><span class="lineno"> 1697</span>                    o = std::make_unique&lt;object&gt;(initializer_list);</div>
 <div class="line"><a id="l01698" name="l01698"></a><span class="lineno"> 1698</span><span class="preprocessor">#else</span></div>
 <div class="line"><a id="l01699" name="l01699"></a><span class="lineno"> 1699</span>                    (*o) = initializer_list;</div>
 <div class="line"><a id="l01700" name="l01700"></a><span class="lineno"> 1700</span><span class="preprocessor">#endif</span></div>
@@ -1845,12 +1845,12 @@ $(document).ready(function(){initNavTree('json_8h_source.html',''); initResizabl
 <div class="line"><a id="l01708" name="l01708"></a><span class="lineno"> 1708</span>                {</div>
 <div class="line"><a id="l01709" name="l01709"></a><span class="lineno"> 1709</span>                    reset();</div>
 <div class="line"><a id="l01710" name="l01710"></a><span class="lineno"> 1710</span>                    t_ = type::Object;</div>
-<div class="line"><a id="l01711" name="l01711"></a><span class="lineno"> 1711</span>                    o = std::unique_ptr&lt;object&gt;(<span class="keyword">new</span> <span class="keywordtype">object</span>(value));</div>
+<div class="line"><a id="l01711" name="l01711"></a><span class="lineno"> 1711</span>                    o = std::make_unique&lt;object&gt;(value);</div>
 <div class="line"><a id="l01712" name="l01712"></a><span class="lineno"> 1712</span>                }</div>
 <div class="line"><a id="l01713" name="l01713"></a><span class="lineno"> 1713</span>                <span class="keywordflow">else</span></div>
 <div class="line"><a id="l01714" name="l01714"></a><span class="lineno"> 1714</span>                {</div>
 <div class="line"><a id="l01715" name="l01715"></a><span class="lineno"> 1715</span><span class="preprocessor">#if defined(__APPLE__) || defined(__MACH__) || defined(__FreeBSD__) || defined(__ANDROID__) || defined(_LIBCPP_VERSION)</span></div>
-<div class="line"><a id="l01716" name="l01716"></a><span class="lineno"> 1716</span>                    o = std::unique_ptr&lt;object&gt;(<span class="keyword">new</span> <span class="keywordtype">object</span>(value));</div>
+<div class="line"><a id="l01716" name="l01716"></a><span class="lineno"> 1716</span>                    o = std::make_unique&lt;object&gt;(value);</div>
 <div class="line"><a id="l01717" name="l01717"></a><span class="lineno"> 1717</span><span class="preprocessor">#else</span></div>
 <div class="line"><a id="l01718" name="l01718"></a><span class="lineno"> 1718</span>                    (*o) = value;</div>
 <div class="line"><a id="l01719" name="l01719"></a><span class="lineno"> 1719</span><span class="preprocessor">#endif</span></div>
@@ -1864,7 +1864,7 @@ $(document).ready(function(){initNavTree('json_8h_source.html',''); initResizabl
 <div class="line"><a id="l01727" name="l01727"></a><span class="lineno"> 1727</span>                {</div>
 <div class="line"><a id="l01728" name="l01728"></a><span class="lineno"> 1728</span>                    reset();</div>
 <div class="line"><a id="l01729" name="l01729"></a><span class="lineno"> 1729</span>                    t_ = type::Object;</div>
-<div class="line"><a id="l01730" name="l01730"></a><span class="lineno"> 1730</span>                    o = std::unique_ptr&lt;object&gt;(<span class="keyword">new</span> <span class="keywordtype">object</span>(std::move(value)));</div>
+<div class="line"><a id="l01730" name="l01730"></a><span class="lineno"> 1730</span>                    o = std::make_unique&lt;object&gt;(std::move(value));</div>
 <div class="line"><a id="l01731" name="l01731"></a><span class="lineno"> 1731</span>                }</div>
 <div class="line"><a id="l01732" name="l01732"></a><span class="lineno"> 1732</span>                <span class="keywordflow">else</span></div>
 <div class="line"><a id="l01733" name="l01733"></a><span class="lineno"> 1733</span>                {</div>
@@ -1887,7 +1887,7 @@ $(document).ready(function(){initNavTree('json_8h_source.html',''); initResizabl
 <div class="line"><a id="l01750" name="l01750"></a><span class="lineno"> 1750</span>                    reset();</div>
 <div class="line"><a id="l01751" name="l01751"></a><span class="lineno"> 1751</span>                t_ = type::List;</div>
 <div class="line"><a id="l01752" name="l01752"></a><span class="lineno"> 1752</span>                <span class="keywordflow">if</span> (!l)</div>
-<div class="line"><a id="l01753" name="l01753"></a><span class="lineno"> 1753</span>                    l = std::unique_ptr&lt;list&gt;(<span class="keyword">new</span> list{});</div>
+<div class="line"><a id="l01753" name="l01753"></a><span class="lineno"> 1753</span>                    l = std::make_unique&lt;list&gt;();</div>
 <div class="line"><a id="l01754" name="l01754"></a><span class="lineno"> 1754</span>                <span class="keywordflow">if</span> (l-&gt;size() &lt; index + 1)</div>
 <div class="line"><a id="l01755" name="l01755"></a><span class="lineno"> 1755</span>                    l-&gt;resize(index + 1);</div>
 <div class="line"><a id="l01756" name="l01756"></a><span class="lineno"> 1756</span>                <span class="keywordflow">return</span> (*l)[index];</div>
@@ -1937,7 +1937,7 @@ $(document).ready(function(){initNavTree('json_8h_source.html',''); initResizabl
 <div class="line"><a id="l01796" name="l01796"></a><span class="lineno"> 1796</span>                    reset();</div>
 <div class="line"><a id="l01797" name="l01797"></a><span class="lineno"> 1797</span>                t_ = type::Object;</div>
 <div class="line"><a id="l01798" name="l01798"></a><span class="lineno"> 1798</span>                <span class="keywordflow">if</span> (!o)</div>
-<div class="line"><a id="l01799" name="l01799"></a><span class="lineno"> 1799</span>                    o = std::unique_ptr&lt;object&gt;(<span class="keyword">new</span> <span class="keywordtype">object</span>{});</div>
+<div class="line"><a id="l01799" name="l01799"></a><span class="lineno"> 1799</span>                    o = std::make_unique&lt;object&gt;();</div>
 <div class="line"><a id="l01800" name="l01800"></a><span class="lineno"> 1800</span>                <span class="keywordflow">return</span> (*o)[str];</div>
 <div class="line"><a id="l01801" name="l01801"></a><span class="lineno"> 1801</span>            }</div>
 <div class="line"><a id="l01802" name="l01802"></a><span class="lineno"> 1802</span> </div>
@@ -2335,7 +2335,7 @@ $(document).ready(function(){initNavTree('json_8h_source.html',''); initResizabl
 			<ul>
 				<li class="navelem"><a class="el" href="dir_d44c64559bbebec7f509842c48db8b23.html">include</a></li><li class="navelem"><a class="el" href="dir_d22c1cb87b72f01e1a7f207eb3bfd1ca.html">crow</a></li><li class="navelem"><b>json.h</b></li>
 				<li class="footer">
-					Generated on Sun Sep 13 2026 for Crow by <a href="http://www.doxygen.org/index.html">
+					Generated on Mon Sep 14 2026 for Crow by <a href="http://www.doxygen.org/index.html">
 					<img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.9.8.
 					Dark theme by <a href="http://majerle.eu" target="_new">Tilen Majerle</a>. Edited by <a href="https://github.com/The-EDev" target="_new">Farook Al-Sammarraie</a>. All rights reserved.
 				</li>
