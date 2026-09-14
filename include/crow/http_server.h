@@ -57,30 +57,33 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         }
     } // namespace detail
 
+    struct ServerConfiguration {
+        unsigned int concurrency_{2};
+        std::string server_name_ {std::string("Crow/") + VERSION};
+        bool use_unix_{false};
+        detail::socket::tcp_socket_options tcp_socket_options_{};
+        std::uint8_t timeout_{5};
+    };
+
     template<typename Handler, typename Acceptor = TCPAcceptor, typename Adaptor = SocketAdaptor, typename... Middlewares>
     class Server
     {
     public:
+
       Server(Handler* handler,
-             typename Acceptor::endpoint endpoint, 
-             std::string server_name = std::string("Crow/") + VERSION,
+             typename Acceptor::endpoint endpoint,
+             const ServerConfiguration& config,
              std::tuple<Middlewares...>* middlewares = nullptr,
-             unsigned int concurrency = 1,
-             uint8_t timeout = 5,
-             typename Adaptor::context* adaptor_ctx = nullptr,
-             detail::socket::tcp_socket_options tcp_socket_options = {}):
-          concurrency_(concurrency),
-          task_queue_length_pool_(concurrency_ - 1),
+             typename Adaptor::context* adaptor_ctx = nullptr):
+          config_(config),
+          task_queue_length_pool_(config.concurrency_ - 1),
           acceptor_(io_context_),
           signals_(io_context_),
           tick_timer_(io_context_),
           accept_timer_(io_context_),
           handler_(handler),
-          timeout_(timeout),
-          server_name_(server_name),
           middlewares_(middlewares),
-          adaptor_ctx_(adaptor_ctx),
-          tcp_socket_options_(tcp_socket_options)
+          adaptor_ctx_(adaptor_ctx)
         {
             if (startup_failed_) {
                 CROW_LOG_ERROR << "Startup failed; not running server.";
@@ -146,7 +149,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                 return;
             }
 
-            uint16_t worker_thread_count = concurrency_ - 1;
+            uint16_t worker_thread_count = config_.concurrency_ - 1;
             for (int i = 0; i < worker_thread_count; i++)
                 io_context_pool_.emplace_back(new asio::io_context());
             get_cached_date_str_pool_.resize(worker_thread_count);
@@ -187,7 +190,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
 
                         // initializing task timers
                         detail::task_timer task_timer(*io_context_pool_[i]);
-                        task_timer.set_default_timeout(timeout_);
+                        task_timer.set_default_timeout(config_.timeout_);
                         task_timer_pool_[i] = &task_timer;
                         task_queue_length_pool_[i] = 0;
 
@@ -221,9 +224,9 @@ namespace crow // NOTE: Already documented in "crow/app.h"
             }
             handler_->port(acceptor_.port());
             handler_->address_is_bound();
-            CROW_LOG_INFO << server_name_ 
+            CROW_LOG_INFO << config_.server_name_
                           << " server is running at " << acceptor_.url_display(handler_->ssl_used()) 
-                          << " using " << concurrency_ << " threads";
+                          << " using " << config_.concurrency_ << " threads";
             CROW_LOG_INFO << "Call `app.loglevel(crow::LogLevel::Warning)` to hide Info level logs.";
 
             signals_.async_wait(
@@ -329,7 +332,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                 size_t context_idx = pick_io_context_idx();
                 asio::io_context& ic = *io_context_pool_[context_idx];
                 auto p = std::make_shared<Connection<Adaptor, Handler, Middlewares...>>(
-                    ic, handler_, server_name_, middlewares_,
+                    ic, handler_, config_.server_name_, middlewares_,
                     get_cached_date_str_pool_[context_idx], *task_timer_pool_[context_idx], adaptor_ctx_, task_queue_length_pool_[context_idx]);
                     
                 CROW_LOG_DEBUG << &ic << " {" << context_idx << "} queue length: " << task_queue_length_pool_[context_idx];
@@ -339,7 +342,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                   [this, p, &ic](error_code ec) {
                       if (!ec)
                       {
-                          detail::socket::apply_tcp_socket_options(p->socket(), tcp_socket_options_);
+                          detail::socket::apply_tcp_socket_options(p->socket(), config_.tcp_socket_options_);
                           asio::post(ic,
                             [p] {
                                 p->start();
@@ -375,7 +378,8 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         }
 
     private:
-        unsigned int concurrency_{2};
+        ServerConfiguration config_;
+
         std::vector<std::atomic<unsigned int>> task_queue_length_pool_;
         std::vector<std::unique_ptr<asio::io_context>> io_context_pool_;
         asio::io_context io_context_;
@@ -393,9 +397,6 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         asio::steady_timer accept_timer_;
 
         Handler* handler_;
-        std::uint8_t timeout_;
-        std::string server_name_;
-        bool use_unix_;
 
         std::chrono::milliseconds tick_interval_;
         std::function<void()> tick_function_;
@@ -403,6 +404,5 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         std::tuple<Middlewares...>* middlewares_;
 
         typename Adaptor::context* adaptor_ctx_;
-        detail::socket::tcp_socket_options tcp_socket_options_;
     };
 } // namespace crow
