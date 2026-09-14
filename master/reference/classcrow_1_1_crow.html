@@ -231,6 +231,13 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><b>is_bound</b> () const
 std::string&#160;</td><td class="memItemRight" valign="bottom"><b>bindaddr</b> ()</td></tr>
 <tr class="memdesc:a8c816534804e7bd351ca692005bf3343"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the address that <a class="el" href="classcrow_1_1_crow.html" title="The main server application class.">Crow</a> will handle requests on. <br /></td></tr>
 <tr class="separator:a8c816534804e7bd351ca692005bf3343"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adbac84e983b956bf71f89e5818fa80bd" id="r_adbac84e983b956bf71f89e5818fa80bd"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classcrow_1_1_crow.html#a5b0a203a6f9070ea8010227dcdbcec60">self_t</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcrow_1_1_crow.html#adbac84e983b956bf71f89e5818fa80bd">static_directory</a> (std::string path)</td></tr>
+<tr class="memdesc:adbac84e983b956bf71f89e5818fa80bd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the filesystem directory for implicit static file serving.  <br /></td></tr>
+<tr class="separator:adbac84e983b956bf71f89e5818fa80bd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a07aad9ff4778c84166cb9143f7951402" id="r_a07aad9ff4778c84166cb9143f7951402"><td class="memItemLeft" align="right" valign="top"><a id="a07aad9ff4778c84166cb9143f7951402" name="a07aad9ff4778c84166cb9143f7951402"></a>
+std::string&#160;</td><td class="memItemRight" valign="bottom"><b>static_directory</b> () const</td></tr>
+<tr class="memdesc:a07aad9ff4778c84166cb9143f7951402"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the filesystem directory used for implicit static files. <br /></td></tr>
+<tr class="separator:a07aad9ff4778c84166cb9143f7951402"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7e8e8d33e54de09323f6604075accc99" id="r_a7e8e8d33e54de09323f6604075accc99"><td class="memItemLeft" align="right" valign="top"><a id="a7e8e8d33e54de09323f6604075accc99" name="a7e8e8d33e54de09323f6604075accc99"></a>
 <a class="el" href="classcrow_1_1_crow.html#a5b0a203a6f9070ea8010227dcdbcec60">self_t</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>local_socket_path</b> (std::string path)</td></tr>
 <tr class="memdesc:a7e8e8d33e54de09323f6604075accc99"><td class="mdescLeft">&#160;</td><td class="mdescRight">Disable tcp/ip and use unix domain socket instead. <br /></td></tr>
@@ -596,6 +603,37 @@ template&lt;typename... Middlewares&gt; </div>
 
 <p>Non-blocking version of <a class="el" href="classcrow_1_1_crow.html#a193d8b03f717234a841cd92f72c6b4b5">run()</a> </p>
 <p>The output from this method needs to be saved into a variable! Otherwise the call will be made on the same thread. </p>
+
+</div>
+</div>
+<a id="adbac84e983b956bf71f89e5818fa80bd" name="adbac84e983b956bf71f89e5818fa80bd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adbac84e983b956bf71f89e5818fa80bd">&#9670;&#160;</a></span>static_directory()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename... Middlewares&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classcrow_1_1_crow.html#a5b0a203a6f9070ea8010227dcdbcec60">self_t</a> &amp; <a class="el" href="classcrow_1_1_crow.html">crow::Crow</a>&lt; Middlewares &gt;::static_directory </td>
+          <td>(</td>
+          <td class="paramtype">std::string&#160;</td>
+          <td class="paramname"><em>path</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Set the filesystem directory for implicit static file serving. </p>
+<p>Defaults to CROW_STATIC_DIRECTORY (<code>"static/"</code>). Must be called before <a class="el" href="classcrow_1_1_crow.html#a193d8b03f717234a841cd92f72c6b4b5">run()</a> / <a class="el" href="classcrow_1_1_crow.html#afd29cf4e11557abfd7bce88b84af9b99">run_async()</a>. Does not change CROW_STATIC_ENDPOINT. </p>
 
 </div>
 </div>
