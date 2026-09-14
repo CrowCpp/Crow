@@ -69,7 +69,9 @@ namespace crow // NOTE: Already documented in "crow/app.h"
             virtual void send_text(std::string msg) = 0;
             virtual void send_ping(std::string msg) = 0;
             virtual void send_pong(std::string msg) = 0;
-            virtual void close(const std::string& msg = "quit", uint16_t status_code = CloseStatusCode::NormalClosure, std::shared_ptr<std::promise<void>> done = nullptr) = 0;
+            virtual void close(const std::string& msg = "quit", 
+                               uint16_t status_code = CloseStatusCode::NormalClosure, 
+                               std::shared_ptr<std::promise<void>> done = nullptr) = 0;
             virtual std::string get_remote_ip() = 0;
             virtual std::string get_subprotocol() const = 0;
             virtual ~connection() = default;
