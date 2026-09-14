@@ -615,6 +615,9 @@ namespace crow
         /// \brief A wrapper for `validate()` in the router
         void validate()
         {
+            // Always validate blueprints so routes remain available when
+            // CROW_DISABLE_STATIC_DIR skips add_blueprint()/add_static_dir().
+            router_.validate_bp();
             router_.validate();
         }
 
