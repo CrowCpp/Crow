@@ -23,7 +23,6 @@
 #include <system_error>
 #include <thread>
 #include <vector>
-#include <optional>
 
 #include "crow/version.h"
 #include "crow/http_connection.h"
