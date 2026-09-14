@@ -257,7 +257,9 @@ namespace crow // NOTE: Already documented in "crow/app.h"
 
             ///
             /// Sets a flag to destroy the object once the message is sent.
-            void close(std::string const& msg = "quit", uint16_t status_code = CloseStatusCode::NormalClosure, std::shared_ptr<std::promise<void>> done = nullptr) override
+            void close(std::string const& msg = "quit", 
+                       uint16_t status_code = CloseStatusCode::NormalClosure, 
+                       std::shared_ptr<std::promise<void>> done = nullptr) override
             {
                 dispatch([shared_this = this->shared_from_this(), msg, status_code, done]() mutable {
                     shared_this->has_sent_close_ = true;
