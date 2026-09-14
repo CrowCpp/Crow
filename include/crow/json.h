@@ -1407,7 +1407,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
               returnable("application/json")
             {
                 t_ = type::List;
-                l = std::unique_ptr<list>(new list{});
+                l = std::make_unique<list>();
                 l->reserve(r.size());
                 for (auto it = r.begin(); it != r.end(); ++it)
                     l->emplace_back(*it);
@@ -1416,7 +1416,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
               returnable("application/json")
             {
                 t_ = type::List;
-                l = std::unique_ptr<list>(new list{});
+                l = std::make_unique<list>();
                 l->reserve(r.size());
                 for (auto it = r.begin(); it != r.end(); ++it)
                     l->emplace_back(*it);
@@ -1447,13 +1447,13 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                         s = r.s();
                         return;
                     case type::List:
-                        l = std::unique_ptr<list>(new list{});
+                        l = std::make_unique<list>();
                         l->reserve(r.size());
                         for (auto it = r.begin(); it != r.end(); ++it)
                             l->emplace_back(*it);
                         return;
                     case type::Object:
-                        o = std::unique_ptr<object>(new object{});
+                        o = std::make_unique<object>();
                         for (auto it = r.begin(); it != r.end(); ++it)
                             o->emplace(it->key(), *it);
                         return;
@@ -1483,13 +1483,13 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                         s = r.s;
                         return;
                     case type::List:
-                        l = std::unique_ptr<list>(new list{});
+                        l = std::make_unique<list>();
                         l->reserve(r.size());
                         for (auto it = r.l->begin(); it != r.l->end(); ++it)
                             l->emplace_back(*it);
                         return;
                     case type::Object:
-                        o = std::unique_ptr<object>(new object{});
+                        o = std::make_unique<object>();
                         o->insert(r.o->begin(), r.o->end());
                         return;
                     case type::Function:
@@ -1654,7 +1654,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                     reset();
                 t_ = type::List;
                 if (!l)
-                    l = std::unique_ptr<list>(new list{});
+                    l = std::make_unique<list>();
                 l->clear();
                 l->resize(v.size());
                 size_t idx = 0;
@@ -1672,7 +1672,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                     reset();
                 t_ = type::List;
                 if (!l)
-                    l = std::unique_ptr<list>(new list{});
+                    l = std::make_unique<list>();
                 l->clear();
                 l->resize(v.size());
                 size_t idx = 0;
@@ -1689,12 +1689,12 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                 {
                     reset();
                     t_ = type::Object;
-                    o = std::unique_ptr<object>(new object(initializer_list));
+                    o = std::make_unique<object>(initializer_list);
                 }
                 else
                 {
 #if defined(__APPLE__) || defined(__MACH__) || defined(__FreeBSD__) || defined(__ANDROID__) || defined(_LIBCPP_VERSION)
-                    o = std::unique_ptr<object>(new object(initializer_list));
+                    o = std::make_unique<object>(initializer_list);
 #else
                     (*o) = initializer_list;
 #endif
@@ -1708,12 +1708,12 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                 {
                     reset();
                     t_ = type::Object;
-                    o = std::unique_ptr<object>(new object(value));
+                    o = std::make_unique<object>(value);
                 }
                 else
                 {
 #if defined(__APPLE__) || defined(__MACH__) || defined(__FreeBSD__) || defined(__ANDROID__) || defined(_LIBCPP_VERSION)
-                    o = std::unique_ptr<object>(new object(value));
+                    o = std::make_unique<object>(value);
 #else
                     (*o) = value;
 #endif
@@ -1727,7 +1727,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                 {
                     reset();
                     t_ = type::Object;
-                    o = std::unique_ptr<object>(new object(std::move(value)));
+                    o = std::make_unique<object>(std::move(value));
                 }
                 else
                 {
@@ -1750,7 +1750,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                     reset();
                 t_ = type::List;
                 if (!l)
-                    l = std::unique_ptr<list>(new list{});
+                    l = std::make_unique<list>();
                 if (l->size() < index + 1)
                     l->resize(index + 1);
                 return (*l)[index];
@@ -1796,7 +1796,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                     reset();
                 t_ = type::Object;
                 if (!o)
-                    o = std::unique_ptr<object>(new object{});
+                    o = std::make_unique<object>();
                 return (*o)[str];
             }
 
