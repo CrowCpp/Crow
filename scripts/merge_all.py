@@ -44,10 +44,16 @@ else:
     middlewares_actual = middlewares
 print("Middlewares: " + str(middlewares_actual))
 
+# Headers that are opt-in and must not be pulled into crow_all.h: they impose
+# a requirement (e.g. RTTI) that the rest of the library doesn't need, so a
+# build that can't meet it can still use the amalgamated header.
+opt_in_headers = {'file_body_sink.h'}
+
 re_depends = re.compile('^#include \"(.*)\"\n', re.MULTILINE)
 re_pragma = re.compile('^(.*)#pragma once(.*)\n', re.MULTILINE)
 headers = [x.rsplit(sep, 1)[-1] for x in glob(pt.join(header_path, '*.h*'))]
-headers += ['crow'+sep + x.rsplit(sep, 1)[-1] for x in glob(pt.join(header_path, 'crow'+sep+'*.h*'))]
+headers += ['crow'+sep + x.rsplit(sep, 1)[-1] for x in glob(pt.join(header_path, 'crow'+sep+'*.h*'))
+            if x.rsplit(sep, 1)[-1] not in opt_in_headers]
 headers += [('crow'+sep+'middlewares'+sep + x + '.h') for x in middlewares_actual]
 print(headers)
 edges = defaultdict(list)

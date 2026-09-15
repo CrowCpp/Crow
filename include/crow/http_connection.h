@@ -121,8 +121,36 @@ namespace crow
             }
         }
 
-        void handle_header()
+        /// Apply `max_body_size` before 100-continue. Return 1 to skip the body (F_SKIPBODY).
+        int handle_header()
         {
+            body_error_status_ = 0;
+            // Set before a body_sink factory can run, so a sink can apply a per-peer policy.
+            req_.remote_ip_address = adaptor_.address();
+            const uint64_t limit = handler_->effective_max_body_size(*routing_handle_result_);
+            parser_.set_max_body_size(limit);
+
+            if (parser_.content_length != CROW_ULLONG_MAX &&
+                limit != UINT64_MAX && parser_.content_length > limit)
+            {
+                body_error_status_ = status::PAYLOAD_TOO_LARGE;
+                return 1;
+            }
+
+            const bool use_body_sink = parser_.has_incoming_body() &&
+                                       handler_->uses_body_sink(*routing_handle_result_);
+            if (use_body_sink)
+            {
+                try
+                {
+                    parser_.open_body_sink(handler_->make_body_sink(*routing_handle_result_, req_));
+                }
+                catch (...)
+                {
+                    body_error_status_ = status::INTERNAL_SERVER_ERROR;
+                    return 1;
+                }
+            }
             // HTTP 1.1 Expect: 100-continue
             if (req_.http_ver_major == 1 && req_.http_ver_minor == 1 && get_header_value(req_.headers, "expect") == "100-continue")
             {
@@ -142,6 +170,19 @@ namespace crow
                 need_to_call_after_handlers_ = true;
                 complete_request();
             }
+            return 0;
+        }
+
+        void reject_body(int code)
+        {
+            if (body_error_status_ == 0)
+                body_error_status_ = code;
+            handle();
+        }
+
+        bool parser_should_abort() const
+        {
+            return body_error_status_ != 0;
         }
 
         void handle()
@@ -156,10 +197,25 @@ namespace crow
             req_.middleware_context = static_cast<void*>(&ctx_);
             req_.middleware_container = static_cast<void*>(middlewares_);
             req_.io_context = &adaptor_.get_io_context();
-            req_.remote_ip_address = adaptor_.address();
             add_keep_alive_ = req_.keep_alive;
             close_connection_ = req_.close_connection;
 
+            if (body_error_status_)
+            {
+                req_.body.clear();
+                res = response(body_error_status_);
+                // Explicit, rather than relying on response::operator=(&&) happening to
+                // omit skip_body: a HEAD request must never get a body, regardless of
+                // which error status (413, or 500 from a body_sink failure) sent it here.
+                res.skip_body = (req_.method == HTTPMethod::Head);
+                res.set_header("Connection", "close");
+                res.end();
+                close_connection_ = true;
+                add_keep_alive_ = false;
+                need_to_call_after_handlers_ = true;
+                complete_request();
+                return;
+            }
             if (req_.check_version(1, 1)) // HTTP/1.1
             {
                 if (!req_.headers.count("host"))
@@ -318,7 +374,7 @@ namespace crow
                 while (is.gcount() > 0)
                 {
                     buffers[0] = asio::buffer(buf, is.gcount());
-                    error_code ec = do_write_sync(buffers);
+                    error_code ec = do_write_sync(buffers, /*clear_parser=*/false);
                     if (ec) {
                         CROW_LOG_ERROR << ec << " - buffer write error happened while sending content of file "
                                        << res.file_info.path << ". Writing stopped premature.";
@@ -327,7 +383,10 @@ namespace crow
                     is.read(buf, sizeof(buf));
                 }
             }
-            if (close_connection_)
+            // A body-error response leaves the read side open for do_read()'s
+            // linger_close() to drain instead of closing here, so a peer still
+            // mid-upload isn't RST'd before it reads the response.
+            if (close_connection_ && !body_error_status_)
             {
                 adaptor_.shutdown_readwrite();
                 adaptor_.close();
@@ -375,7 +434,7 @@ namespace crow
                     {
                         size_t to_transfer = CROW_MIN(16384UL, length - transferred);
                         buffers[0] = asio::const_buffer(data + transferred, to_transfer);
-                        ec = do_write_sync(buffers);
+                        ec = do_write_sync(buffers, /*clear_parser=*/false);
                         if (ec) {
                             CROW_LOG_ERROR << ec << " - " << transferred << " - buffer write error happened while sending response. Writing stopped premature.";
                             break;
@@ -383,7 +442,9 @@ namespace crow
                         transferred += to_transfer;
                     }
                 }
-                if (close_connection_)
+                // See the matching comment in do_write_static(): leave the
+                // close to do_read()'s linger_close() on a body error.
+                if (close_connection_ && !body_error_status_)
                 {
                     adaptor_.shutdown_readwrite();
                     adaptor_.close();
@@ -417,9 +478,21 @@ namespace crow
                   {
                       self->cancel_deadline_timer();
                       self->parser_.done();
-                      self->adaptor_.shutdown_read();
-                      self->adaptor_.close();
                       CROW_LOG_DEBUG << self << " from read(1) with description: \"" << http_errno_description(static_cast<http_errno>(self->parser_.http_errno)) << '\"';
+                      if (self->body_error_status_)
+                      {
+                          // The rejection response (413, or a sink write/finish
+                          // failure's 500) is already written; shut down the write
+                          // side and drain whatever the client still sends instead
+                          // of closing on unread bytes, which can RST a peer that
+                          // is still mid-upload before it reads the response.
+                          self->linger_close();
+                      }
+                      else
+                      {
+                          self->adaptor_.shutdown_read();
+                          self->adaptor_.close();
+                      }
                   }
                   else if (self->close_connection_)
                   {
@@ -436,6 +509,36 @@ namespace crow
                   {
                       // res will be completed later by user
                       self->need_to_start_read_after_complete_ = true;
+                  }
+              });
+        }
+
+        /// Shut down the write side (FIN, not RST) after a rejection response and
+        /// discard whatever the client still sends, instead of closing on unread
+        /// bytes. Bounded by the same deadline timer a slow client already gets.
+        void linger_close()
+        {
+            adaptor_.shutdown_write();
+            start_deadline();
+            do_linger_read();
+        }
+
+        // Reuses the normal read path's buffer_; safe here because parsing has
+        // already aborted, so nothing else reads from or writes to it.
+        void do_linger_read()
+        {
+            auto self = this->shared_from_this();
+            adaptor_.socket().async_read_some(
+              asio::buffer(buffer_),
+              [self](const error_code& ec, std::size_t /*bytes_transferred*/) {
+                  if (!ec && self->adaptor_.is_open())
+                  {
+                      self->do_linger_read();
+                  }
+                  else
+                  {
+                      self->cancel_deadline_timer();
+                      self->adaptor_.close();
                   }
               });
         }
@@ -473,7 +576,12 @@ namespace crow
               });
         }
 
-        inline error_code do_write_sync(std::vector<asio::const_buffer>& buffers)
+        /// `clear_parser` must stay false for every call but the last one writing
+        /// a single response, static file, or streamed body: clearing resets
+        /// `req` (dropping the connection's `body_sink` reference, e.g. deleting
+        /// a `FileBodySink`'s file) and must not happen until that whole response
+        /// has been written, not after its first chunk.
+        inline error_code do_write_sync(std::vector<asio::const_buffer>& buffers, bool clear_parser = true)
         {
             error_code ec;
             asio::write(adaptor_.socket(), buffers, ec);
@@ -489,7 +597,7 @@ namespace crow
             {
                 this->continue_requested = false;
             }
-            else
+            else if (clear_parser)
             {
                 this->parser_.clear();
             }
@@ -545,6 +653,7 @@ namespace crow
         bool need_to_call_after_handlers_{};
         bool need_to_start_read_after_complete_{};
         bool add_keep_alive_{};
+        int body_error_status_{0};
 
         std::tuple<Middlewares...>* middlewares_;
         detail::context<Middlewares...> ctx_;

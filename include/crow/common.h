@@ -288,10 +288,10 @@ namespace crow
     struct routing_handle_result
     {
         bool catch_all{false};
-        size_t rule_index;
+        size_t rule_index{0};
         std::vector<size_t> blueprint_indices;
         routing_params r_params;
-        HTTPMethod method;
+        HTTPMethod method{};
 
         routing_handle_result() {}
 

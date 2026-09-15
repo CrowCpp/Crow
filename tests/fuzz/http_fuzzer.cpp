@@ -4,8 +4,10 @@
 
 struct DummyHandler {
     void handle_url() {}
-    void handle_header() {}
+    int handle_header() { return 0; }
     void handle() {}
+    void reject_body(int) {}
+    bool parser_should_abort() const { return false; }
     size_t stream_threshold() { return 1024*1024; }
 };
 
