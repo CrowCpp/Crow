@@ -1,5 +1,9 @@
 #include "catch2/catch_all.hpp"
 
+#include <filesystem>
+#include <future>
+#include <thread>
+
 #include "crow.h"
 
 using namespace std;
@@ -260,3 +264,53 @@ TEST_CASE("TemlateRouting", "[mustache]")
         CHECK("text/html" == crow::get_header_value(res.headers, "Content-Type"));
     }
 } // PathRouting
+
+
+TEST_CASE("template_base_directory_is_thread_local", "[mustache]")
+{
+    namespace fs = std::filesystem;
+
+    const fs::path dir_one = "mustache_thread_local_one";
+    const fs::path dir_two = "mustache_thread_local_two";
+    const fs::path file_name = "shared.mustache";
+
+    fs::create_directories(dir_one);
+    fs::create_directories(dir_two);
+    std::ofstream(dir_one / file_name) << "template one";
+    std::ofstream(dir_two / file_name) << "template two";
+
+    crow::mustache::set_loader(crow::mustache::default_loader);
+    crow::mustache::set_global_base(".");
+
+    std::promise<void> first_base_ready;
+    std::promise<void> second_base_ready;
+    auto first_base_ready_future = first_base_ready.get_future();
+    auto second_base_ready_future = second_base_ready.get_future();
+
+    std::string thread_one_result{};
+    std::string thread_two_result{};
+
+    std::thread thread_one([&] {
+        crow::mustache::set_base(dir_one.string());
+        first_base_ready.set_value();
+        second_base_ready_future.wait();
+        thread_one_result = crow::mustache::load_text_unsafe(file_name.string());
+    });
+
+    std::thread thread_two([&] {
+        first_base_ready_future.wait();
+        crow::mustache::set_base(dir_two.string());
+        second_base_ready.set_value();
+        thread_two_result = crow::mustache::load_text_unsafe(file_name.string());
+    });
+
+    thread_one.join();
+    thread_two.join();
+
+    CHECK(thread_one_result == "template one");
+    CHECK(thread_two_result == "template two");
+
+    crow::mustache::set_base(".");
+    fs::remove_all(dir_one);
+    fs::remove_all(dir_two);
+} // template_base_directory_is_thread_local
