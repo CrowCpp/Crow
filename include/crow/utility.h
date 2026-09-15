@@ -443,6 +443,32 @@ namespace crow
         struct contains<Tp> : std::false_type
         {};
 
+        template<typename Tp, typename... List>
+        struct contains_decayed : std::true_type
+        {};
+
+        template<typename Tp, typename Head, typename... Rest>
+        struct contains_decayed<Tp, Head, Rest...> :
+            std::conditional<std::is_same<typename std::decay<Tp>::type, typename std::decay<Head>::type>::value, std::true_type, contains_decayed<Tp, Rest...>>::type
+        {};
+
+        template<typename Tp>
+        struct contains_decayed<Tp> : std::false_type
+        {};
+
+        template<typename... Tsuper>
+        struct type_pack
+        {
+            template<typename... Tsub>
+            struct is_superset_of : std::true_type
+            {};
+
+            template<typename T, typename... Tsub>
+            struct is_superset_of<T, Tsub...> :
+                std::conditional<contains_decayed<T, Tsuper...>::value, is_superset_of<Tsub...>, std::false_type>::type
+            {};
+        };
+
         template<typename T>
         struct empty_context
         {};
