@@ -72,6 +72,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
             virtual void send_pong(std::string msg) = 0;
             virtual void close(std::string const& msg = "quit", uint16_t status_code = CloseStatusCode::NormalClosure) = 0;
             virtual std::string get_remote_ip() = 0;
+            virtual uint16_t get_remote_port() = 0;
             virtual std::string get_subprotocol() const = 0;
             virtual ~connection() = default;
 
@@ -284,6 +285,12 @@ namespace crow // NOTE: Already documented in "crow/app.h"
             std::string get_remote_ip() override
             {
                 return adaptor_.address();
+            }
+
+            /// Returns the TCP port of the remote endpoint, 0 when unavailable (Unix domain socket or socket already closed).
+            uint16_t get_remote_port() override
+            {
+                return adaptor_.remote_port();
             }
 
             void set_max_payload_size(uint64_t payload)
