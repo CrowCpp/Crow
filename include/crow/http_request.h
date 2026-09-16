@@ -52,6 +52,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         ci_map headers;
         std::string body;
         std::string remote_ip_address; ///< The IP address from which the request was sent.
+        uint16_t remote_port = 0;      ///< The TCP port from which the request was sent (0 for Unix domain sockets).
         unsigned char http_ver_major, http_ver_minor;
         bool keep_alive,    ///< Whether or not the server should send a `connection: Keep-Alive` header to the client.
           close_connection, ///< Whether or not the server should shut down the TCP connection once a response is sent.

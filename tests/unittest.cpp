@@ -56,6 +56,12 @@ public:
         c.send(asio::buffer(msg, msg_size));
     }
 
+    /** @returns the local TCP port the client is connected from */
+    uint16_t local_port()
+    {
+        return c.local_endpoint().port();
+    }
+
 
     /** method shall be called after sending a request with send
      * @returns the received response string */
@@ -2645,6 +2651,36 @@ TEST_CASE("get_port")
 
 } // get_port
 
+TEST_CASE("remote_port")
+{
+    static std::uint16_t reported_port = 0;
+
+    SimpleApp app;
+
+    CROW_ROUTE(app, "/")
+    ([](const request& req) {
+        reported_port = req.remote_port;
+        return "A";
+    });
+
+    app.validate();
+
+    auto _ = app.bindaddr(LOCALHOST_ADDRESS).port(0).run_async();
+    app.wait_for_server_start();
+
+    HttpClient client(LOCALHOST_ADDRESS, app.port());
+    const std::uint16_t client_port = client.local_port();
+    client.send("GET / HTTP/1.0\r\n\r\n");
+    const std::string response = client.receive();
+
+    app.stop();
+
+    CHECK(response.find("200 OK") != std::string::npos);
+    CHECK(client_port != 0);
+    CHECK(reported_port == client_port);
+
+} // remote_port
+
 TEST_CASE("timeout")
 {
     auto test_timeout = [](const std::uint8_t timeout) {
@@ -2813,8 +2849,10 @@ TEST_CASE("http2_upgrade_is_ignored")
 TEST_CASE("unix_socket")
 {
     static char buf[2048];
+    static std::uint16_t reported_port = 12345;
     SimpleApp app;
-    CROW_ROUTE(app, "/").methods("GET"_method)([] {
+    CROW_ROUTE(app, "/").methods("GET"_method)([](const request& req) {
+        reported_port = req.remote_port;
         return "A";
     });
 
@@ -2835,6 +2873,7 @@ TEST_CASE("unix_socket")
         CHECK('A' == buf[recved - 1]);
     }
     app.stop();
+    CHECK(reported_port == 0);
 } // unix_socket
 
 TEST_CASE("option_header_passed_in_full")
