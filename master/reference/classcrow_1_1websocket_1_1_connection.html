@@ -159,6 +159,9 @@ template&lt;typename CompletionHandler &gt; </td></tr>
 <tr class="separator:a4fab99ae7f8e269480d5842cff1daf88"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae6b8882caf42fc65295920e064e83ecc" id="r_ae6b8882caf42fc65295920e064e83ecc"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcrow_1_1websocket_1_1_connection.html#ae6b8882caf42fc65295920e064e83ecc">get_remote_ip</a> () override</td></tr>
 <tr class="separator:ae6b8882caf42fc65295920e064e83ecc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab1eed231f4c89865bbb8967a6562f2e7" id="r_ab1eed231f4c89865bbb8967a6562f2e7"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcrow_1_1websocket_1_1_connection.html#ab1eed231f4c89865bbb8967a6562f2e7">get_remote_port</a> () override</td></tr>
+<tr class="memdesc:ab1eed231f4c89865bbb8967a6562f2e7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the TCP port of the remote endpoint, 0 when unavailable (Unix domain socket or socket already closed).  <br /></td></tr>
+<tr class="separator:ab1eed231f4c89865bbb8967a6562f2e7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a74ca3df127a5c009920b3c5bb1ec3c81" id="r_a74ca3df127a5c009920b3c5bb1ec3c81"><td class="memItemLeft" align="right" valign="top"><a id="a74ca3df127a5c009920b3c5bb1ec3c81" name="a74ca3df127a5c009920b3c5bb1ec3c81"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>set_max_payload_size</b> (uint64_t payload)</td></tr>
 <tr class="separator:a74ca3df127a5c009920b3c5bb1ec3c81"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -456,6 +459,37 @@ template&lt;typename Adaptor , typename Handler &gt; </div>
 
 </div>
 </div>
+<a id="ab1eed231f4c89865bbb8967a6562f2e7" name="ab1eed231f4c89865bbb8967a6562f2e7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab1eed231f4c89865bbb8967a6562f2e7">&#9670;&#160;</a></span>get_remote_port()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Adaptor , typename Handler &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint16_t <a class="el" href="classcrow_1_1websocket_1_1_connection.html">crow::websocket::Connection</a>&lt; Adaptor, Handler &gt;::get_remote_port </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Returns the TCP port of the remote endpoint, 0 when unavailable (Unix domain socket or socket already closed). </p>
+
+<p>Implements <a class="el" href="structcrow_1_1websocket_1_1connection.html">crow::websocket::connection</a>.</p>
+
+</div>
+</div>
 <a id="a5e2427132ac75808a9e38c6ccaeae94a" name="a5e2427132ac75808a9e38c6ccaeae94a"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a5e2427132ac75808a9e38c6ccaeae94a">&#9670;&#160;</a></span>get_subprotocol()</h2>
 
@@ -689,7 +723,7 @@ template&lt;typename Adaptor , typename Handler &gt; </div>
 			<ul>
 				<li class="navelem"><a class="el" href="namespacecrow.html">crow</a></li><li class="navelem"><a class="el" href="namespacecrow_1_1websocket.html">websocket</a></li><li class="navelem"><a class="el" href="classcrow_1_1websocket_1_1_connection.html">Connection</a></li>
 				<li class="footer">
-					Generated on Mon Sep 14 2026 for Crow by <a href="http://www.doxygen.org/index.html">
+					Generated on Wed Sep 16 2026 for Crow by <a href="http://www.doxygen.org/index.html">
 					<img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.9.8.
 					Dark theme by <a href="http://majerle.eu" target="_new">Tilen Majerle</a>. Edited by <a href="https://github.com/The-EDev" target="_new">Farook Al-Sammarraie</a>. All rights reserved.
 				</li>

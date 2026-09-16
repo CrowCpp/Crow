@@ -8,6 +8,7 @@ var classcrow_1_1websocket_1_1_connection =
     [ "dispatch", "classcrow_1_1websocket_1_1_connection.html#a0d7758d7d22d74ee9ed17c8c7df0a380", null ],
     [ "do_read", "classcrow_1_1websocket_1_1_connection.html#a1049d7689f068379e98954bfb04bee5c", null ],
     [ "do_write", "classcrow_1_1websocket_1_1_connection.html#a787dde96965bf30d994bbc5fb3388281", null ],
+    [ "get_remote_port", "classcrow_1_1websocket_1_1_connection.html#ab1eed231f4c89865bbb8967a6562f2e7", null ],
     [ "get_subprotocol", "classcrow_1_1websocket_1_1_connection.html#a5e2427132ac75808a9e38c6ccaeae94a", null ],
     [ "handle_fragment", "classcrow_1_1websocket_1_1_connection.html#a292002f44552e5eabd8dd65f476a4c28", null ],
     [ "is_FIN", "classcrow_1_1websocket_1_1_connection.html#a98f4af4eac4b807f970667b0147869a4", null ],
