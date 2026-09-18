@@ -398,7 +398,7 @@ TEST_CASE("json::wvalue::wvalue(std::int64_t)", "[json]")
 
 TEST_CASE("json::wvalue::wvalue(float)", "[json]")
 {
-    float f = 4.2;
+    float f = 4.2f;
     json::wvalue value = f;
 
     CHECK(value.t() == json::type::Number);

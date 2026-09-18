@@ -115,7 +115,7 @@ TEST_CASE("Rule")
         r.validate();
         FAIL_CHECK("empty handler should fail to validate");
     }
-    catch (runtime_error& e)
+    catch (runtime_error& /*e*/)
     {
     }
 
@@ -2029,7 +2029,7 @@ TEST_CASE("stream_response")
         std::string sendmsg;
 
         //Total bytes received
-        unsigned int received = 0;
+        size_t received = 0;
         sendmsg = "GET /test HTTP/1.0\r\n\r\n";
         {
             asio::streambuf b;
@@ -2857,7 +2857,7 @@ TEST_CASE("unix_socket")
     });
 
     constexpr const char* socket_path = "unittest.sock";
-    unlink(socket_path);
+    std::remove(socket_path);
     auto _ = app.local_socket_path(socket_path).run_async();
     app.wait_for_server_start();
 

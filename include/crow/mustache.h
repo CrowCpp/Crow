@@ -177,8 +177,8 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                 static json::wvalue empty_str;
                 empty_str = "";
 
-                int dotPosition = name.find(".");
-                if (dotPosition == static_cast<int>(name.npos))
+                size_t dotPosition = name.find(".");
+                if (dotPosition == std::string::npos)
                 {
                     for (auto it = stack.rbegin(); it != stack.rend(); ++it)
                     {
@@ -191,9 +191,9 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                 }
                 else
                 {
-                    std::vector<int> dotPositions;
-                    dotPositions.push_back(-1);
-                    while (dotPosition != static_cast<int>(name.npos))
+                    std::vector<size_t> dotPositions;
+                    dotPositions.push_back(std::string::npos);
+                    while (dotPosition != std::string::npos)
                     {
                         dotPositions.push_back(dotPosition);
                         dotPosition = name.find(".", dotPosition + 1);
@@ -201,7 +201,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                     dotPositions.push_back(name.size());
                     std::vector<std::string> names;
                     names.reserve(dotPositions.size() - 1);
-                    for (int i = 1; i < static_cast<int>(dotPositions.size()); i++)
+                    for (size_t i = 1; i < dotPositions.size(); i++)
                         names.emplace_back(name.substr(dotPositions[i - 1] + 1, dotPositions[i] - dotPositions[i - 1] - 1));
 
                     for (auto it = stack.rbegin(); it != stack.rend(); ++it)
