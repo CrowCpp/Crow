@@ -146,15 +146,15 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                 return;
             }
 
-            uint16_t worker_thread_count = concurrency_ - 1;
-            for (int i = 0; i < worker_thread_count; i++)
+            unsigned int worker_thread_count = concurrency_ - 1;
+            for (unsigned int i = 0; i < worker_thread_count; i++)
                 io_context_pool_.emplace_back(new asio::io_context());
             get_cached_date_str_pool_.resize(worker_thread_count);
             task_timer_pool_.resize(worker_thread_count);
 
             std::vector<std::future<void>> v;
-            std::atomic<int> init_count(0);
-            for (uint16_t i = 0; i < worker_thread_count; i++)
+            std::atomic<unsigned int> init_count(0);
+            for (unsigned int i = 0; i < worker_thread_count; i++)
                 v.push_back(
                   std::async(
                     std::launch::async, [this, i, &init_count] {
