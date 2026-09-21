@@ -690,7 +690,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         void operator()(std::string name, Func&& f)
         {
             name_ = std::move(name);
-            (*this).template operator()<Func>(std::forward(f));
+            (*this).template operator()<Func>(std::forward<Func>(f));
         }
 
     private:
@@ -731,7 +731,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         void operator()(std::string name, Func&& f)
         {
             name_ = std::move(name);
-            (*this).template operator()<Func>(std::forward(f));
+            (*this).template operator()<Func>(std::forward<Func>(f));
         }
 
         void handle(request& req, response& res, const routing_params& params) override
