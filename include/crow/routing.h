@@ -1506,7 +1506,14 @@ namespace crow // NOTE: Already documented in "crow/app.h"
             {
                 CROW_LOG_INFO << "Redirecting to a url with trailing slash: " << req.url;
                 res = response(301);
-                res.add_header("Location", req.url + "/");
+                auto pos_of_first_non_slash = req.url.find_first_not_of('/');
+                if (pos_of_first_non_slash==1)
+                {
+                    res.add_header("Location", req.url + "/");
+                } else
+                {
+                   res.add_header("Location",req.url.substr(pos_of_first_non_slash-1)+"/");
+                }
                 res.end();
                 return;
             }
@@ -1764,7 +1771,14 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                 if (rule_index == RULE_SPECIAL_REDIRECT_SLASH) {
                     CROW_LOG_INFO << "Redirecting to a url with trailing slash: " << req.url;
                     res = response(301);
-                    res.add_header("Location", req.url + "/");
+                    auto pos_of_first_non_slash = req.url.find_first_not_of('/');
+                    if (pos_of_first_non_slash==1)
+                    {
+                        res.add_header("Location", req.url + "/");
+                    } else
+                    {
+                        res.add_header("Location",req.url.substr(pos_of_first_non_slash-1)+"/");
+                    }
                     res.end();
                 } else {
                     CROW_LOG_DEBUG << "Matched rule '" << rules[rule_index]->rule_ << "' " << static_cast<uint64_t>(req.

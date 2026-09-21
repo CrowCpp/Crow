@@ -49,7 +49,7 @@ option(CROW_BUILD_TESTS        "Build the tests in the project"         ${CROW_I
 option(CROW_BUILD_FUZZER       "Instrument and build Crow fuzzer"       OFF)
 option(CROW_ENABLE_SANITIZERS  "Enable sanitizers (ASan, UBSan) for test builds" OFF)
 option(CROW_AMALGAMATE         "Combine all headers into one"           OFF)
-option(CROW_INSTALL            "Add install step for Crow"              ON )
+option(CROW_INSTALL            "Add install step for Crow"              ${CROW_IS_MAIN_PROJECT})
 option(CROW_USE_BOOST          "Use Boost.Asio for Crow"                OFF)
 option(CROW_GENERATE_SBOM      "Generate SBOM file"                     OFF)
 option(CROW_RETURNS_OK_ON_HTTP_OPTIONS_REQUEST

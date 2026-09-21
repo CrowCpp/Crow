@@ -249,7 +249,7 @@ inline std::unique_ptr<std::pair<std::string, std::string>> qs_dict_name2kv(cons
                     {
                         auto key = std::string(open + 3, static_cast<size_t>(close - (open + 3)));
                         auto value = std::string(qs_kv[i] + skip_to_eq);
-                        return std::unique_ptr<std::pair<std::string, std::string>>(new std::pair<std::string, std::string>(key, value));
+                        return std::make_unique<std::pair<std::string, std::string>>(key, value);
                     }
                     else if ( close )
                     {
@@ -266,7 +266,7 @@ inline std::unique_ptr<std::pair<std::string, std::string>> qs_dict_name2kv(cons
             {
                 auto key = std::string(qs_kv[i] + skip_to_brace_open, skip_to_brace_close - skip_to_brace_open);
                 auto value = std::string(qs_kv[i] + skip_to_eq);
-                return std::unique_ptr<std::pair<std::string, std::string>>(new std::pair<std::string, std::string>(key, value));
+                return std::make_unique<std::pair<std::string, std::string>>(key, value);
             }
             else
             {
