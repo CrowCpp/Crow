@@ -1506,14 +1506,15 @@ namespace crow // NOTE: Already documented in "crow/app.h"
             {
                 CROW_LOG_INFO << "Redirecting to a url with trailing slash: " << req.url;
                 res = response(301);
-                auto pos_of_first_non_slash = req.url.find_first_not_of('/');
-                if (pos_of_first_non_slash==1)
+                // Collapse the leading run of '/' and '\' to a single '/'. Browsers treat both as
+                // separators, so "//host" or "/\host" would make the target protocol relative.
+                auto pos_of_first_non_slash = req.url.find_first_not_of("/\\");
+                std::string location = "/";
+                if (pos_of_first_non_slash != std::string::npos)
                 {
-                    res.add_header("Location", req.url + "/");
-                } else
-                {
-                   res.add_header("Location",req.url.substr(pos_of_first_non_slash-1)+"/");
+                    location += req.url.substr(pos_of_first_non_slash) + "/";
                 }
+                res.add_header("Location", location);
                 res.end();
                 return;
             }
@@ -1771,14 +1772,15 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                 if (rule_index == RULE_SPECIAL_REDIRECT_SLASH) {
                     CROW_LOG_INFO << "Redirecting to a url with trailing slash: " << req.url;
                     res = response(301);
-                    auto pos_of_first_non_slash = req.url.find_first_not_of('/');
-                    if (pos_of_first_non_slash==1)
+                    // Collapse the leading run of '/' and '\' to a single '/'. Browsers treat both as
+                    // separators, so "//host" or "/\host" would make the target protocol relative.
+                    auto pos_of_first_non_slash = req.url.find_first_not_of("/\\");
+                    std::string location = "/";
+                    if (pos_of_first_non_slash != std::string::npos)
                     {
-                        res.add_header("Location", req.url + "/");
-                    } else
-                    {
-                        res.add_header("Location",req.url.substr(pos_of_first_non_slash-1)+"/");
+                        location += req.url.substr(pos_of_first_non_slash) + "/";
                     }
+                    res.add_header("Location", location);
                     res.end();
                 } else {
                     CROW_LOG_DEBUG << "Matched rule '" << rules[rule_index]->rule_ << "' " << static_cast<uint64_t>(req.
