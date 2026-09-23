@@ -1669,6 +1669,17 @@ TEST_CASE("route_dynamic")
     }
 } // route_dynamic
 
+TEST_CASE("named_route")
+{
+    SimpleApp app;
+
+    CROW_ROUTE(app, "/hello/<int>")("hello", [](int) {
+        return "hi";
+    });
+
+    app.validate();
+} // named_route
+
 TEST_CASE("multipart")
 {
     //
