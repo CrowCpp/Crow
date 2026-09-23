@@ -847,7 +847,7 @@ $(document).ready(function(){initNavTree('routing_8h_source.html',''); initResiz
 <div class="line"><a id="l00690" name="l00690"></a><span class="lineno">  690</span>        <span class="keywordtype">void</span> operator()(std::string name, Func&amp;&amp; f)</div>
 <div class="line"><a id="l00691" name="l00691"></a><span class="lineno">  691</span>        {</div>
 <div class="line"><a id="l00692" name="l00692"></a><span class="lineno">  692</span>            name_ = std::move(name);</div>
-<div class="line"><a id="l00693" name="l00693"></a><span class="lineno">  693</span>            (*this).template operator()&lt;Func&gt;(std::forward(f));</div>
+<div class="line"><a id="l00693" name="l00693"></a><span class="lineno">  693</span>            (*this).template operator()&lt;Func&gt;(std::forward&lt;Func&gt;(f));</div>
 <div class="line"><a id="l00694" name="l00694"></a><span class="lineno">  694</span>        }</div>
 <div class="line"><a id="l00695" name="l00695"></a><span class="lineno">  695</span> </div>
 <div class="line"><a id="l00696" name="l00696"></a><span class="lineno">  696</span>    <span class="keyword">private</span>:</div>
@@ -890,7 +890,7 @@ $(document).ready(function(){initNavTree('routing_8h_source.html',''); initResiz
 <div class="line"><a id="l00731" name="l00731"></a><span class="lineno">  731</span>        <span class="keywordtype">void</span> operator()(std::string name, Func&amp;&amp; f)</div>
 <div class="line"><a id="l00732" name="l00732"></a><span class="lineno">  732</span>        {</div>
 <div class="line"><a id="l00733" name="l00733"></a><span class="lineno">  733</span>            name_ = std::move(name);</div>
-<div class="line"><a id="l00734" name="l00734"></a><span class="lineno">  734</span>            (*this).template operator()&lt;Func&gt;(std::forward(f));</div>
+<div class="line"><a id="l00734" name="l00734"></a><span class="lineno">  734</span>            (*this).template operator()&lt;Func&gt;(std::forward&lt;Func&gt;(f));</div>
 <div class="line"><a id="l00735" name="l00735"></a><span class="lineno">  735</span>        }</div>
 <div class="line"><a id="l00736" name="l00736"></a><span class="lineno">  736</span> </div>
 <div class="line"><a id="l00737" name="l00737"></a><span class="lineno">  737</span>        <span class="keywordtype">void</span> handle(<a class="code hl_struct" href="structcrow_1_1request.html">request</a>&amp; req, <a class="code hl_struct" href="structcrow_1_1response.html">response</a>&amp; res, <span class="keyword">const</span> routing_params&amp; params)<span class="keyword"> override</span></div>
@@ -2131,7 +2131,7 @@ $(document).ready(function(){initNavTree('routing_8h_source.html',''); initResiz
 			<ul>
 				<li class="navelem"><a class="el" href="dir_d44c64559bbebec7f509842c48db8b23.html">include</a></li><li class="navelem"><a class="el" href="dir_d22c1cb87b72f01e1a7f207eb3bfd1ca.html">crow</a></li><li class="navelem"><b>routing.h</b></li>
 				<li class="footer">
-					Generated on Tue Sep 22 2026 for Crow by <a href="http://www.doxygen.org/index.html">
+					Generated on Wed Sep 23 2026 for Crow by <a href="http://www.doxygen.org/index.html">
 					<img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.9.8.
 					Dark theme by <a href="http://majerle.eu" target="_new">Tilen Majerle</a>. Edited by <a href="https://github.com/The-EDev" target="_new">Farook Al-Sammarraie</a>. All rights reserved.
 				</li>
