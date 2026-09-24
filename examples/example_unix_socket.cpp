@@ -12,7 +12,7 @@ int main()
     });
 
     std::string local_socket_path = "example.sock";
-    unlink(local_socket_path.c_str());
+    std::remove(local_socket_path.c_str());
     app.local_socket_path(local_socket_path).run();
 
 }

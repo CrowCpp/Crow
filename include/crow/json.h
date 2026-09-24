@@ -194,7 +194,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                 }
 
             private:
-                void force(char* s, uint32_t length)
+                void force(char* s, size_t length)
                 {
                     s_ = s;
                     e_ = s_ + length;
@@ -423,8 +423,9 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                         const std::string msg = "expected number, got: " + std::string(get_type_str(t()));
                         throw std::runtime_error(msg);
                 }
-#endif
+#else
                 return utility::lexical_cast<int64_t>(start_, end_ - start_);
+#endif
             }
 
             /// The unsigned integer value.
@@ -1781,7 +1782,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
 #endif
             }
 
-            int count(const std::string& str) const
+            size_t count(const std::string& str) const
             {
                 if (t_ != type::Object)
                     return 0;
