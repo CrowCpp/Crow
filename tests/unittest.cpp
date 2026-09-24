@@ -840,7 +840,8 @@ TEST_CASE("middleware_simple")
 {
     App<NullMiddleware, NullSimpleMiddleware> app;
     TCPAcceptor::endpoint endpoint(asio::ip::make_address(LOCALHOST_ADDRESS), 45451);
-    decltype(app)::server_t server(&app, endpoint);
+    ServerConfiguration config;
+    decltype(app)::server_t server(&app, endpoint,config);
 
     CROW_ROUTE(app, "/")
     ([&](const crow::request& req) {
