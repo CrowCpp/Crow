@@ -3409,40 +3409,29 @@ TEST_CASE("Trailing-slash redirects")
     REQUIRE(trigger_slashes_only.find("301")!=std::string::npos);
     REQUIRE(trigger_slashes_only.find("Location: /\r\n")!=std::string::npos);
 
-    /*
-    auto trigger_encoded = HttpClient::request(LOCALHOST_ADDRESS,
-                                   45451,
-                                   "GET %2F/attacker.example HTTP/1.1\r\n"
-                                   "Host: trusted.example\r\n"
-                                   "Connection: close\r\n\r\n");
-    REQUIRE(trigger_encoded.find("301")!=std::string::npos);
-    // trigger is protocol relative
-    REQUIRE(trigger_encoded.find("Location: //attacker.example/")==std::string::npos);
-    REQUIRE(trigger_encoded.find("Location: /attacker.example/")!=std::string::npos);
-    */
-
-    /*trigger_encoded = HttpClient::request(LOCALHOST_ADDRESS,
+    // req.url reaches the redirect still percent-encoded (crow does not decode it here), so a
+    // percent-encoded slash or backslash stays a literal octet in Location. Browsers do not decode
+    // %2F/%5C when resolving a relative URL, so "/%2Fattacker.example/" is a same-origin path, not
+    // a protocol-relative one. Keep the octet as-is and make sure it never collapses to "//".
+    auto trigger_encoded_slash = HttpClient::request(LOCALHOST_ADDRESS,
                                    45451,
                                    "GET /%2Fattacker.example HTTP/1.1\r\n"
                                    "Host: trusted.example\r\n"
                                    "Connection: close\r\n\r\n");
-    REQUIRE(trigger_encoded.find("301")!=std::string::npos);
-    // trigger is protocol relative
-    REQUIRE(trigger_encoded.find("Location: //attacker.example/")==std::string::npos);
-    REQUIRE(trigger_encoded.find("Location: /attacker.example/")!=std::string::npos);
-    */
 
-    /*
-    trigger_encoded = HttpClient::request(LOCALHOST_ADDRESS,
+    REQUIRE(trigger_encoded_slash.find("301")!=std::string::npos);
+    REQUIRE(trigger_encoded_slash.find("Location: //attacker.example/")==std::string::npos);
+    REQUIRE(trigger_encoded_slash.find("Location: /%2Fattacker.example/")!=std::string::npos);
+
+    auto trigger_encoded_backslash = HttpClient::request(LOCALHOST_ADDRESS,
                                    45451,
-                                   "GET %2F%2Fattacker.example HTTP/1.1\r\n"
+                                   "GET /%5Cattacker.example HTTP/1.1\r\n"
                                    "Host: trusted.example\r\n"
                                    "Connection: close\r\n\r\n");
-    REQUIRE(trigger_encoded.find("301")!=std::string::npos);
-    // trigger is protocol relative
-    REQUIRE(trigger_encoded.find("Location: //attacker.example/")==std::string::npos);
-    REQUIRE(trigger_encoded.find("Location: /attacker.example/")!=std::string::npos);
-    */
+
+    REQUIRE(trigger_encoded_backslash.find("301")!=std::string::npos);
+    REQUIRE(trigger_encoded_backslash.find("Location: //attacker.example/")==std::string::npos);
+    REQUIRE(trigger_encoded_backslash.find("Location: /%5Cattacker.example/")!=std::string::npos);
 
     app.stop();
 
