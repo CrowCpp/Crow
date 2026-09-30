@@ -1908,6 +1908,38 @@ TEST_CASE("multipart_view")
     }
 } // multipart_view
 
+TEST_CASE("multipart_view_name_header_missing")
+{
+    // A section whose Content-Disposition carries no `name` parameter used to
+    // dereference a past-the-end iterator in parse_body; it must now yield 400.
+    std::string test_string = "--CROW-BOUNDARY\r\nContent-Disposition: form-data; \r\n\r\nworld\r\n--CROW-BOUNDARY\r\nContent-Disposition: form-data; \r\n\r\nhello\r\n--CROW-BOUNDARY\r\nContent-Disposition: form-data; \r\n\r\ntext\ntext\ntext\r\n--CROW-BOUNDARY--\r\n";
+
+    SimpleApp app;
+
+    CROW_ROUTE(app, "/multipart")
+    ([](const crow::request& req, crow::response& res) {
+        multipart::message_view msg(req);
+        res.body = msg.dump();
+        res.end();
+    });
+
+    app.validate();
+
+    {
+        request req;
+        response res;
+
+        req.url = "/multipart";
+        req.add_header("Content-Type", "multipart/form-data; boundary=CROW-BOUNDARY");
+        req.body = test_string;
+
+        // with the above-mentioned bug we get SIGV here
+        app.handle_full(req, res);
+
+        CHECK(res.code == crow::status::BAD_REQUEST);
+    }
+} // multipart_view_name_header_missing
+
 TEST_CASE("send_file")
 {
 
