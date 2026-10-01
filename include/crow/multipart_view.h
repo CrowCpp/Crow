@@ -169,18 +169,6 @@ namespace crow
                 return std::move(str).str();
             }
 
-            /// Default constructor using default values
-            message_view(const ci_map& headers_, const std::string& boundary_, const std::vector<part_view>& sections):
-              headers(headers_), boundary(boundary_), parts(sections)
-            {
-                for (const part_view& item : parts)
-                {
-                    part_map.emplace(
-                      (get_header_object(item.headers, "Content-Disposition").params.find("name")->second),
-                      item);
-                }
-            }
-
             /// Create a multipart message from a request data
             explicit message_view(const request& req):
               headers(req.headers),
@@ -229,9 +217,13 @@ namespace crow
                     if (!section.empty())
                     {
                         part_view parsed_section = parse_section(section);
-                        part_map.emplace(
-                          (get_header_object(parsed_section.headers, "Content-Disposition").params.find("name")->second),
-                          parsed_section);
+                        const auto& section_params = get_header_object(parsed_section.headers, "Content-Disposition").params;
+                        const auto name_header = section_params.find("name");
+                        if (name_header == section_params.end())
+                        {
+                            throw bad_request("Unable to find header 'name' in multipart section. Probably ill-formed body.");
+                        }
+                        part_map.emplace(name_header->second, parsed_section);
                         parts.push_back(std::move(parsed_section));
                     }
                 }
