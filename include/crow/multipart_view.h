@@ -59,12 +59,12 @@ namespace crow
         struct padded
         {
             std::string_view value;   ///< String to pad
-            const char padding = '"'; ///< Padding to use
+            static constexpr char padding = '"'; ///< Padding to use
 
             /// Outputs padded value to the stream
             friend std::ostream& operator<<(std::ostream& stream, const padded value_)
             {
-                return stream << value_.padding << value_.value << value_.padding;
+                return stream << padding << value_.value << padding;
             }
         };
 
@@ -132,14 +132,14 @@ namespace crow
 
             part_view get_part_by_name(const std::string_view name)
             {
-                mp_view_map::iterator result = part_map.find(name);
+                auto result = part_map.find(name);
                 if (result != part_map.end())
                     return result->second;
                 else
                     return {};
             }
 
-            friend std::ostream& operator<<(std::ostream& stream, const message_view message)
+            friend std::ostream& operator<<(std::ostream& stream, const message_view& message)
             {
                 std::string delimiter = dd + message.boundary;
 
@@ -186,7 +186,7 @@ namespace crow
                 const size_t found = header.find(boundary_text);
                 if (found == std::string_view::npos)
                 {
-                    return std::string_view();
+                    return {};
                 }
 
                 const std::string_view to_return = header.substr(found + boundary_text.size());
@@ -208,7 +208,7 @@ namespace crow
                     if (found == std::string_view::npos)
                     {
                         // did not find delimiter; probably an ill-formed body; ignore the rest
-                        break;
+                        throw bad_request("Unable to find multipart delimiter. Probably ill-formed body.");
                     }
 
                     const std::string_view section = body.substr(0, found);
