@@ -213,6 +213,10 @@ namespace crow
                 struct part to_return;
 
                 size_t found = section.find(crlf + crlf);
+                if (found == std::string::npos)
+                {
+                    throw bad_request("Unable to find section headers in multipart message. Probably ill-formed body.");
+                }
                 std::string head_line = section.substr(0, found + 2);
                 section.erase(0, found + 4);
 
