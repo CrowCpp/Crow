@@ -1417,6 +1417,11 @@ TEST_CASE("middleware_session")
         CHECK(istart != iend);
         cookie.append(istart->str());
         cookie.push_back(';');
+
+        // the session id is an authentication token, so the default cookie must
+        // not be reachable from document.cookie and should not ride cross-site requests
+        CHECK(res.find("HttpOnly") != std::string::npos);
+        CHECK(res.find("SameSite=Lax") != std::string::npos);
     }
 
     // check test = works
