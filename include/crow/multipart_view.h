@@ -169,18 +169,6 @@ namespace crow
                 return std::move(str).str();
             }
 
-            /// Default constructor using default values
-            message_view(const ci_map& headers_, const std::string& boundary_, const std::vector<part_view>& sections):
-              headers(headers_), boundary(boundary_), parts(sections)
-            {
-                for (const part_view& item : parts)
-                {
-                    part_map.emplace(
-                      (get_header_object(item.headers, "Content-Disposition").params.find("name")->second),
-                      item);
-                }
-            }
-
             /// Create a multipart message from a request data
             explicit message_view(const request& req):
               headers(req.headers),
@@ -218,7 +206,7 @@ namespace crow
                     if (found == std::string_view::npos)
                     {
                         // did not find delimiter; probably an ill-formed body; ignore the rest
-                        break;
+                        throw bad_request("Unable to find multipart delimiter. Probably ill-formed body.");
                     }
 
                     const std::string_view section = body.substr(0, found);
