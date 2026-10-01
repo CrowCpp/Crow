@@ -318,7 +318,11 @@ namespace crow
         template<typename... Ts>
         SessionMiddleware(Ts... ts):
           SessionMiddleware(
-            CookieParser::Cookie("session").path("/").max_age(/*month*/ 30 * 24 * 60 * 60),
+            CookieParser::Cookie("session")
+              .path("/")
+              .max_age(/*month*/ 30 * 24 * 60 * 60)
+              .httponly()
+              .same_site(CookieParser::Cookie::SameSitePolicy::Lax),
             /*id_length */ 20, // around 10^34 possible combinations, but small enough to fit into SSO
             std::forward<Ts>(ts)...)
         {}
