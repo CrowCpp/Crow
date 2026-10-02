@@ -174,6 +174,8 @@ namespace crow
               headers(req.headers),
               boundary(get_boundary(get_header_value("Content-Type")))
             {
+                if (boundary.empty())
+                    throw bad_request("Empty boundary in multipart message");
                 parse_body(req.body);
             }
 
@@ -188,7 +190,7 @@ namespace crow
                 }
 
                 const std::string_view to_return = header.substr(found + boundary_text.size());
-                if (to_return[0] == '\"')
+                if (!to_return.empty() && to_return[0] == '\"')
                 {
                     return to_return.substr(1, to_return.length() - 2);
                 }
