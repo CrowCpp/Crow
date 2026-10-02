@@ -1945,6 +1945,38 @@ TEST_CASE("multipart_view_name_header_missing")
     }
 } // multipart_view_name_header_missing
 
+TEST_CASE("multipart_view_empty_boundary")
+{
+    // A Content-Type ending in `boundary=` leaves an empty boundary value.
+    // get_boundary used to index to_return[0] on an empty string_view (OOB
+    // read) before any check; it must now be rejected with 400 like
+    // multipart::message already does.
+    SimpleApp app;
+
+    CROW_ROUTE(app, "/multipart")
+    ([](const crow::request& req, crow::response& res) {
+        multipart::message_view msg(req);
+        res.body = msg.dump();
+        res.end();
+    });
+
+    app.validate();
+
+    {
+        request req;
+        response res;
+
+        req.url = "/multipart";
+        req.add_header("Content-Type", "multipart/form-data; boundary=");
+        req.body = "some body";
+
+        app.handle_full(req, res);
+
+        CHECK(res.code == 400);
+        CHECK(res.body == "Empty boundary in multipart message");
+    }
+} // multipart_view_empty_boundary
+
 TEST_CASE("send_file")
 {
 
