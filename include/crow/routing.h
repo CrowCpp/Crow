@@ -456,6 +456,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
 #ifdef CROW_ENABLE_SSL
         void handle_upgrade(const request& req, response&, SSLAdaptor&& adaptor) override
         {
+            max_payload_ = max_payload_override_ ? max_payload_ : app_->websocket_max_payload();
             crow::websocket::Connection<SSLAdaptor, App>::create(req, std::move(adaptor), app_, max_payload_, subprotocols_, open_handler_, message_handler_, close_handler_, error_handler_, accept_handler_, mirror_protocols_, app_->websocket_tcp_socket_options());
         }
 #endif
@@ -690,7 +691,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         void operator()(std::string name, Func&& f)
         {
             name_ = std::move(name);
-            (*this).template operator()<Func>(std::forward(f));
+            (*this).template operator()<Func>(std::forward<Func>(f));
         }
 
     private:
@@ -731,7 +732,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         void operator()(std::string name, Func&& f)
         {
             name_ = std::move(name);
-            (*this).template operator()<Func>(std::forward(f));
+            (*this).template operator()<Func>(std::forward<Func>(f));
         }
 
         void handle(request& req, response& res, const routing_params& params) override

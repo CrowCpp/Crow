@@ -50,6 +50,11 @@ The maximum payload size that a connection accepts can be adjusted either global
 
 Specifies the possible subprotocols that are available for the client. If specified, the first match with the client's requested subprotocols will be returned in the "Sec-WebSocket-Protocol" header of the handshake response. Otherwise, the connection will be closed. If no subprotocol are specified on both the client and the server side, the connection process will continue normally. It can be specified by using `#!cpp CROW_WEBSOCKET_ROUTE(app, "/url").subprotocols(<values>)`.
 
+## Remote endpoint
+<span class="tag">[:octicons-feed-tag-16: master](https://github.com/CrowCpp/Crow)</span>
+
+The address and the TCP port the client connected from are available on the connection through `#!cpp conn.get_remote_ip()` and `#!cpp conn.get_remote_port()`. They are also available in `onaccept`, on the request, as `#!cpp req.remote_ip_address` and `#!cpp req.remote_port`. The port is `0` when the connection has none (Unix domain socket) or when the socket is already closed.
+
 ## TCP_NODELAY for WebSocket sockets
 <span class="tag">[:octicons-feed-tag-16: master](https://github.com/CrowCpp/Crow)</span>
 

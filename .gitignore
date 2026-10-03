@@ -60,6 +60,7 @@ cmake-build-*
 .cache
 site
 venv
+.vs
 
 #Bazel
 bazel-*
@@ -67,4 +68,3 @@ MODULE.bazel.lock
 
 # macOS Files
 .DS_Store
-/.vs

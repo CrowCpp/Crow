@@ -108,14 +108,14 @@ namespace crow
             // Expires attribute
             Cookie& expires(const std::tm& time)
             {
-                expires_at_ = std::unique_ptr<std::tm>(new std::tm(time));
+                expires_at_ = std::make_unique<std::tm>(time);
                 return *this;
             }
 
             // Max-Age attribute
             Cookie& max_age(long long seconds)
             {
-                max_age_ = std::unique_ptr<long long>(new long long(seconds));
+                max_age_ = std::make_unique<long long>(seconds);
                 return *this;
             }
 
@@ -150,7 +150,7 @@ namespace crow
             // SameSite attribute
             Cookie& same_site(SameSitePolicy ssp)
             {
-                same_site_ = std::unique_ptr<SameSitePolicy>(new SameSitePolicy(ssp));
+                same_site_ = std::make_unique<SameSitePolicy>(ssp);
                 return *this;
             }
 
@@ -163,13 +163,13 @@ namespace crow
               httponly_(c.httponly_)
             {
                 if (c.max_age_)
-                    max_age_ = std::unique_ptr<long long>(new long long(*c.max_age_));
+                    max_age_ = std::make_unique<long long>(*c.max_age_);
 
                 if (c.expires_at_)
-                    expires_at_ = std::unique_ptr<std::tm>(new std::tm(*c.expires_at_));
+                    expires_at_ = std::make_unique<std::tm>(*c.expires_at_);
 
                 if (c.same_site_)
-                    same_site_ = std::unique_ptr<SameSitePolicy>(new SameSitePolicy(*c.same_site_));
+                    same_site_ = std::make_unique<SameSitePolicy>(*c.same_site_);
             }
 
         private:

@@ -11,6 +11,7 @@ namespace crow
     const char cr = '\r';
     const char lf = '\n';
     const std::string crlf("\r\n");
+    const std::string crlfcrlf("\r\n\r\n");
 
     enum class HTTPMethod : char
     {
