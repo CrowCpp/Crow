@@ -790,12 +790,11 @@ namespace crow
         {
             static const char alphabet[] = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
             std::random_device dev;
-            std::mt19937 rng(dev());
-            std::uniform_int_distribution<std::mt19937::result_type> dist(0, sizeof(alphabet) - 2);
+            std::uniform_int_distribution<std::size_t> dist(0, sizeof(alphabet) - 2);
             std::string out;
             out.reserve(size);
             for (std::size_t i = 0; i < size; i++)
-                out.push_back(alphabet[dist(rng)]);
+                out.push_back(alphabet[dist(dev)]);
             return out;
         }
 
@@ -886,12 +885,12 @@ namespace crow
         }
 
         /**
-         * @brief Returns the first occurence that matches between two ranges of iterators
+         * @brief Returns the first occurrence that matches between two ranges of iterators
          * @param first1 begin() iterator of the first range
          * @param last1 end() iterator of the first range
          * @param first2 begin() iterator of the second range
          * @param last2 end() iterator of the second range
-         * @return first occurence that matches between two ranges of iterators 
+         * @return first occurrence that matches between two ranges of iterators 
         */
         template<typename Iter1, typename Iter2>
         inline static Iter1 find_first_of(Iter1 first1, Iter1 last1, Iter2 first2, Iter2 last2)

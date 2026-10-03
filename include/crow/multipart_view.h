@@ -59,12 +59,12 @@ namespace crow
         struct padded
         {
             std::string_view value;   ///< String to pad
-            const char padding = '"'; ///< Padding to use
+            static constexpr char padding = '"'; ///< Padding to use
 
             /// Outputs padded value to the stream
             friend std::ostream& operator<<(std::ostream& stream, const padded value_)
             {
-                return stream << value_.padding << value_.value << value_.padding;
+                return stream << padding << value_.value << padding;
             }
         };
 
@@ -132,14 +132,14 @@ namespace crow
 
             part_view get_part_by_name(const std::string_view name)
             {
-                mp_view_map::iterator result = part_map.find(name);
+                auto result = part_map.find(name);
                 if (result != part_map.end())
                     return result->second;
                 else
                     return {};
             }
 
-            friend std::ostream& operator<<(std::ostream& stream, const message_view message)
+            friend std::ostream& operator<<(std::ostream& stream, const message_view& message)
             {
                 std::string delimiter = dd + message.boundary;
 
@@ -169,23 +169,13 @@ namespace crow
                 return std::move(str).str();
             }
 
-            /// Default constructor using default values
-            message_view(const ci_map& headers_, const std::string& boundary_, const std::vector<part_view>& sections):
-              headers(headers_), boundary(boundary_), parts(sections)
-            {
-                for (const part_view& item : parts)
-                {
-                    part_map.emplace(
-                      (get_header_object(item.headers, "Content-Disposition").params.find("name")->second),
-                      item);
-                }
-            }
-
             /// Create a multipart message from a request data
             explicit message_view(const request& req):
               headers(req.headers),
               boundary(get_boundary(get_header_value("Content-Type")))
             {
+                if (boundary.empty())
+                    throw bad_request("Empty boundary in multipart message");
                 parse_body(req.body);
             }
 
@@ -196,11 +186,11 @@ namespace crow
                 const size_t found = header.find(boundary_text);
                 if (found == std::string_view::npos)
                 {
-                    return std::string_view();
+                    return {};
                 }
 
                 const std::string_view to_return = header.substr(found + boundary_text.size());
-                if (to_return[0] == '\"')
+                if (!to_return.empty() && to_return[0] == '\"')
                 {
                     return to_return.substr(1, to_return.length() - 2);
                 }
@@ -218,7 +208,7 @@ namespace crow
                     if (found == std::string_view::npos)
                     {
                         // did not find delimiter; probably an ill-formed body; ignore the rest
-                        break;
+                        throw bad_request("Unable to find multipart delimiter. Probably ill-formed body.");
                     }
 
                     const std::string_view section = body.substr(0, found);
@@ -229,9 +219,13 @@ namespace crow
                     if (!section.empty())
                     {
                         part_view parsed_section = parse_section(section);
-                        part_map.emplace(
-                          (get_header_object(parsed_section.headers, "Content-Disposition").params.find("name")->second),
-                          parsed_section);
+                        const auto& section_params = get_header_object(parsed_section.headers, "Content-Disposition").params;
+                        const auto name_header = section_params.find("name");
+                        if (name_header == section_params.end())
+                        {
+                            throw bad_request("Unable to find header 'name' in multipart section. Probably ill-formed body.");
+                        }
+                        part_map.emplace(name_header->second, parsed_section);
                         parts.push_back(std::move(parsed_section));
                     }
                 }

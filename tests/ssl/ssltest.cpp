@@ -27,8 +27,11 @@ TEST_CASE("SSL")
     crow::SimpleApp app;
     //crow::SimpleApp app2;
 
+    static uint16_t reported_port = 0;
+
     CROW_ROUTE(app, "/")
-    ([]() {
+    ([](const crow::request& req) {
+        reported_port = req.remote_port;
         return "Hello world, I'm keycrt.";
     });
     /*
@@ -53,6 +56,7 @@ TEST_CASE("SSL")
     {
         asio::ssl::stream<asio::ip::tcp::socket> c(ioc, ctx);
         c.lowest_layer().connect(asio::ip::tcp::endpoint(asio::ip::make_address(LOCALHOST_ADDRESS), 45460));
+        const uint16_t client_port = c.lowest_layer().local_endpoint().port();
 
         c.handshake(asio::ssl::stream_base::client);
         c.write_some(asio::buffer(sendmsg));
@@ -69,6 +73,10 @@ TEST_CASE("SSL")
         CHECK(start_body!=std::string::npos);
 
         CHECK(std::string("Hello world, I'm keycrt.") == http_response.substr(start_body+4));
+
+        // The port must be read through the SSL adaptor, from the socket underneath the SSL stream.
+        CHECK(client_port != 0);
+        CHECK(reported_port == client_port);
 
         c.lowest_layer().shutdown(asio::socket_base::shutdown_type::shutdown_both, ec);
     }

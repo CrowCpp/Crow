@@ -318,7 +318,11 @@ namespace crow
         template<typename... Ts>
         SessionMiddleware(Ts... ts):
           SessionMiddleware(
-            CookieParser::Cookie("session").path("/").max_age(/*month*/ 30 * 24 * 60 * 60),
+            CookieParser::Cookie("session")
+              .path("/")
+              .max_age(/*month*/ 30 * 24 * 60 * 60)
+              .httponly()
+              .same_site(CookieParser::Cookie::SameSitePolicy::Lax),
             /*id_length */ 20, // around 10^34 possible combinations, but small enough to fit into SSO
             std::forward<Ts>(ts)...)
         {}
@@ -535,7 +539,14 @@ namespace crow
 
         std::string get_filename(const std::string& key, bool suffix = true)
         {
-            return utility::join_path(path_, key + (suffix ? ".json" : ""));
+            std::string filename{key};
+            // we have to sanitize here to prevent file traversal by ".." or similar
+            utility::sanitize_filename(filename);
+            if (suffix)
+            {
+                filename.append(".json");
+            }
+            return (path_/filename).string();
         }
 
         bool contains(const std::string& key)
@@ -556,7 +567,7 @@ namespace crow
               .count();
         }
 
-        std::string path_;
+        std::filesystem::path path_;
         uint64_t expiration_seconds_;
         session::ExpirationTracker expirations_;
     };

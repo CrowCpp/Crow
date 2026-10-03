@@ -1,6 +1,7 @@
 #include "catch2/catch_all.hpp"
 
 #include "crow.h"
+#include <atomic>
 #include <cstddef>
 #include <thread>
 
@@ -391,6 +392,61 @@ TEST_CASE("websocket_close", "[websocket]")
     }
 
     CROW_LOG_WARNING << "Stopping app!\n";
+    app.stop();
+}
+
+TEST_CASE("websocket_remote_port", "[websocket]")
+{
+    static std::string http_message =
+      "GET /ws HTTP/1.1\r\n"
+      "Connection: keep-alive, Upgrade\r\n"
+      "upgrade: websocket\r\n"
+      "Sec-WebSocket-Key: dGhlIHNhbXBsZSBub25jZQ==\r\n"
+      "Sec-WebSocket-Version: 13\r\n"
+      "Host: localhost\r\n"
+      "\r\n";
+
+    std::atomic<uint16_t> reported_port{0};
+    std::atomic<bool> connected{false};
+
+    SimpleApp app;
+
+    CROW_WEBSOCKET_ROUTE(app, "/ws")
+      .onopen([&](websocket::connection& conn) {
+          reported_port = conn.get_remote_port();
+          connected = true;
+      })
+      .onmessage([&](websocket::connection&, const std::string&, bool) {})
+      .onclose([&](websocket::connection&, const std::string&, uint16_t) {});
+
+    app.validate();
+
+    auto _ = app.bindaddr(LOCALHOST_ADDRESS).port(0).run_async();
+    app.wait_for_server_start();
+
+    asio::io_context ic;
+    asio::ip::tcp::socket c(ic);
+    c.connect(asio::ip::tcp::endpoint(
+      asio::ip::make_address(LOCALHOST_ADDRESS), app.port()));
+    const uint16_t client_port = c.local_endpoint().port();
+
+    char buf[2048];
+
+    //----------Handshake----------
+    {
+        std::fill_n(buf, 2048, 0);
+        c.send(asio::buffer(http_message));
+
+        c.receive(asio::buffer(buf, 2048));
+        std::this_thread::sleep_for(std::chrono::milliseconds(5));
+        CHECK(connected);
+    }
+
+    // The connection must report the very port the client is connected from.
+    CHECK(client_port != 0);
+    CHECK(reported_port == client_port);
+
+    c.close();
     app.stop();
 }
 

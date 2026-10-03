@@ -70,6 +70,14 @@ namespace crow
             return socket_.remote_endpoint().address().to_string();
         }
 
+        /// Get the TCP port of the remote endpoint, 0 when unavailable (socket already closed).
+        uint16_t remote_port() const
+        {
+            error_code ec;
+            const auto endpoint = socket_.remote_endpoint(ec);
+            return ec ? 0 : endpoint.port();
+        }
+
         bool is_open() const
         {
             return socket_.is_open();
@@ -141,6 +149,12 @@ namespace crow
             return "";
         }
 
+        /// Unix domain sockets have no port: always 0.
+        uint16_t remote_port() const
+        {
+            return 0;
+        }
+
         bool is_open()
         {
             return socket_.is_open();
@@ -207,6 +221,14 @@ namespace crow
         std::string address() const
         {
             return ssl_socket_->lowest_layer().remote_endpoint().address().to_string();
+        }
+
+        /// Get the TCP port of the remote endpoint, 0 when unavailable (socket already closed).
+        uint16_t remote_port() const
+        {
+            error_code ec;
+            const auto endpoint = ssl_socket_->lowest_layer().remote_endpoint(ec);
+            return ec ? 0 : endpoint.port();
         }
 
         bool is_open()
