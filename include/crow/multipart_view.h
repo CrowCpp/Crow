@@ -231,7 +231,7 @@ namespace crow
                 }
             }
 
-            part_view parse_section(std::string_view section)
+            part_view parse_section(std::string_view section) const
             {
                 constexpr static std::string_view crlf2 = "\r\n\r\n";
 
@@ -245,7 +245,7 @@ namespace crow
                 };
             }
 
-            mph_view_map parse_section_head(std::string_view lines)
+            mph_view_map parse_section_head(std::string_view lines) const
             {
                 mph_view_map result;
 
