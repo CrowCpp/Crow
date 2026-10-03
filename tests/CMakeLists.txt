@@ -22,6 +22,8 @@ enable_testing()
 # list the test sources
 set(TEST_SRCS
   unittest.cpp
+  max_body_size_tests.cpp
+  body_file_tests.cpp
   query_string_tests.cpp
   unit_tests/test_http_response.cpp
   unit_tests/test_json.cpp
@@ -34,6 +36,7 @@ set(TEST_SRCS
 
 add_executable(unittest ${TEST_SRCS})
 target_link_libraries(unittest Crow::Crow Catch2::Catch2WithMain)
+target_compile_definitions(unittest PRIVATE CROW_TEST_REPO_DIR="${CMAKE_SOURCE_DIR}")
 add_warnings_optimizations(unittest)
 add_sanitizer_flags(unittest)
 
