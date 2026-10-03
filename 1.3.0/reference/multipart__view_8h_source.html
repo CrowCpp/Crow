@@ -34,7 +34,7 @@
 						<td id="projectlogo"><img alt="Logo" src="logo55.png"/></td>
 						<td id="projectalign" style="padding-left: 0.5em;">
 							<div id="projectname">Crow
-								&#160;<span id="projectnumber">1.3.4</span>
+								&#160;<span id="projectnumber">1.3.5</span>
 							</div>
 							<div id="projectbrief">A C++ microframework for the web</div>
 						</td>
@@ -172,13 +172,13 @@ $(document).ready(function(){initNavTree('multipart__view_8h_source.html',''); i
 <div class="line"><a id="l00059" name="l00059"></a><span class="lineno"><a class="line" href="structcrow_1_1multipart_1_1padded.html">   59</a></span><span class="comment"></span>        <span class="keyword">struct </span><a class="code hl_struct" href="structcrow_1_1multipart_1_1padded.html">padded</a></div>
 <div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>        {</div>
 <div class="line"><a id="l00061" name="l00061"></a><span class="lineno"><a class="line" href="structcrow_1_1multipart_1_1padded.html#a3198bf9ee11e1c8e9e84a5880898e85b">   61</a></span>            std::string_view <a class="code hl_variable" href="structcrow_1_1multipart_1_1padded.html#a3198bf9ee11e1c8e9e84a5880898e85b">value</a>;   <span class="comment">///&lt; String to pad</span></div>
-<div class="line"><a id="l00062" name="l00062"></a><span class="lineno"><a class="line" href="structcrow_1_1multipart_1_1padded.html#a6e434697fc61b09cdd15953d5260c746">   62</a></span>            <span class="keyword">const</span> <span class="keywordtype">char</span> <a class="code hl_variable" href="structcrow_1_1multipart_1_1padded.html#a6e434697fc61b09cdd15953d5260c746">padding</a> = <span class="charliteral">&#39;&quot;&#39;</span>; <span class="comment">///&lt; Padding to use</span></div>
+<div class="line"><a id="l00062" name="l00062"></a><span class="lineno"><a class="line" href="structcrow_1_1multipart_1_1padded.html#ac43b543fc86d7d0ebfa74895ae65d66b">   62</a></span>            <span class="keyword">static</span> <span class="keyword">constexpr</span> <span class="keywordtype">char</span> <a class="code hl_variable" href="structcrow_1_1multipart_1_1padded.html#ac43b543fc86d7d0ebfa74895ae65d66b">padding</a> = <span class="charliteral">&#39;&quot;&#39;</span>; <span class="comment">///&lt; Padding to use</span></div>
 <div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span><span class="comment"></span> </div>
 <div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span><span class="comment">            /// Outputs padded value to the stream</span></div>
 <div class="foldopen" id="foldopen00065" data-start="{" data-end="};">
 <div class="line"><a id="l00065" name="l00065"></a><span class="lineno"><a class="line" href="structcrow_1_1multipart_1_1padded.html#a742979dce5bf8979686bec8833b9e1ad">   65</a></span><span class="comment"></span>            <span class="keyword">friend</span> std::ostream&amp; <a class="code hl_friend" href="structcrow_1_1multipart_1_1padded.html#a742979dce5bf8979686bec8833b9e1ad">operator&lt;&lt;</a>(std::ostream&amp; stream, <span class="keyword">const</span> <a class="code hl_struct" href="structcrow_1_1multipart_1_1padded.html">padded</a> value_)</div>
 <div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>            {</div>
-<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span>                <span class="keywordflow">return</span> stream &lt;&lt; value_.<a class="code hl_variable" href="structcrow_1_1multipart_1_1padded.html#a6e434697fc61b09cdd15953d5260c746">padding</a> &lt;&lt; value_.<a class="code hl_variable" href="structcrow_1_1multipart_1_1padded.html#a3198bf9ee11e1c8e9e84a5880898e85b">value</a> &lt;&lt; value_.<a class="code hl_variable" href="structcrow_1_1multipart_1_1padded.html#a6e434697fc61b09cdd15953d5260c746">padding</a>;</div>
+<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span>                <span class="keywordflow">return</span> stream &lt;&lt; <a class="code hl_variable" href="structcrow_1_1multipart_1_1padded.html#ac43b543fc86d7d0ebfa74895ae65d66b">padding</a> &lt;&lt; value_.<a class="code hl_variable" href="structcrow_1_1multipart_1_1padded.html#a3198bf9ee11e1c8e9e84a5880898e85b">value</a> &lt;&lt; <a class="code hl_variable" href="structcrow_1_1multipart_1_1padded.html#ac43b543fc86d7d0ebfa74895ae65d66b">padding</a>;</div>
 <div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span>            }</div>
 </div>
 <div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span>        };</div>
@@ -255,14 +255,14 @@ $(document).ready(function(){initNavTree('multipart__view_8h_source.html',''); i
 <div class="line"><a id="l00132" name="l00132"></a><span class="lineno">  132</span> </div>
 <div class="line"><a id="l00133" name="l00133"></a><span class="lineno">  133</span>            <a class="code hl_struct" href="structcrow_1_1multipart_1_1part__view.html">part_view</a> get_part_by_name(<span class="keyword">const</span> std::string_view name)</div>
 <div class="line"><a id="l00134" name="l00134"></a><span class="lineno">  134</span>            {</div>
-<div class="line"><a id="l00135" name="l00135"></a><span class="lineno">  135</span>                mp_view_map::iterator result = <a class="code hl_variable" href="structcrow_1_1multipart_1_1message__view.html#aa81bd5ceffd074caa1fe3c49131a37ce">part_map</a>.find(name);</div>
+<div class="line"><a id="l00135" name="l00135"></a><span class="lineno">  135</span>                <span class="keyword">auto</span> result = <a class="code hl_variable" href="structcrow_1_1multipart_1_1message__view.html#aa81bd5ceffd074caa1fe3c49131a37ce">part_map</a>.find(name);</div>
 <div class="line"><a id="l00136" name="l00136"></a><span class="lineno">  136</span>                <span class="keywordflow">if</span> (result != <a class="code hl_variable" href="structcrow_1_1multipart_1_1message__view.html#aa81bd5ceffd074caa1fe3c49131a37ce">part_map</a>.end())</div>
 <div class="line"><a id="l00137" name="l00137"></a><span class="lineno">  137</span>                    <span class="keywordflow">return</span> result-&gt;second;</div>
 <div class="line"><a id="l00138" name="l00138"></a><span class="lineno">  138</span>                <span class="keywordflow">else</span></div>
 <div class="line"><a id="l00139" name="l00139"></a><span class="lineno">  139</span>                    <span class="keywordflow">return</span> {};</div>
 <div class="line"><a id="l00140" name="l00140"></a><span class="lineno">  140</span>            }</div>
 <div class="line"><a id="l00141" name="l00141"></a><span class="lineno">  141</span> </div>
-<div class="line"><a id="l00142" name="l00142"></a><span class="lineno">  142</span>            <span class="keyword">friend</span> std::ostream&amp; operator&lt;&lt;(std::ostream&amp; stream, <span class="keyword">const</span> message_view message)</div>
+<div class="line"><a id="l00142" name="l00142"></a><span class="lineno">  142</span>            <span class="keyword">friend</span> std::ostream&amp; operator&lt;&lt;(std::ostream&amp; stream, <span class="keyword">const</span> message_view&amp; message)</div>
 <div class="line"><a id="l00143" name="l00143"></a><span class="lineno">  143</span>            {</div>
 <div class="line"><a id="l00144" name="l00144"></a><span class="lineno">  144</span>                std::string delimiter = dd + message.boundary;</div>
 <div class="line"><a id="l00145" name="l00145"></a><span class="lineno">  145</span> </div>
@@ -296,157 +296,150 @@ $(document).ready(function(){initNavTree('multipart__view_8h_source.html',''); i
 <div class="line"><a id="l00170" name="l00170"></a><span class="lineno">  170</span>            }</div>
 </div>
 <div class="line"><a id="l00171" name="l00171"></a><span class="lineno">  171</span><span class="comment"></span> </div>
-<div class="line"><a id="l00172" name="l00172"></a><span class="lineno">  172</span><span class="comment">            /// Default constructor using default values</span></div>
+<div class="line"><a id="l00172" name="l00172"></a><span class="lineno">  172</span><span class="comment">            /// Create a multipart message from a request data</span></div>
 <div class="foldopen" id="foldopen00173" data-start="{" data-end="}">
-<div class="line"><a id="l00173" name="l00173"></a><span class="lineno"><a class="line" href="structcrow_1_1multipart_1_1message__view.html#ab2985a84afde169fb89fc35e430106db">  173</a></span><span class="comment"></span>            <a class="code hl_function" href="structcrow_1_1multipart_1_1message__view.html#ab2985a84afde169fb89fc35e430106db">message_view</a>(<span class="keyword">const</span> ci_map&amp; headers_, <span class="keyword">const</span> std::string&amp; boundary_, <span class="keyword">const</span> std::vector&lt;part_view&gt;&amp; sections):</div>
-<div class="line"><a id="l00174" name="l00174"></a><span class="lineno">  174</span>              <a class="code hl_variable" href="structcrow_1_1multipart_1_1message__view.html#a7d90219f75d30870c249e378b0043065">headers</a>(headers_), <a class="code hl_variable" href="structcrow_1_1multipart_1_1message__view.html#ab57ffe9ae32bac208feea292a33873cd">boundary</a>(boundary_), <a class="code hl_variable" href="structcrow_1_1multipart_1_1message__view.html#a830648cdb55724204eccf7aaea0d4c5c">parts</a>(sections)</div>
-<div class="line"><a id="l00175" name="l00175"></a><span class="lineno">  175</span>            {</div>
-<div class="line"><a id="l00176" name="l00176"></a><span class="lineno">  176</span>                <span class="keywordflow">for</span> (<span class="keyword">const</span> <a class="code hl_struct" href="structcrow_1_1multipart_1_1part__view.html">part_view</a>&amp; item : <a class="code hl_variable" href="structcrow_1_1multipart_1_1message__view.html#a830648cdb55724204eccf7aaea0d4c5c">parts</a>)</div>
-<div class="line"><a id="l00177" name="l00177"></a><span class="lineno">  177</span>                {</div>
-<div class="line"><a id="l00178" name="l00178"></a><span class="lineno">  178</span>                    <a class="code hl_variable" href="structcrow_1_1multipart_1_1message__view.html#aa81bd5ceffd074caa1fe3c49131a37ce">part_map</a>.emplace(</div>
-<div class="line"><a id="l00179" name="l00179"></a><span class="lineno">  179</span>                      (<a class="code hl_function" href="namespacecrow_1_1multipart.html#a0f1be9cb3ce9e5ebed1a68465d7c13f9">get_header_object</a>(item.headers, <span class="stringliteral">&quot;Content-Disposition&quot;</span>).<a class="code hl_variable" href="structcrow_1_1multipart_1_1header.html#a18422d09aac9c5d5751799862d41a73c">params</a>.find(<span class="stringliteral">&quot;name&quot;</span>)-&gt;second),</div>
-<div class="line"><a id="l00180" name="l00180"></a><span class="lineno">  180</span>                      item);</div>
-<div class="line"><a id="l00181" name="l00181"></a><span class="lineno">  181</span>                }</div>
-<div class="line"><a id="l00182" name="l00182"></a><span class="lineno">  182</span>            }</div>
+<div class="line"><a id="l00173" name="l00173"></a><span class="lineno"><a class="line" href="structcrow_1_1multipart_1_1message__view.html#ad0a498ccdfea67c512d5cb23f62c4f1c">  173</a></span><span class="comment"></span>            <span class="keyword">explicit</span> <a class="code hl_function" href="structcrow_1_1multipart_1_1message__view.html#ad0a498ccdfea67c512d5cb23f62c4f1c">message_view</a>(<span class="keyword">const</span> <a class="code hl_struct" href="structcrow_1_1request.html">request</a>&amp; req):</div>
+<div class="line"><a id="l00174" name="l00174"></a><span class="lineno">  174</span>              <a class="code hl_variable" href="structcrow_1_1multipart_1_1message__view.html#a7d90219f75d30870c249e378b0043065">headers</a>(req.<a class="code hl_variable" href="structcrow_1_1multipart_1_1message__view.html#a7d90219f75d30870c249e378b0043065">headers</a>),</div>
+<div class="line"><a id="l00175" name="l00175"></a><span class="lineno">  175</span>              <a class="code hl_variable" href="structcrow_1_1multipart_1_1message__view.html#ab57ffe9ae32bac208feea292a33873cd">boundary</a>(get_boundary(get_header_value(<span class="stringliteral">&quot;Content-Type&quot;</span>)))</div>
+<div class="line"><a id="l00176" name="l00176"></a><span class="lineno">  176</span>            {</div>
+<div class="line"><a id="l00177" name="l00177"></a><span class="lineno">  177</span>                <span class="keywordflow">if</span> (<a class="code hl_variable" href="structcrow_1_1multipart_1_1message__view.html#ab57ffe9ae32bac208feea292a33873cd">boundary</a>.empty())</div>
+<div class="line"><a id="l00178" name="l00178"></a><span class="lineno">  178</span>                    <span class="keywordflow">throw</span> <a class="code hl_struct" href="structcrow_1_1bad__request.html">bad_request</a>(<span class="stringliteral">&quot;Empty boundary in multipart message&quot;</span>);</div>
+<div class="line"><a id="l00179" name="l00179"></a><span class="lineno">  179</span>                parse_body(req.body);</div>
+<div class="line"><a id="l00180" name="l00180"></a><span class="lineno">  180</span>            }</div>
 </div>
-<div class="line"><a id="l00183" name="l00183"></a><span class="lineno">  183</span><span class="comment"></span> </div>
-<div class="line"><a id="l00184" name="l00184"></a><span class="lineno">  184</span><span class="comment">            /// Create a multipart message from a request data</span></div>
-<div class="foldopen" id="foldopen00185" data-start="{" data-end="}">
-<div class="line"><a id="l00185" name="l00185"></a><span class="lineno"><a class="line" href="structcrow_1_1multipart_1_1message__view.html#ad0a498ccdfea67c512d5cb23f62c4f1c">  185</a></span><span class="comment"></span>            <span class="keyword">explicit</span> <a class="code hl_function" href="structcrow_1_1multipart_1_1message__view.html#ad0a498ccdfea67c512d5cb23f62c4f1c">message_view</a>(<span class="keyword">const</span> <a class="code hl_struct" href="structcrow_1_1request.html">request</a>&amp; req):</div>
-<div class="line"><a id="l00186" name="l00186"></a><span class="lineno">  186</span>              <a class="code hl_variable" href="structcrow_1_1multipart_1_1message__view.html#a7d90219f75d30870c249e378b0043065">headers</a>(req.<a class="code hl_variable" href="structcrow_1_1multipart_1_1message__view.html#a7d90219f75d30870c249e378b0043065">headers</a>),</div>
-<div class="line"><a id="l00187" name="l00187"></a><span class="lineno">  187</span>              <a class="code hl_variable" href="structcrow_1_1multipart_1_1message__view.html#ab57ffe9ae32bac208feea292a33873cd">boundary</a>(get_boundary(get_header_value(<span class="stringliteral">&quot;Content-Type&quot;</span>)))</div>
-<div class="line"><a id="l00188" name="l00188"></a><span class="lineno">  188</span>            {</div>
-<div class="line"><a id="l00189" name="l00189"></a><span class="lineno">  189</span>                parse_body(req.body);</div>
-<div class="line"><a id="l00190" name="l00190"></a><span class="lineno">  190</span>            }</div>
-</div>
+<div class="line"><a id="l00181" name="l00181"></a><span class="lineno">  181</span> </div>
+<div class="line"><a id="l00182" name="l00182"></a><span class="lineno">  182</span>        <span class="keyword">private</span>:</div>
+<div class="line"><a id="l00183" name="l00183"></a><span class="lineno">  183</span>            std::string_view get_boundary(<span class="keyword">const</span> std::string_view <a class="code hl_struct" href="structcrow_1_1multipart_1_1header.html">header</a>)<span class="keyword"> const</span></div>
+<div class="line"><a id="l00184" name="l00184"></a><span class="lineno">  184</span><span class="keyword">            </span>{</div>
+<div class="line"><a id="l00185" name="l00185"></a><span class="lineno">  185</span>                <span class="keyword">constexpr</span> std::string_view boundary_text = <span class="stringliteral">&quot;boundary=&quot;</span>;</div>
+<div class="line"><a id="l00186" name="l00186"></a><span class="lineno">  186</span>                <span class="keyword">const</span> <span class="keywordtype">size_t</span> found = <a class="code hl_struct" href="structcrow_1_1multipart_1_1header.html">header</a>.find(boundary_text);</div>
+<div class="line"><a id="l00187" name="l00187"></a><span class="lineno">  187</span>                <span class="keywordflow">if</span> (found == std::string_view::npos)</div>
+<div class="line"><a id="l00188" name="l00188"></a><span class="lineno">  188</span>                {</div>
+<div class="line"><a id="l00189" name="l00189"></a><span class="lineno">  189</span>                    <span class="keywordflow">return</span> {};</div>
+<div class="line"><a id="l00190" name="l00190"></a><span class="lineno">  190</span>                }</div>
 <div class="line"><a id="l00191" name="l00191"></a><span class="lineno">  191</span> </div>
-<div class="line"><a id="l00192" name="l00192"></a><span class="lineno">  192</span>        <span class="keyword">private</span>:</div>
-<div class="line"><a id="l00193" name="l00193"></a><span class="lineno">  193</span>            std::string_view get_boundary(<span class="keyword">const</span> std::string_view <a class="code hl_struct" href="structcrow_1_1multipart_1_1header.html">header</a>)<span class="keyword"> const</span></div>
-<div class="line"><a id="l00194" name="l00194"></a><span class="lineno">  194</span><span class="keyword">            </span>{</div>
-<div class="line"><a id="l00195" name="l00195"></a><span class="lineno">  195</span>                <span class="keyword">constexpr</span> std::string_view boundary_text = <span class="stringliteral">&quot;boundary=&quot;</span>;</div>
-<div class="line"><a id="l00196" name="l00196"></a><span class="lineno">  196</span>                <span class="keyword">const</span> <span class="keywordtype">size_t</span> found = <a class="code hl_struct" href="structcrow_1_1multipart_1_1header.html">header</a>.find(boundary_text);</div>
-<div class="line"><a id="l00197" name="l00197"></a><span class="lineno">  197</span>                <span class="keywordflow">if</span> (found == std::string_view::npos)</div>
-<div class="line"><a id="l00198" name="l00198"></a><span class="lineno">  198</span>                {</div>
-<div class="line"><a id="l00199" name="l00199"></a><span class="lineno">  199</span>                    <span class="keywordflow">return</span> std::string_view();</div>
-<div class="line"><a id="l00200" name="l00200"></a><span class="lineno">  200</span>                }</div>
-<div class="line"><a id="l00201" name="l00201"></a><span class="lineno">  201</span> </div>
-<div class="line"><a id="l00202" name="l00202"></a><span class="lineno">  202</span>                <span class="keyword">const</span> std::string_view to_return = header.substr(found + boundary_text.size());</div>
-<div class="line"><a id="l00203" name="l00203"></a><span class="lineno">  203</span>                <span class="keywordflow">if</span> (to_return[0] == <span class="charliteral">&#39;\&quot;&#39;</span>)</div>
-<div class="line"><a id="l00204" name="l00204"></a><span class="lineno">  204</span>                {</div>
-<div class="line"><a id="l00205" name="l00205"></a><span class="lineno">  205</span>                    <span class="keywordflow">return</span> to_return.substr(1, to_return.length() - 2);</div>
-<div class="line"><a id="l00206" name="l00206"></a><span class="lineno">  206</span>                }</div>
-<div class="line"><a id="l00207" name="l00207"></a><span class="lineno">  207</span>                <span class="keywordflow">return</span> to_return;</div>
-<div class="line"><a id="l00208" name="l00208"></a><span class="lineno">  208</span>            }</div>
-<div class="line"><a id="l00209" name="l00209"></a><span class="lineno">  209</span> </div>
-<div class="line"><a id="l00210" name="l00210"></a><span class="lineno">  210</span>            <span class="keywordtype">void</span> parse_body(std::string_view body)</div>
-<div class="line"><a id="l00211" name="l00211"></a><span class="lineno">  211</span>            {</div>
-<div class="line"><a id="l00212" name="l00212"></a><span class="lineno">  212</span>                <span class="keyword">const</span> std::string delimiter = dd + <a class="code hl_variable" href="structcrow_1_1multipart_1_1message__view.html#ab57ffe9ae32bac208feea292a33873cd">boundary</a>;</div>
+<div class="line"><a id="l00192" name="l00192"></a><span class="lineno">  192</span>                <span class="keyword">const</span> std::string_view to_return = header.substr(found + boundary_text.size());</div>
+<div class="line"><a id="l00193" name="l00193"></a><span class="lineno">  193</span>                <span class="keywordflow">if</span> (!to_return.empty() &amp;&amp; to_return[0] == <span class="charliteral">&#39;\&quot;&#39;</span>)</div>
+<div class="line"><a id="l00194" name="l00194"></a><span class="lineno">  194</span>                {</div>
+<div class="line"><a id="l00195" name="l00195"></a><span class="lineno">  195</span>                    <span class="keywordflow">return</span> to_return.substr(1, to_return.length() - 2);</div>
+<div class="line"><a id="l00196" name="l00196"></a><span class="lineno">  196</span>                }</div>
+<div class="line"><a id="l00197" name="l00197"></a><span class="lineno">  197</span>                <span class="keywordflow">return</span> to_return;</div>
+<div class="line"><a id="l00198" name="l00198"></a><span class="lineno">  198</span>            }</div>
+<div class="line"><a id="l00199" name="l00199"></a><span class="lineno">  199</span> </div>
+<div class="line"><a id="l00200" name="l00200"></a><span class="lineno">  200</span>            <span class="keywordtype">void</span> parse_body(std::string_view body)</div>
+<div class="line"><a id="l00201" name="l00201"></a><span class="lineno">  201</span>            {</div>
+<div class="line"><a id="l00202" name="l00202"></a><span class="lineno">  202</span>                <span class="keyword">const</span> std::string delimiter = dd + <a class="code hl_variable" href="structcrow_1_1multipart_1_1message__view.html#ab57ffe9ae32bac208feea292a33873cd">boundary</a>;</div>
+<div class="line"><a id="l00203" name="l00203"></a><span class="lineno">  203</span> </div>
+<div class="line"><a id="l00204" name="l00204"></a><span class="lineno">  204</span>                <span class="comment">// TODO(EDev): Exit on error</span></div>
+<div class="line"><a id="l00205" name="l00205"></a><span class="lineno">  205</span>                <span class="keywordflow">while</span> (body != (crlf))</div>
+<div class="line"><a id="l00206" name="l00206"></a><span class="lineno">  206</span>                {</div>
+<div class="line"><a id="l00207" name="l00207"></a><span class="lineno">  207</span>                    <span class="keyword">const</span> <span class="keywordtype">size_t</span> found = body.find(delimiter);</div>
+<div class="line"><a id="l00208" name="l00208"></a><span class="lineno">  208</span>                    <span class="keywordflow">if</span> (found == std::string_view::npos)</div>
+<div class="line"><a id="l00209" name="l00209"></a><span class="lineno">  209</span>                    {</div>
+<div class="line"><a id="l00210" name="l00210"></a><span class="lineno">  210</span>                        <span class="comment">// did not find delimiter; probably an ill-formed body; ignore the rest</span></div>
+<div class="line"><a id="l00211" name="l00211"></a><span class="lineno">  211</span>                        <span class="keywordflow">throw</span> bad_request(<span class="stringliteral">&quot;Unable to find multipart delimiter. Probably ill-formed body.&quot;</span>);</div>
+<div class="line"><a id="l00212" name="l00212"></a><span class="lineno">  212</span>                    }</div>
 <div class="line"><a id="l00213" name="l00213"></a><span class="lineno">  213</span> </div>
-<div class="line"><a id="l00214" name="l00214"></a><span class="lineno">  214</span>                <span class="comment">// TODO(EDev): Exit on error</span></div>
-<div class="line"><a id="l00215" name="l00215"></a><span class="lineno">  215</span>                <span class="keywordflow">while</span> (body != (crlf))</div>
-<div class="line"><a id="l00216" name="l00216"></a><span class="lineno">  216</span>                {</div>
-<div class="line"><a id="l00217" name="l00217"></a><span class="lineno">  217</span>                    <span class="keyword">const</span> <span class="keywordtype">size_t</span> found = body.find(delimiter);</div>
-<div class="line"><a id="l00218" name="l00218"></a><span class="lineno">  218</span>                    <span class="keywordflow">if</span> (found == std::string_view::npos)</div>
-<div class="line"><a id="l00219" name="l00219"></a><span class="lineno">  219</span>                    {</div>
-<div class="line"><a id="l00220" name="l00220"></a><span class="lineno">  220</span>                        <span class="comment">// did not find delimiter; probably an ill-formed body; ignore the rest</span></div>
-<div class="line"><a id="l00221" name="l00221"></a><span class="lineno">  221</span>                        <span class="keywordflow">break</span>;</div>
-<div class="line"><a id="l00222" name="l00222"></a><span class="lineno">  222</span>                    }</div>
-<div class="line"><a id="l00223" name="l00223"></a><span class="lineno">  223</span> </div>
-<div class="line"><a id="l00224" name="l00224"></a><span class="lineno">  224</span>                    <span class="keyword">const</span> std::string_view section = body.substr(0, found);</div>
-<div class="line"><a id="l00225" name="l00225"></a><span class="lineno">  225</span> </div>
-<div class="line"><a id="l00226" name="l00226"></a><span class="lineno">  226</span>                    <span class="comment">// +2 is the CRLF.</span></div>
-<div class="line"><a id="l00227" name="l00227"></a><span class="lineno">  227</span>                    <span class="comment">// We don&#39;t check it and delete it so that the same delimiter can be used for The last delimiter (--delimiter--CRLF).</span></div>
-<div class="line"><a id="l00228" name="l00228"></a><span class="lineno">  228</span>                    body = body.substr(found + delimiter.length() + 2);</div>
-<div class="line"><a id="l00229" name="l00229"></a><span class="lineno">  229</span>                    <span class="keywordflow">if</span> (!section.empty())</div>
-<div class="line"><a id="l00230" name="l00230"></a><span class="lineno">  230</span>                    {</div>
-<div class="line"><a id="l00231" name="l00231"></a><span class="lineno">  231</span>                        part_view parsed_section = parse_section(section);</div>
-<div class="line"><a id="l00232" name="l00232"></a><span class="lineno">  232</span>                        <a class="code hl_variable" href="structcrow_1_1multipart_1_1message__view.html#aa81bd5ceffd074caa1fe3c49131a37ce">part_map</a>.emplace(</div>
-<div class="line"><a id="l00233" name="l00233"></a><span class="lineno">  233</span>                          (<a class="code hl_function" href="namespacecrow_1_1multipart.html#a0f1be9cb3ce9e5ebed1a68465d7c13f9">get_header_object</a>(parsed_section.headers, <span class="stringliteral">&quot;Content-Disposition&quot;</span>).<a class="code hl_variable" href="structcrow_1_1multipart_1_1header.html#a18422d09aac9c5d5751799862d41a73c">params</a>.find(<span class="stringliteral">&quot;name&quot;</span>)-&gt;second),</div>
-<div class="line"><a id="l00234" name="l00234"></a><span class="lineno">  234</span>                          parsed_section);</div>
-<div class="line"><a id="l00235" name="l00235"></a><span class="lineno">  235</span>                        <a class="code hl_variable" href="structcrow_1_1multipart_1_1message__view.html#a830648cdb55724204eccf7aaea0d4c5c">parts</a>.push_back(std::move(parsed_section));</div>
-<div class="line"><a id="l00236" name="l00236"></a><span class="lineno">  236</span>                    }</div>
-<div class="line"><a id="l00237" name="l00237"></a><span class="lineno">  237</span>                }</div>
-<div class="line"><a id="l00238" name="l00238"></a><span class="lineno">  238</span>            }</div>
-<div class="line"><a id="l00239" name="l00239"></a><span class="lineno">  239</span> </div>
-<div class="line"><a id="l00240" name="l00240"></a><span class="lineno">  240</span>            part_view parse_section(std::string_view section)</div>
-<div class="line"><a id="l00241" name="l00241"></a><span class="lineno">  241</span>            {</div>
-<div class="line"><a id="l00242" name="l00242"></a><span class="lineno">  242</span>                <span class="keyword">constexpr</span> <span class="keyword">static</span> std::string_view crlf2 = <span class="stringliteral">&quot;\r\n\r\n&quot;</span>;</div>
-<div class="line"><a id="l00243" name="l00243"></a><span class="lineno">  243</span> </div>
-<div class="line"><a id="l00244" name="l00244"></a><span class="lineno">  244</span>                <span class="keyword">const</span> <span class="keywordtype">size_t</span> found = section.find(crlf2);</div>
-<div class="line"><a id="l00245" name="l00245"></a><span class="lineno">  245</span>                <span class="keyword">const</span> std::string_view head_line = section.substr(0, found + 2);</div>
-<div class="line"><a id="l00246" name="l00246"></a><span class="lineno">  246</span>                section = section.substr(found + 4);</div>
+<div class="line"><a id="l00214" name="l00214"></a><span class="lineno">  214</span>                    <span class="keyword">const</span> std::string_view section = body.substr(0, found);</div>
+<div class="line"><a id="l00215" name="l00215"></a><span class="lineno">  215</span> </div>
+<div class="line"><a id="l00216" name="l00216"></a><span class="lineno">  216</span>                    <span class="comment">// +2 is the CRLF.</span></div>
+<div class="line"><a id="l00217" name="l00217"></a><span class="lineno">  217</span>                    <span class="comment">// We don&#39;t check it and delete it so that the same delimiter can be used for The last delimiter (--delimiter--CRLF).</span></div>
+<div class="line"><a id="l00218" name="l00218"></a><span class="lineno">  218</span>                    body = body.substr(found + delimiter.length() + 2);</div>
+<div class="line"><a id="l00219" name="l00219"></a><span class="lineno">  219</span>                    <span class="keywordflow">if</span> (!section.empty())</div>
+<div class="line"><a id="l00220" name="l00220"></a><span class="lineno">  220</span>                    {</div>
+<div class="line"><a id="l00221" name="l00221"></a><span class="lineno">  221</span>                        part_view parsed_section = parse_section(section);</div>
+<div class="line"><a id="l00222" name="l00222"></a><span class="lineno">  222</span>                        <span class="keyword">const</span> <span class="keyword">auto</span>&amp; section_params = <a class="code hl_function" href="namespacecrow_1_1multipart.html#a0f1be9cb3ce9e5ebed1a68465d7c13f9">get_header_object</a>(parsed_section.headers, <span class="stringliteral">&quot;Content-Disposition&quot;</span>).<a class="code hl_variable" href="structcrow_1_1multipart_1_1header.html#a18422d09aac9c5d5751799862d41a73c">params</a>;</div>
+<div class="line"><a id="l00223" name="l00223"></a><span class="lineno">  223</span>                        <span class="keyword">const</span> <span class="keyword">auto</span> name_header = section_params.find(<span class="stringliteral">&quot;name&quot;</span>);</div>
+<div class="line"><a id="l00224" name="l00224"></a><span class="lineno">  224</span>                        <span class="keywordflow">if</span> (name_header == section_params.end())</div>
+<div class="line"><a id="l00225" name="l00225"></a><span class="lineno">  225</span>                        {</div>
+<div class="line"><a id="l00226" name="l00226"></a><span class="lineno">  226</span>                            <span class="keywordflow">throw</span> bad_request(<span class="stringliteral">&quot;Unable to find header &#39;name&#39; in multipart section. Probably ill-formed body.&quot;</span>);</div>
+<div class="line"><a id="l00227" name="l00227"></a><span class="lineno">  227</span>                        }</div>
+<div class="line"><a id="l00228" name="l00228"></a><span class="lineno">  228</span>                        <a class="code hl_variable" href="structcrow_1_1multipart_1_1message__view.html#aa81bd5ceffd074caa1fe3c49131a37ce">part_map</a>.emplace(name_header-&gt;second, parsed_section);</div>
+<div class="line"><a id="l00229" name="l00229"></a><span class="lineno">  229</span>                        <a class="code hl_variable" href="structcrow_1_1multipart_1_1message__view.html#a830648cdb55724204eccf7aaea0d4c5c">parts</a>.push_back(std::move(parsed_section));</div>
+<div class="line"><a id="l00230" name="l00230"></a><span class="lineno">  230</span>                    }</div>
+<div class="line"><a id="l00231" name="l00231"></a><span class="lineno">  231</span>                }</div>
+<div class="line"><a id="l00232" name="l00232"></a><span class="lineno">  232</span>            }</div>
+<div class="line"><a id="l00233" name="l00233"></a><span class="lineno">  233</span> </div>
+<div class="line"><a id="l00234" name="l00234"></a><span class="lineno">  234</span>            part_view parse_section(std::string_view section)</div>
+<div class="line"><a id="l00235" name="l00235"></a><span class="lineno">  235</span>            {</div>
+<div class="line"><a id="l00236" name="l00236"></a><span class="lineno">  236</span>                <span class="keyword">constexpr</span> <span class="keyword">static</span> std::string_view crlf2 = <span class="stringliteral">&quot;\r\n\r\n&quot;</span>;</div>
+<div class="line"><a id="l00237" name="l00237"></a><span class="lineno">  237</span> </div>
+<div class="line"><a id="l00238" name="l00238"></a><span class="lineno">  238</span>                <span class="keyword">const</span> <span class="keywordtype">size_t</span> found = section.find(crlf2);</div>
+<div class="line"><a id="l00239" name="l00239"></a><span class="lineno">  239</span>                <span class="keyword">const</span> std::string_view head_line = section.substr(0, found + 2);</div>
+<div class="line"><a id="l00240" name="l00240"></a><span class="lineno">  240</span>                section = section.substr(found + 4);</div>
+<div class="line"><a id="l00241" name="l00241"></a><span class="lineno">  241</span> </div>
+<div class="line"><a id="l00242" name="l00242"></a><span class="lineno">  242</span>                <span class="keywordflow">return</span> part_view{</div>
+<div class="line"><a id="l00243" name="l00243"></a><span class="lineno">  243</span>                  parse_section_head(head_line),</div>
+<div class="line"><a id="l00244" name="l00244"></a><span class="lineno">  244</span>                  section.substr(0, section.length() - 2),</div>
+<div class="line"><a id="l00245" name="l00245"></a><span class="lineno">  245</span>                };</div>
+<div class="line"><a id="l00246" name="l00246"></a><span class="lineno">  246</span>            }</div>
 <div class="line"><a id="l00247" name="l00247"></a><span class="lineno">  247</span> </div>
-<div class="line"><a id="l00248" name="l00248"></a><span class="lineno">  248</span>                <span class="keywordflow">return</span> part_view{</div>
-<div class="line"><a id="l00249" name="l00249"></a><span class="lineno">  249</span>                  parse_section_head(head_line),</div>
-<div class="line"><a id="l00250" name="l00250"></a><span class="lineno">  250</span>                  section.substr(0, section.length() - 2),</div>
-<div class="line"><a id="l00251" name="l00251"></a><span class="lineno">  251</span>                };</div>
-<div class="line"><a id="l00252" name="l00252"></a><span class="lineno">  252</span>            }</div>
-<div class="line"><a id="l00253" name="l00253"></a><span class="lineno">  253</span> </div>
-<div class="line"><a id="l00254" name="l00254"></a><span class="lineno">  254</span>            <a class="code hl_typedef" href="namespacecrow_1_1multipart.html#a560fd4c66cfa4114e644cade74e90960">mph_view_map</a> parse_section_head(std::string_view lines)</div>
-<div class="line"><a id="l00255" name="l00255"></a><span class="lineno">  255</span>            {</div>
-<div class="line"><a id="l00256" name="l00256"></a><span class="lineno">  256</span>                <a class="code hl_typedef" href="namespacecrow_1_1multipart.html#a560fd4c66cfa4114e644cade74e90960">mph_view_map</a> result;</div>
-<div class="line"><a id="l00257" name="l00257"></a><span class="lineno">  257</span> </div>
-<div class="line"><a id="l00258" name="l00258"></a><span class="lineno">  258</span>                <span class="keywordflow">while</span> (!lines.empty())</div>
-<div class="line"><a id="l00259" name="l00259"></a><span class="lineno">  259</span>                {</div>
-<div class="line"><a id="l00260" name="l00260"></a><span class="lineno">  260</span>                    header_view to_add;</div>
-<div class="line"><a id="l00261" name="l00261"></a><span class="lineno">  261</span> </div>
-<div class="line"><a id="l00262" name="l00262"></a><span class="lineno">  262</span>                    <span class="keyword">const</span> <span class="keywordtype">size_t</span> found_crlf = lines.find(crlf);</div>
-<div class="line"><a id="l00263" name="l00263"></a><span class="lineno">  263</span>                    std::string_view line = lines.substr(0, found_crlf);</div>
-<div class="line"><a id="l00264" name="l00264"></a><span class="lineno">  264</span>                    std::string_view key;</div>
-<div class="line"><a id="l00265" name="l00265"></a><span class="lineno">  265</span>                    lines = lines.substr(found_crlf + 2);</div>
-<div class="line"><a id="l00266" name="l00266"></a><span class="lineno">  266</span>                    <span class="comment">// Add the header if available</span></div>
-<div class="line"><a id="l00267" name="l00267"></a><span class="lineno">  267</span>                    <span class="keywordflow">if</span> (!line.empty())</div>
-<div class="line"><a id="l00268" name="l00268"></a><span class="lineno">  268</span>                    {</div>
-<div class="line"><a id="l00269" name="l00269"></a><span class="lineno">  269</span>                        <span class="keyword">const</span> <span class="keywordtype">size_t</span> found_semicolon = line.find(<span class="stringliteral">&quot;; &quot;</span>);</div>
-<div class="line"><a id="l00270" name="l00270"></a><span class="lineno">  270</span>                        std::string_view header = line.substr(0, found_semicolon);</div>
-<div class="line"><a id="l00271" name="l00271"></a><span class="lineno">  271</span>                        <span class="keywordflow">if</span> (found_semicolon != std::string_view::npos)</div>
-<div class="line"><a id="l00272" name="l00272"></a><span class="lineno">  272</span>                            line = line.substr(found_semicolon + 2);</div>
-<div class="line"><a id="l00273" name="l00273"></a><span class="lineno">  273</span>                        <span class="keywordflow">else</span></div>
-<div class="line"><a id="l00274" name="l00274"></a><span class="lineno">  274</span>                            line = std::string_view();</div>
+<div class="line"><a id="l00248" name="l00248"></a><span class="lineno">  248</span>            <a class="code hl_typedef" href="namespacecrow_1_1multipart.html#a560fd4c66cfa4114e644cade74e90960">mph_view_map</a> parse_section_head(std::string_view lines)</div>
+<div class="line"><a id="l00249" name="l00249"></a><span class="lineno">  249</span>            {</div>
+<div class="line"><a id="l00250" name="l00250"></a><span class="lineno">  250</span>                <a class="code hl_typedef" href="namespacecrow_1_1multipart.html#a560fd4c66cfa4114e644cade74e90960">mph_view_map</a> result;</div>
+<div class="line"><a id="l00251" name="l00251"></a><span class="lineno">  251</span> </div>
+<div class="line"><a id="l00252" name="l00252"></a><span class="lineno">  252</span>                <span class="keywordflow">while</span> (!lines.empty())</div>
+<div class="line"><a id="l00253" name="l00253"></a><span class="lineno">  253</span>                {</div>
+<div class="line"><a id="l00254" name="l00254"></a><span class="lineno">  254</span>                    header_view to_add;</div>
+<div class="line"><a id="l00255" name="l00255"></a><span class="lineno">  255</span> </div>
+<div class="line"><a id="l00256" name="l00256"></a><span class="lineno">  256</span>                    <span class="keyword">const</span> <span class="keywordtype">size_t</span> found_crlf = lines.find(crlf);</div>
+<div class="line"><a id="l00257" name="l00257"></a><span class="lineno">  257</span>                    std::string_view line = lines.substr(0, found_crlf);</div>
+<div class="line"><a id="l00258" name="l00258"></a><span class="lineno">  258</span>                    std::string_view key;</div>
+<div class="line"><a id="l00259" name="l00259"></a><span class="lineno">  259</span>                    lines = lines.substr(found_crlf + 2);</div>
+<div class="line"><a id="l00260" name="l00260"></a><span class="lineno">  260</span>                    <span class="comment">// Add the header if available</span></div>
+<div class="line"><a id="l00261" name="l00261"></a><span class="lineno">  261</span>                    <span class="keywordflow">if</span> (!line.empty())</div>
+<div class="line"><a id="l00262" name="l00262"></a><span class="lineno">  262</span>                    {</div>
+<div class="line"><a id="l00263" name="l00263"></a><span class="lineno">  263</span>                        <span class="keyword">const</span> <span class="keywordtype">size_t</span> found_semicolon = line.find(<span class="stringliteral">&quot;; &quot;</span>);</div>
+<div class="line"><a id="l00264" name="l00264"></a><span class="lineno">  264</span>                        std::string_view header = line.substr(0, found_semicolon);</div>
+<div class="line"><a id="l00265" name="l00265"></a><span class="lineno">  265</span>                        <span class="keywordflow">if</span> (found_semicolon != std::string_view::npos)</div>
+<div class="line"><a id="l00266" name="l00266"></a><span class="lineno">  266</span>                            line = line.substr(found_semicolon + 2);</div>
+<div class="line"><a id="l00267" name="l00267"></a><span class="lineno">  267</span>                        <span class="keywordflow">else</span></div>
+<div class="line"><a id="l00268" name="l00268"></a><span class="lineno">  268</span>                            line = std::string_view();</div>
+<div class="line"><a id="l00269" name="l00269"></a><span class="lineno">  269</span> </div>
+<div class="line"><a id="l00270" name="l00270"></a><span class="lineno">  270</span>                        <span class="keyword">const</span> <span class="keywordtype">size_t</span> header_split = header.find(<span class="stringliteral">&quot;: &quot;</span>);</div>
+<div class="line"><a id="l00271" name="l00271"></a><span class="lineno">  271</span>                        key = header.substr(0, header_split);</div>
+<div class="line"><a id="l00272" name="l00272"></a><span class="lineno">  272</span> </div>
+<div class="line"><a id="l00273" name="l00273"></a><span class="lineno">  273</span>                        to_add.value = header.substr(header_split + 2);</div>
+<div class="line"><a id="l00274" name="l00274"></a><span class="lineno">  274</span>                    }</div>
 <div class="line"><a id="l00275" name="l00275"></a><span class="lineno">  275</span> </div>
-<div class="line"><a id="l00276" name="l00276"></a><span class="lineno">  276</span>                        <span class="keyword">const</span> <span class="keywordtype">size_t</span> header_split = header.find(<span class="stringliteral">&quot;: &quot;</span>);</div>
-<div class="line"><a id="l00277" name="l00277"></a><span class="lineno">  277</span>                        key = header.substr(0, header_split);</div>
-<div class="line"><a id="l00278" name="l00278"></a><span class="lineno">  278</span> </div>
-<div class="line"><a id="l00279" name="l00279"></a><span class="lineno">  279</span>                        to_add.value = header.substr(header_split + 2);</div>
-<div class="line"><a id="l00280" name="l00280"></a><span class="lineno">  280</span>                    }</div>
-<div class="line"><a id="l00281" name="l00281"></a><span class="lineno">  281</span> </div>
-<div class="line"><a id="l00282" name="l00282"></a><span class="lineno">  282</span>                    <span class="comment">// Add the parameters</span></div>
-<div class="line"><a id="l00283" name="l00283"></a><span class="lineno">  283</span>                    <span class="keywordflow">while</span> (!line.empty())</div>
-<div class="line"><a id="l00284" name="l00284"></a><span class="lineno">  284</span>                    {</div>
-<div class="line"><a id="l00285" name="l00285"></a><span class="lineno">  285</span>                        <span class="keyword">const</span> <span class="keywordtype">size_t</span> found_semicolon = line.find(<span class="stringliteral">&quot;; &quot;</span>);</div>
-<div class="line"><a id="l00286" name="l00286"></a><span class="lineno">  286</span>                        std::string_view param = line.substr(0, found_semicolon);</div>
-<div class="line"><a id="l00287" name="l00287"></a><span class="lineno">  287</span>                        <span class="keywordflow">if</span> (found_semicolon != std::string_view::npos)</div>
-<div class="line"><a id="l00288" name="l00288"></a><span class="lineno">  288</span>                            line = line.substr(found_semicolon + 2);</div>
-<div class="line"><a id="l00289" name="l00289"></a><span class="lineno">  289</span>                        <span class="keywordflow">else</span></div>
-<div class="line"><a id="l00290" name="l00290"></a><span class="lineno">  290</span>                            line = std::string_view();</div>
-<div class="line"><a id="l00291" name="l00291"></a><span class="lineno">  291</span> </div>
-<div class="line"><a id="l00292" name="l00292"></a><span class="lineno">  292</span>                        <span class="keyword">const</span> <span class="keywordtype">size_t</span> param_split = param.find(<span class="charliteral">&#39;=&#39;</span>);</div>
-<div class="line"><a id="l00293" name="l00293"></a><span class="lineno">  293</span> </div>
-<div class="line"><a id="l00294" name="l00294"></a><span class="lineno">  294</span>                        <span class="keyword">const</span> std::string_view value = param.substr(param_split + 1);</div>
-<div class="line"><a id="l00295" name="l00295"></a><span class="lineno">  295</span> </div>
-<div class="line"><a id="l00296" name="l00296"></a><span class="lineno">  296</span>                        to_add.params.emplace(param.substr(0, param_split), trim(value));</div>
-<div class="line"><a id="l00297" name="l00297"></a><span class="lineno">  297</span>                    }</div>
-<div class="line"><a id="l00298" name="l00298"></a><span class="lineno">  298</span>                    result.emplace(key, to_add);</div>
-<div class="line"><a id="l00299" name="l00299"></a><span class="lineno">  299</span>                }</div>
-<div class="line"><a id="l00300" name="l00300"></a><span class="lineno">  300</span> </div>
-<div class="line"><a id="l00301" name="l00301"></a><span class="lineno">  301</span>                <span class="keywordflow">return</span> result;</div>
-<div class="line"><a id="l00302" name="l00302"></a><span class="lineno">  302</span>            }</div>
-<div class="line"><a id="l00303" name="l00303"></a><span class="lineno">  303</span> </div>
-<div class="line"><a id="l00304" name="l00304"></a><span class="lineno">  304</span>            <span class="keyword">inline</span> std::string_view trim(<span class="keyword">const</span> std::string_view <span class="keywordtype">string</span>, <span class="keyword">const</span> <span class="keywordtype">char</span> excess = <span class="charliteral">&#39;&quot;&#39;</span>)<span class="keyword"> const</span></div>
-<div class="line"><a id="l00305" name="l00305"></a><span class="lineno">  305</span><span class="keyword">            </span>{</div>
-<div class="line"><a id="l00306" name="l00306"></a><span class="lineno">  306</span>                <span class="keywordflow">if</span> (<span class="keywordtype">string</span>.length() &gt; 1 &amp;&amp; <span class="keywordtype">string</span>[0] == excess &amp;&amp; <span class="keywordtype">string</span>[<span class="keywordtype">string</span>.length() - 1] == excess)</div>
-<div class="line"><a id="l00307" name="l00307"></a><span class="lineno">  307</span>                    <span class="keywordflow">return</span> <span class="keywordtype">string</span>.substr(1, <span class="keywordtype">string</span>.length() - 2);</div>
-<div class="line"><a id="l00308" name="l00308"></a><span class="lineno">  308</span>                <span class="keywordflow">return</span> string;</div>
-<div class="line"><a id="l00309" name="l00309"></a><span class="lineno">  309</span>            }</div>
-<div class="line"><a id="l00310" name="l00310"></a><span class="lineno">  310</span>        };</div>
+<div class="line"><a id="l00276" name="l00276"></a><span class="lineno">  276</span>                    <span class="comment">// Add the parameters</span></div>
+<div class="line"><a id="l00277" name="l00277"></a><span class="lineno">  277</span>                    <span class="keywordflow">while</span> (!line.empty())</div>
+<div class="line"><a id="l00278" name="l00278"></a><span class="lineno">  278</span>                    {</div>
+<div class="line"><a id="l00279" name="l00279"></a><span class="lineno">  279</span>                        <span class="keyword">const</span> <span class="keywordtype">size_t</span> found_semicolon = line.find(<span class="stringliteral">&quot;; &quot;</span>);</div>
+<div class="line"><a id="l00280" name="l00280"></a><span class="lineno">  280</span>                        std::string_view param = line.substr(0, found_semicolon);</div>
+<div class="line"><a id="l00281" name="l00281"></a><span class="lineno">  281</span>                        <span class="keywordflow">if</span> (found_semicolon != std::string_view::npos)</div>
+<div class="line"><a id="l00282" name="l00282"></a><span class="lineno">  282</span>                            line = line.substr(found_semicolon + 2);</div>
+<div class="line"><a id="l00283" name="l00283"></a><span class="lineno">  283</span>                        <span class="keywordflow">else</span></div>
+<div class="line"><a id="l00284" name="l00284"></a><span class="lineno">  284</span>                            line = std::string_view();</div>
+<div class="line"><a id="l00285" name="l00285"></a><span class="lineno">  285</span> </div>
+<div class="line"><a id="l00286" name="l00286"></a><span class="lineno">  286</span>                        <span class="keyword">const</span> <span class="keywordtype">size_t</span> param_split = param.find(<span class="charliteral">&#39;=&#39;</span>);</div>
+<div class="line"><a id="l00287" name="l00287"></a><span class="lineno">  287</span> </div>
+<div class="line"><a id="l00288" name="l00288"></a><span class="lineno">  288</span>                        <span class="keyword">const</span> std::string_view value = param.substr(param_split + 1);</div>
+<div class="line"><a id="l00289" name="l00289"></a><span class="lineno">  289</span> </div>
+<div class="line"><a id="l00290" name="l00290"></a><span class="lineno">  290</span>                        to_add.params.emplace(param.substr(0, param_split), trim(value));</div>
+<div class="line"><a id="l00291" name="l00291"></a><span class="lineno">  291</span>                    }</div>
+<div class="line"><a id="l00292" name="l00292"></a><span class="lineno">  292</span>                    result.emplace(key, to_add);</div>
+<div class="line"><a id="l00293" name="l00293"></a><span class="lineno">  293</span>                }</div>
+<div class="line"><a id="l00294" name="l00294"></a><span class="lineno">  294</span> </div>
+<div class="line"><a id="l00295" name="l00295"></a><span class="lineno">  295</span>                <span class="keywordflow">return</span> result;</div>
+<div class="line"><a id="l00296" name="l00296"></a><span class="lineno">  296</span>            }</div>
+<div class="line"><a id="l00297" name="l00297"></a><span class="lineno">  297</span> </div>
+<div class="line"><a id="l00298" name="l00298"></a><span class="lineno">  298</span>            <span class="keyword">inline</span> std::string_view trim(<span class="keyword">const</span> std::string_view <span class="keywordtype">string</span>, <span class="keyword">const</span> <span class="keywordtype">char</span> excess = <span class="charliteral">&#39;&quot;&#39;</span>)<span class="keyword"> const</span></div>
+<div class="line"><a id="l00299" name="l00299"></a><span class="lineno">  299</span><span class="keyword">            </span>{</div>
+<div class="line"><a id="l00300" name="l00300"></a><span class="lineno">  300</span>                <span class="keywordflow">if</span> (<span class="keywordtype">string</span>.length() &gt; 1 &amp;&amp; <span class="keywordtype">string</span>[0] == excess &amp;&amp; <span class="keywordtype">string</span>[<span class="keywordtype">string</span>.length() - 1] == excess)</div>
+<div class="line"><a id="l00301" name="l00301"></a><span class="lineno">  301</span>                    <span class="keywordflow">return</span> <span class="keywordtype">string</span>.substr(1, <span class="keywordtype">string</span>.length() - 2);</div>
+<div class="line"><a id="l00302" name="l00302"></a><span class="lineno">  302</span>                <span class="keywordflow">return</span> string;</div>
+<div class="line"><a id="l00303" name="l00303"></a><span class="lineno">  303</span>            }</div>
+<div class="line"><a id="l00304" name="l00304"></a><span class="lineno">  304</span>        };</div>
 </div>
-<div class="line"><a id="l00311" name="l00311"></a><span class="lineno">  311</span>    } <span class="comment">// namespace multipart</span></div>
-<div class="line"><a id="l00312" name="l00312"></a><span class="lineno">  312</span>} <span class="comment">// namespace crow</span></div>
+<div class="line"><a id="l00305" name="l00305"></a><span class="lineno">  305</span>    } <span class="comment">// namespace multipart</span></div>
+<div class="line"><a id="l00306" name="l00306"></a><span class="lineno">  306</span>} <span class="comment">// namespace crow</span></div>
 <div class="ttc" id="anamespacecrow_1_1multipart_html_a0f1be9cb3ce9e5ebed1a68465d7c13f9"><div class="ttname"><a href="namespacecrow_1_1multipart.html#a0f1be9cb3ce9e5ebed1a68465d7c13f9">crow::multipart::get_header_object</a></div><div class="ttdeci">const header &amp; get_header_object(const T &amp;headers, const std::string &amp;key)</div><div class="ttdoc">Same as get_header_value_object() but for multipart::header.</div><div class="ttdef"><b>Definition</b> multipart.h:48</div></div>
 <div class="ttc" id="anamespacecrow_1_1multipart_html_a15fb03e1d837c1cc48cc990198924d23"><div class="ttname"><a href="namespacecrow_1_1multipart.html#a15fb03e1d837c1cc48cc990198924d23">crow::multipart::mp_view_map</a></div><div class="ttdeci">std::unordered_multimap&lt; std::string_view, part_view, ci_hash, ci_key_eq &gt; mp_view_map</div><div class="ttdoc">Multipart map (key is the name parameter).</div><div class="ttdef"><b>Definition</b> multipart_view.h:118</div></div>
 <div class="ttc" id="anamespacecrow_1_1multipart_html_a560fd4c66cfa4114e644cade74e90960"><div class="ttname"><a href="namespacecrow_1_1multipart.html#a560fd4c66cfa4114e644cade74e90960">crow::multipart::mph_view_map</a></div><div class="ttdeci">std::unordered_multimap&lt; std::string_view, header_view, ci_hash, ci_key_eq &gt; mph_view_map</div><div class="ttdoc">Multipart header map (key is header key).</div><div class="ttdef"><b>Definition</b> multipart_view.h:43</div></div>
 <div class="ttc" id="anamespacecrow_html"><div class="ttname"><a href="namespacecrow.html">crow</a></div><div class="ttdoc">The main namespace of the library. In this namespace is defined the most important classes and functi...</div></div>
 <div class="ttc" id="anamespacecrow_html_a88064857f10f96ac9bf075e19624ee4d"><div class="ttname"><a href="namespacecrow.html#a88064857f10f96ac9bf075e19624ee4d">crow::get_header_value</a></div><div class="ttdeci">const std::string &amp; get_header_value(const ci_map &amp;headers, const std::string &amp;key)</div><div class="ttdoc">Find and return the value associated with the key. (returns an empty string if nothing is found)</div><div class="ttdef"><b>Definition</b> http_request.h:33</div></div>
+<div class="ttc" id="astructcrow_1_1bad__request_html"><div class="ttname"><a href="structcrow_1_1bad__request.html">crow::bad_request</a></div><div class="ttdef"><b>Definition</b> exceptions.h:7</div></div>
 <div class="ttc" id="astructcrow_1_1multipart_1_1header__view_html"><div class="ttname"><a href="structcrow_1_1multipart_1_1header__view.html">crow::multipart::header_view</a></div><div class="ttdoc">The first part in a section, contains metadata about the part.</div><div class="ttdef"><b>Definition</b> multipart_view.h:22</div></div>
 <div class="ttc" id="astructcrow_1_1multipart_1_1header__view_html_a5a998c3220179d0de4ba5e3aff6675e9"><div class="ttname"><a href="structcrow_1_1multipart_1_1header__view.html#a5a998c3220179d0de4ba5e3aff6675e9">crow::multipart::header_view::params</a></div><div class="ttdeci">std::unordered_map&lt; std::string_view, std::string_view &gt; params</div><div class="ttdoc">The parameters of the header, come after the value</div><div class="ttdef"><b>Definition</b> multipart_view.h:24</div></div>
 <div class="ttc" id="astructcrow_1_1multipart_1_1header__view_html_acf0fda29ac1f295c661db2249431cfcf"><div class="ttname"><a href="structcrow_1_1multipart_1_1header__view.html#acf0fda29ac1f295c661db2249431cfcf">crow::multipart::header_view::value</a></div><div class="ttdeci">std::string_view value</div><div class="ttdoc">The first part of the header, usually Content-Type or Content-Disposition</div><div class="ttdef"><b>Definition</b> multipart_view.h:23</div></div>
@@ -457,14 +450,13 @@ $(document).ready(function(){initNavTree('multipart__view_8h_source.html',''); i
 <div class="ttc" id="astructcrow_1_1multipart_1_1message__view_html_a830648cdb55724204eccf7aaea0d4c5c"><div class="ttname"><a href="structcrow_1_1multipart_1_1message__view.html#a830648cdb55724204eccf7aaea0d4c5c">crow::multipart::message_view::parts</a></div><div class="ttdeci">std::vector&lt; part_view &gt; parts</div><div class="ttdoc">The individual parts of the message.</div><div class="ttdef"><b>Definition</b> multipart_view.h:125</div></div>
 <div class="ttc" id="astructcrow_1_1multipart_1_1message__view_html_a93b1d69b8688d153ed0949ad6dc527fc"><div class="ttname"><a href="structcrow_1_1multipart_1_1message__view.html#a93b1d69b8688d153ed0949ad6dc527fc">crow::multipart::message_view::dump</a></div><div class="ttdeci">std::string dump(int part_) const</div><div class="ttdoc">Represent an individual part as a string.</div><div class="ttdef"><b>Definition</b> multipart_view.h:165</div></div>
 <div class="ttc" id="astructcrow_1_1multipart_1_1message__view_html_aa81bd5ceffd074caa1fe3c49131a37ce"><div class="ttname"><a href="structcrow_1_1multipart_1_1message__view.html#aa81bd5ceffd074caa1fe3c49131a37ce">crow::multipart::message_view::part_map</a></div><div class="ttdeci">mp_view_map part_map</div><div class="ttdoc">The individual parts of the message, organized in a map with the name header parameter being the key.</div><div class="ttdef"><b>Definition</b> multipart_view.h:126</div></div>
-<div class="ttc" id="astructcrow_1_1multipart_1_1message__view_html_ab2985a84afde169fb89fc35e430106db"><div class="ttname"><a href="structcrow_1_1multipart_1_1message__view.html#ab2985a84afde169fb89fc35e430106db">crow::multipart::message_view::message_view</a></div><div class="ttdeci">message_view(const ci_map &amp;headers_, const std::string &amp;boundary_, const std::vector&lt; part_view &gt; &amp;sections)</div><div class="ttdoc">Default constructor using default values.</div><div class="ttdef"><b>Definition</b> multipart_view.h:173</div></div>
 <div class="ttc" id="astructcrow_1_1multipart_1_1message__view_html_ab57ffe9ae32bac208feea292a33873cd"><div class="ttname"><a href="structcrow_1_1multipart_1_1message__view.html#ab57ffe9ae32bac208feea292a33873cd">crow::multipart::message_view::boundary</a></div><div class="ttdeci">std::string boundary</div><div class="ttdoc">The text boundary that separates different parts</div><div class="ttdef"><b>Definition</b> multipart_view.h:124</div></div>
-<div class="ttc" id="astructcrow_1_1multipart_1_1message__view_html_ad0a498ccdfea67c512d5cb23f62c4f1c"><div class="ttname"><a href="structcrow_1_1multipart_1_1message__view.html#ad0a498ccdfea67c512d5cb23f62c4f1c">crow::multipart::message_view::message_view</a></div><div class="ttdeci">message_view(const request &amp;req)</div><div class="ttdoc">Create a multipart message from a request data.</div><div class="ttdef"><b>Definition</b> multipart_view.h:185</div></div>
+<div class="ttc" id="astructcrow_1_1multipart_1_1message__view_html_ad0a498ccdfea67c512d5cb23f62c4f1c"><div class="ttname"><a href="structcrow_1_1multipart_1_1message__view.html#ad0a498ccdfea67c512d5cb23f62c4f1c">crow::multipart::message_view::message_view</a></div><div class="ttdeci">message_view(const request &amp;req)</div><div class="ttdoc">Create a multipart message from a request data.</div><div class="ttdef"><b>Definition</b> multipart_view.h:173</div></div>
 <div class="ttc" id="astructcrow_1_1multipart_1_1message__view_html_ad12d2270b477b231c9ff53d40bad9d60"><div class="ttname"><a href="structcrow_1_1multipart_1_1message__view.html#ad12d2270b477b231c9ff53d40bad9d60">crow::multipart::message_view::dump</a></div><div class="ttdeci">std::string dump() const</div><div class="ttdoc">Represent all parts as a string (does not include message headers)</div><div class="ttdef"><b>Definition</b> multipart_view.h:157</div></div>
 <div class="ttc" id="astructcrow_1_1multipart_1_1padded_html"><div class="ttname"><a href="structcrow_1_1multipart_1_1padded.html">crow::multipart::padded</a></div><div class="ttdoc">String padded with the specified padding (double quotes by default)</div><div class="ttdef"><b>Definition</b> multipart_view.h:60</div></div>
 <div class="ttc" id="astructcrow_1_1multipart_1_1padded_html_a3198bf9ee11e1c8e9e84a5880898e85b"><div class="ttname"><a href="structcrow_1_1multipart_1_1padded.html#a3198bf9ee11e1c8e9e84a5880898e85b">crow::multipart::padded::value</a></div><div class="ttdeci">std::string_view value</div><div class="ttdoc">String to pad.</div><div class="ttdef"><b>Definition</b> multipart_view.h:61</div></div>
-<div class="ttc" id="astructcrow_1_1multipart_1_1padded_html_a6e434697fc61b09cdd15953d5260c746"><div class="ttname"><a href="structcrow_1_1multipart_1_1padded.html#a6e434697fc61b09cdd15953d5260c746">crow::multipart::padded::padding</a></div><div class="ttdeci">const char padding</div><div class="ttdoc">Padding to use.</div><div class="ttdef"><b>Definition</b> multipart_view.h:62</div></div>
 <div class="ttc" id="astructcrow_1_1multipart_1_1padded_html_a742979dce5bf8979686bec8833b9e1ad"><div class="ttname"><a href="structcrow_1_1multipart_1_1padded.html#a742979dce5bf8979686bec8833b9e1ad">crow::multipart::padded::operator&lt;&lt;</a></div><div class="ttdeci">friend std::ostream &amp; operator&lt;&lt;(std::ostream &amp;stream, const padded value_)</div><div class="ttdoc">Outputs padded value to the stream.</div><div class="ttdef"><b>Definition</b> multipart_view.h:65</div></div>
+<div class="ttc" id="astructcrow_1_1multipart_1_1padded_html_ac43b543fc86d7d0ebfa74895ae65d66b"><div class="ttname"><a href="structcrow_1_1multipart_1_1padded.html#ac43b543fc86d7d0ebfa74895ae65d66b">crow::multipart::padded::padding</a></div><div class="ttdeci">static constexpr char padding</div><div class="ttdoc">Padding to use.</div><div class="ttdef"><b>Definition</b> multipart_view.h:62</div></div>
 <div class="ttc" id="astructcrow_1_1multipart_1_1part__view_html"><div class="ttname"><a href="structcrow_1_1multipart_1_1part__view.html">crow::multipart::part_view</a></div><div class="ttdoc">One part of the multipart message.</div><div class="ttdef"><b>Definition</b> multipart_view.h:76</div></div>
 <div class="ttc" id="astructcrow_1_1multipart_1_1part__view_html_a8517b18d6b773485557de67f7cb057e6"><div class="ttname"><a href="structcrow_1_1multipart_1_1part__view.html#a8517b18d6b773485557de67f7cb057e6">crow::multipart::part_view::headers</a></div><div class="ttdeci">mph_view_map headers</div><div class="ttdoc">(optional) The first part before the data, Contains information regarding the type of data and encodi...</div><div class="ttdef"><b>Definition</b> multipart_view.h:77</div></div>
 <div class="ttc" id="astructcrow_1_1multipart_1_1part__view_html_ad1b39218844594c549190a9aec795f05"><div class="ttname"><a href="structcrow_1_1multipart_1_1part__view.html#ad1b39218844594c549190a9aec795f05">crow::multipart::part_view::body</a></div><div class="ttdeci">std::string_view body</div><div class="ttdoc">The actual data in the part.</div><div class="ttdef"><b>Definition</b> multipart_view.h:78</div></div>
@@ -476,7 +468,7 @@ $(document).ready(function(){initNavTree('multipart__view_8h_source.html',''); i
 			<ul>
 				<li class="navelem"><a class="el" href="dir_d44c64559bbebec7f509842c48db8b23.html">include</a></li><li class="navelem"><a class="el" href="dir_d22c1cb87b72f01e1a7f207eb3bfd1ca.html">crow</a></li><li class="navelem"><b>multipart_view.h</b></li>
 				<li class="footer">
-					Generated on Mon Sep 7 2026 for Crow by <a href="http://www.doxygen.org/index.html">
+					Generated on Sat Oct 3 2026 for Crow by <a href="http://www.doxygen.org/index.html">
 					<img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.9.8.
 					Dark theme by <a href="http://majerle.eu" target="_new">Tilen Majerle</a>. Edited by <a href="https://github.com/The-EDev" target="_new">Farook Al-Sammarraie</a>. All rights reserved.
 				</li>

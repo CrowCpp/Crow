@@ -25,15 +25,16 @@ var searchData=
   ['simpleapp_22',['SimpleApp',['../namespacecrow.html#a3603179c9794548cac2c9990685178b4',1,'crow']]],
   ['size_23',['size',['../classcrow_1_1json_1_1wvalue.html#a1ded929c63fcb6e3c53be38e9b54c672',1,'crow::json::wvalue']]],
   ['skip_5fbody_24',['skip_body',['../structcrow_1_1response.html#a548c4f5e059a7bb3b2560b7ac5800011',1,'crow::response']]],
-  ['socket_25',['socket',['../classcrow_1_1_connection.html#a4e1e6e41ec0fbf059c93fae2b9738a19',1,'crow::Connection::socket()'],['../structcrow_1_1_socket_adaptor.html#a41fbd5c8e046163bb50e793f5decfda6',1,'crow::SocketAdaptor::socket()']]],
+  ['socket_25',['socket',['../structcrow_1_1_socket_adaptor.html#a41fbd5c8e046163bb50e793f5decfda6',1,'crow::SocketAdaptor::socket()'],['../classcrow_1_1_connection.html#a4e1e6e41ec0fbf059c93fae2b9738a19',1,'crow::Connection::socket()']]],
   ['socketadaptor_26',['SocketAdaptor',['../structcrow_1_1_socket_adaptor.html',1,'crow']]],
   ['ssl_5fchainfile_27',['ssl_chainfile',['../classcrow_1_1_crow.html#a5db312a2a72f76be1f040eacaf387787',1,'crow::Crow']]],
   ['ssl_5ffile_28',['ssl_file',['../classcrow_1_1_crow.html#a6b3004e9388f1ac8114c0db2c93b6dd9',1,'crow::Crow::ssl_file(const std::string &amp;crt_filename, const std::string &amp;key_filename)'],['../classcrow_1_1_crow.html#ad56281ae1ca63aaa4b04a70ae445ed95',1,'crow::Crow::ssl_file(const std::string &amp;pem_filename)']]],
   ['ssl_5fserver_5ft_29',['ssl_server_t',['../classcrow_1_1_crow.html#aa2b8c210254ad4c4afce885b91365081',1,'crow::Crow']]],
   ['ssladaptor_30',['SSLAdaptor',['../structcrow_1_1_s_s_l_adaptor.html',1,'crow']]],
   ['start_31',['start',['../classcrow_1_1websocket_1_1_connection.html#a928134640aa98a86f56a71735a41147a',1,'crow::websocket::Connection']]],
-  ['static_5ffile_32',['static_file',['../classcrow_1_1_crow.html#ad28362be780a71415e032d5401cdaaca',1,'crow::Crow']]],
-  ['static_5ffile_5finfo_33',['static_file_info',['../structcrow_1_1response_1_1static__file__info.html',1,'crow::response']]],
-  ['stop_34',['stop',['../classcrow_1_1_crow.html#a0266672657128919ab9a067d93f3868f',1,'crow::Crow']]],
-  ['stream_5fthreshold_35',['stream_threshold',['../classcrow_1_1_crow.html#a058d8138c140c1073f0972c74cfa812b',1,'crow::Crow::stream_threshold(size_t threshold)'],['../classcrow_1_1_crow.html#af35a53c39414aa79446690fea359e573',1,'crow::Crow::stream_threshold()']]]
+  ['static_5fdirectory_32',['static_directory',['../classcrow_1_1_crow.html#adbac84e983b956bf71f89e5818fa80bd',1,'crow::Crow::static_directory(std::string path)'],['../classcrow_1_1_crow.html#a07aad9ff4778c84166cb9143f7951402',1,'crow::Crow::static_directory() const']]],
+  ['static_5ffile_33',['static_file',['../classcrow_1_1_crow.html#ad28362be780a71415e032d5401cdaaca',1,'crow::Crow']]],
+  ['static_5ffile_5finfo_34',['static_file_info',['../structcrow_1_1response_1_1static__file__info.html',1,'crow::response']]],
+  ['stop_35',['stop',['../classcrow_1_1_crow.html#a0266672657128919ab9a067d93f3868f',1,'crow::Crow']]],
+  ['stream_5fthreshold_36',['stream_threshold',['../classcrow_1_1_crow.html#a058d8138c140c1073f0972c74cfa812b',1,'crow::Crow::stream_threshold(size_t threshold)'],['../classcrow_1_1_crow.html#af35a53c39414aa79446690fea359e573',1,'crow::Crow::stream_threshold()']]]
 ];

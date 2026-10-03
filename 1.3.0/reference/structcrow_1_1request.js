@@ -9,6 +9,7 @@ var structcrow_1_1request =
     [ "keep_alive", "structcrow_1_1request.html#a5148ce95969d261e50ee977c1dc7960c", null ],
     [ "raw_url", "structcrow_1_1request.html#a72f5504a56f9ba70d7d33f86aaf9bc8a", null ],
     [ "remote_ip_address", "structcrow_1_1request.html#aa8a04e30e2249f04614f233d25ffaad7", null ],
+    [ "remote_port", "structcrow_1_1request.html#ad4d47d39f911c25ca1d95a7536cfdd33", null ],
     [ "upgrade", "structcrow_1_1request.html#ac4b5e2e32e2e0b633211925158b03559", null ],
     [ "url", "structcrow_1_1request.html#aa3df34c56847d6d42887e73655276167", null ],
     [ "url_params", "structcrow_1_1request.html#a745d5a94e9e9ae1fed64674aae0194b0", null ]
