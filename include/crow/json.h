@@ -4,17 +4,15 @@
 //#define CROW_JSON_USE_MAP
 
 #include <string>
-#ifdef CROW_JSON_USE_MAP
 #include <map>
-#else
 #include <unordered_map>
-#endif
 #include <iostream>
 #include <algorithm>
 #include <memory>
 #include <vector>
 #include <cmath>
 #include <cfloat>
+#include <utility>
 
 #include "crow/utility.h"
 #include "crow/settings.h"
@@ -281,6 +279,151 @@ namespace crow // NOTE: Already documented in "crow/app.h"
             {
                 return !(l == r);
             }
+
+            template<typename Key, typename Value>
+            class ordered_object
+            {
+            public:
+                using key_type = Key;
+                using value_type = std::pair<key_type, Value>;
+                using storage_type = std::vector<value_type>;
+
+                using iterator = typename storage_type::iterator;
+                using const_iterator = typename storage_type::const_iterator;
+
+                ordered_object() = default;
+                ordered_object(const ordered_object&) = default;
+                ordered_object(ordered_object&&) noexcept = default;
+                ordered_object& operator=(const ordered_object& other)
+                {
+                    if (this != &other)
+                    {
+                        clear();
+                        insert(other.begin(), other.end());
+                    }
+                    return *this;
+                }
+                ordered_object& operator=(ordered_object&&) noexcept = default;
+
+                ordered_object(std::initializer_list<std::pair<const key_type, Value>> initializer_list)
+                {
+                    insert(initializer_list.begin(), initializer_list.end());
+                }
+
+                ordered_object& operator=(std::initializer_list<std::pair<const key_type, Value>> initializer_list)
+                {
+                    clear();
+                    insert(initializer_list.begin(), initializer_list.end());
+                    return *this;
+                }
+
+                Value& operator[](const key_type& key)
+                {
+                    auto it = find(key);
+
+                    if (it == end())
+                    {
+                        entries_.emplace_back(key, Value{});
+                        return entries_.back().second;
+                    }
+
+                    return it->second;
+                }
+
+                iterator find(const key_type& key)
+                {
+                    for (auto it = begin(); it != end(); ++it)
+                    {
+                        if (it->first == key)
+                            return it;
+                    }
+
+                    return end();
+                }
+
+                const_iterator find(const key_type& key) const
+                {
+                    for (auto it = begin(); it != end(); ++it)
+                    {
+                        if (it->first == key)
+                            return it;
+                    }
+
+                    return end();
+                }
+
+                std::size_t count(const key_type& key) const
+                {
+                    return find(key) == end() ? 0 : 1;
+                }
+
+                bool contains(const key_type& key) const
+                {
+                    return count(key) != 0;
+                }
+
+                iterator begin() { return entries_.begin(); }
+                iterator end() { return entries_.end(); }
+
+                const_iterator begin() const { return entries_.begin(); }
+                const_iterator end() const { return entries_.end(); }
+
+                template<typename K, typename V>
+                std::pair<iterator, bool> emplace(K&& key, V&& value)
+                {
+                    key_type key_copy(std::forward<K>(key));
+                    auto it = find(key_copy);
+                    if (it != end())
+                        return {it, false};
+
+                    entries_.emplace_back(std::move(key_copy), std::forward<V>(value));
+                    return {std::prev(end()), true};
+                }
+
+                template<typename InputIt>
+                void insert(InputIt first, InputIt last)
+                {
+                    for (; first != last; ++first)
+                        emplace(first->first, first->second);
+                }
+
+                void clear() { entries_.clear(); }
+                std::size_t size() const { return entries_.size(); }
+
+            private:
+                storage_type entries_;
+            };
+
+            struct unordered_policy
+            {
+                template<typename Value>
+                using object_type =
+                  std::unordered_map<std::string, Value>;
+            };
+
+            struct map_policy
+            {
+                template<typename Value>
+                using object_type =
+                  std::map<std::string, Value>;
+            };
+
+            struct insertion_order_policy
+            {
+                template<typename Value>
+                using object_type = ordered_object<std::string, Value>;
+            };
+
+#if defined(CROW_JSON_USE_INSERTION_ORDER) && defined(CROW_JSON_USE_MAP)
+#error "Only one JSON object ordering policy may be selected"
+#elif defined(CROW_JSON_USE_INSERTION_ORDER)
+            using object_policy = insertion_order_policy;
+#elif defined(CROW_JSON_USE_MAP)
+            using object_policy = map_policy;
+#else
+            using object_policy = unordered_policy;
+#endif
+
         } // namespace detail
 
         /// JSON read value.
@@ -1314,12 +1457,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
             friend struct wvalue_reader;
 
         public:
-            using object =
-#ifdef CROW_JSON_USE_MAP
-              std::map<std::string, wvalue>;
-#else
-              std::unordered_map<std::string, wvalue>;
-#endif
+            using object = detail::object_policy::object_type<wvalue>;
 
             using list = std::vector<wvalue>;
 
