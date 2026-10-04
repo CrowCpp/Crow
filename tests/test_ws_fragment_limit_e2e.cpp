@@ -1,11 +1,13 @@
-// Crow WebSocket maximum-payload bypass through fragmented messages.
-//
-// Build:
-//   g++ -std=c++17 -I <crow>/include -I <asio>/asio/include \
-//       -DASIO_STANDALONE -O1 -o ws_fragment_limit_e2e \
-//       ws_fragment_limit_e2e.cpp -lpthread
-//
-// Loopback only. The configured maximum message payload is 16 bytes.
+/**
+* Crow WebSocket maximum-payload bypass through fragmented messages.
+*
+* Build:
+*   g++ -std=c++17 -I <crow>/include -I <asio>/asio/include \
+*       -DASIO_STANDALONE -O1 -o ws_fragment_limit_e2e \
+*       ws_fragment_limit_e2e.cpp -lpthread
+*
+* Loopback only. The configured maximum message payload is 16 bytes.
+*/
 
 #include <cstdint>
 #include <atomic>
