@@ -9,6 +9,7 @@
 #include <thread>
 
 #include "catch2/catch_all.hpp"
+
 #include "crow.h"
 #include "crow/middlewares/cors.h"
 
