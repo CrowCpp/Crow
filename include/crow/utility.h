@@ -905,6 +905,12 @@ namespace crow
             return last1;
         }
 
+        /**
+         * @brief An object-like container with unique keys stored in insertion order.
+         * New keys are added at the end; existing keys retain their position.
+         * @tparam Key the key type
+         * @tparam Value the mapped value type
+         */
         template<typename Key, typename Value>
         class ordered_object
         {
@@ -942,6 +948,12 @@ namespace crow
                 return *this;
             }
 
+            /**
+             * @brief Return the value for a key, adding a new key at the end if it does not exist.
+             * Updating an existing key does not change its position.
+             * @param key the key to look up
+             * @return the value associated with the key
+             */
             Value& operator[](const key_type& key)
             {
                 auto it = find(key);
@@ -977,6 +989,11 @@ namespace crow
                 return end();
             }
 
+            /**
+             * @brief Return the count of a key, which is either zero or one.
+             * @param key the key to count
+             * @return 1 if the key exists, otherwise 0
+             */
             std::size_t count(const key_type& key) const
             {
                 return find(key) == end() ? 0 : 1;
@@ -987,12 +1004,25 @@ namespace crow
                 return count(key) != 0;
             }
 
+            /**
+             * @brief Return an iterator to the first entry in insertion order.
+             * @return an iterator to the first entry
+             */
             iterator begin() { return entries_.begin(); }
             iterator end() { return entries_.end(); }
 
             const_iterator begin() const { return entries_.begin(); }
             const_iterator end() const { return entries_.end(); }
 
+            /**
+             * @brief Insert a key-value pair at the end if the key is not already present.
+             * Existing keys are ignored.
+             * @tparam K the key type
+             * @tparam V the mapped value type
+             * @param key the key to insert
+             * @param value the value to insert
+             * @return an iterator to the entry and whether insertion took place
+             */
             template<typename K, typename V>
             std::pair<iterator, bool> emplace(K&& key, V&& value)
             {
@@ -1005,6 +1035,13 @@ namespace crow
                 return {std::prev(end()), true};
             }
 
+            /**
+             * @brief Insert new keys from a range in input order; existing keys are ignored.
+             * @tparam InputIt the input iterator type
+             * @param first the beginning of the range
+             * @param last the end of the range
+             * @return nothing
+             */
             template<typename InputIt>
             void insert(InputIt first, InputIt last)
             {
