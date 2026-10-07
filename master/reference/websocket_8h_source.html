@@ -653,383 +653,384 @@ $(document).ready(function(){initNavTree('websocket_8h_source.html',''); initRes
 <div class="line"><a id="l00519" name="l00519"></a><span class="lineno">  519</span>                    }</div>
 <div class="line"><a id="l00520" name="l00520"></a><span class="lineno">  520</span>                    <span class="keywordflow">break</span>;</div>
 <div class="line"><a id="l00521" name="l00521"></a><span class="lineno">  521</span>                    <span class="keywordflow">case</span> WebSocketReadState::Mask:</div>
-<div class="line"><a id="l00522" name="l00522"></a><span class="lineno">  522</span>                        <span class="keywordflow">if</span> ((message_.size() + remaining_length_) &gt; max_payload_bytes_)</div>
-<div class="line"><a id="l00523" name="l00523"></a><span class="lineno">  523</span>                        {</div>
-<div class="line"><a id="l00524" name="l00524"></a><span class="lineno">  524</span>                            close_connection_ = <span class="keyword">true</span>;</div>
-<div class="line"><a id="l00525" name="l00525"></a><span class="lineno">  525</span>                            adaptor_.close();</div>
-<div class="line"><a id="l00526" name="l00526"></a><span class="lineno">  526</span>                            <span class="keywordflow">if</span> (error_handler_)</div>
-<div class="line"><a id="l00527" name="l00527"></a><span class="lineno">  527</span>                                error_handler_(*<span class="keyword">this</span>, <span class="stringliteral">&quot;Message length exceeds maximum payload.&quot;</span>);</div>
-<div class="line"><a id="l00528" name="l00528"></a><span class="lineno">  528</span>                            <a class="code hl_function" href="classcrow_1_1websocket_1_1_connection.html#ad13e9b7b8a2a551056b34495cb334124">check_destroy</a>(MessageTooBig);</div>
-<div class="line"><a id="l00529" name="l00529"></a><span class="lineno">  529</span>                        }</div>
-<div class="line"><a id="l00530" name="l00530"></a><span class="lineno">  530</span>                        <span class="keywordflow">else</span> <span class="keywordflow">if</span> (has_mask_)</div>
-<div class="line"><a id="l00531" name="l00531"></a><span class="lineno">  531</span>                        {</div>
-<div class="line"><a id="l00532" name="l00532"></a><span class="lineno">  532</span>                            asio::async_read(</div>
-<div class="line"><a id="l00533" name="l00533"></a><span class="lineno">  533</span>                              adaptor_.socket(), asio::buffer((<span class="keywordtype">char</span>*)&amp;mask_, 4),</div>
-<div class="line"><a id="l00534" name="l00534"></a><span class="lineno">  534</span>                              [shared_this = this-&gt;shared_from_this()](<span class="keyword">const</span> error_code&amp; ec, std::size_t</div>
-<div class="line"><a id="l00535" name="l00535"></a><span class="lineno">  535</span>#ifdef CROW_ENABLE_DEBUG</div>
-<div class="line"><a id="l00536" name="l00536"></a><span class="lineno">  536</span>                                                                   bytes_transferred</div>
-<div class="line"><a id="l00537" name="l00537"></a><span class="lineno">  537</span>#endif</div>
-<div class="line"><a id="l00538" name="l00538"></a><span class="lineno">  538</span>                              ) {</div>
-<div class="line"><a id="l00539" name="l00539"></a><span class="lineno">  539</span>                                  shared_this-&gt;is_reading = false;</div>
-<div class="line"><a id="l00540" name="l00540"></a><span class="lineno">  540</span>#ifdef CROW_ENABLE_DEBUG</div>
-<div class="line"><a id="l00541" name="l00541"></a><span class="lineno">  541</span>                                  if (!ec &amp;&amp; bytes_transferred != 4)</div>
-<div class="line"><a id="l00542" name="l00542"></a><span class="lineno">  542</span>                                  {</div>
-<div class="line"><a id="l00543" name="l00543"></a><span class="lineno">  543</span>                                      throw std::runtime_error(<span class="stringliteral">&quot;WebSocket:Mask:async_read fail:asio bug?&quot;</span>);</div>
-<div class="line"><a id="l00544" name="l00544"></a><span class="lineno">  544</span>                                  }</div>
-<div class="line"><a id="l00545" name="l00545"></a><span class="lineno">  545</span>#endif</div>
-<div class="line"><a id="l00546" name="l00546"></a><span class="lineno">  546</span> </div>
-<div class="line"><a id="l00547" name="l00547"></a><span class="lineno">  547</span>                                  if (!ec)</div>
-<div class="line"><a id="l00548" name="l00548"></a><span class="lineno">  548</span>                                  {</div>
-<div class="line"><a id="l00549" name="l00549"></a><span class="lineno">  549</span>                                      shared_this-&gt;state_ = WebSocketReadState::Payload;</div>
-<div class="line"><a id="l00550" name="l00550"></a><span class="lineno">  550</span>                                      shared_this-&gt;do_read();</div>
-<div class="line"><a id="l00551" name="l00551"></a><span class="lineno">  551</span>                                  }</div>
-<div class="line"><a id="l00552" name="l00552"></a><span class="lineno">  552</span>                                  <span class="keywordflow">else</span></div>
-<div class="line"><a id="l00553" name="l00553"></a><span class="lineno">  553</span>                                  {</div>
-<div class="line"><a id="l00554" name="l00554"></a><span class="lineno">  554</span>                                      shared_this-&gt;close_connection_ = <span class="keyword">true</span>;</div>
-<div class="line"><a id="l00555" name="l00555"></a><span class="lineno">  555</span>                                      <span class="keywordflow">if</span> (shared_this-&gt;error_handler_)</div>
-<div class="line"><a id="l00556" name="l00556"></a><span class="lineno">  556</span>                                          shared_this-&gt;error_handler_(*shared_this, ec.message());</div>
-<div class="line"><a id="l00557" name="l00557"></a><span class="lineno">  557</span>                                      shared_this-&gt;adaptor_.shutdown_readwrite();</div>
-<div class="line"><a id="l00558" name="l00558"></a><span class="lineno">  558</span>                                      shared_this-&gt;adaptor_.close();</div>
-<div class="line"><a id="l00559" name="l00559"></a><span class="lineno">  559</span>                                      shared_this-&gt;check_destroy();</div>
-<div class="line"><a id="l00560" name="l00560"></a><span class="lineno">  560</span>                                  }</div>
-<div class="line"><a id="l00561" name="l00561"></a><span class="lineno">  561</span>                              });</div>
-<div class="line"><a id="l00562" name="l00562"></a><span class="lineno">  562</span>                        }</div>
-<div class="line"><a id="l00563" name="l00563"></a><span class="lineno">  563</span>                        <span class="keywordflow">else</span></div>
-<div class="line"><a id="l00564" name="l00564"></a><span class="lineno">  564</span>                        {</div>
-<div class="line"><a id="l00565" name="l00565"></a><span class="lineno">  565</span>                            state_ = WebSocketReadState::Payload;</div>
-<div class="line"><a id="l00566" name="l00566"></a><span class="lineno">  566</span>                            do_read();</div>
-<div class="line"><a id="l00567" name="l00567"></a><span class="lineno">  567</span>                        }</div>
-<div class="line"><a id="l00568" name="l00568"></a><span class="lineno">  568</span>                        <span class="keywordflow">break</span>;</div>
-<div class="line"><a id="l00569" name="l00569"></a><span class="lineno">  569</span>                    <span class="keywordflow">case</span> WebSocketReadState::Payload:</div>
-<div class="line"><a id="l00570" name="l00570"></a><span class="lineno">  570</span>                    {</div>
-<div class="line"><a id="l00571" name="l00571"></a><span class="lineno">  571</span>                        <span class="keyword">auto</span> to_read = <span class="keyword">static_cast&lt;</span>std::uint64_t<span class="keyword">&gt;</span>(buffer_.size());</div>
-<div class="line"><a id="l00572" name="l00572"></a><span class="lineno">  572</span>                        <span class="keywordflow">if</span> (remaining_length_ &lt; to_read)</div>
-<div class="line"><a id="l00573" name="l00573"></a><span class="lineno">  573</span>                            to_read = remaining_length_;</div>
-<div class="line"><a id="l00574" name="l00574"></a><span class="lineno">  574</span>                        adaptor_.socket().async_read_some(</div>
-<div class="line"><a id="l00575" name="l00575"></a><span class="lineno">  575</span>                          asio::buffer(buffer_, <span class="keyword">static_cast&lt;</span>std::size_t<span class="keyword">&gt;</span>(to_read)),</div>
-<div class="line"><a id="l00576" name="l00576"></a><span class="lineno">  576</span>                          [shared_this = this-&gt;shared_from_this()](<span class="keyword">const</span> error_code&amp; ec, std::size_t bytes_transferred) {</div>
-<div class="line"><a id="l00577" name="l00577"></a><span class="lineno">  577</span>                              shared_this-&gt;is_reading = <span class="keyword">false</span>;</div>
-<div class="line"><a id="l00578" name="l00578"></a><span class="lineno">  578</span> </div>
-<div class="line"><a id="l00579" name="l00579"></a><span class="lineno">  579</span>                              <span class="keywordflow">if</span> (!ec)</div>
-<div class="line"><a id="l00580" name="l00580"></a><span class="lineno">  580</span>                              {</div>
-<div class="line"><a id="l00581" name="l00581"></a><span class="lineno">  581</span>                                  shared_this-&gt;fragment_.insert(shared_this-&gt;fragment_.end(), shared_this-&gt;buffer_.begin(), shared_this-&gt;buffer_.begin() + bytes_transferred);</div>
-<div class="line"><a id="l00582" name="l00582"></a><span class="lineno">  582</span>                                  shared_this-&gt;remaining_length_ -= bytes_transferred;</div>
-<div class="line"><a id="l00583" name="l00583"></a><span class="lineno">  583</span>                                  <span class="keywordflow">if</span> (shared_this-&gt;remaining_length_ == 0)</div>
-<div class="line"><a id="l00584" name="l00584"></a><span class="lineno">  584</span>                                  {</div>
-<div class="line"><a id="l00585" name="l00585"></a><span class="lineno">  585</span>                                      <span class="keywordflow">if</span> (shared_this-&gt;handle_fragment())</div>
-<div class="line"><a id="l00586" name="l00586"></a><span class="lineno">  586</span>                                      {</div>
-<div class="line"><a id="l00587" name="l00587"></a><span class="lineno">  587</span>                                          shared_this-&gt;state_ = WebSocketReadState::MiniHeader;</div>
-<div class="line"><a id="l00588" name="l00588"></a><span class="lineno">  588</span>                                          shared_this-&gt;do_read();</div>
-<div class="line"><a id="l00589" name="l00589"></a><span class="lineno">  589</span>                                      }</div>
-<div class="line"><a id="l00590" name="l00590"></a><span class="lineno">  590</span>                                  }</div>
-<div class="line"><a id="l00591" name="l00591"></a><span class="lineno">  591</span>                                  <span class="keywordflow">else</span></div>
-<div class="line"><a id="l00592" name="l00592"></a><span class="lineno">  592</span>                                      shared_this-&gt;do_read();</div>
-<div class="line"><a id="l00593" name="l00593"></a><span class="lineno">  593</span>                              }</div>
-<div class="line"><a id="l00594" name="l00594"></a><span class="lineno">  594</span>                              <span class="keywordflow">else</span></div>
-<div class="line"><a id="l00595" name="l00595"></a><span class="lineno">  595</span>                              {</div>
-<div class="line"><a id="l00596" name="l00596"></a><span class="lineno">  596</span>                                  shared_this-&gt;close_connection_ = <span class="keyword">true</span>;</div>
-<div class="line"><a id="l00597" name="l00597"></a><span class="lineno">  597</span>                                  <span class="keywordflow">if</span> (shared_this-&gt;error_handler_)</div>
-<div class="line"><a id="l00598" name="l00598"></a><span class="lineno">  598</span>                                      shared_this-&gt;error_handler_(*shared_this, ec.message());</div>
-<div class="line"><a id="l00599" name="l00599"></a><span class="lineno">  599</span>                                  shared_this-&gt;adaptor_.shutdown_readwrite();</div>
-<div class="line"><a id="l00600" name="l00600"></a><span class="lineno">  600</span>                                  shared_this-&gt;adaptor_.close();</div>
-<div class="line"><a id="l00601" name="l00601"></a><span class="lineno">  601</span>                                  shared_this-&gt;check_destroy();</div>
-<div class="line"><a id="l00602" name="l00602"></a><span class="lineno">  602</span>                              }</div>
-<div class="line"><a id="l00603" name="l00603"></a><span class="lineno">  603</span>                          });</div>
-<div class="line"><a id="l00604" name="l00604"></a><span class="lineno">  604</span>                    }</div>
-<div class="line"><a id="l00605" name="l00605"></a><span class="lineno">  605</span>                    <span class="keywordflow">break</span>;</div>
-<div class="line"><a id="l00606" name="l00606"></a><span class="lineno">  606</span>                }</div>
-<div class="line"><a id="l00607" name="l00607"></a><span class="lineno">  607</span>            }</div>
+<div class="line"><a id="l00522" name="l00522"></a><span class="lineno">  522</span>                        <span class="keywordflow">if</span> (message_.size() &gt; max_payload_bytes_ ||</div>
+<div class="line"><a id="l00523" name="l00523"></a><span class="lineno">  523</span>                            remaining_length_ &gt; max_payload_bytes_ - message_.size())</div>
+<div class="line"><a id="l00524" name="l00524"></a><span class="lineno">  524</span>                        {</div>
+<div class="line"><a id="l00525" name="l00525"></a><span class="lineno">  525</span>                            close_connection_ = <span class="keyword">true</span>;</div>
+<div class="line"><a id="l00526" name="l00526"></a><span class="lineno">  526</span>                            adaptor_.close();</div>
+<div class="line"><a id="l00527" name="l00527"></a><span class="lineno">  527</span>                            <span class="keywordflow">if</span> (error_handler_)</div>
+<div class="line"><a id="l00528" name="l00528"></a><span class="lineno">  528</span>                                error_handler_(*<span class="keyword">this</span>, <span class="stringliteral">&quot;Message length exceeds maximum payload.&quot;</span>);</div>
+<div class="line"><a id="l00529" name="l00529"></a><span class="lineno">  529</span>                            <a class="code hl_function" href="classcrow_1_1websocket_1_1_connection.html#ad13e9b7b8a2a551056b34495cb334124">check_destroy</a>(MessageTooBig);</div>
+<div class="line"><a id="l00530" name="l00530"></a><span class="lineno">  530</span>                        }</div>
+<div class="line"><a id="l00531" name="l00531"></a><span class="lineno">  531</span>                        <span class="keywordflow">else</span> <span class="keywordflow">if</span> (has_mask_)</div>
+<div class="line"><a id="l00532" name="l00532"></a><span class="lineno">  532</span>                        {</div>
+<div class="line"><a id="l00533" name="l00533"></a><span class="lineno">  533</span>                            asio::async_read(</div>
+<div class="line"><a id="l00534" name="l00534"></a><span class="lineno">  534</span>                              adaptor_.socket(), asio::buffer((<span class="keywordtype">char</span>*)&amp;mask_, 4),</div>
+<div class="line"><a id="l00535" name="l00535"></a><span class="lineno">  535</span>                              [shared_this = this-&gt;shared_from_this()](<span class="keyword">const</span> error_code&amp; ec, std::size_t</div>
+<div class="line"><a id="l00536" name="l00536"></a><span class="lineno">  536</span>#ifdef CROW_ENABLE_DEBUG</div>
+<div class="line"><a id="l00537" name="l00537"></a><span class="lineno">  537</span>                                                                   bytes_transferred</div>
+<div class="line"><a id="l00538" name="l00538"></a><span class="lineno">  538</span>#endif</div>
+<div class="line"><a id="l00539" name="l00539"></a><span class="lineno">  539</span>                              ) {</div>
+<div class="line"><a id="l00540" name="l00540"></a><span class="lineno">  540</span>                                  shared_this-&gt;is_reading = false;</div>
+<div class="line"><a id="l00541" name="l00541"></a><span class="lineno">  541</span>#ifdef CROW_ENABLE_DEBUG</div>
+<div class="line"><a id="l00542" name="l00542"></a><span class="lineno">  542</span>                                  if (!ec &amp;&amp; bytes_transferred != 4)</div>
+<div class="line"><a id="l00543" name="l00543"></a><span class="lineno">  543</span>                                  {</div>
+<div class="line"><a id="l00544" name="l00544"></a><span class="lineno">  544</span>                                      throw std::runtime_error(<span class="stringliteral">&quot;WebSocket:Mask:async_read fail:asio bug?&quot;</span>);</div>
+<div class="line"><a id="l00545" name="l00545"></a><span class="lineno">  545</span>                                  }</div>
+<div class="line"><a id="l00546" name="l00546"></a><span class="lineno">  546</span>#endif</div>
+<div class="line"><a id="l00547" name="l00547"></a><span class="lineno">  547</span> </div>
+<div class="line"><a id="l00548" name="l00548"></a><span class="lineno">  548</span>                                  if (!ec)</div>
+<div class="line"><a id="l00549" name="l00549"></a><span class="lineno">  549</span>                                  {</div>
+<div class="line"><a id="l00550" name="l00550"></a><span class="lineno">  550</span>                                      shared_this-&gt;state_ = WebSocketReadState::Payload;</div>
+<div class="line"><a id="l00551" name="l00551"></a><span class="lineno">  551</span>                                      shared_this-&gt;do_read();</div>
+<div class="line"><a id="l00552" name="l00552"></a><span class="lineno">  552</span>                                  }</div>
+<div class="line"><a id="l00553" name="l00553"></a><span class="lineno">  553</span>                                  <span class="keywordflow">else</span></div>
+<div class="line"><a id="l00554" name="l00554"></a><span class="lineno">  554</span>                                  {</div>
+<div class="line"><a id="l00555" name="l00555"></a><span class="lineno">  555</span>                                      shared_this-&gt;close_connection_ = <span class="keyword">true</span>;</div>
+<div class="line"><a id="l00556" name="l00556"></a><span class="lineno">  556</span>                                      <span class="keywordflow">if</span> (shared_this-&gt;error_handler_)</div>
+<div class="line"><a id="l00557" name="l00557"></a><span class="lineno">  557</span>                                          shared_this-&gt;error_handler_(*shared_this, ec.message());</div>
+<div class="line"><a id="l00558" name="l00558"></a><span class="lineno">  558</span>                                      shared_this-&gt;adaptor_.shutdown_readwrite();</div>
+<div class="line"><a id="l00559" name="l00559"></a><span class="lineno">  559</span>                                      shared_this-&gt;adaptor_.close();</div>
+<div class="line"><a id="l00560" name="l00560"></a><span class="lineno">  560</span>                                      shared_this-&gt;check_destroy();</div>
+<div class="line"><a id="l00561" name="l00561"></a><span class="lineno">  561</span>                                  }</div>
+<div class="line"><a id="l00562" name="l00562"></a><span class="lineno">  562</span>                              });</div>
+<div class="line"><a id="l00563" name="l00563"></a><span class="lineno">  563</span>                        }</div>
+<div class="line"><a id="l00564" name="l00564"></a><span class="lineno">  564</span>                        <span class="keywordflow">else</span></div>
+<div class="line"><a id="l00565" name="l00565"></a><span class="lineno">  565</span>                        {</div>
+<div class="line"><a id="l00566" name="l00566"></a><span class="lineno">  566</span>                            state_ = WebSocketReadState::Payload;</div>
+<div class="line"><a id="l00567" name="l00567"></a><span class="lineno">  567</span>                            do_read();</div>
+<div class="line"><a id="l00568" name="l00568"></a><span class="lineno">  568</span>                        }</div>
+<div class="line"><a id="l00569" name="l00569"></a><span class="lineno">  569</span>                        <span class="keywordflow">break</span>;</div>
+<div class="line"><a id="l00570" name="l00570"></a><span class="lineno">  570</span>                    <span class="keywordflow">case</span> WebSocketReadState::Payload:</div>
+<div class="line"><a id="l00571" name="l00571"></a><span class="lineno">  571</span>                    {</div>
+<div class="line"><a id="l00572" name="l00572"></a><span class="lineno">  572</span>                        <span class="keyword">auto</span> to_read = <span class="keyword">static_cast&lt;</span>std::uint64_t<span class="keyword">&gt;</span>(buffer_.size());</div>
+<div class="line"><a id="l00573" name="l00573"></a><span class="lineno">  573</span>                        <span class="keywordflow">if</span> (remaining_length_ &lt; to_read)</div>
+<div class="line"><a id="l00574" name="l00574"></a><span class="lineno">  574</span>                            to_read = remaining_length_;</div>
+<div class="line"><a id="l00575" name="l00575"></a><span class="lineno">  575</span>                        adaptor_.socket().async_read_some(</div>
+<div class="line"><a id="l00576" name="l00576"></a><span class="lineno">  576</span>                          asio::buffer(buffer_, <span class="keyword">static_cast&lt;</span>std::size_t<span class="keyword">&gt;</span>(to_read)),</div>
+<div class="line"><a id="l00577" name="l00577"></a><span class="lineno">  577</span>                          [shared_this = this-&gt;shared_from_this()](<span class="keyword">const</span> error_code&amp; ec, std::size_t bytes_transferred) {</div>
+<div class="line"><a id="l00578" name="l00578"></a><span class="lineno">  578</span>                              shared_this-&gt;is_reading = <span class="keyword">false</span>;</div>
+<div class="line"><a id="l00579" name="l00579"></a><span class="lineno">  579</span> </div>
+<div class="line"><a id="l00580" name="l00580"></a><span class="lineno">  580</span>                              <span class="keywordflow">if</span> (!ec)</div>
+<div class="line"><a id="l00581" name="l00581"></a><span class="lineno">  581</span>                              {</div>
+<div class="line"><a id="l00582" name="l00582"></a><span class="lineno">  582</span>                                  shared_this-&gt;fragment_.insert(shared_this-&gt;fragment_.end(), shared_this-&gt;buffer_.begin(), shared_this-&gt;buffer_.begin() + bytes_transferred);</div>
+<div class="line"><a id="l00583" name="l00583"></a><span class="lineno">  583</span>                                  shared_this-&gt;remaining_length_ -= bytes_transferred;</div>
+<div class="line"><a id="l00584" name="l00584"></a><span class="lineno">  584</span>                                  <span class="keywordflow">if</span> (shared_this-&gt;remaining_length_ == 0)</div>
+<div class="line"><a id="l00585" name="l00585"></a><span class="lineno">  585</span>                                  {</div>
+<div class="line"><a id="l00586" name="l00586"></a><span class="lineno">  586</span>                                      <span class="keywordflow">if</span> (shared_this-&gt;handle_fragment())</div>
+<div class="line"><a id="l00587" name="l00587"></a><span class="lineno">  587</span>                                      {</div>
+<div class="line"><a id="l00588" name="l00588"></a><span class="lineno">  588</span>                                          shared_this-&gt;state_ = WebSocketReadState::MiniHeader;</div>
+<div class="line"><a id="l00589" name="l00589"></a><span class="lineno">  589</span>                                          shared_this-&gt;do_read();</div>
+<div class="line"><a id="l00590" name="l00590"></a><span class="lineno">  590</span>                                      }</div>
+<div class="line"><a id="l00591" name="l00591"></a><span class="lineno">  591</span>                                  }</div>
+<div class="line"><a id="l00592" name="l00592"></a><span class="lineno">  592</span>                                  <span class="keywordflow">else</span></div>
+<div class="line"><a id="l00593" name="l00593"></a><span class="lineno">  593</span>                                      shared_this-&gt;do_read();</div>
+<div class="line"><a id="l00594" name="l00594"></a><span class="lineno">  594</span>                              }</div>
+<div class="line"><a id="l00595" name="l00595"></a><span class="lineno">  595</span>                              <span class="keywordflow">else</span></div>
+<div class="line"><a id="l00596" name="l00596"></a><span class="lineno">  596</span>                              {</div>
+<div class="line"><a id="l00597" name="l00597"></a><span class="lineno">  597</span>                                  shared_this-&gt;close_connection_ = <span class="keyword">true</span>;</div>
+<div class="line"><a id="l00598" name="l00598"></a><span class="lineno">  598</span>                                  <span class="keywordflow">if</span> (shared_this-&gt;error_handler_)</div>
+<div class="line"><a id="l00599" name="l00599"></a><span class="lineno">  599</span>                                      shared_this-&gt;error_handler_(*shared_this, ec.message());</div>
+<div class="line"><a id="l00600" name="l00600"></a><span class="lineno">  600</span>                                  shared_this-&gt;adaptor_.shutdown_readwrite();</div>
+<div class="line"><a id="l00601" name="l00601"></a><span class="lineno">  601</span>                                  shared_this-&gt;adaptor_.close();</div>
+<div class="line"><a id="l00602" name="l00602"></a><span class="lineno">  602</span>                                  shared_this-&gt;check_destroy();</div>
+<div class="line"><a id="l00603" name="l00603"></a><span class="lineno">  603</span>                              }</div>
+<div class="line"><a id="l00604" name="l00604"></a><span class="lineno">  604</span>                          });</div>
+<div class="line"><a id="l00605" name="l00605"></a><span class="lineno">  605</span>                    }</div>
+<div class="line"><a id="l00606" name="l00606"></a><span class="lineno">  606</span>                    <span class="keywordflow">break</span>;</div>
+<div class="line"><a id="l00607" name="l00607"></a><span class="lineno">  607</span>                }</div>
+<div class="line"><a id="l00608" name="l00608"></a><span class="lineno">  608</span>            }</div>
 </div>
-<div class="line"><a id="l00608" name="l00608"></a><span class="lineno">  608</span><span class="comment"></span> </div>
-<div class="line"><a id="l00609" name="l00609"></a><span class="lineno">  609</span><span class="comment">            /// Check if the FIN bit is set.</span></div>
-<div class="foldopen" id="foldopen00610" data-start="{" data-end="}">
-<div class="line"><a id="l00610" name="l00610"></a><span class="lineno"><a class="line" href="classcrow_1_1websocket_1_1_connection.html#a98f4af4eac4b807f970667b0147869a4">  610</a></span><span class="comment"></span>            <span class="keywordtype">bool</span> <a class="code hl_function" href="classcrow_1_1websocket_1_1_connection.html#a98f4af4eac4b807f970667b0147869a4">is_FIN</a>()</div>
-<div class="line"><a id="l00611" name="l00611"></a><span class="lineno">  611</span>            {</div>
-<div class="line"><a id="l00612" name="l00612"></a><span class="lineno">  612</span>                <span class="keywordflow">return</span> mini_header_ &amp; 0x8000;</div>
-<div class="line"><a id="l00613" name="l00613"></a><span class="lineno">  613</span>            }</div>
+<div class="line"><a id="l00609" name="l00609"></a><span class="lineno">  609</span><span class="comment"></span> </div>
+<div class="line"><a id="l00610" name="l00610"></a><span class="lineno">  610</span><span class="comment">            /// Check if the FIN bit is set.</span></div>
+<div class="foldopen" id="foldopen00611" data-start="{" data-end="}">
+<div class="line"><a id="l00611" name="l00611"></a><span class="lineno"><a class="line" href="classcrow_1_1websocket_1_1_connection.html#a98f4af4eac4b807f970667b0147869a4">  611</a></span><span class="comment"></span>            <span class="keywordtype">bool</span> <a class="code hl_function" href="classcrow_1_1websocket_1_1_connection.html#a98f4af4eac4b807f970667b0147869a4">is_FIN</a>()</div>
+<div class="line"><a id="l00612" name="l00612"></a><span class="lineno">  612</span>            {</div>
+<div class="line"><a id="l00613" name="l00613"></a><span class="lineno">  613</span>                <span class="keywordflow">return</span> mini_header_ &amp; 0x8000;</div>
+<div class="line"><a id="l00614" name="l00614"></a><span class="lineno">  614</span>            }</div>
 </div>
-<div class="line"><a id="l00614" name="l00614"></a><span class="lineno">  614</span><span class="comment"></span> </div>
-<div class="line"><a id="l00615" name="l00615"></a><span class="lineno">  615</span><span class="comment">            /// Extract the opcode from the header.</span></div>
-<div class="foldopen" id="foldopen00616" data-start="{" data-end="}">
-<div class="line"><a id="l00616" name="l00616"></a><span class="lineno"><a class="line" href="classcrow_1_1websocket_1_1_connection.html#a6d74305323202dc7ebd07cbd3ee19f98">  616</a></span><span class="comment"></span>            <span class="keywordtype">int</span> <a class="code hl_function" href="classcrow_1_1websocket_1_1_connection.html#a6d74305323202dc7ebd07cbd3ee19f98">opcode</a>()</div>
-<div class="line"><a id="l00617" name="l00617"></a><span class="lineno">  617</span>            {</div>
-<div class="line"><a id="l00618" name="l00618"></a><span class="lineno">  618</span>                <span class="keywordflow">return</span> (mini_header_ &amp; 0x0f00) &gt;&gt; 8;</div>
-<div class="line"><a id="l00619" name="l00619"></a><span class="lineno">  619</span>            }</div>
+<div class="line"><a id="l00615" name="l00615"></a><span class="lineno">  615</span><span class="comment"></span> </div>
+<div class="line"><a id="l00616" name="l00616"></a><span class="lineno">  616</span><span class="comment">            /// Extract the opcode from the header.</span></div>
+<div class="foldopen" id="foldopen00617" data-start="{" data-end="}">
+<div class="line"><a id="l00617" name="l00617"></a><span class="lineno"><a class="line" href="classcrow_1_1websocket_1_1_connection.html#a6d74305323202dc7ebd07cbd3ee19f98">  617</a></span><span class="comment"></span>            <span class="keywordtype">int</span> <a class="code hl_function" href="classcrow_1_1websocket_1_1_connection.html#a6d74305323202dc7ebd07cbd3ee19f98">opcode</a>()</div>
+<div class="line"><a id="l00618" name="l00618"></a><span class="lineno">  618</span>            {</div>
+<div class="line"><a id="l00619" name="l00619"></a><span class="lineno">  619</span>                <span class="keywordflow">return</span> (mini_header_ &amp; 0x0f00) &gt;&gt; 8;</div>
+<div class="line"><a id="l00620" name="l00620"></a><span class="lineno">  620</span>            }</div>
 </div>
-<div class="line"><a id="l00620" name="l00620"></a><span class="lineno">  620</span><span class="comment"></span> </div>
-<div class="line"><a id="l00621" name="l00621"></a><span class="lineno">  621</span><span class="comment">            /// Process the payload fragment.</span></div>
-<div class="line"><a id="l00622" name="l00622"></a><span class="lineno">  622</span><span class="comment"></span><span class="comment"></span> </div>
-<div class="line"><a id="l00623" name="l00623"></a><span class="lineno">  623</span><span class="comment">            ///</span></div>
-<div class="line"><a id="l00624" name="l00624"></a><span class="lineno">  624</span><span class="comment">            /// Unmasks the fragment, checks the opcode, merges fragments into 1 message body, and calls the appropriate handler.</span></div>
-<div class="foldopen" id="foldopen00625" data-start="{" data-end="}">
-<div class="line"><a id="l00625" name="l00625"></a><span class="lineno"><a class="line" href="classcrow_1_1websocket_1_1_connection.html#a292002f44552e5eabd8dd65f476a4c28">  625</a></span><span class="comment"></span>            <span class="keywordtype">bool</span> <a class="code hl_function" href="classcrow_1_1websocket_1_1_connection.html#a292002f44552e5eabd8dd65f476a4c28">handle_fragment</a>()</div>
-<div class="line"><a id="l00626" name="l00626"></a><span class="lineno">  626</span>            {</div>
-<div class="line"><a id="l00627" name="l00627"></a><span class="lineno">  627</span>                <span class="keywordflow">if</span> (has_mask_)</div>
-<div class="line"><a id="l00628" name="l00628"></a><span class="lineno">  628</span>                {</div>
-<div class="line"><a id="l00629" name="l00629"></a><span class="lineno">  629</span>                    <span class="keywordflow">for</span> (<span class="keyword">decltype</span>(fragment_.length()) i = 0; i &lt; fragment_.length(); i++)</div>
-<div class="line"><a id="l00630" name="l00630"></a><span class="lineno">  630</span>                    {</div>
-<div class="line"><a id="l00631" name="l00631"></a><span class="lineno">  631</span>                        fragment_[i] ^= ((<span class="keywordtype">char</span>*)&amp;mask_)[i % 4];</div>
-<div class="line"><a id="l00632" name="l00632"></a><span class="lineno">  632</span>                    }</div>
-<div class="line"><a id="l00633" name="l00633"></a><span class="lineno">  633</span>                }</div>
-<div class="line"><a id="l00634" name="l00634"></a><span class="lineno">  634</span>                <span class="keywordflow">switch</span> (opcode())</div>
-<div class="line"><a id="l00635" name="l00635"></a><span class="lineno">  635</span>                {</div>
-<div class="line"><a id="l00636" name="l00636"></a><span class="lineno">  636</span>                    <span class="keywordflow">case</span> 0: <span class="comment">// Continuation</span></div>
-<div class="line"><a id="l00637" name="l00637"></a><span class="lineno">  637</span>                    {</div>
-<div class="line"><a id="l00638" name="l00638"></a><span class="lineno">  638</span>                        message_ += fragment_;</div>
-<div class="line"><a id="l00639" name="l00639"></a><span class="lineno">  639</span>                        <span class="keywordflow">if</span> (is_FIN())</div>
-<div class="line"><a id="l00640" name="l00640"></a><span class="lineno">  640</span>                        {</div>
-<div class="line"><a id="l00641" name="l00641"></a><span class="lineno">  641</span>                            <span class="keywordflow">if</span> (message_handler_)</div>
-<div class="line"><a id="l00642" name="l00642"></a><span class="lineno">  642</span>                                message_handler_(*<span class="keyword">this</span>, message_, is_binary_);</div>
-<div class="line"><a id="l00643" name="l00643"></a><span class="lineno">  643</span>                            message_.clear();</div>
-<div class="line"><a id="l00644" name="l00644"></a><span class="lineno">  644</span>                        }</div>
-<div class="line"><a id="l00645" name="l00645"></a><span class="lineno">  645</span>                    }</div>
-<div class="line"><a id="l00646" name="l00646"></a><span class="lineno">  646</span>                    <span class="keywordflow">break</span>;</div>
-<div class="line"><a id="l00647" name="l00647"></a><span class="lineno">  647</span>                    <span class="keywordflow">case</span> 1: <span class="comment">// Text</span></div>
-<div class="line"><a id="l00648" name="l00648"></a><span class="lineno">  648</span>                    {</div>
-<div class="line"><a id="l00649" name="l00649"></a><span class="lineno">  649</span>                        is_binary_ = <span class="keyword">false</span>;</div>
-<div class="line"><a id="l00650" name="l00650"></a><span class="lineno">  650</span>                        message_ += fragment_;</div>
-<div class="line"><a id="l00651" name="l00651"></a><span class="lineno">  651</span>                        <span class="keywordflow">if</span> (is_FIN())</div>
-<div class="line"><a id="l00652" name="l00652"></a><span class="lineno">  652</span>                        {</div>
-<div class="line"><a id="l00653" name="l00653"></a><span class="lineno">  653</span>                            <span class="keywordflow">if</span> (message_handler_)</div>
-<div class="line"><a id="l00654" name="l00654"></a><span class="lineno">  654</span>                                message_handler_(*<span class="keyword">this</span>, message_, is_binary_);</div>
-<div class="line"><a id="l00655" name="l00655"></a><span class="lineno">  655</span>                            message_.clear();</div>
-<div class="line"><a id="l00656" name="l00656"></a><span class="lineno">  656</span>                        }</div>
-<div class="line"><a id="l00657" name="l00657"></a><span class="lineno">  657</span>                    }</div>
-<div class="line"><a id="l00658" name="l00658"></a><span class="lineno">  658</span>                    <span class="keywordflow">break</span>;</div>
-<div class="line"><a id="l00659" name="l00659"></a><span class="lineno">  659</span>                    <span class="keywordflow">case</span> 2: <span class="comment">// Binary</span></div>
-<div class="line"><a id="l00660" name="l00660"></a><span class="lineno">  660</span>                    {</div>
-<div class="line"><a id="l00661" name="l00661"></a><span class="lineno">  661</span>                        is_binary_ = <span class="keyword">true</span>;</div>
-<div class="line"><a id="l00662" name="l00662"></a><span class="lineno">  662</span>                        message_ += fragment_;</div>
-<div class="line"><a id="l00663" name="l00663"></a><span class="lineno">  663</span>                        <span class="keywordflow">if</span> (is_FIN())</div>
-<div class="line"><a id="l00664" name="l00664"></a><span class="lineno">  664</span>                        {</div>
-<div class="line"><a id="l00665" name="l00665"></a><span class="lineno">  665</span>                            <span class="keywordflow">if</span> (message_handler_)</div>
-<div class="line"><a id="l00666" name="l00666"></a><span class="lineno">  666</span>                                message_handler_(*<span class="keyword">this</span>, message_, is_binary_);</div>
-<div class="line"><a id="l00667" name="l00667"></a><span class="lineno">  667</span>                            message_.clear();</div>
-<div class="line"><a id="l00668" name="l00668"></a><span class="lineno">  668</span>                        }</div>
-<div class="line"><a id="l00669" name="l00669"></a><span class="lineno">  669</span>                    }</div>
-<div class="line"><a id="l00670" name="l00670"></a><span class="lineno">  670</span>                    <span class="keywordflow">break</span>;</div>
-<div class="line"><a id="l00671" name="l00671"></a><span class="lineno">  671</span>                    <span class="keywordflow">case</span> 0x8: <span class="comment">// Close</span></div>
-<div class="line"><a id="l00672" name="l00672"></a><span class="lineno">  672</span>                    {</div>
-<div class="line"><a id="l00673" name="l00673"></a><span class="lineno">  673</span>                        has_recv_close_ = <span class="keyword">true</span>;</div>
-<div class="line"><a id="l00674" name="l00674"></a><span class="lineno">  674</span> </div>
+<div class="line"><a id="l00621" name="l00621"></a><span class="lineno">  621</span><span class="comment"></span> </div>
+<div class="line"><a id="l00622" name="l00622"></a><span class="lineno">  622</span><span class="comment">            /// Process the payload fragment.</span></div>
+<div class="line"><a id="l00623" name="l00623"></a><span class="lineno">  623</span><span class="comment"></span><span class="comment"></span> </div>
+<div class="line"><a id="l00624" name="l00624"></a><span class="lineno">  624</span><span class="comment">            ///</span></div>
+<div class="line"><a id="l00625" name="l00625"></a><span class="lineno">  625</span><span class="comment">            /// Unmasks the fragment, checks the opcode, merges fragments into 1 message body, and calls the appropriate handler.</span></div>
+<div class="foldopen" id="foldopen00626" data-start="{" data-end="}">
+<div class="line"><a id="l00626" name="l00626"></a><span class="lineno"><a class="line" href="classcrow_1_1websocket_1_1_connection.html#a292002f44552e5eabd8dd65f476a4c28">  626</a></span><span class="comment"></span>            <span class="keywordtype">bool</span> <a class="code hl_function" href="classcrow_1_1websocket_1_1_connection.html#a292002f44552e5eabd8dd65f476a4c28">handle_fragment</a>()</div>
+<div class="line"><a id="l00627" name="l00627"></a><span class="lineno">  627</span>            {</div>
+<div class="line"><a id="l00628" name="l00628"></a><span class="lineno">  628</span>                <span class="keywordflow">if</span> (has_mask_)</div>
+<div class="line"><a id="l00629" name="l00629"></a><span class="lineno">  629</span>                {</div>
+<div class="line"><a id="l00630" name="l00630"></a><span class="lineno">  630</span>                    <span class="keywordflow">for</span> (<span class="keyword">decltype</span>(fragment_.length()) i = 0; i &lt; fragment_.length(); i++)</div>
+<div class="line"><a id="l00631" name="l00631"></a><span class="lineno">  631</span>                    {</div>
+<div class="line"><a id="l00632" name="l00632"></a><span class="lineno">  632</span>                        fragment_[i] ^= ((<span class="keywordtype">char</span>*)&amp;mask_)[i % 4];</div>
+<div class="line"><a id="l00633" name="l00633"></a><span class="lineno">  633</span>                    }</div>
+<div class="line"><a id="l00634" name="l00634"></a><span class="lineno">  634</span>                }</div>
+<div class="line"><a id="l00635" name="l00635"></a><span class="lineno">  635</span>                <span class="keywordflow">switch</span> (opcode())</div>
+<div class="line"><a id="l00636" name="l00636"></a><span class="lineno">  636</span>                {</div>
+<div class="line"><a id="l00637" name="l00637"></a><span class="lineno">  637</span>                    <span class="keywordflow">case</span> 0: <span class="comment">// Continuation</span></div>
+<div class="line"><a id="l00638" name="l00638"></a><span class="lineno">  638</span>                    {</div>
+<div class="line"><a id="l00639" name="l00639"></a><span class="lineno">  639</span>                        message_ += fragment_;</div>
+<div class="line"><a id="l00640" name="l00640"></a><span class="lineno">  640</span>                        <span class="keywordflow">if</span> (is_FIN())</div>
+<div class="line"><a id="l00641" name="l00641"></a><span class="lineno">  641</span>                        {</div>
+<div class="line"><a id="l00642" name="l00642"></a><span class="lineno">  642</span>                            <span class="keywordflow">if</span> (message_handler_)</div>
+<div class="line"><a id="l00643" name="l00643"></a><span class="lineno">  643</span>                                message_handler_(*<span class="keyword">this</span>, message_, is_binary_);</div>
+<div class="line"><a id="l00644" name="l00644"></a><span class="lineno">  644</span>                            message_.clear();</div>
+<div class="line"><a id="l00645" name="l00645"></a><span class="lineno">  645</span>                        }</div>
+<div class="line"><a id="l00646" name="l00646"></a><span class="lineno">  646</span>                    }</div>
+<div class="line"><a id="l00647" name="l00647"></a><span class="lineno">  647</span>                    <span class="keywordflow">break</span>;</div>
+<div class="line"><a id="l00648" name="l00648"></a><span class="lineno">  648</span>                    <span class="keywordflow">case</span> 1: <span class="comment">// Text</span></div>
+<div class="line"><a id="l00649" name="l00649"></a><span class="lineno">  649</span>                    {</div>
+<div class="line"><a id="l00650" name="l00650"></a><span class="lineno">  650</span>                        is_binary_ = <span class="keyword">false</span>;</div>
+<div class="line"><a id="l00651" name="l00651"></a><span class="lineno">  651</span>                        message_ += fragment_;</div>
+<div class="line"><a id="l00652" name="l00652"></a><span class="lineno">  652</span>                        <span class="keywordflow">if</span> (is_FIN())</div>
+<div class="line"><a id="l00653" name="l00653"></a><span class="lineno">  653</span>                        {</div>
+<div class="line"><a id="l00654" name="l00654"></a><span class="lineno">  654</span>                            <span class="keywordflow">if</span> (message_handler_)</div>
+<div class="line"><a id="l00655" name="l00655"></a><span class="lineno">  655</span>                                message_handler_(*<span class="keyword">this</span>, message_, is_binary_);</div>
+<div class="line"><a id="l00656" name="l00656"></a><span class="lineno">  656</span>                            message_.clear();</div>
+<div class="line"><a id="l00657" name="l00657"></a><span class="lineno">  657</span>                        }</div>
+<div class="line"><a id="l00658" name="l00658"></a><span class="lineno">  658</span>                    }</div>
+<div class="line"><a id="l00659" name="l00659"></a><span class="lineno">  659</span>                    <span class="keywordflow">break</span>;</div>
+<div class="line"><a id="l00660" name="l00660"></a><span class="lineno">  660</span>                    <span class="keywordflow">case</span> 2: <span class="comment">// Binary</span></div>
+<div class="line"><a id="l00661" name="l00661"></a><span class="lineno">  661</span>                    {</div>
+<div class="line"><a id="l00662" name="l00662"></a><span class="lineno">  662</span>                        is_binary_ = <span class="keyword">true</span>;</div>
+<div class="line"><a id="l00663" name="l00663"></a><span class="lineno">  663</span>                        message_ += fragment_;</div>
+<div class="line"><a id="l00664" name="l00664"></a><span class="lineno">  664</span>                        <span class="keywordflow">if</span> (is_FIN())</div>
+<div class="line"><a id="l00665" name="l00665"></a><span class="lineno">  665</span>                        {</div>
+<div class="line"><a id="l00666" name="l00666"></a><span class="lineno">  666</span>                            <span class="keywordflow">if</span> (message_handler_)</div>
+<div class="line"><a id="l00667" name="l00667"></a><span class="lineno">  667</span>                                message_handler_(*<span class="keyword">this</span>, message_, is_binary_);</div>
+<div class="line"><a id="l00668" name="l00668"></a><span class="lineno">  668</span>                            message_.clear();</div>
+<div class="line"><a id="l00669" name="l00669"></a><span class="lineno">  669</span>                        }</div>
+<div class="line"><a id="l00670" name="l00670"></a><span class="lineno">  670</span>                    }</div>
+<div class="line"><a id="l00671" name="l00671"></a><span class="lineno">  671</span>                    <span class="keywordflow">break</span>;</div>
+<div class="line"><a id="l00672" name="l00672"></a><span class="lineno">  672</span>                    <span class="keywordflow">case</span> 0x8: <span class="comment">// Close</span></div>
+<div class="line"><a id="l00673" name="l00673"></a><span class="lineno">  673</span>                    {</div>
+<div class="line"><a id="l00674" name="l00674"></a><span class="lineno">  674</span>                        has_recv_close_ = <span class="keyword">true</span>;</div>
 <div class="line"><a id="l00675" name="l00675"></a><span class="lineno">  675</span> </div>
-<div class="line"><a id="l00676" name="l00676"></a><span class="lineno">  676</span>                        uint16_t status_code = NoStatusCodePresent;</div>
-<div class="line"><a id="l00677" name="l00677"></a><span class="lineno">  677</span>                        std::string::size_type message_start = 2;</div>
-<div class="line"><a id="l00678" name="l00678"></a><span class="lineno">  678</span>                        <span class="keywordflow">if</span> (fragment_.size() &gt;= 2)</div>
-<div class="line"><a id="l00679" name="l00679"></a><span class="lineno">  679</span>                        {</div>
-<div class="line"><a id="l00680" name="l00680"></a><span class="lineno">  680</span>                            status_code = ntohs(((uint16_t*)fragment_.data())[0]);</div>
-<div class="line"><a id="l00681" name="l00681"></a><span class="lineno">  681</span>                        } <span class="keywordflow">else</span> {</div>
-<div class="line"><a id="l00682" name="l00682"></a><span class="lineno">  682</span>                            <span class="comment">// no message will crash substr</span></div>
-<div class="line"><a id="l00683" name="l00683"></a><span class="lineno">  683</span>                            message_start = 0;</div>
-<div class="line"><a id="l00684" name="l00684"></a><span class="lineno">  684</span>                        }</div>
-<div class="line"><a id="l00685" name="l00685"></a><span class="lineno">  685</span> </div>
-<div class="line"><a id="l00686" name="l00686"></a><span class="lineno">  686</span>                        <span class="keywordflow">if</span> (!has_sent_close_)</div>
-<div class="line"><a id="l00687" name="l00687"></a><span class="lineno">  687</span>                        {</div>
-<div class="line"><a id="l00688" name="l00688"></a><span class="lineno">  688</span>                            close(fragment_.substr(message_start), status_code);</div>
-<div class="line"><a id="l00689" name="l00689"></a><span class="lineno">  689</span>                        }</div>
-<div class="line"><a id="l00690" name="l00690"></a><span class="lineno">  690</span>                        <span class="keywordflow">else</span></div>
-<div class="line"><a id="l00691" name="l00691"></a><span class="lineno">  691</span>                        {</div>
-<div class="line"><a id="l00692" name="l00692"></a><span class="lineno">  692</span> </div>
-<div class="line"><a id="l00693" name="l00693"></a><span class="lineno">  693</span>                            close_connection_ = <span class="keyword">true</span>;</div>
-<div class="line"><a id="l00694" name="l00694"></a><span class="lineno">  694</span>                            <span class="keywordflow">if</span> (!is_close_handler_called_)</div>
-<div class="line"><a id="l00695" name="l00695"></a><span class="lineno">  695</span>                            {</div>
-<div class="line"><a id="l00696" name="l00696"></a><span class="lineno">  696</span>                                <span class="keywordflow">if</span> (close_handler_)</div>
-<div class="line"><a id="l00697" name="l00697"></a><span class="lineno">  697</span>                                    close_handler_(*<span class="keyword">this</span>, fragment_.substr(message_start), status_code);</div>
-<div class="line"><a id="l00698" name="l00698"></a><span class="lineno">  698</span>                                is_close_handler_called_ = <span class="keyword">true</span>;</div>
-<div class="line"><a id="l00699" name="l00699"></a><span class="lineno">  699</span>                            }</div>
-<div class="line"><a id="l00700" name="l00700"></a><span class="lineno">  700</span>                            adaptor_.shutdown_readwrite();</div>
-<div class="line"><a id="l00701" name="l00701"></a><span class="lineno">  701</span>                            adaptor_.close();</div>
-<div class="line"><a id="l00702" name="l00702"></a><span class="lineno">  702</span> </div>
-<div class="line"><a id="l00703" name="l00703"></a><span class="lineno">  703</span>                            <span class="comment">// Close handler must have been called at this point so code does not matter</span></div>
-<div class="line"><a id="l00704" name="l00704"></a><span class="lineno">  704</span>                            check_destroy();</div>
-<div class="line"><a id="l00705" name="l00705"></a><span class="lineno">  705</span>                            <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
-<div class="line"><a id="l00706" name="l00706"></a><span class="lineno">  706</span>                        }</div>
-<div class="line"><a id="l00707" name="l00707"></a><span class="lineno">  707</span>                    }</div>
-<div class="line"><a id="l00708" name="l00708"></a><span class="lineno">  708</span>                    <span class="keywordflow">break</span>;</div>
-<div class="line"><a id="l00709" name="l00709"></a><span class="lineno">  709</span>                    <span class="keywordflow">case</span> 0x9: <span class="comment">// Ping</span></div>
-<div class="line"><a id="l00710" name="l00710"></a><span class="lineno">  710</span>                    {</div>
-<div class="line"><a id="l00711" name="l00711"></a><span class="lineno">  711</span>                        send_pong(fragment_);</div>
-<div class="line"><a id="l00712" name="l00712"></a><span class="lineno">  712</span>                    }</div>
-<div class="line"><a id="l00713" name="l00713"></a><span class="lineno">  713</span>                    <span class="keywordflow">break</span>;</div>
-<div class="line"><a id="l00714" name="l00714"></a><span class="lineno">  714</span>                    <span class="keywordflow">case</span> 0xA: <span class="comment">// Pong</span></div>
-<div class="line"><a id="l00715" name="l00715"></a><span class="lineno">  715</span>                    {</div>
-<div class="line"><a id="l00716" name="l00716"></a><span class="lineno">  716</span>                        pong_received_ = <span class="keyword">true</span>;</div>
-<div class="line"><a id="l00717" name="l00717"></a><span class="lineno">  717</span>                    }</div>
-<div class="line"><a id="l00718" name="l00718"></a><span class="lineno">  718</span>                    <span class="keywordflow">break</span>;</div>
-<div class="line"><a id="l00719" name="l00719"></a><span class="lineno">  719</span>                }</div>
-<div class="line"><a id="l00720" name="l00720"></a><span class="lineno">  720</span> </div>
-<div class="line"><a id="l00721" name="l00721"></a><span class="lineno">  721</span>                fragment_.clear();</div>
-<div class="line"><a id="l00722" name="l00722"></a><span class="lineno">  722</span>                <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
-<div class="line"><a id="l00723" name="l00723"></a><span class="lineno">  723</span>            }</div>
+<div class="line"><a id="l00676" name="l00676"></a><span class="lineno">  676</span> </div>
+<div class="line"><a id="l00677" name="l00677"></a><span class="lineno">  677</span>                        uint16_t status_code = NoStatusCodePresent;</div>
+<div class="line"><a id="l00678" name="l00678"></a><span class="lineno">  678</span>                        std::string::size_type message_start = 2;</div>
+<div class="line"><a id="l00679" name="l00679"></a><span class="lineno">  679</span>                        <span class="keywordflow">if</span> (fragment_.size() &gt;= 2)</div>
+<div class="line"><a id="l00680" name="l00680"></a><span class="lineno">  680</span>                        {</div>
+<div class="line"><a id="l00681" name="l00681"></a><span class="lineno">  681</span>                            status_code = ntohs(((uint16_t*)fragment_.data())[0]);</div>
+<div class="line"><a id="l00682" name="l00682"></a><span class="lineno">  682</span>                        } <span class="keywordflow">else</span> {</div>
+<div class="line"><a id="l00683" name="l00683"></a><span class="lineno">  683</span>                            <span class="comment">// no message will crash substr</span></div>
+<div class="line"><a id="l00684" name="l00684"></a><span class="lineno">  684</span>                            message_start = 0;</div>
+<div class="line"><a id="l00685" name="l00685"></a><span class="lineno">  685</span>                        }</div>
+<div class="line"><a id="l00686" name="l00686"></a><span class="lineno">  686</span> </div>
+<div class="line"><a id="l00687" name="l00687"></a><span class="lineno">  687</span>                        <span class="keywordflow">if</span> (!has_sent_close_)</div>
+<div class="line"><a id="l00688" name="l00688"></a><span class="lineno">  688</span>                        {</div>
+<div class="line"><a id="l00689" name="l00689"></a><span class="lineno">  689</span>                            close(fragment_.substr(message_start), status_code);</div>
+<div class="line"><a id="l00690" name="l00690"></a><span class="lineno">  690</span>                        }</div>
+<div class="line"><a id="l00691" name="l00691"></a><span class="lineno">  691</span>                        <span class="keywordflow">else</span></div>
+<div class="line"><a id="l00692" name="l00692"></a><span class="lineno">  692</span>                        {</div>
+<div class="line"><a id="l00693" name="l00693"></a><span class="lineno">  693</span> </div>
+<div class="line"><a id="l00694" name="l00694"></a><span class="lineno">  694</span>                            close_connection_ = <span class="keyword">true</span>;</div>
+<div class="line"><a id="l00695" name="l00695"></a><span class="lineno">  695</span>                            <span class="keywordflow">if</span> (!is_close_handler_called_)</div>
+<div class="line"><a id="l00696" name="l00696"></a><span class="lineno">  696</span>                            {</div>
+<div class="line"><a id="l00697" name="l00697"></a><span class="lineno">  697</span>                                <span class="keywordflow">if</span> (close_handler_)</div>
+<div class="line"><a id="l00698" name="l00698"></a><span class="lineno">  698</span>                                    close_handler_(*<span class="keyword">this</span>, fragment_.substr(message_start), status_code);</div>
+<div class="line"><a id="l00699" name="l00699"></a><span class="lineno">  699</span>                                is_close_handler_called_ = <span class="keyword">true</span>;</div>
+<div class="line"><a id="l00700" name="l00700"></a><span class="lineno">  700</span>                            }</div>
+<div class="line"><a id="l00701" name="l00701"></a><span class="lineno">  701</span>                            adaptor_.shutdown_readwrite();</div>
+<div class="line"><a id="l00702" name="l00702"></a><span class="lineno">  702</span>                            adaptor_.close();</div>
+<div class="line"><a id="l00703" name="l00703"></a><span class="lineno">  703</span> </div>
+<div class="line"><a id="l00704" name="l00704"></a><span class="lineno">  704</span>                            <span class="comment">// Close handler must have been called at this point so code does not matter</span></div>
+<div class="line"><a id="l00705" name="l00705"></a><span class="lineno">  705</span>                            check_destroy();</div>
+<div class="line"><a id="l00706" name="l00706"></a><span class="lineno">  706</span>                            <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><a id="l00707" name="l00707"></a><span class="lineno">  707</span>                        }</div>
+<div class="line"><a id="l00708" name="l00708"></a><span class="lineno">  708</span>                    }</div>
+<div class="line"><a id="l00709" name="l00709"></a><span class="lineno">  709</span>                    <span class="keywordflow">break</span>;</div>
+<div class="line"><a id="l00710" name="l00710"></a><span class="lineno">  710</span>                    <span class="keywordflow">case</span> 0x9: <span class="comment">// Ping</span></div>
+<div class="line"><a id="l00711" name="l00711"></a><span class="lineno">  711</span>                    {</div>
+<div class="line"><a id="l00712" name="l00712"></a><span class="lineno">  712</span>                        send_pong(fragment_);</div>
+<div class="line"><a id="l00713" name="l00713"></a><span class="lineno">  713</span>                    }</div>
+<div class="line"><a id="l00714" name="l00714"></a><span class="lineno">  714</span>                    <span class="keywordflow">break</span>;</div>
+<div class="line"><a id="l00715" name="l00715"></a><span class="lineno">  715</span>                    <span class="keywordflow">case</span> 0xA: <span class="comment">// Pong</span></div>
+<div class="line"><a id="l00716" name="l00716"></a><span class="lineno">  716</span>                    {</div>
+<div class="line"><a id="l00717" name="l00717"></a><span class="lineno">  717</span>                        pong_received_ = <span class="keyword">true</span>;</div>
+<div class="line"><a id="l00718" name="l00718"></a><span class="lineno">  718</span>                    }</div>
+<div class="line"><a id="l00719" name="l00719"></a><span class="lineno">  719</span>                    <span class="keywordflow">break</span>;</div>
+<div class="line"><a id="l00720" name="l00720"></a><span class="lineno">  720</span>                }</div>
+<div class="line"><a id="l00721" name="l00721"></a><span class="lineno">  721</span> </div>
+<div class="line"><a id="l00722" name="l00722"></a><span class="lineno">  722</span>                fragment_.clear();</div>
+<div class="line"><a id="l00723" name="l00723"></a><span class="lineno">  723</span>                <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
+<div class="line"><a id="l00724" name="l00724"></a><span class="lineno">  724</span>            }</div>
 </div>
-<div class="line"><a id="l00724" name="l00724"></a><span class="lineno">  724</span><span class="comment"></span> </div>
-<div class="line"><a id="l00725" name="l00725"></a><span class="lineno">  725</span><span class="comment">            /// Send the buffers&#39; data through the socket.</span></div>
-<div class="line"><a id="l00726" name="l00726"></a><span class="lineno">  726</span><span class="comment"></span><span class="comment"></span> </div>
-<div class="line"><a id="l00727" name="l00727"></a><span class="lineno">  727</span><span class="comment">            ///</span></div>
-<div class="line"><a id="l00728" name="l00728"></a><span class="lineno">  728</span><span class="comment">            /// Also destroys the object if the Close flag is set.</span></div>
-<div class="foldopen" id="foldopen00729" data-start="{" data-end="}">
-<div class="line"><a id="l00729" name="l00729"></a><span class="lineno"><a class="line" href="classcrow_1_1websocket_1_1_connection.html#a787dde96965bf30d994bbc5fb3388281">  729</a></span><span class="comment"></span>            <span class="keywordtype">void</span> <a class="code hl_function" href="classcrow_1_1websocket_1_1_connection.html#a787dde96965bf30d994bbc5fb3388281">do_write</a>()</div>
-<div class="line"><a id="l00730" name="l00730"></a><span class="lineno">  730</span>            {</div>
-<div class="line"><a id="l00731" name="l00731"></a><span class="lineno">  731</span>                <span class="keywordflow">if</span> (sending_buffers_.empty()) {</div>
-<div class="line"><a id="l00732" name="l00732"></a><span class="lineno">  732</span>                    <span class="keywordflow">if</span> (write_buffers_.empty()) <span class="keywordflow">return</span>;</div>
-<div class="line"><a id="l00733" name="l00733"></a><span class="lineno">  733</span> </div>
-<div class="line"><a id="l00734" name="l00734"></a><span class="lineno">  734</span>                    sending_buffers_.swap(write_buffers_);</div>
-<div class="line"><a id="l00735" name="l00735"></a><span class="lineno">  735</span>                    std::vector&lt;asio::const_buffer&gt; buffers;</div>
-<div class="line"><a id="l00736" name="l00736"></a><span class="lineno">  736</span>                    buffers.reserve(sending_buffers_.size());</div>
-<div class="line"><a id="l00737" name="l00737"></a><span class="lineno">  737</span>                    <span class="keywordflow">for</span> (<span class="keyword">auto</span> &amp;s: sending_buffers_)</div>
-<div class="line"><a id="l00738" name="l00738"></a><span class="lineno">  738</span>                    {</div>
-<div class="line"><a id="l00739" name="l00739"></a><span class="lineno">  739</span>                        buffers.emplace_back(asio::buffer(s));</div>
-<div class="line"><a id="l00740" name="l00740"></a><span class="lineno">  740</span>                    }</div>
-<div class="line"><a id="l00741" name="l00741"></a><span class="lineno">  741</span>                    <span class="keyword">auto</span> watch = std::weak_ptr&lt;void&gt;{anchor_};</div>
-<div class="line"><a id="l00742" name="l00742"></a><span class="lineno">  742</span>                    asio::async_write(</div>
-<div class="line"><a id="l00743" name="l00743"></a><span class="lineno">  743</span>                        adaptor_.socket(), buffers,</div>
-<div class="line"><a id="l00744" name="l00744"></a><span class="lineno">  744</span>                        [shared_this = this-&gt;shared_from_this(), watch](<span class="keyword">const</span> error_code &amp;ec, std::size_t <span class="comment">/*bytes_transferred*/</span>) {</div>
-<div class="line"><a id="l00745" name="l00745"></a><span class="lineno">  745</span>                            auto anchor = watch.lock();</div>
-<div class="line"><a id="l00746" name="l00746"></a><span class="lineno">  746</span>                            if (anchor == nullptr)</div>
-<div class="line"><a id="l00747" name="l00747"></a><span class="lineno">  747</span>                                return;</div>
-<div class="line"><a id="l00748" name="l00748"></a><span class="lineno">  748</span> </div>
-<div class="line"><a id="l00749" name="l00749"></a><span class="lineno">  749</span>                            if (!ec &amp;&amp; !shared_this-&gt;close_connection_)</div>
-<div class="line"><a id="l00750" name="l00750"></a><span class="lineno">  750</span>                            {</div>
-<div class="line"><a id="l00751" name="l00751"></a><span class="lineno">  751</span>                                shared_this-&gt;sending_buffers_.clear();</div>
-<div class="line"><a id="l00752" name="l00752"></a><span class="lineno">  752</span>                                if (!shared_this-&gt;write_buffers_.empty())</div>
-<div class="line"><a id="l00753" name="l00753"></a><span class="lineno">  753</span>                                    shared_this-&gt;do_write();</div>
-<div class="line"><a id="l00754" name="l00754"></a><span class="lineno">  754</span>                                if (shared_this-&gt;has_sent_close_)</div>
-<div class="line"><a id="l00755" name="l00755"></a><span class="lineno">  755</span>                                    shared_this-&gt;close_connection_ = true;</div>
-<div class="line"><a id="l00756" name="l00756"></a><span class="lineno">  756</span>                            }</div>
-<div class="line"><a id="l00757" name="l00757"></a><span class="lineno">  757</span>                            <span class="keywordflow">else</span></div>
-<div class="line"><a id="l00758" name="l00758"></a><span class="lineno">  758</span>                            {</div>
-<div class="line"><a id="l00759" name="l00759"></a><span class="lineno">  759</span>                                shared_this-&gt;sending_buffers_.clear();</div>
-<div class="line"><a id="l00760" name="l00760"></a><span class="lineno">  760</span>                                shared_this-&gt;close_connection_ = true;</div>
-<div class="line"><a id="l00761" name="l00761"></a><span class="lineno">  761</span>                                shared_this-&gt;check_destroy();</div>
-<div class="line"><a id="l00762" name="l00762"></a><span class="lineno">  762</span>                            }</div>
-<div class="line"><a id="l00763" name="l00763"></a><span class="lineno">  763</span>                        });</div>
-<div class="line"><a id="l00764" name="l00764"></a><span class="lineno">  764</span>                }</div>
-<div class="line"><a id="l00765" name="l00765"></a><span class="lineno">  765</span>            }</div>
+<div class="line"><a id="l00725" name="l00725"></a><span class="lineno">  725</span><span class="comment"></span> </div>
+<div class="line"><a id="l00726" name="l00726"></a><span class="lineno">  726</span><span class="comment">            /// Send the buffers&#39; data through the socket.</span></div>
+<div class="line"><a id="l00727" name="l00727"></a><span class="lineno">  727</span><span class="comment"></span><span class="comment"></span> </div>
+<div class="line"><a id="l00728" name="l00728"></a><span class="lineno">  728</span><span class="comment">            ///</span></div>
+<div class="line"><a id="l00729" name="l00729"></a><span class="lineno">  729</span><span class="comment">            /// Also destroys the object if the Close flag is set.</span></div>
+<div class="foldopen" id="foldopen00730" data-start="{" data-end="}">
+<div class="line"><a id="l00730" name="l00730"></a><span class="lineno"><a class="line" href="classcrow_1_1websocket_1_1_connection.html#a787dde96965bf30d994bbc5fb3388281">  730</a></span><span class="comment"></span>            <span class="keywordtype">void</span> <a class="code hl_function" href="classcrow_1_1websocket_1_1_connection.html#a787dde96965bf30d994bbc5fb3388281">do_write</a>()</div>
+<div class="line"><a id="l00731" name="l00731"></a><span class="lineno">  731</span>            {</div>
+<div class="line"><a id="l00732" name="l00732"></a><span class="lineno">  732</span>                <span class="keywordflow">if</span> (sending_buffers_.empty()) {</div>
+<div class="line"><a id="l00733" name="l00733"></a><span class="lineno">  733</span>                    <span class="keywordflow">if</span> (write_buffers_.empty()) <span class="keywordflow">return</span>;</div>
+<div class="line"><a id="l00734" name="l00734"></a><span class="lineno">  734</span> </div>
+<div class="line"><a id="l00735" name="l00735"></a><span class="lineno">  735</span>                    sending_buffers_.swap(write_buffers_);</div>
+<div class="line"><a id="l00736" name="l00736"></a><span class="lineno">  736</span>                    std::vector&lt;asio::const_buffer&gt; buffers;</div>
+<div class="line"><a id="l00737" name="l00737"></a><span class="lineno">  737</span>                    buffers.reserve(sending_buffers_.size());</div>
+<div class="line"><a id="l00738" name="l00738"></a><span class="lineno">  738</span>                    <span class="keywordflow">for</span> (<span class="keyword">auto</span> &amp;s: sending_buffers_)</div>
+<div class="line"><a id="l00739" name="l00739"></a><span class="lineno">  739</span>                    {</div>
+<div class="line"><a id="l00740" name="l00740"></a><span class="lineno">  740</span>                        buffers.emplace_back(asio::buffer(s));</div>
+<div class="line"><a id="l00741" name="l00741"></a><span class="lineno">  741</span>                    }</div>
+<div class="line"><a id="l00742" name="l00742"></a><span class="lineno">  742</span>                    <span class="keyword">auto</span> watch = std::weak_ptr&lt;void&gt;{anchor_};</div>
+<div class="line"><a id="l00743" name="l00743"></a><span class="lineno">  743</span>                    asio::async_write(</div>
+<div class="line"><a id="l00744" name="l00744"></a><span class="lineno">  744</span>                        adaptor_.socket(), buffers,</div>
+<div class="line"><a id="l00745" name="l00745"></a><span class="lineno">  745</span>                        [shared_this = this-&gt;shared_from_this(), watch](<span class="keyword">const</span> error_code &amp;ec, std::size_t <span class="comment">/*bytes_transferred*/</span>) {</div>
+<div class="line"><a id="l00746" name="l00746"></a><span class="lineno">  746</span>                            auto anchor = watch.lock();</div>
+<div class="line"><a id="l00747" name="l00747"></a><span class="lineno">  747</span>                            if (anchor == nullptr)</div>
+<div class="line"><a id="l00748" name="l00748"></a><span class="lineno">  748</span>                                return;</div>
+<div class="line"><a id="l00749" name="l00749"></a><span class="lineno">  749</span> </div>
+<div class="line"><a id="l00750" name="l00750"></a><span class="lineno">  750</span>                            if (!ec &amp;&amp; !shared_this-&gt;close_connection_)</div>
+<div class="line"><a id="l00751" name="l00751"></a><span class="lineno">  751</span>                            {</div>
+<div class="line"><a id="l00752" name="l00752"></a><span class="lineno">  752</span>                                shared_this-&gt;sending_buffers_.clear();</div>
+<div class="line"><a id="l00753" name="l00753"></a><span class="lineno">  753</span>                                if (!shared_this-&gt;write_buffers_.empty())</div>
+<div class="line"><a id="l00754" name="l00754"></a><span class="lineno">  754</span>                                    shared_this-&gt;do_write();</div>
+<div class="line"><a id="l00755" name="l00755"></a><span class="lineno">  755</span>                                if (shared_this-&gt;has_sent_close_)</div>
+<div class="line"><a id="l00756" name="l00756"></a><span class="lineno">  756</span>                                    shared_this-&gt;close_connection_ = true;</div>
+<div class="line"><a id="l00757" name="l00757"></a><span class="lineno">  757</span>                            }</div>
+<div class="line"><a id="l00758" name="l00758"></a><span class="lineno">  758</span>                            <span class="keywordflow">else</span></div>
+<div class="line"><a id="l00759" name="l00759"></a><span class="lineno">  759</span>                            {</div>
+<div class="line"><a id="l00760" name="l00760"></a><span class="lineno">  760</span>                                shared_this-&gt;sending_buffers_.clear();</div>
+<div class="line"><a id="l00761" name="l00761"></a><span class="lineno">  761</span>                                shared_this-&gt;close_connection_ = true;</div>
+<div class="line"><a id="l00762" name="l00762"></a><span class="lineno">  762</span>                                shared_this-&gt;check_destroy();</div>
+<div class="line"><a id="l00763" name="l00763"></a><span class="lineno">  763</span>                            }</div>
+<div class="line"><a id="l00764" name="l00764"></a><span class="lineno">  764</span>                        });</div>
+<div class="line"><a id="l00765" name="l00765"></a><span class="lineno">  765</span>                }</div>
+<div class="line"><a id="l00766" name="l00766"></a><span class="lineno">  766</span>            }</div>
 </div>
-<div class="line"><a id="l00766" name="l00766"></a><span class="lineno">  766</span><span class="comment"></span> </div>
-<div class="line"><a id="l00767" name="l00767"></a><span class="lineno">  767</span><span class="comment">            /// Destroy the Connection.</span></div>
-<div class="foldopen" id="foldopen00768" data-start="{" data-end="}">
-<div class="line"><a id="l00768" name="l00768"></a><span class="lineno"><a class="line" href="classcrow_1_1websocket_1_1_connection.html#ad13e9b7b8a2a551056b34495cb334124">  768</a></span><span class="comment"></span>            <span class="keywordtype">void</span> <a class="code hl_function" href="classcrow_1_1websocket_1_1_connection.html#ad13e9b7b8a2a551056b34495cb334124">check_destroy</a>(websocket::CloseStatusCode code = CloseStatusCode::ClosedAbnormally)</div>
-<div class="line"><a id="l00769" name="l00769"></a><span class="lineno">  769</span>            {</div>
-<div class="line"><a id="l00770" name="l00770"></a><span class="lineno">  770</span>                <span class="comment">// Note that if the close handler was not yet called at this point we did not receive a close packet (or send one)</span></div>
-<div class="line"><a id="l00771" name="l00771"></a><span class="lineno">  771</span>                <span class="comment">// and thus we use ClosedAbnormally unless instructed otherwise</span></div>
-<div class="line"><a id="l00772" name="l00772"></a><span class="lineno">  772</span>                <span class="keywordflow">if</span> (!is_close_handler_called_)</div>
-<div class="line"><a id="l00773" name="l00773"></a><span class="lineno">  773</span>                {</div>
-<div class="line"><a id="l00774" name="l00774"></a><span class="lineno">  774</span>                    <span class="keywordflow">if</span> (close_handler_)</div>
-<div class="line"><a id="l00775" name="l00775"></a><span class="lineno">  775</span>                    {</div>
-<div class="line"><a id="l00776" name="l00776"></a><span class="lineno">  776</span>                        close_handler_(*<span class="keyword">this</span>, <span class="stringliteral">&quot;uncleanly&quot;</span>, code);</div>
-<div class="line"><a id="l00777" name="l00777"></a><span class="lineno">  777</span>                    }</div>
-<div class="line"><a id="l00778" name="l00778"></a><span class="lineno">  778</span>                }</div>
-<div class="line"><a id="l00779" name="l00779"></a><span class="lineno">  779</span> </div>
-<div class="line"><a id="l00780" name="l00780"></a><span class="lineno">  780</span>                handler_-&gt;remove_websocket(this-&gt;shared_from_this());</div>
-<div class="line"><a id="l00781" name="l00781"></a><span class="lineno">  781</span>            }</div>
+<div class="line"><a id="l00767" name="l00767"></a><span class="lineno">  767</span><span class="comment"></span> </div>
+<div class="line"><a id="l00768" name="l00768"></a><span class="lineno">  768</span><span class="comment">            /// Destroy the Connection.</span></div>
+<div class="foldopen" id="foldopen00769" data-start="{" data-end="}">
+<div class="line"><a id="l00769" name="l00769"></a><span class="lineno"><a class="line" href="classcrow_1_1websocket_1_1_connection.html#ad13e9b7b8a2a551056b34495cb334124">  769</a></span><span class="comment"></span>            <span class="keywordtype">void</span> <a class="code hl_function" href="classcrow_1_1websocket_1_1_connection.html#ad13e9b7b8a2a551056b34495cb334124">check_destroy</a>(websocket::CloseStatusCode code = CloseStatusCode::ClosedAbnormally)</div>
+<div class="line"><a id="l00770" name="l00770"></a><span class="lineno">  770</span>            {</div>
+<div class="line"><a id="l00771" name="l00771"></a><span class="lineno">  771</span>                <span class="comment">// Note that if the close handler was not yet called at this point we did not receive a close packet (or send one)</span></div>
+<div class="line"><a id="l00772" name="l00772"></a><span class="lineno">  772</span>                <span class="comment">// and thus we use ClosedAbnormally unless instructed otherwise</span></div>
+<div class="line"><a id="l00773" name="l00773"></a><span class="lineno">  773</span>                <span class="keywordflow">if</span> (!is_close_handler_called_)</div>
+<div class="line"><a id="l00774" name="l00774"></a><span class="lineno">  774</span>                {</div>
+<div class="line"><a id="l00775" name="l00775"></a><span class="lineno">  775</span>                    <span class="keywordflow">if</span> (close_handler_)</div>
+<div class="line"><a id="l00776" name="l00776"></a><span class="lineno">  776</span>                    {</div>
+<div class="line"><a id="l00777" name="l00777"></a><span class="lineno">  777</span>                        close_handler_(*<span class="keyword">this</span>, <span class="stringliteral">&quot;uncleanly&quot;</span>, code);</div>
+<div class="line"><a id="l00778" name="l00778"></a><span class="lineno">  778</span>                    }</div>
+<div class="line"><a id="l00779" name="l00779"></a><span class="lineno">  779</span>                }</div>
+<div class="line"><a id="l00780" name="l00780"></a><span class="lineno">  780</span> </div>
+<div class="line"><a id="l00781" name="l00781"></a><span class="lineno">  781</span>                handler_-&gt;remove_websocket(this-&gt;shared_from_this());</div>
+<div class="line"><a id="l00782" name="l00782"></a><span class="lineno">  782</span>            }</div>
 </div>
-<div class="line"><a id="l00782" name="l00782"></a><span class="lineno">  782</span> </div>
 <div class="line"><a id="l00783" name="l00783"></a><span class="lineno">  783</span> </div>
-<div class="foldopen" id="foldopen00784" data-start="{" data-end="};">
-<div class="line"><a id="l00784" name="l00784"></a><span class="lineno"><a class="line" href="structcrow_1_1websocket_1_1_connection_1_1_send_message_type.html">  784</a></span>            <span class="keyword">struct </span><a class="code hl_struct" href="structcrow_1_1websocket_1_1_connection_1_1_send_message_type.html">SendMessageType</a></div>
-<div class="line"><a id="l00785" name="l00785"></a><span class="lineno">  785</span>            {</div>
-<div class="line"><a id="l00786" name="l00786"></a><span class="lineno">  786</span>                std::string payload;</div>
-<div class="line"><a id="l00787" name="l00787"></a><span class="lineno">  787</span>                <a class="code hl_class" href="classcrow_1_1websocket_1_1_connection.html">Connection</a>* self;</div>
-<div class="line"><a id="l00788" name="l00788"></a><span class="lineno">  788</span>                <span class="keywordtype">int</span> opcode;</div>
-<div class="line"><a id="l00789" name="l00789"></a><span class="lineno">  789</span> </div>
-<div class="line"><a id="l00790" name="l00790"></a><span class="lineno">  790</span>                <span class="keywordtype">void</span> operator()()</div>
-<div class="line"><a id="l00791" name="l00791"></a><span class="lineno">  791</span>                {</div>
-<div class="line"><a id="l00792" name="l00792"></a><span class="lineno">  792</span>                    self-&gt;send_data_impl(<span class="keyword">this</span>);</div>
-<div class="line"><a id="l00793" name="l00793"></a><span class="lineno">  793</span>                }</div>
-<div class="line"><a id="l00794" name="l00794"></a><span class="lineno">  794</span>            };</div>
+<div class="line"><a id="l00784" name="l00784"></a><span class="lineno">  784</span> </div>
+<div class="foldopen" id="foldopen00785" data-start="{" data-end="};">
+<div class="line"><a id="l00785" name="l00785"></a><span class="lineno"><a class="line" href="structcrow_1_1websocket_1_1_connection_1_1_send_message_type.html">  785</a></span>            <span class="keyword">struct </span><a class="code hl_struct" href="structcrow_1_1websocket_1_1_connection_1_1_send_message_type.html">SendMessageType</a></div>
+<div class="line"><a id="l00786" name="l00786"></a><span class="lineno">  786</span>            {</div>
+<div class="line"><a id="l00787" name="l00787"></a><span class="lineno">  787</span>                std::string payload;</div>
+<div class="line"><a id="l00788" name="l00788"></a><span class="lineno">  788</span>                <a class="code hl_class" href="classcrow_1_1websocket_1_1_connection.html">Connection</a>* self;</div>
+<div class="line"><a id="l00789" name="l00789"></a><span class="lineno">  789</span>                <span class="keywordtype">int</span> opcode;</div>
+<div class="line"><a id="l00790" name="l00790"></a><span class="lineno">  790</span> </div>
+<div class="line"><a id="l00791" name="l00791"></a><span class="lineno">  791</span>                <span class="keywordtype">void</span> operator()()</div>
+<div class="line"><a id="l00792" name="l00792"></a><span class="lineno">  792</span>                {</div>
+<div class="line"><a id="l00793" name="l00793"></a><span class="lineno">  793</span>                    self-&gt;send_data_impl(<span class="keyword">this</span>);</div>
+<div class="line"><a id="l00794" name="l00794"></a><span class="lineno">  794</span>                }</div>
+<div class="line"><a id="l00795" name="l00795"></a><span class="lineno">  795</span>            };</div>
 </div>
-<div class="line"><a id="l00795" name="l00795"></a><span class="lineno">  795</span> </div>
-<div class="line"><a id="l00796" name="l00796"></a><span class="lineno">  796</span>            <span class="keywordtype">void</span> send_data_impl(<a class="code hl_struct" href="structcrow_1_1websocket_1_1_connection_1_1_send_message_type.html">SendMessageType</a>* s)</div>
-<div class="line"><a id="l00797" name="l00797"></a><span class="lineno">  797</span>            {</div>
-<div class="line"><a id="l00798" name="l00798"></a><span class="lineno">  798</span>                <span class="keyword">auto</span> header = build_header(s-&gt;opcode, s-&gt;payload.size());</div>
-<div class="line"><a id="l00799" name="l00799"></a><span class="lineno">  799</span>                write_buffers_.emplace_back(std::move(header));</div>
-<div class="line"><a id="l00800" name="l00800"></a><span class="lineno">  800</span>                write_buffers_.emplace_back(std::move(s-&gt;payload));</div>
-<div class="line"><a id="l00801" name="l00801"></a><span class="lineno">  801</span>                do_write();</div>
-<div class="line"><a id="l00802" name="l00802"></a><span class="lineno">  802</span>            }</div>
-<div class="line"><a id="l00803" name="l00803"></a><span class="lineno">  803</span> </div>
-<div class="line"><a id="l00804" name="l00804"></a><span class="lineno">  804</span>            <span class="keywordtype">void</span> send_data(<span class="keywordtype">int</span> opcode, std::string&amp;&amp; msg)</div>
-<div class="line"><a id="l00805" name="l00805"></a><span class="lineno">  805</span>            {</div>
-<div class="line"><a id="l00806" name="l00806"></a><span class="lineno">  806</span>                SendMessageType event_arg{</div>
-<div class="line"><a id="l00807" name="l00807"></a><span class="lineno">  807</span>                  std::move(msg),</div>
-<div class="line"><a id="l00808" name="l00808"></a><span class="lineno">  808</span>                  <span class="keyword">this</span>,</div>
-<div class="line"><a id="l00809" name="l00809"></a><span class="lineno">  809</span>                  opcode};</div>
-<div class="line"><a id="l00810" name="l00810"></a><span class="lineno">  810</span> </div>
-<div class="line"><a id="l00811" name="l00811"></a><span class="lineno">  811</span>                post(std::move(event_arg));</div>
-<div class="line"><a id="l00812" name="l00812"></a><span class="lineno">  812</span>            }</div>
-<div class="line"><a id="l00813" name="l00813"></a><span class="lineno">  813</span> </div>
-<div class="line"><a id="l00814" name="l00814"></a><span class="lineno">  814</span>        <span class="keyword">private</span>:</div>
-<div class="line"><a id="l00815" name="l00815"></a><span class="lineno">  815</span>            Connection(Adaptor&amp;&amp; adaptor, Handler* handler, uint64_t max_payload,</div>
-<div class="line"><a id="l00816" name="l00816"></a><span class="lineno">  816</span>                       std::function&lt;<span class="keywordtype">void</span>(<a class="code hl_struct" href="structcrow_1_1websocket_1_1connection.html">crow::websocket::connection</a>&amp;)&gt; open_handler,</div>
-<div class="line"><a id="l00817" name="l00817"></a><span class="lineno">  817</span>                       std::function&lt;<span class="keywordtype">void</span>(<a class="code hl_struct" href="structcrow_1_1websocket_1_1connection.html">crow::websocket::connection</a>&amp;, <span class="keyword">const</span> std::string&amp;, <span class="keywordtype">bool</span>)&gt; message_handler,</div>
-<div class="line"><a id="l00818" name="l00818"></a><span class="lineno">  818</span>                       std::function&lt;<span class="keywordtype">void</span>(<a class="code hl_struct" href="structcrow_1_1websocket_1_1connection.html">crow::websocket::connection</a>&amp;, <span class="keyword">const</span> std::string&amp;, uint16_t)&gt; close_handler,</div>
-<div class="line"><a id="l00819" name="l00819"></a><span class="lineno">  819</span>                       std::function&lt;<span class="keywordtype">void</span>(<a class="code hl_struct" href="structcrow_1_1websocket_1_1connection.html">crow::websocket::connection</a>&amp;, <span class="keyword">const</span> std::string&amp;)&gt; error_handler,</div>
-<div class="line"><a id="l00820" name="l00820"></a><span class="lineno">  820</span>                       std::function&lt;<span class="keywordtype">void</span>(<span class="keyword">const</span> <a class="code hl_struct" href="structcrow_1_1request.html">crow::request</a>&amp;, std::optional&lt;crow::response&gt;&amp;, <span class="keywordtype">void</span>**)&gt; accept_handler):</div>
-<div class="line"><a id="l00821" name="l00821"></a><span class="lineno">  821</span>              adaptor_(std::move(adaptor)),</div>
-<div class="line"><a id="l00822" name="l00822"></a><span class="lineno">  822</span>              handler_(handler),</div>
-<div class="line"><a id="l00823" name="l00823"></a><span class="lineno">  823</span>              max_payload_bytes_(max_payload),</div>
-<div class="line"><a id="l00824" name="l00824"></a><span class="lineno">  824</span>              open_handler_(std::move(open_handler)),</div>
-<div class="line"><a id="l00825" name="l00825"></a><span class="lineno">  825</span>              message_handler_(std::move(message_handler)),</div>
-<div class="line"><a id="l00826" name="l00826"></a><span class="lineno">  826</span>              close_handler_(std::move(close_handler)),</div>
-<div class="line"><a id="l00827" name="l00827"></a><span class="lineno">  827</span>              error_handler_(std::move(error_handler)),</div>
-<div class="line"><a id="l00828" name="l00828"></a><span class="lineno">  828</span>              accept_handler_(std::move(accept_handler))</div>
-<div class="line"><a id="l00829" name="l00829"></a><span class="lineno">  829</span>            {}</div>
-<div class="line"><a id="l00830" name="l00830"></a><span class="lineno">  830</span> </div>
-<div class="line"><a id="l00831" name="l00831"></a><span class="lineno">  831</span>            Adaptor adaptor_;</div>
-<div class="line"><a id="l00832" name="l00832"></a><span class="lineno">  832</span>            Handler* handler_;</div>
-<div class="line"><a id="l00833" name="l00833"></a><span class="lineno">  833</span> </div>
-<div class="line"><a id="l00834" name="l00834"></a><span class="lineno">  834</span>            std::vector&lt;std::string&gt; sending_buffers_;</div>
-<div class="line"><a id="l00835" name="l00835"></a><span class="lineno">  835</span>            std::vector&lt;std::string&gt; write_buffers_;</div>
-<div class="line"><a id="l00836" name="l00836"></a><span class="lineno">  836</span> </div>
-<div class="line"><a id="l00837" name="l00837"></a><span class="lineno">  837</span>            std::array&lt;char, 4096&gt; buffer_;</div>
-<div class="line"><a id="l00838" name="l00838"></a><span class="lineno">  838</span>            <span class="keywordtype">bool</span> is_binary_;</div>
-<div class="line"><a id="l00839" name="l00839"></a><span class="lineno">  839</span>            std::string message_;</div>
-<div class="line"><a id="l00840" name="l00840"></a><span class="lineno">  840</span>            std::string fragment_;</div>
-<div class="line"><a id="l00841" name="l00841"></a><span class="lineno">  841</span>            WebSocketReadState state_{WebSocketReadState::MiniHeader};</div>
-<div class="line"><a id="l00842" name="l00842"></a><span class="lineno">  842</span>            uint16_t remaining_length16_{0};</div>
-<div class="line"><a id="l00843" name="l00843"></a><span class="lineno">  843</span>            uint64_t remaining_length_{0};</div>
-<div class="line"><a id="l00844" name="l00844"></a><span class="lineno">  844</span>            uint64_t max_payload_bytes_{UINT64_MAX};</div>
-<div class="line"><a id="l00845" name="l00845"></a><span class="lineno">  845</span>            std::string subprotocol_;</div>
-<div class="line"><a id="l00846" name="l00846"></a><span class="lineno">  846</span>            <span class="keywordtype">bool</span> close_connection_{<span class="keyword">false</span>};</div>
-<div class="line"><a id="l00847" name="l00847"></a><span class="lineno">  847</span>            <span class="keywordtype">bool</span> is_reading{<span class="keyword">false</span>};</div>
-<div class="line"><a id="l00848" name="l00848"></a><span class="lineno">  848</span>            <span class="keywordtype">bool</span> has_mask_{<span class="keyword">false</span>};</div>
-<div class="line"><a id="l00849" name="l00849"></a><span class="lineno">  849</span>            uint32_t mask_;</div>
-<div class="line"><a id="l00850" name="l00850"></a><span class="lineno">  850</span>            uint16_t mini_header_;</div>
-<div class="line"><a id="l00851" name="l00851"></a><span class="lineno">  851</span>            <span class="keywordtype">bool</span> has_sent_close_{<span class="keyword">false</span>};</div>
-<div class="line"><a id="l00852" name="l00852"></a><span class="lineno">  852</span>            <span class="keywordtype">bool</span> has_recv_close_{<span class="keyword">false</span>};</div>
-<div class="line"><a id="l00853" name="l00853"></a><span class="lineno">  853</span>            <span class="keywordtype">bool</span> error_occurred_{<span class="keyword">false</span>};</div>
-<div class="line"><a id="l00854" name="l00854"></a><span class="lineno">  854</span>            <span class="keywordtype">bool</span> pong_received_{<span class="keyword">false</span>};</div>
-<div class="line"><a id="l00855" name="l00855"></a><span class="lineno">  855</span>            <span class="keywordtype">bool</span> is_close_handler_called_{<span class="keyword">false</span>};</div>
-<div class="line"><a id="l00856" name="l00856"></a><span class="lineno">  856</span> </div>
-<div class="line"><a id="l00857" name="l00857"></a><span class="lineno">  857</span>            std::shared_ptr&lt;void&gt; anchor_ = std::make_shared&lt;int&gt;(); <span class="comment">// Value is just for placeholding</span></div>
-<div class="line"><a id="l00858" name="l00858"></a><span class="lineno">  858</span> </div>
-<div class="line"><a id="l00859" name="l00859"></a><span class="lineno">  859</span>            std::function&lt;void(<a class="code hl_struct" href="structcrow_1_1websocket_1_1connection.html">crow::websocket::connection</a>&amp;)&gt; open_handler_;</div>
-<div class="line"><a id="l00860" name="l00860"></a><span class="lineno">  860</span>            std::function&lt;void(<a class="code hl_struct" href="structcrow_1_1websocket_1_1connection.html">crow::websocket::connection</a>&amp;, <span class="keyword">const</span> std::string&amp;, <span class="keywordtype">bool</span>)&gt; message_handler_;</div>
-<div class="line"><a id="l00861" name="l00861"></a><span class="lineno">  861</span>            std::function&lt;void(<a class="code hl_struct" href="structcrow_1_1websocket_1_1connection.html">crow::websocket::connection</a>&amp;, <span class="keyword">const</span> std::string&amp;, uint16_t status_code)&gt; close_handler_;</div>
-<div class="line"><a id="l00862" name="l00862"></a><span class="lineno">  862</span>            std::function&lt;void(<a class="code hl_struct" href="structcrow_1_1websocket_1_1connection.html">crow::websocket::connection</a>&amp;, <span class="keyword">const</span> std::string&amp;)&gt; error_handler_;</div>
-<div class="line"><a id="l00863" name="l00863"></a><span class="lineno">  863</span>            std::function&lt;void(<span class="keyword">const</span> <a class="code hl_struct" href="structcrow_1_1request.html">crow::request</a>&amp;, std::optional&lt;crow::response&gt;&amp;, <span class="keywordtype">void</span>**)&gt; accept_handler_;</div>
-<div class="line"><a id="l00864" name="l00864"></a><span class="lineno">  864</span>        };</div>
+<div class="line"><a id="l00796" name="l00796"></a><span class="lineno">  796</span> </div>
+<div class="line"><a id="l00797" name="l00797"></a><span class="lineno">  797</span>            <span class="keywordtype">void</span> send_data_impl(<a class="code hl_struct" href="structcrow_1_1websocket_1_1_connection_1_1_send_message_type.html">SendMessageType</a>* s)</div>
+<div class="line"><a id="l00798" name="l00798"></a><span class="lineno">  798</span>            {</div>
+<div class="line"><a id="l00799" name="l00799"></a><span class="lineno">  799</span>                <span class="keyword">auto</span> header = build_header(s-&gt;opcode, s-&gt;payload.size());</div>
+<div class="line"><a id="l00800" name="l00800"></a><span class="lineno">  800</span>                write_buffers_.emplace_back(std::move(header));</div>
+<div class="line"><a id="l00801" name="l00801"></a><span class="lineno">  801</span>                write_buffers_.emplace_back(std::move(s-&gt;payload));</div>
+<div class="line"><a id="l00802" name="l00802"></a><span class="lineno">  802</span>                do_write();</div>
+<div class="line"><a id="l00803" name="l00803"></a><span class="lineno">  803</span>            }</div>
+<div class="line"><a id="l00804" name="l00804"></a><span class="lineno">  804</span> </div>
+<div class="line"><a id="l00805" name="l00805"></a><span class="lineno">  805</span>            <span class="keywordtype">void</span> send_data(<span class="keywordtype">int</span> opcode, std::string&amp;&amp; msg)</div>
+<div class="line"><a id="l00806" name="l00806"></a><span class="lineno">  806</span>            {</div>
+<div class="line"><a id="l00807" name="l00807"></a><span class="lineno">  807</span>                SendMessageType event_arg{</div>
+<div class="line"><a id="l00808" name="l00808"></a><span class="lineno">  808</span>                  std::move(msg),</div>
+<div class="line"><a id="l00809" name="l00809"></a><span class="lineno">  809</span>                  <span class="keyword">this</span>,</div>
+<div class="line"><a id="l00810" name="l00810"></a><span class="lineno">  810</span>                  opcode};</div>
+<div class="line"><a id="l00811" name="l00811"></a><span class="lineno">  811</span> </div>
+<div class="line"><a id="l00812" name="l00812"></a><span class="lineno">  812</span>                post(std::move(event_arg));</div>
+<div class="line"><a id="l00813" name="l00813"></a><span class="lineno">  813</span>            }</div>
+<div class="line"><a id="l00814" name="l00814"></a><span class="lineno">  814</span> </div>
+<div class="line"><a id="l00815" name="l00815"></a><span class="lineno">  815</span>        <span class="keyword">private</span>:</div>
+<div class="line"><a id="l00816" name="l00816"></a><span class="lineno">  816</span>            Connection(Adaptor&amp;&amp; adaptor, Handler* handler, uint64_t max_payload,</div>
+<div class="line"><a id="l00817" name="l00817"></a><span class="lineno">  817</span>                       std::function&lt;<span class="keywordtype">void</span>(<a class="code hl_struct" href="structcrow_1_1websocket_1_1connection.html">crow::websocket::connection</a>&amp;)&gt; open_handler,</div>
+<div class="line"><a id="l00818" name="l00818"></a><span class="lineno">  818</span>                       std::function&lt;<span class="keywordtype">void</span>(<a class="code hl_struct" href="structcrow_1_1websocket_1_1connection.html">crow::websocket::connection</a>&amp;, <span class="keyword">const</span> std::string&amp;, <span class="keywordtype">bool</span>)&gt; message_handler,</div>
+<div class="line"><a id="l00819" name="l00819"></a><span class="lineno">  819</span>                       std::function&lt;<span class="keywordtype">void</span>(<a class="code hl_struct" href="structcrow_1_1websocket_1_1connection.html">crow::websocket::connection</a>&amp;, <span class="keyword">const</span> std::string&amp;, uint16_t)&gt; close_handler,</div>
+<div class="line"><a id="l00820" name="l00820"></a><span class="lineno">  820</span>                       std::function&lt;<span class="keywordtype">void</span>(<a class="code hl_struct" href="structcrow_1_1websocket_1_1connection.html">crow::websocket::connection</a>&amp;, <span class="keyword">const</span> std::string&amp;)&gt; error_handler,</div>
+<div class="line"><a id="l00821" name="l00821"></a><span class="lineno">  821</span>                       std::function&lt;<span class="keywordtype">void</span>(<span class="keyword">const</span> <a class="code hl_struct" href="structcrow_1_1request.html">crow::request</a>&amp;, std::optional&lt;crow::response&gt;&amp;, <span class="keywordtype">void</span>**)&gt; accept_handler):</div>
+<div class="line"><a id="l00822" name="l00822"></a><span class="lineno">  822</span>              adaptor_(std::move(adaptor)),</div>
+<div class="line"><a id="l00823" name="l00823"></a><span class="lineno">  823</span>              handler_(handler),</div>
+<div class="line"><a id="l00824" name="l00824"></a><span class="lineno">  824</span>              max_payload_bytes_(max_payload),</div>
+<div class="line"><a id="l00825" name="l00825"></a><span class="lineno">  825</span>              open_handler_(std::move(open_handler)),</div>
+<div class="line"><a id="l00826" name="l00826"></a><span class="lineno">  826</span>              message_handler_(std::move(message_handler)),</div>
+<div class="line"><a id="l00827" name="l00827"></a><span class="lineno">  827</span>              close_handler_(std::move(close_handler)),</div>
+<div class="line"><a id="l00828" name="l00828"></a><span class="lineno">  828</span>              error_handler_(std::move(error_handler)),</div>
+<div class="line"><a id="l00829" name="l00829"></a><span class="lineno">  829</span>              accept_handler_(std::move(accept_handler))</div>
+<div class="line"><a id="l00830" name="l00830"></a><span class="lineno">  830</span>            {}</div>
+<div class="line"><a id="l00831" name="l00831"></a><span class="lineno">  831</span> </div>
+<div class="line"><a id="l00832" name="l00832"></a><span class="lineno">  832</span>            Adaptor adaptor_;</div>
+<div class="line"><a id="l00833" name="l00833"></a><span class="lineno">  833</span>            Handler* handler_;</div>
+<div class="line"><a id="l00834" name="l00834"></a><span class="lineno">  834</span> </div>
+<div class="line"><a id="l00835" name="l00835"></a><span class="lineno">  835</span>            std::vector&lt;std::string&gt; sending_buffers_;</div>
+<div class="line"><a id="l00836" name="l00836"></a><span class="lineno">  836</span>            std::vector&lt;std::string&gt; write_buffers_;</div>
+<div class="line"><a id="l00837" name="l00837"></a><span class="lineno">  837</span> </div>
+<div class="line"><a id="l00838" name="l00838"></a><span class="lineno">  838</span>            std::array&lt;char, 4096&gt; buffer_;</div>
+<div class="line"><a id="l00839" name="l00839"></a><span class="lineno">  839</span>            <span class="keywordtype">bool</span> is_binary_;</div>
+<div class="line"><a id="l00840" name="l00840"></a><span class="lineno">  840</span>            std::string message_;</div>
+<div class="line"><a id="l00841" name="l00841"></a><span class="lineno">  841</span>            std::string fragment_;</div>
+<div class="line"><a id="l00842" name="l00842"></a><span class="lineno">  842</span>            WebSocketReadState state_{WebSocketReadState::MiniHeader};</div>
+<div class="line"><a id="l00843" name="l00843"></a><span class="lineno">  843</span>            uint16_t remaining_length16_{0};</div>
+<div class="line"><a id="l00844" name="l00844"></a><span class="lineno">  844</span>            uint64_t remaining_length_{0};</div>
+<div class="line"><a id="l00845" name="l00845"></a><span class="lineno">  845</span>            uint64_t max_payload_bytes_{UINT64_MAX};</div>
+<div class="line"><a id="l00846" name="l00846"></a><span class="lineno">  846</span>            std::string subprotocol_;</div>
+<div class="line"><a id="l00847" name="l00847"></a><span class="lineno">  847</span>            <span class="keywordtype">bool</span> close_connection_{<span class="keyword">false</span>};</div>
+<div class="line"><a id="l00848" name="l00848"></a><span class="lineno">  848</span>            <span class="keywordtype">bool</span> is_reading{<span class="keyword">false</span>};</div>
+<div class="line"><a id="l00849" name="l00849"></a><span class="lineno">  849</span>            <span class="keywordtype">bool</span> has_mask_{<span class="keyword">false</span>};</div>
+<div class="line"><a id="l00850" name="l00850"></a><span class="lineno">  850</span>            uint32_t mask_;</div>
+<div class="line"><a id="l00851" name="l00851"></a><span class="lineno">  851</span>            uint16_t mini_header_;</div>
+<div class="line"><a id="l00852" name="l00852"></a><span class="lineno">  852</span>            <span class="keywordtype">bool</span> has_sent_close_{<span class="keyword">false</span>};</div>
+<div class="line"><a id="l00853" name="l00853"></a><span class="lineno">  853</span>            <span class="keywordtype">bool</span> has_recv_close_{<span class="keyword">false</span>};</div>
+<div class="line"><a id="l00854" name="l00854"></a><span class="lineno">  854</span>            <span class="keywordtype">bool</span> error_occurred_{<span class="keyword">false</span>};</div>
+<div class="line"><a id="l00855" name="l00855"></a><span class="lineno">  855</span>            <span class="keywordtype">bool</span> pong_received_{<span class="keyword">false</span>};</div>
+<div class="line"><a id="l00856" name="l00856"></a><span class="lineno">  856</span>            <span class="keywordtype">bool</span> is_close_handler_called_{<span class="keyword">false</span>};</div>
+<div class="line"><a id="l00857" name="l00857"></a><span class="lineno">  857</span> </div>
+<div class="line"><a id="l00858" name="l00858"></a><span class="lineno">  858</span>            std::shared_ptr&lt;void&gt; anchor_ = std::make_shared&lt;int&gt;(); <span class="comment">// Value is just for placeholding</span></div>
+<div class="line"><a id="l00859" name="l00859"></a><span class="lineno">  859</span> </div>
+<div class="line"><a id="l00860" name="l00860"></a><span class="lineno">  860</span>            std::function&lt;void(<a class="code hl_struct" href="structcrow_1_1websocket_1_1connection.html">crow::websocket::connection</a>&amp;)&gt; open_handler_;</div>
+<div class="line"><a id="l00861" name="l00861"></a><span class="lineno">  861</span>            std::function&lt;void(<a class="code hl_struct" href="structcrow_1_1websocket_1_1connection.html">crow::websocket::connection</a>&amp;, <span class="keyword">const</span> std::string&amp;, <span class="keywordtype">bool</span>)&gt; message_handler_;</div>
+<div class="line"><a id="l00862" name="l00862"></a><span class="lineno">  862</span>            std::function&lt;void(<a class="code hl_struct" href="structcrow_1_1websocket_1_1connection.html">crow::websocket::connection</a>&amp;, <span class="keyword">const</span> std::string&amp;, uint16_t status_code)&gt; close_handler_;</div>
+<div class="line"><a id="l00863" name="l00863"></a><span class="lineno">  863</span>            std::function&lt;void(<a class="code hl_struct" href="structcrow_1_1websocket_1_1connection.html">crow::websocket::connection</a>&amp;, <span class="keyword">const</span> std::string&amp;)&gt; error_handler_;</div>
+<div class="line"><a id="l00864" name="l00864"></a><span class="lineno">  864</span>            std::function&lt;void(<span class="keyword">const</span> <a class="code hl_struct" href="structcrow_1_1request.html">crow::request</a>&amp;, std::optional&lt;crow::response&gt;&amp;, <span class="keywordtype">void</span>**)&gt; accept_handler_;</div>
+<div class="line"><a id="l00865" name="l00865"></a><span class="lineno">  865</span>        };</div>
 </div>
-<div class="line"><a id="l00865" name="l00865"></a><span class="lineno">  865</span>    } <span class="comment">// namespace websocket</span></div>
-<div class="line"><a id="l00866" name="l00866"></a><span class="lineno">  866</span>} <span class="comment">// namespace crow</span></div>
+<div class="line"><a id="l00866" name="l00866"></a><span class="lineno">  866</span>    } <span class="comment">// namespace websocket</span></div>
+<div class="line"><a id="l00867" name="l00867"></a><span class="lineno">  867</span>} <span class="comment">// namespace crow</span></div>
 <div class="ttc" id="a_tiny_s_h_a1_8hpp_html"><div class="ttname"><a href="_tiny_s_h_a1_8hpp.html">TinySHA1.hpp</a></div><div class="ttdoc">TinySHA1 - a header only implementation of the SHA1 algorithm in C++. Based on the implementation in ...</div></div>
 <div class="ttc" id="aclasscrow_1_1websocket_1_1_connection_html"><div class="ttname"><a href="classcrow_1_1websocket_1_1_connection.html">crow::websocket::Connection</a></div><div class="ttdoc">A websocket connection.</div><div class="ttdef"><b>Definition</b> websocket.h:113</div></div>
 <div class="ttc" id="aclasscrow_1_1websocket_1_1_connection_html_a0d7758d7d22d74ee9ed17c8c7df0a380"><div class="ttname"><a href="classcrow_1_1websocket_1_1_connection.html#a0d7758d7d22d74ee9ed17c8c7df0a380">crow::websocket::Connection::dispatch</a></div><div class="ttdeci">void dispatch(CompletionHandler &amp;&amp;handler)</div><div class="ttdoc">Send data through the socket.</div><div class="ttdef"><b>Definition</b> websocket.h:214</div></div>
 <div class="ttc" id="aclasscrow_1_1websocket_1_1_connection_html_a1049d7689f068379e98954bfb04bee5c"><div class="ttname"><a href="classcrow_1_1websocket_1_1_connection.html#a1049d7689f068379e98954bfb04bee5c">crow::websocket::Connection::do_read</a></div><div class="ttdeci">void do_read()</div><div class="ttdoc">Read a websocket message.</div><div class="ttdef"><b>Definition</b> websocket.h:366</div></div>
 <div class="ttc" id="aclasscrow_1_1websocket_1_1_connection_html_a22c353583685e0e878813ab67333342c"><div class="ttname"><a href="classcrow_1_1websocket_1_1_connection.html#a22c353583685e0e878813ab67333342c">crow::websocket::Connection::send_pong</a></div><div class="ttdeci">void send_pong(std::string msg) override</div><div class="ttdoc">Send a &quot;Pong&quot; message.</div><div class="ttdef"><b>Definition</b> websocket.h:243</div></div>
-<div class="ttc" id="aclasscrow_1_1websocket_1_1_connection_html_a292002f44552e5eabd8dd65f476a4c28"><div class="ttname"><a href="classcrow_1_1websocket_1_1_connection.html#a292002f44552e5eabd8dd65f476a4c28">crow::websocket::Connection::handle_fragment</a></div><div class="ttdeci">bool handle_fragment()</div><div class="ttdoc">Process the payload fragment.</div><div class="ttdef"><b>Definition</b> websocket.h:625</div></div>
+<div class="ttc" id="aclasscrow_1_1websocket_1_1_connection_html_a292002f44552e5eabd8dd65f476a4c28"><div class="ttname"><a href="classcrow_1_1websocket_1_1_connection.html#a292002f44552e5eabd8dd65f476a4c28">crow::websocket::Connection::handle_fragment</a></div><div class="ttdeci">bool handle_fragment()</div><div class="ttdoc">Process the payload fragment.</div><div class="ttdef"><b>Definition</b> websocket.h:626</div></div>
 <div class="ttc" id="aclasscrow_1_1websocket_1_1_connection_html_a2fc995281b9452b56f743294baa7ed17"><div class="ttname"><a href="classcrow_1_1websocket_1_1_connection.html#a2fc995281b9452b56f743294baa7ed17">crow::websocket::Connection::build_header</a></div><div class="ttdeci">std::string build_header(int opcode, size_t size)</div><div class="ttdoc">Generate the websocket headers using an opcode and the message size (in bytes).</div><div class="ttdef"><b>Definition</b> websocket.h:309</div></div>
 <div class="ttc" id="aclasscrow_1_1websocket_1_1_connection_html_a4fab99ae7f8e269480d5842cff1daf88"><div class="ttname"><a href="classcrow_1_1websocket_1_1_connection.html#a4fab99ae7f8e269480d5842cff1daf88">crow::websocket::Connection::close</a></div><div class="ttdeci">void close(std::string const &amp;msg, uint16_t status_code) override</div><div class="ttdoc">Send a close signal.</div><div class="ttdef"><b>Definition</b> websocket.h:264</div></div>
 <div class="ttc" id="aclasscrow_1_1websocket_1_1_connection_html_a595b84a3c7206d4923286ac863b45ffb"><div class="ttname"><a href="classcrow_1_1websocket_1_1_connection.html#a595b84a3c7206d4923286ac863b45ffb">crow::websocket::Connection::send_text</a></div><div class="ttdeci">void send_text(std::string msg) override</div><div class="ttdoc">Send a plaintext message.</div><div class="ttdef"><b>Definition</b> websocket.h:255</div></div>
 <div class="ttc" id="aclasscrow_1_1websocket_1_1_connection_html_a5e2427132ac75808a9e38c6ccaeae94a"><div class="ttname"><a href="classcrow_1_1websocket_1_1_connection.html#a5e2427132ac75808a9e38c6ccaeae94a">crow::websocket::Connection::get_subprotocol</a></div><div class="ttdeci">std::string get_subprotocol() const override</div><div class="ttdoc">Returns the matching client/server subprotocol, empty string if none matched.</div><div class="ttdef"><b>Definition</b> websocket.h:302</div></div>
-<div class="ttc" id="aclasscrow_1_1websocket_1_1_connection_html_a6d74305323202dc7ebd07cbd3ee19f98"><div class="ttname"><a href="classcrow_1_1websocket_1_1_connection.html#a6d74305323202dc7ebd07cbd3ee19f98">crow::websocket::Connection::opcode</a></div><div class="ttdeci">int opcode()</div><div class="ttdoc">Extract the opcode from the header.</div><div class="ttdef"><b>Definition</b> websocket.h:616</div></div>
-<div class="ttc" id="aclasscrow_1_1websocket_1_1_connection_html_a787dde96965bf30d994bbc5fb3388281"><div class="ttname"><a href="classcrow_1_1websocket_1_1_connection.html#a787dde96965bf30d994bbc5fb3388281">crow::websocket::Connection::do_write</a></div><div class="ttdeci">void do_write()</div><div class="ttdoc">Send the buffers' data through the socket.</div><div class="ttdef"><b>Definition</b> websocket.h:729</div></div>
+<div class="ttc" id="aclasscrow_1_1websocket_1_1_connection_html_a6d74305323202dc7ebd07cbd3ee19f98"><div class="ttname"><a href="classcrow_1_1websocket_1_1_connection.html#a6d74305323202dc7ebd07cbd3ee19f98">crow::websocket::Connection::opcode</a></div><div class="ttdeci">int opcode()</div><div class="ttdoc">Extract the opcode from the header.</div><div class="ttdef"><b>Definition</b> websocket.h:617</div></div>
+<div class="ttc" id="aclasscrow_1_1websocket_1_1_connection_html_a787dde96965bf30d994bbc5fb3388281"><div class="ttname"><a href="classcrow_1_1websocket_1_1_connection.html#a787dde96965bf30d994bbc5fb3388281">crow::websocket::Connection::do_write</a></div><div class="ttdeci">void do_write()</div><div class="ttdoc">Send the buffers' data through the socket.</div><div class="ttdef"><b>Definition</b> websocket.h:730</div></div>
 <div class="ttc" id="aclasscrow_1_1websocket_1_1_connection_html_a928134640aa98a86f56a71735a41147a"><div class="ttname"><a href="classcrow_1_1websocket_1_1_connection.html#a928134640aa98a86f56a71735a41147a">crow::websocket::Connection::start</a></div><div class="ttdeci">void start(std::string &amp;&amp;hello)</div><div class="ttdoc">Send the HTTP upgrade response.</div><div class="ttdef"><b>Definition</b> websocket.h:336</div></div>
-<div class="ttc" id="aclasscrow_1_1websocket_1_1_connection_html_a98f4af4eac4b807f970667b0147869a4"><div class="ttname"><a href="classcrow_1_1websocket_1_1_connection.html#a98f4af4eac4b807f970667b0147869a4">crow::websocket::Connection::is_FIN</a></div><div class="ttdeci">bool is_FIN()</div><div class="ttdoc">Check if the FIN bit is set.</div><div class="ttdef"><b>Definition</b> websocket.h:610</div></div>
+<div class="ttc" id="aclasscrow_1_1websocket_1_1_connection_html_a98f4af4eac4b807f970667b0147869a4"><div class="ttname"><a href="classcrow_1_1websocket_1_1_connection.html#a98f4af4eac4b807f970667b0147869a4">crow::websocket::Connection::is_FIN</a></div><div class="ttdeci">bool is_FIN()</div><div class="ttdoc">Check if the FIN bit is set.</div><div class="ttdef"><b>Definition</b> websocket.h:611</div></div>
 <div class="ttc" id="aclasscrow_1_1websocket_1_1_connection_html_ab1eed231f4c89865bbb8967a6562f2e7"><div class="ttname"><a href="classcrow_1_1websocket_1_1_connection.html#ab1eed231f4c89865bbb8967a6562f2e7">crow::websocket::Connection::get_remote_port</a></div><div class="ttdeci">uint16_t get_remote_port() override</div><div class="ttdoc">Returns the TCP port of the remote endpoint, 0 when unavailable (Unix domain socket or socket already...</div><div class="ttdef"><b>Definition</b> websocket.h:291</div></div>
 <div class="ttc" id="aclasscrow_1_1websocket_1_1_connection_html_ab5c1387014e5fdc0e9ebbb8661be04da"><div class="ttname"><a href="classcrow_1_1websocket_1_1_connection.html#ab5c1387014e5fdc0e9ebbb8661be04da">crow::websocket::Connection::send_ping</a></div><div class="ttdeci">void send_ping(std::string msg) override</div><div class="ttdoc">Send a &quot;Ping&quot; message.</div><div class="ttdef"><b>Definition</b> websocket.h:234</div></div>
 <div class="ttc" id="aclasscrow_1_1websocket_1_1_connection_html_ac8ba4036c9777f0e3af3531791d8ca62"><div class="ttname"><a href="classcrow_1_1websocket_1_1_connection.html#ac8ba4036c9777f0e3af3531791d8ca62">crow::websocket::Connection::send_binary</a></div><div class="ttdeci">void send_binary(std::string msg) override</div><div class="ttdoc">Send a binary encoded message.</div><div class="ttdef"><b>Definition</b> websocket.h:249</div></div>
-<div class="ttc" id="aclasscrow_1_1websocket_1_1_connection_html_ad13e9b7b8a2a551056b34495cb334124"><div class="ttname"><a href="classcrow_1_1websocket_1_1_connection.html#ad13e9b7b8a2a551056b34495cb334124">crow::websocket::Connection::check_destroy</a></div><div class="ttdeci">void check_destroy(websocket::CloseStatusCode code=CloseStatusCode::ClosedAbnormally)</div><div class="ttdoc">Destroy the Connection.</div><div class="ttdef"><b>Definition</b> websocket.h:768</div></div>
+<div class="ttc" id="aclasscrow_1_1websocket_1_1_connection_html_ad13e9b7b8a2a551056b34495cb334124"><div class="ttname"><a href="classcrow_1_1websocket_1_1_connection.html#ad13e9b7b8a2a551056b34495cb334124">crow::websocket::Connection::check_destroy</a></div><div class="ttdeci">void check_destroy(websocket::CloseStatusCode code=CloseStatusCode::ClosedAbnormally)</div><div class="ttdoc">Destroy the Connection.</div><div class="ttdef"><b>Definition</b> websocket.h:769</div></div>
 <div class="ttc" id="aclasscrow_1_1websocket_1_1_connection_html_add2e4c2f87bb47da40169539ea972a2a"><div class="ttname"><a href="classcrow_1_1websocket_1_1_connection.html#add2e4c2f87bb47da40169539ea972a2a">crow::websocket::Connection::create</a></div><div class="ttdeci">static void create(const crow::request &amp;req, Adaptor adaptor, Handler *handler, uint64_t max_payload, const std::vector&lt; std::string &gt; &amp;subprotocols, std::function&lt; void(crow::websocket::connection &amp;)&gt; open_handler, std::function&lt; void(crow::websocket::connection &amp;, const std::string &amp;, bool)&gt; message_handler, std::function&lt; void(crow::websocket::connection &amp;, const std::string &amp;, uint16_t)&gt; close_handler, std::function&lt; void(crow::websocket::connection &amp;, const std::string &amp;)&gt; error_handler, std::function&lt; void(const crow::request &amp;, std::optional&lt; crow::response &gt; &amp;, void **)&gt; accept_handler, bool mirror_protocols, const detail::socket::tcp_socket_options &amp;tcp_options={})</div><div class="ttdef"><b>Definition</b> websocket.h:119</div></div>
 <div class="ttc" id="aclasscrow_1_1websocket_1_1_connection_html_ae55db4104d46350f5a9e040d32600984"><div class="ttname"><a href="classcrow_1_1websocket_1_1_connection.html#ae55db4104d46350f5a9e040d32600984">crow::websocket::Connection::post</a></div><div class="ttdeci">void post(CompletionHandler &amp;&amp;handler)</div><div class="ttdoc">Send data through the socket and return immediately.</div><div class="ttdef"><b>Definition</b> websocket.h:223</div></div>
 <div class="ttc" id="aclasssha1_1_1_s_h_a1_html"><div class="ttname"><a href="classsha1_1_1_s_h_a1.html">sha1::SHA1</a></div><div class="ttdoc">A tiny SHA1 algorithm implementation used internally in the Crow server (specifically in crow/websock...</div><div class="ttdef"><b>Definition</b> TinySHA1.hpp:48</div></div>
@@ -1037,7 +1038,7 @@ $(document).ready(function(){initNavTree('websocket_8h_source.html',''); initRes
 <div class="ttc" id="astructcrow_1_1detail_1_1socket_1_1tcp__socket__options_html"><div class="ttname"><a href="structcrow_1_1detail_1_1socket_1_1tcp__socket__options.html">crow::detail::socket::tcp_socket_options</a></div><div class="ttdef"><b>Definition</b> tcp_socket_options.h:29</div></div>
 <div class="ttc" id="astructcrow_1_1request_html"><div class="ttname"><a href="structcrow_1_1request.html">crow::request</a></div><div class="ttdoc">An HTTP request.</div><div class="ttdef"><b>Definition</b> http_request.h:47</div></div>
 <div class="ttc" id="astructcrow_1_1request_html_a5148ce95969d261e50ee977c1dc7960c"><div class="ttname"><a href="structcrow_1_1request.html#a5148ce95969d261e50ee977c1dc7960c">crow::request::keep_alive</a></div><div class="ttdeci">bool keep_alive</div><div class="ttdoc">Whether or not the server should send a connection: Keep-Alive header to the client.</div><div class="ttdef"><b>Definition</b> http_request.h:57</div></div>
-<div class="ttc" id="astructcrow_1_1websocket_1_1_connection_1_1_send_message_type_html"><div class="ttname"><a href="structcrow_1_1websocket_1_1_connection_1_1_send_message_type.html">crow::websocket::Connection::SendMessageType</a></div><div class="ttdef"><b>Definition</b> websocket.h:785</div></div>
+<div class="ttc" id="astructcrow_1_1websocket_1_1_connection_1_1_send_message_type_html"><div class="ttname"><a href="structcrow_1_1websocket_1_1_connection_1_1_send_message_type.html">crow::websocket::Connection::SendMessageType</a></div><div class="ttdef"><b>Definition</b> websocket.h:786</div></div>
 <div class="ttc" id="astructcrow_1_1websocket_1_1_connection_1_1_weak_wrapped_message_html"><div class="ttname"><a href="structcrow_1_1websocket_1_1_connection_1_1_weak_wrapped_message.html">crow::websocket::Connection::WeakWrappedMessage</a></div><div class="ttdef"><b>Definition</b> websocket.h:199</div></div>
 <div class="ttc" id="astructcrow_1_1websocket_1_1connection_html"><div class="ttname"><a href="structcrow_1_1websocket_1_1connection.html">crow::websocket::connection</a></div><div class="ttdoc">A base class for websocket connection.</div><div class="ttdef"><b>Definition</b> websocket.h:68</div></div>
 </div><!-- fragment --></div><!-- contents -->
@@ -1047,7 +1048,7 @@ $(document).ready(function(){initNavTree('websocket_8h_source.html',''); initRes
 			<ul>
 				<li class="navelem"><a class="el" href="dir_d44c64559bbebec7f509842c48db8b23.html">include</a></li><li class="navelem"><a class="el" href="dir_d22c1cb87b72f01e1a7f207eb3bfd1ca.html">crow</a></li><li class="navelem"><b>websocket.h</b></li>
 				<li class="footer">
-					Generated on Sun Oct 4 2026 for Crow by <a href="http://www.doxygen.org/index.html">
+					Generated on Wed Oct 7 2026 for Crow by <a href="http://www.doxygen.org/index.html">
 					<img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.9.8.
 					Dark theme by <a href="http://majerle.eu" target="_new">Tilen Majerle</a>. Edited by <a href="https://github.com/The-EDev" target="_new">Farook Al-Sammarraie</a>. All rights reserved.
 				</li>
