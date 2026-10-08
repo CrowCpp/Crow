@@ -822,7 +822,7 @@ namespace crow
                 }
                 else
                 {
-                    if (std::toupper(l[i]) != std::toupper(r[i]))
+                    if (std::toupper(static_cast<unsigned char>(l[i])) != std::toupper(static_cast<unsigned char>(r[i])))
                         return false;
                 }
             }
