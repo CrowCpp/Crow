@@ -1,8 +1,7 @@
 var searchData=
 [
-  ['weakwrappedmessage_0',['WeakWrappedMessage',['../structcrow_1_1websocket_1_1_connection_1_1_weak_wrapped_message.html',1,'crow::websocket::Connection']]],
-  ['websocketrule_1',['WebSocketRule',['../classcrow_1_1_web_socket_rule.html',1,'crow']]],
-  ['wrapped_2',['Wrapped',['../structcrow_1_1detail_1_1routing__handler__call__helper_1_1_wrapped.html',1,'crow::detail::routing_handler_call_helper']]],
-  ['wvalue_3',['wvalue',['../classcrow_1_1json_1_1wvalue.html',1,'crow::json']]],
-  ['wvalue_5freader_4',['wvalue_reader',['../structcrow_1_1json_1_1wvalue__reader.html',1,'crow::json']]]
+  ['unixsocketacceptor_0',['UnixSocketAcceptor',['../structcrow_1_1_unix_socket_acceptor.html',1,'crow']]],
+  ['unixsocketadaptor_1',['UnixSocketAdaptor',['../structcrow_1_1_unix_socket_adaptor.html',1,'crow']]],
+  ['unordered_5fpolicy_2',['unordered_policy',['../structcrow_1_1json_1_1detail_1_1unordered__policy.html',1,'crow::json::detail']]],
+  ['utf8_3',['UTF8',['../structcrow_1_1_u_t_f8.html',1,'crow']]]
 ];

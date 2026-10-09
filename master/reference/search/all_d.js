@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['onaccept_0',['onaccept',['../classcrow_1_1_web_socket_rule.html#aa128ca9dee46f1d6246ad0c3d5f389e2',1,'crow::WebSocketRule::onaccept(std::function&lt; bool(const crow::request &amp;, void **)&gt; &amp;&amp;callback)'],['../classcrow_1_1_web_socket_rule.html#a5c9bedacdb693641ef92debbf725fe55',1,'crow::WebSocketRule::onaccept(std::function&lt; void(const crow::request &amp;, std::optional&lt; crow::response &gt; &amp;, void **)&gt; &amp;&amp;callback)']]],
+  ['onaccept_0',['onaccept',['../classcrow_1_1_web_socket_rule.html#a5c9bedacdb693641ef92debbf725fe55',1,'crow::WebSocketRule::onaccept(std::function&lt; void(const crow::request &amp;, std::optional&lt; crow::response &gt; &amp;, void **)&gt; &amp;&amp;callback)'],['../classcrow_1_1_web_socket_rule.html#aa128ca9dee46f1d6246ad0c3d5f389e2',1,'crow::WebSocketRule::onaccept(std::function&lt; bool(const crow::request &amp;, void **)&gt; &amp;&amp;callback)']]],
   ['onclose_1',['onclose',['../classcrow_1_1_web_socket_rule.html#a2ec997d0a538e1124421f1c470386cd4',1,'crow::WebSocketRule']]],
   ['onerror_2',['onerror',['../classcrow_1_1_web_socket_rule.html#a5f80c41d2566bbb0e915b4620401f34f',1,'crow::WebSocketRule']]],
   ['onmessage_3',['onmessage',['../classcrow_1_1_web_socket_rule.html#a3c173e7d4a27066bf07ee619ce08213d',1,'crow::WebSocketRule']]],
@@ -10,5 +10,7 @@ var searchData=
   ['operator_20int_7',['operator int',['../structcrow_1_1multipart_1_1header.html#adff380493f414108eb67420d06d426ee',1,'crow::multipart::header::operator int()'],['../structcrow_1_1multipart_1_1part.html#a06851f0fd2d36b71139e8488fb646b7e',1,'crow::multipart::part::operator int()'],['../structcrow_1_1multipart_1_1header__view.html#a3031c16055b06d94567802ec202c6622',1,'crow::multipart::header_view::operator int()'],['../structcrow_1_1multipart_1_1part__view.html#a2307998bbce5709e7d1d7cee49b7edc0',1,'crow::multipart::part_view::operator int()']]],
   ['operator_20std_3a_3astring_8',['operator std::string',['../classcrow_1_1json_1_1rvalue.html#a2d5dd8607112a132fe070dee432987ae',1,'crow::json::rvalue::string()'],['../classcrow_1_1json_1_1wvalue.html#aed82c8a415d61c7fc0174f0f641bccff',1,'crow::json::wvalue::string()']]],
   ['operator_3c_3c_9',['operator&lt;&lt;',['../structcrow_1_1multipart_1_1padded.html#a742979dce5bf8979686bec8833b9e1ad',1,'crow::multipart::padded']]],
-  ['origin_10',['origin',['../structcrow_1_1_c_o_r_s_rules.html#a24c7fb4f22e72d9bf11c444eeefe27fe',1,'crow::CORSRules']]]
+  ['operator_5b_5d_10',['operator[]',['../classcrow_1_1ordered__object.html#af1c4251edcecb12c22888d46dc6657a2',1,'crow::ordered_object']]],
+  ['ordered_5fobject_11',['ordered_object',['../classcrow_1_1ordered__object.html',1,'crow']]],
+  ['origin_12',['origin',['../structcrow_1_1_c_o_r_s_rules.html#a24c7fb4f22e72d9bf11c444eeefe27fe',1,'crow::CORSRules']]]
 ];

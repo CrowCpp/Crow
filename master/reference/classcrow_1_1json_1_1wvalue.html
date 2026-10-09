@@ -126,9 +126,9 @@ Inheritance diagram for crow::json::wvalue:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-types" name="pub-types"></a>
 Public Types</h2></td></tr>
-<tr class="memitem:aaa67583404db6c3f8f0d28783996887a" id="r_aaa67583404db6c3f8f0d28783996887a"><td class="memItemLeft" align="right" valign="top"><a id="aaa67583404db6c3f8f0d28783996887a" name="aaa67583404db6c3f8f0d28783996887a"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>object</b> = std::unordered_map&lt; std::string, <a class="el" href="classcrow_1_1json_1_1wvalue.html">wvalue</a> &gt;</td></tr>
-<tr class="separator:aaa67583404db6c3f8f0d28783996887a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a87743863c67778252cac476d989f1e98" id="r_a87743863c67778252cac476d989f1e98"><td class="memItemLeft" align="right" valign="top"><a id="a87743863c67778252cac476d989f1e98" name="a87743863c67778252cac476d989f1e98"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>object</b> = detail::object_policy::object_type&lt; <a class="el" href="classcrow_1_1json_1_1wvalue.html">wvalue</a> &gt;</td></tr>
+<tr class="separator:a87743863c67778252cac476d989f1e98"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4a885b86093c6fc423747a46865996b3" id="r_a4a885b86093c6fc423747a46865996b3"><td class="memItemLeft" align="right" valign="top"><a id="a4a885b86093c6fc423747a46865996b3" name="a4a885b86093c6fc423747a46865996b3"></a>
 using&#160;</td><td class="memItemRight" valign="bottom"><b>list</b> = std::vector&lt; <a class="el" href="classcrow_1_1json_1_1wvalue.html">wvalue</a> &gt;</td></tr>
 <tr class="separator:a4a885b86093c6fc423747a46865996b3"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -356,7 +356,7 @@ std::string&#160;</td><td class="memItemRight" valign="bottom"><b>content_type</
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>JSON write value. </p>
 <p>Value can mean any json value, including a JSON object.<br  />
- Write means this class is used to primarily assemble JSON objects using keys and values and export those into a string. </p>
+ Write means this class is used to primarily assemble JSON objects using keys and values and export those into a string. The object container is selected at compile time. By default, object keys use an <code>std::unordered_map</code>; <code>CROW_JSON_USE_MAP</code> selects lexicographically sorted keys, while <code>CROW_JSON_USE_INSERTION_ORDER</code> preserves the order of newly inserted keys. Updating an existing key does not change its position. These options affect the order of serialized JSON object keys and cannot be used together. </p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
 <a id="a50df07b34ba40c150abd72549c3ff85d" name="a50df07b34ba40c150abd72549c3ff85d"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a50df07b34ba40c150abd72549c3ff85d">&#9670;&#160;</a></span>dump()</h2>
@@ -395,7 +395,7 @@ std::string&#160;</td><td class="memItemRight" valign="bottom"><b>content_type</
 			<ul>
 				<li class="navelem"><a class="el" href="namespacecrow.html">crow</a></li><li class="navelem"><b>json</b></li><li class="navelem"><a class="el" href="classcrow_1_1json_1_1wvalue.html">wvalue</a></li>
 				<li class="footer">
-					Generated on Wed Oct 7 2026 for Crow by <a href="http://www.doxygen.org/index.html">
+					Generated on Fri Oct 9 2026 for Crow by <a href="http://www.doxygen.org/index.html">
 					<img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.9.8.
 					Dark theme by <a href="http://majerle.eu" target="_new">Tilen Majerle</a>. Edited by <a href="https://github.com/The-EDev" target="_new">Farook Al-Sammarraie</a>. All rights reserved.
 				</li>

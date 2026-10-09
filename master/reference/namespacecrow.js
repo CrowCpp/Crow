@@ -24,6 +24,7 @@ var namespacecrow =
     [ "ILogHandler", "classcrow_1_1_i_log_handler.html", null ],
     [ "InMemoryStore", "structcrow_1_1_in_memory_store.html", null ],
     [ "logger", "classcrow_1_1logger.html", null ],
+    [ "ordered_object", "classcrow_1_1ordered__object.html", "classcrow_1_1ordered__object" ],
     [ "query_string", "classcrow_1_1query__string.html", "classcrow_1_1query__string" ],
     [ "request", "structcrow_1_1request.html", "structcrow_1_1request" ],
     [ "response", "structcrow_1_1response.html", "structcrow_1_1response" ],

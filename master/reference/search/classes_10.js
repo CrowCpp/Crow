@@ -1,9 +1,10 @@
 var searchData=
 [
-  ['taggedrule_0',['TaggedRule',['../classcrow_1_1_tagged_rule.html',1,'crow']]],
-  ['task_5ftimer_1',['task_timer',['../classcrow_1_1detail_1_1task__timer.html',1,'crow::detail']]],
-  ['tcp_5fsocket_5foptions_2',['tcp_socket_options',['../structcrow_1_1detail_1_1socket_1_1tcp__socket__options.html',1,'crow::detail::socket']]],
-  ['tcpacceptor_3',['TCPAcceptor',['../structcrow_1_1_t_c_p_acceptor.html',1,'crow']]],
-  ['template_5ft_4',['template_t',['../classcrow_1_1mustache_1_1template__t.html',1,'crow::mustache']]],
-  ['trie_5',['Trie',['../classcrow_1_1_trie.html',1,'crow']]]
+  ['sendmessagetype_0',['SendMessageType',['../structcrow_1_1websocket_1_1_connection_1_1_send_message_type.html',1,'crow::websocket::Connection']]],
+  ['server_1',['Server',['../classcrow_1_1_server.html',1,'crow']]],
+  ['sessionmiddleware_2',['SessionMiddleware',['../structcrow_1_1_session_middleware.html',1,'crow']]],
+  ['sha1_3',['SHA1',['../classsha1_1_1_s_h_a1.html',1,'sha1']]],
+  ['socketadaptor_4',['SocketAdaptor',['../structcrow_1_1_socket_adaptor.html',1,'crow']]],
+  ['ssladaptor_5',['SSLAdaptor',['../structcrow_1_1_s_s_l_adaptor.html',1,'crow']]],
+  ['static_5ffile_5finfo_6',['static_file_info',['../structcrow_1_1response_1_1static__file__info.html',1,'crow::response']]]
 ];

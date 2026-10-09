@@ -8,6 +8,7 @@ var searchData=
   ['compile_5',['compile',['../namespacecrow_1_1mustache.html#a5823e2be647059121cc4f0329e44741a',1,'crow::mustache']]],
   ['complete_5frequest_6',['complete_request',['../classcrow_1_1_connection.html#aa40019a3731cc55174401e3b31602524',1,'crow::Connection']]],
   ['concurrency_7',['concurrency',['../classcrow_1_1_crow.html#a9e1a24f305db4b2c313b752c72067b81',1,'crow::Crow::concurrency(unsigned int concurrency)'],['../classcrow_1_1_crow.html#af57f77dfa5ddbf65befc92779fee6d5d',1,'crow::Crow::concurrency() const']]],
-  ['create_8',['create',['../classcrow_1_1websocket_1_1_connection.html#add2e4c2f87bb47da40169539ea972a2a',1,'crow::websocket::Connection']]],
-  ['crow_9',['Crow',['../classcrow_1_1_crow.html#abb69a7bf5d4a791a398c838d37086d94',1,'crow::Crow']]]
+  ['count_8',['count',['../classcrow_1_1ordered__object.html#a47cf3c9530415db1ced030e23e71486d',1,'crow::ordered_object']]],
+  ['create_9',['create',['../classcrow_1_1websocket_1_1_connection.html#add2e4c2f87bb47da40169539ea972a2a',1,'crow::websocket::Connection']]],
+  ['crow_10',['Crow',['../classcrow_1_1_crow.html#abb69a7bf5d4a791a398c838d37086d94',1,'crow::Crow']]]
 ];

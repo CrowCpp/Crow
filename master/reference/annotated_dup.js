@@ -36,7 +36,10 @@ var annotated_dup =
       ] ],
       [ "json", null, [
         [ "detail", null, [
-          [ "r_string", "structcrow_1_1json_1_1detail_1_1r__string.html", "structcrow_1_1json_1_1detail_1_1r__string" ]
+          [ "insertion_order_policy", "structcrow_1_1json_1_1detail_1_1insertion__order__policy.html", null ],
+          [ "map_policy", "structcrow_1_1json_1_1detail_1_1map__policy.html", null ],
+          [ "r_string", "structcrow_1_1json_1_1detail_1_1r__string.html", "structcrow_1_1json_1_1detail_1_1r__string" ],
+          [ "unordered_policy", "structcrow_1_1json_1_1detail_1_1unordered__policy.html", null ]
         ] ],
         [ "rvalue", "classcrow_1_1json_1_1rvalue.html", "classcrow_1_1json_1_1rvalue" ],
         [ "wvalue", "classcrow_1_1json_1_1wvalue.html", "classcrow_1_1json_1_1wvalue" ],
@@ -87,6 +90,7 @@ var annotated_dup =
       [ "ILogHandler", "classcrow_1_1_i_log_handler.html", null ],
       [ "InMemoryStore", "structcrow_1_1_in_memory_store.html", null ],
       [ "logger", "classcrow_1_1logger.html", null ],
+      [ "ordered_object", "classcrow_1_1ordered__object.html", "classcrow_1_1ordered__object" ],
       [ "query_string", "classcrow_1_1query__string.html", "classcrow_1_1query__string" ],
       [ "request", "structcrow_1_1request.html", "structcrow_1_1request" ],
       [ "response", "structcrow_1_1response.html", "structcrow_1_1response" ],
