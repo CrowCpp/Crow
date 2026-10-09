@@ -632,6 +632,22 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                         fragment_[i] ^= ((char*)&mask_)[i % 4];
                     }
                 }
+                if ((mini_header_ & 0x7000) != 0)
+                {
+                    if (error_handler_)
+                        error_handler_(*this, "RSV bits set without a negotiated extension.");
+                    close("", CloseStatusCode::ProtocolError);
+                    check_destroy(CloseStatusCode::ProtocolError);
+                    return false;
+                }
+                if ((opcode() & 0x8) != 0 && (!is_FIN() || fragment_.size() > 125))
+                {
+                    if (error_handler_)
+                        error_handler_(*this, "Fragmented or oversized control frame.");
+                    close("", CloseStatusCode::ProtocolError);
+                    check_destroy(CloseStatusCode::ProtocolError);
+                    return false;
+                }
                 switch (opcode())
                 {
                     case 0: // Continuation
@@ -717,6 +733,14 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                         pong_received_ = true;
                     }
                     break;
+                    default:
+                    {
+                        if (error_handler_)
+                            error_handler_(*this, "Reserved opcode.");
+                        close("", CloseStatusCode::ProtocolError);
+                        check_destroy(CloseStatusCode::ProtocolError);
+                        return false;
+                    }
                 }
 
                 fragment_.clear();
