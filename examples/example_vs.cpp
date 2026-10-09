@@ -3,7 +3,7 @@
 class ExampleLogHandler : public crow::ILogHandler
 {
 public:
-    void log(const std::string & message, crow::LogLevel level) override
+    void log(const std::string& /*message*/, crow::LogLevel /*level*/) override
     {
         //            cerr << "ExampleLogHandler -> " << message;
     }
@@ -26,12 +26,12 @@ struct ExampleMiddleware
     struct context
     {};
 
-    void before_handle(crow::request& req, crow::response& res, context& ctx)
+    void before_handle(crow::request& /*req*/, crow::response&/* res*/, context& /*ctx*/)
     {
         CROW_LOG_DEBUG << " - MESSAGE: " << message;
     }
 
-    void after_handle(crow::request& req, crow::response& res, context& ctx)
+    void after_handle(crow::request& /*req*/, crow::response& /*res*/, context& /*ctx*/)
     {
         // no-op
     }

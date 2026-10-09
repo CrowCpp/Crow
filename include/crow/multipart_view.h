@@ -180,7 +180,7 @@ namespace crow
             }
 
         private:
-            std::string_view get_boundary(const std::string_view header) const
+            static std::string_view get_boundary(const std::string_view header)
             {
                 constexpr std::string_view boundary_text = "boundary=";
                 const size_t found = header.find(boundary_text);
@@ -231,11 +231,13 @@ namespace crow
                 }
             }
 
-            part_view parse_section(std::string_view section)
+            [[nodiscard]] static part_view parse_section(std::string_view section)
             {
-                constexpr static std::string_view crlf2 = "\r\n\r\n";
-
-                const size_t found = section.find(crlf2);
+                const size_t found = section.find(crlfcrlf);
+                if (found==std::string_view::npos)
+                {
+                    throw bad_request("Section Header end missing in multipart message");
+                }
                 const std::string_view head_line = section.substr(0, found + 2);
                 section = section.substr(found + 4);
 
@@ -245,7 +247,7 @@ namespace crow
                 };
             }
 
-            mph_view_map parse_section_head(std::string_view lines)
+            static mph_view_map parse_section_head(std::string_view lines)
             {
                 mph_view_map result;
 
@@ -295,7 +297,7 @@ namespace crow
                 return result;
             }
 
-            inline std::string_view trim(const std::string_view string, const char excess = '"') const
+            [[nodiscard]] static std::string_view trim(const std::string_view string, const char excess = '"')
             {
                 if (string.length() > 1 && string[0] == excess && string[string.length() - 1] == excess)
                     return string.substr(1, string.length() - 2);
