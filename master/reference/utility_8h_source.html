@@ -926,7 +926,7 @@ $(document).ready(function(){initNavTree('utility_8h_source.html',''); initResiz
 <div class="line"><a id="l00822" name="l00822"></a><span class="lineno">  822</span>                }</div>
 <div class="line"><a id="l00823" name="l00823"></a><span class="lineno">  823</span>                <span class="keywordflow">else</span></div>
 <div class="line"><a id="l00824" name="l00824"></a><span class="lineno">  824</span>                {</div>
-<div class="line"><a id="l00825" name="l00825"></a><span class="lineno">  825</span>                    <span class="keywordflow">if</span> (std::toupper(l[i]) != std::toupper(r[i]))</div>
+<div class="line"><a id="l00825" name="l00825"></a><span class="lineno">  825</span>                    <span class="keywordflow">if</span> (std::toupper(<span class="keyword">static_cast&lt;</span><span class="keywordtype">unsigned</span> <span class="keywordtype">char</span><span class="keyword">&gt;</span>(l[i])) != std::toupper(<span class="keyword">static_cast&lt;</span><span class="keywordtype">unsigned</span> <span class="keywordtype">char</span><span class="keyword">&gt;</span>(r[i])))</div>
 <div class="line"><a id="l00826" name="l00826"></a><span class="lineno">  826</span>                        <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
 <div class="line"><a id="l00827" name="l00827"></a><span class="lineno">  827</span>                }</div>
 <div class="line"><a id="l00828" name="l00828"></a><span class="lineno">  828</span>            }</div>
