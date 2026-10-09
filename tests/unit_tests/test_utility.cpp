@@ -101,6 +101,13 @@ TEST_CASE("string_equals")
     CHECK(utility::string_equals("", "", true) == true);
     CHECK(utility::string_equals("abc", "abc", true) == true);
     CHECK(utility::string_equals("ABC", "abc", true) == false);
+
+    // bytes with the high bit set must be handled as unsigned char by the
+    // case-insensitive path (passing a negative char to std::toupper is UB)
+    const std::string high_bytes = "\x80\xA5\xC3\xFF";
+    CHECK(utility::string_equals(high_bytes, high_bytes) == true);
+    CHECK(utility::string_equals(high_bytes, "\x80\xA5\xC3\xFE") == false);
+    CHECK(utility::string_equals("\xC3 websocket", "\xC3 WEBSOCKET") == true);
 }
 
 TEST_CASE("lexical_cast")
