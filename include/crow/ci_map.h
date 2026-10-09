@@ -14,19 +14,12 @@ namespace crow
         size_t operator()(const std::string_view key) const
         {
             std::size_t seed = 0;
-            std::locale locale;
 
-            for (auto c : key)
-                hash_combine(seed, std::toupper(c, locale));
-
+            for (auto c : key) {
+                std::hash<char> hasher;
+                seed ^= hasher(std::toupper(c)) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
+            }
             return seed;
-        }
-
-    private:
-        static inline void hash_combine(std::size_t& seed, char v)
-        {
-            std::hash<char> hasher;
-            seed ^= hasher(v) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
         }
     };
 
@@ -35,7 +28,12 @@ namespace crow
     {
         bool operator()(const std::string_view l, const std::string_view r) const
         {
-            return utility::string_equals(l, r);
+            return (l.length() == r.length())
+#ifdef _MSC_VER
+                   && (::_strnicmp(l.data(), r.data(), l.length())==0);
+#else
+                   && (::strncasecmp(l.data(), r.data(), l.length())==0);
+#endif
         }
     };
 
