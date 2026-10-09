@@ -2,19 +2,18 @@
 
 //#define CROW_JSON_NO_ERROR_CHECK
 //#define CROW_JSON_USE_MAP
+//#define CROW_JSON_USE_INSERTION_ORDER
 
 #include <string>
-#ifdef CROW_JSON_USE_MAP
 #include <map>
-#else
 #include <unordered_map>
-#endif
 #include <iostream>
 #include <algorithm>
 #include <memory>
 #include <vector>
 #include <cmath>
 #include <cfloat>
+#include <utility>
 
 #include "crow/utility.h"
 #include "crow/settings.h"
@@ -281,6 +280,37 @@ namespace crow // NOTE: Already documented in "crow/app.h"
             {
                 return !(l == r);
             }
+
+            struct unordered_policy
+            {
+                template<typename Value>
+                using object_type =
+                  std::unordered_map<std::string, Value>;
+            };
+
+            struct map_policy
+            {
+                template<typename Value>
+                using object_type =
+                  std::map<std::string, Value>;
+            };
+
+            struct insertion_order_policy
+            {
+                template<typename Value>
+                using object_type = utility::ordered_object<std::string, Value>;
+            };
+
+#if defined(CROW_JSON_USE_INSERTION_ORDER) && defined(CROW_JSON_USE_MAP)
+#error "Only one JSON object ordering policy may be selected"
+#elif defined(CROW_JSON_USE_INSERTION_ORDER)
+            using object_policy = insertion_order_policy;
+#elif defined(CROW_JSON_USE_MAP)
+            using object_policy = map_policy;
+#else
+            using object_policy = unordered_policy;
+#endif
+
         } // namespace detail
 
         /// JSON read value.
@@ -1303,23 +1333,24 @@ namespace crow // NOTE: Already documented in "crow/app.h"
 
         struct wvalue_reader;
 
-        /// JSON write value.
-
-        ///
-        /// Value can mean any json value, including a JSON object.<br>
-        /// Write means this class is used to primarily assemble JSON objects using keys and values and export those into a string.
+        /**
+         * @brief JSON write value.
+         *
+         * Value can mean any json value, including a JSON object.<br>
+         * Write means this class is used to primarily assemble JSON objects using keys and values and export those into a string.
+         * The object container is selected at compile time. By default, object keys use an
+         * `std::unordered_map`; `CROW_JSON_USE_MAP` selects lexicographically sorted keys,
+         * while `CROW_JSON_USE_INSERTION_ORDER` preserves the order of newly inserted keys.
+         * Updating an existing key does not change its position. These options affect the
+         * order of serialized JSON object keys and cannot be used together.
+         */
         class wvalue : public returnable
         {
             friend class crow::mustache::template_t;
             friend struct wvalue_reader;
 
         public:
-            using object =
-#ifdef CROW_JSON_USE_MAP
-              std::map<std::string, wvalue>;
-#else
-              std::unordered_map<std::string, wvalue>;
-#endif
+            using object = detail::object_policy::object_type<wvalue>;
 
             using list = std::vector<wvalue>;
 
