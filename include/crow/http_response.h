@@ -412,7 +412,7 @@ namespace crow
             auto& status = statusCodes.find(code)->second;
             buffers.emplace_back(status.data(), status.size());
 
-            if (code >= 400 && body.empty())
+            if (code >= 400 && body.empty() && !skip_body)
                 body = statusCodes[code].substr(9);
 
             for (auto& kv : headers)
