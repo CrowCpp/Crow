@@ -555,7 +555,37 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                                       (from_hex(head[2]) << 8) +
                                       (from_hex(head[3]) << 4) +
                                       from_hex(head[4]);
-                                    if (code >= 0x800)
+                                    head += 4;
+                                    if (code >= 0xD800 && code <= 0xDFFF)
+                                    {
+                                        // UTF-16 surrogate: a high half followed by an escaped low half
+                                        // encodes one code point; an unpaired half is not a valid code
+                                        // point, so it is replaced with U+FFFD to keep the output valid UTF-8.
+                                        unsigned int low = 0;
+                                        if (code <= 0xDBFF && head[1] == '\\' && head[2] == 'u')
+                                        {
+                                            low = (from_hex(head[3]) << 12) +
+                                                  (from_hex(head[4]) << 8) +
+                                                  (from_hex(head[5]) << 4) +
+                                                  from_hex(head[6]);
+                                        }
+                                        if (low >= 0xDC00 && low <= 0xDFFF)
+                                        {
+                                            code = 0x10000 + ((code - 0xD800) << 10) + (low - 0xDC00);
+                                            *tail++ = 0xF0 | (code >> 18);
+                                            *tail++ = 0x80 | ((code >> 12) & 0x3F);
+                                            *tail++ = 0x80 | ((code >> 6) & 0x3F);
+                                            *tail++ = 0x80 | (code & 0x3F);
+                                            head += 6;
+                                        }
+                                        else
+                                        {
+                                            *tail++ = 0xEF;
+                                            *tail++ = 0xBF;
+                                            *tail++ = 0xBD;
+                                        }
+                                    }
+                                    else if (code >= 0x800)
                                     {
                                         *tail++ = 0xE0 | (code >> 12);
                                         *tail++ = 0x80 | ((code >> 6) & 0x3F);
@@ -570,7 +600,6 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                                     {
                                         *tail++ = code;
                                     }
-                                    head += 4;
                                 }
                                 break;
                             }
