@@ -1,9 +1,13 @@
 #pragma once
 
+#include <algorithm>
+#include <cstdint>
+#include <memory>
 #include <string>
 #include <unordered_map>
-#include <algorithm>
 
+#include "crow/body_sink.h"
+#include "crow/common.h"
 #include "crow/http_request.h"
 #include "crow/http_parser_merged.h"
 
@@ -82,13 +86,40 @@ namespace crow
 
             self->set_connection_parameters();
 
-            self->process_header();
-            return 0;
+            return self->process_header();
         }
         static int on_body(http_parser* self_, const char* at, size_t length)
         {
             HTTPParser* self = static_cast<HTTPParser*>(self_);
-            self->req.body.insert(self->req.body.end(), at, at + length);
+            if (self->max_body_size_ != UINT64_MAX &&
+                (length > self->max_body_size_ ||
+                 self->body_bytes_ > self->max_body_size_ - length))
+            {
+                self->handler_->reject_body(status::PAYLOAD_TOO_LARGE);
+                return 1;
+            }
+            if (self->req.body_sink)
+            {
+                bool ok = false;
+                try
+                {
+                    ok = self->req.body_sink->write(at, length);
+                }
+                catch (...)
+                {
+                    ok = false;
+                }
+                if (!ok)
+                {
+                    self->handler_->reject_body(status::INTERNAL_SERVER_ERROR);
+                    return 1;
+                }
+            }
+            else
+            {
+                self->req.body.insert(self->req.body.end(), at, at + length);
+            }
+            self->body_bytes_ += length;
             return 0;
         }
         static int on_message_complete(http_parser* self_)
@@ -96,8 +127,26 @@ namespace crow
             HTTPParser* self = static_cast<HTTPParser*>(self_);
 
             self->message_complete = true;
+            if (self->req.body_sink)
+            {
+                bool ok = false;
+                try
+                {
+                    ok = self->req.body_sink->finish();
+                }
+                catch (...)
+                {
+                    ok = false;
+                }
+                if (!ok)
+                {
+                    self->handler_->reject_body(status::INTERNAL_SERVER_ERROR);
+                    return 1;
+                }
+            }
             self->process_message();
-            return 0;
+            // Stop so leftover skipped-body bytes are not parsed as the next request.
+            return self->handler_->parser_should_abort() ? 1 : 0;
         }
         HTTPParser(Handler* handler):
           http_parser(),
@@ -145,7 +194,28 @@ namespace crow
             header_building_state = 0;
             qs_point = 0;
             message_complete = false;
+            body_bytes_ = 0;
+            max_body_size_ = UINT64_MAX;
             state = CROW_NEW_MESSAGE();
+        }
+
+        void set_max_body_size(uint64_t bytes)
+        {
+            max_body_size_ = bytes;
+        }
+
+        /// `sink` may be null: the factory declining means "keep the body in
+        /// `req.body`", not an error. A factory that wants a 500 should throw.
+        void open_body_sink(std::unique_ptr<BodySink> sink)
+        {
+            req.body_sink = std::move(sink);
+        }
+
+        bool has_incoming_body() const
+        {
+            if (flags & F_CHUNKED)
+                return true;
+            return content_length != CROW_ULLONG_MAX && content_length > 0;
         }
 
         inline void process_url()
@@ -153,9 +223,9 @@ namespace crow
             handler_->handle_url();
         }
 
-        inline void process_header()
+        inline int process_header()
         {
-            handler_->handle_header();
+            return handler_->handle_header();
         }
 
         inline void process_message()
@@ -190,6 +260,8 @@ namespace crow
     private:
         int header_building_state = 0;
         bool message_complete = false;
+        uint64_t body_bytes_{0};
+        uint64_t max_body_size_{UINT64_MAX};
         std::string header_field;
         std::string header_value;
 
