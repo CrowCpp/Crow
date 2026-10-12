@@ -712,6 +712,49 @@ TEST_CASE("json r_string move ownership transfer #1199", "[json]")
     }
 }
 
+TEST_CASE("json_unescape_surrogate_pairs", "[json]")
+{
+    // A surrogate pair decodes to a single code point (RFC 8259 section 7).
+    {
+        auto x = json::load("\"\\uD83D\\uDE00\"");
+        REQUIRE(x);
+        CHECK(x.s() == std::string("\xF0\x9F\x98\x80"));
+    }
+    // Consecutive pairs mixed with plain characters.
+    {
+        auto x = json::load("\"a\\uD834\\uDD1Eb\\uD83D\\uDE00\"");
+        REQUIRE(x);
+        CHECK(x.s() == std::string("a\xF0\x9D\x84\x9E"
+                                   "b\xF0\x9F\x98\x80"));
+    }
+    // An unpaired low half becomes U+FFFD instead of invalid UTF-8.
+    {
+        auto x = json::load("\"\\uDC00\"");
+        REQUIRE(x);
+        CHECK(x.s() == std::string("\xEF\xBF\xBD"));
+    }
+    // A high half not followed by an escape becomes U+FFFD.
+    {
+        auto x = json::load("\"\\uD83Dx\"");
+        REQUIRE(x);
+        CHECK(x.s() == std::string("\xEF\xBF\xBD"
+                                   "x"));
+    }
+    // A high half followed by an escaped non-surrogate keeps the second escape.
+    {
+        auto x = json::load("\"\\uD83D\\u0041\"");
+        REQUIRE(x);
+        CHECK(x.s() == std::string("\xEF\xBF\xBD"
+                                   "A"));
+    }
+    // Escapes outside the surrogate range are unaffected.
+    {
+        auto x = json::load("\"\\u00E9\\u20AC\"");
+        REQUIRE(x);
+        CHECK(x.s() == std::string("\xC3\xA9\xE2\x82\xAC"));
+    }
+}
+
 TEST_CASE("Assorted floating points", "[json]")
 {
     crow::json::wvalue data;
