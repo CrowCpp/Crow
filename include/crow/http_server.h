@@ -105,8 +105,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
 
             acceptor_.raw_acceptor().bind(endpoint, ec);
             if (ec) {
-                CROW_LOG_ERROR << "Failed to bind to " << acceptor_.address()
-                            << ":" << acceptor_.port() << " - " << ec.message();
+                CROW_LOG_ERROR << "Failed to bind to " << endpoint << " - " << ec.message();
                 startup_failed_ = true;
                 return;
             }
