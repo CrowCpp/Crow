@@ -254,7 +254,10 @@ namespace crow
                 completed_ = true;
                 if (skip_body)
                 {
-                    set_header("Content-Length", std::to_string(body.size()));
+                    // static responses already carry the file size in Content-Length,
+                    // which is what the equivalent GET response would send (RFC 9110 9.3.2)
+                    if (!is_static_type())
+                        set_header("Content-Length", std::to_string(body.size()));
                     body = "";
                     manual_length_header = true;
                 }
@@ -412,7 +415,7 @@ namespace crow
             auto& status = statusCodes.find(code)->second;
             buffers.emplace_back(status.data(), status.size());
 
-            if (code >= 400 && body.empty())
+            if (code >= 400 && body.empty() && !skip_body)
                 body = statusCodes[code].substr(9);
 
             for (auto& kv : headers)

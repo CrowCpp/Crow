@@ -2079,6 +2079,75 @@ TEST_CASE("send_file")
     }
 } // send_file
 
+TEST_CASE("head_response_has_no_body")
+{
+    struct stat statbuf_cat;
+    stat("tests/img/cat.jpg", &statbuf_cat);
+
+    SimpleApp app;
+
+    CROW_STATIC_FILE(app, "/jpg", "tests/img/cat.jpg");
+
+    CROW_ROUTE(app, "/error404")
+    ([](const request&, response& res) {
+        res.code = 404;
+        res.end();
+    });
+
+    auto _ = app.bindaddr(LOCALHOST_ADDRESS).port(45451).run_async();
+    app.wait_for_server_start();
+
+    asio::io_context is;
+
+    auto make_request = [&](const std::string& rq) {
+        asio::ip::tcp::socket c(is);
+        c.connect(asio::ip::tcp::endpoint(
+          asio::ip::make_address(LOCALHOST_ADDRESS), 45451));
+        c.send(asio::buffer(rq));
+        std::string fullString{};
+        asio_error_code error;
+        char buffer[1024];
+        while (true)
+        {
+            size_t len = c.read_some(asio::buffer(buffer), error);
+
+            if (error == asio::error::eof)
+            {
+                break;
+            }
+            else if (error)
+            {
+                throw system_error(error);
+            }
+
+            fullString.append(buffer, len);
+        }
+        c.close();
+        return fullString;
+    };
+
+    // a HEAD response for a static file must send the file's Content-Length
+    // without the file content following the header block
+    {
+        auto res = make_request("HEAD /jpg HTTP/1.1\r\nHost: localhost\r\nConnection: close\r\n\r\n");
+        const size_t header_end = res.find("\r\n\r\n");
+        REQUIRE(header_end != std::string::npos);
+        CHECK(res.find("Content-Length: " + to_string(statbuf_cat.st_size)) != std::string::npos);
+        CHECK(res.substr(header_end + 4).empty());
+    }
+
+    // a HEAD error response must not carry the default error body
+    {
+        auto res = make_request("HEAD /error404 HTTP/1.1\r\nHost: localhost\r\nConnection: close\r\n\r\n");
+        const size_t header_end = res.find("\r\n\r\n");
+        REQUIRE(header_end != std::string::npos);
+        CHECK(res.find("HTTP/1.1 404 Not Found") == 0);
+        CHECK(res.substr(header_end + 4).empty());
+    }
+
+    app.stop();
+} // head_response_has_no_body
+
 TEST_CASE("stream_response")
 {
     SimpleApp app;
