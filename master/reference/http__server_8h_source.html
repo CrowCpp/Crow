@@ -250,15 +250,15 @@ $(document).ready(function(){initNavTree('http__server_8h_source.html',''); init
 <div class="line"><a id="l00145" name="l00145"></a><span class="lineno">  145</span>                <span class="keywordflow">return</span>;</div>
 <div class="line"><a id="l00146" name="l00146"></a><span class="lineno">  146</span>            }</div>
 <div class="line"><a id="l00147" name="l00147"></a><span class="lineno">  147</span> </div>
-<div class="line"><a id="l00148" name="l00148"></a><span class="lineno">  148</span>            uint16_t worker_thread_count = concurrency_ - 1;</div>
-<div class="line"><a id="l00149" name="l00149"></a><span class="lineno">  149</span>            <span class="keywordflow">for</span> (<span class="keywordtype">int</span> i = 0; i &lt; worker_thread_count; i++)</div>
+<div class="line"><a id="l00148" name="l00148"></a><span class="lineno">  148</span>            <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> worker_thread_count = concurrency_ - 1;</div>
+<div class="line"><a id="l00149" name="l00149"></a><span class="lineno">  149</span>            <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i = 0; i &lt; worker_thread_count; i++)</div>
 <div class="line"><a id="l00150" name="l00150"></a><span class="lineno">  150</span>                io_context_pool_.emplace_back(<span class="keyword">new</span> asio::io_context());</div>
 <div class="line"><a id="l00151" name="l00151"></a><span class="lineno">  151</span>            get_cached_date_str_pool_.resize(worker_thread_count);</div>
 <div class="line"><a id="l00152" name="l00152"></a><span class="lineno">  152</span>            task_timer_pool_.resize(worker_thread_count);</div>
 <div class="line"><a id="l00153" name="l00153"></a><span class="lineno">  153</span> </div>
 <div class="line"><a id="l00154" name="l00154"></a><span class="lineno">  154</span>            std::vector&lt;std::future&lt;void&gt;&gt; v;</div>
-<div class="line"><a id="l00155" name="l00155"></a><span class="lineno">  155</span>            std::atomic&lt;int&gt; init_count(0);</div>
-<div class="line"><a id="l00156" name="l00156"></a><span class="lineno">  156</span>            <span class="keywordflow">for</span> (uint16_t i = 0; i &lt; worker_thread_count; i++)</div>
+<div class="line"><a id="l00155" name="l00155"></a><span class="lineno">  155</span>            std::atomic&lt;unsigned int&gt; init_count(0);</div>
+<div class="line"><a id="l00156" name="l00156"></a><span class="lineno">  156</span>            <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i = 0; i &lt; worker_thread_count; i++)</div>
 <div class="line"><a id="l00157" name="l00157"></a><span class="lineno">  157</span>                v.push_back(</div>
 <div class="line"><a id="l00158" name="l00158"></a><span class="lineno">  158</span>                  std::async(</div>
 <div class="line"><a id="l00159" name="l00159"></a><span class="lineno">  159</span>                    std::launch::async, [<span class="keyword">this</span>, i, &amp;init_count] {</div>
