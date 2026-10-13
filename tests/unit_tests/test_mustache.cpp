@@ -149,7 +149,7 @@ TEST_CASE("template_load", "[mustache]")
     ctx["name"] = "killer tomatoes";
     auto result = t.render_string(ctx);
     CHECK("attack of killer tomatoes" == result);
-    unlink("test.mustache");
+    std::remove("test.mustache");
 } // template_load
 
 TEST_CASE("template_custom_loader", "[mustache]")
