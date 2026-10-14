@@ -640,14 +640,6 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                     check_destroy(CloseStatusCode::ProtocolError);
                     return false;
                 }
-                if ((opcode() & 0x8) != 0 && (!is_FIN() || fragment_.size() > 125))
-                {
-                    if (error_handler_)
-                        error_handler_(*this, "Fragmented or oversized control frame.");
-                    close("", CloseStatusCode::ProtocolError);
-                    check_destroy(CloseStatusCode::ProtocolError);
-                    return false;
-                }
                 switch (opcode())
                 {
                     case 0: // Continuation
@@ -688,9 +680,18 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                     case 0x8: // Close
                     {
                         has_recv_close_ = true;
-
-
                         uint16_t status_code = NoStatusCodePresent;
+                        
+                        if (!is_FIN() || fragment_.size() > 125)
+                        {
+                            if (error_handler_) {
+                                error_handler_(*this, "Fragmented or oversized control frame.");
+                            }
+                            close("", CloseStatusCode::ProtocolError);
+                            check_destroy(CloseStatusCode::ProtocolError);
+                            return false;
+                        }
+
                         std::string::size_type message_start = 2;
                         if (fragment_.size() >= 2)
                         {
