@@ -2,19 +2,18 @@
 
 //#define CROW_JSON_NO_ERROR_CHECK
 //#define CROW_JSON_USE_MAP
+//#define CROW_JSON_USE_INSERTION_ORDER
 
 #include <string>
-#ifdef CROW_JSON_USE_MAP
 #include <map>
-#else
 #include <unordered_map>
-#endif
 #include <iostream>
 #include <algorithm>
 #include <memory>
 #include <vector>
 #include <cmath>
 #include <cfloat>
+#include <utility>
 
 #include "crow/utility.h"
 #include "crow/settings.h"
@@ -194,7 +193,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                 }
 
             private:
-                void force(char* s, uint32_t length)
+                void force(char* s, size_t length)
                 {
                     s_ = s;
                     e_ = s_ + length;
@@ -281,6 +280,37 @@ namespace crow // NOTE: Already documented in "crow/app.h"
             {
                 return !(l == r);
             }
+
+            struct unordered_policy
+            {
+                template<typename Value>
+                using object_type =
+                  std::unordered_map<std::string, Value>;
+            };
+
+            struct map_policy
+            {
+                template<typename Value>
+                using object_type =
+                  std::map<std::string, Value>;
+            };
+
+            struct insertion_order_policy
+            {
+                template<typename Value>
+                using object_type = utility::ordered_object<std::string, Value>;
+            };
+
+#if defined(CROW_JSON_USE_INSERTION_ORDER) && defined(CROW_JSON_USE_MAP)
+#error "Only one JSON object ordering policy may be selected"
+#elif defined(CROW_JSON_USE_INSERTION_ORDER)
+            using object_policy = insertion_order_policy;
+#elif defined(CROW_JSON_USE_MAP)
+            using object_policy = map_policy;
+#else
+            using object_policy = unordered_policy;
+#endif
+
         } // namespace detail
 
         /// JSON read value.
@@ -423,8 +453,9 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                         const std::string msg = "expected number, got: " + std::string(get_type_str(t()));
                         throw std::runtime_error(msg);
                 }
-#endif
+#else
                 return utility::lexical_cast<int64_t>(start_, end_ - start_);
+#endif
             }
 
             /// The unsigned integer value.
@@ -525,7 +556,37 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                                       (from_hex(head[2]) << 8) +
                                       (from_hex(head[3]) << 4) +
                                       from_hex(head[4]);
-                                    if (code >= 0x800)
+                                    head += 4;
+                                    if (code >= 0xD800 && code <= 0xDFFF)
+                                    {
+                                        // UTF-16 surrogate: a high half followed by an escaped low half
+                                        // encodes one code point; an unpaired half is not a valid code
+                                        // point, so it is replaced with U+FFFD to keep the output valid UTF-8.
+                                        unsigned int low = 0;
+                                        if (code <= 0xDBFF && head[1] == '\\' && head[2] == 'u')
+                                        {
+                                            low = (from_hex(head[3]) << 12) +
+                                                  (from_hex(head[4]) << 8) +
+                                                  (from_hex(head[5]) << 4) +
+                                                  from_hex(head[6]);
+                                        }
+                                        if (low >= 0xDC00 && low <= 0xDFFF)
+                                        {
+                                            code = 0x10000 + ((code - 0xD800) << 10) + (low - 0xDC00);
+                                            *tail++ = 0xF0 | (code >> 18);
+                                            *tail++ = 0x80 | ((code >> 12) & 0x3F);
+                                            *tail++ = 0x80 | ((code >> 6) & 0x3F);
+                                            *tail++ = 0x80 | (code & 0x3F);
+                                            head += 6;
+                                        }
+                                        else
+                                        {
+                                            *tail++ = 0xEF;
+                                            *tail++ = 0xBF;
+                                            *tail++ = 0xBD;
+                                        }
+                                    }
+                                    else if (code >= 0x800)
                                     {
                                         *tail++ = 0xE0 | (code >> 12);
                                         *tail++ = 0x80 | ((code >> 6) & 0x3F);
@@ -540,7 +601,6 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                                     {
                                         *tail++ = code;
                                     }
-                                    head += 4;
                                 }
                                 break;
                             }
@@ -1303,23 +1363,24 @@ namespace crow // NOTE: Already documented in "crow/app.h"
 
         struct wvalue_reader;
 
-        /// JSON write value.
-
-        ///
-        /// Value can mean any json value, including a JSON object.<br>
-        /// Write means this class is used to primarily assemble JSON objects using keys and values and export those into a string.
+        /**
+         * @brief JSON write value.
+         *
+         * Value can mean any json value, including a JSON object.<br>
+         * Write means this class is used to primarily assemble JSON objects using keys and values and export those into a string.
+         * The object container is selected at compile time. By default, object keys use an
+         * `std::unordered_map`; `CROW_JSON_USE_MAP` selects lexicographically sorted keys,
+         * while `CROW_JSON_USE_INSERTION_ORDER` preserves the order of newly inserted keys.
+         * Updating an existing key does not change its position. These options affect the
+         * order of serialized JSON object keys and cannot be used together.
+         */
         class wvalue : public returnable
         {
             friend class crow::mustache::template_t;
             friend struct wvalue_reader;
 
         public:
-            using object =
-#ifdef CROW_JSON_USE_MAP
-              std::map<std::string, wvalue>;
-#else
-              std::unordered_map<std::string, wvalue>;
-#endif
+            using object = detail::object_policy::object_type<wvalue>;
 
             using list = std::vector<wvalue>;
 
@@ -1781,7 +1842,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
 #endif
             }
 
-            int count(const std::string& str) const
+            size_t count(const std::string& str) const
             {
                 if (t_ != type::Object)
                     return 0;

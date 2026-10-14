@@ -32,6 +32,7 @@ set(TEST_SRCS
   test_ws_fragment_limit_e2e.cpp
   test_ws_payload_overflow_e2e.cpp
   test_ws_rfc6455_frame_validation_e2e.cpp
+  test_ws_minheader_split_e2e.cpp
 )
 
 add_executable(unittest ${TEST_SRCS})

@@ -310,7 +310,8 @@ namespace crow
         {
             asio::write(adaptor_.socket(), buffers_);
 
-            if (res.file_info.statResult == 0)
+            // responses to HEAD requests carry no message body (RFC 9112 6.3)
+            if (res.file_info.statResult == 0 && !res.skip_body)
             {
                 std::ifstream is(res.file_info.path.c_str(), std::ios::in | std::ios::binary);
                 std::vector<asio::const_buffer> buffers{1};

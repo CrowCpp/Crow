@@ -115,7 +115,7 @@ TEST_CASE("Rule")
         r.validate();
         FAIL_CHECK("empty handler should fail to validate");
     }
-    catch (runtime_error& e)
+    catch (runtime_error& /*e*/)
     {
     }
 
@@ -656,6 +656,71 @@ TEST_CASE("server_invalid_ip_address")
     // we should run into a timeout as the server will not started
     CHECK(state==cv_status::timeout);
 } // server_invalid_ip_address
+
+TEST_CASE("server_port_in_use")
+{
+    // Collects the log lines that the server thread writes.
+    class LogCapture : public crow::ILogHandler
+    {
+    public:
+        void log(const std::string& message, crow::LogLevel /*level*/) override
+        {
+            std::lock_guard<std::mutex> lock(mutex_);
+            lines_.push_back(message);
+        }
+
+        std::vector<std::string> lines()
+        {
+            std::lock_guard<std::mutex> lock(mutex_);
+            return lines_;
+        }
+
+    private:
+        std::mutex mutex_;
+        std::vector<std::string> lines_;
+    };
+
+    // Hold a loopback port without SO_REUSEADDR, which would let Windows bind Crow to it too.
+    asio::io_context ic;
+    asio::ip::tcp::acceptor holder(ic);
+    holder.open(asio::ip::tcp::v4());
+    holder.bind(asio::ip::tcp::endpoint(asio::ip::make_address(LOCALHOST_ADDRESS), 0));
+    holder.listen();
+    const uint16_t port = holder.local_endpoint().port();
+
+    // Other tests change the global log level, and the error lines must reach the capture.
+    const crow::LogLevel saved_level = crow::logger::get_current_log_level();
+    crow::logger::setLogLevel(crow::LogLevel::Error);
+    LogCapture capture;
+    crow::logger::setHandler(&capture);
+
+    SimpleApp app;
+    CROW_ROUTE(app, "/")
+    ([] {
+        return "A";
+    });
+    auto server = app.bindaddr(LOCALHOST_ADDRESS).port(port).run_async();
+    // A bind that unexpectedly succeeds would make run() block forever.
+    if (server.wait_for(chrono::seconds(10)) != future_status::ready)
+        app.stop();
+    CHECK_NOTHROW(server.get());
+
+    // The logger has no getter for its handler, so the default output is restored with one that outlives the test.
+    static crow::CerrLogHandler cerr_handler;
+    crow::logger::setHandler(&cerr_handler);
+    crow::logger::setLogLevel(saved_level);
+
+    CHECK_FALSE(app.is_bound());
+    const std::string expected = "Failed to bind to " LOCALHOST_ADDRESS ":" + std::to_string(port) + " - ";
+    const auto lines = capture.lines();
+    const auto line = std::find_if(lines.begin(), lines.end(), [](const std::string& l) {
+        return l.rfind("Failed to bind to ", 0) == 0;
+    });
+    REQUIRE(line != lines.end());
+    CHECK_THAT(*line, Catch::Matchers::StartsWith(expected));
+    // The bind error follows the endpoint.
+    CHECK(line->size() > expected.size());
+} // server_port_in_use
 
 
 TEST_CASE("server_dynamic_port_allocation")
@@ -2079,6 +2144,75 @@ TEST_CASE("send_file")
     }
 } // send_file
 
+TEST_CASE("head_response_has_no_body")
+{
+    struct stat statbuf_cat;
+    stat("tests/img/cat.jpg", &statbuf_cat);
+
+    SimpleApp app;
+
+    CROW_STATIC_FILE(app, "/jpg", "tests/img/cat.jpg");
+
+    CROW_ROUTE(app, "/error404")
+    ([](const request&, response& res) {
+        res.code = 404;
+        res.end();
+    });
+
+    auto _ = app.bindaddr(LOCALHOST_ADDRESS).port(45451).run_async();
+    app.wait_for_server_start();
+
+    asio::io_context is;
+
+    auto make_request = [&](const std::string& rq) {
+        asio::ip::tcp::socket c(is);
+        c.connect(asio::ip::tcp::endpoint(
+          asio::ip::make_address(LOCALHOST_ADDRESS), 45451));
+        c.send(asio::buffer(rq));
+        std::string fullString{};
+        asio_error_code error;
+        char buffer[1024];
+        while (true)
+        {
+            size_t len = c.read_some(asio::buffer(buffer), error);
+
+            if (error == asio::error::eof)
+            {
+                break;
+            }
+            else if (error)
+            {
+                throw system_error(error);
+            }
+
+            fullString.append(buffer, len);
+        }
+        c.close();
+        return fullString;
+    };
+
+    // a HEAD response for a static file must send the file's Content-Length
+    // without the file content following the header block
+    {
+        auto res = make_request("HEAD /jpg HTTP/1.1\r\nHost: localhost\r\nConnection: close\r\n\r\n");
+        const size_t header_end = res.find("\r\n\r\n");
+        REQUIRE(header_end != std::string::npos);
+        CHECK(res.find("Content-Length: " + to_string(statbuf_cat.st_size)) != std::string::npos);
+        CHECK(res.substr(header_end + 4).empty());
+    }
+
+    // a HEAD error response must not carry the default error body
+    {
+        auto res = make_request("HEAD /error404 HTTP/1.1\r\nHost: localhost\r\nConnection: close\r\n\r\n");
+        const size_t header_end = res.find("\r\n\r\n");
+        REQUIRE(header_end != std::string::npos);
+        CHECK(res.find("HTTP/1.1 404 Not Found") == 0);
+        CHECK(res.substr(header_end + 4).empty());
+    }
+
+    app.stop();
+} // head_response_has_no_body
+
 TEST_CASE("stream_response")
 {
     SimpleApp app;
@@ -2109,7 +2243,7 @@ TEST_CASE("stream_response")
         std::string sendmsg;
 
         //Total bytes received
-        unsigned int received = 0;
+        size_t received = 0;
         sendmsg = "GET /test HTTP/1.0\r\n\r\n";
         {
             asio::streambuf b;
@@ -2937,7 +3071,7 @@ TEST_CASE("unix_socket")
     });
 
     constexpr const char* socket_path = "unittest.sock";
-    unlink(socket_path);
+    std::remove(socket_path);
     auto _ = app.local_socket_path(socket_path).run_async();
     app.wait_for_server_start();
 
