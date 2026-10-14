@@ -380,9 +380,8 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                     case WebSocketReadState::MiniHeader:
                     {
                         mini_header_ = 0;
-                        //asio::async_read(adaptor_.socket(), asio::buffer(&mini_header_, 1),
-                        adaptor_.socket().async_read_some(
-                          asio::buffer(&mini_header_, 2),
+                        asio::async_read(
+                          adaptor_.socket(), asio::buffer(&mini_header_, 2),
                           [shared_this = this->shared_from_this()](const error_code& ec, std::size_t
 #ifdef CROW_ENABLE_DEBUG
                                                                bytes_transferred
