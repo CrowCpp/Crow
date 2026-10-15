@@ -488,7 +488,7 @@ $(document).ready(function(){initNavTree('http__server_8h_source.html',''); init
 <div class="line"><a id="l00381" name="l00381"></a><span class="lineno">  381</span>        std::vector&lt;detail::task_timer*&gt; task_timer_pool_;</div>
 <div class="line"><a id="l00382" name="l00382"></a><span class="lineno">  382</span>        std::vector&lt;std::function&lt;std::string()&gt;&gt; get_cached_date_str_pool_;</div>
 <div class="line"><a id="l00383" name="l00383"></a><span class="lineno">  383</span>        Acceptor acceptor_;</div>
-<div class="line"><a id="l00384" name="l00384"></a><span class="lineno">  384</span>        <span class="keywordtype">bool</span> shutting_down_ = <span class="keyword">false</span>;</div>
+<div class="line"><a id="l00384" name="l00384"></a><span class="lineno">  384</span>        std::atomic&lt;bool&gt; shutting_down_{<span class="keyword">false</span>};</div>
 <div class="line"><a id="l00385" name="l00385"></a><span class="lineno">  385</span>        <span class="keywordtype">bool</span> server_started_{<span class="keyword">false</span>};</div>
 <div class="line"><a id="l00386" name="l00386"></a><span class="lineno">  386</span>        <span class="keywordtype">bool</span> startup_failed_ = <span class="keyword">false</span>;</div>
 <div class="line"><a id="l00387" name="l00387"></a><span class="lineno">  387</span>        std::condition_variable cv_started_;</div>
