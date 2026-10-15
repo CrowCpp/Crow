@@ -381,7 +381,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         std::vector<detail::task_timer*> task_timer_pool_;
         std::vector<std::function<std::string()>> get_cached_date_str_pool_;
         Acceptor acceptor_;
-        bool shutting_down_ = false;
+        std::atomic<bool> shutting_down_{false};
         bool server_started_{false};
         bool startup_failed_ = false;
         std::condition_variable cv_started_;
