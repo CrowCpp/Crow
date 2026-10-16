@@ -3609,6 +3609,34 @@ TEST_CASE("crow_filestore_boundary_e2e")
     app.stop();
 }
 
+TEST_CASE("crow_filestore_rejects_expired_session")
+{
+    const fs::path store = fs::current_path() / "filestore_expired_session";
+    fs::remove_all(store);
+    fs::create_directories(store);
+
+    crow::FileStore file_store{store.string(), 0};
+    for (const char* id : {"expired_a", "expired_b", "expired_c", "expired_d"})
+    {
+        crow::session::CachedSession cn;
+        cn.session_id = id;
+        cn.requested_refresh = true;
+        cn.dirty.insert("role");
+        cn.entries["role"].set(std::string("admin"));
+        file_store.save(cn);
+    }
+
+    std::this_thread::sleep_for(std::chrono::milliseconds(1100));
+
+    // each load only evicts a few expired sessions, the rest must still be rejected
+    for (const char* id : {"expired_a", "expired_b", "expired_c", "expired_d"})
+    {
+        CHECK_FALSE(file_store.contains(id));
+    }
+
+    fs::remove_all(store);
+}
+
 TEST_CASE("Trailing-slash redirects")
 {
     // this test is linked to https://github.com/CrowCpp/Crow/security/advisories/GHSA-x6vq-298x-6qgq
