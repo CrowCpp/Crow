@@ -1828,6 +1828,12 @@ reexecute:
           parser->state = s_chunk_size_almost_done;
           break;
         }
+        /* A bare LF or other control character in a chunk extension would let
+         * a peer that ends the chunk line at LF frame the body differently. */
+        if (CROW_UNLIKELY(ch == lf || !CROW_IS_HEADER_CHAR(ch))) {
+          CROW_SET_ERRNO(CHPE_INVALID_CHUNK_SIZE);
+          goto error;
+        }
         break;
       }
 
