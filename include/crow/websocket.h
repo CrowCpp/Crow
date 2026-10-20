@@ -290,7 +290,8 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                             {
                                 auto header = shared_this->build_header(0x8, msg.size() + 2);
                                 char status_buf[2];
-                                *(uint16_t*)(status_buf) = htons(status_code);
+                                uint16_t network_status_code = htons(status_code);
+                                std::memcpy(status_buf, &network_status_code, sizeof(network_status_code));
                                 
                                 shared_this->write_buffers_.emplace_back(std::move(header));
                                 shared_this->write_buffers_.emplace_back(std::string(status_buf, 2));
