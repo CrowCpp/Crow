@@ -80,7 +80,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
             void* userdata() { return userdata_; }
 
         private:
-            void* userdata_;
+            void* userdata_{nullptr};
         };
 
         // Modified version of the illustration in RFC6455 Section-5.2
@@ -137,6 +137,9 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                 // Apply TCP socket options to WebSocket connection
                 detail::socket::apply_tcp_socket_options(conn->adaptor_.socket(), tcp_options);
                 
+                // Kept for get_remote_ip(), which must still answer once the socket is closed (e.g. in onclose)
+                conn->remote_ip_ = req.remote_ip_address;
+
                 // Perform handshake validation
                 if (!utility::string_equals(req.get_header_value("upgrade"), "websocket"))
                 {
@@ -282,9 +285,10 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                 });
             }
 
+            /// Returns the IP address the connection was opened from, also once the socket is closed (empty for a Unix domain socket).
             std::string get_remote_ip() override
             {
-                return adaptor_.address();
+                return remote_ip_;
             }
 
             /// Returns the TCP port of the remote endpoint, 0 when unavailable (Unix domain socket or socket already closed).
@@ -351,8 +355,8 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                 }
                 write_buffers_.emplace_back(crlf);
                 do_write();
-                if (open_handler_)
-                    open_handler_(*this);
+                if (open_handler_ && !call_handler([this] { open_handler_(*this); }))
+                    return;
                 do_read();
             }
 
@@ -414,6 +418,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                                       if (shared_this->error_handler_)
                                           shared_this->error_handler_(*shared_this, "Client connection not masked.");
                                       shared_this->check_destroy(CloseStatusCode::UnacceptableData);
+                                      return;
 #endif
                                   }
 
@@ -647,41 +652,40 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                     check_destroy(CloseStatusCode::ProtocolError);
                     return false;
                 }
+                // A continuation frame needs a text or binary message to continue, and a new message can't start before that one ends
+                if ((opcode() == 0 && !is_message_in_progress_) || ((opcode() == 1 || opcode() == 2) && is_message_in_progress_))
+                {
+                    if (error_handler_)
+                        error_handler_(*this, "Fragmented message out of sequence.");
+                    close("", CloseStatusCode::ProtocolError);
+                    check_destroy(CloseStatusCode::ProtocolError);
+                    return false;
+                }
                 switch (opcode())
                 {
                     case 0: // Continuation
                     {
                         message_ += fragment_;
-                        if (is_FIN())
-                        {
-                            if (message_handler_)
-                                message_handler_(*this, message_, is_binary_);
-                            message_.clear();
-                        }
+                        if (is_FIN() && !finish_message())
+                            return false;
                     }
                     break;
                     case 1: // Text
                     {
                         is_binary_ = false;
+                        is_message_in_progress_ = true;
                         message_ += fragment_;
-                        if (is_FIN())
-                        {
-                            if (message_handler_)
-                                message_handler_(*this, message_, is_binary_);
-                            message_.clear();
-                        }
+                        if (is_FIN() && !finish_message())
+                            return false;
                     }
                     break;
                     case 2: // Binary
                     {
                         is_binary_ = true;
+                        is_message_in_progress_ = true;
                         message_ += fragment_;
-                        if (is_FIN())
-                        {
-                            if (message_handler_)
-                                message_handler_(*this, message_, is_binary_);
-                            message_.clear();
-                        }
+                        if (is_FIN() && !finish_message())
+                            return false;
                     }
                     break;
                     case 0x8: // Close
@@ -744,6 +748,49 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                 return true;
             }
 
+            /// Pass the complete message to the message handler and get ready for the next one.
+
+            ///
+            /// Returns false if the handler threw, in which case the connection is being closed.
+            bool finish_message()
+            {
+                is_message_in_progress_ = false;
+                bool handled = !message_handler_ || call_handler([this] { message_handler_(*this, message_, is_binary_); });
+                message_.clear();
+                return handled;
+            }
+
+            /// Call a user handler.
+
+            ///
+            /// An exception escaping the handler is reported to the error handler and the connection is closed with UnexpectedCondition.<br>
+            /// Returns false in that case, nothing more should be read from the connection.
+            template<typename Callable>
+            bool call_handler(Callable&& handler)
+            {
+                std::string error;
+                try
+                {
+                    handler();
+                    return true;
+                }
+                catch (const std::exception& e)
+                {
+                    error = e.what();
+                }
+                catch (...)
+                {
+                    error = "Unknown exception.";
+                }
+                CROW_LOG_ERROR << "An uncaught exception occurred in a websocket handler: " << error;
+                if (error_handler_)
+                    error_handler_(*this, error);
+                if (!has_sent_close_)
+                    close("", CloseStatusCode::UnexpectedCondition);
+                check_destroy(CloseStatusCode::UnexpectedCondition);
+                return false;
+            }
+
             /// Send the buffers' data through the socket.
 
             ///
@@ -791,8 +838,10 @@ namespace crow // NOTE: Already documented in "crow/app.h"
             {
                 // Note that if the close handler was not yet called at this point we did not receive a close packet (or send one)
                 // and thus we use ClosedAbnormally unless instructed otherwise
+                // A read and a write that fail together both end up here: run the close handler only once
                 if (!is_close_handler_called_)
                 {
+                    is_close_handler_called_ = true;
                     if (close_handler_)
                     {
                         close_handler_(*this, "uncleanly", code);
@@ -857,7 +906,8 @@ namespace crow // NOTE: Already documented in "crow/app.h"
             std::vector<std::string> write_buffers_;
 
             std::array<char, 4096> buffer_;
-            bool is_binary_;
+            bool is_binary_{false};
+            bool is_message_in_progress_{false};
             std::string message_;
             std::string fragment_;
             WebSocketReadState state_{WebSocketReadState::MiniHeader};
@@ -865,6 +915,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
             uint64_t remaining_length_{0};
             uint64_t max_payload_bytes_{UINT64_MAX};
             std::string subprotocol_;
+            std::string remote_ip_;
             bool close_connection_{false};
             bool is_reading{false};
             bool has_mask_{false};
