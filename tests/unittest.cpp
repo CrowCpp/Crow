@@ -3426,9 +3426,7 @@ TEST_CASE("TCP_NODELAY_tcp_socket_logs_no_warning")
 TEST_CASE("TCP_NODELAY_unix_socket_warns_only_when_requested")
 {
     asio::io_context io_context;
-    asio::local::stream_protocol::socket first(io_context);
-    asio::local::stream_protocol::socket second(io_context);
-    asio::local::connect_pair(first, second);
+    asio::local::stream_protocol::socket socket(io_context);
 
     const crow::LogLevel saved_level = crow::logger::get_current_log_level();
     crow::logger::setLogLevel(crow::LogLevel::Warning);
@@ -3437,10 +3435,10 @@ TEST_CASE("TCP_NODELAY_unix_socket_warns_only_when_requested")
 
     crow::detail::socket::tcp_socket_options options;
     options.no_delay = false;
-    crow::detail::socket::apply_tcp_socket_options(first, options);
+    crow::detail::socket::apply_tcp_socket_options(socket, options);
     const auto lines_not_requested = capture.lines();
     options.no_delay = true;
-    crow::detail::socket::apply_tcp_socket_options(first, options);
+    crow::detail::socket::apply_tcp_socket_options(socket, options);
     const auto lines_requested = capture.lines();
 
     static crow::CerrLogHandler cerr_handler;
@@ -3530,7 +3528,7 @@ TEST_CASE("TCP_NODELAY_ssl_stream_apply")
 
 TEST_CASE("TCP_NODELAY_ssl_server_logs_no_warning")
 {
-    std::system("openssl req -newkey rsa:2048 -x509 -sha256 -days 1 -nodes -out nodelay.crt -keyout nodelay.key -subj '/CN=127.0.0.1'");
+    std::system("openssl req -newkey rsa:2048 -x509 -sha256 -days 1 -nodes -out nodelay.crt -keyout nodelay.key -subj \"/CN=127.0.0.1\"");
 
     bool enabled = GENERATE(true, false);
     CAPTURE(enabled);
@@ -3607,7 +3605,8 @@ TEST_CASE("TCP_NODELAY_ssl_server_logs_no_warning")
 
     CHECK(count_lines_containing(capture.lines(), "TCP_NODELAY") == 0);
 
-    std::system("rm nodelay.crt nodelay.key");
+    fs::remove("nodelay.crt");
+    fs::remove("nodelay.key");
 }
 #endif
 
