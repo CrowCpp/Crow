@@ -3659,6 +3659,89 @@ TEST_CASE("Global middleware rejection ignored during WebSocket upgrade")
     app.stop();
 }
 
+// Regression test: the global middlewares' before_handle ran for an upgrade request, but their
+// after_handle did not, so a middleware releasing per-request state there (the SessionMiddleware
+// unpinning the session from its cache) never did. When the route did not accept the upgrade,
+// the router's answer (404 here) was not sent either.
+TEST_CASE("upgrade_request_runs_after_handle_of_global_middlewares")
+{
+    static std::atomic<int> before_count{0};
+    static std::atomic<int> after_count{0};
+    before_count = 0;
+    after_count = 0;
+
+    struct CountingMiddleware
+    {
+        struct context
+        {};
+
+        void before_handle(crow::request&, crow::response&, context&)
+        {
+            before_count++;
+        }
+
+        void after_handle(crow::request&, crow::response&, context&)
+        {
+            after_count++;
+        }
+    };
+
+    crow::App<CountingMiddleware> app;
+
+    CROW_ROUTE(app, "/")
+    ([] {
+        return "root";
+    });
+
+    CROW_WEBSOCKET_ROUTE(app, "/ws")
+      .onopen([](crow::websocket::connection&) {});
+
+    auto _ = app.bindaddr(LOCALHOST_ADDRESS).port(45451).run_async();
+    app.wait_for_server_start();
+
+    const std::string upgrade_headers =
+      "Host: localhost\r\n"
+      "Upgrade: websocket\r\n"
+      "Connection: Upgrade\r\n"
+      "Sec-WebSocket-Key: dGhlIHNhbXBsZSBub25jZQ==\r\n"
+      "Sec-WebSocket-Version: 13\r\n"
+      "\r\n";
+
+    {
+        // "/" is no websocket route: the router answers the upgrade with a 404
+        std::string resp;
+        try
+        {
+            resp = HttpClient::request(LOCALHOST_ADDRESS, 45451, "GET / HTTP/1.1\r\n" + upgrade_headers);
+        }
+        catch (const std::exception&)
+        {
+            // the connection was closed without a response
+        }
+        CHECK(resp.find("HTTP/1.1 404 Not Found") == 0);
+        CHECK(resp.find("Keep-Alive") == std::string::npos);
+        CHECK(before_count == 1);
+        CHECK(after_count == 1);
+    }
+
+    {
+        HttpClient c(LOCALHOST_ADDRESS, 45451);
+        c.send("GET /ws HTTP/1.1\r\n" + upgrade_headers);
+        CHECK(c.receive().find("HTTP/1.1 101 Switching Protocols") == 0);
+
+        // the pong is read after the upgrade request was handled
+        const char ping[] = "\x89\x80\x00\x00\x00\x00";
+        c.send(ping, 6);
+        auto pong = c.receive();
+        REQUIRE(pong.size() >= 2);
+        CHECK((int)(unsigned char)pong[0] == 0x8A);
+        CHECK(before_count == 2);
+        CHECK(after_count == 2);
+    }
+
+    app.stop();
+} // upgrade_request_runs_after_handle_of_global_middlewares
+
 TEST_CASE("stack overflow due to deeply nested json input")
 {
     // this is linked to security advisory https://github.com/CrowCpp/Crow/security/advisories/GHSA-7x84-xhp8-6cqj

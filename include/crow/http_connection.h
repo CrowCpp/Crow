@@ -193,6 +193,7 @@ namespace crow
                         detail::middleware_call_helper<detail::middleware_call_criteria_only_global,
                                                        0, decltype(ctx_), decltype(*middlewares_)>({}, *middlewares_, req_, res, ctx_);
                         close_connection_ = true;
+                        add_keep_alive_ = false;
                         if (res.is_completed())
                         {
                             CROW_LOG_INFO << "Request completed before websocket upgrade: " << utility::lexical_cast<std::string>(adaptor_.remote_endpoint()) << " " << this << " HTTP/" << (char)(req_.http_ver_major + '0') << "." << (char)(req_.http_ver_minor + '0') << ' ' << method_name(req_.method) << " " << req_.url;
@@ -201,7 +202,20 @@ namespace crow
                         }
                         else
                         {
+                            // the global before_handle ran for this request, so its after_handle runs too
+                            need_to_call_after_handlers_ = true;
                             handler_->handle_upgrade(req_, res, std::move(adaptor_));
+                            if (res.is_completed() && adaptor_.is_open())
+                            {
+                                // the router answered the request itself (404, 405, redirect, exception): send it
+                                complete_request();
+                            }
+                            else
+                            {
+                                // the connection now belongs to the websocket (even if it threw after taking
+                                // it), no response is sent from here
+                                call_after_handlers();
+                            }
                         }
                         return;
                     }
@@ -248,17 +262,7 @@ namespace crow
             CROW_LOG_INFO << "Response: " << this << ' ' << req_.raw_url << ' ' << res.code << ' ' << close_connection_;
             res.is_alive_helper_ = nullptr;
 
-            if (need_to_call_after_handlers_)
-            {
-                need_to_call_after_handlers_ = false;
-
-                // call all after_handler of middlewares
-                detail::after_handlers_call_helper<
-                  detail::middleware_call_criteria_only_global,
-                  (static_cast<int>(sizeof...(Middlewares)) - 1),
-                  decltype(ctx_),
-                  decltype(*middlewares_)>({}, *middlewares_, ctx_, req_, res);
-            }
+            call_after_handlers();
 #ifdef CROW_ENABLE_COMPRESSION
             if (!res.body.empty() && handler_->compression_used())
             {
@@ -301,6 +305,22 @@ namespace crow
         }
 
     private:
+        /// Call the after handle of the global middlewares, once per request.
+        void call_after_handlers()
+        {
+            if (need_to_call_after_handlers_)
+            {
+                need_to_call_after_handlers_ = false;
+
+                // call all after_handler of middlewares
+                detail::after_handlers_call_helper<
+                  detail::middleware_call_criteria_only_global,
+                  (static_cast<int>(sizeof...(Middlewares)) - 1),
+                  decltype(ctx_),
+                  decltype(*middlewares_)>({}, *middlewares_, ctx_, req_, res);
+            }
+        }
+
         void prepare_buffers()
         {
             res.complete_request_handler_ = nullptr;
