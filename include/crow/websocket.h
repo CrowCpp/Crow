@@ -1,5 +1,6 @@
 #pragma once
 #include <array>
+#include <cstring>
 #include <memory>
 #include <optional>
 #include <string>
@@ -276,7 +277,8 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                     }
                     auto header = shared_this->build_header(0x8, msg.size() + 2);
                     char status_buf[2];
-                    *(uint16_t*)(status_buf) = htons(status_code);
+                    uint16_t network_status_code = htons(status_code);
+                    std::memcpy(status_buf, &network_status_code, sizeof(network_status_code));
 
                     shared_this->write_buffers_.emplace_back(std::move(header));
                     shared_this->write_buffers_.emplace_back(std::string(status_buf, 2));
@@ -322,13 +324,16 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                 else if (size < 0x10000)
                 {
                     buf[1] += 126;
-                    *(uint16_t*)(buf + 2) = htons(static_cast<uint16_t>(size));
+                    uint16_t length = htons(static_cast<uint16_t>(size));
+                    std::memcpy(buf + 2, &length, sizeof(length));
                     return {buf, buf + 4};
                 }
                 else
                 {
                     buf[1] += 127;
-                    *reinterpret_cast<uint64_t*>(buf + 2) = ((1 == htonl(1)) ? static_cast<uint64_t>(size) : (static_cast<uint64_t>(htonl((size)&0xFFFFFFFF)) << 32) | htonl(static_cast<uint64_t>(size) >> 32));
+                    // buf + 2 is not aligned for a uint64_t: copy the length instead of storing it through a cast pointer
+                    uint64_t length = ((1 == htonl(1)) ? static_cast<uint64_t>(size) : (static_cast<uint64_t>(htonl((size)&0xFFFFFFFF)) << 32) | htonl(static_cast<uint64_t>(size) >> 32));
+                    std::memcpy(buf + 2, &length, sizeof(length));
                     return {buf, buf + 10};
                 }
             }
