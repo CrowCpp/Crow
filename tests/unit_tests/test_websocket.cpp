@@ -17,6 +17,26 @@ using asio_error_code = asio::error_code;
 
 #define LOCALHOST_ADDRESS "127.0.0.1"
 
+// Read from the socket until the server closes the connection, giving up after a second.
+static std::string read_until_closed(asio::ip::tcp::socket& c, bool& closed)
+{
+    std::string received;
+    char buf[2048];
+    closed = false;
+    c.non_blocking(true);
+    for (int i = 0; i < 100 && !closed; ++i)
+    {
+        asio_error_code ec;
+        received.append(buf, c.receive(asio::buffer(buf, 2048), 0, ec));
+        if (ec == asio::error::would_block)
+            std::this_thread::sleep_for(std::chrono::milliseconds(10));
+        else if (ec)
+            closed = true;
+    }
+    c.non_blocking(false);
+    return received;
+}
+
 TEST_CASE("websocket", "[websocket]")
 {
     static std::string http_message = 
@@ -933,3 +953,300 @@ TEST_CASE("websocket_close_handler_called_once", "[websocket]")
 
     app.stop();
 } // websocket_close_handler_called_once
+
+TEST_CASE("websocket_handler_exception", "[websocket]")
+{
+    static std::string http_message =
+      "GET /ws HTTP/1.1\r\n"
+      "Connection: keep-alive, Upgrade\r\n"
+      "upgrade: websocket\r\n"
+      "Sec-WebSocket-Key: dGhlIHNhbXBsZSBub25jZQ==\r\n"
+      "Sec-WebSocket-Version: 13\r\n"
+      "Host: localhost\r\n"
+      "\r\n";
+
+    std::atomic<bool> throw_in_open{true};
+    std::atomic<int> close_calls{0};
+    std::atomic<uint16_t> last_status_code{0};
+    std::string error_message;
+
+    SimpleApp app;
+
+    CROW_WEBSOCKET_ROUTE(app, "/ws")
+      .onopen([&](websocket::connection&) {
+          if (throw_in_open)
+              throw std::runtime_error("open failed");
+      })
+      .onmessage([&](websocket::connection&, const std::string& message, bool) {
+          throw std::runtime_error("bad message: " + message);
+      })
+      .onerror([&](websocket::connection&, const std::string& message) {
+          error_message = message;
+      })
+      .onclose([&](websocket::connection&, const std::string&, uint16_t status_code) {
+          last_status_code = status_code;
+          ++close_calls;
+      });
+
+    app.validate();
+
+    auto _ = app.bindaddr(LOCALHOST_ADDRESS).port(0).run_async();
+    app.wait_for_server_start();
+    asio::io_context ic;
+
+    // Close frame with status code 1011 (unexpected condition)
+    const std::string close_message("\x88\x02\x03\xF3", 4);
+    char buf[2048];
+    bool closed = false;
+
+    //----------Exception in onopen----------
+    {
+        asio::ip::tcp::socket c(ic);
+        c.connect(asio::ip::tcp::endpoint(
+          asio::ip::make_address(LOCALHOST_ADDRESS), app.port()));
+        c.send(asio::buffer(http_message));
+
+        // The handshake response is followed by a close frame, then the server drops the connection
+        std::string received = read_until_closed(c, closed);
+        CHECK(received.find("HTTP/1.1 101") == 0);
+        CHECK(received.find(close_message) != std::string::npos);
+        CHECK(closed);
+        CHECK(close_calls == 1);
+        CHECK(last_status_code == websocket::UnexpectedCondition);
+        CHECK(error_message == "open failed");
+    }
+
+    throw_in_open = false;
+
+    //----------Exception in onmessage----------
+    {
+        asio::ip::tcp::socket c(ic);
+        c.connect(asio::ip::tcp::endpoint(
+          asio::ip::make_address(LOCALHOST_ADDRESS), app.port()));
+        c.send(asio::buffer(http_message));
+        c.receive(asio::buffer(buf, 2048));
+
+        char text_message[2 + 5 + 1]("\x81\x05"
+                                     "Hello");
+        c.send(asio::buffer(text_message, 7));
+
+        std::string received = read_until_closed(c, closed);
+        CHECK(received == close_message);
+        CHECK(closed);
+        CHECK(close_calls == 2);
+        CHECK(last_status_code == websocket::UnexpectedCondition);
+        CHECK(error_message == "bad message: Hello");
+    }
+
+    app.stop();
+}
+
+TEST_CASE("websocket_remote_ip_after_unclean_close", "[websocket]")
+{
+    static std::string http_message =
+      "GET /ws HTTP/1.1\r\n"
+      "Connection: keep-alive, Upgrade\r\n"
+      "upgrade: websocket\r\n"
+      "Sec-WebSocket-Key: dGhlIHNhbXBsZSBub25jZQ==\r\n"
+      "Sec-WebSocket-Version: 13\r\n"
+      "Host: localhost\r\n"
+      "\r\n";
+
+    std::atomic<int> close_calls{0};
+    std::atomic<bool> remote_ip_threw{false};
+    std::string remote_ip{"unset"};
+
+    SimpleApp app;
+
+    CROW_WEBSOCKET_ROUTE(app, "/ws")
+      .onmessage([&](websocket::connection&, const std::string&, bool) {})
+      .onclose([&](websocket::connection& conn, const std::string&, uint16_t) {
+          try
+          {
+              remote_ip = conn.get_remote_ip();
+          }
+          catch (...)
+          {
+              remote_ip_threw = true;
+          }
+          ++close_calls;
+      });
+
+    app.validate();
+
+    auto _ = app.bindaddr(LOCALHOST_ADDRESS).port(0).run_async();
+    app.wait_for_server_start();
+    asio::io_context ic;
+
+    asio::ip::tcp::socket c(ic);
+    c.connect(asio::ip::tcp::endpoint(
+      asio::ip::make_address(LOCALHOST_ADDRESS), app.port()));
+
+    char buf[2048];
+
+    //----------Handshake----------
+    {
+        c.send(asio::buffer(http_message));
+        c.receive(asio::buffer(buf, 2048));
+    }
+
+    // The client goes away without a close frame: the server closes its socket before calling onclose
+    c.close();
+
+    for (int i = 0; i < 100 && close_calls == 0; ++i)
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    CHECK(close_calls == 1);
+    CHECK_FALSE(remote_ip_threw);
+    CHECK(remote_ip == LOCALHOST_ADDRESS);
+
+    app.stop();
+}
+
+TEST_CASE("websocket_fragmented_message_out_of_sequence", "[websocket]")
+{
+    static std::string http_message =
+      "GET /ws HTTP/1.1\r\n"
+      "Connection: keep-alive, Upgrade\r\n"
+      "upgrade: websocket\r\n"
+      "Sec-WebSocket-Key: dGhlIHNhbXBsZSBub25jZQ==\r\n"
+      "Sec-WebSocket-Version: 13\r\n"
+      "Host: localhost\r\n"
+      "\r\n";
+
+    std::atomic<int> message_calls{0};
+    std::atomic<int> close_calls{0};
+    std::atomic<uint16_t> last_status_code{0};
+
+    SimpleApp app;
+
+    CROW_WEBSOCKET_ROUTE(app, "/ws")
+      .onmessage([&](websocket::connection& conn, const std::string& message, bool) {
+          ++message_calls;
+          conn.send_text(message);
+      })
+      .onclose([&](websocket::connection&, const std::string&, uint16_t status_code) {
+          last_status_code = status_code;
+          ++close_calls;
+      });
+
+    app.validate();
+
+    auto _ = app.bindaddr(LOCALHOST_ADDRESS).port(0).run_async();
+    app.wait_for_server_start();
+    asio::io_context ic;
+
+    // Close frame with status code 1002 (protocol error)
+    const std::string close_message("\x88\x02\x03\xEA", 4);
+    char buf[2048];
+    bool closed = false;
+
+    //----------Continuation without a message----------
+    {
+        asio::ip::tcp::socket c(ic);
+        c.connect(asio::ip::tcp::endpoint(
+          asio::ip::make_address(LOCALHOST_ADDRESS), app.port()));
+        c.send(asio::buffer(http_message));
+        c.receive(asio::buffer(buf, 2048));
+
+        // A fragmented message is put back together
+        std::fill_n(buf, 2048, 0);
+        char first_fragment[2 + 3 + 1]("\x01\x03"
+                                       "Hel");
+        char last_fragment[2 + 2 + 1]("\x80\x02"
+                                      "lo");
+        c.send(asio::buffer(first_fragment, 5));
+        c.send(asio::buffer(last_fragment, 4));
+        c.receive(asio::buffer(buf, 2048));
+        std::string checkstring(std::string(buf).substr(0, 7));
+        CHECK(checkstring == "\x81\x05Hello");
+
+        // Once it is complete, there is nothing left to continue
+        char continuation_message[2 + 5 + 1]("\x80\x05"
+                                             "Hello");
+        c.send(asio::buffer(continuation_message, 7));
+
+        std::string received = read_until_closed(c, closed);
+        CHECK(received == close_message);
+        CHECK(closed);
+        CHECK(message_calls == 1);
+        CHECK(close_calls == 1);
+        CHECK(last_status_code == websocket::ProtocolError);
+    }
+
+    //----------New message before the last one ended----------
+    {
+        asio::ip::tcp::socket c(ic);
+        c.connect(asio::ip::tcp::endpoint(
+          asio::ip::make_address(LOCALHOST_ADDRESS), app.port()));
+        c.send(asio::buffer(http_message));
+        c.receive(asio::buffer(buf, 2048));
+
+        char first_fragment[2 + 3 + 1]("\x01\x03"
+                                       "Hel");
+        char text_message[2 + 5 + 1]("\x81\x05"
+                                     "Hello");
+        c.send(asio::buffer(first_fragment, 5));
+        c.send(asio::buffer(text_message, 7));
+
+        std::string received = read_until_closed(c, closed);
+        CHECK(received == close_message);
+        CHECK(closed);
+        CHECK(message_calls == 1);
+        CHECK(close_calls == 2);
+        CHECK(last_status_code == websocket::ProtocolError);
+    }
+
+    app.stop();
+}
+
+TEST_CASE("websocket_userdata_without_onaccept", "[websocket]")
+{
+    static std::string http_message =
+      "GET /ws HTTP/1.1\r\n"
+      "Connection: keep-alive, Upgrade\r\n"
+      "upgrade: websocket\r\n"
+      "Sec-WebSocket-Key: dGhlIHNhbXBsZSBub25jZQ==\r\n"
+      "Sec-WebSocket-Version: 13\r\n"
+      "Host: localhost\r\n"
+      "\r\n";
+
+    std::atomic<bool> connected{false};
+    void* userdata = &connected;
+
+    SimpleApp app;
+
+    CROW_WEBSOCKET_ROUTE(app, "/ws")
+      .onopen([&](websocket::connection& conn) {
+          userdata = conn.userdata();
+          connected = true;
+      })
+      .onmessage([&](websocket::connection&, const std::string&, bool) {})
+      .onclose([&](websocket::connection&, const std::string&, uint16_t) {});
+
+    app.validate();
+
+    auto _ = app.bindaddr(LOCALHOST_ADDRESS).port(0).run_async();
+    app.wait_for_server_start();
+    asio::io_context ic;
+
+    asio::ip::tcp::socket c(ic);
+    c.connect(asio::ip::tcp::endpoint(
+      asio::ip::make_address(LOCALHOST_ADDRESS), app.port()));
+
+    char buf[2048];
+
+    //----------Handshake----------
+    {
+        c.send(asio::buffer(http_message));
+        c.receive(asio::buffer(buf, 2048));
+        for (int i = 0; i < 100 && !connected; ++i)
+            std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    }
+
+    // Without an onaccept handler nothing sets the userdata, it must start out null
+    CHECK(connected);
+    CHECK(userdata == nullptr);
+
+    c.close();
+    app.stop();
+}
