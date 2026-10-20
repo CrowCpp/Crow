@@ -111,6 +111,21 @@ namespace crow
 
         void handle_url()
         {
+            // A new request begins here (on_url may fire more than once for a URL split across reads).
+            // Reset what the previous request on this keep-alive connection left behind before anything
+            // can complete this one: a request completed early here or in handle_header() runs the after
+            // handlers on ctx_. The response flags are reset here rather than in response::clear(), which
+            // the 100-continue write in handle_header() calls in the middle of a request.
+            ctx_ = detail::context<Middlewares...>();
+            req_.middleware_context = static_cast<void*>(&ctx_);
+            req_.middleware_container = static_cast<void*>(middlewares_);
+            add_keep_alive_ = false;
+            res.skip_body = false;
+            res.manual_length_header = false;
+#ifdef CROW_ENABLE_COMPRESSION
+            res.compressed = true;
+#endif
+
             routing_handle_result_ = handler_->handle_initial(req_, res);
             // if no route is found for the request method, return the response without parsing or processing anything further.
             if (!routing_handle_result_->rule_index && !routing_handle_result_->catch_all && (req_.method != HTTPMethod::Options || routing_handle_result_->method == HTTPMethod::InternalMethodCount))
@@ -151,10 +166,6 @@ namespace crow
             bool is_invalid_request = false;
             add_keep_alive_ = false;
 
-            // Create context
-            ctx_ = detail::context<Middlewares...>();
-            req_.middleware_context = static_cast<void*>(&ctx_);
-            req_.middleware_container = static_cast<void*>(middlewares_);
             req_.io_context = &adaptor_.get_io_context();
             req_.remote_ip_address = adaptor_.address();
             req_.remote_port = adaptor_.remote_port();
@@ -219,8 +230,6 @@ namespace crow
                     };
                     need_to_call_after_handlers_ = true;
                     handler_->handle(req_, res, routing_handle_result_);
-                    if (add_keep_alive_)
-                        res.set_header("connection", "Keep-Alive");
                 }
                 else
                 {
