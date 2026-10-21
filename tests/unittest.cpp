@@ -104,6 +104,34 @@ bool is_tcp_nodelay_enabled_for_connection_after_apply(const crow::detail::socke
     return no_delay.value();
 }
 
+// Collects the log lines that the server thread writes.
+class LogCapture : public crow::ILogHandler
+{
+public:
+    void log(const std::string& message, crow::LogLevel /*level*/) override
+    {
+        std::lock_guard<std::mutex> lock(mutex_);
+        lines_.push_back(message);
+    }
+
+    std::vector<std::string> lines()
+    {
+        std::lock_guard<std::mutex> lock(mutex_);
+        return lines_;
+    }
+
+private:
+    std::mutex mutex_;
+    std::vector<std::string> lines_;
+};
+
+size_t count_lines_containing(const std::vector<std::string>& lines, const std::string& text)
+{
+    return std::count_if(lines.begin(), lines.end(), [&](const std::string& line) {
+        return line.find(text) != std::string::npos;
+    });
+}
+
 TEST_CASE("Rule")
 {
     TaggedRule<> r("/http/");
@@ -659,27 +687,6 @@ TEST_CASE("server_invalid_ip_address")
 
 TEST_CASE("server_port_in_use")
 {
-    // Collects the log lines that the server thread writes.
-    class LogCapture : public crow::ILogHandler
-    {
-    public:
-        void log(const std::string& message, crow::LogLevel /*level*/) override
-        {
-            std::lock_guard<std::mutex> lock(mutex_);
-            lines_.push_back(message);
-        }
-
-        std::vector<std::string> lines()
-        {
-            std::lock_guard<std::mutex> lock(mutex_);
-            return lines_;
-        }
-
-    private:
-        std::mutex mutex_;
-        std::vector<std::string> lines_;
-    };
-
     // Hold a loopback port without SO_REUSEADDR, which would let Windows bind Crow to it too.
     asio::io_context ic;
     asio::ip::tcp::acceptor holder(ic);
@@ -3395,6 +3402,213 @@ TEST_CASE("TCP_NODELAY_websocket_smoke_test")
     socket.close();
     app.stop();
 }
+
+TEST_CASE("TCP_NODELAY_tcp_socket_logs_no_warning")
+{
+    const crow::LogLevel saved_level = crow::logger::get_current_log_level();
+    crow::logger::setLogLevel(crow::LogLevel::Warning);
+    LogCapture capture;
+    crow::logger::setHandler(&capture);
+
+    crow::detail::socket::tcp_socket_options options;
+    options.no_delay = true;
+    CHECK(is_tcp_nodelay_enabled_for_connection_after_apply(options) == true);
+    options.no_delay = false;
+    CHECK(is_tcp_nodelay_enabled_for_connection_after_apply(options) == false);
+
+    static crow::CerrLogHandler cerr_handler;
+    crow::logger::setHandler(&cerr_handler);
+    crow::logger::setLogLevel(saved_level);
+
+    CHECK(count_lines_containing(capture.lines(), "TCP_NODELAY") == 0);
+}
+
+TEST_CASE("TCP_NODELAY_unix_socket_warns_only_when_requested")
+{
+    asio::io_context io_context;
+    asio::local::stream_protocol::socket socket(io_context);
+
+    const crow::LogLevel saved_level = crow::logger::get_current_log_level();
+    crow::logger::setLogLevel(crow::LogLevel::Warning);
+    LogCapture capture;
+    crow::logger::setHandler(&capture);
+
+    crow::detail::socket::tcp_socket_options options;
+    options.no_delay = false;
+    crow::detail::socket::apply_tcp_socket_options(socket, options);
+    const auto lines_not_requested = capture.lines();
+    options.no_delay = true;
+    crow::detail::socket::apply_tcp_socket_options(socket, options);
+    const auto lines_requested = capture.lines();
+
+    static crow::CerrLogHandler cerr_handler;
+    crow::logger::setHandler(&cerr_handler);
+    crow::logger::setLogLevel(saved_level);
+
+    CHECK(count_lines_containing(lines_not_requested, "TCP_NODELAY") == 0);
+    CHECK(count_lines_containing(lines_requested, "TCP_NODELAY requested but not supported") == 1);
+}
+
+TEST_CASE("TCP_NODELAY_http_server_logs_no_warning")
+{
+    const crow::LogLevel saved_level = crow::logger::get_current_log_level();
+    crow::logger::setLogLevel(crow::LogLevel::Warning);
+    LogCapture capture;
+    crow::logger::setHandler(&capture);
+
+    {
+        crow::SimpleApp app;
+        CROW_ROUTE(app, "/")([] {
+            return "ok";
+        });
+        app.tcp_nodelay(true);
+
+        auto _ = app.bindaddr(LOCALHOST_ADDRESS).port(0).run_async();
+        struct StopApp
+        {
+            crow::SimpleApp& app;
+            ~StopApp() { app.stop(); }
+        } stop_app{app};
+        app.wait_for_server_start();
+
+        auto response = HttpClient::request(LOCALHOST_ADDRESS,
+                                            app.port(),
+                                            "GET / HTTP/1.0\r\n"
+                                            "Host: localhost\r\n"
+                                            "\r\n");
+        CHECK(response.find("200 OK") != std::string::npos);
+    }
+
+    static crow::CerrLogHandler cerr_handler;
+    crow::logger::setHandler(&cerr_handler);
+    crow::logger::setLogLevel(saved_level);
+
+    CHECK(count_lines_containing(capture.lines(), "TCP_NODELAY") == 0);
+}
+
+#ifdef CROW_ENABLE_SSL
+TEST_CASE("TCP_NODELAY_ssl_stream_apply")
+{
+    asio::io_context io_context;
+    asio::ip::tcp::acceptor acceptor(io_context,
+                                     asio::ip::tcp::endpoint(asio::ip::make_address(LOCALHOST_ADDRESS), 0));
+
+    asio::ip::tcp::socket client_socket(io_context);
+    client_socket.connect(acceptor.local_endpoint());
+
+    asio::ssl::context ctx(asio::ssl::context::sslv23);
+    asio::ssl::stream<asio::ip::tcp::socket> server_stream(io_context, ctx);
+    acceptor.accept(server_stream.lowest_layer());
+
+    const crow::LogLevel saved_level = crow::logger::get_current_log_level();
+    crow::logger::setLogLevel(crow::LogLevel::Warning);
+    LogCapture capture;
+    crow::logger::setHandler(&capture);
+
+    crow::detail::socket::tcp_socket_options options;
+    asio::ip::tcp::no_delay enabled;
+    asio::ip::tcp::no_delay disabled;
+
+    options.no_delay = true;
+    crow::detail::socket::apply_tcp_socket_options(server_stream, options);
+    server_stream.lowest_layer().get_option(enabled);
+
+    options.no_delay = false;
+    crow::detail::socket::apply_tcp_socket_options(server_stream, options);
+    server_stream.lowest_layer().get_option(disabled);
+
+    static crow::CerrLogHandler cerr_handler;
+    crow::logger::setHandler(&cerr_handler);
+    crow::logger::setLogLevel(saved_level);
+
+    CHECK(enabled.value() == true);
+    CHECK(disabled.value() == false);
+    CHECK(count_lines_containing(capture.lines(), "TCP_NODELAY") == 0);
+}
+
+TEST_CASE("TCP_NODELAY_ssl_server_logs_no_warning")
+{
+    std::system("openssl req -newkey rsa:2048 -x509 -sha256 -days 1 -nodes -out nodelay.crt -keyout nodelay.key -subj \"/CN=127.0.0.1\"");
+
+    bool enabled = GENERATE(true, false);
+    CAPTURE(enabled);
+
+    const crow::LogLevel saved_level = crow::logger::get_current_log_level();
+    crow::logger::setLogLevel(crow::LogLevel::Warning);
+    LogCapture capture;
+    crow::logger::setHandler(&capture);
+
+    {
+        crow::SimpleApp app;
+        CROW_ROUTE(app, "/")([] {
+            return "ok";
+        });
+        CROW_WEBSOCKET_ROUTE(app, "/ws")
+          .onmessage([](crow::websocket::connection&, const std::string&, bool) {});
+        app.tcp_nodelay(enabled).websocket_tcp_nodelay(enabled);
+
+        auto _ = app.bindaddr(LOCALHOST_ADDRESS).port(0).ssl_file("nodelay.crt", "nodelay.key").run_async();
+        struct StopApp
+        {
+            crow::SimpleApp& app;
+            ~StopApp() { app.stop(); }
+        } stop_app{app};
+        app.wait_for_server_start();
+
+        asio::ssl::context ctx(asio::ssl::context::sslv23);
+        asio::io_context ioc;
+        const asio::ip::tcp::endpoint endpoint(asio::ip::make_address(LOCALHOST_ADDRESS), app.port());
+
+        {
+            asio::ssl::stream<asio::ip::tcp::socket> c(ioc, ctx);
+            c.lowest_layer().connect(endpoint);
+            c.handshake(asio::ssl::stream_base::client);
+            asio::write(c, asio::buffer(std::string("GET / HTTP/1.0\r\nHost: localhost\r\n\r\n")));
+
+            std::string http_response;
+            char buf[2048];
+            asio_error_code ec{};
+            while (!ec)
+            {
+                size_t n = c.read_some(asio::buffer(buf), ec);
+                http_response.append(buf, n);
+            }
+            CHECK(http_response.find("200 OK") != std::string::npos);
+        }
+
+        {
+            asio::ssl::stream<asio::ip::tcp::socket> c(ioc, ctx);
+            c.lowest_layer().connect(endpoint);
+            c.handshake(asio::ssl::stream_base::client);
+            asio::write(c, asio::buffer(std::string(
+                             "GET /ws HTTP/1.1\r\n"
+                             "Host: localhost\r\n"
+                             "Upgrade: websocket\r\n"
+                             "Connection: Upgrade\r\n"
+                             "Sec-WebSocket-Key: dGhlIHNhbXBsZSBub25jZQ==\r\n"
+                             "Sec-WebSocket-Version: 13\r\n"
+                             "\r\n")));
+
+            asio::streambuf response;
+            asio::read_until(c, response, "\r\n\r\n");
+            std::string upgrade_response(asio::buffers_begin(response.data()), asio::buffers_end(response.data()));
+            CHECK(upgrade_response.find("101") != std::string::npos);
+
+            asio_error_code ec{};
+            c.lowest_layer().close(ec);
+        }
+    }
+
+    static crow::CerrLogHandler cerr_handler;
+    crow::logger::setHandler(&cerr_handler);
+    crow::logger::setLogLevel(saved_level);
+
+    CHECK(count_lines_containing(capture.lines(), "TCP_NODELAY") == 0);
+
+    fs::remove("nodelay.crt");
+    fs::remove("nodelay.key");
+}
+#endif
 
 TEST_CASE("Global middleware rejection ignored during WebSocket upgrade")
 {
