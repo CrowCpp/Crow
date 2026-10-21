@@ -1,4 +1,5 @@
 
+#include <cstring>
 #include <iostream>
 #include <vector>
 
@@ -75,4 +76,44 @@ TEST_CASE( "malformed percent encoding - trailing percent" )
     REQUIRE(std::string(val) == " value");
 
     REQUIRE(true); // Test passes if no crash/sanitizer error
+}
+
+TEST_CASE( "qs_scanvalue truncates and terminates a value longer than the buffer" )
+{
+    char val[8];
+
+    // value longer than the buffer: truncated to sizeof(val) - 1 characters and terminated
+    std::memset(val, 'x', sizeof(val));
+    REQUIRE(crow::qs_scanvalue("key", "/path?key=0123456789abcdef&other=1", val, sizeof(val)) != nullptr);
+    REQUIRE(std::string(val) == "0123456");
+
+    // value exactly sizeof(val) - 1 characters long
+    std::memset(val, 'x', sizeof(val));
+    REQUIRE(crow::qs_scanvalue("key", "/path?key=abcdefg", val, sizeof(val)) != nullptr);
+    REQUIRE(std::string(val) == "abcdefg");
+
+    // value that fits, followed by another pair
+    std::memset(val, 'x', sizeof(val));
+    REQUIRE(crow::qs_scanvalue("key", "/path?key=abc&other=1", val, sizeof(val)) != nullptr);
+    REQUIRE(std::string(val) == "abc");
+
+    // value that fits is still decoded up to the fragment
+    std::memset(val, 'x', sizeof(val));
+    REQUIRE(crow::qs_scanvalue("key", "/path?key=a+b%20c#frag", val, sizeof(val)) != nullptr);
+    REQUIRE(std::string(val) == "a b c");
+
+    // truncation inside a percent escape keeps only the complete characters
+    std::memset(val, 'x', sizeof(val));
+    REQUIRE(crow::qs_scanvalue("key", "/path?key=abcde%41%42", val, sizeof(val)) != nullptr);
+    REQUIRE(std::string(val) == "abcde");
+
+    // a one byte buffer only holds the terminator
+    std::memset(val, 'x', sizeof(val));
+    REQUIRE(crow::qs_scanvalue("key", "/path?key=abc", val, 1) != nullptr);
+    REQUIRE(val[0] == '\0');
+
+    // a zero length buffer is left untouched
+    char empty[2] = {'x', '\0'};
+    REQUIRE(crow::qs_scanvalue("key", "/path?key=abc", empty, 0) != nullptr);
+    REQUIRE(empty[0] == 'x');
 }
