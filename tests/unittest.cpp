@@ -3609,6 +3609,31 @@ TEST_CASE("crow_filestore_boundary_e2e")
     app.stop();
 }
 
+TEST_CASE("crow_filestore_persisted_expiration")
+{
+    const fs::path store = fs::current_path() / "filestore_persisted_expiration";
+    fs::remove_all(store);
+    fs::create_directories(store);
+
+    // .expirations is read back after a restart (possibly after a reboot),
+    // so the stored times must be wall-clock times
+    const uint64_t now = std::chrono::duration_cast<std::chrono::seconds>(
+                           std::chrono::system_clock::now().time_since_epoch())
+                           .count();
+    std::ofstream(store / "expired.json") << "{}";
+    std::ofstream(store / "valid.json") << "{}";
+    std::ofstream(store / ".expirations") << "expired " << (now - 60) << "\n"
+                                          << "valid " << (now + 3600) << "\n";
+
+    {
+        crow::FileStore fs_store{store.string()};
+        CHECK_FALSE(fs_store.contains("expired"));
+        CHECK(fs_store.contains("valid"));
+    }
+
+    fs::remove_all(store);
+}
+
 TEST_CASE("Trailing-slash redirects")
 {
     // this test is linked to https://github.com/CrowCpp/Crow/security/advisories/GHSA-x6vq-298x-6qgq

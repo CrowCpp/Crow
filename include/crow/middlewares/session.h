@@ -560,10 +560,11 @@ namespace crow
             std::remove(get_filename(key).c_str());
         }
 
+        // expirations are persisted across restarts, so they need a clock with a fixed epoch
         uint64_t chrono_time() const
         {
             return std::chrono::duration_cast<std::chrono::seconds>(
-                     std::chrono::steady_clock::now().time_since_epoch())
+                     std::chrono::system_clock::now().time_since_epoch())
               .count();
         }
 
