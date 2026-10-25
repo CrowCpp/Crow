@@ -256,6 +256,29 @@ TEST_CASE("test_ws_rfc6455_frame_validation_e2e")
     CHECK(oversized.close_code == PROTOCOL_ERROR);
     ::close(oversized_fd);
 
+    const struct
+    {
+        std::string payload;
+        std::uint16_t expected_code;
+    } close_cases[] = {
+      {std::string("\x03", 1), PROTOCOL_ERROR},     // payload of a single byte
+      {std::string("\x03\xe7", 2), PROTOCOL_ERROR}, // 999
+      {std::string("\x03\xed", 2), PROTOCOL_ERROR}, // 1005 must not be sent
+      {std::string("\x0b\xb8", 2), 3000},           // a valid code is echoed
+      {std::string(), 0},                           // no status code: none is sent back
+    };
+    for (const auto& close_case : close_cases)
+    {
+        const int close_fd = connect_websocket();
+        CHECK(close_fd >= 0);
+        const bool close_sent = send_masked_frame(close_fd, true, 0x0, 0x8, close_case.payload);
+        const ServerObservation closed = read_server_frames(close_fd);
+        CHECK(close_sent);
+        CHECK(closed.close_frame);
+        CHECK(closed.close_code == close_case.expected_code);
+        ::close(close_fd);
+    }
+
     const int rsv_fd = connect_websocket();
     CHECK(rsv_fd >= 0);
     const bool rsv_sent = send_masked_frame(rsv_fd, true, 0x4, 0x1, "x");
