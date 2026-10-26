@@ -833,6 +833,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                 // and thus we use ClosedAbnormally unless instructed otherwise
                 if (!is_close_handler_called_)
                 {
+                    is_close_handler_called_ = true;
                     if (close_handler_)
                     {
                         close_handler_(*this, "uncleanly", code);

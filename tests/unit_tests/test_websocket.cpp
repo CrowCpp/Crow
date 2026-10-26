@@ -876,3 +876,60 @@ TEST_CASE("websocket_local_middleware", "[websocket]")
 
     app.stop();
 }
+
+TEST_CASE("websocket_close_handler_called_once", "[websocket]")
+{
+    static std::string http_message =
+      "GET /ws HTTP/1.1\r\n"
+      "Connection: keep-alive, Upgrade\r\n"
+      "upgrade: websocket\r\n"
+      "Sec-WebSocket-Key: dGhlIHNhbXBsZSBub25jZQ==\r\n"
+      "Sec-WebSocket-Version: 13\r\n"
+      "Host: localhost\r\n"
+      "\r\n";
+
+    std::atomic<int> close_count{0};
+
+    SimpleApp app;
+
+    CROW_WEBSOCKET_ROUTE(app, "/ws")
+      .onmessage([&](websocket::connection& conn, const std::string&, bool) {
+          // large enough that the write is still pending when the client resets
+          conn.send_binary(std::string(16 * 1024 * 1024, 'x'));
+      })
+      .onclose([&](websocket::connection&, const std::string&, uint16_t) {
+          ++close_count;
+      });
+
+    app.validate();
+
+    auto _ = app.bindaddr(LOCALHOST_ADDRESS).port(45481).run_async();
+    app.wait_for_server_start();
+    asio::io_context ic;
+
+    asio::ip::tcp::socket c(ic);
+    c.connect(asio::ip::tcp::endpoint(
+      asio::ip::make_address(LOCALHOST_ADDRESS), 45481));
+    c.set_option(asio::socket_base::receive_buffer_size(4096));
+
+    char buf[2048];
+    c.send(asio::buffer(http_message));
+    c.receive(asio::buffer(buf, 2048));
+
+    char text_message[2 + 5 + 1]("\x81\x05"
+                                 "flood");
+    c.send(asio::buffer(text_message, 7));
+    std::this_thread::sleep_for(std::chrono::milliseconds(200));
+
+    // abortive close: the pending read and the pending write both fail
+    c.set_option(asio::socket_base::linger(true, 0));
+    c.close();
+
+    for (int i = 0; i < 100 && close_count == 0; i++)
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    std::this_thread::sleep_for(std::chrono::milliseconds(200));
+
+    CHECK(close_count == 1);
+
+    app.stop();
+} // websocket_close_handler_called_once
