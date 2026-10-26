@@ -23,7 +23,7 @@
       
       
       <link rel="icon" href="../../assets/favicon.svg">
-      <meta name="generator" content="mkdocs-ProperDocs 1.6.7, mkdocs-material-9.7.7">
+      <meta name="generator" content="mkdocs-ProperDocs 1.6.7, mkdocs-material-9.8.0">
     
     
       
@@ -31,10 +31,10 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.57a0d79d.min.css">
       
         
-        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.fb2fffe2.min.css">
       
       
 
@@ -1798,7 +1798,7 @@
 <p>Setting the Macro <code>CROW_ENABLE_DEBUG</code> during compilation will also set the log level to <code>Debug</code> (unless otherwise set using <code>loglevel()</code>).</p>
 </div>
 <h2 id="writing-a-log">Writing a log<a class="headerlink" href="#writing-a-log" title="Permanent link">&para;</a></h2>
-<p>Writing a log is as simple as <code class="highlight"><span class="n">CROW_LOG_</span><span class="o">&lt;</span><span class="n">LOG</span><span class="w"> </span><span class="n">LEVEL</span><span class="o">&gt;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;Hello&quot;</span><span class="p">;</span></code> (replace&lt;LOG LEVEL&gt; with the actual level in all caps, so you have <code>CROW_LOG_WARNING</code>).</p>
+<p>Writing a log is as simple as <code class="highlight"><span class="n">CROW_LOG_</span><span class="o">&lt;</span><span class="n">LOG</span><span class="w"> </span><span class="n">LEVEL</span><span class="o">&gt;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">"Hello"</span><span class="p">;</span></code> (replace&lt;LOG LEVEL&gt; with the actual level in all caps, so you have <code>CROW_LOG_WARNING</code>).</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>Log times are reported in GMT timezone by default. This is because HTTP requires all reported times for requests and responses to be in GMT. This can be changed by using the macro <code>CROW_USE_LOCALTIMEZONE</code> which will set <strong>only the log timezone</strong> to the server's local timezone.</p>
@@ -1812,8 +1812,8 @@ Once you have your custom logger, you need to set it via <code class="highlight"
 <span class="w"> </span><span class="k">public</span><span class="o">:</span>
 <span class="w">  </span><span class="n">CustomLogger</span><span class="p">()</span><span class="w"> </span><span class="p">{}</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">log</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">message</span><span class="p">,</span><span class="w"> </span><span class="n">crow</span><span class="o">::</span><span class="n">LogLevel</span><span class="w"> </span><span class="cm">/*level*/</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="c1">// &quot;message&quot; doesn&#39;t contain the timestamp and loglevel</span>
-<span class="w">    </span><span class="c1">// prefix the default logger does and it doesn&#39;t end</span>
+<span class="w">    </span><span class="c1">// "message" doesn't contain the timestamp and loglevel</span>
+<span class="w">    </span><span class="c1">// prefix the default logger does and it doesn't end</span>
 <span class="w">    </span><span class="c1">// in a newline.</span>
 <span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">cerr</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">message</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
 <span class="w">  </span><span class="p">}</span>
@@ -1824,7 +1824,7 @@ Once you have your custom logger, you need to set it via <code class="highlight"
 <span class="w">  </span><span class="n">crow</span><span class="o">::</span><span class="n">logger</span><span class="o">::</span><span class="n">setHandler</span><span class="p">(</span><span class="o">&amp;</span><span class="n">logger</span><span class="p">);</span>
 
 <span class="w">  </span><span class="n">crow</span><span class="o">::</span><span class="n">SimpleApp</span><span class="w"> </span><span class="n">app</span><span class="p">;</span>
-<span class="w">  </span><span class="n">CROW_ROUTE</span><span class="p">(</span><span class="n">app</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;/&quot;</span><span class="p">)([]()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="s">&quot;Hello&quot;</span><span class="p">;</span><span class="w"> </span><span class="p">});</span>
+<span class="w">  </span><span class="n">CROW_ROUTE</span><span class="p">(</span><span class="n">app</span><span class="p">,</span><span class="w"> </span><span class="s">"/"</span><span class="p">)([]()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="s">"Hello"</span><span class="p">;</span><span class="w"> </span><span class="p">});</span>
 <span class="w">  </span><span class="n">app</span><span class="p">.</span><span class="n">run</span><span class="p">();</span>
 <span class="p">}</span>
 </code></pre></div></p>
@@ -2027,10 +2027,10 @@ Once you have your custom logger, you need to set it via <code class="highlight"
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.tabs", "content.code.annotate"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"default": "latest", "provider": "mike"}}</script>
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.tabs", "content.code.annotate"], "search": "../../assets/javascripts/workers/search.a7633da7.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"default": "latest", "provider": "mike"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      <script src="../../assets/javascripts/bundle.c21346df.min.js"></script>
       
     
   </body>

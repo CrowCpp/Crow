@@ -23,7 +23,7 @@
       
       
       <link rel="icon" href="../../assets/favicon.svg">
-      <meta name="generator" content="mkdocs-ProperDocs 1.6.7, mkdocs-material-9.7.7">
+      <meta name="generator" content="mkdocs-ProperDocs 1.6.7, mkdocs-material-9.8.0">
     
     
       
@@ -31,10 +31,10 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.57a0d79d.min.css">
       
         
-        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.fb2fffe2.min.css">
       
       
 
@@ -1830,17 +1830,17 @@
 <p>A JSON object containing the tags as keys and their values. <code>crow::mustache::context</code> is actually a <a href="../json/#wvalue">crow::json::wvalue</a>.<br><br></p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p><code>crow::mustache::context</code> can take a C++ lambda as a value. The lambda needs to take a string as an argument and return a string, such as <code class="highlight"><span class="n">ctx</span><span class="p">[</span><span class="n">lmd</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="o">&amp;</span><span class="p">](</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">){</span><span class="k">return</span><span class="w"> </span><span class="s">&quot;Hello World&quot;</span><span class="p">;};</span></code>.</p>
+<p><code>crow::mustache::context</code> can take a C++ lambda as a value. The lambda needs to take a string as an argument and return a string, such as <code class="highlight"><span class="n">ctx</span><span class="p">[</span><span class="n">lmd</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="o">&amp;</span><span class="p">](</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">){</span><span class="k">return</span><span class="w"> </span><span class="s">"Hello World"</span><span class="p">;};</span></code>.</p>
 </div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>The string returned by the lamdba can contain mustache tags, Crow will parse it as any normal template string.</p>
 </div>
 <h2 id="returning-a-template">Returning a template<a class="headerlink" href="#returning-a-template" title="Permanent link">&para;</a></h2>
-<p>To return a mustache template, you need to load a page using <code class="highlight"><span class="k">auto</span><span class="w"> </span><span class="n">page</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">crow</span><span class="o">::</span><span class="n">mustache</span><span class="o">::</span><span class="n">load</span><span class="p">(</span><span class="s">&quot;path/to/template.html&quot;</span><span class="p">);</span></code>. Or just simply load a string using <code class="highlight"><span class="k">auto</span><span class="w"> </span><span class="n">page</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">crow</span><span class="o">::</span><span class="n">mustache</span><span class="o">::</span><span class="n">compile</span><span class="p">(</span><span class="s">&quot;my mustache {{value}}&quot;</span><span class="p">);</span></code>. Keep in mind that the path is relative to the templates directory.</p>
+<p>To return a mustache template, you need to load a page using <code class="highlight"><span class="k">auto</span><span class="w"> </span><span class="n">page</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">crow</span><span class="o">::</span><span class="n">mustache</span><span class="o">::</span><span class="n">load</span><span class="p">(</span><span class="s">"path/to/template.html"</span><span class="p">);</span></code>. Or just simply load a string using <code class="highlight"><span class="k">auto</span><span class="w"> </span><span class="n">page</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">crow</span><span class="o">::</span><span class="n">mustache</span><span class="o">::</span><span class="n">compile</span><span class="p">(</span><span class="s">"my mustache {{value}}"</span><span class="p">);</span></code>. Keep in mind that the path is relative to the templates directory.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>You can also use <code class="highlight"><span class="k">auto</span><span class="w"> </span><span class="n">page</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">crow</span><span class="o">::</span><span class="n">mustache</span><span class="o">::</span><span class="n">load_text</span><span class="p">(</span><span class="s">&quot;path/to/template.html&quot;</span><span class="p">);</span></code> if you want to load a template without mustache processing.</p>
+<p>You can also use <code class="highlight"><span class="k">auto</span><span class="w"> </span><span class="n">page</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">crow</span><span class="o">::</span><span class="n">mustache</span><span class="o">::</span><span class="n">load_text</span><span class="p">(</span><span class="s">"path/to/template.html"</span><span class="p">);</span></code> if you want to load a template without mustache processing.</p>
 </div>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
@@ -2053,10 +2053,10 @@ Alternatively you could just render the page without a context using <code class
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.tabs", "content.code.annotate"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"default": "latest", "provider": "mike"}}</script>
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.tabs", "content.code.annotate"], "search": "../../assets/javascripts/workers/search.a7633da7.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"default": "latest", "provider": "mike"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      <script src="../../assets/javascripts/bundle.c21346df.min.js"></script>
       
     
   </body>

@@ -23,7 +23,7 @@
       
       
       <link rel="icon" href="../../assets/favicon.svg">
-      <meta name="generator" content="mkdocs-ProperDocs 1.6.7, mkdocs-material-9.7.7">
+      <meta name="generator" content="mkdocs-ProperDocs 1.6.7, mkdocs-material-9.8.0">
     
     
       
@@ -31,10 +31,10 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.57a0d79d.min.css">
       
         
-        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.fb2fffe2.min.css">
       
       
 
@@ -1976,7 +1976,7 @@ Using <code>/hello</code> means the client will need to access <code>http://exam
 A path can have parameters, for example <code>/hello/&lt;int&gt;</code> will allow a client to input an int into the url which will be in the handler (something like <code>http://example.com/hello/42</code>).<br>
 Parameters can be <code>&lt;int&gt;</code>, <code>&lt;uint&gt;</code>, <code>&lt;double&gt;</code>, <code>&lt;string&gt;</code>, or <code>&lt;path&gt;</code>.<br>
 It's worth noting that the parameters also need to be defined in the handler, an example of using parameters would be to add 2 numbers based on input:
-<div class="highlight"><pre><span></span><code><span class="n">CROW_ROUTE</span><span class="p">(</span><span class="n">app</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;/add/&lt;int&gt;/&lt;int&gt;&quot;</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><span class="n">CROW_ROUTE</span><span class="p">(</span><span class="n">app</span><span class="p">,</span><span class="w"> </span><span class="s">"/add/&lt;int&gt;/&lt;int&gt;"</span><span class="p">)</span>
 <span class="p">([](</span><span class="kt">int</span><span class="w"> </span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">b</span><span class="p">)</span>
 <span class="p">{</span>
 <span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">to_string</span><span class="p">(</span><span class="n">a</span><span class="o">+</span><span class="n">b</span><span class="p">);</span>
@@ -2035,10 +2035,10 @@ UNLINK
 SOURCE
 </code></pre></div></p>
 <h2 id="handler">Handler<a class="headerlink" href="#handler" title="Permanent link">&para;</a></h2>
-<p>Basically a piece of code that gets executed whenever the client calls the associated route, usually in the form of a <a href="https://en.cppreference.com/w/cpp/language/lambda">lambda expression</a>. It can be as simple as <code class="highlight"><span class="p">([](){</span><span class="k">return</span><span class="w"> </span><span class="s">&quot;Hello World&quot;</span><span class="p">})</span></code>.<br><br></p>
+<p>Basically a piece of code that gets executed whenever the client calls the associated route, usually in the form of a <a href="https://en.cppreference.com/w/cpp/language/lambda">lambda expression</a>. It can be as simple as <code class="highlight"><span class="p">([](){</span><span class="k">return</span><span class="w"> </span><span class="s">"Hello World"</span><span class="p">})</span></code>.<br><br></p>
 <h3 id="request">Request<a class="headerlink" href="#request" title="Permanent link">&para;</a></h3>
 <p>Handlers can also use information from the request by adding it as a parameter <code class="highlight"><span class="p">([](</span><span class="k">const</span><span class="w"> </span><span class="n">crow</span><span class="o">::</span><span class="n">request</span><span class="o">&amp;</span><span class="w"> </span><span class="n">req</span><span class="p">){...})</span></code>.<br><br></p>
-<p>You can also access the URL parameters in the handler using <code class="highlight"><span class="n">req</span><span class="p">.</span><span class="n">url_params</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;param_name&quot;</span><span class="p">);</span></code>. If the parameter doesn't exist, <code>nullptr</code> is returned.<br><br></p>
+<p>You can also access the URL parameters in the handler using <code class="highlight"><span class="n">req</span><span class="p">.</span><span class="n">url_params</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">"param_name"</span><span class="p">);</span></code>. If the parameter doesn't exist, <code>nullptr</code> is returned.<br><br></p>
 <div class="admonition note">
 <p class="admonition-title">Note &nbsp;&nbsp;&nbsp;&nbsp; <span class="tag"><a href="https://github.com/CrowCpp/Crow"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M7.22 6.5a.72.72 0 1 1-1.44 0 .72.72 0 0 1 1.44 0"/><path d="M8 16A8 8 0 1 1 8 0a8 8 0 0 1 0 16M4 5v3.38c.001.397.159.778.44 1.059l3.211 3.213a1.2 1.2 0 0 0 1.698 0l3.303-3.303a1.2 1.2 0 0 0 0-1.698L9.439 4.44A1.5 1.5 0 0 0 8.379 4H5a1 1 0 0 0-1 1"/></svg></span> master</a></span></p>
 <p>parameters inside the body can be parsed using <code class="highlight"><span class="n">req</span><span class="p">.</span><span class="n">get_body_params</span><span class="p">();</span></code>. which is useful for requests of type <code>application/x-www-form-urlencoded</code>. Its format is similar to <code>url_params</code>.</p>
@@ -2118,7 +2118,7 @@ to use the returnable class, you only need your class to publicly extend <code>c
 <p>Your class should look like the following:
 <div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">a</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">crow</span><span class="o">::</span><span class="n">returnable</span>
 <span class="p">{</span>
-<span class="w">    </span><span class="n">a</span><span class="p">()</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">returnable</span><span class="p">(</span><span class="s">&quot;text/plain&quot;</span><span class="p">){};</span>
+<span class="w">    </span><span class="n">a</span><span class="p">()</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">returnable</span><span class="p">(</span><span class="s">"text/plain"</span><span class="p">){};</span>
 
 <span class="w">    </span><span class="p">...</span>
 <span class="w">    </span><span class="p">...</span>
@@ -2340,10 +2340,10 @@ to use the returnable class, you only need your class to publicly extend <code>c
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.tabs", "content.code.annotate"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"default": "latest", "provider": "mike"}}</script>
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.tabs", "content.code.annotate"], "search": "../../assets/javascripts/workers/search.a7633da7.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"default": "latest", "provider": "mike"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      <script src="../../assets/javascripts/bundle.c21346df.min.js"></script>
       
     
   </body>

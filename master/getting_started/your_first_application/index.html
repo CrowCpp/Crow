@@ -23,7 +23,7 @@
       
       
       <link rel="icon" href="../../assets/favicon.svg">
-      <meta name="generator" content="mkdocs-ProperDocs 1.6.7, mkdocs-material-9.7.7">
+      <meta name="generator" content="mkdocs-ProperDocs 1.6.7, mkdocs-material-9.8.0">
     
     
       
@@ -31,10 +31,10 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.57a0d79d.min.css">
       
         
-        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.fb2fffe2.min.css">
       
       
 
@@ -1820,7 +1820,7 @@
 
 <p>This page shows how you can get started with a simple hello world application.</p>
 <h2 id="1-include">1. Include<a class="headerlink" href="#1-include" title="Permanent link">&para;</a></h2>
-<p>Starting with an empty <code>main.cpp</code> file, first add <code class="highlight"><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;crow.h&quot;</span></code> or <code class="highlight"><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;crow_all.h&quot;</span></code> if you're using the single header file.</p>
+<p>Starting with an empty <code>main.cpp</code> file, first add <code class="highlight"><span class="cp">#include</span><span class="w"> </span><span class="cpf">"crow.h"</span></code> or <code class="highlight"><span class="cp">#include</span><span class="w"> </span><span class="cpf">"crow_all.h"</span></code> if you're using the single header file.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>If you are using version v0.3, then you have to put <code class="highlight"><span class="cp">#define CROW_MAIN</span></code> at the top of one and only one source file.</p>
@@ -1836,8 +1836,8 @@ The App (or SimpleApp) class organizes all the different parts of Crow and provi
 For more information, please go <a href="../../guides/app/">here</a>.</p>
 <h2 id="3-adding-routes">3. Adding routes<a class="headerlink" href="#3-adding-routes" title="Permanent link">&para;</a></h2>
 <p>Once you have your app, the next step is to add routes (or endpoints). You can do so with the <code>CROW_ROUTE</code> macro.
-<div class="highlight"><pre><span></span><code><span class="n">CROW_ROUTE</span><span class="p">(</span><span class="n">app</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;/&quot;</span><span class="p">)([](){</span>
-<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="s">&quot;Hello world&quot;</span><span class="p">;</span>
+<div class="highlight"><pre><span></span><code><span class="n">CROW_ROUTE</span><span class="p">(</span><span class="n">app</span><span class="p">,</span><span class="w"> </span><span class="s">"/"</span><span class="p">)([](){</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="s">"Hello world"</span><span class="p">;</span>
 <span class="p">});</span>
 </code></pre></div>
 For more details on routes, please go <a href="../../guides/routes/">here</a>.</p>
@@ -1862,16 +1862,16 @@ Please note that the <code>port()</code> and <code>multithreaded()</code> method
 <span class="normal">12</span>
 <span class="normal">13</span>
 <span class="normal">14</span>
-<span class="normal">15</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;crow.h&quot;</span>
-<span class="c1">//#include &quot;crow_all.h&quot;</span>
+<span class="normal">15</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="cp">#include</span><span class="w"> </span><span class="cpf">"crow.h"</span>
+<span class="c1">//#include "crow_all.h"</span>
 
 <span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span>
 <span class="p">{</span>
 <span class="w">    </span><span class="n">crow</span><span class="o">::</span><span class="n">SimpleApp</span><span class="w"> </span><span class="n">app</span><span class="p">;</span><span class="w"> </span><span class="c1">//define your crow application</span>
 
 <span class="w">    </span><span class="c1">//define your endpoint at the root directory</span>
-<span class="w">    </span><span class="n">CROW_ROUTE</span><span class="p">(</span><span class="n">app</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;/&quot;</span><span class="p">)([](){</span>
-<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="s">&quot;Hello world&quot;</span><span class="p">;</span>
+<span class="w">    </span><span class="n">CROW_ROUTE</span><span class="p">(</span><span class="n">app</span><span class="p">,</span><span class="w"> </span><span class="s">"/"</span><span class="p">)([](){</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="s">"Hello world"</span><span class="p">;</span>
 <span class="w">    </span><span class="p">});</span>
 
 <span class="w">    </span><span class="c1">//set the port, set the app to run on multiple threads, and run the app</span>
@@ -2082,10 +2082,10 @@ Please note that the <code>port()</code> and <code>multithreaded()</code> method
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.tabs", "content.code.annotate"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"default": "latest", "provider": "mike"}}</script>
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.tabs", "content.code.annotate"], "search": "../../assets/javascripts/workers/search.a7633da7.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"default": "latest", "provider": "mike"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      <script src="../../assets/javascripts/bundle.c21346df.min.js"></script>
       
     
   </body>

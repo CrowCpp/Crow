@@ -23,7 +23,7 @@
       
       
       <link rel="icon" href="../../assets/favicon.svg">
-      <meta name="generator" content="mkdocs-ProperDocs 1.6.7, mkdocs-material-9.7.7">
+      <meta name="generator" content="mkdocs-ProperDocs 1.6.7, mkdocs-material-9.8.0">
     
     
       
@@ -31,10 +31,10 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.57a0d79d.min.css">
       
         
-        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.fb2fffe2.min.css">
       
       
 
@@ -1780,16 +1780,16 @@ Now that we have our HTML page ready, let's take our Hello World example from ea
 <span class="normal">12</span>
 <span class="normal">13</span>
 <span class="normal">14</span>
-<span class="normal">15</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;crow.h&quot;</span>
-<span class="c1">//#include &quot;crow_all.h&quot;</span>
+<span class="normal">15</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="cp">#include</span><span class="w"> </span><span class="cpf">"crow.h"</span>
+<span class="c1">//#include "crow_all.h"</span>
 
 <span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span>
 <span class="p">{</span>
 <span class="w">    </span><span class="n">crow</span><span class="o">::</span><span class="n">SimpleApp</span><span class="w"> </span><span class="n">app</span><span class="p">;</span><span class="w"> </span><span class="c1">//define your crow application</span>
 
 <span class="w">    </span><span class="c1">//define your endpoint at the root directory</span>
-<span class="w">    </span><span class="n">CROW_ROUTE</span><span class="p">(</span><span class="n">app</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;/&quot;</span><span class="p">)([](){</span>
-<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="s">&quot;Hello world&quot;</span><span class="p">;</span>
+<span class="w">    </span><span class="n">CROW_ROUTE</span><span class="p">(</span><span class="n">app</span><span class="p">,</span><span class="w"> </span><span class="s">"/"</span><span class="p">)([](){</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="s">"Hello world"</span><span class="p">;</span>
 <span class="w">    </span><span class="p">});</span>
 
 <span class="w">    </span><span class="c1">//set the port, set the app to run on multiple threads, and run the app</span>
@@ -1812,16 +1812,16 @@ Now that we have our HTML page ready, let's take our Hello World example from ea
 <span class="normal">12</span>
 <span class="normal">13</span>
 <span class="normal">14</span>
-<span class="normal">15</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;crow.h&quot;</span>
-<span class="c1">//#include &quot;crow_all.h&quot;</span>
+<span class="normal">15</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="cp">#include</span><span class="w"> </span><span class="cpf">"crow.h"</span>
+<span class="c1">//#include "crow_all.h"</span>
 
 <span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span>
 <span class="p">{</span>
 <span class="w">    </span><span class="n">crow</span><span class="o">::</span><span class="n">SimpleApp</span><span class="w"> </span><span class="n">app</span><span class="p">;</span>
 
 <span class="w">    </span><span class="c1">//define your endpoint at the root directory</span>
-<span class="w">    </span><span class="n">CROW_ROUTE</span><span class="p">(</span><span class="n">app</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;/&quot;</span><span class="p">)([](){</span>
-<span class="hll"><span class="w">        </span><span class="k">auto</span><span class="w"> </span><span class="n">page</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">crow</span><span class="o">::</span><span class="n">mustache</span><span class="o">::</span><span class="n">load_text</span><span class="p">(</span><span class="s">&quot;fancypage.html&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="n">CROW_ROUTE</span><span class="p">(</span><span class="n">app</span><span class="p">,</span><span class="w"> </span><span class="s">"/"</span><span class="p">)([](){</span>
+<span class="hll"><span class="w">        </span><span class="k">auto</span><span class="w"> </span><span class="n">page</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">crow</span><span class="o">::</span><span class="n">mustache</span><span class="o">::</span><span class="n">load_text</span><span class="p">(</span><span class="s">"fancypage.html"</span><span class="p">);</span>
 </span><span class="hll"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">page</span><span class="p">;</span>
 </span><span class="w">    </span><span class="p">});</span>
 
@@ -1885,17 +1885,17 @@ Now let's modify our C++ code to use the variable we just added to our webpage (
 <span class="normal">13</span>
 <span class="normal">14</span>
 <span class="normal">15</span>
-<span class="normal">16</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;crow.h&quot;</span>
-<span class="c1">//#include &quot;crow_all.h&quot;</span>
+<span class="normal">16</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="cp">#include</span><span class="w"> </span><span class="cpf">"crow.h"</span>
+<span class="c1">//#include "crow_all.h"</span>
 
 <span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span>
 <span class="p">{</span>
 <span class="w">    </span><span class="n">crow</span><span class="o">::</span><span class="n">SimpleApp</span><span class="w"> </span><span class="n">app</span><span class="p">;</span>
 
 <span class="w">    </span><span class="c1">//define your endpoint at the root directory</span>
-<span class="hll"><span class="w">    </span><span class="n">CROW_ROUTE</span><span class="p">(</span><span class="n">app</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;/&lt;string&gt;&quot;</span><span class="p">)([](</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">name</span><span class="p">){</span><span class="w"> </span><span class="c1">// (1)</span>
-</span><span class="hll"><span class="w">        </span><span class="k">auto</span><span class="w"> </span><span class="n">page</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">crow</span><span class="o">::</span><span class="n">mustache</span><span class="o">::</span><span class="n">load</span><span class="p">(</span><span class="s">&quot;fancypage.html&quot;</span><span class="p">);</span><span class="w"> </span><span class="c1">// (2)</span>
-</span><span class="hll"><span class="w">        </span><span class="n">crow</span><span class="o">::</span><span class="n">mustache</span><span class="o">::</span><span class="n">context</span><span class="w"> </span><span class="n">ctx</span><span class="w"> </span><span class="p">({{</span><span class="s">&quot;person&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">name</span><span class="p">}});</span><span class="w"> </span><span class="c1">// (3)</span>
+<span class="hll"><span class="w">    </span><span class="n">CROW_ROUTE</span><span class="p">(</span><span class="n">app</span><span class="p">,</span><span class="w"> </span><span class="s">"/&lt;string&gt;"</span><span class="p">)([](</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">name</span><span class="p">){</span><span class="w"> </span><span class="c1">// (1)</span>
+</span><span class="hll"><span class="w">        </span><span class="k">auto</span><span class="w"> </span><span class="n">page</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">crow</span><span class="o">::</span><span class="n">mustache</span><span class="o">::</span><span class="n">load</span><span class="p">(</span><span class="s">"fancypage.html"</span><span class="p">);</span><span class="w"> </span><span class="c1">// (2)</span>
+</span><span class="hll"><span class="w">        </span><span class="n">crow</span><span class="o">::</span><span class="n">mustache</span><span class="o">::</span><span class="n">context</span><span class="w"> </span><span class="n">ctx</span><span class="w"> </span><span class="p">({{</span><span class="s">"person"</span><span class="p">,</span><span class="w"> </span><span class="n">name</span><span class="p">}});</span><span class="w"> </span><span class="c1">// (3)</span>
 </span><span class="hll"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">page</span><span class="p">.</span><span class="n">render</span><span class="p">(</span><span class="n">ctx</span><span class="p">);</span><span class="w"> </span><span class="c1">//(4)</span>
 </span><span class="w">    </span><span class="p">});</span>
 
@@ -2109,10 +2109,10 @@ Now let's modify our C++ code to use the variable we just added to our webpage (
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.tabs", "content.code.annotate"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"default": "latest", "provider": "mike"}}</script>
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.tabs", "content.code.annotate"], "search": "../../assets/javascripts/workers/search.a7633da7.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"default": "latest", "provider": "mike"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      <script src="../../assets/javascripts/bundle.c21346df.min.js"></script>
       
     
   </body>

@@ -23,7 +23,7 @@
       
       
       <link rel="icon" href="../../assets/favicon.svg">
-      <meta name="generator" content="mkdocs-ProperDocs 1.6.7, mkdocs-material-9.7.7">
+      <meta name="generator" content="mkdocs-ProperDocs 1.6.7, mkdocs-material-9.8.0">
     
     
       
@@ -31,10 +31,10 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.57a0d79d.min.css">
       
         
-        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.fb2fffe2.min.css">
       
       
 
@@ -1816,13 +1816,13 @@
 <h2 id="implicit">Implicit<a class="headerlink" href="#implicit" title="Permanent link">&para;</a></h2>
 <p>Crow implicitly returns any static files placed in a <code>static</code> directory and any subdirectories, as long as the user calls the endpoint <code>/static/path/to/file</code>.<br><br>
 The static folder or endpoint can be changed by defining the macros :
-<div class="highlight"><pre><span></span><code><span class="cp">#define CROW_STATIC_DIRECTORY &quot;alternative_directory/&quot;</span>
-<span class="cp">#define CROW_STATIC_ENDPOINT &quot;/alternative_endpoint/&lt;path&gt;&quot;</span>
+<div class="highlight"><pre><span></span><code><span class="cp">#define CROW_STATIC_DIRECTORY "alternative_directory/"</span>
+<span class="cp">#define CROW_STATIC_ENDPOINT "/alternative_endpoint/&lt;path&gt;"</span>
 </code></pre></div>
 <code>CROW_STATIC_DIRECTORY</code> changes the directory in the server's file system, while <code>CROW_STATIC_ENDPOINT</code> changes the URL that the client needs to access.</p>
 <p>The static directory can also be set at runtime (before <code>run()</code>), which is useful when the path is only known when the process starts:
 <div class="highlight"><pre><span></span><code><span class="n">crow</span><span class="o">::</span><span class="n">SimpleApp</span><span class="w"> </span><span class="n">app</span><span class="p">;</span>
-<span class="n">app</span><span class="p">.</span><span class="n">static_directory</span><span class="p">(</span><span class="s">&quot;alternative_directory/&quot;</span><span class="p">);</span>
+<span class="n">app</span><span class="p">.</span><span class="n">static_directory</span><span class="p">(</span><span class="s">"alternative_directory/"</span><span class="p">);</span>
 </code></pre></div>
 <code>CROW_STATIC_DIRECTORY</code> remains the default when <code>static_directory()</code> is not called.</p>
 <h2 id="explicit">Explicit<a class="headerlink" href="#explicit" title="Permanent link">&para;</a></h2>
@@ -1834,19 +1834,19 @@ The path is relative to the working directory.</p>
 <div class="highlight"><pre><span></span><code><span class="k">auto</span><span class="w"> </span><span class="n">app</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">crow</span><span class="o">::</span><span class="n">SimpleApp</span><span class="p">();</span><span class="w"> </span><span class="c1">// or crow::App()</span>
 
 <span class="c1">// by Macro</span>
-<span class="n">CROW_STATIC_FILE</span><span class="p">(</span><span class="n">app</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;/&quot;</span><span class="w">          </span><span class="p">,</span><span class="w"> </span><span class="s">&quot;home.html&quot;</span><span class="p">);</span>
-<span class="n">CROW_STATIC_FILE</span><span class="p">(</span><span class="n">app</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;/home.html&quot;</span><span class="w"> </span><span class="p">,</span><span class="w"> </span><span class="s">&quot;home.html&quot;</span><span class="p">);</span>
+<span class="n">CROW_STATIC_FILE</span><span class="p">(</span><span class="n">app</span><span class="p">,</span><span class="w"> </span><span class="s">"/"</span><span class="w">          </span><span class="p">,</span><span class="w"> </span><span class="s">"home.html"</span><span class="p">);</span>
+<span class="n">CROW_STATIC_FILE</span><span class="p">(</span><span class="n">app</span><span class="p">,</span><span class="w"> </span><span class="s">"/home.html"</span><span class="w"> </span><span class="p">,</span><span class="w"> </span><span class="s">"home.html"</span><span class="p">);</span>
 
 <span class="c1">// by Function</span>
-<span class="n">app</span><span class="p">.</span><span class="n">static_file</span><span class="p">(</span><span class="s">&quot;/favicon.ico&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;images/home.png&quot;</span><span class="p">);</span>
-<span class="n">app</span><span class="p">.</span><span class="n">static_file</span><span class="p">(</span><span class="s">&quot;/style.css&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;style.css&quot;</span><span class="p">);</span>
+<span class="n">app</span><span class="p">.</span><span class="n">static_file</span><span class="p">(</span><span class="s">"/favicon.ico"</span><span class="p">,</span><span class="w"> </span><span class="s">"images/home.png"</span><span class="p">);</span>
+<span class="n">app</span><span class="p">.</span><span class="n">static_file</span><span class="p">(</span><span class="s">"/style.css"</span><span class="p">,</span><span class="w"> </span><span class="s">"style.css"</span><span class="p">);</span>
 
 <span class="c1">// Explicit route to add more information</span>
-<span class="n">CROW_ROUTE</span><span class="p">(</span><span class="n">app</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;/customDataType.xyz&quot;</span><span class="p">)</span>
+<span class="n">CROW_ROUTE</span><span class="p">(</span><span class="n">app</span><span class="p">,</span><span class="w"> </span><span class="s">"/customDataType.xyz"</span><span class="p">)</span>
 <span class="p">([](</span><span class="k">const</span><span class="w"> </span><span class="n">crow</span><span class="o">::</span><span class="n">request</span><span class="o">&amp;</span><span class="p">,</span><span class="w"> </span><span class="n">crow</span><span class="o">::</span><span class="n">response</span><span class="o">&amp;</span><span class="w"> </span><span class="n">res</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
 <span class="w">    </span><span class="n">res</span><span class="p">.</span><span class="n">set_static_file_info</span><span class="p">(</span>
-<span class="w">                </span><span class="s">&quot;data/customType.xyz&quot;</span><span class="p">,</span>
-<span class="w">                </span><span class="s">&quot;application/octet-stream&quot;</span>
+<span class="w">                </span><span class="s">"data/customType.xyz"</span><span class="p">,</span>
+<span class="w">                </span><span class="s">"application/octet-stream"</span>
 <span class="w">                </span><span class="p">);</span>
 <span class="w">    </span><span class="n">res</span><span class="p">.</span><span class="n">end</span><span class="p">();</span>
 <span class="p">});</span>
@@ -1854,11 +1854,11 @@ The path is relative to the working directory.</p>
 <h2 id="notes">Notes<a class="headerlink" href="#notes" title="Permanent link">&para;</a></h2>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
-<p>The path to the file is sanitized by default. it should be fine for most circumstances but if you know what you're doing and need the sanitizer off you can use <code class="highlight"><span class="n">response</span><span class="p">.</span><span class="n">set_static_file_info_unsafe</span><span class="p">(</span><span class="s">&quot;path/to/file&quot;</span><span class="p">)</span></code> instead.</p>
+<p>The path to the file is sanitized by default. it should be fine for most circumstances but if you know what you're doing and need the sanitizer off you can use <code class="highlight"><span class="n">response</span><span class="p">.</span><span class="n">set_static_file_info_unsafe</span><span class="p">(</span><span class="s">"path/to/file"</span><span class="p">)</span></code> instead.</p>
 </div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>Crow sets the <code>content-type</code> header automatically based on the file's extension, if an extension is unavailable or undefined,  Crow uses <code>text/plain</code>, if you'd like to explicitly set a <code>content-type</code>, use <code class="highlight"><span class="n">response</span><span class="p">.</span><span class="n">set_header</span><span class="p">(</span><span class="s">&quot;content-type&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;mime/type&quot;</span><span class="p">);</span></code> <strong>AFTER</strong> calling <code>set_static_file_info</code>.</p>
+<p>Crow sets the <code>content-type</code> header automatically based on the file's extension, if an extension is unavailable or undefined,  Crow uses <code>text/plain</code>, if you'd like to explicitly set a <code>content-type</code>, use <code class="highlight"><span class="n">response</span><span class="p">.</span><span class="n">set_header</span><span class="p">(</span><span class="s">"content-type"</span><span class="p">,</span><span class="w"> </span><span class="s">"mime/type"</span><span class="p">);</span></code> <strong>AFTER</strong> calling <code>set_static_file_info</code>.</p>
 </div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -2063,10 +2063,10 @@ The path is relative to the working directory.</p>
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.tabs", "content.code.annotate"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"default": "latest", "provider": "mike"}}</script>
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.tabs", "content.code.annotate"], "search": "../../assets/javascripts/workers/search.a7633da7.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"default": "latest", "provider": "mike"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      <script src="../../assets/javascripts/bundle.c21346df.min.js"></script>
       
     
   </body>

@@ -25,7 +25,7 @@ Make sure you understand how to enable and use middleware.">
       
       
       <link rel="icon" href="../../assets/favicon.svg">
-      <meta name="generator" content="mkdocs-ProperDocs 1.6.7, mkdocs-material-9.7.7">
+      <meta name="generator" content="mkdocs-ProperDocs 1.6.7, mkdocs-material-9.8.0">
     
     
       
@@ -33,10 +33,10 @@ Make sure you understand how to enable and use middleware.">
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.57a0d79d.min.css">
       
         
-        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.fb2fffe2.min.css">
       
       
 
@@ -1873,7 +1873,7 @@ Examples: <code>examples/middlewares/session.cpp</code></p>
 <p><strong>Always list the CookieParser before the Session</strong>
 <div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">Session</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">crow</span><span class="o">::</span><span class="n">SessionMiddleware</span><span class="o">&lt;</span><span class="n">crow</span><span class="o">::</span><span class="n">FileStore</span><span class="o">&gt;</span><span class="p">;</span>
 <span class="n">crow</span><span class="o">::</span><span class="n">App</span><span class="o">&lt;</span><span class="n">crow</span><span class="o">::</span><span class="n">CookieParser</span><span class="p">,</span><span class="w"> </span><span class="n">Session</span><span class="o">&gt;</span><span class="w"> </span><span class="n">app</span><span class="p">{</span><span class="n">Session</span><span class="p">{</span>
-<span class="w">  </span><span class="n">crow</span><span class="o">::</span><span class="n">FileStore</span><span class="p">{</span><span class="s">&quot;/tmp/sessiondata&quot;</span><span class="p">}</span>
+<span class="w">  </span><span class="n">crow</span><span class="o">::</span><span class="n">FileStore</span><span class="p">{</span><span class="s">"/tmp/sessiondata"</span><span class="p">}</span>
 <span class="p">}};</span>
 </code></pre></div></p>
 <p>Session ids are represented as random alphanumeric strings and are stored in cookies. See the examples for more customization options.</p>
@@ -1881,18 +1881,18 @@ Examples: <code>examples/middlewares/session.cpp</code></p>
 <p>A session is basically a key-value map with support for multiple types: strings, integers, booleans and doubles. The map is created and persisted automatically as soon it is first written to.</p>
 <div class="highlight"><pre><span></span><code><span class="k">auto</span><span class="o">&amp;</span><span class="w"> </span><span class="n">session</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">app</span><span class="p">.</span><span class="n">get_context</span><span class="o">&lt;</span><span class="n">Session</span><span class="o">&gt;</span><span class="p">(</span><span class="n">request</span><span class="p">);</span>
 
-<span class="n">session</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;key&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;not-found&quot;</span><span class="p">);</span><span class="w"> </span><span class="c1">// get string by key and return &quot;not-found&quot; if not found</span>
-<span class="n">session</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;int&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">-1</span><span class="p">);</span>
-<span class="n">session</span><span class="p">.</span><span class="n">get</span><span class="o">&lt;</span><span class="kt">bool</span><span class="o">&gt;</span><span class="p">(</span><span class="s">&quot;flag&quot;</span><span class="p">);</span><span class="w"> </span><span class="c1">// returns default value(false) if not found</span>
+<span class="n">session</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">"key"</span><span class="p">,</span><span class="w"> </span><span class="s">"not-found"</span><span class="p">);</span><span class="w"> </span><span class="c1">// get string by key and return "not-found" if not found</span>
+<span class="n">session</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">"int"</span><span class="p">,</span><span class="w"> </span><span class="mi">-1</span><span class="p">);</span>
+<span class="n">session</span><span class="p">.</span><span class="n">get</span><span class="o">&lt;</span><span class="kt">bool</span><span class="o">&gt;</span><span class="p">(</span><span class="s">"flag"</span><span class="p">);</span><span class="w"> </span><span class="c1">// returns default value(false) if not found</span>
 
-<span class="n">session</span><span class="p">.</span><span class="n">set</span><span class="p">(</span><span class="s">&quot;key&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;new value&quot;</span><span class="p">);</span>
-<span class="n">session</span><span class="p">.</span><span class="n">string</span><span class="p">(</span><span class="s">&quot;any-type&quot;</span><span class="p">);</span><span class="w"> </span><span class="c1">// return any type as string representation</span>
-<span class="n">session</span><span class="p">.</span><span class="n">remove</span><span class="p">(</span><span class="s">&quot;key&quot;</span><span class="p">);</span>
+<span class="n">session</span><span class="p">.</span><span class="n">set</span><span class="p">(</span><span class="s">"key"</span><span class="p">,</span><span class="w"> </span><span class="s">"new value"</span><span class="p">);</span>
+<span class="n">session</span><span class="p">.</span><span class="n">string</span><span class="p">(</span><span class="s">"any-type"</span><span class="p">);</span><span class="w"> </span><span class="c1">// return any type as string representation</span>
+<span class="n">session</span><span class="p">.</span><span class="n">remove</span><span class="p">(</span><span class="s">"key"</span><span class="p">);</span>
 <span class="n">session</span><span class="p">.</span><span class="n">keys</span><span class="p">();</span><span class="w"> </span><span class="c1">// return list of keys</span>
 </code></pre></div>
 <p>Session objects are shared between concurrent requests,
 this means we can perform atomic operations and even lock the object.
-<div class="highlight"><pre><span></span><code><span class="n">session</span><span class="p">.</span><span class="n">apply</span><span class="p">(</span><span class="s">&quot;views&quot;</span><span class="p">,</span><span class="w"> </span><span class="p">[](</span><span class="kt">int</span><span class="w"> </span><span class="n">v</span><span class="p">){</span><span class="k">return</span><span class="w"> </span><span class="n">v</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">;});</span><span class="w"> </span><span class="c1">// this operation is always atomic, no way to get a data race</span>
+<div class="highlight"><pre><span></span><code><span class="n">session</span><span class="p">.</span><span class="n">apply</span><span class="p">(</span><span class="s">"views"</span><span class="p">,</span><span class="w"> </span><span class="p">[](</span><span class="kt">int</span><span class="w"> </span><span class="n">v</span><span class="p">){</span><span class="k">return</span><span class="w"> </span><span class="n">v</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">;});</span><span class="w"> </span><span class="c1">// this operation is always atomic, no way to get a data race</span>
 <span class="n">session</span><span class="p">.</span><span class="n">mutex</span><span class="p">().</span><span class="n">lock</span><span class="p">();</span><span class="w"> </span><span class="c1">// manually lock session</span>
 </code></pre></div></p>
 <h3 id="expiration">Expiration<a class="headerlink" href="#expiration" title="Permanent link">&para;</a></h3>
@@ -1910,9 +1910,9 @@ Examples: <code>examples/middlewares/example_cookies.cpp</code></p>
 <p>This middleware allows to read and write cookies by using <code>CookieParser</code>. Once enabled, it parses all incoming cookies.</p>
 <p>Cookies can be read and written with the middleware context. All cookie attributes can be changed as well.</p>
 <div class="highlight"><pre><span></span><code><span class="k">auto</span><span class="o">&amp;</span><span class="w"> </span><span class="n">ctx</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">app</span><span class="p">.</span><span class="n">get_context</span><span class="o">&lt;</span><span class="n">crow</span><span class="o">::</span><span class="n">CookieParser</span><span class="o">&gt;</span><span class="p">(</span><span class="n">request</span><span class="p">);</span>
-<span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">value</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ctx</span><span class="p">.</span><span class="n">get_cookie</span><span class="p">(</span><span class="s">&quot;key&quot;</span><span class="p">);</span>
-<span class="n">ctx</span><span class="p">.</span><span class="n">set_cookie</span><span class="p">(</span><span class="s">&quot;key&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;value&quot;</span><span class="p">)</span>
-<span class="w">    </span><span class="p">.</span><span class="n">path</span><span class="p">(</span><span class="s">&quot;/&quot;</span><span class="p">)</span>
+<span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">value</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ctx</span><span class="p">.</span><span class="n">get_cookie</span><span class="p">(</span><span class="s">"key"</span><span class="p">);</span>
+<span class="n">ctx</span><span class="p">.</span><span class="n">set_cookie</span><span class="p">(</span><span class="s">"key"</span><span class="p">,</span><span class="w"> </span><span class="s">"value"</span><span class="p">)</span>
+<span class="w">    </span><span class="p">.</span><span class="n">path</span><span class="p">(</span><span class="s">"/"</span><span class="p">)</span>
 <span class="w">    </span><span class="p">.</span><span class="n">max_age</span><span class="p">(</span><span class="mi">120</span><span class="p">);</span>
 </code></pre></div>
 <div class="admonition note">
@@ -1928,10 +1928,10 @@ Examples: <code>examples/middlewares/example_cors.cpp</code></p>
 <div class="highlight"><pre><span></span><code><span class="k">auto</span><span class="o">&amp;</span><span class="w"> </span><span class="n">cors</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">app</span><span class="p">.</span><span class="n">get_middleware</span><span class="o">&lt;</span><span class="n">crow</span><span class="o">::</span><span class="n">CORSHandler</span><span class="o">&gt;</span><span class="p">();</span>
 <span class="n">cors</span>
 <span class="w">  </span><span class="p">.</span><span class="n">global</span><span class="p">()</span>
-<span class="w">    </span><span class="p">.</span><span class="n">headers</span><span class="p">(</span><span class="s">&quot;X-Custom-Header&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Upgrade-Insecure-Requests&quot;</span><span class="p">)</span>
-<span class="w">    </span><span class="p">.</span><span class="n">methods</span><span class="p">(</span><span class="s">&quot;POST&quot;</span><span class="n">_method</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;GET&quot;</span><span class="n">_method</span><span class="p">)</span>
-<span class="w">  </span><span class="p">.</span><span class="n">prefix</span><span class="p">(</span><span class="s">&quot;/cors&quot;</span><span class="p">)</span>
-<span class="w">    </span><span class="p">.</span><span class="n">origin</span><span class="p">(</span><span class="s">&quot;example.com&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="p">.</span><span class="n">headers</span><span class="p">(</span><span class="s">"X-Custom-Header"</span><span class="p">,</span><span class="w"> </span><span class="s">"Upgrade-Insecure-Requests"</span><span class="p">)</span>
+<span class="w">    </span><span class="p">.</span><span class="n">methods</span><span class="p">(</span><span class="s">"POST"</span><span class="n">_method</span><span class="p">,</span><span class="w"> </span><span class="s">"GET"</span><span class="n">_method</span><span class="p">)</span>
+<span class="w">  </span><span class="p">.</span><span class="n">prefix</span><span class="p">(</span><span class="s">"/cors"</span><span class="p">)</span>
+<span class="w">    </span><span class="p">.</span><span class="n">origin</span><span class="p">(</span><span class="s">"example.com"</span><span class="p">);</span>
 </code></pre></div>
 
 
@@ -2132,10 +2132,10 @@ Examples: <code>examples/middlewares/example_cors.cpp</code></p>
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.tabs", "content.code.annotate"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"default": "latest", "provider": "mike"}}</script>
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.tabs", "content.code.annotate"], "search": "../../assets/javascripts/workers/search.a7633da7.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"default": "latest", "provider": "mike"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      <script src="../../assets/javascripts/bundle.c21346df.min.js"></script>
       
     
   </body>
