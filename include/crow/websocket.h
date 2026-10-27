@@ -271,21 +271,28 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                         if (shared_this->close_handler_)
                             shared_this->close_handler_(*shared_this, msg, status_code);
                     }
-                    // These codes only report that no status code was received and must not
-                    // be sent in a Close frame (RFC 6455 Section 7.4.1), so send none at all.
-                    if (status_code == NoStatusCodePresent || status_code == ClosedAbnormally || status_code == TLSHandshakeFailure)
-                    {
-                        shared_this->write_buffers_.emplace_back(shared_this->build_header(0x8, 0));
-                        shared_this->do_write();
-                        return;
-                    }
-                    auto header = shared_this->build_header(0x8, msg.size() + 2);
-                    char status_buf[2];
-                    *(uint16_t*)(status_buf) = htons(status_code);
 
-                    shared_this->write_buffers_.emplace_back(std::move(header));
-                    shared_this->write_buffers_.emplace_back(std::string(status_buf, 2));
-                    shared_this->write_buffers_.emplace_back(msg);
+                    switch(status_code) {
+                        
+                        case NoStatusCodePresent:
+                        case ClosedAbnormally:
+                        case TLSHandshakeFailure:
+                            // These codes only report that no status code was received and must not
+                            // be sent in a Close frame (RFC 6455 Section 7.4.1), so send none at all.
+                            {
+                                shared_this->write_buffers_.emplace_back(shared_this->build_header(0x8, 0));
+                            }
+                        default: 
+                            {
+                                auto header = shared_this->build_header(0x8, msg.size() + 2);
+                                char status_buf[2];
+                                *(uint16_t*)(status_buf) = htons(status_code);
+                                
+                                shared_this->write_buffers_.emplace_back(std::move(header));
+                                shared_this->write_buffers_.emplace_back(std::string(status_buf, 2));
+                                shared_this->write_buffers_.emplace_back(msg);
+                            }
+                    }
                     shared_this->do_write();
                 });
             }
