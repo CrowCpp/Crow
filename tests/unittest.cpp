@@ -3086,7 +3086,7 @@ TEST_CASE("chunk_extension_rejects_bare_lf")
           asio::ip::make_address(LOCALHOST_ADDRESS), 45451));
         c.send(asio::buffer(rq));
         std::string res;
-        asio::error_code ec;
+        asio_error_code ec;
         size_t n = c.receive(asio::buffer(buf, 2048), 0, ec);
         res.assign(buf, n);
         c.close();
