@@ -76,3 +76,57 @@ TEST_CASE( "malformed percent encoding - trailing percent" )
 
     REQUIRE(true); // Test passes if no crash/sanitizer error
 }
+TEST_CASE( "pop family removes percent-encoded keys" )
+{
+    // pop() must remove what get() found, including URL-encoded key names
+    {
+        crow::query_string qs("https://example.com/?a%20b=1&z=9");
+        REQUIRE(qs.get("a b") != nullptr);
+        REQUIRE(std::string(qs.pop("a b")) == "1");
+        REQUIRE(qs.get("a b") == nullptr);
+        REQUIRE(qs.keys().size() == 1);
+    }
+    {
+        crow::query_string qs("https://example.com/?a+b=1&z=9");
+        REQUIRE(std::string(qs.pop("a b")) == "1");
+        REQUIRE(qs.get("a b") == nullptr);
+    }
+    // a valueless key is found by get(), so pop() must remove it too
+    {
+        crow::query_string qs("https://example.com/?foo&bar=1");
+        REQUIRE(qs.get("foo") != nullptr);
+        (void)qs.pop("foo");
+        REQUIRE(qs.get("foo") == nullptr);
+        REQUIRE(qs.get("bar") != nullptr);
+    }
+    // pop_list() must remove what get_list() found
+    {
+        crow::query_string qs("https://example.com/?a+b[]=1&a+b[]=2&z=9");
+        REQUIRE(qs.get_list("a b").size() == 2);
+        REQUIRE(qs.pop_list("a b").size() == 2);
+        REQUIRE(qs.get_list("a b").empty() == true);
+        REQUIRE(qs.keys().size() == 1);
+    }
+    // pop_dict() must remove what get_dict() found, encoded brackets included
+    {
+        crow::query_string qs("https://example.com/?page%5Bsize%5D=3&page%5Bnum%5D=7&z=9");
+        REQUIRE(qs.get_dict("page").size() == 2);
+        REQUIRE(qs.pop_dict("page").size() == 2);
+        REQUIRE(qs.get_dict("page").empty() == true);
+        REQUIRE(qs.keys().size() == 1);
+    }
+    // pop() removes only the first occurrence, exactly what get() returned
+    {
+        crow::query_string qs("https://example.com/?a+b=1&z=9&a+b=2");
+        REQUIRE(std::string(qs.pop("a b")) == "1");
+        REQUIRE(std::string(qs.get("a b")) == "2");
+        REQUIRE(qs.keys().size() == 2);
+    }
+    // plain ASCII keys keep working
+    {
+        crow::query_string qs("https://example.com/?hello=world&left=right");
+        REQUIRE(std::string(qs.pop("left")) == "right");
+        REQUIRE(qs.get("left") == nullptr);
+        REQUIRE(std::string(qs.get("hello")) == "world");
+    }
+}
