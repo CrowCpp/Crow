@@ -271,13 +271,28 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                         if (shared_this->close_handler_)
                             shared_this->close_handler_(*shared_this, msg, status_code);
                     }
-                    auto header = shared_this->build_header(0x8, msg.size() + 2);
-                    char status_buf[2];
-                    *(uint16_t*)(status_buf) = htons(status_code);
 
-                    shared_this->write_buffers_.emplace_back(std::move(header));
-                    shared_this->write_buffers_.emplace_back(std::string(status_buf, 2));
-                    shared_this->write_buffers_.emplace_back(msg);
+                    switch(status_code) {
+                        
+                        case NoStatusCodePresent:
+                        case ClosedAbnormally:
+                        case TLSHandshakeFailure:
+                            // These codes only report that no status code was received and must not
+                            // be sent in a Close frame (RFC 6455 Section 7.4.1), so send none at all.
+                            {
+                                shared_this->write_buffers_.emplace_back(shared_this->build_header(0x8, 0));
+                            }
+                        default: 
+                            {
+                                auto header = shared_this->build_header(0x8, msg.size() + 2);
+                                char status_buf[2];
+                                *(uint16_t*)(status_buf) = htons(status_code);
+                                
+                                shared_this->write_buffers_.emplace_back(std::move(header));
+                                shared_this->write_buffers_.emplace_back(std::string(status_buf, 2));
+                                shared_this->write_buffers_.emplace_back(msg);
+                            }
+                    }
                     shared_this->do_write();
                 });
             }
@@ -699,7 +714,16 @@ namespace crow // NOTE: Already documented in "crow/app.h"
 
                         if (!has_sent_close_)
                         {
-                            close(fragment_.substr(message_start), status_code);
+                            if (fragment_.size() == 1 || (fragment_.size() >= 2 && !is_valid_close_code(status_code)))
+                            {
+                                if (error_handler_)
+                                    error_handler_(*this, "Invalid close frame.");
+                                close("", CloseStatusCode::ProtocolError);
+                            }
+                            else
+                            {
+                                close(fragment_.substr(message_start), status_code);
+                            }
                         }
                         else
                         {
@@ -787,6 +811,12 @@ namespace crow // NOTE: Already documented in "crow/app.h"
             }
 
             /// Destroy the Connection.
+            /// Whether a peer may send the status code in a Close frame (RFC 6455 Section 7.4).
+            static bool is_valid_close_code(uint16_t code)
+            {
+                return (code >= 1000 && code <= 1003) || (code >= 1007 && code <= 1014) || (code >= 3000 && code <= 4999);
+            }
+
             void check_destroy(websocket::CloseStatusCode code = CloseStatusCode::ClosedAbnormally)
             {
                 // Note that if the close handler was not yet called at this point we did not receive a close packet (or send one)
