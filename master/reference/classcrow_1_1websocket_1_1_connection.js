@@ -3,7 +3,6 @@ var classcrow_1_1websocket_1_1_connection =
     [ "SendMessageType", "structcrow_1_1websocket_1_1_connection_1_1_send_message_type.html", null ],
     [ "WeakWrappedMessage", "structcrow_1_1websocket_1_1_connection_1_1_weak_wrapped_message.html", null ],
     [ "build_header", "classcrow_1_1websocket_1_1_connection.html#a2fc995281b9452b56f743294baa7ed17", null ],
-    [ "check_destroy", "classcrow_1_1websocket_1_1_connection.html#ad13e9b7b8a2a551056b34495cb334124", null ],
     [ "close", "classcrow_1_1websocket_1_1_connection.html#a4fab99ae7f8e269480d5842cff1daf88", null ],
     [ "dispatch", "classcrow_1_1websocket_1_1_connection.html#a0d7758d7d22d74ee9ed17c8c7df0a380", null ],
     [ "do_read", "classcrow_1_1websocket_1_1_connection.html#a1049d7689f068379e98954bfb04bee5c", null ],

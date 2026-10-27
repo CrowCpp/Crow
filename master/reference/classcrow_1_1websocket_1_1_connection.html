@@ -104,6 +104,7 @@ $(document).ready(function(){initNavTree('classcrow_1_1websocket_1_1_connection.
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pub-static-methods">Static Public Member Functions</a> &#124;
 <a href="#pro-methods">Protected Member Functions</a> &#124;
+<a href="#pro-static-methods">Static Protected Member Functions</a> &#124;
 <a href="classcrow_1_1websocket_1_1_connection-members.html">List of all members</a>  </div>
   <div class="headertitle"><div class="title">crow::websocket::Connection&lt; Adaptor, Handler &gt; Class Template Reference</div></div>
 </div><!--header-->
@@ -209,7 +210,6 @@ int&#160;</td><td class="memItemRight" valign="bottom"><b>opcode</b> ()</td></tr
 <tr class="separator:a787dde96965bf30d994bbc5fb3388281"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad13e9b7b8a2a551056b34495cb334124" id="r_ad13e9b7b8a2a551056b34495cb334124"><td class="memItemLeft" align="right" valign="top"><a id="ad13e9b7b8a2a551056b34495cb334124" name="ad13e9b7b8a2a551056b34495cb334124"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>check_destroy</b> (websocket::CloseStatusCode code=CloseStatusCode::ClosedAbnormally)</td></tr>
-<tr class="memdesc:ad13e9b7b8a2a551056b34495cb334124"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destroy the <a class="el" href="classcrow_1_1websocket_1_1_connection.html" title="A websocket connection.">Connection</a>. <br /></td></tr>
 <tr class="separator:ad13e9b7b8a2a551056b34495cb334124"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad7f9fc603b168908dba35e4a82dce69b" id="r_ad7f9fc603b168908dba35e4a82dce69b"><td class="memItemLeft" align="right" valign="top"><a id="ad7f9fc603b168908dba35e4a82dce69b" name="ad7f9fc603b168908dba35e4a82dce69b"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>send_data_impl</b> (<a class="el" href="structcrow_1_1websocket_1_1_connection_1_1_send_message_type.html">SendMessageType</a> *s)</td></tr>
@@ -217,6 +217,11 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>send_data_impl</b> (<
 <tr class="memitem:ac27434329d97c1a7be8c2f649c180612" id="r_ac27434329d97c1a7be8c2f649c180612"><td class="memItemLeft" align="right" valign="top"><a id="ac27434329d97c1a7be8c2f649c180612" name="ac27434329d97c1a7be8c2f649c180612"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>send_data</b> (int <a class="el" href="classcrow_1_1websocket_1_1_connection.html#a6d74305323202dc7ebd07cbd3ee19f98">opcode</a>, std::string &amp;&amp;msg)</td></tr>
 <tr class="separator:ac27434329d97c1a7be8c2f649c180612"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pro-static-methods" name="pro-static-methods"></a>
+Static Protected Member Functions</h2></td></tr>
+<tr class="memitem:a92cfbdf06814c440a9fbafd1e9b1ec70" id="r_a92cfbdf06814c440a9fbafd1e9b1ec70"><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcrow_1_1websocket_1_1_connection.html#a92cfbdf06814c440a9fbafd1e9b1ec70">is_valid_close_code</a> (uint16_t code)</td></tr>
+<tr class="separator:a92cfbdf06814c440a9fbafd1e9b1ec70"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;typename Adaptor, typename Handler&gt;<br />
@@ -548,6 +553,35 @@ template&lt;typename Adaptor , typename Handler &gt; </div>
 
 <p>Process the payload fragment. </p>
 <p>Unmasks the fragment, checks the opcode, merges fragments into 1 message body, and calls the appropriate handler. </p>
+
+</div>
+</div>
+<a id="a92cfbdf06814c440a9fbafd1e9b1ec70" name="a92cfbdf06814c440a9fbafd1e9b1ec70"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a92cfbdf06814c440a9fbafd1e9b1ec70">&#9670;&#160;</a></span>is_valid_close_code()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Adaptor , typename Handler &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static bool <a class="el" href="classcrow_1_1websocket_1_1_connection.html">crow::websocket::Connection</a>&lt; Adaptor, Handler &gt;::is_valid_close_code </td>
+          <td>(</td>
+          <td class="paramtype">uint16_t&#160;</td>
+          <td class="paramname"><em>code</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Destroy the <a class="el" href="classcrow_1_1websocket_1_1_connection.html" title="A websocket connection.">Connection</a>. Whether a peer may send the status code in a Close frame (RFC 6455 Section 7.4). </p>
 
 </div>
 </div>
