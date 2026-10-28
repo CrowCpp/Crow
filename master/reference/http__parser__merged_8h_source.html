@@ -1936,191 +1936,197 @@ $(document).ready(function(){initNavTree('http__parser__merged_8h_source.html','
 <div class="line"><a id="l01828" name="l01828"></a><span class="lineno"> 1828</span>          parser-&gt;state = s_chunk_size_almost_done;</div>
 <div class="line"><a id="l01829" name="l01829"></a><span class="lineno"> 1829</span>          <span class="keywordflow">break</span>;</div>
 <div class="line"><a id="l01830" name="l01830"></a><span class="lineno"> 1830</span>        }</div>
-<div class="line"><a id="l01831" name="l01831"></a><span class="lineno"> 1831</span>        <span class="keywordflow">break</span>;</div>
-<div class="line"><a id="l01832" name="l01832"></a><span class="lineno"> 1832</span>      }</div>
-<div class="line"><a id="l01833" name="l01833"></a><span class="lineno"> 1833</span> </div>
-<div class="line"><a id="l01834" name="l01834"></a><span class="lineno"> 1834</span>      <span class="keywordflow">case</span> s_chunk_size_almost_done:</div>
-<div class="line"><a id="l01835" name="l01835"></a><span class="lineno"> 1835</span>      {</div>
-<div class="line"><a id="l01836" name="l01836"></a><span class="lineno"> 1836</span>        assert(parser-&gt;flags &amp; F_CHUNKED);</div>
-<div class="line"><a id="l01837" name="l01837"></a><span class="lineno"> 1837</span>        CROW_STRICT_CHECK(ch != lf);</div>
-<div class="line"><a id="l01838" name="l01838"></a><span class="lineno"> 1838</span> </div>
-<div class="line"><a id="l01839" name="l01839"></a><span class="lineno"> 1839</span>        parser-&gt;nread = 0;</div>
-<div class="line"><a id="l01840" name="l01840"></a><span class="lineno"> 1840</span>        nread = 0;</div>
-<div class="line"><a id="l01841" name="l01841"></a><span class="lineno"> 1841</span> </div>
-<div class="line"><a id="l01842" name="l01842"></a><span class="lineno"> 1842</span>        <span class="keywordflow">if</span> (parser-&gt;content_length == 0) {</div>
-<div class="line"><a id="l01843" name="l01843"></a><span class="lineno"> 1843</span>          parser-&gt;flags |= F_TRAILING;</div>
-<div class="line"><a id="l01844" name="l01844"></a><span class="lineno"> 1844</span>          parser-&gt;state = s_header_field_start;</div>
-<div class="line"><a id="l01845" name="l01845"></a><span class="lineno"> 1845</span>        } <span class="keywordflow">else</span> {</div>
-<div class="line"><a id="l01846" name="l01846"></a><span class="lineno"> 1846</span>          parser-&gt;state = s_chunk_data;</div>
-<div class="line"><a id="l01847" name="l01847"></a><span class="lineno"> 1847</span>        }</div>
-<div class="line"><a id="l01848" name="l01848"></a><span class="lineno"> 1848</span>        <span class="keywordflow">break</span>;</div>
-<div class="line"><a id="l01849" name="l01849"></a><span class="lineno"> 1849</span>      }</div>
-<div class="line"><a id="l01850" name="l01850"></a><span class="lineno"> 1850</span> </div>
-<div class="line"><a id="l01851" name="l01851"></a><span class="lineno"> 1851</span>      <span class="keywordflow">case</span> s_chunk_data:</div>
-<div class="line"><a id="l01852" name="l01852"></a><span class="lineno"> 1852</span>      {</div>
-<div class="line"><a id="l01853" name="l01853"></a><span class="lineno"> 1853</span>        uint64_t to_read = CROW_MIN(parser-&gt;content_length,</div>
-<div class="line"><a id="l01854" name="l01854"></a><span class="lineno"> 1854</span>                               (uint64_t) ((data + len) - p));</div>
-<div class="line"><a id="l01855" name="l01855"></a><span class="lineno"> 1855</span> </div>
-<div class="line"><a id="l01856" name="l01856"></a><span class="lineno"> 1856</span>        assert(parser-&gt;flags &amp; F_CHUNKED);</div>
-<div class="line"><a id="l01857" name="l01857"></a><span class="lineno"> 1857</span>        assert(parser-&gt;content_length != 0</div>
-<div class="line"><a id="l01858" name="l01858"></a><span class="lineno"> 1858</span>            &amp;&amp; parser-&gt;content_length != CROW_ULLONG_MAX);</div>
-<div class="line"><a id="l01859" name="l01859"></a><span class="lineno"> 1859</span> </div>
-<div class="line"><a id="l01860" name="l01860"></a><span class="lineno"> 1860</span>        <span class="comment">/* See the explanation in s_body_identity for why the content</span></div>
-<div class="line"><a id="l01861" name="l01861"></a><span class="lineno"> 1861</span><span class="comment">         * length and data pointers are managed this way.</span></div>
-<div class="line"><a id="l01862" name="l01862"></a><span class="lineno"> 1862</span><span class="comment">         */</span></div>
-<div class="line"><a id="l01863" name="l01863"></a><span class="lineno"> 1863</span>        CROW_MARK(body);</div>
-<div class="line"><a id="l01864" name="l01864"></a><span class="lineno"> 1864</span>        parser-&gt;content_length -= to_read;</div>
-<div class="line"><a id="l01865" name="l01865"></a><span class="lineno"> 1865</span>        p += to_read - 1;</div>
-<div class="line"><a id="l01866" name="l01866"></a><span class="lineno"> 1866</span> </div>
-<div class="line"><a id="l01867" name="l01867"></a><span class="lineno"> 1867</span>        <span class="keywordflow">if</span> (parser-&gt;content_length == 0) {</div>
-<div class="line"><a id="l01868" name="l01868"></a><span class="lineno"> 1868</span>          parser-&gt;state = s_chunk_data_almost_done;</div>
-<div class="line"><a id="l01869" name="l01869"></a><span class="lineno"> 1869</span>        }</div>
-<div class="line"><a id="l01870" name="l01870"></a><span class="lineno"> 1870</span> </div>
-<div class="line"><a id="l01871" name="l01871"></a><span class="lineno"> 1871</span>        <span class="keywordflow">break</span>;</div>
-<div class="line"><a id="l01872" name="l01872"></a><span class="lineno"> 1872</span>      }</div>
-<div class="line"><a id="l01873" name="l01873"></a><span class="lineno"> 1873</span> </div>
-<div class="line"><a id="l01874" name="l01874"></a><span class="lineno"> 1874</span>      <span class="keywordflow">case</span> s_chunk_data_almost_done:</div>
-<div class="line"><a id="l01875" name="l01875"></a><span class="lineno"> 1875</span>        assert(parser-&gt;flags &amp; F_CHUNKED);</div>
-<div class="line"><a id="l01876" name="l01876"></a><span class="lineno"> 1876</span>        assert(parser-&gt;content_length == 0);</div>
-<div class="line"><a id="l01877" name="l01877"></a><span class="lineno"> 1877</span>        CROW_STRICT_CHECK(ch != cr);</div>
-<div class="line"><a id="l01878" name="l01878"></a><span class="lineno"> 1878</span>        parser-&gt;state = s_chunk_data_done;</div>
-<div class="line"><a id="l01879" name="l01879"></a><span class="lineno"> 1879</span>        CROW_CALLBACK_DATA(body);</div>
-<div class="line"><a id="l01880" name="l01880"></a><span class="lineno"> 1880</span>        <span class="keywordflow">break</span>;</div>
-<div class="line"><a id="l01881" name="l01881"></a><span class="lineno"> 1881</span> </div>
-<div class="line"><a id="l01882" name="l01882"></a><span class="lineno"> 1882</span>      <span class="keywordflow">case</span> s_chunk_data_done:</div>
-<div class="line"><a id="l01883" name="l01883"></a><span class="lineno"> 1883</span>        assert(parser-&gt;flags &amp; F_CHUNKED);</div>
-<div class="line"><a id="l01884" name="l01884"></a><span class="lineno"> 1884</span>        CROW_STRICT_CHECK(ch != lf);</div>
-<div class="line"><a id="l01885" name="l01885"></a><span class="lineno"> 1885</span>        parser-&gt;nread = 0;</div>
-<div class="line"><a id="l01886" name="l01886"></a><span class="lineno"> 1886</span>        nread = 0;</div>
-<div class="line"><a id="l01887" name="l01887"></a><span class="lineno"> 1887</span>        parser-&gt;state = s_chunk_size_start;</div>
-<div class="line"><a id="l01888" name="l01888"></a><span class="lineno"> 1888</span>        <span class="keywordflow">break</span>;</div>
-<div class="line"><a id="l01889" name="l01889"></a><span class="lineno"> 1889</span> </div>
-<div class="line"><a id="l01890" name="l01890"></a><span class="lineno"> 1890</span>      <span class="keywordflow">default</span>:</div>
-<div class="line"><a id="l01891" name="l01891"></a><span class="lineno"> 1891</span>        assert(0 &amp;&amp; <span class="stringliteral">&quot;unhandled state&quot;</span>);</div>
-<div class="line"><a id="l01892" name="l01892"></a><span class="lineno"> 1892</span>        CROW_SET_ERRNO(CHPE_INVALID_INTERNAL_STATE);</div>
-<div class="line"><a id="l01893" name="l01893"></a><span class="lineno"> 1893</span>        <span class="keywordflow">goto</span> error;</div>
-<div class="line"><a id="l01894" name="l01894"></a><span class="lineno"> 1894</span>    }</div>
-<div class="line"><a id="l01895" name="l01895"></a><span class="lineno"> 1895</span>  }</div>
-<div class="line"><a id="l01896" name="l01896"></a><span class="lineno"> 1896</span> </div>
-<div class="line"><a id="l01897" name="l01897"></a><span class="lineno"> 1897</span>  <span class="comment">/* Run callbacks for any marks that we have leftover after we ran out of</span></div>
-<div class="line"><a id="l01898" name="l01898"></a><span class="lineno"> 1898</span><span class="comment">   * bytes. There should be at most one of these set, so it&#39;s OK to invoke</span></div>
-<div class="line"><a id="l01899" name="l01899"></a><span class="lineno"> 1899</span><span class="comment">   * them in series (unset marks will not result in callbacks).</span></div>
-<div class="line"><a id="l01900" name="l01900"></a><span class="lineno"> 1900</span><span class="comment">   *</span></div>
-<div class="line"><a id="l01901" name="l01901"></a><span class="lineno"> 1901</span><span class="comment">   * We use the NOADVANCE() variety of callbacks here because &#39;p&#39; has already</span></div>
-<div class="line"><a id="l01902" name="l01902"></a><span class="lineno"> 1902</span><span class="comment">   * overflowed &#39;data&#39; and this allows us to correct for the off-by-one that</span></div>
-<div class="line"><a id="l01903" name="l01903"></a><span class="lineno"> 1903</span><span class="comment">   * we&#39;d otherwise have (since CROW_CALLBACK_DATA() is meant to be run with a &#39;p&#39;</span></div>
-<div class="line"><a id="l01904" name="l01904"></a><span class="lineno"> 1904</span><span class="comment">   * value that&#39;s in-bounds).</span></div>
-<div class="line"><a id="l01905" name="l01905"></a><span class="lineno"> 1905</span><span class="comment">   */</span></div>
-<div class="line"><a id="l01906" name="l01906"></a><span class="lineno"> 1906</span> </div>
-<div class="line"><a id="l01907" name="l01907"></a><span class="lineno"> 1907</span>  assert(((header_field_mark ? 1 : 0) +</div>
-<div class="line"><a id="l01908" name="l01908"></a><span class="lineno"> 1908</span>          (header_value_mark ? 1 : 0) +</div>
-<div class="line"><a id="l01909" name="l01909"></a><span class="lineno"> 1909</span>          (url_mark ? 1 : 0)  +</div>
-<div class="line"><a id="l01910" name="l01910"></a><span class="lineno"> 1910</span>          (body_mark ? 1 : 0)) &lt;= 1);</div>
-<div class="line"><a id="l01911" name="l01911"></a><span class="lineno"> 1911</span> </div>
-<div class="line"><a id="l01912" name="l01912"></a><span class="lineno"> 1912</span>  CROW_CALLBACK_DATA_NOADVANCE(header_field);</div>
-<div class="line"><a id="l01913" name="l01913"></a><span class="lineno"> 1913</span>  CROW_CALLBACK_DATA_NOADVANCE(header_value);</div>
-<div class="line"><a id="l01914" name="l01914"></a><span class="lineno"> 1914</span>  CROW_CALLBACK_DATA_NOADVANCE(url);</div>
-<div class="line"><a id="l01915" name="l01915"></a><span class="lineno"> 1915</span>  CROW_CALLBACK_DATA_NOADVANCE(body);</div>
-<div class="line"><a id="l01916" name="l01916"></a><span class="lineno"> 1916</span> </div>
-<div class="line"><a id="l01917" name="l01917"></a><span class="lineno"> 1917</span>  parser-&gt;nread = nread;</div>
-<div class="line"><a id="l01918" name="l01918"></a><span class="lineno"> 1918</span>  <span class="keywordflow">return</span> len;</div>
-<div class="line"><a id="l01919" name="l01919"></a><span class="lineno"> 1919</span> </div>
-<div class="line"><a id="l01920" name="l01920"></a><span class="lineno"> 1920</span>error:</div>
-<div class="line"><a id="l01921" name="l01921"></a><span class="lineno"> 1921</span>  <span class="keywordflow">if</span> (CROW_HTTP_PARSER_ERRNO(parser) == CHPE_OK) {</div>
-<div class="line"><a id="l01922" name="l01922"></a><span class="lineno"> 1922</span>    CROW_SET_ERRNO(CHPE_UNKNOWN);</div>
-<div class="line"><a id="l01923" name="l01923"></a><span class="lineno"> 1923</span>  }</div>
-<div class="line"><a id="l01924" name="l01924"></a><span class="lineno"> 1924</span> </div>
-<div class="line"><a id="l01925" name="l01925"></a><span class="lineno"> 1925</span>  parser-&gt;nread = nread;</div>
-<div class="line"><a id="l01926" name="l01926"></a><span class="lineno"> 1926</span>  <span class="keywordflow">return</span> (p - data);</div>
-<div class="line"><a id="l01927" name="l01927"></a><span class="lineno"> 1927</span>}</div>
-<div class="line"><a id="l01928" name="l01928"></a><span class="lineno"> 1928</span> </div>
-<div class="line"><a id="l01929" name="l01929"></a><span class="lineno"> 1929</span><span class="keyword">inline</span> <span class="keywordtype">void</span></div>
-<div class="line"><a id="l01930" name="l01930"></a><span class="lineno"> 1930</span>  http_parser_init(http_parser* parser)</div>
-<div class="line"><a id="l01931" name="l01931"></a><span class="lineno"> 1931</span>{</div>
-<div class="line"><a id="l01932" name="l01932"></a><span class="lineno"> 1932</span>  <span class="keywordtype">void</span> *data = parser-&gt;data; <span class="comment">/* preserve application data */</span></div>
-<div class="line"><a id="l01933" name="l01933"></a><span class="lineno"> 1933</span>  memset(parser, 0, <span class="keyword">sizeof</span>(*parser));</div>
-<div class="line"><a id="l01934" name="l01934"></a><span class="lineno"> 1934</span>  parser-&gt;data = data;</div>
-<div class="line"><a id="l01935" name="l01935"></a><span class="lineno"> 1935</span>  parser-&gt;state = s_start_req;</div>
-<div class="line"><a id="l01936" name="l01936"></a><span class="lineno"> 1936</span>  parser-&gt;http_errno = CHPE_OK;</div>
-<div class="line"><a id="l01937" name="l01937"></a><span class="lineno"> 1937</span>}</div>
-<div class="line"><a id="l01938" name="l01938"></a><span class="lineno"> 1938</span> </div>
-<div class="line"><a id="l01939" name="l01939"></a><span class="lineno"> 1939</span><span class="comment">/* Return a string name of the given error */</span></div>
-<div class="line"><a id="l01940" name="l01940"></a><span class="lineno"> 1940</span><span class="keyword">inline</span> <span class="keyword">const</span> <span class="keywordtype">char</span> *</div>
-<div class="line"><a id="l01941" name="l01941"></a><span class="lineno"> 1941</span>http_errno_name(<span class="keyword">enum</span> http_errno err) {</div>
-<div class="line"><a id="l01942" name="l01942"></a><span class="lineno"> 1942</span><span class="comment">/* Map errno values to strings for human-readable output */</span></div>
-<div class="line"><a id="l01943" name="l01943"></a><span class="lineno"> 1943</span><span class="preprocessor">#define CROW_HTTP_STRERROR_GEN(n, s) { &quot;CHPE_&quot; #n, s },</span></div>
-<div class="line"><a id="l01944" name="l01944"></a><span class="lineno"> 1944</span><span class="keyword">static</span> <span class="keyword">struct </span>{</div>
-<div class="line"><a id="l01945" name="l01945"></a><span class="lineno"> 1945</span>  <span class="keyword">const</span> <span class="keywordtype">char</span> *name;</div>
-<div class="line"><a id="l01946" name="l01946"></a><span class="lineno"> 1946</span>  <span class="keyword">const</span> <span class="keywordtype">char</span> *description;</div>
-<div class="line"><a id="l01947" name="l01947"></a><span class="lineno"> 1947</span>} http_strerror_tab[] = {</div>
-<div class="line"><a id="l01948" name="l01948"></a><span class="lineno"> 1948</span>  CROW_HTTP_ERRNO_MAP(CROW_HTTP_STRERROR_GEN)</div>
-<div class="line"><a id="l01949" name="l01949"></a><span class="lineno"> 1949</span>};</div>
-<div class="line"><a id="l01950" name="l01950"></a><span class="lineno"> 1950</span><span class="preprocessor">#undef CROW_HTTP_STRERROR_GEN</span></div>
-<div class="line"><a id="l01951" name="l01951"></a><span class="lineno"> 1951</span>  assert(((<span class="keywordtype">size_t</span>) err) &lt; CROW_ARRAY_SIZE(http_strerror_tab));</div>
-<div class="line"><a id="l01952" name="l01952"></a><span class="lineno"> 1952</span>  <span class="keywordflow">return</span> http_strerror_tab[err].name;</div>
-<div class="line"><a id="l01953" name="l01953"></a><span class="lineno"> 1953</span>}</div>
-<div class="line"><a id="l01954" name="l01954"></a><span class="lineno"> 1954</span> </div>
-<div class="line"><a id="l01955" name="l01955"></a><span class="lineno"> 1955</span><span class="comment">/* Return a string description of the given error */</span></div>
-<div class="line"><a id="l01956" name="l01956"></a><span class="lineno"> 1956</span><span class="keyword">inline</span> <span class="keyword">const</span> <span class="keywordtype">char</span> *</div>
-<div class="line"><a id="l01957" name="l01957"></a><span class="lineno"> 1957</span>http_errno_description(<span class="keyword">enum</span> http_errno err) {</div>
-<div class="line"><a id="l01958" name="l01958"></a><span class="lineno"> 1958</span><span class="comment">/* Map errno values to strings for human-readable output */</span></div>
-<div class="line"><a id="l01959" name="l01959"></a><span class="lineno"> 1959</span><span class="preprocessor">#define CROW_HTTP_STRERROR_GEN(n, s) { &quot;CHPE_&quot; #n, s },</span></div>
-<div class="line"><a id="l01960" name="l01960"></a><span class="lineno"> 1960</span><span class="keyword">static</span> <span class="keyword">struct </span>{</div>
-<div class="line"><a id="l01961" name="l01961"></a><span class="lineno"> 1961</span>  <span class="keyword">const</span> <span class="keywordtype">char</span> *name;</div>
-<div class="line"><a id="l01962" name="l01962"></a><span class="lineno"> 1962</span>  <span class="keyword">const</span> <span class="keywordtype">char</span> *description;</div>
-<div class="line"><a id="l01963" name="l01963"></a><span class="lineno"> 1963</span>} http_strerror_tab[] = {</div>
-<div class="line"><a id="l01964" name="l01964"></a><span class="lineno"> 1964</span>  CROW_HTTP_ERRNO_MAP(CROW_HTTP_STRERROR_GEN)</div>
-<div class="line"><a id="l01965" name="l01965"></a><span class="lineno"> 1965</span>};</div>
-<div class="line"><a id="l01966" name="l01966"></a><span class="lineno"> 1966</span><span class="preprocessor">#undef CROW_HTTP_STRERROR_GEN</span></div>
-<div class="line"><a id="l01967" name="l01967"></a><span class="lineno"> 1967</span>  assert(((<span class="keywordtype">size_t</span>) err) &lt; CROW_ARRAY_SIZE(http_strerror_tab));</div>
-<div class="line"><a id="l01968" name="l01968"></a><span class="lineno"> 1968</span>  <span class="keywordflow">return</span> http_strerror_tab[err].description;</div>
-<div class="line"><a id="l01969" name="l01969"></a><span class="lineno"> 1969</span>}</div>
-<div class="line"><a id="l01970" name="l01970"></a><span class="lineno"> 1970</span> </div>
-<div class="line"><a id="l01971" name="l01971"></a><span class="lineno"> 1971</span><span class="comment">/* Checks if this is the final chunk of the body. */</span></div>
-<div class="line"><a id="l01972" name="l01972"></a><span class="lineno"> 1972</span><span class="keyword">inline</span> <span class="keywordtype">int</span></div>
-<div class="line"><a id="l01973" name="l01973"></a><span class="lineno"> 1973</span>http_body_is_final(<span class="keyword">const</span> <span class="keyword">struct</span> http_parser *parser) {</div>
-<div class="line"><a id="l01974" name="l01974"></a><span class="lineno"> 1974</span>    <span class="keywordflow">return</span> parser-&gt;state == s_message_done;</div>
+<div class="line"><a id="l01831" name="l01831"></a><span class="lineno"> 1831</span>        <span class="comment">/* A bare LF or other control character in a chunk extension would let</span></div>
+<div class="line"><a id="l01832" name="l01832"></a><span class="lineno"> 1832</span><span class="comment">         * a peer that ends the chunk line at LF frame the body differently. */</span></div>
+<div class="line"><a id="l01833" name="l01833"></a><span class="lineno"> 1833</span>        <span class="keywordflow">if</span> (CROW_UNLIKELY(ch == lf || !CROW_IS_HEADER_CHAR(ch))) {</div>
+<div class="line"><a id="l01834" name="l01834"></a><span class="lineno"> 1834</span>          CROW_SET_ERRNO(CHPE_INVALID_CHUNK_SIZE);</div>
+<div class="line"><a id="l01835" name="l01835"></a><span class="lineno"> 1835</span>          <span class="keywordflow">goto</span> error;</div>
+<div class="line"><a id="l01836" name="l01836"></a><span class="lineno"> 1836</span>        }</div>
+<div class="line"><a id="l01837" name="l01837"></a><span class="lineno"> 1837</span>        <span class="keywordflow">break</span>;</div>
+<div class="line"><a id="l01838" name="l01838"></a><span class="lineno"> 1838</span>      }</div>
+<div class="line"><a id="l01839" name="l01839"></a><span class="lineno"> 1839</span> </div>
+<div class="line"><a id="l01840" name="l01840"></a><span class="lineno"> 1840</span>      <span class="keywordflow">case</span> s_chunk_size_almost_done:</div>
+<div class="line"><a id="l01841" name="l01841"></a><span class="lineno"> 1841</span>      {</div>
+<div class="line"><a id="l01842" name="l01842"></a><span class="lineno"> 1842</span>        assert(parser-&gt;flags &amp; F_CHUNKED);</div>
+<div class="line"><a id="l01843" name="l01843"></a><span class="lineno"> 1843</span>        CROW_STRICT_CHECK(ch != lf);</div>
+<div class="line"><a id="l01844" name="l01844"></a><span class="lineno"> 1844</span> </div>
+<div class="line"><a id="l01845" name="l01845"></a><span class="lineno"> 1845</span>        parser-&gt;nread = 0;</div>
+<div class="line"><a id="l01846" name="l01846"></a><span class="lineno"> 1846</span>        nread = 0;</div>
+<div class="line"><a id="l01847" name="l01847"></a><span class="lineno"> 1847</span> </div>
+<div class="line"><a id="l01848" name="l01848"></a><span class="lineno"> 1848</span>        <span class="keywordflow">if</span> (parser-&gt;content_length == 0) {</div>
+<div class="line"><a id="l01849" name="l01849"></a><span class="lineno"> 1849</span>          parser-&gt;flags |= F_TRAILING;</div>
+<div class="line"><a id="l01850" name="l01850"></a><span class="lineno"> 1850</span>          parser-&gt;state = s_header_field_start;</div>
+<div class="line"><a id="l01851" name="l01851"></a><span class="lineno"> 1851</span>        } <span class="keywordflow">else</span> {</div>
+<div class="line"><a id="l01852" name="l01852"></a><span class="lineno"> 1852</span>          parser-&gt;state = s_chunk_data;</div>
+<div class="line"><a id="l01853" name="l01853"></a><span class="lineno"> 1853</span>        }</div>
+<div class="line"><a id="l01854" name="l01854"></a><span class="lineno"> 1854</span>        <span class="keywordflow">break</span>;</div>
+<div class="line"><a id="l01855" name="l01855"></a><span class="lineno"> 1855</span>      }</div>
+<div class="line"><a id="l01856" name="l01856"></a><span class="lineno"> 1856</span> </div>
+<div class="line"><a id="l01857" name="l01857"></a><span class="lineno"> 1857</span>      <span class="keywordflow">case</span> s_chunk_data:</div>
+<div class="line"><a id="l01858" name="l01858"></a><span class="lineno"> 1858</span>      {</div>
+<div class="line"><a id="l01859" name="l01859"></a><span class="lineno"> 1859</span>        uint64_t to_read = CROW_MIN(parser-&gt;content_length,</div>
+<div class="line"><a id="l01860" name="l01860"></a><span class="lineno"> 1860</span>                               (uint64_t) ((data + len) - p));</div>
+<div class="line"><a id="l01861" name="l01861"></a><span class="lineno"> 1861</span> </div>
+<div class="line"><a id="l01862" name="l01862"></a><span class="lineno"> 1862</span>        assert(parser-&gt;flags &amp; F_CHUNKED);</div>
+<div class="line"><a id="l01863" name="l01863"></a><span class="lineno"> 1863</span>        assert(parser-&gt;content_length != 0</div>
+<div class="line"><a id="l01864" name="l01864"></a><span class="lineno"> 1864</span>            &amp;&amp; parser-&gt;content_length != CROW_ULLONG_MAX);</div>
+<div class="line"><a id="l01865" name="l01865"></a><span class="lineno"> 1865</span> </div>
+<div class="line"><a id="l01866" name="l01866"></a><span class="lineno"> 1866</span>        <span class="comment">/* See the explanation in s_body_identity for why the content</span></div>
+<div class="line"><a id="l01867" name="l01867"></a><span class="lineno"> 1867</span><span class="comment">         * length and data pointers are managed this way.</span></div>
+<div class="line"><a id="l01868" name="l01868"></a><span class="lineno"> 1868</span><span class="comment">         */</span></div>
+<div class="line"><a id="l01869" name="l01869"></a><span class="lineno"> 1869</span>        CROW_MARK(body);</div>
+<div class="line"><a id="l01870" name="l01870"></a><span class="lineno"> 1870</span>        parser-&gt;content_length -= to_read;</div>
+<div class="line"><a id="l01871" name="l01871"></a><span class="lineno"> 1871</span>        p += to_read - 1;</div>
+<div class="line"><a id="l01872" name="l01872"></a><span class="lineno"> 1872</span> </div>
+<div class="line"><a id="l01873" name="l01873"></a><span class="lineno"> 1873</span>        <span class="keywordflow">if</span> (parser-&gt;content_length == 0) {</div>
+<div class="line"><a id="l01874" name="l01874"></a><span class="lineno"> 1874</span>          parser-&gt;state = s_chunk_data_almost_done;</div>
+<div class="line"><a id="l01875" name="l01875"></a><span class="lineno"> 1875</span>        }</div>
+<div class="line"><a id="l01876" name="l01876"></a><span class="lineno"> 1876</span> </div>
+<div class="line"><a id="l01877" name="l01877"></a><span class="lineno"> 1877</span>        <span class="keywordflow">break</span>;</div>
+<div class="line"><a id="l01878" name="l01878"></a><span class="lineno"> 1878</span>      }</div>
+<div class="line"><a id="l01879" name="l01879"></a><span class="lineno"> 1879</span> </div>
+<div class="line"><a id="l01880" name="l01880"></a><span class="lineno"> 1880</span>      <span class="keywordflow">case</span> s_chunk_data_almost_done:</div>
+<div class="line"><a id="l01881" name="l01881"></a><span class="lineno"> 1881</span>        assert(parser-&gt;flags &amp; F_CHUNKED);</div>
+<div class="line"><a id="l01882" name="l01882"></a><span class="lineno"> 1882</span>        assert(parser-&gt;content_length == 0);</div>
+<div class="line"><a id="l01883" name="l01883"></a><span class="lineno"> 1883</span>        CROW_STRICT_CHECK(ch != cr);</div>
+<div class="line"><a id="l01884" name="l01884"></a><span class="lineno"> 1884</span>        parser-&gt;state = s_chunk_data_done;</div>
+<div class="line"><a id="l01885" name="l01885"></a><span class="lineno"> 1885</span>        CROW_CALLBACK_DATA(body);</div>
+<div class="line"><a id="l01886" name="l01886"></a><span class="lineno"> 1886</span>        <span class="keywordflow">break</span>;</div>
+<div class="line"><a id="l01887" name="l01887"></a><span class="lineno"> 1887</span> </div>
+<div class="line"><a id="l01888" name="l01888"></a><span class="lineno"> 1888</span>      <span class="keywordflow">case</span> s_chunk_data_done:</div>
+<div class="line"><a id="l01889" name="l01889"></a><span class="lineno"> 1889</span>        assert(parser-&gt;flags &amp; F_CHUNKED);</div>
+<div class="line"><a id="l01890" name="l01890"></a><span class="lineno"> 1890</span>        CROW_STRICT_CHECK(ch != lf);</div>
+<div class="line"><a id="l01891" name="l01891"></a><span class="lineno"> 1891</span>        parser-&gt;nread = 0;</div>
+<div class="line"><a id="l01892" name="l01892"></a><span class="lineno"> 1892</span>        nread = 0;</div>
+<div class="line"><a id="l01893" name="l01893"></a><span class="lineno"> 1893</span>        parser-&gt;state = s_chunk_size_start;</div>
+<div class="line"><a id="l01894" name="l01894"></a><span class="lineno"> 1894</span>        <span class="keywordflow">break</span>;</div>
+<div class="line"><a id="l01895" name="l01895"></a><span class="lineno"> 1895</span> </div>
+<div class="line"><a id="l01896" name="l01896"></a><span class="lineno"> 1896</span>      <span class="keywordflow">default</span>:</div>
+<div class="line"><a id="l01897" name="l01897"></a><span class="lineno"> 1897</span>        assert(0 &amp;&amp; <span class="stringliteral">&quot;unhandled state&quot;</span>);</div>
+<div class="line"><a id="l01898" name="l01898"></a><span class="lineno"> 1898</span>        CROW_SET_ERRNO(CHPE_INVALID_INTERNAL_STATE);</div>
+<div class="line"><a id="l01899" name="l01899"></a><span class="lineno"> 1899</span>        <span class="keywordflow">goto</span> error;</div>
+<div class="line"><a id="l01900" name="l01900"></a><span class="lineno"> 1900</span>    }</div>
+<div class="line"><a id="l01901" name="l01901"></a><span class="lineno"> 1901</span>  }</div>
+<div class="line"><a id="l01902" name="l01902"></a><span class="lineno"> 1902</span> </div>
+<div class="line"><a id="l01903" name="l01903"></a><span class="lineno"> 1903</span>  <span class="comment">/* Run callbacks for any marks that we have leftover after we ran out of</span></div>
+<div class="line"><a id="l01904" name="l01904"></a><span class="lineno"> 1904</span><span class="comment">   * bytes. There should be at most one of these set, so it&#39;s OK to invoke</span></div>
+<div class="line"><a id="l01905" name="l01905"></a><span class="lineno"> 1905</span><span class="comment">   * them in series (unset marks will not result in callbacks).</span></div>
+<div class="line"><a id="l01906" name="l01906"></a><span class="lineno"> 1906</span><span class="comment">   *</span></div>
+<div class="line"><a id="l01907" name="l01907"></a><span class="lineno"> 1907</span><span class="comment">   * We use the NOADVANCE() variety of callbacks here because &#39;p&#39; has already</span></div>
+<div class="line"><a id="l01908" name="l01908"></a><span class="lineno"> 1908</span><span class="comment">   * overflowed &#39;data&#39; and this allows us to correct for the off-by-one that</span></div>
+<div class="line"><a id="l01909" name="l01909"></a><span class="lineno"> 1909</span><span class="comment">   * we&#39;d otherwise have (since CROW_CALLBACK_DATA() is meant to be run with a &#39;p&#39;</span></div>
+<div class="line"><a id="l01910" name="l01910"></a><span class="lineno"> 1910</span><span class="comment">   * value that&#39;s in-bounds).</span></div>
+<div class="line"><a id="l01911" name="l01911"></a><span class="lineno"> 1911</span><span class="comment">   */</span></div>
+<div class="line"><a id="l01912" name="l01912"></a><span class="lineno"> 1912</span> </div>
+<div class="line"><a id="l01913" name="l01913"></a><span class="lineno"> 1913</span>  assert(((header_field_mark ? 1 : 0) +</div>
+<div class="line"><a id="l01914" name="l01914"></a><span class="lineno"> 1914</span>          (header_value_mark ? 1 : 0) +</div>
+<div class="line"><a id="l01915" name="l01915"></a><span class="lineno"> 1915</span>          (url_mark ? 1 : 0)  +</div>
+<div class="line"><a id="l01916" name="l01916"></a><span class="lineno"> 1916</span>          (body_mark ? 1 : 0)) &lt;= 1);</div>
+<div class="line"><a id="l01917" name="l01917"></a><span class="lineno"> 1917</span> </div>
+<div class="line"><a id="l01918" name="l01918"></a><span class="lineno"> 1918</span>  CROW_CALLBACK_DATA_NOADVANCE(header_field);</div>
+<div class="line"><a id="l01919" name="l01919"></a><span class="lineno"> 1919</span>  CROW_CALLBACK_DATA_NOADVANCE(header_value);</div>
+<div class="line"><a id="l01920" name="l01920"></a><span class="lineno"> 1920</span>  CROW_CALLBACK_DATA_NOADVANCE(url);</div>
+<div class="line"><a id="l01921" name="l01921"></a><span class="lineno"> 1921</span>  CROW_CALLBACK_DATA_NOADVANCE(body);</div>
+<div class="line"><a id="l01922" name="l01922"></a><span class="lineno"> 1922</span> </div>
+<div class="line"><a id="l01923" name="l01923"></a><span class="lineno"> 1923</span>  parser-&gt;nread = nread;</div>
+<div class="line"><a id="l01924" name="l01924"></a><span class="lineno"> 1924</span>  <span class="keywordflow">return</span> len;</div>
+<div class="line"><a id="l01925" name="l01925"></a><span class="lineno"> 1925</span> </div>
+<div class="line"><a id="l01926" name="l01926"></a><span class="lineno"> 1926</span>error:</div>
+<div class="line"><a id="l01927" name="l01927"></a><span class="lineno"> 1927</span>  <span class="keywordflow">if</span> (CROW_HTTP_PARSER_ERRNO(parser) == CHPE_OK) {</div>
+<div class="line"><a id="l01928" name="l01928"></a><span class="lineno"> 1928</span>    CROW_SET_ERRNO(CHPE_UNKNOWN);</div>
+<div class="line"><a id="l01929" name="l01929"></a><span class="lineno"> 1929</span>  }</div>
+<div class="line"><a id="l01930" name="l01930"></a><span class="lineno"> 1930</span> </div>
+<div class="line"><a id="l01931" name="l01931"></a><span class="lineno"> 1931</span>  parser-&gt;nread = nread;</div>
+<div class="line"><a id="l01932" name="l01932"></a><span class="lineno"> 1932</span>  <span class="keywordflow">return</span> (p - data);</div>
+<div class="line"><a id="l01933" name="l01933"></a><span class="lineno"> 1933</span>}</div>
+<div class="line"><a id="l01934" name="l01934"></a><span class="lineno"> 1934</span> </div>
+<div class="line"><a id="l01935" name="l01935"></a><span class="lineno"> 1935</span><span class="keyword">inline</span> <span class="keywordtype">void</span></div>
+<div class="line"><a id="l01936" name="l01936"></a><span class="lineno"> 1936</span>  http_parser_init(http_parser* parser)</div>
+<div class="line"><a id="l01937" name="l01937"></a><span class="lineno"> 1937</span>{</div>
+<div class="line"><a id="l01938" name="l01938"></a><span class="lineno"> 1938</span>  <span class="keywordtype">void</span> *data = parser-&gt;data; <span class="comment">/* preserve application data */</span></div>
+<div class="line"><a id="l01939" name="l01939"></a><span class="lineno"> 1939</span>  memset(parser, 0, <span class="keyword">sizeof</span>(*parser));</div>
+<div class="line"><a id="l01940" name="l01940"></a><span class="lineno"> 1940</span>  parser-&gt;data = data;</div>
+<div class="line"><a id="l01941" name="l01941"></a><span class="lineno"> 1941</span>  parser-&gt;state = s_start_req;</div>
+<div class="line"><a id="l01942" name="l01942"></a><span class="lineno"> 1942</span>  parser-&gt;http_errno = CHPE_OK;</div>
+<div class="line"><a id="l01943" name="l01943"></a><span class="lineno"> 1943</span>}</div>
+<div class="line"><a id="l01944" name="l01944"></a><span class="lineno"> 1944</span> </div>
+<div class="line"><a id="l01945" name="l01945"></a><span class="lineno"> 1945</span><span class="comment">/* Return a string name of the given error */</span></div>
+<div class="line"><a id="l01946" name="l01946"></a><span class="lineno"> 1946</span><span class="keyword">inline</span> <span class="keyword">const</span> <span class="keywordtype">char</span> *</div>
+<div class="line"><a id="l01947" name="l01947"></a><span class="lineno"> 1947</span>http_errno_name(<span class="keyword">enum</span> http_errno err) {</div>
+<div class="line"><a id="l01948" name="l01948"></a><span class="lineno"> 1948</span><span class="comment">/* Map errno values to strings for human-readable output */</span></div>
+<div class="line"><a id="l01949" name="l01949"></a><span class="lineno"> 1949</span><span class="preprocessor">#define CROW_HTTP_STRERROR_GEN(n, s) { &quot;CHPE_&quot; #n, s },</span></div>
+<div class="line"><a id="l01950" name="l01950"></a><span class="lineno"> 1950</span><span class="keyword">static</span> <span class="keyword">struct </span>{</div>
+<div class="line"><a id="l01951" name="l01951"></a><span class="lineno"> 1951</span>  <span class="keyword">const</span> <span class="keywordtype">char</span> *name;</div>
+<div class="line"><a id="l01952" name="l01952"></a><span class="lineno"> 1952</span>  <span class="keyword">const</span> <span class="keywordtype">char</span> *description;</div>
+<div class="line"><a id="l01953" name="l01953"></a><span class="lineno"> 1953</span>} http_strerror_tab[] = {</div>
+<div class="line"><a id="l01954" name="l01954"></a><span class="lineno"> 1954</span>  CROW_HTTP_ERRNO_MAP(CROW_HTTP_STRERROR_GEN)</div>
+<div class="line"><a id="l01955" name="l01955"></a><span class="lineno"> 1955</span>};</div>
+<div class="line"><a id="l01956" name="l01956"></a><span class="lineno"> 1956</span><span class="preprocessor">#undef CROW_HTTP_STRERROR_GEN</span></div>
+<div class="line"><a id="l01957" name="l01957"></a><span class="lineno"> 1957</span>  assert(((<span class="keywordtype">size_t</span>) err) &lt; CROW_ARRAY_SIZE(http_strerror_tab));</div>
+<div class="line"><a id="l01958" name="l01958"></a><span class="lineno"> 1958</span>  <span class="keywordflow">return</span> http_strerror_tab[err].name;</div>
+<div class="line"><a id="l01959" name="l01959"></a><span class="lineno"> 1959</span>}</div>
+<div class="line"><a id="l01960" name="l01960"></a><span class="lineno"> 1960</span> </div>
+<div class="line"><a id="l01961" name="l01961"></a><span class="lineno"> 1961</span><span class="comment">/* Return a string description of the given error */</span></div>
+<div class="line"><a id="l01962" name="l01962"></a><span class="lineno"> 1962</span><span class="keyword">inline</span> <span class="keyword">const</span> <span class="keywordtype">char</span> *</div>
+<div class="line"><a id="l01963" name="l01963"></a><span class="lineno"> 1963</span>http_errno_description(<span class="keyword">enum</span> http_errno err) {</div>
+<div class="line"><a id="l01964" name="l01964"></a><span class="lineno"> 1964</span><span class="comment">/* Map errno values to strings for human-readable output */</span></div>
+<div class="line"><a id="l01965" name="l01965"></a><span class="lineno"> 1965</span><span class="preprocessor">#define CROW_HTTP_STRERROR_GEN(n, s) { &quot;CHPE_&quot; #n, s },</span></div>
+<div class="line"><a id="l01966" name="l01966"></a><span class="lineno"> 1966</span><span class="keyword">static</span> <span class="keyword">struct </span>{</div>
+<div class="line"><a id="l01967" name="l01967"></a><span class="lineno"> 1967</span>  <span class="keyword">const</span> <span class="keywordtype">char</span> *name;</div>
+<div class="line"><a id="l01968" name="l01968"></a><span class="lineno"> 1968</span>  <span class="keyword">const</span> <span class="keywordtype">char</span> *description;</div>
+<div class="line"><a id="l01969" name="l01969"></a><span class="lineno"> 1969</span>} http_strerror_tab[] = {</div>
+<div class="line"><a id="l01970" name="l01970"></a><span class="lineno"> 1970</span>  CROW_HTTP_ERRNO_MAP(CROW_HTTP_STRERROR_GEN)</div>
+<div class="line"><a id="l01971" name="l01971"></a><span class="lineno"> 1971</span>};</div>
+<div class="line"><a id="l01972" name="l01972"></a><span class="lineno"> 1972</span><span class="preprocessor">#undef CROW_HTTP_STRERROR_GEN</span></div>
+<div class="line"><a id="l01973" name="l01973"></a><span class="lineno"> 1973</span>  assert(((<span class="keywordtype">size_t</span>) err) &lt; CROW_ARRAY_SIZE(http_strerror_tab));</div>
+<div class="line"><a id="l01974" name="l01974"></a><span class="lineno"> 1974</span>  <span class="keywordflow">return</span> http_strerror_tab[err].description;</div>
 <div class="line"><a id="l01975" name="l01975"></a><span class="lineno"> 1975</span>}</div>
 <div class="line"><a id="l01976" name="l01976"></a><span class="lineno"> 1976</span> </div>
-<div class="line"><a id="l01977" name="l01977"></a><span class="lineno"> 1977</span><span class="comment">/* Change the maximum header size provided at compile time. */</span></div>
-<div class="line"><a id="l01978" name="l01978"></a><span class="lineno"> 1978</span><span class="keyword">inline</span> <span class="keywordtype">void</span></div>
-<div class="line"><a id="l01979" name="l01979"></a><span class="lineno"> 1979</span>http_parser_set_max_header_size(uint32_t size) {</div>
-<div class="line"><a id="l01980" name="l01980"></a><span class="lineno"> 1980</span>  max_header_size = size;</div>
+<div class="line"><a id="l01977" name="l01977"></a><span class="lineno"> 1977</span><span class="comment">/* Checks if this is the final chunk of the body. */</span></div>
+<div class="line"><a id="l01978" name="l01978"></a><span class="lineno"> 1978</span><span class="keyword">inline</span> <span class="keywordtype">int</span></div>
+<div class="line"><a id="l01979" name="l01979"></a><span class="lineno"> 1979</span>http_body_is_final(<span class="keyword">const</span> <span class="keyword">struct</span> http_parser *parser) {</div>
+<div class="line"><a id="l01980" name="l01980"></a><span class="lineno"> 1980</span>    <span class="keywordflow">return</span> parser-&gt;state == s_message_done;</div>
 <div class="line"><a id="l01981" name="l01981"></a><span class="lineno"> 1981</span>}</div>
 <div class="line"><a id="l01982" name="l01982"></a><span class="lineno"> 1982</span> </div>
-<div class="line"><a id="l01983" name="l01983"></a><span class="lineno"> 1983</span><span class="preprocessor">#undef CROW_HTTP_ERRNO_MAP</span></div>
-<div class="line"><a id="l01984" name="l01984"></a><span class="lineno"> 1984</span><span class="preprocessor">#undef CROW_SET_ERRNO</span></div>
-<div class="line"><a id="l01985" name="l01985"></a><span class="lineno"> 1985</span><span class="preprocessor">#undef CROW_CALLBACK_NOTIFY_</span></div>
-<div class="line"><a id="l01986" name="l01986"></a><span class="lineno"> 1986</span><span class="preprocessor">#undef CROW_CALLBACK_NOTIFY</span></div>
-<div class="line"><a id="l01987" name="l01987"></a><span class="lineno"> 1987</span><span class="preprocessor">#undef CROW_CALLBACK_NOTIFY_NOADVANCE</span></div>
-<div class="line"><a id="l01988" name="l01988"></a><span class="lineno"> 1988</span><span class="preprocessor">#undef CROW_CALLBACK_DATA_</span></div>
-<div class="line"><a id="l01989" name="l01989"></a><span class="lineno"> 1989</span><span class="preprocessor">#undef CROW_CALLBACK_DATA</span></div>
-<div class="line"><a id="l01990" name="l01990"></a><span class="lineno"> 1990</span><span class="preprocessor">#undef CROW_CALLBACK_DATA_NOADVANCE</span></div>
-<div class="line"><a id="l01991" name="l01991"></a><span class="lineno"> 1991</span><span class="preprocessor">#undef CROW_MARK</span></div>
-<div class="line"><a id="l01992" name="l01992"></a><span class="lineno"> 1992</span><span class="preprocessor">#undef CROW_PROXY_CONNECTION</span></div>
-<div class="line"><a id="l01993" name="l01993"></a><span class="lineno"> 1993</span><span class="preprocessor">#undef CROW_CONNECTION</span></div>
-<div class="line"><a id="l01994" name="l01994"></a><span class="lineno"> 1994</span><span class="preprocessor">#undef CROW_CONTENT_LENGTH</span></div>
-<div class="line"><a id="l01995" name="l01995"></a><span class="lineno"> 1995</span><span class="preprocessor">#undef CROW_TRANSFER_ENCODING</span></div>
-<div class="line"><a id="l01996" name="l01996"></a><span class="lineno"> 1996</span><span class="preprocessor">#undef CROW_UPGRADE</span></div>
-<div class="line"><a id="l01997" name="l01997"></a><span class="lineno"> 1997</span><span class="preprocessor">#undef CROW_CHUNKED</span></div>
-<div class="line"><a id="l01998" name="l01998"></a><span class="lineno"> 1998</span><span class="preprocessor">#undef CROW_KEEP_ALIVE</span></div>
-<div class="line"><a id="l01999" name="l01999"></a><span class="lineno"> 1999</span><span class="preprocessor">#undef CROW_CLOSE</span></div>
-<div class="line"><a id="l02000" name="l02000"></a><span class="lineno"> 2000</span><span class="preprocessor">#undef CROW_PARSING_HEADER</span></div>
-<div class="line"><a id="l02001" name="l02001"></a><span class="lineno"> 2001</span><span class="preprocessor">#undef CROW_LOWER</span></div>
-<div class="line"><a id="l02002" name="l02002"></a><span class="lineno"> 2002</span><span class="preprocessor">#undef CROW_IS_ALPHA</span></div>
-<div class="line"><a id="l02003" name="l02003"></a><span class="lineno"> 2003</span><span class="preprocessor">#undef CROW_IS_NUM</span></div>
-<div class="line"><a id="l02004" name="l02004"></a><span class="lineno"> 2004</span><span class="preprocessor">#undef CROW_IS_ALPHANUM</span></div>
-<div class="line"><a id="l02005" name="l02005"></a><span class="lineno"> 2005</span><span class="comment">//#undef CROW_IS_HEX</span></div>
-<div class="line"><a id="l02006" name="l02006"></a><span class="lineno"> 2006</span><span class="preprocessor">#undef CROW_IS_MARK</span></div>
-<div class="line"><a id="l02007" name="l02007"></a><span class="lineno"> 2007</span><span class="preprocessor">#undef CROW_IS_USERINFO_CHAR</span></div>
-<div class="line"><a id="l02008" name="l02008"></a><span class="lineno"> 2008</span><span class="preprocessor">#undef CROW_TOKEN</span></div>
-<div class="line"><a id="l02009" name="l02009"></a><span class="lineno"> 2009</span><span class="preprocessor">#undef CROW_IS_URL_CHAR</span></div>
-<div class="line"><a id="l02010" name="l02010"></a><span class="lineno"> 2010</span><span class="comment">//#undef CROW_IS_HOST_CHAR</span></div>
-<div class="line"><a id="l02011" name="l02011"></a><span class="lineno"> 2011</span><span class="preprocessor">#undef CROW_STRICT_CHECK</span></div>
-<div class="line"><a id="l02012" name="l02012"></a><span class="lineno"> 2012</span> </div>
-<div class="line"><a id="l02013" name="l02013"></a><span class="lineno"> 2013</span>}</div>
-<div class="line"><a id="l02014" name="l02014"></a><span class="lineno"> 2014</span> </div>
-<div class="line"><a id="l02015" name="l02015"></a><span class="lineno"> 2015</span><span class="comment">// clang-format on</span></div>
+<div class="line"><a id="l01983" name="l01983"></a><span class="lineno"> 1983</span><span class="comment">/* Change the maximum header size provided at compile time. */</span></div>
+<div class="line"><a id="l01984" name="l01984"></a><span class="lineno"> 1984</span><span class="keyword">inline</span> <span class="keywordtype">void</span></div>
+<div class="line"><a id="l01985" name="l01985"></a><span class="lineno"> 1985</span>http_parser_set_max_header_size(uint32_t size) {</div>
+<div class="line"><a id="l01986" name="l01986"></a><span class="lineno"> 1986</span>  max_header_size = size;</div>
+<div class="line"><a id="l01987" name="l01987"></a><span class="lineno"> 1987</span>}</div>
+<div class="line"><a id="l01988" name="l01988"></a><span class="lineno"> 1988</span> </div>
+<div class="line"><a id="l01989" name="l01989"></a><span class="lineno"> 1989</span><span class="preprocessor">#undef CROW_HTTP_ERRNO_MAP</span></div>
+<div class="line"><a id="l01990" name="l01990"></a><span class="lineno"> 1990</span><span class="preprocessor">#undef CROW_SET_ERRNO</span></div>
+<div class="line"><a id="l01991" name="l01991"></a><span class="lineno"> 1991</span><span class="preprocessor">#undef CROW_CALLBACK_NOTIFY_</span></div>
+<div class="line"><a id="l01992" name="l01992"></a><span class="lineno"> 1992</span><span class="preprocessor">#undef CROW_CALLBACK_NOTIFY</span></div>
+<div class="line"><a id="l01993" name="l01993"></a><span class="lineno"> 1993</span><span class="preprocessor">#undef CROW_CALLBACK_NOTIFY_NOADVANCE</span></div>
+<div class="line"><a id="l01994" name="l01994"></a><span class="lineno"> 1994</span><span class="preprocessor">#undef CROW_CALLBACK_DATA_</span></div>
+<div class="line"><a id="l01995" name="l01995"></a><span class="lineno"> 1995</span><span class="preprocessor">#undef CROW_CALLBACK_DATA</span></div>
+<div class="line"><a id="l01996" name="l01996"></a><span class="lineno"> 1996</span><span class="preprocessor">#undef CROW_CALLBACK_DATA_NOADVANCE</span></div>
+<div class="line"><a id="l01997" name="l01997"></a><span class="lineno"> 1997</span><span class="preprocessor">#undef CROW_MARK</span></div>
+<div class="line"><a id="l01998" name="l01998"></a><span class="lineno"> 1998</span><span class="preprocessor">#undef CROW_PROXY_CONNECTION</span></div>
+<div class="line"><a id="l01999" name="l01999"></a><span class="lineno"> 1999</span><span class="preprocessor">#undef CROW_CONNECTION</span></div>
+<div class="line"><a id="l02000" name="l02000"></a><span class="lineno"> 2000</span><span class="preprocessor">#undef CROW_CONTENT_LENGTH</span></div>
+<div class="line"><a id="l02001" name="l02001"></a><span class="lineno"> 2001</span><span class="preprocessor">#undef CROW_TRANSFER_ENCODING</span></div>
+<div class="line"><a id="l02002" name="l02002"></a><span class="lineno"> 2002</span><span class="preprocessor">#undef CROW_UPGRADE</span></div>
+<div class="line"><a id="l02003" name="l02003"></a><span class="lineno"> 2003</span><span class="preprocessor">#undef CROW_CHUNKED</span></div>
+<div class="line"><a id="l02004" name="l02004"></a><span class="lineno"> 2004</span><span class="preprocessor">#undef CROW_KEEP_ALIVE</span></div>
+<div class="line"><a id="l02005" name="l02005"></a><span class="lineno"> 2005</span><span class="preprocessor">#undef CROW_CLOSE</span></div>
+<div class="line"><a id="l02006" name="l02006"></a><span class="lineno"> 2006</span><span class="preprocessor">#undef CROW_PARSING_HEADER</span></div>
+<div class="line"><a id="l02007" name="l02007"></a><span class="lineno"> 2007</span><span class="preprocessor">#undef CROW_LOWER</span></div>
+<div class="line"><a id="l02008" name="l02008"></a><span class="lineno"> 2008</span><span class="preprocessor">#undef CROW_IS_ALPHA</span></div>
+<div class="line"><a id="l02009" name="l02009"></a><span class="lineno"> 2009</span><span class="preprocessor">#undef CROW_IS_NUM</span></div>
+<div class="line"><a id="l02010" name="l02010"></a><span class="lineno"> 2010</span><span class="preprocessor">#undef CROW_IS_ALPHANUM</span></div>
+<div class="line"><a id="l02011" name="l02011"></a><span class="lineno"> 2011</span><span class="comment">//#undef CROW_IS_HEX</span></div>
+<div class="line"><a id="l02012" name="l02012"></a><span class="lineno"> 2012</span><span class="preprocessor">#undef CROW_IS_MARK</span></div>
+<div class="line"><a id="l02013" name="l02013"></a><span class="lineno"> 2013</span><span class="preprocessor">#undef CROW_IS_USERINFO_CHAR</span></div>
+<div class="line"><a id="l02014" name="l02014"></a><span class="lineno"> 2014</span><span class="preprocessor">#undef CROW_TOKEN</span></div>
+<div class="line"><a id="l02015" name="l02015"></a><span class="lineno"> 2015</span><span class="preprocessor">#undef CROW_IS_URL_CHAR</span></div>
+<div class="line"><a id="l02016" name="l02016"></a><span class="lineno"> 2016</span><span class="comment">//#undef CROW_IS_HOST_CHAR</span></div>
+<div class="line"><a id="l02017" name="l02017"></a><span class="lineno"> 2017</span><span class="preprocessor">#undef CROW_STRICT_CHECK</span></div>
+<div class="line"><a id="l02018" name="l02018"></a><span class="lineno"> 2018</span> </div>
+<div class="line"><a id="l02019" name="l02019"></a><span class="lineno"> 2019</span>}</div>
+<div class="line"><a id="l02020" name="l02020"></a><span class="lineno"> 2020</span> </div>
+<div class="line"><a id="l02021" name="l02021"></a><span class="lineno"> 2021</span><span class="comment">// clang-format on</span></div>
 <div class="ttc" id="anamespacecrow_html"><div class="ttname"><a href="namespacecrow.html">crow</a></div><div class="ttdoc">The main namespace of the library. In this namespace is defined the most important classes and functi...</div></div>
 <div class="ttc" id="astructcrow_1_1http__parser__settings_html"><div class="ttname"><a href="structcrow_1_1http__parser__settings.html">crow::http_parser_settings</a></div><div class="ttdef"><b>Definition</b> http_parser_merged.h:181</div></div>
 <div class="ttc" id="astructcrow_1_1http__parser_html"><div class="ttname"><a href="structcrow_1_1http__parser.html">crow::http_parser</a></div><div class="ttdef"><b>Definition</b> http_parser_merged.h:148</div></div>
