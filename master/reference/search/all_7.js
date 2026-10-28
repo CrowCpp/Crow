@@ -4,7 +4,7 @@ var searchData=
   ['handle_5ffragment_1',['handle_fragment',['../classcrow_1_1websocket_1_1_connection.html#a292002f44552e5eabd8dd65f476a4c28',1,'crow::websocket::Connection']]],
   ['handle_5ffull_2',['handle_full',['../classcrow_1_1_crow.html#accf00be55c273297b758fa243f107018',1,'crow::Crow']]],
   ['handle_5finitial_3',['handle_initial',['../classcrow_1_1_crow.html#ad5e54dd12437653844565aa7c6295436',1,'crow::Crow']]],
-  ['handle_5fupgrade_4',['handle_upgrade',['../classcrow_1_1_crow.html#a6e435bf5275735effd32647772bdbd04',1,'crow::Crow']]],
+  ['handle_5fupgrade_4',['handle_upgrade',['../classcrow_1_1_crow.html#a2a8b54228a5f26333390de1f2a7c91ba',1,'crow::Crow']]],
   ['handler_5ftype_5fhelper_5',['handler_type_helper',['../structcrow_1_1detail_1_1routing__handler__call__helper_1_1_wrapped_1_1handler__type__helper.html',1,'crow::detail::routing_handler_call_helper::Wrapped']]],
   ['handler_5ftype_5fhelper_3c_20argswrapped_2e_2e_2e_20_3e_6',['handler_type_helper&lt; ArgsWrapped... &gt;',['../structcrow_1_1detail_1_1routing__handler__call__helper_1_1_wrapped_1_1handler__type__helper.html',1,'crow::detail::routing_handler_call_helper::Wrapped']]],
   ['handler_5ftype_5fhelper_3c_20const_20request_20_26_2c_20args_2e_2e_2e_20_3e_7',['handler_type_helper&lt; const request &amp;, Args... &gt;',['../structcrow_1_1detail_1_1routing__handler__call__helper_1_1_wrapped_1_1handler__type__helper_3_012f01fc0d25e96ed100e3017a66fd4b36.html',1,'crow::detail::routing_handler_call_helper::Wrapped']]],

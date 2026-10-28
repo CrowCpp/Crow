@@ -151,10 +151,10 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>validate_bp</b> (std:
 <tr class="memitem:a7916aa9620d6c6af2389af0d877ea9d9" id="r_a7916aa9620d6c6af2389af0d877ea9d9"><td class="memItemLeft" align="right" valign="top"><a id="a7916aa9620d6c6af2389af0d877ea9d9" name="a7916aa9620d6c6af2389af0d877ea9d9"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>validate</b> ()</td></tr>
 <tr class="separator:a7916aa9620d6c6af2389af0d877ea9d9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2b37f05675d075c3de79f6a4de42320d" id="r_a2b37f05675d075c3de79f6a4de42320d"><td class="memTemplParams" colspan="2"><a id="a2b37f05675d075c3de79f6a4de42320d" name="a2b37f05675d075c3de79f6a4de42320d"></a>
-template&lt;typename Adaptor &gt; </td></tr>
-<tr class="memitem:a2b37f05675d075c3de79f6a4de42320d"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><b>handle_upgrade</b> (const <a class="el" href="structcrow_1_1request.html">request</a> &amp;req, <a class="el" href="structcrow_1_1response.html">response</a> &amp;res, Adaptor &amp;&amp;adaptor)</td></tr>
-<tr class="separator:a2b37f05675d075c3de79f6a4de42320d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad0adbc5d6c76a19588563a9047e0d968" id="r_ad0adbc5d6c76a19588563a9047e0d968"><td class="memTemplParams" colspan="2"><a id="ad0adbc5d6c76a19588563a9047e0d968" name="ad0adbc5d6c76a19588563a9047e0d968"></a>
+template&lt;typename <a class="el" href="namespacecrow.html#a153c1bf24903d1a8629ef6eaf045110b">App</a> , typename Adaptor &gt; </td></tr>
+<tr class="memitem:ad0adbc5d6c76a19588563a9047e0d968"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><b>handle_upgrade</b> (<a class="el" href="structcrow_1_1request.html">request</a> &amp;req, <a class="el" href="structcrow_1_1response.html">response</a> &amp;res, Adaptor &amp;&amp;adaptor)</td></tr>
+<tr class="separator:ad0adbc5d6c76a19588563a9047e0d968"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a39a07fa9ac79f0d6eb1391ea83808d5d" id="r_a39a07fa9ac79f0d6eb1391ea83808d5d"><td class="memItemLeft" align="right" valign="top"><a id="a39a07fa9ac79f0d6eb1391ea83808d5d" name="a39a07fa9ac79f0d6eb1391ea83808d5d"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>get_found_bp</b> (const std::vector&lt; size_t &gt; &amp;bp_i, const std::vector&lt; <a class="el" href="classcrow_1_1_blueprint.html">Blueprint</a> * &gt; &amp;blueprints, std::vector&lt; <a class="el" href="classcrow_1_1_blueprint.html">Blueprint</a> * &gt; &amp;found_bps, size_t index=0)</td></tr>
 <tr class="separator:a39a07fa9ac79f0d6eb1391ea83808d5d"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -179,6 +179,14 @@ template&lt;typename <a class="el" href="namespacecrow.html#a153c1bf24903d1a8629
 template&lt;typename <a class="el" href="namespacecrow.html#a153c1bf24903d1a8629ef6eaf045110b">App</a> &gt; </td></tr>
 <tr class="memitem:aafd44b978ad37662eb59045fa9394a08"><td class="memTemplItemLeft" align="right" valign="top">std::enable_if&lt; std::tuple_size&lt; typenameApp::mw_container_t &gt;::value==0, void &gt;::type&#160;</td><td class="memTemplItemRight" valign="bottom"><b>handle_rule</b> (<a class="el" href="classcrow_1_1_base_rule.html">BaseRule</a> &amp;rule, <a class="el" href="structcrow_1_1request.html">crow::request</a> &amp;req, <a class="el" href="structcrow_1_1response.html">crow::response</a> &amp;res, const crow::routing_params &amp;rp)</td></tr>
 <tr class="separator:aafd44b978ad37662eb59045fa9394a08"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a91c4bc679ab46316a4ec4a832eb96ffe" id="r_a91c4bc679ab46316a4ec4a832eb96ffe"><td class="memTemplParams" colspan="2"><a id="a91c4bc679ab46316a4ec4a832eb96ffe" name="a91c4bc679ab46316a4ec4a832eb96ffe"></a>
+template&lt;typename <a class="el" href="namespacecrow.html#a153c1bf24903d1a8629ef6eaf045110b">App</a> , typename Adaptor &gt; </td></tr>
+<tr class="memitem:a91c4bc679ab46316a4ec4a832eb96ffe"><td class="memTemplItemLeft" align="right" valign="top">std::enable_if&lt; std::tuple_size&lt; typenameApp::mw_container_t &gt;::value!=0, void &gt;::type&#160;</td><td class="memTemplItemRight" valign="bottom"><b>handle_upgrade_rule</b> (<a class="el" href="classcrow_1_1_base_rule.html">BaseRule</a> &amp;rule, <a class="el" href="structcrow_1_1request.html">crow::request</a> &amp;req, <a class="el" href="structcrow_1_1response.html">crow::response</a> &amp;res, Adaptor &amp;&amp;adaptor)</td></tr>
+<tr class="separator:a91c4bc679ab46316a4ec4a832eb96ffe"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9fb9b59161136d339e40e85e1fe8e5f4" id="r_a9fb9b59161136d339e40e85e1fe8e5f4"><td class="memTemplParams" colspan="2"><a id="a9fb9b59161136d339e40e85e1fe8e5f4" name="a9fb9b59161136d339e40e85e1fe8e5f4"></a>
+template&lt;typename <a class="el" href="namespacecrow.html#a153c1bf24903d1a8629ef6eaf045110b">App</a> , typename Adaptor &gt; </td></tr>
+<tr class="memitem:a9fb9b59161136d339e40e85e1fe8e5f4"><td class="memTemplItemLeft" align="right" valign="top">std::enable_if&lt; std::tuple_size&lt; typenameApp::mw_container_t &gt;::value==0, void &gt;::type&#160;</td><td class="memTemplItemRight" valign="bottom"><b>handle_upgrade_rule</b> (<a class="el" href="classcrow_1_1_base_rule.html">BaseRule</a> &amp;rule, <a class="el" href="structcrow_1_1request.html">crow::request</a> &amp;req, <a class="el" href="structcrow_1_1response.html">crow::response</a> &amp;res, Adaptor &amp;&amp;adaptor)</td></tr>
+<tr class="separator:a9fb9b59161136d339e40e85e1fe8e5f4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a61157adad80f901413a4023d8fb0fd9d" id="r_a61157adad80f901413a4023d8fb0fd9d"><td class="memItemLeft" align="right" valign="top"><a id="a61157adad80f901413a4023d8fb0fd9d" name="a61157adad80f901413a4023d8fb0fd9d"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>debug_print</b> ()</td></tr>
 <tr class="separator:a61157adad80f901413a4023d8fb0fd9d"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -213,7 +221,7 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><b>using_ssl</b></td></t
 			<ul>
 				<li class="navelem"><a class="el" href="namespacecrow.html">crow</a></li><li class="navelem"><a class="el" href="classcrow_1_1_router.html">Router</a></li>
 				<li class="footer">
-					Generated on Tue Oct 27 2026 for Crow by <a href="http://www.doxygen.org/index.html">
+					Generated on Wed Oct 28 2026 for Crow by <a href="http://www.doxygen.org/index.html">
 					<img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.9.8.
 					Dark theme by <a href="http://majerle.eu" target="_new">Tilen Majerle</a>. Edited by <a href="https://github.com/The-EDev" target="_new">Farook Al-Sammarraie</a>. All rights reserved.
 				</li>

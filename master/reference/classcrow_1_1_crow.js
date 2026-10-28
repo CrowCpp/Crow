@@ -19,7 +19,7 @@ var classcrow_1_1_crow =
     [ "handle", "classcrow_1_1_crow.html#a866cb219bb77c19326f39f431424e1c7", null ],
     [ "handle_full", "classcrow_1_1_crow.html#accf00be55c273297b758fa243f107018", null ],
     [ "handle_initial", "classcrow_1_1_crow.html#ad5e54dd12437653844565aa7c6295436", null ],
-    [ "handle_upgrade", "classcrow_1_1_crow.html#a6e435bf5275735effd32647772bdbd04", null ],
+    [ "handle_upgrade", "classcrow_1_1_crow.html#a2a8b54228a5f26333390de1f2a7c91ba", null ],
     [ "is_bound", "classcrow_1_1_crow.html#a9cca429d9b2a543e8affaad4df442013", null ],
     [ "local_socket_path", "classcrow_1_1_crow.html#ad62ae6b2e726a828dabd833b19d87aad", null ],
     [ "local_socket_path", "classcrow_1_1_crow.html#a7e8e8d33e54de09323f6604075accc99", null ],
