@@ -263,9 +263,9 @@ namespace crow
         ///
         /// Currently used to upgrade an HTTP connection to a WebSocket connection
         template<typename Adaptor>
-        void handle_upgrade(const request& req, response& res, Adaptor&& adaptor)
+        void handle_upgrade(request& req, response& res, Adaptor&& adaptor)
         {
-            router_.handle_upgrade(req, res, adaptor);
+            router_.handle_upgrade<self_t>(req, res, adaptor);
         }
 
         /// \brief Process only the method and URL of a request and provide a route (or an error response)

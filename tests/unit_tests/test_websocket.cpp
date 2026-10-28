@@ -794,3 +794,85 @@ TEST_CASE("multithreaded_websockets_open_close", "[websocket]")
     CROW_LOG_WARNING << "Stopping app!\n";
     app.stop();
 }
+
+struct RejectUpgradeMW : crow::ILocalMiddleware
+{
+    struct context
+    {};
+
+    void before_handle(request& req, response& res, context&)
+    {
+        if (req.get_header_value("Authorization").empty())
+        {
+            res.code = 401;
+            res.end();
+        }
+    }
+
+    void after_handle(request&, response&, context&)
+    {}
+};
+
+TEST_CASE("websocket_local_middleware", "[websocket]")
+{
+    static std::atomic<int> accepted{0};
+
+    App<RejectUpgradeMW> app;
+
+    Blueprint bp("bp");
+    bp.CROW_MIDDLEWARES(app, RejectUpgradeMW);
+    CROW_BP_ROUTE(bp, "/ws")
+      .websocket<std::remove_reference<decltype(app)>::type>(&app)
+      .onaccept([&](const crow::request&, void**) {
+          accepted++;
+          return true;
+      });
+    app.register_blueprint(bp);
+
+    CROW_ROUTE(app, "/ws")
+      .CROW_MIDDLEWARES(app, RejectUpgradeMW)
+      .websocket<std::remove_reference<decltype(app)>::type>(&app)
+      .onaccept([&](const crow::request&, void**) {
+          accepted++;
+          return true;
+      });
+
+    app.validate();
+
+    auto _ = app.bindaddr(LOCALHOST_ADDRESS).port(45481).run_async();
+    app.wait_for_server_start();
+    asio::io_context ic;
+
+    auto upgrade = [&](const std::string& url, const std::string& extra_headers) {
+        std::string http_message = "GET " + url + " HTTP/1.1\r\n"
+                                                  "Host: localhost\r\n"
+                                                  "Connection: keep-alive, Upgrade\r\n"
+                                                  "upgrade: websocket\r\n"
+                                                  "Sec-WebSocket-Key: dGhlIHNhbXBsZSBub25jZQ==\r\n"
+                                                  "Sec-WebSocket-Version: 13\r\n" +
+                                   extra_headers + "\r\n";
+
+        asio::ip::tcp::socket c(ic);
+        c.connect(asio::ip::tcp::endpoint(
+          asio::ip::make_address(LOCALHOST_ADDRESS), 45481));
+        c.send(asio::buffer(http_message));
+
+        char buf[2048] = {};
+        asio_error_code ec;
+        c.read_some(asio::buffer(buf, sizeof(buf) - 1), ec);
+        c.close();
+        return std::string(buf).find("101 Switching Protocols") != std::string::npos;
+    };
+
+    // The local middleware rejects these requests, so the upgrade must not happen
+    CHECK(!upgrade("/bp/ws", ""));
+    CHECK(!upgrade("/ws", ""));
+    CHECK(accepted == 0);
+
+    // Requests the local middleware lets through are still upgraded
+    CHECK(upgrade("/bp/ws", "Authorization: token\r\n"));
+    CHECK(upgrade("/ws", "Authorization: token\r\n"));
+    CHECK(accepted == 2);
+
+    app.stop();
+}
