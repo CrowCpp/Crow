@@ -3060,6 +3060,75 @@ TEST_CASE("http2_upgrade_is_ignored")
     app.stop();
 }
 
+TEST_CASE("chunk_extension_rejects_bare_lf")
+{
+    static char buf[5012];
+
+    SimpleApp app;
+    std::atomic<int> smuggled_hits{0};
+    CROW_ROUTE(app, "/echo").methods("POST"_method)([](crow::request const& req) {
+        return req.body;
+    });
+    CROW_ROUTE(app, "/smuggled")
+    ([&] {
+        smuggled_hits++;
+        return "smuggled";
+    });
+
+    auto _ = app.bindaddr(LOCALHOST_ADDRESS).port(45451).run_async();
+
+    app.wait_for_server_start();
+    asio::io_context ic;
+
+    auto make_request = [&](const std::string& rq) {
+        asio::ip::tcp::socket c(ic);
+        c.connect(asio::ip::tcp::endpoint(
+          asio::ip::make_address(LOCALHOST_ADDRESS), 45451));
+        c.send(asio::buffer(rq));
+        std::string res;
+        asio_error_code ec;
+        size_t n = c.receive(asio::buffer(buf, 2048), 0, ec);
+        res.assign(buf, n);
+        c.close();
+        return res;
+    };
+
+    // Well-formed chunk extensions are still accepted
+    auto res = make_request(
+      "POST /echo HTTP/1.1\r\n"
+      "host: " LOCALHOST_ADDRESS ":45451\r\n"
+      "transfer-encoding: chunked\r\n"
+      "\r\n"
+      "5;name=\"va lue\"\r\n"
+      "hello\r\n"
+      "0\r\n"
+      "\r\n");
+    CHECK(res.find("200 OK") != std::string::npos);
+    CHECK(res.find("hello") != std::string::npos);
+
+    // A peer that ends the chunk line at the bare LF sees chunk "xx" followed by
+    // a 0x28 byte chunk carrying the GET, so it must not reach the router.
+    res = make_request(
+      "POST /echo HTTP/1.1\r\n"
+      "host: " LOCALHOST_ADDRESS ":45451\r\n"
+      "transfer-encoding: chunked\r\n"
+      "\r\n"
+      "2;\nxx\r\n"
+      "28\r\n"
+      "0\r\n"
+      "\r\n"
+      "GET /smuggled HTTP/1.1\r\n"
+      "host: a\r\n"
+      "\r\n"
+      "\r\n"
+      "0\r\n"
+      "\r\n");
+    CHECK(res.find("200 OK") == std::string::npos);
+    CHECK(smuggled_hits == 0);
+
+    app.stop();
+}
+
 TEST_CASE("unix_socket")
 {
     static char buf[2048];
