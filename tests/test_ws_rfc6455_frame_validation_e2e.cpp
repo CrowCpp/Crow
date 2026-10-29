@@ -289,6 +289,28 @@ TEST_CASE("test_ws_rfc6455_frame_validation_e2e")
     CHECK(rsv.close_code == PROTOCOL_ERROR);
     ::close(rsv_fd);
 
+    const int continuation_fd = connect_websocket();
+    CHECK(continuation_fd >= 0);
+    const bool continuation_sent = send_masked_frame(continuation_fd, true, 0x0, 0x0, "x");
+    const ServerObservation continuation = read_server_frames(continuation_fd);
+    CHECK(continuation_sent);
+    CHECK(message_count.load() == 0);
+    CHECK(continuation.close_frame);
+    CHECK(continuation.close_code == PROTOCOL_ERROR);
+    ::close(continuation_fd);
+
+    const int interleaved_fd = connect_websocket();
+    CHECK(interleaved_fd >= 0);
+    const bool first_sent = send_masked_frame(interleaved_fd, false, 0x0, 0x1, "a");
+    const bool second_sent = send_masked_frame(interleaved_fd, true, 0x0, 0x1, "b");
+    const ServerObservation interleaved = read_server_frames(interleaved_fd);
+    CHECK(first_sent);
+    CHECK(second_sent);
+    CHECK(message_count.load() == 0);
+    CHECK(interleaved.close_frame);
+    CHECK(interleaved.close_code == PROTOCOL_ERROR);
+    ::close(interleaved_fd);
+
     app.stop();
     future.wait();
 }

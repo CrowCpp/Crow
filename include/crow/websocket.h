@@ -666,9 +666,18 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                 {
                     case 0: // Continuation
                     {
+                        if (!has_unfinished_message_)
+                        {
+                            if (error_handler_)
+                                error_handler_(*this, "Continuation frame without a message to continue.");
+                            close("", CloseStatusCode::ProtocolError);
+                            check_destroy(CloseStatusCode::ProtocolError);
+                            return false;
+                        }
                         message_ += fragment_;
                         if (is_FIN())
                         {
+                            has_unfinished_message_ = false;
                             if (message_handler_)
                                 message_handler_(*this, message_, is_binary_);
                             message_.clear();
@@ -676,8 +685,17 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                     }
                     break;
                     case 1: // Text
+                    case 2: // Binary
                     {
-                        is_binary_ = false;
+                        if (has_unfinished_message_)
+                        {
+                            if (error_handler_)
+                                error_handler_(*this, "New message before the fragmented message was finished.");
+                            close("", CloseStatusCode::ProtocolError);
+                            check_destroy(CloseStatusCode::ProtocolError);
+                            return false;
+                        }
+                        is_binary_ = opcode() == 2;
                         message_ += fragment_;
                         if (is_FIN())
                         {
@@ -685,17 +703,9 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                                 message_handler_(*this, message_, is_binary_);
                             message_.clear();
                         }
-                    }
-                    break;
-                    case 2: // Binary
-                    {
-                        is_binary_ = true;
-                        message_ += fragment_;
-                        if (is_FIN())
+                        else
                         {
-                            if (message_handler_)
-                                message_handler_(*this, message_, is_binary_);
-                            message_.clear();
+                            has_unfinished_message_ = true;
                         }
                     }
                     break;
@@ -888,6 +898,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
 
             std::array<char, 4096> buffer_;
             bool is_binary_;
+            bool has_unfinished_message_{false};
             std::string message_;
             std::string fragment_;
             WebSocketReadState state_{WebSocketReadState::MiniHeader};
