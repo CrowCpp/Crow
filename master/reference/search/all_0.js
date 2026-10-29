@@ -6,8 +6,9 @@ var searchData=
   ['add_5fblueprint_3',['add_blueprint',['../classcrow_1_1_crow.html#af0d01b97da7d4d20844a80fd31b74f46',1,'crow::Crow']]],
   ['add_5fheader_4',['add_header',['../structcrow_1_1response.html#a16d1a8bcec6460ba97f90b80881693b8',1,'crow::response']]],
   ['add_5fstatic_5fdir_5',['add_static_dir',['../classcrow_1_1_crow.html#a3cbe89120e47d2bd3d05376b9129adfa',1,'crow::Crow']]],
-  ['address_5fis_5fbound_6',['address_is_bound',['../classcrow_1_1_crow.html#af2960e5cac7ed2db225b1e807fe58392',1,'crow::Crow']]],
-  ['allow_5fcredentials_7',['allow_credentials',['../structcrow_1_1_c_o_r_s_rules.html#ace25d18b26ecffe10c7485f30c449186',1,'crow::CORSRules']]],
-  ['app_8',['App',['../namespacecrow.html#a153c1bf24903d1a8629ef6eaf045110b',1,'crow']]],
-  ['app_2eh_9',['app.h',['../app_8h.html',1,'']]]
+  ['address_6',['address',['../structcrow_1_1_socket_adaptor.html#a9187a440983ad2c79c3ab0a3cdf287f7',1,'crow::SocketAdaptor::address()'],['../structcrow_1_1_s_s_l_adaptor.html#a7dd264bb0f5e38378cbf63cd330c70d1',1,'crow::SSLAdaptor::address()']]],
+  ['address_5fis_5fbound_7',['address_is_bound',['../classcrow_1_1_crow.html#af2960e5cac7ed2db225b1e807fe58392',1,'crow::Crow']]],
+  ['allow_5fcredentials_8',['allow_credentials',['../structcrow_1_1_c_o_r_s_rules.html#ace25d18b26ecffe10c7485f30c449186',1,'crow::CORSRules']]],
+  ['app_9',['App',['../namespacecrow.html#a153c1bf24903d1a8629ef6eaf045110b',1,'crow']]],
+  ['app_2eh_10',['app.h',['../app_8h.html',1,'']]]
 ];
