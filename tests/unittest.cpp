@@ -3610,6 +3610,9 @@ TEST_CASE("Global middleware rejection ignored during WebSocket upgrade")
     // an authorized request to websocket url shall return status 101
     // and shall call on_open of websocket
     CHECK(authorized_resp.find("HTTP/1.1 101 Switching Protocols") != std::string::npos);
+    // the 101 is sent before on_open is called, so the client can read it first
+    for (int i = 0; i < 100 && !websocket_open_called; ++i)
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
     CHECK(websocket_open_called == true);
 
     app.stop();
