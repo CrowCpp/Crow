@@ -2895,6 +2895,78 @@ TEST_CASE("remote_port")
 
 } // remote_port
 
+TEST_CASE("remote_address_of_unconnected_socket")
+{
+    // Once the peer resets the connection, getpeername fails with ENOTCONN (issue #791).
+    asio::io_context ic;
+    SocketAdaptor adaptor(ic, nullptr);
+    adaptor.raw_socket().open(asio::ip::tcp::v4());
+
+    std::string address = "unset";
+    CHECK_NOTHROW(address = adaptor.address());
+    CHECK(address.empty());
+    CHECK(adaptor.remote_port() == 0);
+} // remote_address_of_unconnected_socket
+
+TEST_CASE("reset_connections_do_not_crash_workers")
+{
+    // Counts the "Worker Crash" lines that an exception escaping a handler produces.
+    class CrashCounter : public crow::ILogHandler
+    {
+    public:
+        void log(const std::string& message, crow::LogLevel /*level*/) override
+        {
+            if (message.find("Worker Crash") != std::string::npos)
+                crashes_++;
+        }
+
+        int crashes() const { return crashes_; }
+
+    private:
+        std::atomic<int> crashes_{0};
+    };
+
+    const crow::LogLevel saved_level = crow::logger::get_current_log_level();
+    crow::logger::setLogLevel(crow::LogLevel::Error);
+    CrashCounter counter;
+    crow::logger::setHandler(&counter);
+
+    SimpleApp app;
+    CROW_ROUTE(app, "/")
+    ([] {
+        return "A";
+    });
+    auto _ = app.bindaddr(LOCALHOST_ADDRESS).port(0).run_async();
+    app.wait_for_server_start();
+
+    // Send a request and reset the connection at once, so the server often handles the
+    // request after the socket is gone (issue #791).
+    asio::io_context ic;
+    const asio::ip::tcp::endpoint endpoint(asio::ip::make_address(LOCALHOST_ADDRESS), app.port());
+    const std::string request = "GET / HTTP/1.1\r\nHost: localhost\r\n\r\n";
+    for (int i = 0; i < 2000; i++)
+    {
+        asio::ip::tcp::socket c(ic);
+        c.connect(endpoint);
+        c.set_option(asio::socket_base::linger(true, 0));
+        asio::write(c, asio::buffer(request));
+        c.close();
+    }
+
+    // The server still answers a well-behaved client.
+    HttpClient client(LOCALHOST_ADDRESS, app.port());
+    client.send("GET / HTTP/1.0\r\n\r\n");
+    const std::string response = client.receive();
+    app.stop();
+
+    static crow::CerrLogHandler cerr_handler;
+    crow::logger::setHandler(&cerr_handler);
+    crow::logger::setLogLevel(saved_level);
+
+    CHECK(response.find("200 OK") != std::string::npos);
+    CHECK(counter.crashes() == 0);
+} // reset_connections_do_not_crash_workers
+
 TEST_CASE("timeout")
 {
     auto test_timeout = [](const std::uint8_t timeout) {

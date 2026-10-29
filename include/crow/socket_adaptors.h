@@ -65,9 +65,12 @@ namespace crow
             return socket_.remote_endpoint();
         }
 
+        /// Get the IP address of the remote endpoint, empty when unavailable (socket already closed).
         std::string address() const
         {
-            return socket_.remote_endpoint().address().to_string();
+            error_code ec;
+            const auto endpoint = socket_.remote_endpoint(ec);
+            return ec ? std::string() : endpoint.address().to_string();
         }
 
         /// Get the TCP port of the remote endpoint, 0 when unavailable (socket already closed).
@@ -218,9 +221,12 @@ namespace crow
             return raw_socket().remote_endpoint();
         }
 
+        /// Get the IP address of the remote endpoint, empty when unavailable (socket already closed).
         std::string address() const
         {
-            return ssl_socket_->lowest_layer().remote_endpoint().address().to_string();
+            error_code ec;
+            const auto endpoint = ssl_socket_->lowest_layer().remote_endpoint(ec);
+            return ec ? std::string() : endpoint.address().to_string();
         }
 
         /// Get the TCP port of the remote endpoint, 0 when unavailable (socket already closed).
