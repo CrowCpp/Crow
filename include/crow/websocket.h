@@ -286,6 +286,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                             {
                                 shared_this->write_buffers_.emplace_back(shared_this->build_header(0x8, 0));
                             }
+                            break;
                         default: 
                             {
                                 auto header = shared_this->build_header(0x8, msg.size() + 2);

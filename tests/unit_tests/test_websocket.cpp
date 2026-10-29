@@ -254,6 +254,8 @@ TEST_CASE("websocket_close", "[websocket]")
               conn.close();
           else if (message == "quit-custom")
               conn.close("custom", crow::websocket::StartStatusCodesForPrivateUse + 10u);
+          else if (message == "quit-no-status")
+              conn.close("", crow::websocket::NoStatusCodePresent);
       })
       .onclose([&](websocket::connection& conn, const std::string&, uint16_t status_code) {
           // There should just be one connection
@@ -409,6 +411,29 @@ TEST_CASE("websocket_close", "[websocket]")
         std::this_thread::sleep_for(std::chrono::milliseconds(5));
         CHECK(close_calls == 1);
         CHECK(last_status_code == expected_code);
+    }
+
+    SECTION("close from server without a status code")
+    {
+        // 1005 must not be sent in a Close frame (RFC 6455 Section 7.4.1): an empty one goes out, and nothing else
+        char text_message[2 + 14 + 1]("\x81\x0E"
+                                      "quit-no-status");
+
+        c.send(asio::buffer(text_message, 16));
+        bool closed = false;
+        std::string received = read_until_closed(c, closed);
+        CHECK(received == std::string("\x88\x00", 2));
+        CHECK_FALSE(closed);
+
+        CHECK(close_calls == 0);
+
+        // Reply with client close
+        char client_close_response[3]("\x88\x00");
+
+        c.send(asio::buffer(client_close_response, 2));
+        std::this_thread::sleep_for(std::chrono::milliseconds(50));
+        CHECK(close_calls == 1);
+        CHECK(last_status_code == websocket::NoStatusCodePresent);
     }
 
     CROW_LOG_WARNING << "Stopping app!\n";
