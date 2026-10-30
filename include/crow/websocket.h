@@ -1,5 +1,6 @@
 #pragma once
 #include <array>
+#include <cstring>
 #include <memory>
 #include <optional>
 #include <string>
@@ -333,13 +334,15 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                 else if (size < 0x10000)
                 {
                     buf[1] += 126;
-                    *(uint16_t*)(buf + 2) = htons(static_cast<uint16_t>(size));
+                    uint16_t len = htons(static_cast<uint16_t>(size));
+                    std::memcpy(buf + 2, &len, sizeof(len));
                     return {buf, buf + 4};
                 }
                 else
                 {
                     buf[1] += 127;
-                    *reinterpret_cast<uint64_t*>(buf + 2) = ((1 == htonl(1)) ? static_cast<uint64_t>(size) : (static_cast<uint64_t>(htonl((size)&0xFFFFFFFF)) << 32) | htonl(static_cast<uint64_t>(size) >> 32));
+                    uint64_t len = ((1 == htonl(1)) ? static_cast<uint64_t>(size) : (static_cast<uint64_t>(htonl((size) & 0xFFFFFFFF)) << 32) | htonl(static_cast<uint64_t>(size) >> 32));
+                    std::memcpy(buf + 2, &len, sizeof(len));
                     return {buf, buf + 10};
                 }
             }

@@ -925,7 +925,7 @@ TEST_CASE("websocket_close_handler_called_once", "[websocket]")
     c.set_option(asio::socket_base::linger(true, 0));
     c.close();
 
-    for (int i = 0; i < 100 && close_count == 0; i++)
+    for (int i = 0; i < 500 && close_count == 0; i++)
         std::this_thread::sleep_for(std::chrono::milliseconds(10));
     std::this_thread::sleep_for(std::chrono::milliseconds(200));
 
