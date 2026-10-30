@@ -42,6 +42,11 @@ To return a mustache template, you need to load a page using `#!cpp auto page = 
 
     The path to the template is sanitized by default. it should be fine for most circumstances but if you know what you're doing and need the sanitizer off you can use `#!cpp crow::mustache::load_unsafe()` instead.
 
+!!! note
+
+    By default templates are read from the templates directory. To read them from somewhere else (e.g. a database or memory), use `#!cpp crow::mustache::set_loader([](std::string filename) -> std::string {...});`. The loader receives the (sanitized) filename and returns the template's contents. Call `#!cpp crow::mustache::set_loader(crow::mustache::default_loader);` to go back to reading files.<br>
+    `set_loader()` is thread-safe and can be called while the application is handling requests. Loads that have already started finish using the previous loader.
+
 <br>
 You also need to set up the context by using `#!cpp crow::mustache::context ctx;`. Then you need to assign the keys and values, this can be done the same way you assign values to a JSON write value (`ctx["key"] = value;`).<br>
 With your context and page ready, just `#!cpp return page.render(ctx);`. This will use the context data to return a filled template.<br>

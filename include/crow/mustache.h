@@ -10,6 +10,7 @@
 #include <fstream>
 #include <iterator>
 #include <functional>
+#include <mutex>
 #include "crow/json.h"
 #include "crow/logging.h"
 #include "crow/returnable.h"
@@ -776,10 +777,26 @@ namespace crow // NOTE: Already documented in "crow/app.h"
 
         namespace detail
         {
+            inline std::mutex& get_loader_mutex()
+            {
+                static std::mutex loader_mutex;
+                return loader_mutex;
+            }
+
+            /// Only access while holding \ref get_loader_mutex.
             inline std::function<std::string(std::string)>& get_loader_ref()
             {
                 static std::function<std::string(std::string)> loader = default_loader;
                 return loader;
+            }
+
+            /// Returns a copy of the current loader, so that it can be
+            /// called without holding the lock (loading a template
+            /// with partials calls the loader recursively).
+            inline std::function<std::string(std::string)> get_loader()
+            {
+                std::lock_guard<std::mutex> lock(get_loader_mutex());
+                return get_loader_ref();
             }
         } // namespace detail
 
@@ -815,8 +832,13 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         /// By default, the previously mentioned functions load files
         /// using \ref default_loader, that only reads a file and
         /// returns a std::string.
+        ///
+        /// This function is thread-safe and may be called while the
+        /// server is handling requests. Loads that have already started
+        /// keep using the previous loader.
         inline void set_loader(std::function<std::string(std::string)> loader)
         {
+            std::lock_guard<std::mutex> lock(detail::get_loader_mutex());
             detail::get_loader_ref() = std::move(loader);
         }
 
@@ -829,7 +851,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         {
             std::string filename_sanitized(filename);
             utility::sanitize_filename(filename_sanitized);
-            return detail::get_loader_ref()(filename_sanitized);
+            return detail::get_loader()(filename_sanitized);
         }
 
         /// \brief Open and read a file but returns a std::string
@@ -854,7 +876,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         /// **Never blindly trust your users!**
         inline std::string load_text_unsafe(const std::string& filename)
         {
-            return detail::get_loader_ref()(filename);
+            return detail::get_loader()(filename);
         }
 
         /// \brief Open, read and renders a file using a mustache
@@ -863,7 +885,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         {
             std::string filename_sanitized(filename);
             utility::sanitize_filename(filename_sanitized);
-            return compile(detail::get_loader_ref()(filename_sanitized));
+            return compile(detail::get_loader()(filename_sanitized));
         }
 
         /// \brief Open, read and renders a file using a mustache
@@ -875,7 +897,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         /// **Never blindly trust your users!**
         inline template_t load_unsafe(const std::string& filename)
         {
-            return compile(detail::get_loader_ref()(filename));
+            return compile(detail::get_loader()(filename));
         }
     } // namespace mustache
 } // namespace crow
