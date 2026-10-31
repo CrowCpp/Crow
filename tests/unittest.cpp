@@ -2498,6 +2498,44 @@ TEST_CASE("zlib_compression")
     app_deflate.stop();
     app_gzip.stop();
 } // zlib_compression
+
+// Regression test: response::compressed = false applies to one response only. It was never reset,
+// so on a keep-alive connection every later response was sent uncompressed too.
+TEST_CASE("keepalive_compressed_flag_applies_to_one_response")
+{
+    SimpleApp app;
+
+    const std::string text(512, 'a');
+
+    CROW_ROUTE(app, "/plain")
+    ([&](const request&, response& res) {
+        res.compressed = false;
+        res.body = text;
+        res.end();
+    });
+
+    CROW_ROUTE(app, "/compress")
+    ([&]() {
+        return text;
+    });
+
+    auto _ = app.bindaddr(LOCALHOST_ADDRESS).port(45451).use_compression(compression::algorithm::GZIP).run_async();
+    app.wait_for_server_start();
+
+    HttpClient c(LOCALHOST_ADDRESS, 45451);
+
+    c.send("GET /plain HTTP/1.1\r\nHost: localhost\r\nAccept-Encoding: gzip\r\n\r\n");
+    auto resp1 = c.receive();
+    CHECK(resp1.find("HTTP/1.1 200 OK") == 0);
+    CHECK(resp1.find("Content-Encoding") == std::string::npos);
+
+    c.send("GET /compress HTTP/1.1\r\nHost: localhost\r\nAccept-Encoding: gzip\r\n\r\n");
+    auto resp2 = c.receive();
+    CHECK(resp2.find("HTTP/1.1 200 OK") == 0);
+    CHECK(resp2.find("Content-Encoding: gzip") != std::string::npos);
+
+    app.stop();
+} // keepalive_compressed_flag_applies_to_one_response
 #endif
 
 TEST_CASE("catchall")
@@ -2660,6 +2698,153 @@ TEST_CASE("catchall_keepalive_return_value_handler")
 
     app.stop();
 } // catchall_keepalive_return_value_handler
+
+// Regression test: a request completed before it is routed (HEAD to an unknown route, OPTIONS)
+// still runs the after_handle of the global middlewares. The middleware context was only created
+// in Connection::handle(), so on a keep-alive connection these after handlers ran on the previous
+// request's context, and the CookieParser sent the cookie set for the previous request again.
+TEST_CASE("keepalive_early_completed_request_gets_fresh_middleware_context")
+{
+    App<CookieParser> app;
+
+    CROW_ROUTE(app, "/login")
+    ([&](const request& req) {
+        auto& ctx = app.get_context<CookieParser>(req);
+        ctx.set_cookie("session", "set-for-login-only");
+        return "ok";
+    });
+
+    CROW_ROUTE(app, "/")
+    ([] {
+        return "root";
+    });
+
+    auto _ = app.bindaddr(LOCALHOST_ADDRESS).port(45451).run_async();
+    app.wait_for_server_start();
+
+    auto second_response_after_login = [](const std::string& second) {
+        HttpClient c(LOCALHOST_ADDRESS, 45451);
+
+        c.send("GET /login HTTP/1.1\r\nHost: localhost\r\n\r\n");
+        auto resp1 = c.receive();
+        CHECK(resp1.find("Set-Cookie: session=set-for-login-only") != std::string::npos);
+
+        c.send(second);
+        return c.receive();
+    };
+
+    {
+        auto resp = second_response_after_login("HEAD /unknown HTTP/1.1\r\nHost: localhost\r\n\r\n");
+        CHECK(resp.find("HTTP/1.1 404 Not Found") == 0);
+        CHECK(resp.find("Set-Cookie") == std::string::npos);
+    }
+
+    {
+        auto resp = second_response_after_login("OPTIONS / HTTP/1.1\r\nHost: localhost\r\n\r\n");
+#ifdef CROW_RETURNS_OK_ON_HTTP_OPTIONS_REQUEST
+        CHECK(resp.find("HTTP/1.1 200 OK") == 0);
+#else
+        CHECK(resp.find("HTTP/1.1 204 No Content") == 0);
+#endif
+        CHECK(resp.find("Allow: ") != std::string::npos);
+        CHECK(resp.find("Set-Cookie") == std::string::npos);
+    }
+
+    app.stop();
+} // keepalive_early_completed_request_gets_fresh_middleware_context
+
+// Regression test: the HEAD flags of a response (skip_body, manual_length_header) were only reset
+// when the response was ended through the router's completion handler. A HEAD request answered
+// otherwise (by a global middleware's before_handle, or the 400 for a missing Host header) left
+// them set, and the next response on the keep-alive connection was sent without its body.
+TEST_CASE("keepalive_head_response_does_not_drop_next_body")
+{
+    struct DenyMiddleware
+    {
+        struct context
+        {};
+
+        void before_handle(request& req, response& res, context&)
+        {
+            if (req.get_header_value("X-Deny") == "1")
+            {
+                res.code = 403;
+                res.end();
+            }
+        }
+
+        void after_handle(request&, response&, context&)
+        {}
+    };
+
+    App<DenyMiddleware> app;
+
+    CROW_ROUTE(app, "/")
+    ([] {
+        return "root";
+    });
+
+    auto _ = app.bindaddr(LOCALHOST_ADDRESS).port(45451).run_async();
+    app.wait_for_server_start();
+
+    auto get_after_head = [](const std::string& head, const std::string& expected_status) {
+        HttpClient c(LOCALHOST_ADDRESS, 45451);
+
+        c.send(head);
+        auto resp1 = c.receive();
+        CHECK(resp1.find(expected_status) == 0);
+
+        c.send("GET / HTTP/1.1\r\nHost: localhost\r\n\r\n");
+        return c.receive();
+    };
+
+    {
+        auto resp = get_after_head("HEAD / HTTP/1.1\r\nHost: localhost\r\nX-Deny: 1\r\n\r\n", "HTTP/1.1 403 Forbidden");
+        CHECK(resp.find("HTTP/1.1 200 OK") == 0);
+        CHECK(resp.find("Content-Length: 4\r\n") != std::string::npos);
+        CHECK(resp.substr(resp.find("\r\n\r\n") + 4) == "root");
+    }
+
+    {
+        auto resp = get_after_head("HEAD / HTTP/1.1\r\n\r\n", "HTTP/1.1 400 Bad Request");
+        CHECK(resp.find("HTTP/1.1 200 OK") == 0);
+        CHECK(resp.find("Content-Length: 4\r\n") != std::string::npos);
+        CHECK(resp.substr(resp.find("\r\n\r\n") + 4) == "root");
+    }
+
+    app.stop();
+} // keepalive_head_response_does_not_drop_next_body
+
+// Regression test: Connection::handle() added a "connection: Keep-Alive" header to the response
+// after the handler returned. A handler that ends the response right away has already sent and
+// cleared it by then, so the header was left on the next response of the connection, even on one
+// the connection is closed after (an HTTP/1.0 request without keep-alive).
+TEST_CASE("keepalive_header_does_not_leak_into_next_response")
+{
+    SimpleApp app;
+
+    CROW_ROUTE(app, "/")
+    ([](const request&, response& res) {
+        res.body = "root";
+        res.end();
+    });
+
+    auto _ = app.bindaddr(LOCALHOST_ADDRESS).port(45451).run_async();
+    app.wait_for_server_start();
+
+    HttpClient c(LOCALHOST_ADDRESS, 45451);
+
+    c.send("GET / HTTP/1.1\r\nHost: localhost\r\n\r\n");
+    auto resp1 = c.receive();
+    CHECK(resp1.find("HTTP/1.1 200 OK") == 0);
+
+    c.send("GET / HTTP/1.0\r\n\r\n");
+    auto resp2 = c.receive();
+    CHECK(resp2.find("HTTP/1.1 200 OK") == 0);
+    CHECK(resp2.find("Keep-Alive") == std::string::npos);
+
+    app.stop();
+} // keepalive_header_does_not_leak_into_next_response
 
 TEST_CASE("blueprint")
 {
@@ -3614,6 +3799,89 @@ TEST_CASE("Global middleware rejection ignored during WebSocket upgrade")
 
     app.stop();
 }
+
+// Regression test: the global middlewares' before_handle ran for an upgrade request, but their
+// after_handle did not, so a middleware releasing per-request state there (the SessionMiddleware
+// unpinning the session from its cache) never did. When the route did not accept the upgrade,
+// the router's answer (404 here) was not sent either.
+TEST_CASE("upgrade_request_runs_after_handle_of_global_middlewares")
+{
+    static std::atomic<int> before_count{0};
+    static std::atomic<int> after_count{0};
+    before_count = 0;
+    after_count = 0;
+
+    struct CountingMiddleware
+    {
+        struct context
+        {};
+
+        void before_handle(crow::request&, crow::response&, context&)
+        {
+            before_count++;
+        }
+
+        void after_handle(crow::request&, crow::response&, context&)
+        {
+            after_count++;
+        }
+    };
+
+    crow::App<CountingMiddleware> app;
+
+    CROW_ROUTE(app, "/")
+    ([] {
+        return "root";
+    });
+
+    CROW_WEBSOCKET_ROUTE(app, "/ws")
+      .onopen([](crow::websocket::connection&) {});
+
+    auto _ = app.bindaddr(LOCALHOST_ADDRESS).port(45451).run_async();
+    app.wait_for_server_start();
+
+    const std::string upgrade_headers =
+      "Host: localhost\r\n"
+      "Upgrade: websocket\r\n"
+      "Connection: Upgrade\r\n"
+      "Sec-WebSocket-Key: dGhlIHNhbXBsZSBub25jZQ==\r\n"
+      "Sec-WebSocket-Version: 13\r\n"
+      "\r\n";
+
+    {
+        // "/" is no websocket route: the router answers the upgrade with a 404
+        std::string resp;
+        try
+        {
+            resp = HttpClient::request(LOCALHOST_ADDRESS, 45451, "GET / HTTP/1.1\r\n" + upgrade_headers);
+        }
+        catch (const std::exception&)
+        {
+            // the connection was closed without a response
+        }
+        CHECK(resp.find("HTTP/1.1 404 Not Found") == 0);
+        CHECK(resp.find("Keep-Alive") == std::string::npos);
+        CHECK(before_count == 1);
+        CHECK(after_count == 1);
+    }
+
+    {
+        HttpClient c(LOCALHOST_ADDRESS, 45451);
+        c.send("GET /ws HTTP/1.1\r\n" + upgrade_headers);
+        CHECK(c.receive().find("HTTP/1.1 101 Switching Protocols") == 0);
+
+        // the pong is read after the upgrade request was handled
+        const char ping[] = "\x89\x80\x00\x00\x00\x00";
+        c.send(ping, 6);
+        auto pong = c.receive();
+        REQUIRE(pong.size() >= 2);
+        CHECK((int)(unsigned char)pong[0] == 0x8A);
+        CHECK(before_count == 2);
+        CHECK(after_count == 2);
+    }
+
+    app.stop();
+} // upgrade_request_runs_after_handle_of_global_middlewares
 
 TEST_CASE("stack overflow due to deeply nested json input")
 {
