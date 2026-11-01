@@ -2778,6 +2778,54 @@ TEST_CASE("blueprint")
     }
 } // blueprint
 
+// Regression test for an out-of-bounds read in Router::get_found_bp.
+// When a parent blueprint registers no route of its own (as happens when
+// static-directory routes are not added, e.g. under CROW_DISABLE_STATIC_DIR),
+// no trie node carries the parent's own index, so a 404 under one of its child
+// blueprints leaves the child's parent-relative index as the first entry of
+// found.blueprint_indices. get_found_bp indexed the router's top-level
+// blueprint vector with that value without a bounds check, reading past the
+// end when the index exceeded the number of top-level blueprints.
+TEST_CASE("blueprint_catchall_oob")
+{
+    SimpleApp app;
+    Blueprint parent("parent_bp");
+    Blueprint child_a("child_a");
+    Blueprint child_b("child_b");
+
+    CROW_BP_ROUTE(child_a, "/ping")
+    ([]() {
+        return "a";
+    });
+    CROW_BP_ROUTE(child_b, "/ping")
+    ([]() {
+        return "b";
+    });
+
+    parent.register_blueprint(child_a); // index 0 within parent
+    parent.register_blueprint(child_b); // index 1 within parent
+    app.register_blueprint(parent);     // single top-level blueprint
+
+    CROW_CATCHALL_ROUTE(app)
+    ([](crow::response& res) {
+        res.code = 404;
+        res.body = "global catchall";
+        res.end();
+    });
+
+    // Deliberately skip add_blueprint()/add_static_dir() so the parent has no
+    // route of its own, matching the CROW_DISABLE_STATIC_DIR code path.
+    app.validate();
+
+    request req;
+    response res;
+    req.url = "/parent_bp/child_b/nope";
+    app.handle_full(req, res);
+
+    CHECK(404 == res.code);
+    CHECK("global catchall" == res.body);
+}
+
 TEST_CASE("exception_handler")
 {
     SimpleApp app;

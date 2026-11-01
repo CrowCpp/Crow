@@ -1566,6 +1566,8 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                 {
                     if (found_bps.size() < 2)
                     {
+                        if (bp_i[index] >= blueprints_.size())
+                            return;
                         found_bps.clear();
                         found_bps.push_back(blueprints_[bp_i[index]]);
                     }
@@ -1573,6 +1575,8 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                     {
                         found_bps.pop_back();
                         Blueprint* last_element = found_bps.back();
+                        if (bp_i[index] >= last_element->blueprints_.size())
+                            return;
                         found_bps.push_back(last_element->blueprints_[bp_i[index]]);
                     }
                     get_found_bp(bp_i, found_bps.back()->blueprints_, found_bps, ++index);
