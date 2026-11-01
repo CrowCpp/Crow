@@ -19,16 +19,16 @@ jobs:
       fail-fast: true
       matrix:
         include:
-          - { os: ubuntu-latest, compiler: gcc,   cxx_stdlib: libstdc++, asio_type: boost }
-          - { os: ubuntu-latest, compiler: gcc,   cxx_stdlib: libstdc++, asio_type: standalone }
-          - { os: ubuntu-latest, compiler: clang, cxx_stdlib: libstdc++, asio_type: boost }
-          - { os: ubuntu-latest, compiler: clang, cxx_stdlib: libstdc++, asio_type: standalone }
-          - { os: ubuntu-latest, compiler: clang, cxx_stdlib: libc++,    asio_type: boost }
-          - { os: ubuntu-latest, compiler: clang, cxx_stdlib: libc++,    asio_type: standalone }
-          - { os: ubuntu-22.04,  compiler: gcc,   cxx_stdlib: libstdc++ }
-          - { os: macos-latest,  compiler: clang, cxx_stdlib: libstdc++ }
-          - { os: macos-latest,  compiler: clang, cxx_stdlib: libc++ }
-          - { os: macos-14,      compiler: clang, cxx_stdlib: libc++ }
+          - { os: ubuntu-latest,  compiler: gcc,   cxx_stdlib: libstdc++, asio_type: boost }
+          - { os: ubuntu-latest,  compiler: gcc,   cxx_stdlib: libstdc++, asio_type: standalone }
+          - { os: ubuntu-latest,  compiler: clang, cxx_stdlib: libstdc++, asio_type: boost }
+          - { os: ubuntu-latest,  compiler: clang, cxx_stdlib: libstdc++, asio_type: standalone }
+          - { os: ubuntu-latest,  compiler: clang, cxx_stdlib: libc++,    asio_type: boost }
+          - { os: ubuntu-latest,  compiler: clang, cxx_stdlib: libc++,    asio_type: standalone }
+          - { os: ubuntu-22.04,   compiler: gcc,   cxx_stdlib: libstdc++ }
+          - { os: macos-latest,   compiler: clang, cxx_stdlib: libstdc++ }
+          - { os: macos-latest,   compiler: clang, cxx_stdlib: libc++ }
+          - { os: macos-15-intel, compiler: clang, cxx_stdlib: libc++ }
           - { os: windows-latest, compiler: msvc, cxx_stdlib: msvc }
 
     steps:
