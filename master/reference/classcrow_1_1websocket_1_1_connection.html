@@ -159,6 +159,7 @@ template&lt;typename CompletionHandler &gt; </td></tr>
 <tr class="memdesc:a4fab99ae7f8e269480d5842cff1daf88"><td class="mdescLeft">&#160;</td><td class="mdescRight">Send a close signal.  <br /></td></tr>
 <tr class="separator:a4fab99ae7f8e269480d5842cff1daf88"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae6b8882caf42fc65295920e064e83ecc" id="r_ae6b8882caf42fc65295920e064e83ecc"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcrow_1_1websocket_1_1_connection.html#ae6b8882caf42fc65295920e064e83ecc">get_remote_ip</a> () override</td></tr>
+<tr class="memdesc:ae6b8882caf42fc65295920e064e83ecc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the IP address the connection was opened from, also once the socket is closed (empty for a Unix domain socket).  <br /></td></tr>
 <tr class="separator:ae6b8882caf42fc65295920e064e83ecc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab1eed231f4c89865bbb8967a6562f2e7" id="r_ab1eed231f4c89865bbb8967a6562f2e7"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcrow_1_1websocket_1_1_connection.html#ab1eed231f4c89865bbb8967a6562f2e7">get_remote_port</a> () override</td></tr>
 <tr class="memdesc:ab1eed231f4c89865bbb8967a6562f2e7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the TCP port of the remote endpoint, 0 when unavailable (Unix domain socket or socket already closed).  <br /></td></tr>
@@ -205,6 +206,13 @@ int&#160;</td><td class="memItemRight" valign="bottom"><b>opcode</b> ()</td></tr
 <tr class="memitem:a292002f44552e5eabd8dd65f476a4c28" id="r_a292002f44552e5eabd8dd65f476a4c28"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcrow_1_1websocket_1_1_connection.html#a292002f44552e5eabd8dd65f476a4c28">handle_fragment</a> ()</td></tr>
 <tr class="memdesc:a292002f44552e5eabd8dd65f476a4c28"><td class="mdescLeft">&#160;</td><td class="mdescRight">Process the payload fragment.  <br /></td></tr>
 <tr class="separator:a292002f44552e5eabd8dd65f476a4c28"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1f2cd16255e0b05da19db44a0fcc02ce" id="r_a1f2cd16255e0b05da19db44a0fcc02ce"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcrow_1_1websocket_1_1_connection.html#a1f2cd16255e0b05da19db44a0fcc02ce">finish_message</a> ()</td></tr>
+<tr class="memdesc:a1f2cd16255e0b05da19db44a0fcc02ce"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pass the complete message to the message handler and get ready for the next one.  <br /></td></tr>
+<tr class="separator:a1f2cd16255e0b05da19db44a0fcc02ce"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a68639e53aaf9ef63bacef237fb9cbe63" id="r_a68639e53aaf9ef63bacef237fb9cbe63"><td class="memTemplParams" colspan="2">template&lt;typename Callable &gt; </td></tr>
+<tr class="memitem:a68639e53aaf9ef63bacef237fb9cbe63"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classcrow_1_1websocket_1_1_connection.html#a68639e53aaf9ef63bacef237fb9cbe63">call_handler</a> (Callable &amp;&amp;handler)</td></tr>
+<tr class="memdesc:a68639e53aaf9ef63bacef237fb9cbe63"><td class="mdescLeft">&#160;</td><td class="mdescRight">Call a user handler.  <br /></td></tr>
+<tr class="separator:a68639e53aaf9ef63bacef237fb9cbe63"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a787dde96965bf30d994bbc5fb3388281" id="r_a787dde96965bf30d994bbc5fb3388281"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcrow_1_1websocket_1_1_connection.html#a787dde96965bf30d994bbc5fb3388281">do_write</a> ()</td></tr>
 <tr class="memdesc:a787dde96965bf30d994bbc5fb3388281"><td class="mdescLeft">&#160;</td><td class="mdescRight">Send the buffers' data through the socket.  <br /></td></tr>
 <tr class="separator:a787dde96965bf30d994bbc5fb3388281"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -227,6 +235,40 @@ Static Protected Member Functions</h2></td></tr>
 <div class="textblock"><div class="compoundTemplParams">template&lt;typename Adaptor, typename Handler&gt;<br />
 class crow::websocket::Connection&lt; Adaptor, Handler &gt;</div><p>A websocket connection. </p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
+<a id="a68639e53aaf9ef63bacef237fb9cbe63" name="a68639e53aaf9ef63bacef237fb9cbe63"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a68639e53aaf9ef63bacef237fb9cbe63">&#9670;&#160;</a></span>call_handler()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Adaptor , typename Handler &gt; </div>
+<div class="memtemplate">
+template&lt;typename Callable &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool <a class="el" href="classcrow_1_1websocket_1_1_connection.html">crow::websocket::Connection</a>&lt; Adaptor, Handler &gt;::call_handler </td>
+          <td>(</td>
+          <td class="paramtype">Callable &amp;&amp;&#160;</td>
+          <td class="paramname"><em>handler</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Call a user handler. </p>
+<p>An exception escaping the handler is reported to the error handler and the connection is closed with UnexpectedCondition.<br  />
+ Returns false in that case, nothing more should be read from the connection. </p>
+
+</div>
+</div>
 <a id="a4fab99ae7f8e269480d5842cff1daf88" name="a4fab99ae7f8e269480d5842cff1daf88"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a4fab99ae7f8e269480d5842cff1daf88">&#9670;&#160;</a></span>close()</h2>
 
@@ -435,6 +477,36 @@ template&lt;typename Adaptor , typename Handler &gt; </div>
 
 </div>
 </div>
+<a id="a1f2cd16255e0b05da19db44a0fcc02ce" name="a1f2cd16255e0b05da19db44a0fcc02ce"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1f2cd16255e0b05da19db44a0fcc02ce">&#9670;&#160;</a></span>finish_message()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Adaptor , typename Handler &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool <a class="el" href="classcrow_1_1websocket_1_1_connection.html">crow::websocket::Connection</a>&lt; Adaptor, Handler &gt;::finish_message </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Pass the complete message to the message handler and get ready for the next one. </p>
+<p>Returns false if the handler threw, in which case the connection is being closed. </p>
+
+</div>
+</div>
 <a id="ae6b8882caf42fc65295920e064e83ecc" name="ae6b8882caf42fc65295920e064e83ecc"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ae6b8882caf42fc65295920e064e83ecc">&#9670;&#160;</a></span>get_remote_ip()</h2>
 
@@ -459,6 +531,8 @@ template&lt;typename Adaptor , typename Handler &gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Returns the IP address the connection was opened from, also once the socket is closed (empty for a Unix domain socket). </p>
 
 <p>Implements <a class="el" href="structcrow_1_1websocket_1_1connection.html">crow::websocket::connection</a>.</p>
 
