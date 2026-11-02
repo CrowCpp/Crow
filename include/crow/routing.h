@@ -112,7 +112,11 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         std::unique_ptr<BaseRule> upgrade()
         {
             if (rule_to_upgrade_)
+            {
+                // keep the local middlewares added before the rule was upgraded
+                rule_to_upgrade_->mw_indices_ = mw_indices_;
                 return std::move(rule_to_upgrade_);
+            }
             return {};
         }
 
@@ -1471,8 +1475,8 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         }
 
         // TODO maybe add actual_method
-        template<typename Adaptor>
-        void handle_upgrade(const request& req, response& res, Adaptor&& adaptor)
+        template<typename App, typename Adaptor>
+        void handle_upgrade(request& req, response& res, Adaptor&& adaptor)
         {
             if (req.method >= HTTPMethod::InternalMethodCount)
                 return;
@@ -1525,7 +1529,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
 
             try
             {
-                rules[rule_index]->handle_upgrade(req, res, std::move(adaptor));
+                handle_upgrade_rule<App>(*rules[rule_index], req, res, std::move(adaptor));
             }
             catch (...)
             {
@@ -1562,6 +1566,8 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                 {
                     if (found_bps.size() < 2)
                     {
+                        if (bp_i[index] >= blueprints_.size())
+                            return;
                         found_bps.clear();
                         found_bps.push_back(blueprints_[bp_i[index]]);
                     }
@@ -1569,6 +1575,8 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                     {
                         found_bps.pop_back();
                         Blueprint* last_element = found_bps.back();
+                        if (bp_i[index] >= last_element->blueprints_.size())
+                            return;
                         found_bps.push_back(last_element->blueprints_[bp_i[index]]);
                     }
                     get_found_bp(bp_i, found_bps.back()->blueprints_, found_bps, ++index);
@@ -1837,6 +1845,33 @@ namespace crow // NOTE: Already documented in "crow/app.h"
           handle_rule(BaseRule& rule, crow::request& req, crow::response& res, const crow::routing_params& rp)
         {
             rule.handle(req, res, rp);
+        }
+
+        template<typename App, typename Adaptor>
+        typename std::enable_if<std::tuple_size<typename App::mw_container_t>::value != 0, void>::type
+          handle_upgrade_rule(BaseRule& rule, crow::request& req, crow::response& res, Adaptor&& adaptor)
+        {
+            if (!rule.mw_indices_.empty())
+            {
+                auto& ctx = *reinterpret_cast<typename App::context_t*>(req.middleware_context);
+                auto& container = *reinterpret_cast<typename App::mw_container_t*>(req.middleware_container);
+                detail::middleware_call_criteria_dynamic<false> crit_fwd(rule.mw_indices_.indices());
+
+                detail::middleware_call_helper<decltype(crit_fwd),
+                                               0, typename App::context_t, typename App::mw_container_t>(crit_fwd, container, req, res, ctx);
+
+                // a local middleware answered the request, do not upgrade the connection
+                if (res.completed_)
+                    return;
+            }
+            rule.handle_upgrade(req, res, std::move(adaptor));
+        }
+
+        template<typename App, typename Adaptor>
+        typename std::enable_if<std::tuple_size<typename App::mw_container_t>::value == 0, void>::type
+          handle_upgrade_rule(BaseRule& rule, crow::request& req, crow::response& res, Adaptor&& adaptor)
+        {
+            rule.handle_upgrade(req, res, std::move(adaptor));
         }
 
         void debug_print()

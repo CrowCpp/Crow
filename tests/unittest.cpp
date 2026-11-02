@@ -2778,6 +2778,54 @@ TEST_CASE("blueprint")
     }
 } // blueprint
 
+// Regression test for an out-of-bounds read in Router::get_found_bp.
+// When a parent blueprint registers no route of its own (as happens when
+// static-directory routes are not added, e.g. under CROW_DISABLE_STATIC_DIR),
+// no trie node carries the parent's own index, so a 404 under one of its child
+// blueprints leaves the child's parent-relative index as the first entry of
+// found.blueprint_indices. get_found_bp indexed the router's top-level
+// blueprint vector with that value without a bounds check, reading past the
+// end when the index exceeded the number of top-level blueprints.
+TEST_CASE("blueprint_catchall_oob")
+{
+    SimpleApp app;
+    Blueprint parent("parent_bp");
+    Blueprint child_a("child_a");
+    Blueprint child_b("child_b");
+
+    CROW_BP_ROUTE(child_a, "/ping")
+    ([]() {
+        return "a";
+    });
+    CROW_BP_ROUTE(child_b, "/ping")
+    ([]() {
+        return "b";
+    });
+
+    parent.register_blueprint(child_a); // index 0 within parent
+    parent.register_blueprint(child_b); // index 1 within parent
+    app.register_blueprint(parent);     // single top-level blueprint
+
+    CROW_CATCHALL_ROUTE(app)
+    ([](crow::response& res) {
+        res.code = 404;
+        res.body = "global catchall";
+        res.end();
+    });
+
+    // Deliberately skip add_blueprint()/add_static_dir() so the parent has no
+    // route of its own, matching the CROW_DISABLE_STATIC_DIR code path.
+    app.validate();
+
+    request req;
+    response res;
+    req.url = "/parent_bp/child_b/nope";
+    app.handle_full(req, res);
+
+    CHECK(404 == res.code);
+    CHECK("global catchall" == res.body);
+}
+
 TEST_CASE("exception_handler")
 {
     SimpleApp app;
@@ -2894,6 +2942,78 @@ TEST_CASE("remote_port")
     CHECK(reported_port == client_port);
 
 } // remote_port
+
+TEST_CASE("remote_address_of_unconnected_socket")
+{
+    // Once the peer resets the connection, getpeername fails with ENOTCONN (issue #791).
+    asio::io_context ic;
+    SocketAdaptor adaptor(ic, nullptr);
+    adaptor.raw_socket().open(asio::ip::tcp::v4());
+
+    std::string address = "unset";
+    CHECK_NOTHROW(address = adaptor.address());
+    CHECK(address.empty());
+    CHECK(adaptor.remote_port() == 0);
+} // remote_address_of_unconnected_socket
+
+TEST_CASE("reset_connections_do_not_crash_workers")
+{
+    // Counts the "Worker Crash" lines that an exception escaping a handler produces.
+    class CrashCounter : public crow::ILogHandler
+    {
+    public:
+        void log(const std::string& message, crow::LogLevel /*level*/) override
+        {
+            if (message.find("Worker Crash") != std::string::npos)
+                crashes_++;
+        }
+
+        int crashes() const { return crashes_; }
+
+    private:
+        std::atomic<int> crashes_{0};
+    };
+
+    const crow::LogLevel saved_level = crow::logger::get_current_log_level();
+    crow::logger::setLogLevel(crow::LogLevel::Error);
+    CrashCounter counter;
+    crow::logger::setHandler(&counter);
+
+    SimpleApp app;
+    CROW_ROUTE(app, "/")
+    ([] {
+        return "A";
+    });
+    auto _ = app.bindaddr(LOCALHOST_ADDRESS).port(0).run_async();
+    app.wait_for_server_start();
+
+    // Send a request and reset the connection at once, so the server often handles the
+    // request after the socket is gone (issue #791).
+    asio::io_context ic;
+    const asio::ip::tcp::endpoint endpoint(asio::ip::make_address(LOCALHOST_ADDRESS), app.port());
+    const std::string request = "GET / HTTP/1.1\r\nHost: localhost\r\n\r\n";
+    for (int i = 0; i < 2000; i++)
+    {
+        asio::ip::tcp::socket c(ic);
+        c.connect(endpoint);
+        c.set_option(asio::socket_base::linger(true, 0));
+        asio::write(c, asio::buffer(request));
+        c.close();
+    }
+
+    // The server still answers a well-behaved client.
+    HttpClient client(LOCALHOST_ADDRESS, app.port());
+    client.send("GET / HTTP/1.0\r\n\r\n");
+    const std::string response = client.receive();
+    app.stop();
+
+    static crow::CerrLogHandler cerr_handler;
+    crow::logger::setHandler(&cerr_handler);
+    crow::logger::setLogLevel(saved_level);
+
+    CHECK(response.find("200 OK") != std::string::npos);
+    CHECK(counter.crashes() == 0);
+} // reset_connections_do_not_crash_workers
 
 TEST_CASE("timeout")
 {
@@ -3057,6 +3177,75 @@ TEST_CASE("http2_upgrade_is_ignored")
 
     auto res = make_request(request);
     CHECK(res.find("http2 upgrade is not supported so body is parsed") != std::string::npos);
+    app.stop();
+}
+
+TEST_CASE("chunk_extension_rejects_bare_lf")
+{
+    static char buf[5012];
+
+    SimpleApp app;
+    std::atomic<int> smuggled_hits{0};
+    CROW_ROUTE(app, "/echo").methods("POST"_method)([](crow::request const& req) {
+        return req.body;
+    });
+    CROW_ROUTE(app, "/smuggled")
+    ([&] {
+        smuggled_hits++;
+        return "smuggled";
+    });
+
+    auto _ = app.bindaddr(LOCALHOST_ADDRESS).port(45451).run_async();
+
+    app.wait_for_server_start();
+    asio::io_context ic;
+
+    auto make_request = [&](const std::string& rq) {
+        asio::ip::tcp::socket c(ic);
+        c.connect(asio::ip::tcp::endpoint(
+          asio::ip::make_address(LOCALHOST_ADDRESS), 45451));
+        c.send(asio::buffer(rq));
+        std::string res;
+        asio_error_code ec;
+        size_t n = c.receive(asio::buffer(buf, 2048), 0, ec);
+        res.assign(buf, n);
+        c.close();
+        return res;
+    };
+
+    // Well-formed chunk extensions are still accepted
+    auto res = make_request(
+      "POST /echo HTTP/1.1\r\n"
+      "host: " LOCALHOST_ADDRESS ":45451\r\n"
+      "transfer-encoding: chunked\r\n"
+      "\r\n"
+      "5;name=\"va lue\"\r\n"
+      "hello\r\n"
+      "0\r\n"
+      "\r\n");
+    CHECK(res.find("200 OK") != std::string::npos);
+    CHECK(res.find("hello") != std::string::npos);
+
+    // A peer that ends the chunk line at the bare LF sees chunk "xx" followed by
+    // a 0x28 byte chunk carrying the GET, so it must not reach the router.
+    res = make_request(
+      "POST /echo HTTP/1.1\r\n"
+      "host: " LOCALHOST_ADDRESS ":45451\r\n"
+      "transfer-encoding: chunked\r\n"
+      "\r\n"
+      "2;\nxx\r\n"
+      "28\r\n"
+      "0\r\n"
+      "\r\n"
+      "GET /smuggled HTTP/1.1\r\n"
+      "host: a\r\n"
+      "\r\n"
+      "\r\n"
+      "0\r\n"
+      "\r\n");
+    CHECK(res.find("200 OK") == std::string::npos);
+    CHECK(smuggled_hits == 0);
+
     app.stop();
 }
 
@@ -3469,6 +3658,9 @@ TEST_CASE("Global middleware rejection ignored during WebSocket upgrade")
     // an authorized request to websocket url shall return status 101
     // and shall call on_open of websocket
     CHECK(authorized_resp.find("HTTP/1.1 101 Switching Protocols") != std::string::npos);
+    // the 101 is sent before on_open is called, so the client can read it first
+    for (int i = 0; i < 100 && !websocket_open_called; ++i)
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
     CHECK(websocket_open_called == true);
 
     app.stop();
@@ -3632,6 +3824,30 @@ TEST_CASE("crow_filestore_rejects_expired_session")
     for (const char* id : {"expired_a", "expired_b", "expired_c", "expired_d"})
     {
         CHECK_FALSE(file_store.contains(id));
+    }
+    fs::remove_all(store);
+}
+      
+TEST_CASE("crow_filestore_persisted_expiration")
+{
+    const fs::path store = fs::current_path() / "filestore_persisted_expiration";
+    fs::remove_all(store);
+    fs::create_directories(store);
+
+    // .expirations is read back after a restart (possibly after a reboot),
+    // so the stored times must be wall-clock times
+    const uint64_t now = std::chrono::duration_cast<std::chrono::seconds>(
+                           std::chrono::system_clock::now().time_since_epoch())
+                           .count();
+    std::ofstream(store / "expired.json") << "{}";
+    std::ofstream(store / "valid.json") << "{}";
+    std::ofstream(store / ".expirations") << "expired " << (now - 60) << "\n"
+                                          << "valid " << (now + 3600) << "\n";
+
+    {
+        crow::FileStore fs_store{store.string()};
+        CHECK_FALSE(fs_store.contains("expired"));
+        CHECK(fs_store.contains("valid"));
     }
 
     fs::remove_all(store);

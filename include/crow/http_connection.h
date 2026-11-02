@@ -184,7 +184,7 @@ namespace crow
                         close_connection_ = true;
                         if (res.is_completed())
                         {
-                            CROW_LOG_INFO << "Request completed before websocket upgrade: " << utility::lexical_cast<std::string>(adaptor_.remote_endpoint()) << " " << this << " HTTP/" << (char)(req_.http_ver_major + '0') << "." << (char)(req_.http_ver_minor + '0') << ' ' << method_name(req_.method) << " " << req_.url;
+                            CROW_LOG_INFO << "Request completed before websocket upgrade: " << req_.remote_ip_address << ":" << req_.remote_port << " " << this << " HTTP/" << (char)(req_.http_ver_major + '0') << "." << (char)(req_.http_ver_minor + '0') << ' ' << method_name(req_.method) << " " << req_.url;
                             complete_request();
 
                         }
@@ -197,7 +197,7 @@ namespace crow
                 }
             }
 
-            CROW_LOG_INFO << "Request: " << utility::lexical_cast<std::string>(adaptor_.remote_endpoint()) << " " << this << " HTTP/" << (char)(req_.http_ver_major + '0') << "." << (char)(req_.http_ver_minor + '0') << ' ' << method_name(req_.method) << " " << req_.url;
+            CROW_LOG_INFO << "Request: " << req_.remote_ip_address << ":" << req_.remote_port << " " << this << " HTTP/" << (char)(req_.http_ver_major + '0') << "." << (char)(req_.http_ver_minor + '0') << ' ' << method_name(req_.method) << " " << req_.url;
 
 
             need_to_call_after_handlers_ = false;
