@@ -1,0 +1,6 @@
+--CROW-BOUNDARY
+Content-Disposition: form-data; name="upload"; filename="a.bin"
+Content-Type: application/octet-stream
+
+BINARYDATA0000
+--CROW-BOUNDARY--
