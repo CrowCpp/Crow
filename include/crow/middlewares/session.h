@@ -148,6 +148,14 @@ namespace crow
                 return queue_.begin()->first;
             }
 
+            /// Get expiration time of key, or the maximum value if it is not tracked
+            uint64_t get(const std::string& key) const
+            {
+                auto it = times_.find(key);
+                if (it == times_.end()) return std::numeric_limits<uint64_t>::max();
+                return it->second;
+            }
+
             std::string pop_first()
             {
                 auto it = times_.find(queue_.begin()->second);
@@ -551,6 +559,14 @@ namespace crow
 
         bool contains(const std::string& key)
         {
+            // handle_expired() only evicts a few entries per load, so check this key explicitly
+            if (chrono_time() > expirations_.get(key))
+            {
+                expirations_.remove(key);
+                evict(key);
+                return false;
+            }
+
             std::ifstream file(get_filename(key));
             return file.good();
         }
