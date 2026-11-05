@@ -220,7 +220,7 @@ namespace crow
         {
             return p == s.size() ? 0 :
                    s[p] == '<'   ? (
-                                   is_int(s, p)   ? get_parameter_tag(s, find_closing_tag(s, p)) * 6 + 1 :
+                                    is_int(s, p)   ? get_parameter_tag(s, find_closing_tag(s, p)) * 6 + 1 :
                                      is_uint(s, p)  ? get_parameter_tag(s, find_closing_tag(s, p)) * 6 + 2 :
                                      is_float(s, p) ? get_parameter_tag(s, find_closing_tag(s, p)) * 6 + 3 :
                                      is_str(s, p)   ? get_parameter_tag(s, find_closing_tag(s, p)) * 6 + 4 :
@@ -480,7 +480,6 @@ namespace crow
 
     namespace detail
     {
-
         template<class T, std::size_t N, class... Args>
         struct get_index_of_element_from_tuple_by_type_impl
         {

@@ -3529,6 +3529,27 @@ TEST_CASE("option_header_passed_in_full")
     app.stop();
 }
 
+TEST_CASE("lambda_wrapper")
+{
+    utility::lambda_wrapper<int, std::string> empty;
+    CHECK(empty != true);
+    CHECK_THROWS_AS(empty("hello"), crow::utility::call_error);
+
+    utility::lambda_wrapper<int> const_val([]()->int { return 42; });
+    CHECK(const_val == true);
+    CHECK(const_val() == 42);
+
+    utility::lambda_wrapper<int, int, int> plus([](int a, int b)->int { return a + b; });
+    CHECK(plus == true);
+    CHECK(plus(2, 3) == 5);
+
+    const std::string name{"Motoko"};
+    utility::lambda_wrapper<void, std::string&> func([name](std::string& str) { str = name; });
+    CHECK(func == true);
+    std::string strval;
+    func(strval);
+    CHECK(strval == name);
+}
 
 TEST_CASE("inject_header_via_set_haeder")
 {
