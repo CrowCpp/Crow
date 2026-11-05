@@ -148,6 +148,14 @@ namespace crow
                 return queue_.begin()->first;
             }
 
+            /// Get expiration time of key, or the maximum value if it is not tracked
+            uint64_t get(const std::string& key) const
+            {
+                auto it = times_.find(key);
+                if (it == times_.end()) return std::numeric_limits<uint64_t>::max();
+                return it->second;
+            }
+
             std::string pop_first()
             {
                 auto it = times_.find(queue_.begin()->second);
@@ -318,7 +326,11 @@ namespace crow
         template<typename... Ts>
         SessionMiddleware(Ts... ts):
           SessionMiddleware(
-            CookieParser::Cookie("session").path("/").max_age(/*month*/ 30 * 24 * 60 * 60),
+            CookieParser::Cookie("session")
+              .path("/")
+              .max_age(/*month*/ 30 * 24 * 60 * 60)
+              .httponly()
+              .same_site(CookieParser::Cookie::SameSitePolicy::Lax),
             /*id_length */ 20, // around 10^34 possible combinations, but small enough to fit into SSO
             std::forward<Ts>(ts)...)
         {}
@@ -535,11 +547,26 @@ namespace crow
 
         std::string get_filename(const std::string& key, bool suffix = true)
         {
-            return utility::join_path(path_, key + (suffix ? ".json" : ""));
+            std::string filename{key};
+            // we have to sanitize here to prevent file traversal by ".." or similar
+            utility::sanitize_filename(filename);
+            if (suffix)
+            {
+                filename.append(".json");
+            }
+            return (path_/filename).string();
         }
 
         bool contains(const std::string& key)
         {
+            // handle_expired() only evicts a few entries per load, so check this key explicitly
+            if (chrono_time() > expirations_.get(key))
+            {
+                expirations_.remove(key);
+                evict(key);
+                return false;
+            }
+
             std::ifstream file(get_filename(key));
             return file.good();
         }
@@ -549,6 +576,7 @@ namespace crow
             std::remove(get_filename(key).c_str());
         }
 
+        // expirations are persisted across restarts, so they need a clock with a fixed epoch
         uint64_t chrono_time() const
         {
             return std::chrono::duration_cast<std::chrono::seconds>(
@@ -556,7 +584,7 @@ namespace crow
               .count();
         }
 
-        std::string path_;
+        std::filesystem::path path_;
         uint64_t expiration_seconds_;
         session::ExpirationTracker expirations_;
     };

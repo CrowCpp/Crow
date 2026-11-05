@@ -790,12 +790,11 @@ namespace crow
         {
             static const char alphabet[] = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
             std::random_device dev;
-            std::mt19937 rng(dev());
-            std::uniform_int_distribution<std::mt19937::result_type> dist(0, sizeof(alphabet) - 2);
+            std::uniform_int_distribution<std::size_t> dist(0, sizeof(alphabet) - 2);
             std::string out;
             out.reserve(size);
             for (std::size_t i = 0; i < size; i++)
-                out.push_back(alphabet[dist(rng)]);
+                out.push_back(alphabet[dist(dev)]);
             return out;
         }
 
@@ -823,7 +822,7 @@ namespace crow
                 }
                 else
                 {
-                    if (std::toupper(l[i]) != std::toupper(r[i]))
+                    if (std::toupper(static_cast<unsigned char>(l[i])) != std::toupper(static_cast<unsigned char>(r[i])))
                         return false;
                 }
             }
@@ -855,40 +854,17 @@ namespace crow
             return res;
         }
 
-
-        /// Return a copy of the given string with its
+        /// Return string view of the given string view with its
         /// leading and trailing whitespaces removed.
-        inline static std::string trim(const std::string& v)
-        {
-            if (v.empty())
-                return "";
-
-            size_t begin = 0, end = v.length();
-
-            size_t i;
-            for (i = 0; i < v.length(); i++)
-            {
-                if (!std::isspace(v[i]))
-                {
-                    begin = i;
-                    break;
-                }
+        inline static std::string_view trim(const std::string_view sv) {
+            const size_t first = sv.find_first_not_of(" \t\n\r\f\v"); // same as isspace
+            if (std::string_view::npos == first) {
+                return sv.substr(0, 0);
             }
-
-            if (i == v.length())
-                return "";
-
-            for (i = v.length(); i > 0; i--)
-            {
-                if (!std::isspace(v[i - 1]))
-                {
-                    end = i;
-                    break;
-                }
-            }
-
-            return v.substr(begin, end - begin);
+            const size_t last = sv.find_last_not_of(" \t\n\r\f\v");
+            return sv.substr(first, (last - first + 1));
         }
+
 
         /**
          * @brief splits a string based on a separator
@@ -909,12 +885,12 @@ namespace crow
         }
 
         /**
-         * @brief Returns the first occurence that matches between two ranges of iterators
+         * @brief Returns the first occurrence that matches between two ranges of iterators
          * @param first1 begin() iterator of the first range
          * @param last1 end() iterator of the first range
          * @param first2 begin() iterator of the second range
          * @param last2 end() iterator of the second range
-         * @return first occurence that matches between two ranges of iterators 
+         * @return first occurrence that matches between two ranges of iterators 
         */
         template<typename Iter1, typename Iter2>
         inline static Iter1 find_first_of(Iter1 first1, Iter1 last1, Iter2 first2, Iter2 last2)
@@ -928,5 +904,157 @@ namespace crow
             }
             return last1;
         }
+
+        /**
+         * @brief An object-like container with unique keys stored in insertion order.
+         * New keys are added at the end; existing keys retain their position.
+         * @tparam Key the key type
+         * @tparam Value the mapped value type
+         */
+        template<typename Key, typename Value>
+        class ordered_object
+        {
+        public:
+            using key_type = Key;
+            using value_type = std::pair<key_type, Value>;
+            using storage_type = std::vector<value_type>;
+
+            using iterator = typename storage_type::iterator;
+            using const_iterator = typename storage_type::const_iterator;
+
+            ordered_object() = default;
+            ordered_object(const ordered_object&) = default;
+            ordered_object(ordered_object&&) noexcept = default;
+            ordered_object& operator=(const ordered_object& other)
+            {
+                if (this != &other)
+                {
+                    clear();
+                    insert(other.begin(), other.end());
+                }
+                return *this;
+            }
+            ordered_object& operator=(ordered_object&&) noexcept = default;
+
+            ordered_object(std::initializer_list<std::pair<const key_type, Value>> initializer_list)
+            {
+                insert(initializer_list.begin(), initializer_list.end());
+            }
+
+            ordered_object& operator=(std::initializer_list<std::pair<const key_type, Value>> initializer_list)
+            {
+                clear();
+                insert(initializer_list.begin(), initializer_list.end());
+                return *this;
+            }
+
+            /**
+             * @brief Return the value for a key, adding a new key at the end if it does not exist.
+             * Updating an existing key does not change its position.
+             * @param key the key to look up
+             * @return the value associated with the key
+             */
+            Value& operator[](const key_type& key)
+            {
+                auto it = find(key);
+
+                if (it == end())
+                {
+                    entries_.emplace_back(key, Value{});
+                    return entries_.back().second;
+                }
+
+                return it->second;
+            }
+
+            iterator find(const key_type& key)
+            {
+                for (auto it = begin(); it != end(); ++it)
+                {
+                    if (it->first == key)
+                        return it;
+                }
+
+                return end();
+            }
+
+            const_iterator find(const key_type& key) const
+            {
+                for (auto it = begin(); it != end(); ++it)
+                {
+                    if (it->first == key)
+                        return it;
+                }
+
+                return end();
+            }
+
+            /**
+             * @brief Return the count of a key, which is either zero or one.
+             * @param key the key to count
+             * @return 1 if the key exists, otherwise 0
+             */
+            std::size_t count(const key_type& key) const
+            {
+                return find(key) == end() ? 0 : 1;
+            }
+
+            bool contains(const key_type& key) const
+            {
+                return count(key) != 0;
+            }
+
+            /**
+             * @brief Return an iterator to the first entry in insertion order.
+             * @return an iterator to the first entry
+             */
+            iterator begin() { return entries_.begin(); }
+            iterator end() { return entries_.end(); }
+
+            const_iterator begin() const { return entries_.begin(); }
+            const_iterator end() const { return entries_.end(); }
+
+            /**
+             * @brief Insert a key-value pair at the end if the key is not already present.
+             * Existing keys are ignored.
+             * @tparam K the key type
+             * @tparam V the mapped value type
+             * @param key the key to insert
+             * @param value the value to insert
+             * @return an iterator to the entry and whether insertion took place
+             */
+            template<typename K, typename V>
+            std::pair<iterator, bool> emplace(K&& key, V&& value)
+            {
+                key_type key_copy(std::forward<K>(key));
+                auto it = find(key_copy);
+                if (it != end())
+                    return {it, false};
+
+                entries_.emplace_back(std::move(key_copy), std::forward<V>(value));
+                return {std::prev(end()), true};
+            }
+
+            /**
+             * @brief Insert new keys from a range in input order; existing keys are ignored.
+             * @tparam InputIt the input iterator type
+             * @param first the beginning of the range
+             * @param last the end of the range
+             * @return nothing
+             */
+            template<typename InputIt>
+            void insert(InputIt first, InputIt last)
+            {
+                for (; first != last; ++first)
+                    emplace(first->first, first->second);
+            }
+
+            void clear() { entries_.clear(); }
+            std::size_t size() const { return entries_.size(); }
+
+        private:
+            storage_type entries_;
+        };
+
     } // namespace utility
 } // namespace crow

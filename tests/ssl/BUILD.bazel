@@ -1,0 +1,13 @@
+cc_test(
+    name = "ssltest",
+    srcs = select({
+        "//:ssl_enabled": ["ssltest.cpp"],
+        "//conditions:default": [],
+    }),
+    copts = ["-DASIO_STANDALONE", "-DCROW_ENABLE_SSL"],
+    deps = [
+        "//:crow",
+        "@catch2//:catch2_main",
+    ],
+    visibility = ["//visibility:public"],
+)

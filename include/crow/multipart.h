@@ -97,7 +97,7 @@ namespace crow
             std::string dump() const override
             {
                 std::stringstream str;
-                std::string delimiter = dd + boundary;
+                const std::string delimiter = dd + boundary;
 
                 for (unsigned i = 0; i < parts.size(); i++)
                 {
@@ -193,13 +193,17 @@ namespace crow
                     // +2 is the CRLF.
                     // We don't check it and delete it so that the same delimiter can be used for The last delimiter (--delimiter--CRLF).
                     body.erase(0, found + delimiter.length() + 2);
-                    if (!section.empty())
-                    {
+                    if (!section.empty()) {
                         part parsed_section(parse_section(section));
-                        part_map.emplace(
-                          (get_header_object(parsed_section.headers, "Content-Disposition").params.find("name")->second),
-                          parsed_section);
-                        parts.push_back(std::move(parsed_section));
+                        const auto section_params_headers = get_header_object(
+                            parsed_section.headers, "Content-Disposition").params;
+                        const auto name_header = section_params_headers.find("name");
+                        if (name_header == section_params_headers.end()) {
+                            throw bad_request("Unable to find header 'name' in multipart section. Probably ill-formed body.");
+                        } else {
+                            part_map.emplace(name_header->second, parsed_section);
+                            parts.push_back(std::move(parsed_section));
+                        }
                     }
                 }
             }
@@ -208,7 +212,11 @@ namespace crow
             {
                 struct part to_return;
 
-                size_t found = section.find(crlf + crlf);
+                size_t found = section.find(crlfcrlf);
+                if (found == std::string::npos)
+                {
+                    throw bad_request("Unable to find section headers in multipart message. Probably ill-formed body.");
+                }
                 std::string head_line = section.substr(0, found + 2);
                 section.erase(0, found + 4);
 

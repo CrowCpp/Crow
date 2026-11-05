@@ -67,6 +67,7 @@ nav:
       - Multipart: guides/multipart.md
       - Query Strings: guides/query-string.md
       - Middleware: guides/middleware.md
+      - SBOM Generation: guides/sbom.md
       - SSL: guides/ssl.md
       - Static Files: guides/static.md
       - Blueprints: guides/blueprints.md

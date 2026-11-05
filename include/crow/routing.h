@@ -1,6 +1,7 @@
-﻿#pragma once
+#pragma once
 
 #include <cstdint>
+#include <limits>
 #include <utility>
 #include <tuple>
 #include <unordered_map>
@@ -8,6 +9,7 @@
 #include <vector>
 #include <algorithm>
 #include <type_traits>
+#include <optional>
 
 #include "crow/common.h"
 #include "crow/http_response.h"
@@ -22,7 +24,7 @@
 namespace crow // NOTE: Already documented in "crow/app.h"
 {
 
-    constexpr const uint16_t INVALID_BP_ID{((uint16_t)-1)};
+    constexpr size_t INVALID_BP_ID{SIZE_MAX};
 
     namespace detail
     {
@@ -93,8 +95,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
           rule_(std::move(rule))
         {}
 
-        virtual ~BaseRule()
-        {}
+        virtual ~BaseRule()=default;
 
         virtual void validate() = 0;
 
@@ -111,12 +112,21 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         std::unique_ptr<BaseRule> upgrade()
         {
             if (rule_to_upgrade_)
+            {
+                // keep the local middlewares added before the rule was upgraded
+                rule_to_upgrade_->mw_indices_ = mw_indices_;
                 return std::move(rule_to_upgrade_);
+            }
             return {};
         }
 
         virtual void handle(request&, response&, const routing_params&) = 0;
         virtual void handle_upgrade(const request&, response& res, SocketAdaptor&&)
+        {
+            res = response(404);
+            res.end();
+        }
+        virtual void handle_upgrade(const request&, response& res, UnixSocketAdaptor&&)
         {
             res = response(404);
             res.end();
@@ -129,7 +139,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         }
 #endif
 
-        uint32_t get_methods()
+        uint64_t get_methods()
         {
             return methods_;
         }
@@ -137,7 +147,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         template<typename F>
         void foreach_method(F f)
         {
-            for (uint32_t method = 0, method_bit = 1; method < static_cast<uint32_t>(HTTPMethod::InternalMethodCount); method++, method_bit <<= 1)
+            for (uint64_t method = 0, method_bit = 1; method < static_cast<uint64_t>(HTTPMethod::InternalMethodCount); method++, method_bit <<= 1)
             {
                 if (methods_ & method_bit)
                     f(method);
@@ -149,7 +159,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         const std::string& rule() { return rule_; }
 
     protected:
-        uint32_t methods_{1 << static_cast<int>(HTTPMethod::Get)};
+        uint64_t methods_{1ULL << static_cast<int>(HTTPMethod::Get)};
 
         std::string rule_;
         std::string name_;
@@ -350,7 +360,6 @@ namespace crow // NOTE: Already documented in "crow/app.h"
 
             handler_ = ([f = std::move(f)](const request&, response& res) {
                 res = response(f());
-                res.end();
             });
         }
 
@@ -366,7 +375,6 @@ namespace crow // NOTE: Already documented in "crow/app.h"
 
             handler_ = ([f = std::move(f)](const request& req, response& res) {
                 res = response(f(req));
-                res.end();
             });
         }
 
@@ -440,12 +448,20 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         void handle_upgrade(const request& req, response&, SocketAdaptor&& adaptor) override
         {
             max_payload_ = max_payload_override_ ? max_payload_ : app_->websocket_max_payload();
-            new crow::websocket::Connection<SocketAdaptor, App>(req, std::move(adaptor), app_, max_payload_, subprotocols_, open_handler_, message_handler_, close_handler_, error_handler_, accept_handler_, mirror_protocols_);
+            crow::websocket::Connection<SocketAdaptor, App>::create(req, std::move(adaptor), app_, max_payload_, subprotocols_, open_handler_, message_handler_, close_handler_, error_handler_, accept_handler_, mirror_protocols_, app_->websocket_tcp_socket_options());
         }
+
+        void handle_upgrade(const request& req, response&, UnixSocketAdaptor&& adaptor) override
+        {
+            max_payload_ = max_payload_override_ ? max_payload_ : app_->websocket_max_payload();
+            crow::websocket::Connection<UnixSocketAdaptor, App>::create(req, std::move(adaptor), app_, max_payload_, subprotocols_, open_handler_, message_handler_, close_handler_, error_handler_, accept_handler_, mirror_protocols_, app_->websocket_tcp_socket_options());
+        }
+
 #ifdef CROW_ENABLE_SSL
         void handle_upgrade(const request& req, response&, SSLAdaptor&& adaptor) override
         {
-            new crow::websocket::Connection<SSLAdaptor, App>(req, std::move(adaptor), app_, max_payload_, subprotocols_, open_handler_, message_handler_, close_handler_, error_handler_, accept_handler_, mirror_protocols_);
+            max_payload_ = max_payload_override_ ? max_payload_ : app_->websocket_max_payload();
+            crow::websocket::Connection<SSLAdaptor, App>::create(req, std::move(adaptor), app_, max_payload_, subprotocols_, open_handler_, message_handler_, close_handler_, error_handler_, accept_handler_, mirror_protocols_, app_->websocket_tcp_socket_options());
         }
 #endif
 
@@ -463,6 +479,12 @@ namespace crow // NOTE: Already documented in "crow/app.h"
             return *this;
         }
 
+        /// \brief Set functor that process a client request to open a WebSocket.
+        ///     The required interface is:
+        ///         void(crow::websocket::connection& conn)
+        ///
+        /// \param f Functor to set.
+        ///
         template<typename Func>
         self_t& onopen(Func f)
         {
@@ -470,6 +492,12 @@ namespace crow // NOTE: Already documented in "crow/app.h"
             return *this;
         }
 
+        /// \brief Set functor that process a client message.
+        ///     The required interface is:
+        ///         void(crow::websocket::connection& conn, const std::string& msgData, bool is_binary)
+        ///
+        /// \param f Functor to set.
+        ///
         template<typename Func>
         self_t& onmessage(Func f)
         {
@@ -477,6 +505,12 @@ namespace crow // NOTE: Already documented in "crow/app.h"
             return *this;
         }
 
+        /// \brief Set functor that process a client close.
+        ///     The required interface is:
+        ///         void(crow::websocket::connection& conn, const std::string& reason, uint16_t status_code)
+        ///
+        /// \param f Functor to set.
+        ///
         template<typename Func>
         self_t& onclose(Func f)
         {
@@ -484,6 +518,12 @@ namespace crow // NOTE: Already documented in "crow/app.h"
             return *this;
         }
 
+        /// \brief Set functor that process an error on this WebSocket.
+        ///     The required interface is:
+        ///         void(crow::websocket::connection& conn, const std::string& error_message)
+        ///
+        /// \param f Functor to set.
+        ///
         template<typename Func>
         self_t& onerror(Func f)
         {
@@ -491,10 +531,32 @@ namespace crow // NOTE: Already documented in "crow/app.h"
             return *this;
         }
 
-        template<typename Func>
-        self_t& onaccept(Func f)
+        /// \brief Set functor that process a client request to start a WebSocket.
+        ///     The required interface is:
+        ///         const crow::request& conn, std::optional<crow::response>& response, void** userData)
+        ///
+        /// \param callback Functor to set.
+        ///
+        self_t& onaccept(std::function<void(const crow::request&, std::optional<crow::response>&, void**)>&& callback)
         {
-            accept_handler_ = f;
+            accept_handler_ = std::move(callback);
+            return *this;
+        }
+
+        /// \brief Set functor that process a client request to start a WebSocket.
+        ///     The required interface is (**without response**):
+        ///         const crow::request& conn, void** userData)
+        ///
+        /// \param callback Functor to set.
+        ///
+        self_t& onaccept(std::function<bool(const crow::request&, void**)>&& callback)
+        {
+            onaccept([callback](const crow::request& req, std::optional<crow::response>& res, void** p) {
+                if (!callback(req, p))
+                {
+                    res = crow::response(400);
+                }
+            });
             return *this;
         }
 
@@ -510,7 +572,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         std::function<void(crow::websocket::connection&, const std::string&, bool)> message_handler_;
         std::function<void(crow::websocket::connection&, const std::string&, uint16_t)> close_handler_;
         std::function<void(crow::websocket::connection&, const std::string&)> error_handler_;
-        std::function<bool(const crow::request&, void**)> accept_handler_;
+        std::function<void(const crow::request&, std::optional<crow::response>&, void**)> accept_handler_;
         bool mirror_protocols_ = false;
         uint64_t max_payload_;
         bool max_payload_override_ = false;
@@ -542,7 +604,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
 
         self_t& methods(HTTPMethod method)
         {
-            static_cast<self_t*>(this)->methods_ = 1 << static_cast<int>(method);
+            static_cast<self_t*>(this)->methods_ = 1ULL << static_cast<int>(method);
             return static_cast<self_t&>(*this);
         }
 
@@ -550,7 +612,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         self_t& methods(HTTPMethod method, MethodArgs... args_method)
         {
             methods(args_method...);
-            static_cast<self_t*>(this)->methods_ |= 1 << static_cast<int>(method);
+            static_cast<self_t*>(this)->methods_ |= 1ULL << static_cast<int>(method);
             return static_cast<self_t&>(*this);
         }
 
@@ -583,8 +645,9 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         {
             if (!custom_templates_base.empty())
                 mustache::set_base(custom_templates_base);
-            else if (mustache::detail::get_template_base_directory_ref() != "templates")
-                mustache::set_base("templates");
+            else if (mustache::detail::get_template_base_directory_ref() != mustache::detail::get_global_template_base_directory_ref())
+                mustache::set_base(mustache::detail::get_global_template_base_directory_ref());
+
             erased_handler_(req, res, params);
         }
 
@@ -632,7 +695,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         void operator()(std::string name, Func&& f)
         {
             name_ = std::move(name);
-            (*this).template operator()<Func>(std::forward(f));
+            (*this).template operator()<Func>(std::forward<Func>(f));
         }
 
     private:
@@ -673,7 +736,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         void operator()(std::string name, Func&& f)
         {
             name_ = std::move(name);
-            (*this).template operator()<Func>(std::forward(f));
+            (*this).template operator()<Func>(std::forward<Func>(f));
         }
 
         void handle(request& req, response& res, const routing_params& params) override
@@ -695,8 +758,9 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         std::function<void(crow::request&, crow::response&, Args...)> handler_;
     };
 
-    const int RULE_SPECIAL_REDIRECT_SLASH = 1;
+    using StaticRule = TaggedRule<>;
 
+    constexpr size_t RULE_SPECIAL_REDIRECT_SLASH = 1;
 
     /// A search tree.
     class Trie
@@ -704,9 +768,9 @@ namespace crow // NOTE: Already documented in "crow/app.h"
     public:
         struct Node
         {
-            uint16_t rule_index{};
+            size_t rule_index{};
             // Assign the index to the maximum 32 unsigned integer value by default so that any other number (specifically 0) is a valid BP id.
-            uint16_t blueprint_index{INVALID_BP_ID};
+            size_t blueprint_index{INVALID_BP_ID};
             std::string key;
             ParamType param = ParamType::MAX; // MAX = No param.
             std::vector<Node> children;
@@ -772,7 +836,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
             }
         }
 
-        void debug_node_print(const Node& node, int level)
+        void debug_node_print(const Node& node, size_t level)
         {
             if (node.param != ParamType::MAX)
             {
@@ -829,19 +893,19 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         }
 
         //Rule_index, Blueprint_index, routing_params
-        routing_handle_result find(const std::string& req_url, const Node& node, unsigned pos = 0, routing_params* params = nullptr, std::vector<uint16_t>* blueprints = nullptr) const
+        routing_handle_result find(const std::string& req_url, const Node& node, size_t pos = 0, routing_params* params = nullptr, std::vector<size_t>* blueprints = nullptr) const
         {
             //start params as an empty struct
             routing_params empty;
             if (params == nullptr)
                 params = &empty;
             //same for blueprint vector
-            std::vector<uint16_t> MT;
+            std::vector<size_t> MT;
             if (blueprints == nullptr)
                 blueprints = &MT;
 
-            uint16_t found{};               //The rule index to be found
-            std::vector<uint16_t> found_BP; //The Blueprint indices to be found
+            size_t found{};               //The rule index to be found
+            std::vector<size_t> found_BP; //The Blueprint indices to be found
             routing_params match_params;    //supposedly the final matched parameters
 
             auto update_found = [&found, &found_BP, &match_params](routing_handle_result& ret) {
@@ -993,13 +1057,13 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         }
 
         //This functions assumes any blueprint info passed is valid
-        void add(const std::string& url, uint16_t rule_index, unsigned bp_prefix_length = 0, uint16_t blueprint_index = INVALID_BP_ID)
+        void add(const std::string& url, size_t rule_index, unsigned bp_prefix_length = 0, size_t blueprint_index = INVALID_BP_ID)
         {
             auto idx = &head_;
 
             bool has_blueprint = bp_prefix_length != 0 && blueprint_index != INVALID_BP_ID;
 
-            for (unsigned i = 0; i < url.size(); i++)
+            for (size_t i = 0; i < url.size(); i++)
             {
                 char c = url[i];
                 if (c == '<')
@@ -1090,16 +1154,17 @@ namespace crow // NOTE: Already documented in "crow/app.h"
     class Blueprint
     {
     public:
-        Blueprint(const std::string& prefix):
-          prefix_(prefix),
-          static_dir_(prefix),
-          templates_dir_(prefix){};
+        Blueprint(const std::string& prefix)
+          : prefix_(prefix),
+            static_dir_(prefix),
+            templates_dir_(prefix)
+            {}
 
         Blueprint(const std::string& prefix, const std::string& static_dir):
-          prefix_(prefix), static_dir_(static_dir){};
+          prefix_(prefix), static_dir_(static_dir){}
 
         Blueprint(const std::string& prefix, const std::string& static_dir, const std::string& templates_dir):
-          prefix_(prefix), static_dir_(static_dir), templates_dir_(templates_dir){};
+          prefix_(prefix), static_dir_(static_dir), templates_dir_(templates_dir){}
 
         /*
         Blueprint(Blueprint& other)
@@ -1241,8 +1306,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
     };
 
     /// Handles matching requests to existing rules and upgrade requests.
-    class Router
-    {
+    class Router {
     public:
         bool using_ssl;
 
@@ -1262,6 +1326,12 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         {
             using RuleT = typename black_magic::arguments<N>::type::template rebind<TaggedRule>;
 
+            return new_rule<RuleT>(rule);
+        }
+
+        template<typename RuleT=StaticRule>
+        auto& new_rule(const std::string& rule)
+        {
             auto ruleObject = new RuleT(rule);
             all_rules_.emplace_back(ruleObject);
 
@@ -1278,7 +1348,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
             internal_add_rule_object(rule, ruleObject, INVALID_BP_ID, blueprints_);
         }
 
-        void internal_add_rule_object(const std::string& rule, BaseRule* ruleObject, const uint16_t& BP_index, std::vector<Blueprint*>& blueprints)
+        void internal_add_rule_object(const std::string& rule, BaseRule* ruleObject, const size_t& BP_index, std::vector<Blueprint*>& blueprints)
         {
             bool has_trailing_slash = false;
             std::string rule_without_trailing_slash;
@@ -1293,7 +1363,9 @@ namespace crow // NOTE: Already documented in "crow/app.h"
 
             ruleObject->foreach_method([&](int method) {
                 per_methods_[method].rules.emplace_back(ruleObject);
-                per_methods_[method].trie.add(rule, per_methods_[method].rules.size() - 1, BP_index != INVALID_BP_ID ? blueprints[BP_index]->prefix().length() : 0, BP_index);
+                per_methods_[method].trie.add(rule, per_methods_[method].rules.size() - 1,
+                    BP_index != INVALID_BP_ID ? blueprints[BP_index]->prefix().length() : 0,
+                    BP_index);
 
                 // directory case:
                 //   request to '/about' url matches '/about/' rule
@@ -1403,15 +1475,15 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         }
 
         // TODO maybe add actual_method
-        template<typename Adaptor>
-        void handle_upgrade(const request& req, response& res, Adaptor&& adaptor)
+        template<typename App, typename Adaptor>
+        void handle_upgrade(request& req, response& res, Adaptor&& adaptor)
         {
             if (req.method >= HTTPMethod::InternalMethodCount)
                 return;
 
             auto& per_method = per_methods_[static_cast<int>(req.method)];
             auto& rules = per_method.rules;
-            unsigned rule_index = per_method.trie.find(req.url).rule_index;
+            size_t rule_index = per_method.trie.find(req.url).rule_index;
 
             if (!rule_index)
             {
@@ -1439,16 +1511,25 @@ namespace crow // NOTE: Already documented in "crow/app.h"
             {
                 CROW_LOG_INFO << "Redirecting to a url with trailing slash: " << req.url;
                 res = response(301);
-                res.add_header("Location", req.url + "/");
+                auto pos_of_first_non_slash = req.url.find_first_not_of('/');
+                if (pos_of_first_non_slash==1)
+                {
+                    res.add_header("Location", req.url + "/");
+                } else
+                {
+                   res.add_header("Location",req.url.substr(pos_of_first_non_slash-1)+"/");
+                }
                 res.end();
                 return;
             }
 
-            CROW_LOG_DEBUG << "Matched rule (upgrade) '" << rules[rule_index]->rule_ << "' " << static_cast<uint32_t>(req.method) << " / " << rules[rule_index]->get_methods();
+            CROW_LOG_DEBUG << "Matched rule (upgrade) '" << rules[rule_index]->rule_ << "' "
+                           << static_cast<uint64_t>(req.method) << " / "
+                           << rules[rule_index]->get_methods();
 
             try
             {
-                rules[rule_index]->handle_upgrade(req, res, std::move(adaptor));
+                handle_upgrade_rule<App>(*rules[rule_index], req, res, std::move(adaptor));
             }
             catch (...)
             {
@@ -1458,7 +1539,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
             }
         }
 
-        void get_found_bp(std::vector<uint16_t>& bp_i, std::vector<Blueprint*>& blueprints, std::vector<Blueprint*>& found_bps, uint16_t index = 0)
+        void get_found_bp(const std::vector<size_t>& bp_i, const std::vector<Blueprint*>& blueprints, std::vector<Blueprint*>& found_bps, size_t index = 0)
         {
             // This statement makes 3 assertions:
             // 1. The index is above 0.
@@ -1485,6 +1566,8 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                 {
                     if (found_bps.size() < 2)
                     {
+                        if (bp_i[index] >= blueprints_.size())
+                            return;
                         found_bps.clear();
                         found_bps.push_back(blueprints_[bp_i[index]]);
                     }
@@ -1492,6 +1575,8 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                     {
                         found_bps.pop_back();
                         Blueprint* last_element = found_bps.back();
+                        if (bp_i[index] >= last_element->blueprints_.size())
+                            return;
                         found_bps.push_back(last_element->blueprints_[bp_i[index]]);
                     }
                     get_found_bp(bp_i, found_bps.back()->blueprints_, found_bps, ++index);
@@ -1499,49 +1584,44 @@ namespace crow // NOTE: Already documented in "crow/app.h"
             }
         }
 
-        /// Is used to handle errors, you insert the error code, found route, request, and response. and it'll either call the appropriate catchall route (considering the blueprint system) and send you a status string (which is mainly used for debug messages), or just set the response code to the proper error code.
-        std::string get_error(unsigned short code, routing_handle_result& found, const request& req, response& res)
-        {
-            res.code = code;
+        CatchallRule& get_catch_all(const routing_handle_result& found) {
             std::vector<Blueprint*> bps_found;
             get_found_bp(found.blueprint_indices, blueprints_, bps_found);
-            for (int i = bps_found.size() - 1; i > 0; i--)
-            {
-                std::vector<uint16_t> bpi = found.blueprint_indices;
-                if (bps_found[i]->catchall_rule().has_handler())
+            if (!bps_found.empty()) {
+                for (size_t i = bps_found.size() - 1; i > 0; i--)
                 {
-                    try
-                    {
-                        bps_found[i]->catchall_rule().handler_(req, res);
+                    if (bps_found[i]->catchall_rule().has_handler()) {
+                        return bps_found[i]->catchall_rule();
                     }
-                    catch (...)
-                    {
-                        exception_handler_(res);
-                    }
-#ifdef CROW_ENABLE_DEBUG
-                    return std::string("Redirected to Blueprint \"" + bps_found[i]->prefix() + "\" Catchall rule");
-#else
-                    return std::string();
-#endif
                 }
             }
-            if (catchall_rule_.has_handler())
-            {
-                try
-                {
-                    catchall_rule_.handler_(req, res);
+            return catchall_rule_;
+        }
+
+        std::string get_error(const routing_handle_result& found)
+        {
+            const std::string EMPTY;
+
+            std::vector<Blueprint*> bps_found;
+            get_found_bp(found.blueprint_indices, blueprints_, bps_found);
+            if (!bps_found.empty()) {
+                for (size_t i = bps_found.size() - 1; i > 0; i--) {
+                    if (bps_found[i]->catchall_rule().has_handler()) {
+#ifdef CROW_ENABLE_DEBUG
+                        return std::string("Redirected to Blueprint \"" + bps_found[i]->prefix() + "\" Catchall rule");
+#else
+                        return EMPTY;
+#endif
+                    }
                 }
-                catch (...)
-                {
-                    exception_handler_(res);
-                }
+            } else  if (catchall_rule_.has_handler()) {
 #ifdef CROW_ENABLE_DEBUG
                 return std::string("Redirected to global Catchall rule");
 #else
-                return std::string();
+                return EMPTY;
 #endif
             }
-            return std::string();
+            return EMPTY;
         }
 
         std::unique_ptr<routing_handle_result> handle_initial(request& req, response& res)
@@ -1551,7 +1631,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
             std::unique_ptr<routing_handle_result> found{
               new routing_handle_result(
                 0,
-                std::vector<uint16_t>(),
+                std::vector<size_t>(),
                 routing_params(),
                 HTTPMethod::InternalMethodCount)}; // This is always returned to avoid a null pointer dereference.
 
@@ -1596,7 +1676,12 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                             allow.append(method_name(static_cast<HTTPMethod>(i)));
                         }
                     }
-                    res = response(204);
+#ifdef CROW_RETURNS_OK_ON_HTTP_OPTIONS_REQUEST
+                    res = response(crow::status::OK);
+#else
+                    res = response(crow::status::NO_CONTENT);
+#endif
+
                     res.set_header("Allow", allow);
                     res.end();
                     found->method = method_actual;
@@ -1620,7 +1705,11 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                     }
                     if (rules_matched)
                     {
-                        res = response(204);
+#ifdef CROW_RETURNS_OK_ON_HTTP_OPTIONS_REQUEST
+                        res = response(crow::status::OK);
+#else
+                        res = response(crow::status::NO_CONTENT);
+#endif
                         res.set_header("Allow", allow);
                         res.end();
                         found->method = method_actual;
@@ -1645,17 +1734,18 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                     {
                         if (per_method.trie.find(req.url).rule_index) //Route found, but in another method
                         {
-                            const std::string error_message(get_error(405, *found, req, res));
-                            CROW_LOG_DEBUG << "Cannot match method " << req.url << " " << method_name(method_actual) << ". " << error_message;
-                            res.end();
+                            res.code = 405;
+                            found->catch_all = true;
+                            CROW_LOG_DEBUG << "Cannot match method " << req.url << " "
+                                           << method_name(method_actual) << ". " << get_error(*found);
                             return found;
                         }
                     }
                     //Route does not exist anywhere
 
-                    const std::string error_message(get_error(404, *found, req, res));
-                    CROW_LOG_DEBUG << "Cannot match rules " << req.url << ". " << error_message;
-                    res.end();
+                    res.code = 404;
+                    found->catch_all = true;
+                    CROW_LOG_DEBUG << "Cannot match rules " << req.url << ". " << get_error(*found);
                     return found;
                 }
 
@@ -1667,34 +1757,50 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         template<typename App>
         void handle(request& req, response& res, routing_handle_result found)
         {
-            HTTPMethod method_actual = found.method;
-            auto& rules = per_methods_[static_cast<int>(method_actual)].rules;
-            unsigned rule_index = found.rule_index;
-
-            if (rule_index >= rules.size())
-                throw std::runtime_error("Trie internal structure corrupted!");
-
-            if (rule_index == RULE_SPECIAL_REDIRECT_SLASH)
-            {
-                CROW_LOG_INFO << "Redirecting to a url with trailing slash: " << req.url;
-                res = response(301);
-                res.add_header("Location", req.url + "/");
+            if (found.catch_all) {
+                auto catch_all = get_catch_all(found);
+                if (catch_all.has_handler()) {
+                    try
+                    {
+                        catch_all.handler_(req, res);
+                    }
+                    catch (...)
+                    {
+                        exception_handler_(res);
+                    }
+                }
                 res.end();
-                return;
-            }
+            } else {
+                HTTPMethod method_actual = found.method;
+                const auto& rules = per_methods_[static_cast<int>(method_actual)].rules;
+                const size_t rule_index = found.rule_index;
 
-            CROW_LOG_DEBUG << "Matched rule '" << rules[rule_index]->rule_ << "' " << static_cast<uint32_t>(req.method) << " / " << rules[rule_index]->get_methods();
+                if (rule_index >= rules.size())
+                    throw std::runtime_error("Trie internal structure corrupted!");
+                if (rule_index == RULE_SPECIAL_REDIRECT_SLASH) {
+                    CROW_LOG_INFO << "Redirecting to a url with trailing slash: " << req.url;
+                    res = response(301);
+                    auto pos_of_first_non_slash = req.url.find_first_not_of('/');
+                    if (pos_of_first_non_slash==1)
+                    {
+                        res.add_header("Location", req.url + "/");
+                    } else
+                    {
+                        res.add_header("Location",req.url.substr(pos_of_first_non_slash-1)+"/");
+                    }
+                    res.end();
+                } else {
+                    CROW_LOG_DEBUG << "Matched rule '" << rules[rule_index]->rule_ << "' " << static_cast<uint64_t>(req.
+                                      method) << " / " << rules[rule_index]->get_methods();
 
-            try
-            {
-                BaseRule& rule = *rules[rule_index];
-                handle_rule<App>(rule, req, res, found.r_params);
-            }
-            catch (...)
-            {
-                exception_handler_(res);
-                res.end();
-                return;
+                    try {
+                        BaseRule &rule = *rules[rule_index];
+                        handle_rule<App>(rule, req, res, found.r_params);
+                    } catch (...) {
+                        exception_handler_(res);
+                        res.end();
+                    }
+                }
             }
         }
 
@@ -1739,6 +1845,33 @@ namespace crow // NOTE: Already documented in "crow/app.h"
           handle_rule(BaseRule& rule, crow::request& req, crow::response& res, const crow::routing_params& rp)
         {
             rule.handle(req, res, rp);
+        }
+
+        template<typename App, typename Adaptor>
+        typename std::enable_if<std::tuple_size<typename App::mw_container_t>::value != 0, void>::type
+          handle_upgrade_rule(BaseRule& rule, crow::request& req, crow::response& res, Adaptor&& adaptor)
+        {
+            if (!rule.mw_indices_.empty())
+            {
+                auto& ctx = *reinterpret_cast<typename App::context_t*>(req.middleware_context);
+                auto& container = *reinterpret_cast<typename App::mw_container_t*>(req.middleware_container);
+                detail::middleware_call_criteria_dynamic<false> crit_fwd(rule.mw_indices_.indices());
+
+                detail::middleware_call_helper<decltype(crit_fwd),
+                                               0, typename App::context_t, typename App::mw_container_t>(crit_fwd, container, req, res, ctx);
+
+                // a local middleware answered the request, do not upgrade the connection
+                if (res.completed_)
+                    return;
+            }
+            rule.handle_upgrade(req, res, std::move(adaptor));
+        }
+
+        template<typename App, typename Adaptor>
+        typename std::enable_if<std::tuple_size<typename App::mw_container_t>::value == 0, void>::type
+          handle_upgrade_rule(BaseRule& rule, crow::request& req, crow::response& res, Adaptor&& adaptor)
+        {
+            rule.handle_upgrade(req, res, std::move(adaptor));
         }
 
         void debug_print()

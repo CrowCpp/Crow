@@ -9,6 +9,8 @@
 #include <asio.hpp>
 #endif
 
+#include <algorithm>
+
 #include "crow/common.h"
 #include "crow/ci_map.h"
 #include "crow/query_string.h"
@@ -19,16 +21,25 @@ namespace crow // NOTE: Already documented in "crow/app.h"
     namespace asio = boost::asio;
 #endif
 
-    /// Find and return the value associated with the key. (returns an empty string if nothing is found)
-    template<typename T>
-    inline const std::string& get_header_value(const T& headers, const std::string& key)
+    /// Remove CR (\r) and LF (\n) characters from a header name or value to prevent header injection.
+    inline void sanitize_header_value(std::string& s)
     {
-        if (headers.count(key))
-        {
-            return headers.find(key)->second;
+        s.erase(std::remove_if(s.begin(), s.end(),
+                               [](char c) { return c == '\r' || c == '\n'; }),
+                s.end());
+    }
+
+    /// Find and return the value associated with the key. (returns an empty string if nothing is found)
+    inline const std::string& get_header_value(const ci_map& headers, const std::string& key)
+    {
+        static const std::string EMPTY;
+        const auto it = headers.find(key);
+        if (it != headers.end()) {
+            return it->second;
         }
-        static std::string empty;
-        return empty;
+        else {
+            return EMPTY;
+        }
     }
 
     /// URLs given to routes are in URL-encoding (aka Percent-encoding)
@@ -57,10 +68,11 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         ci_map headers;
         std::string body;
         std::string remote_ip_address; ///< The IP address from which the request was sent.
-        unsigned char http_ver_major, http_ver_minor;
-        bool keep_alive,    ///< Whether or not the server should send a `connection: Keep-Alive` header to the client.
-          close_connection, ///< Whether or not the server should shut down the TCP connection once a response is sent.
-          upgrade;          ///< Whether or noth the server should change the HTTP connection to a different connection.
+        uint16_t remote_port = 0;      ///< The TCP port from which the request was sent (0 for Unix domain sockets).
+        unsigned char http_ver_major{}, http_ver_minor{};
+        bool keep_alive{},    ///< Whether or not the server should send a `connection: Keep-Alive` header to the client.
+          close_connection{}, ///< Whether or not the server should shut down the TCP connection once a response is sent.
+          upgrade{};          ///< Whether or noth the server should change the HTTP connection to a different connection.
 
         void* middleware_context{};
         void* middleware_container{};
@@ -78,6 +90,8 @@ namespace crow // NOTE: Already documented in "crow/app.h"
 
         void add_header(std::string key, std::string value)
         {
+            sanitize_header_value(key);
+            sanitize_header_value(value);
             headers.emplace(std::move(key), std::move(value));
         }
 

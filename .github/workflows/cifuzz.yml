@@ -25,14 +25,14 @@ jobs:
         fuzz-seconds: 800
         output-sarif: true
     - name: Upload Crash
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       if: failure() && steps.build.outcome == 'success'
       with:
         name: artifacts
         path: ./out/artifacts
     - name: Upload Sarif
       if: always() && steps.build.outcome == 'success'
-      uses: github/codeql-action/upload-sarif@v3
+      uses: github/codeql-action/upload-sarif@v4.39.1
       with:
         # Path to SARIF file relative to the root of the repository
         sarif_file: cifuzz-sarif/results.sarif

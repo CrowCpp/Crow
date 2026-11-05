@@ -64,23 +64,33 @@ inline int qs_strncmp(const char * s, const char * qs, size_t n)
         if ( u1 == '+' ) {  u1 = ' ';  }
         if ( u1 == '%' ) // easier/safer than scanf
         {
-            unyb = static_cast<unsigned char>(*s++);
-            lnyb = static_cast<unsigned char>(*s++);
-            if ( CROW_QS_ISHEX(unyb) && CROW_QS_ISHEX(lnyb) )
+            // Check that next two chars exist and are valid hex before reading
+            if ( CROW_QS_ISHEX(s[0]) && CROW_QS_ISHEX(s[1]) )
+            {
+                unyb = static_cast<unsigned char>(*s++);
+                lnyb = static_cast<unsigned char>(*s++);
                 u1 = (CROW_QS_HEX2DEC(unyb) * 16) + CROW_QS_HEX2DEC(lnyb);
+            }
             else
+            {
                 u1 = '\0';
+            }
         }
 
         if ( u2 == '+' ) {  u2 = ' ';  }
         if ( u2 == '%' ) // easier/safer than scanf
         {
-            unyb = static_cast<unsigned char>(*qs++);
-            lnyb = static_cast<unsigned char>(*qs++);
-            if ( CROW_QS_ISHEX(unyb) && CROW_QS_ISHEX(lnyb) )
+            // Check that next two chars exist and are valid hex before reading
+            if ( CROW_QS_ISHEX(qs[0]) && CROW_QS_ISHEX(qs[1]) )
+            {
+                unyb = static_cast<unsigned char>(*qs++);
+                lnyb = static_cast<unsigned char>(*qs++);
                 u2 = (CROW_QS_HEX2DEC(unyb) * 16) + CROW_QS_HEX2DEC(lnyb);
+            }
             else
+            {
                 u2 = '\0';
+            }
         }
 
         if ( u1 != u2 )
@@ -150,7 +160,9 @@ inline int qs_decode(char * qs)
         if ( qs[j] == '+' ) {  qs[i] = ' ';  }
         else if ( qs[j] == '%' ) // easier/safer than scanf
         {
-            if ( ! CROW_QS_ISHEX(qs[j+1]) || ! CROW_QS_ISHEX(qs[j+2]) )
+            // Check bounds before reading: ensure j+1 and j+2 are within string
+            if ( qs[j+1] == '\0' || qs[j+2] == '\0' ||
+                 ! CROW_QS_ISHEX(qs[j+1]) || ! CROW_QS_ISHEX(qs[j+2]) )
             {
                 qs[i] = '\0';
                 return i;
@@ -222,6 +234,31 @@ inline std::unique_ptr<std::pair<std::string, std::string>> qs_dict_name2kv(cons
                 skip_to_brace_open++;
             skip_to_brace_close = strcspn(qs_kv[i], "]");
 
+            // Encoded brackets: page%5Bsize%5D=3 should match page[size]=3 (#1109).
+            if ( skip_to_brace_open == strlen(qs_kv[i]) )
+            {
+                const char* open = strstr(qs_kv[i] + name_len, "%5B");
+                if (!open)
+                    open = strstr(qs_kv[i] + name_len, "%5b");
+                if ( open && open == qs_kv[i] + name_len )
+                {
+                    const char* close = strstr(open + 3, "%5D");
+                    if (!close)
+                        close = strstr(open + 3, "%5d");
+                    if ( close && nth == 0 )
+                    {
+                        auto key = std::string(open + 3, static_cast<size_t>(close - (open + 3)));
+                        auto value = std::string(qs_kv[i] + skip_to_eq);
+                        return std::make_unique<std::pair<std::string, std::string>>(key, value);
+                    }
+                    else if ( close )
+                    {
+                        --nth;
+                        continue;
+                    }
+                }
+            }
+
             if ( skip_to_brace_open <= skip_to_brace_close &&
                  skip_to_brace_open > 0 &&
                  skip_to_brace_close > 0 &&
@@ -229,7 +266,7 @@ inline std::unique_ptr<std::pair<std::string, std::string>> qs_dict_name2kv(cons
             {
                 auto key = std::string(qs_kv[i] + skip_to_brace_open, skip_to_brace_close - skip_to_brace_open);
                 auto value = std::string(qs_kv[i] + skip_to_eq);
-                return std::unique_ptr<std::pair<std::string, std::string>>(new std::pair<std::string, std::string>(key, value));
+                return std::make_unique<std::pair<std::string, std::string>>(key, value);
             }
             else
             {
@@ -245,34 +282,38 @@ inline std::unique_ptr<std::pair<std::string, std::string>> qs_dict_name2kv(cons
 
 inline char * qs_scanvalue(const char * key, const char * qs, char * val, size_t val_len)
 {
-    size_t i, key_len;
-    const char * tmp;
+    const char * tmp= strchr(qs, '?');
 
     // find the beginning of the k/v substrings
-    if ( (tmp = strchr(qs, '?')) != NULL )
+    if ( tmp != nullptr )
         qs = tmp + 1;
 
-    key_len = strlen(key);
-    while(qs[0] != '#' && qs[0] != '\0')
+    const size_t key_len = strlen(key);
+    while(*qs != '#' && *qs != '\0')
     {
         if ( qs_strncmp(key, qs, key_len) == 0 )
             break;
-        qs += strcspn(qs, "&") + 1;
+        qs += strcspn(qs, "&");
+        if (*qs=='&') qs++;
     }
 
-    if ( qs[0] == '\0' ) return NULL;
+    if ( qs[0] == '\0' ) return nullptr;
 
     qs += strcspn(qs, "=&#");
     if ( qs[0] == '=' )
     {
+        if ( val_len == 0 )
+            return val;
+
         qs++;
-        i = strcspn(qs, "&=#");
-#ifdef _MSC_VER
-        strncpy_s(val, val_len, qs, (val_len - 1)<(i + 1) ? (val_len - 1) : (i + 1));
-#else
-        strncpy(val, qs, (val_len - 1)<(i + 1) ? (val_len - 1) : (i + 1));
-#endif
-		qs_decode(val);
+        size_t i = strcspn(qs, "&=#");
+        // copy at most val_len - 1 characters and always terminate,
+        // so a value longer than the buffer comes back truncated
+        if ( i > val_len - 1 )
+            i = val_len - 1;
+        memcpy(val, qs, i);
+        val[i] = '\0';
+        qs_decode(val);
     }
     else
     {

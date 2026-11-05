@@ -207,3 +207,13 @@ Crow has incorporated the following libraries into its source.
     FOR ANY DAMAGES OR OTHER LIABILITY, WHETHER IN CONTRACT, TORT OR OTHERWISE,
     ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
     DEALINGS IN THE SOFTWARE.
+
+## Star History
+
+<a href="https://www.star-history.com/?repos=crowcpp%2Fcrow%2Coatpp%2Foatpp%2Cdrogonframework%2Fdrogon&type=date&legend=top-left">
+ <picture>
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=crowcpp/crow%2Coatpp/oatpp%2Cdrogonframework/drogon&type=date&theme=dark&legend=top-left" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=crowcpp/crow%2Coatpp/oatpp%2Cdrogonframework/drogon&type=date&legend=top-left" />
+   <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=crowcpp/crow%2Coatpp/oatpp%2Cdrogonframework/drogon&type=date&legend=top-left" />
+ </picture>
+</a>

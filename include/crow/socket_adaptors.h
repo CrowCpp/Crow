@@ -18,7 +18,7 @@
 #endif
 #include "crow/settings.h"
 
-#if (CROW_USE_BOOST && BOOST_VERSION >= 107000) || (ASIO_VERSION >= 101300)
+#if (defined(CROW_USE_BOOST) && BOOST_VERSION >= 107000) || (ASIO_VERSION >= 101008)
 #define GET_IO_CONTEXT(s) ((asio::io_context&)(s).get_executor().context())
 #else
 #define GET_IO_CONTEXT(s) ((s).get_io_service())
@@ -33,6 +33,7 @@ namespace crow
     using error_code = asio::error_code;
 #endif
     using tcp = asio::ip::tcp;
+    using stream_protocol = asio::local::stream_protocol;
 
     /// A wrapper for the asio::ip::tcp::socket and asio::ssl::stream
     struct SocketAdaptor
@@ -47,7 +48,7 @@ namespace crow
             return GET_IO_CONTEXT(socket_);
         }
 
-        /// Get the TCP socket handling data trasfers, regardless of what layer is handling transfers on top of the socket.
+        /// Get the TCP socket handling data transfers, regardless of what layer is handling transfers on top of the socket.
         tcp::socket& raw_socket()
         {
             return socket_;
@@ -59,12 +60,28 @@ namespace crow
             return socket_;
         }
 
-        tcp::endpoint remote_endpoint()
+        tcp::endpoint remote_endpoint() const
         {
             return socket_.remote_endpoint();
         }
 
-        bool is_open()
+        /// Get the IP address of the remote endpoint, empty when unavailable (socket already closed).
+        std::string address() const
+        {
+            error_code ec;
+            const auto endpoint = socket_.remote_endpoint(ec);
+            return ec ? std::string() : endpoint.address().to_string();
+        }
+
+        /// Get the TCP port of the remote endpoint, 0 when unavailable (socket already closed).
+        uint16_t remote_port() const
+        {
+            error_code ec;
+            const auto endpoint = socket_.remote_endpoint(ec);
+            return ec ? 0 : endpoint.port();
+        }
+
+        bool is_open() const
         {
             return socket_.is_open();
         }
@@ -102,6 +119,83 @@ namespace crow
         tcp::socket socket_;
     };
 
+    struct UnixSocketAdaptor
+    {
+        using context = void;
+        UnixSocketAdaptor(asio::io_context& io_context, context*):
+          socket_(io_context)
+        {
+        }
+
+        asio::io_context& get_io_context()
+        {
+            return GET_IO_CONTEXT(socket_);
+        }
+
+        stream_protocol::socket& raw_socket()
+        {
+            return socket_;
+        }
+
+        stream_protocol::socket& socket()
+        {
+            return socket_;
+        }
+
+        stream_protocol::endpoint remote_endpoint()
+        {
+            return socket_.local_endpoint();
+        }
+
+        std::string address() const
+        {
+            return "";
+        }
+
+        /// Unix domain sockets have no port: always 0.
+        uint16_t remote_port() const
+        {
+            return 0;
+        }
+
+        bool is_open()
+        {
+            return socket_.is_open();
+        }
+
+        void close()
+        {
+            error_code ec;
+            socket_.close(ec);
+        }
+
+        void shutdown_readwrite()
+        {
+            error_code ec;
+            socket_.shutdown(asio::socket_base::shutdown_type::shutdown_both, ec);
+        }
+
+        void shutdown_write()
+        {
+            error_code ec;
+            socket_.shutdown(asio::socket_base::shutdown_type::shutdown_send, ec);
+        }
+
+        void shutdown_read()
+        {
+            error_code ec;
+            socket_.shutdown(asio::socket_base::shutdown_type::shutdown_receive, ec);
+        }
+
+        template<typename F>
+        void start(F f)
+        {
+            f(error_code());
+        }
+
+        stream_protocol::socket socket_;
+    };
+
 #ifdef CROW_ENABLE_SSL
     struct SSLAdaptor
     {
@@ -125,6 +219,22 @@ namespace crow
         tcp::endpoint remote_endpoint()
         {
             return raw_socket().remote_endpoint();
+        }
+
+        /// Get the IP address of the remote endpoint, empty when unavailable (socket already closed).
+        std::string address() const
+        {
+            error_code ec;
+            const auto endpoint = ssl_socket_->lowest_layer().remote_endpoint(ec);
+            return ec ? std::string() : endpoint.address().to_string();
+        }
+
+        /// Get the TCP port of the remote endpoint, 0 when unavailable (socket already closed).
+        uint16_t remote_port() const
+        {
+            error_code ec;
+            const auto endpoint = ssl_socket_->lowest_layer().remote_endpoint(ec);
+            return ec ? 0 : endpoint.port();
         }
 
         bool is_open()

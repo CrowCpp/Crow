@@ -15,6 +15,10 @@ A websocket route differs from a normal route quite a bit. It uses a slightly al
 
     `onaccept` must return a boolean. In case `false` is returned, the connection is shut down, deleted, and no further communication is done.
 
+!!! note
+
+    If `onopen` or `onmessage` throws, the exception's message is passed to `onerror` and the connection is closed with status code 1011 (unexpected condition).
+
 !!! Warning
 
     By default, Crow allows clients to send unmasked websocket messages. This is useful for debugging, but goes against the protocol specifications. Production Crow applications should enforce the protocol by adding `#!cpp #define CROW_ENFORCE_WS_SPEC` to their source code.
@@ -49,6 +53,32 @@ The maximum payload size that a connection accepts can be adjusted either global
 <span class="tag">[:octicons-feed-tag-16: master](https://github.com/CrowCpp/Crow)</span>
 
 Specifies the possible subprotocols that are available for the client. If specified, the first match with the client's requested subprotocols will be returned in the "Sec-WebSocket-Protocol" header of the handshake response. Otherwise, the connection will be closed. If no subprotocol are specified on both the client and the server side, the connection process will continue normally. It can be specified by using `#!cpp CROW_WEBSOCKET_ROUTE(app, "/url").subprotocols(<values>)`.
+
+## Remote endpoint
+<span class="tag">[:octicons-feed-tag-16: master](https://github.com/CrowCpp/Crow)</span>
+
+The address and the TCP port the client connected from are available on the connection through `#!cpp conn.get_remote_ip()` and `#!cpp conn.get_remote_port()`. They are also available in `onaccept`, on the request, as `#!cpp req.remote_ip_address` and `#!cpp req.remote_port`. The address stays available once the socket is closed, so `onclose` can still read it. The port is `0` when the connection has none (Unix domain socket) or when the socket is already closed.
+
+## TCP_NODELAY for WebSocket sockets
+<span class="tag">[:octicons-feed-tag-16: master](https://github.com/CrowCpp/Crow)</span>
+
+You can enable or disable TCP_NODELAY for WebSocket connections with:
+
+- `app.websocket_tcp_nodelay(true)`
+
+This setting is separate from HTTP connections.
+To control HTTP sockets, use:
+
+- `app.tcp_nodelay(true)`
+
+Example:
+
+```cpp
+crow::SimpleApp app;
+
+app.tcp_nodelay(true)
+    .websocket_tcp_nodelay(true);
+```
 
 
 For more info about websocket routes go [here](../reference/classcrow_1_1_web_socket_rule.html).

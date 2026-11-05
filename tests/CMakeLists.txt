@@ -9,7 +9,7 @@ include(${CMAKE_SOURCE_DIR}/cmake/CPM.cmake)
 
 
 CPMAddPackage(Catch2
-  VERSION 3.7.0
+  VERSION 3.15.1
   GITHUB_REPOSITORY catchorg/Catch2
   OPTIONS
   "CATCH_INSTALL_DOCS Off"
@@ -19,14 +19,27 @@ CPMAddPackage(Catch2
   
 enable_testing()
 
+# list the test sources
 set(TEST_SRCS
   unittest.cpp
   query_string_tests.cpp
+  unit_tests/test_http_response.cpp
+  unit_tests/test_json.cpp
+  unit_tests/test_mustache.cpp
+  unit_tests/test_utility.cpp
+  unit_tests/test_websocket.cpp
+  unit_tests/test_json.cpp
+  test_ws_fragment_limit_e2e.cpp
+  test_ws_payload_overflow_e2e.cpp
+  test_ws_rfc6455_frame_validation_e2e.cpp
+  test_ws_minheader_split_e2e.cpp
+  test_ws_close_reserved_code_e2e.cpp
 )
 
 add_executable(unittest ${TEST_SRCS})
 target_link_libraries(unittest Crow::Crow Catch2::Catch2WithMain)
 add_warnings_optimizations(unittest)
+add_sanitizer_flags(unittest)
 
 if("${CMAKE_SYSTEM_NAME}" STREQUAL "Android")
   target_link_libraries(unittest log)
