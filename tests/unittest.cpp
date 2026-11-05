@@ -2818,7 +2818,8 @@ TEST_CASE("keepalive_head_response_does_not_drop_next_body")
 // Regression test: Connection::handle() added a "connection: Keep-Alive" header to the response
 // after the handler returned. A handler that ends the response right away has already sent and
 // cleared it by then, so the header was left on the next response of the connection, even on one
-// the connection is closed after (an HTTP/1.0 request without keep-alive).
+// the connection is closed after (an HTTP/1.0 request without keep-alive). The response writer
+// adds the header itself, once, when the request keeps the connection alive.
 TEST_CASE("keepalive_header_does_not_leak_into_next_response")
 {
     SimpleApp app;
@@ -2837,6 +2838,8 @@ TEST_CASE("keepalive_header_does_not_leak_into_next_response")
     c.send("GET / HTTP/1.1\r\nHost: localhost\r\n\r\n");
     auto resp1 = c.receive();
     CHECK(resp1.find("HTTP/1.1 200 OK") == 0);
+    CHECK(resp1.find("\r\nConnection: Keep-Alive\r\n") != std::string::npos);
+    CHECK(resp1.find("Keep-Alive") == resp1.rfind("Keep-Alive"));
 
     c.send("GET / HTTP/1.0\r\n\r\n");
     auto resp2 = c.receive();
