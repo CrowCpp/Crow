@@ -20,6 +20,19 @@ CROW_ROUTE(app, "/add/<int>/<int>")
 ```
 you can see the first `<int>` is defined as `a` and the second as `b`. If you were to run this and call `http://example.com/add/1/2`, the result would be a page with `3`. Exciting!
 
+Another example is to ask for the first part in a string, and the remainder in a path.
+Note that strings are in URL-encoding (aka Percent-encoding, eg `"image%20file.png"`).
+To decode into UTF-8, use `crow::decode_url(...)` to in-place decode the string.
+```cpp
+CROW_ROUTE(app, "/combine/<string>/<path>")
+([](std::string first, std::string remainder)
+{
+    // first can remain percent-encoded: perhaps we know for certain that it will always be simple text
+    crow::decode_url(remainder);
+    return first + " --> " + remainder;
+});
+```
+
 ## Methods
 You can change the HTTP methods the route uses from just the default `GET` by using `method()`, your route macro should look like `CROW_ROUTE(app, "/add/<int>/<int>").methods(crow::HTTPMethod::GET, crow::HTTPMethod::PATCH)` or `CROW_ROUTE(app, "/add/<int>/<int>").methods("GET"_method, "PATCH"_method)`.
 
