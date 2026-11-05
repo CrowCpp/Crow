@@ -23,9 +23,7 @@
 #include <functional>
 #include <chrono>
 
-#ifdef CROW_CAN_USE_CPP17
 #include <variant>
-#endif
 
 namespace
 {
@@ -53,7 +51,6 @@ namespace crow
     namespace session
     {
 
-#ifdef CROW_CAN_USE_CPP17
         using multi_value_types = black_magic::S<bool, int64_t, double, std::string>;
 
         /// A multi_value is a safe variant wrapper with json conversion support
@@ -105,7 +102,7 @@ namespace crow
             {
                 case type::Number:
                 {
-                    if (rv.nt() == num_type::Floating_point)
+                    if (rv.nt() == num_type::Floating_point || rv.nt() == num_type::Double_precision_floating_point)
                         return multi_value{rv.d()};
                     else if (rv.nt() == num_type::Unsigned_integer)
                         return multi_value{int64_t(rv.u())};
@@ -118,38 +115,6 @@ namespace crow
                 default: return multi_value{false};
             }
         }
-#else
-        // Fallback for C++11/14 that uses a raw json::wvalue internally.
-        // This implementation consumes significantly more memory
-        // than the variant-based version
-        struct multi_value
-        {
-            json::wvalue json() const { return v_; }
-
-            static multi_value from_json(const json::rvalue&);
-
-            std::string string() const { return v_.dump(); }
-
-            template<typename T, typename RT = wrap_mv_t<T>>
-            RT get(const T& fallback)
-            {
-                return json::wvalue_reader{v_}.get((const RT&)(fallback));
-            }
-
-            template<typename T, typename RT = wrap_mv_t<T>>
-            void set(T val)
-            {
-                v_ = RT(std::move(val));
-            }
-
-            json::wvalue v_;
-        };
-
-        inline multi_value multi_value::from_json(const json::rvalue& rv)
-        {
-            return {rv};
-        }
-#endif
 
         /// Expiration tracker keeps track of soonest-to-expire keys
         struct ExpirationTracker
@@ -181,6 +146,14 @@ namespace crow
             {
                 if (queue_.empty()) return std::numeric_limits<uint64_t>::max();
                 return queue_.begin()->first;
+            }
+
+            /// Get expiration time of key, or the maximum value if it is not tracked
+            uint64_t get(const std::string& key) const
+            {
+                auto it = times_.find(key);
+                if (it == times_.end()) return std::numeric_limits<uint64_t>::max();
+                return it->second;
             }
 
             std::string pop_first()
@@ -226,13 +199,8 @@ namespace crow
     template<typename Store>
     struct SessionMiddleware
     {
-#ifdef CROW_CAN_USE_CPP17
         using lock = std::scoped_lock<std::mutex>;
         using rc_lock = std::scoped_lock<std::recursive_mutex>;
-#else
-        using lock = std::lock_guard<std::mutex>;
-        using rc_lock = std::lock_guard<std::recursive_mutex>;
-#endif
 
         struct context
         {
@@ -358,7 +326,11 @@ namespace crow
         template<typename... Ts>
         SessionMiddleware(Ts... ts):
           SessionMiddleware(
-            CookieParser::Cookie("session").path("/").max_age(/*month*/ 30 * 24 * 60 * 60),
+            CookieParser::Cookie("session")
+              .path("/")
+              .max_age(/*month*/ 30 * 24 * 60 * 60)
+              .httponly()
+              .same_site(CookieParser::Cookie::SameSitePolicy::Lax),
             /*id_length */ 20, // around 10^34 possible combinations, but small enough to fit into SSO
             std::forward<Ts>(ts)...)
         {}
@@ -575,11 +547,26 @@ namespace crow
 
         std::string get_filename(const std::string& key, bool suffix = true)
         {
-            return utility::join_path(path_, key + (suffix ? ".json" : ""));
+            std::string filename{key};
+            // we have to sanitize here to prevent file traversal by ".." or similar
+            utility::sanitize_filename(filename);
+            if (suffix)
+            {
+                filename.append(".json");
+            }
+            return (path_/filename).string();
         }
 
         bool contains(const std::string& key)
         {
+            // handle_expired() only evicts a few entries per load, so check this key explicitly
+            if (chrono_time() > expirations_.get(key))
+            {
+                expirations_.remove(key);
+                evict(key);
+                return false;
+            }
+
             std::ifstream file(get_filename(key));
             return file.good();
         }
@@ -589,6 +576,7 @@ namespace crow
             std::remove(get_filename(key).c_str());
         }
 
+        // expirations are persisted across restarts, so they need a clock with a fixed epoch
         uint64_t chrono_time() const
         {
             return std::chrono::duration_cast<std::chrono::seconds>(
@@ -596,7 +584,7 @@ namespace crow
               .count();
         }
 
-        std::string path_;
+        std::filesystem::path path_;
         uint64_t expiration_seconds_;
         session::ExpirationTracker expirations_;
     };

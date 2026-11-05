@@ -1,26 +1,45 @@
 #pragma once
 
+#ifdef CROW_USE_BOOST
+#include <boost/asio.hpp>
+#else
 #ifndef ASIO_STANDALONE
 #define ASIO_STANDALONE
 #endif
 #include <asio.hpp>
+#endif
+
+#include <algorithm>
 
 #include "crow/common.h"
 #include "crow/ci_map.h"
 #include "crow/query_string.h"
 
-namespace crow
+namespace crow // NOTE: Already documented in "crow/app.h"
 {
-    /// Find and return the value associated with the key. (returns an empty string if nothing is found)
-    template<typename T>
-    inline const std::string& get_header_value(const T& headers, const std::string& key)
+#ifdef CROW_USE_BOOST
+    namespace asio = boost::asio;
+#endif
+
+    /// Remove CR (\r) and LF (\n) characters from a header name or value to prevent header injection.
+    inline void sanitize_header_value(std::string& s)
     {
-        if (headers.count(key))
-        {
-            return headers.find(key)->second;
+        s.erase(std::remove_if(s.begin(), s.end(),
+                               [](char c) { return c == '\r' || c == '\n'; }),
+                s.end());
+    }
+
+    /// Find and return the value associated with the key. (returns an empty string if nothing is found)
+    inline const std::string& get_header_value(const ci_map& headers, const std::string& key)
+    {
+        static const std::string EMPTY;
+        const auto it = headers.find(key);
+        if (it != headers.end()) {
+            return it->second;
         }
-        static std::string empty;
-        return empty;
+        else {
+            return EMPTY;
+        }
     }
 
     /// An HTTP request.
@@ -33,14 +52,15 @@ namespace crow
         ci_map headers;
         std::string body;
         std::string remote_ip_address; ///< The IP address from which the request was sent.
-        unsigned char http_ver_major, http_ver_minor;
-        bool keep_alive,    ///< Whether or not the server should send a `connection: Keep-Alive` header to the client.
-          close_connection, ///< Whether or not the server should shut down the TCP connection once a response is sent.
-          upgrade;          ///< Whether or noth the server should change the HTTP connection to a different connection.
+        uint16_t remote_port = 0;      ///< The TCP port from which the request was sent (0 for Unix domain sockets).
+        unsigned char http_ver_major{}, http_ver_minor{};
+        bool keep_alive{},    ///< Whether or not the server should send a `connection: Keep-Alive` header to the client.
+          close_connection{}, ///< Whether or not the server should shut down the TCP connection once a response is sent.
+          upgrade{};          ///< Whether or noth the server should change the HTTP connection to a different connection.
 
         void* middleware_context{};
         void* middleware_container{};
-        asio::io_service* io_service{};
+        asio::io_context* io_context{};
 
         /// Construct an empty request. (sets the method to `GET`)
         request():
@@ -48,12 +68,14 @@ namespace crow
         {}
 
         /// Construct a request with all values assigned.
-        request(HTTPMethod method, std::string raw_url, std::string url, query_string url_params, ci_map headers, std::string body, unsigned char http_major, unsigned char http_minor, bool has_keep_alive, bool has_close_connection, bool is_upgrade):
-          method(method), raw_url(std::move(raw_url)), url(std::move(url)), url_params(std::move(url_params)), headers(std::move(headers)), body(std::move(body)), http_ver_major(http_major), http_ver_minor(http_minor), keep_alive(has_keep_alive), close_connection(has_close_connection), upgrade(is_upgrade)
+        request(HTTPMethod method_, std::string raw_url_, std::string url_, query_string url_params_, ci_map headers_, std::string body_, unsigned char http_major, unsigned char http_minor, bool has_keep_alive, bool has_close_connection, bool is_upgrade):
+          method(method_), raw_url(std::move(raw_url_)), url(std::move(url_)), url_params(std::move(url_params_)), headers(std::move(headers_)), body(std::move(body_)), http_ver_major(http_major), http_ver_minor(http_minor), keep_alive(has_keep_alive), close_connection(has_close_connection), upgrade(is_upgrade)
         {}
 
         void add_header(std::string key, std::string value)
         {
+            sanitize_header_value(key);
+            sanitize_header_value(value);
             headers.emplace(std::move(key), std::move(value));
         }
 
@@ -80,14 +102,14 @@ namespace crow
         template<typename CompletionHandler>
         void post(CompletionHandler handler)
         {
-            io_service->post(handler);
+            asio::post(io_context, handler);
         }
 
         /// Send data to whoever made this request with a completion handler.
         template<typename CompletionHandler>
         void dispatch(CompletionHandler handler)
         {
-            io_service->dispatch(handler);
+            asio::dispatch(io_context, handler);
         }
     };
 } // namespace crow

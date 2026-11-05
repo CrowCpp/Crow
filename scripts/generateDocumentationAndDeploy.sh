@@ -35,7 +35,7 @@ __AUTHOR__="Jeroen de Bruijn"
 # The branch should be empty except for an empty '.nojekyll' file and an
 # 'index.html' file that redirects to master/index.html. Optionally you would
 # also need a 'CNAME' file containing your custom domain (without http or www).
-# 
+#
 ################################################################################
 ################################################################################
 
@@ -83,7 +83,7 @@ echo 'Removing old documentation...'
 rm -rf *
 
 echo 'Generating MkDocs documentation...'
-# Copy the mkdocs documentation to the work directory and generate the mkdocs' 
+# Copy the mkdocs documentation to the work directory and generate the mkdocs'
 # 'site' directory
 cp ../../../mkdocs.yml .
 cp -r ../../../docs .
@@ -102,7 +102,7 @@ echo 'Generating Doxygen code documentation...'
 # Redirect both stderr and stdout to the log file AND the console.
 doxygen $DOXYFILE 2>&1 | tee doxygen.log
 
-# Rename mkdocs' output folder to 'html' to retain compatibility with the 
+# Rename mkdocs' output folder to 'html' to retain compatibility with the
 # existing index.html and the rest of this code.
 # Also remove any remaining documentation files.
 mv  site/* .
@@ -114,8 +114,8 @@ mv versions.json ../
 ################################################################################
 #####  Upload the documentation to the gh-pages branch of the repository.  #####
 # Only upload if Doxygen successfully created the documentation.
-# Check this by verifying that the reference directory (for doxygen) and 
-# the file index.html (for mkdocs) both exist. 
+# Check this by verifying that the reference directory (for doxygen) and
+# the file index.html (for mkdocs) both exist.
 # This is a good indication that Doxygen and Mkdocs did their work.
 if [ -d "reference" ] && [ -f "index.html" ]; then
 

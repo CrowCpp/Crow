@@ -1,13 +1,34 @@
 #pragma once
 #include <array>
+#include <cstring>
+#include <memory>
+#include <optional>
+#include <string>
+#include <thread>
+#include "crow/http_response.h"
 #include "crow/logging.h"
 #include "crow/socket_adaptors.h"
 #include "crow/http_request.h"
+#include "crow/tcp_socket_options.h"
 #include "crow/TinySHA1.hpp"
 #include "crow/utility.h"
 
-namespace crow
+namespace crow // NOTE: Already documented in "crow/app.h"
 {
+#ifdef CROW_USE_BOOST
+    namespace asio = boost::asio;
+    using error_code = boost::system::error_code;
+#else
+    using error_code = asio::error_code;
+#endif
+
+    /**
+     * \namespace crow::websocket
+     * \brief Namespace that includes the \ref Connection class
+     * and \ref connection struct. Useful for WebSockets connection.
+     *
+     * Used specially in crow/websocket.h, crow/app.h and crow/routing.h
+     */
     namespace websocket
     {
         enum class WebSocketReadState
@@ -19,6 +40,30 @@ namespace crow
             Payload,
         };
 
+        // Codes taken from https://www.rfc-editor.org/rfc/rfc6455#section-7.4.1
+        enum CloseStatusCode : uint16_t {
+            NormalClosure = 1000,
+            EndpointGoingAway = 1001,
+            ProtocolError = 1002,
+            UnacceptableData = 1003,
+            InconsistentData = 1007,
+            PolicyViolated = 1008,
+            MessageTooBig = 1009,
+            ExtensionsNotNegotiated = 1010,
+            UnexpectedCondition = 1011,
+
+            // Reserved for applications only, should not send/receive these to/from clients
+            NoStatusCodePresent = 1005,
+            ClosedAbnormally = 1006,
+            TLSHandshakeFailure = 1015,
+
+            StartStatusCodesForLibraries = 3000,
+            StartStatusCodesForPrivateUse = 4000,
+            // Status code should be between 1000 and 4999 inclusive
+            StartStatusCodes = NormalClosure,
+            EndStatusCodes = 4999,
+        };
+
         /// A base class for websocket connection.
         struct connection
         {
@@ -26,15 +71,17 @@ namespace crow
             virtual void send_text(std::string msg) = 0;
             virtual void send_ping(std::string msg) = 0;
             virtual void send_pong(std::string msg) = 0;
-            virtual void close(std::string const& msg = "quit") = 0;
+            virtual void close(std::string const& msg = "quit", uint16_t status_code = CloseStatusCode::NormalClosure) = 0;
             virtual std::string get_remote_ip() = 0;
+            virtual uint16_t get_remote_port() = 0;
+            virtual std::string get_subprotocol() const = 0;
             virtual ~connection() = default;
 
             void userdata(void* u) { userdata_ = u; }
             void* userdata() { return userdata_; }
 
         private:
-            void* userdata_;
+            void* userdata_{nullptr};
         };
 
         // Modified version of the illustration in RFC6455 Section-5.2
@@ -63,48 +110,78 @@ namespace crow
         /// A websocket connection.
 
         template<typename Adaptor, typename Handler>
-        class Connection : public connection
+        class Connection : public connection, public std::enable_shared_from_this<Connection<Adaptor, Handler>>
         {
         public:
-            /// Constructor for a connection.
-
+            /// Factory for a connection.
             ///
             /// Requires a request with an "Upgrade: websocket" header.<br>
             /// Automatically handles the handshake.
-            Connection(const crow::request& req, Adaptor&& adaptor, Handler* handler, uint64_t max_payload,
-                       std::function<void(crow::websocket::connection&)> open_handler,
-                       std::function<void(crow::websocket::connection&, const std::string&, bool)> message_handler,
-                       std::function<void(crow::websocket::connection&, const std::string&)> close_handler,
-                       std::function<void(crow::websocket::connection&, const std::string&)> error_handler,
-                       std::function<bool(const crow::request&, void**)> accept_handler):
-              adaptor_(std::move(adaptor)),
-              handler_(handler),
-              max_payload_bytes_(max_payload),
-              open_handler_(std::move(open_handler)),
-              message_handler_(std::move(message_handler)),
-              close_handler_(std::move(close_handler)),
-              error_handler_(std::move(error_handler)),
-              accept_handler_(std::move(accept_handler))
+            static void create(const crow::request& req, Adaptor adaptor, Handler* handler,
+                               uint64_t max_payload, const std::vector<std::string>& subprotocols,
+                               std::function<void(crow::websocket::connection&)> open_handler,
+                               std::function<void(crow::websocket::connection&, const std::string&, bool)> message_handler,
+                               std::function<void(crow::websocket::connection&, const std::string&, uint16_t)> close_handler,
+                               std::function<void(crow::websocket::connection&, const std::string&)> error_handler,
+                               std::function<void(const crow::request&, std::optional<crow::response>&, void**)> accept_handler,
+                               bool mirror_protocols,
+                               const detail::socket::tcp_socket_options& tcp_options = {})
             {
+                auto conn = std::shared_ptr<Connection>(new Connection(std::move(adaptor), 
+                                                                       handler, max_payload,
+                                                                       std::move(open_handler), 
+                                                                       std::move(message_handler), 
+                                                                       std::move(close_handler),
+                                                                       std::move(error_handler), 
+                                                                       std::move(accept_handler)));
+                
+                // Apply TCP socket options to WebSocket connection
+                detail::socket::apply_tcp_socket_options(conn->adaptor_.socket(), tcp_options);
+                
+                // Kept for get_remote_ip(), which must still answer once the socket is closed (e.g. in onclose)
+                conn->remote_ip_ = req.remote_ip_address;
+
+                // Perform handshake validation
                 if (!utility::string_equals(req.get_header_value("upgrade"), "websocket"))
                 {
-                    adaptor_.close();
-                    handler_->remove_websocket(this);
-                    delete this;
+                    conn->adaptor_.close();
                     return;
                 }
 
-                if (accept_handler_)
+                std::string requested_subprotocols_header = req.get_header_value("Sec-WebSocket-Protocol");
+                if (!subprotocols.empty() || !requested_subprotocols_header.empty())
+                {
+                    auto requested_subprotocols = utility::split(requested_subprotocols_header, ", ");
+                    auto subprotocol = utility::find_first_of(subprotocols.begin(), subprotocols.end(), requested_subprotocols.begin(), requested_subprotocols.end());
+                    if (subprotocol != subprotocols.end())
+                    {
+                        conn->subprotocol_ = *subprotocol;
+                    }
+                }
+
+                if (mirror_protocols & !requested_subprotocols_header.empty())
+                {
+                    conn->subprotocol_ = requested_subprotocols_header;
+                }
+
+                if (conn->accept_handler_)
                 {
                     void* ud = nullptr;
-                    if (!accept_handler_(req, &ud))
+                    std::optional<crow::response> res;
+                    conn->accept_handler_(req, res, &ud);
+                    if (res)
                     {
-                        adaptor_.close();
-                        handler_->remove_websocket(this);
-                        delete this;
+                        std::vector<asio::const_buffer> buffers;
+                        auto server_name = "";
+                        std::string content_length_buffer;
+                        res->write_header_into_buffer(buffers, content_length_buffer, req.keep_alive, server_name);
+                        buffers.emplace_back(res->body.data(), res->body.size());
+                        error_code ec;
+                        asio::write(conn->adaptor_.socket(), buffers, ec);
+                        conn->adaptor_.close();
                         return;
                     }
-                    userdata(ud);
+                    conn->userdata(ud);
                 }
 
                 // Sec-WebSocket-Key: dGhlIHNhbXBsZSBub25jZQ==
@@ -115,22 +192,11 @@ namespace crow
                 uint8_t digest[20];
                 s.getDigestBytes(digest);
 
-                start(crow::utility::base64encode((unsigned char*)digest, 20));
+                conn->handler_->add_websocket(conn);
+                conn->start(crow::utility::base64encode((unsigned char*)digest, 20));
             }
 
-            ~Connection() noexcept override
-            {
-                // Do not modify anchor_ here since writing shared_ptr is not atomic.
-                auto watch = std::weak_ptr<void>{anchor_};
-
-                // Wait until all unhandled asynchronous operations to join.
-                // As the deletion occurs inside 'check_destroy()', which already locks
-                //  anchor, use count can be 1 on valid deletion context.
-                while (watch.use_count() > 2) // 1 for 'check_destroy() routine', 1 for 'this->anchor_'
-                {
-                    std::this_thread::yield();
-                }
-            }
+            ~Connection() noexcept override = default;
 
             template<typename Callable>
             struct WeakWrappedMessage
@@ -151,7 +217,7 @@ namespace crow
             template<typename CompletionHandler>
             void dispatch(CompletionHandler&& handler)
             {
-                asio::dispatch(adaptor_.get_io_service(),
+                asio::dispatch(adaptor_.get_io_context(),
                                WeakWrappedMessage<typename std::decay<CompletionHandler>::type>{
                                  std::forward<CompletionHandler>(handler), anchor_});
             }
@@ -160,7 +226,7 @@ namespace crow
             template<typename CompletionHandler>
             void post(CompletionHandler&& handler)
             {
-                asio::post(adaptor_.get_io_service(),
+                asio::post(adaptor_.get_io_context(),
                            WeakWrappedMessage<typename std::decay<CompletionHandler>::type>{
                              std::forward<CompletionHandler>(handler), anchor_});
             }
@@ -199,31 +265,65 @@ namespace crow
 
             ///
             /// Sets a flag to destroy the object once the message is sent.
-            void close(std::string const& msg) override
+            void close(std::string const& msg, uint16_t status_code) override
             {
-                dispatch([this, msg]() mutable {
-                    has_sent_close_ = true;
-                    if (has_recv_close_ && !is_close_handler_called_)
+                dispatch([shared_this = this->shared_from_this(), msg, status_code]() mutable {
+                    shared_this->has_sent_close_ = true;
+                    if (shared_this->has_recv_close_ && !shared_this->is_close_handler_called_)
                     {
-                        is_close_handler_called_ = true;
-                        if (close_handler_)
-                            close_handler_(*this, msg);
+                        shared_this->is_close_handler_called_ = true;
+                        if (shared_this->close_handler_)
+                            shared_this->close_handler_(*shared_this, msg, status_code);
                     }
-                    auto header = build_header(0x8, msg.size());
-                    write_buffers_.emplace_back(std::move(header));
-                    write_buffers_.emplace_back(msg);
-                    do_write();
+
+                    switch(status_code) {
+                        
+                        case NoStatusCodePresent:
+                        case ClosedAbnormally:
+                        case TLSHandshakeFailure:
+                            // These codes only report that no status code was received and must not
+                            // be sent in a Close frame (RFC 6455 Section 7.4.1), so send none at all.
+                            {
+                                shared_this->write_buffers_.emplace_back(shared_this->build_header(0x8, 0));
+                            }
+                            break;
+                        default: 
+                            {
+                                auto header = shared_this->build_header(0x8, msg.size() + 2);
+                                char status_buf[2];
+                                uint16_t network_status_code = htons(status_code);
+                                std::memcpy(status_buf, &network_status_code, sizeof(network_status_code));
+                                
+                                shared_this->write_buffers_.emplace_back(std::move(header));
+                                shared_this->write_buffers_.emplace_back(std::string(status_buf, 2));
+                                shared_this->write_buffers_.emplace_back(msg);
+                            }
+                    }
+                    shared_this->do_write();
                 });
             }
 
+            /// Returns the IP address the connection was opened from, also once the socket is closed (empty for a Unix domain socket).
             std::string get_remote_ip() override
             {
-                return adaptor_.remote_endpoint().address().to_string();
+                return remote_ip_;
+            }
+
+            /// Returns the TCP port of the remote endpoint, 0 when unavailable (Unix domain socket or socket already closed).
+            uint16_t get_remote_port() override
+            {
+                return adaptor_.remote_port();
             }
 
             void set_max_payload_size(uint64_t payload)
             {
                 max_payload_bytes_ = payload;
+            }
+
+            /// Returns the matching client/server subprotocol, empty string if none matched. 
+            std::string get_subprotocol() const override
+            {
+                return subprotocol_;
             }
 
         protected:
@@ -240,13 +340,15 @@ namespace crow
                 else if (size < 0x10000)
                 {
                     buf[1] += 126;
-                    *(uint16_t*)(buf + 2) = htons(static_cast<uint16_t>(size));
+                    uint16_t len = htons(static_cast<uint16_t>(size));
+                    std::memcpy(buf + 2, &len, sizeof(len));
                     return {buf, buf + 4};
                 }
                 else
                 {
                     buf[1] += 127;
-                    *reinterpret_cast<uint64_t*>(buf + 2) = ((1 == htonl(1)) ? static_cast<uint64_t>(size) : (static_cast<uint64_t>(htonl((size)&0xFFFFFFFF)) << 32) | htonl(static_cast<uint64_t>(size) >> 32));
+                    uint64_t len = ((1 == htonl(1)) ? static_cast<uint64_t>(size) : (static_cast<uint64_t>(htonl((size) & 0xFFFFFFFF)) << 32) | htonl(static_cast<uint64_t>(size) >> 32));
+                    std::memcpy(buf + 2, &len, sizeof(len));
                     return {buf, buf + 10};
                 }
             }
@@ -265,10 +367,16 @@ namespace crow
                 write_buffers_.emplace_back(header);
                 write_buffers_.emplace_back(std::move(hello));
                 write_buffers_.emplace_back(crlf);
+                if (!subprotocol_.empty())
+                {
+                    write_buffers_.emplace_back("Sec-WebSocket-Protocol: ");
+                    write_buffers_.emplace_back(subprotocol_);
+                    write_buffers_.emplace_back(crlf);
+                }
                 write_buffers_.emplace_back(crlf);
                 do_write();
-                if (open_handler_)
-                    open_handler_(*this);
+                if (open_handler_ && !call_handler([this] { open_handler_(*this); }))
+                    return;
                 do_read();
             }
 
@@ -296,18 +404,17 @@ namespace crow
                     case WebSocketReadState::MiniHeader:
                     {
                         mini_header_ = 0;
-                        //asio::async_read(adaptor_.socket(), asio::buffer(&mini_header_, 1),
-                        adaptor_.socket().async_read_some(
-                          asio::buffer(&mini_header_, 2),
-                          [this](const asio::error_code& ec, std::size_t
+                        asio::async_read(
+                          adaptor_.socket(), asio::buffer(&mini_header_, 2),
+                          [shared_this = this->shared_from_this()](const error_code& ec, std::size_t
 #ifdef CROW_ENABLE_DEBUG
                                                                bytes_transferred
 #endif
                           )
 
                           {
-                              is_reading = false;
-                              mini_header_ = ntohs(mini_header_);
+                              shared_this->is_reading = false;
+                              shared_this->mini_header_ = ntohs(shared_this->mini_header_);
 #ifdef CROW_ENABLE_DEBUG
 
                               if (!ec && bytes_transferred != 2)
@@ -318,45 +425,46 @@ namespace crow
 
                               if (!ec)
                               {
-                                  if ((mini_header_ & 0x80) == 0x80)
-                                      has_mask_ = true;
+                                  if ((shared_this->mini_header_ & 0x80) == 0x80)
+                                      shared_this->has_mask_ = true;
                                   else //if the websocket specification is enforced and the message isn't masked, terminate the connection
                                   {
 #ifndef CROW_ENFORCE_WS_SPEC
-                                      has_mask_ = false;
+                                      shared_this->has_mask_ = false;
 #else
-                                      close_connection_ = true;
-                                      adaptor_.shutdown_readwrite();
-                                      adaptor_.close();
-                                      if (error_handler_)
-                                          error_handler_(*this, "Client connection not masked.");
-                                      check_destroy();
+                                      shared_this->close_connection_ = true;
+                                      shared_this->adaptor_.shutdown_readwrite();
+                                      shared_this->adaptor_.close();
+                                      if (shared_this->error_handler_)
+                                          shared_this->error_handler_(*shared_this, "Client connection not masked.");
+                                      shared_this->check_destroy(CloseStatusCode::UnacceptableData);
+                                      return;
 #endif
                                   }
 
-                                  if ((mini_header_ & 0x7f) == 127)
+                                  if ((shared_this->mini_header_ & 0x7f) == 127)
                                   {
-                                      state_ = WebSocketReadState::Len64;
+                                      shared_this->state_ = WebSocketReadState::Len64;
                                   }
-                                  else if ((mini_header_ & 0x7f) == 126)
+                                  else if ((shared_this->mini_header_ & 0x7f) == 126)
                                   {
-                                      state_ = WebSocketReadState::Len16;
+                                      shared_this->state_ = WebSocketReadState::Len16;
                                   }
                                   else
                                   {
-                                      remaining_length_ = mini_header_ & 0x7f;
-                                      state_ = WebSocketReadState::Mask;
+                                      shared_this->remaining_length_ = shared_this->mini_header_ & 0x7f;
+                                      shared_this->state_ = WebSocketReadState::Mask;
                                   }
-                                  do_read();
+                                  shared_this->do_read();
                               }
                               else
                               {
-                                  close_connection_ = true;
-                                  adaptor_.shutdown_readwrite();
-                                  adaptor_.close();
-                                  if (error_handler_)
-                                      error_handler_(*this, ec.message());
-                                  check_destroy();
+                                  shared_this->close_connection_ = true;
+                                  shared_this->adaptor_.shutdown_readwrite();
+                                  shared_this->adaptor_.close();
+                                  if (shared_this->error_handler_)
+                                      shared_this->error_handler_(*shared_this, ec.message());
+                                  shared_this->check_destroy();
                               }
                           });
                     }
@@ -367,14 +475,14 @@ namespace crow
                         remaining_length16_ = 0;
                         asio::async_read(
                           adaptor_.socket(), asio::buffer(&remaining_length16_, 2),
-                          [this](const asio::error_code& ec, std::size_t
+                          [shared_this = this->shared_from_this()](const error_code& ec, std::size_t
 #ifdef CROW_ENABLE_DEBUG
                                                                bytes_transferred
 #endif
                           ) {
-                              is_reading = false;
-                              remaining_length16_ = ntohs(remaining_length16_);
-                              remaining_length_ = remaining_length16_;
+                              shared_this->is_reading = false;
+                              shared_this->remaining_length16_ = ntohs(shared_this->remaining_length16_);
+                              shared_this->remaining_length_ = shared_this->remaining_length16_;
 #ifdef CROW_ENABLE_DEBUG
                               if (!ec && bytes_transferred != 2)
                               {
@@ -384,17 +492,17 @@ namespace crow
 
                               if (!ec)
                               {
-                                  state_ = WebSocketReadState::Mask;
-                                  do_read();
+                                  shared_this->state_ = WebSocketReadState::Mask;
+                                  shared_this->do_read();
                               }
                               else
                               {
-                                  close_connection_ = true;
-                                  adaptor_.shutdown_readwrite();
-                                  adaptor_.close();
-                                  if (error_handler_)
-                                      error_handler_(*this, ec.message());
-                                  check_destroy();
+                                  shared_this->close_connection_ = true;
+                                  shared_this->adaptor_.shutdown_readwrite();
+                                  shared_this->adaptor_.close();
+                                  if (shared_this->error_handler_)
+                                      shared_this->error_handler_(*shared_this, ec.message());
+                                  shared_this->check_destroy();
                               }
                           });
                     }
@@ -403,13 +511,13 @@ namespace crow
                     {
                         asio::async_read(
                           adaptor_.socket(), asio::buffer(&remaining_length_, 8),
-                          [this](const asio::error_code& ec, std::size_t
+                          [shared_this = this->shared_from_this()](const error_code& ec, std::size_t
 #ifdef CROW_ENABLE_DEBUG
                                                                bytes_transferred
 #endif
                           ) {
-                              is_reading = false;
-                              remaining_length_ = ((1 == ntohl(1)) ? (remaining_length_) : (static_cast<uint64_t>(ntohl((remaining_length_)&0xFFFFFFFF)) << 32) | ntohl((remaining_length_) >> 32));
+                              shared_this->is_reading = false;
+                              shared_this->remaining_length_ = ((1 == ntohl(1)) ? (shared_this->remaining_length_) : (static_cast<uint64_t>(ntohl((shared_this->remaining_length_)&0xFFFFFFFF)) << 32) | ntohl((shared_this->remaining_length_) >> 32));
 #ifdef CROW_ENABLE_DEBUG
                               if (!ec && bytes_transferred != 8)
                               {
@@ -419,40 +527,41 @@ namespace crow
 
                               if (!ec)
                               {
-                                  state_ = WebSocketReadState::Mask;
-                                  do_read();
+                                  shared_this->state_ = WebSocketReadState::Mask;
+                                  shared_this->do_read();
                               }
                               else
                               {
-                                  close_connection_ = true;
-                                  adaptor_.shutdown_readwrite();
-                                  adaptor_.close();
-                                  if (error_handler_)
-                                      error_handler_(*this, ec.message());
-                                  check_destroy();
+                                  shared_this->close_connection_ = true;
+                                  shared_this->adaptor_.shutdown_readwrite();
+                                  shared_this->adaptor_.close();
+                                  if (shared_this->error_handler_)
+                                      shared_this->error_handler_(*shared_this, ec.message());
+                                  shared_this->check_destroy();
                               }
                           });
                     }
                     break;
                     case WebSocketReadState::Mask:
-                        if (remaining_length_ > max_payload_bytes_)
+                        if (message_.size() > max_payload_bytes_ ||
+                            remaining_length_ > max_payload_bytes_ - message_.size())
                         {
                             close_connection_ = true;
                             adaptor_.close();
                             if (error_handler_)
                                 error_handler_(*this, "Message length exceeds maximum payload.");
-                            check_destroy();
+                            check_destroy(MessageTooBig);
                         }
                         else if (has_mask_)
                         {
                             asio::async_read(
                               adaptor_.socket(), asio::buffer((char*)&mask_, 4),
-                              [this](const asio::error_code& ec, std::size_t
+                              [shared_this = this->shared_from_this()](const error_code& ec, std::size_t
 #ifdef CROW_ENABLE_DEBUG
                                                                    bytes_transferred
 #endif
                               ) {
-                                  is_reading = false;
+                                  shared_this->is_reading = false;
 #ifdef CROW_ENABLE_DEBUG
                                   if (!ec && bytes_transferred != 4)
                                   {
@@ -462,17 +571,17 @@ namespace crow
 
                                   if (!ec)
                                   {
-                                      state_ = WebSocketReadState::Payload;
-                                      do_read();
+                                      shared_this->state_ = WebSocketReadState::Payload;
+                                      shared_this->do_read();
                                   }
                                   else
                                   {
-                                      close_connection_ = true;
-                                      if (error_handler_)
-                                          error_handler_(*this, ec.message());
-                                      adaptor_.shutdown_readwrite();
-                                      adaptor_.close();
-                                      check_destroy();
+                                      shared_this->close_connection_ = true;
+                                      if (shared_this->error_handler_)
+                                          shared_this->error_handler_(*shared_this, ec.message());
+                                      shared_this->adaptor_.shutdown_readwrite();
+                                      shared_this->adaptor_.close();
+                                      shared_this->check_destroy();
                                   }
                               });
                         }
@@ -489,32 +598,32 @@ namespace crow
                             to_read = remaining_length_;
                         adaptor_.socket().async_read_some(
                           asio::buffer(buffer_, static_cast<std::size_t>(to_read)),
-                          [this](const asio::error_code& ec, std::size_t bytes_transferred) {
-                              is_reading = false;
+                          [shared_this = this->shared_from_this()](const error_code& ec, std::size_t bytes_transferred) {
+                              shared_this->is_reading = false;
 
                               if (!ec)
                               {
-                                  fragment_.insert(fragment_.end(), buffer_.begin(), buffer_.begin() + bytes_transferred);
-                                  remaining_length_ -= bytes_transferred;
-                                  if (remaining_length_ == 0)
+                                  shared_this->fragment_.insert(shared_this->fragment_.end(), shared_this->buffer_.begin(), shared_this->buffer_.begin() + bytes_transferred);
+                                  shared_this->remaining_length_ -= bytes_transferred;
+                                  if (shared_this->remaining_length_ == 0)
                                   {
-                                      if (handle_fragment())
+                                      if (shared_this->handle_fragment())
                                       {
-                                          state_ = WebSocketReadState::MiniHeader;
-                                          do_read();
+                                          shared_this->state_ = WebSocketReadState::MiniHeader;
+                                          shared_this->do_read();
                                       }
                                   }
                                   else
-                                      do_read();
+                                      shared_this->do_read();
                               }
                               else
                               {
-                                  close_connection_ = true;
-                                  if (error_handler_)
-                                      error_handler_(*this, ec.message());
-                                  adaptor_.shutdown_readwrite();
-                                  adaptor_.close();
-                                  check_destroy();
+                                  shared_this->close_connection_ = true;
+                                  if (shared_this->error_handler_)
+                                      shared_this->error_handler_(*shared_this, ec.message());
+                                  shared_this->adaptor_.shutdown_readwrite();
+                                  shared_this->adaptor_.close();
+                                  shared_this->check_destroy();
                               }
                           });
                     }
@@ -547,61 +656,103 @@ namespace crow
                         fragment_[i] ^= ((char*)&mask_)[i % 4];
                     }
                 }
+                if ((mini_header_ & 0x7000) != 0)
+                {
+                    if (error_handler_)
+                        error_handler_(*this, "RSV bits set without a negotiated extension.");
+                    close("", CloseStatusCode::ProtocolError);
+                    check_destroy(CloseStatusCode::ProtocolError);
+                    return false;
+                }
+                if ((opcode() & 0x8) != 0 && (!is_FIN() || fragment_.size() > 125))
+                {
+                    if (error_handler_)
+                        error_handler_(*this, "Fragmented or oversized control frame.");
+                    close("", CloseStatusCode::ProtocolError);
+                    check_destroy(CloseStatusCode::ProtocolError);
+                    return false;
+                }
                 switch (opcode())
                 {
                     case 0: // Continuation
                     {
-                        message_ += fragment_;
-                        if (is_FIN())
+                        if (!has_unfinished_message_)
                         {
-                            if (message_handler_)
-                                message_handler_(*this, message_, is_binary_);
-                            message_.clear();
+                            if (error_handler_)
+                                error_handler_(*this, "Continuation frame without a message to continue.");
+                            close("", CloseStatusCode::ProtocolError);
+                            check_destroy(CloseStatusCode::ProtocolError);
+                            return false;
                         }
+                        message_ += fragment_;
+                        if (is_FIN() && !finish_message())
+                            return false;
                     }
                     break;
                     case 1: // Text
-                    {
-                        is_binary_ = false;
-                        message_ += fragment_;
-                        if (is_FIN())
-                        {
-                            if (message_handler_)
-                                message_handler_(*this, message_, is_binary_);
-                            message_.clear();
-                        }
-                    }
-                    break;
                     case 2: // Binary
                     {
-                        is_binary_ = true;
+                        if (has_unfinished_message_)
+                        {
+                            if (error_handler_)
+                                error_handler_(*this, "New message before the fragmented message was finished.");
+                            close("", CloseStatusCode::ProtocolError);
+                            check_destroy(CloseStatusCode::ProtocolError);
+                            return false;
+                        }
+                        is_binary_ = opcode() == 2;
                         message_ += fragment_;
                         if (is_FIN())
                         {
-                            if (message_handler_)
-                                message_handler_(*this, message_, is_binary_);
-                            message_.clear();
+                            if (!finish_message())
+                                return false;
+                        }
+                        else
+                        {
+                            has_unfinished_message_ = true;
                         }
                     }
                     break;
                     case 0x8: // Close
                     {
                         has_recv_close_ = true;
+                        uint16_t status_code = NoStatusCodePresent;
+                        std::string::size_type message_start = 2;
+                        if (fragment_.size() >= 2)
+                        {
+                            status_code = ntohs(((uint16_t*)fragment_.data())[0]);
+                        } else {
+                            // no message will crash substr
+                            message_start = 0;
+                        }
+
                         if (!has_sent_close_)
                         {
-                            close(fragment_);
+                            if (fragment_.size() == 1 || (fragment_.size() >= 2 && !is_valid_close_code(status_code)))
+                            {
+                                if (error_handler_)
+                                    error_handler_(*this, "Invalid close frame.");
+                                close("", CloseStatusCode::ProtocolError);
+                            }
+                            else
+                            {
+                                close(fragment_.substr(message_start), status_code);
+                            }
                         }
                         else
                         {
-                            adaptor_.shutdown_readwrite();
-                            adaptor_.close();
+
                             close_connection_ = true;
                             if (!is_close_handler_called_)
                             {
                                 if (close_handler_)
-                                    close_handler_(*this, fragment_);
+                                    close_handler_(*this, fragment_.substr(message_start), status_code);
                                 is_close_handler_called_ = true;
                             }
+                            adaptor_.shutdown_readwrite();
+                            adaptor_.close();
+
+                            // Close handler must have been called at this point so code does not matter
                             check_destroy();
                             return false;
                         }
@@ -617,10 +768,61 @@ namespace crow
                         pong_received_ = true;
                     }
                     break;
+                    default:
+                    {
+                        if (error_handler_)
+                            error_handler_(*this, "Reserved opcode.");
+                        close("", CloseStatusCode::ProtocolError);
+                        check_destroy(CloseStatusCode::ProtocolError);
+                        return false;
+                    }
                 }
 
                 fragment_.clear();
                 return true;
+            }
+
+            /// Pass the complete message to the message handler and get ready for the next one.
+
+            ///
+            /// Returns false if the handler threw, in which case the connection is being closed.
+            bool finish_message()
+            {
+                has_unfinished_message_ = false;
+                bool handled = !message_handler_ || call_handler([this] { message_handler_(*this, message_, is_binary_); });
+                message_.clear();
+                return handled;
+            }
+
+            /// Call a user handler.
+
+            ///
+            /// An exception escaping the handler is reported to the error handler and the connection is closed with UnexpectedCondition.<br>
+            /// Returns false in that case, nothing more should be read from the connection.
+            template<typename Callable>
+            bool call_handler(Callable&& handler)
+            {
+                std::string error;
+                try
+                {
+                    handler();
+                    return true;
+                }
+                catch (const std::exception& e)
+                {
+                    error = e.what();
+                }
+                catch (...)
+                {
+                    error = "Unknown exception.";
+                }
+                CROW_LOG_ERROR << "An uncaught exception occurred in a websocket handler: " << error;
+                if (error_handler_)
+                    error_handler_(*this, error);
+                if (!has_sent_close_)
+                    close("", CloseStatusCode::UnexpectedCondition);
+                check_destroy(CloseStatusCode::UnexpectedCondition);
+                return false;
             }
 
             /// Send the buffers' data through the socket.
@@ -629,50 +831,63 @@ namespace crow
             /// Also destroys the object if the Close flag is set.
             void do_write()
             {
-                if (sending_buffers_.empty())
-                {
+                if (sending_buffers_.empty()) {
+                    if (write_buffers_.empty()) return;
+
                     sending_buffers_.swap(write_buffers_);
                     std::vector<asio::const_buffer> buffers;
                     buffers.reserve(sending_buffers_.size());
-                    for (auto& s : sending_buffers_)
+                    for (auto &s: sending_buffers_)
                     {
                         buffers.emplace_back(asio::buffer(s));
                     }
                     auto watch = std::weak_ptr<void>{anchor_};
                     asio::async_write(
-                      adaptor_.socket(), buffers,
-                      [&, watch](const asio::error_code& ec, std::size_t /*bytes_transferred*/) {
-                          if (!ec && !close_connection_)
-                          {
-                              sending_buffers_.clear();
-                              if (!write_buffers_.empty())
-                                  do_write();
-                              if (has_sent_close_)
-                                  close_connection_ = true;
-                          }
-                          else
-                          {
-                              auto anchor = watch.lock();
-                              if (anchor == nullptr) { return; }
+                        adaptor_.socket(), buffers,
+                        [shared_this = this->shared_from_this(), watch](const error_code &ec, std::size_t /*bytes_transferred*/) {
+                            auto anchor = watch.lock();
+                            if (anchor == nullptr)
+                                return;
 
-                              sending_buffers_.clear();
-                              close_connection_ = true;
-                              check_destroy();
-                          }
-                      });
+                            if (!ec && !shared_this->close_connection_)
+                            {
+                                shared_this->sending_buffers_.clear();
+                                if (!shared_this->write_buffers_.empty())
+                                    shared_this->do_write();
+                                if (shared_this->has_sent_close_)
+                                    shared_this->close_connection_ = true;
+                            }
+                            else
+                            {
+                                shared_this->sending_buffers_.clear();
+                                shared_this->close_connection_ = true;
+                                shared_this->check_destroy();
+                            }
+                        });
                 }
             }
 
             /// Destroy the Connection.
-            void check_destroy()
+            /// Whether a peer may send the status code in a Close frame (RFC 6455 Section 7.4).
+            static bool is_valid_close_code(uint16_t code)
             {
-                //if (has_sent_close_ && has_recv_close_)
+                return (code >= 1000 && code <= 1003) || (code >= 1007 && code <= 1014) || (code >= 3000 && code <= 4999);
+            }
+
+            void check_destroy(websocket::CloseStatusCode code = CloseStatusCode::ClosedAbnormally)
+            {
+                // Note that if the close handler was not yet called at this point we did not receive a close packet (or send one)
+                // and thus we use ClosedAbnormally unless instructed otherwise
                 if (!is_close_handler_called_)
+                {
+                    is_close_handler_called_ = true;
                     if (close_handler_)
-                        close_handler_(*this, "uncleanly");
-                handler_->remove_websocket(this);
-                if (sending_buffers_.empty() && !is_reading)
-                    delete this;
+                    {
+                        close_handler_(*this, "uncleanly", code);
+                    }
+                }
+
+                handler_->remove_websocket(this->shared_from_this());
             }
 
 
@@ -707,6 +922,22 @@ namespace crow
             }
 
         private:
+            Connection(Adaptor&& adaptor, Handler* handler, uint64_t max_payload,
+                       std::function<void(crow::websocket::connection&)> open_handler,
+                       std::function<void(crow::websocket::connection&, const std::string&, bool)> message_handler,
+                       std::function<void(crow::websocket::connection&, const std::string&, uint16_t)> close_handler,
+                       std::function<void(crow::websocket::connection&, const std::string&)> error_handler,
+                       std::function<void(const crow::request&, std::optional<crow::response>&, void**)> accept_handler):
+              adaptor_(std::move(adaptor)),
+              handler_(handler),
+              max_payload_bytes_(max_payload),
+              open_handler_(std::move(open_handler)),
+              message_handler_(std::move(message_handler)),
+              close_handler_(std::move(close_handler)),
+              error_handler_(std::move(error_handler)),
+              accept_handler_(std::move(accept_handler))
+            {}
+
             Adaptor adaptor_;
             Handler* handler_;
 
@@ -714,13 +945,16 @@ namespace crow
             std::vector<std::string> write_buffers_;
 
             std::array<char, 4096> buffer_;
-            bool is_binary_;
+            bool is_binary_{false};
+            bool has_unfinished_message_{false};
             std::string message_;
             std::string fragment_;
             WebSocketReadState state_{WebSocketReadState::MiniHeader};
             uint16_t remaining_length16_{0};
             uint64_t remaining_length_{0};
             uint64_t max_payload_bytes_{UINT64_MAX};
+            std::string subprotocol_;
+            std::string remote_ip_;
             bool close_connection_{false};
             bool is_reading{false};
             bool has_mask_{false};
@@ -736,9 +970,9 @@ namespace crow
 
             std::function<void(crow::websocket::connection&)> open_handler_;
             std::function<void(crow::websocket::connection&, const std::string&, bool)> message_handler_;
-            std::function<void(crow::websocket::connection&, const std::string&)> close_handler_;
+            std::function<void(crow::websocket::connection&, const std::string&, uint16_t status_code)> close_handler_;
             std::function<void(crow::websocket::connection&, const std::string&)> error_handler_;
-            std::function<bool(const crow::request&, void**)> accept_handler_;
+            std::function<void(const crow::request&, std::optional<crow::response>&, void**)> accept_handler_;
         };
     } // namespace websocket
 } // namespace crow

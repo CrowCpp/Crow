@@ -3,7 +3,7 @@
 class ExampleLogHandler : public crow::ILogHandler
 {
 public:
-    void log(std::string /*message*/, crow::LogLevel /*level*/) override
+    void log(const std::string& /*message*/, crow::LogLevel /*level*/) override
     {
         //            cerr << "ExampleLogHandler -> " << message;
     }
@@ -155,7 +155,7 @@ int main()
           auto x = crow::json::load(req.body);
           if (!x)
               return crow::response(400);
-          int sum = x["a"].i() + x["b"].i();
+          int64_t sum = x["a"].i() + x["b"].i();
           std::ostringstream os;
           os << sum;
           return crow::response{os.str()};
@@ -210,7 +210,7 @@ int main()
     // Take a multipart/form-data request and print out its body
     CROW_ROUTE(app, "/multipart")
     ([](const crow::request& req) {
-        crow::multipart::message msg(req);
+        crow::multipart::message_view msg(req);
         CROW_LOG_INFO << "body of the first part " << msg.parts[0].body;
         return "it works!";
     });

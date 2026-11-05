@@ -1,4 +1,3 @@
- 
 ## Encoding
 Using `#!cpp crow::utility::base64encode(mystring, mystring.size())` will return a Base64 encoded string. For URL safe Base64 `#!cpp crow::utility::base64encode_urlsafe(mystring, mystring.size())` can be used. The key used in the encoding process can be changed, it is a string containing all 64 characters to be used.
 

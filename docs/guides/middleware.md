@@ -14,7 +14,7 @@ Any middleware requires the following 3 members:
 * A `before_handle` method, which is called before the handler.
 * A `after_handle` method, which is called after the handler.
 
-!!! warning 
+!!! warning
 
     As soon as `response.end()` is called, no other handlers and middleware is run, except for after_handlers of already visited middleware.
 
@@ -57,7 +57,7 @@ There are two possible signatures for before_handle and after_handle
 
     ``` cpp
     template <typename AllContext>
-    void before_handle(request& req, response& res, context& ctx, AllContext& all_ctx) 
+    void before_handle(request& req, response& res, context& ctx, AllContext& all_ctx)
     {
         auto other_ctx = all_ctx.template get<OtherMiddleware>();
     }
@@ -68,7 +68,7 @@ There are two possible signatures for before_handle and after_handle
 By default, every middleware is called for each request. If you want to enable middleware for specific handlers or blueprints, you have to extend it from `crow::ILocalMiddleware`
 
 ```cpp
-struct LocalMiddleware : crow::ILocalMiddleware 
+struct LocalMiddleware : crow::ILocalMiddleware
 {
 ```
 
@@ -90,6 +90,6 @@ bp.CROW_MIDDLEWARES(app, FistLocalMiddleware, SecondLocalMiddleware);
 ```
 
 !!! warning
-    
+
     Local and global middleware are called separately. First all global middleware is run, then all enabled local middleware for the current handler is run. In both cases middleware is called strongly
     in the order listed in the Crow application.

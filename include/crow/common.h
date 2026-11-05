@@ -11,6 +11,7 @@ namespace crow
     const char cr = '\r';
     const char lf = '\n';
     const std::string crlf("\r\n");
+    const std::string crlfcrlf("\r\n\r\n");
 
     enum class HTTPMethod : char
     {
@@ -157,7 +158,7 @@ namespace crow
     {
         if (CROW_LIKELY(method < HTTPMethod::InternalMethodCount))
         {
-            return method_strings[(unsigned char)method];
+            return method_strings[static_cast<unsigned int>(method)];
         }
         return "invalid";
     }
@@ -176,7 +177,7 @@ namespace crow
         NO_CONTENT                    = 204,
         RESET_CONTENT                 = 205,
         PARTIAL_CONTENT               = 206,
-
+        WEBDAV_MULTI_STATUS           = 207,
         MULTIPLE_CHOICES              = 300,
         MOVED_PERMANENTLY             = 301,
         FOUND                         = 302,
@@ -190,6 +191,7 @@ namespace crow
         FORBIDDEN                     = 403,
         NOT_FOUND                     = 404,
         METHOD_NOT_ALLOWED            = 405,
+        NOT_ACCEPTABLE                = 406,
         PROXY_AUTHENTICATION_REQUIRED = 407,
         CONFLICT                      = 409,
         GONE                          = 410,
@@ -197,6 +199,13 @@ namespace crow
         UNSUPPORTED_MEDIA_TYPE        = 415,
         RANGE_NOT_SATISFIABLE         = 416,
         EXPECTATION_FAILED            = 417,
+
+        WEBDAV_PRECONDITION_FAILED    = 412,
+        WEBDAV_REQUEST_URI_TOO_LONG   = 414,
+        WEBDAV_UNPROCESSABLE_ENTITY   = 422,
+        WEBDAV_LOCKED                 = 423,
+        WEBDAV_FAILED_DEPENDENCY      = 424,
+
         PRECONDITION_REQUIRED         = 428,
         TOO_MANY_REQUESTS             = 429,
         UNAVAILABLE_FOR_LEGAL_REASONS = 451,
@@ -206,7 +215,8 @@ namespace crow
         BAD_GATEWAY                   = 502,
         SERVICE_UNAVAILABLE           = 503,
         GATEWAY_TIMEOUT               = 504,
-        VARIANT_ALSO_NEGOTIATES       = 506
+        VARIANT_ALSO_NEGOTIATES       = 506,
+        WEBDAV_INSUFFICIENT_STORAGE   = 507
     };
 
     // clang-format on
@@ -278,19 +288,20 @@ namespace crow
 
     struct routing_handle_result
     {
-        uint16_t rule_index;
-        std::vector<uint16_t> blueprint_indices;
+        bool catch_all{false};
+        size_t rule_index;
+        std::vector<size_t> blueprint_indices;
         routing_params r_params;
         HTTPMethod method;
 
         routing_handle_result() {}
 
-        routing_handle_result(uint16_t rule_index_, std::vector<uint16_t> blueprint_indices_, routing_params r_params_):
+        routing_handle_result(size_t rule_index_, std::vector<size_t> blueprint_indices_, routing_params r_params_):
           rule_index(rule_index_),
           blueprint_indices(blueprint_indices_),
           r_params(r_params_) {}
 
-        routing_handle_result(uint16_t rule_index_, std::vector<uint16_t> blueprint_indices_, routing_params r_params_, HTTPMethod method_):
+        routing_handle_result(size_t rule_index_, std::vector<size_t> blueprint_indices_, routing_params r_params_, HTTPMethod method_):
           rule_index(rule_index_),
           blueprint_indices(blueprint_indices_),
           r_params(r_params_),
@@ -346,7 +357,7 @@ constexpr crow::HTTPMethod method_from_string(const char* str)
                                                            throw std::runtime_error("invalid http method");
 }
 
-constexpr crow::HTTPMethod operator"" _method(const char* str, size_t /*len*/)
+constexpr crow::HTTPMethod operator""_method(const char* str, size_t /*len*/)
 {
     return method_from_string( str );
 }

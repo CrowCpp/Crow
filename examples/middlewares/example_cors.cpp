@@ -1,6 +1,14 @@
 #include "crow.h"
 #include "crow/middlewares/cors.h"
 
+// Warning!
+// If you want to use CORS with OPTIONS cache on browser requests,
+// be sure to specify each headers you use, please do not use "*"
+// else otherwise the browser will ignore you
+// Example:
+//    .headers("Origin", "Content-Type", "Accept", *Your-Headers*)
+//    .max_age(5);
+
 int main()
 {
     // Enable CORS

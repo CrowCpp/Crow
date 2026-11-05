@@ -6,7 +6,10 @@ cmake_minimum_required(VERSION 3.15.0 FATAL_ERROR)
 # Define the project name and language
 project(Crow
 	LANGUAGES CXX
+	VERSION 1.3.4
 )
+
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 # Make sure Findasio.cmake module is found
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
@@ -18,7 +21,7 @@ if (CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
 endif()
 
 # Set required C++ standard
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
 
 # Default to build type "Release" unless tests are being built
@@ -36,18 +39,60 @@ if (MSVC)
 endif ()
 
 include(FindPython3)
-find_package(Python3) 
+find_package(Python3)
 
 #####################################
 # Define Options
 #####################################
 option(CROW_BUILD_EXAMPLES     "Build the examples in the project"      ${CROW_IS_MAIN_PROJECT})
 option(CROW_BUILD_TESTS        "Build the tests in the project"         ${CROW_IS_MAIN_PROJECT})
+option(CROW_BUILD_FUZZER       "Instrument and build Crow fuzzer"       OFF)
+option(CROW_ENABLE_SANITIZERS  "Enable sanitizers (ASan, UBSan) for test builds" OFF)
 option(CROW_AMALGAMATE         "Combine all headers into one"           OFF)
-option(CROW_INSTALL            "Add install step for Crow"              ON )
+option(CROW_INSTALL            "Add install step for Crow"              ${CROW_IS_MAIN_PROJECT})
+option(CROW_USE_BOOST          "Use Boost.Asio for Crow"                OFF)
+option(CROW_GENERATE_SBOM      "Generate SBOM file"                     OFF)
+option(CROW_RETURNS_OK_ON_HTTP_OPTIONS_REQUEST
+		"Returns HTTP status code OK (200) instead of 204 for OPTIONS request"
+		OFF )
 
-# Possible values: ssl, compression
-option(CROW_FEATURES					 "Enable features extending Crow's abilities" "")
+option(CROW_ENABLE_SSL "Enable Crow's SSL feature for supporting https" OFF)
+option(CROW_ENABLE_COMPRESSION "Enable Crow's Compression feature for supporting compressed http content" OFF)
+option(CROW_ENABLE_TSAN "Enable ThreadSanitizer" OFF)
+
+if(CROW_GENERATE_SBOM OR CROW_BUILD_TESTS)
+	include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/CPM.cmake)
+endif ()
+
+if(CROW_GENERATE_SBOM)
+  CPMAddPackage(
+    NAME cmake-sbom
+    GITHUB_REPOSITORY DEMCON/cmake-sbom
+    GIT_TAG v1.5.0
+    DOWNLOAD_ONLY YES
+  )
+  list(APPEND CMAKE_MODULE_PATH "${CMAKE_BINARY_DIR}/_deps/cmake-sbom-src/cmake")
+
+  include(sbom)
+	include(version)
+	string(TIMESTAMP BUILD_DATE "%Y-%m-%d")
+	sbom_generate(
+		SUPPLIER CrowCpp
+		SUPPLIER_URL https://crowcpp.org/
+		LICENSE "BSD-3-Clause"
+		OUTPUT crow-${PROJECT_VERSION}-${BUILD_DATE}.spdx
+	)
+endif()
+
+if(CROW_ENABLE_TSAN)
+  if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+    message(STATUS "ThreadSanitizer enabled")
+    add_compile_options(-fsanitize=thread -fno-omit-frame-pointer)
+    add_link_options(-fsanitize=thread)
+  else()
+    message(WARNING "ThreadSanitizer is exclusive to Clang and cannot be used with any other compilers")
+  endif()
+endif()
 
 #####################################
 # Define Targets
@@ -61,34 +106,159 @@ target_include_directories(Crow
 		$<INSTALL_INTERFACE:include>
 )
 
-find_package(asio REQUIRED)
+if(CROW_USE_BOOST)
+	if(POLICY CMP0167)
+		# Use Boost CMake module from Boost instead of the one from CMake
+		cmake_policy(SET CMP0167 NEW)
+	endif()
+	find_package(Boost 1.64 COMPONENTS date_time REQUIRED)
+	if(Boost_VERSION VERSION_LESS 1.89)
+		find_package(Boost 1.64 COMPONENTS system REQUIRED)
+	else()
+		if(NOT TARGET Boost::system)
+			add_library(Boost::system ALIAS Boost::headers)
+		endif()
+	endif()
+	target_link_libraries(Crow
+		INTERFACE
+			Boost::boost Boost::system Boost::date_time
+	)
+	target_compile_definitions(Crow INTERFACE CROW_USE_BOOST)
 
-target_link_libraries(Crow
-	INTERFACE
-		asio::asio
-)
+	if(CROW_GENERATE_SBOM)
+		sbom_add(
+			PACKAGE boost
+			DOWNLOAD_LOCATION https://www.boost.org/
+			LICENSE "BSL-1.0"
+			SUPPLIER "Organization: Boost Community"
+			VERSION "${Boost_VERSION}"
+		)
+	endif()
+else()
+    find_package(asio REQUIRED)
+	target_link_libraries(Crow
+		INTERFACE
+			asio::asio
+	)
+	target_compile_definitions(Crow INTERFACE ASIO_NO_DEPRECATED)
+      endif()
+
+		if(ASIO_FOUND)
+			find_file(ASIO_VERSION_HPP "asio/version.hpp" PATHS ${ASIO_INCLUDE_DIR})
+			if(ASIO_VERSION_HPP)
+					file(READ ${ASIO_VERSION_HPP} ASIO_VERSION_CONTENT)
+					string(REGEX MATCH "#define ASIO_VERSION ([0-9]+)" _ ${ASIO_VERSION_CONTENT})
+					if(CMAKE_MATCH_1)
+							math(EXPR ASIO_VERSION_MAJOR "${CMAKE_MATCH_1} / 100000")
+							math(EXPR ASIO_VERSION_MINOR "(${CMAKE_MATCH_1} / 1000) % 100")
+							math(EXPR ASIO_VERSION_PATCH "${CMAKE_MATCH_1} % 1000")
+							set(asio_VERSION "${ASIO_VERSION_MAJOR}.${ASIO_VERSION_MINOR}.${ASIO_VERSION_PATCH}")
+					endif()
+			endif()
+
+			# Fallback
+			if(NOT asio_VERSION)
+					set(asio_VERSION "unknown")
+			endif()
+
+			if(CROW_GENERATE_SBOM)
+				sbom_add(
+					PACKAGE asio
+					DOWNLOAD_LOCATION https://github.com/chriskohlhoff/asio
+					LICENSE "BSL-1.0"
+					SUPPLIER "Organization: Boost Community"
+					VERSION "${asio_VERSION}"
+				)
+			endif()
+	endif()
 
 target_compile_definitions(Crow INTERFACE "")
 
-if("compression" IN_LIST CROW_FEATURES)
+if(CROW_ENABLE_COMPRESSION)
 	find_package(ZLIB REQUIRED)
 	target_link_libraries(Crow INTERFACE ZLIB::ZLIB)
 	target_compile_definitions(Crow INTERFACE CROW_ENABLE_COMPRESSION)
+
+	if(CROW_GENERATE_SBOM)
+		sbom_add(
+	    PACKAGE zlib
+	    DOWNLOAD_LOCATION https://github.com/madler/zlib
+	    LICENSE "Zlib"
+	    SUPPLIER "Person: Jean-loup Gailly and Mark Adler"
+	    VERSION "${ZLIB_VERSION}"
+		)
+	endif()
 endif()
 
-if("ssl" IN_LIST CROW_FEATURES)
+if(CROW_ENABLE_SSL)
 	find_package(OpenSSL REQUIRED)
 	target_link_libraries(Crow INTERFACE OpenSSL::SSL)
 	target_compile_definitions(Crow INTERFACE CROW_ENABLE_SSL)
+
+	if(CROW_GENERATE_SBOM)
+		sbom_add(
+	    PACKAGE openssl
+	    DOWNLOAD_LOCATION https://github.com/openssl/openssl
+	    LICENSE "Apache-2.0"
+	    SUPPLIER "Organization: OpenSSL Software Foundation"
+	    VERSION "${OPENSSL_VERSION}"
+		)
+	endif()
 endif()
 
 if(CROW_AMALGAMATE)
+	set(CROW_AMALGAMATED_HEADERS
+		include/crow.h
+		include/crow/app.h
+		include/crow/ci_map.h
+		include/crow/common.h
+		include/crow/compression.h
+		include/crow/exceptions.h
+		include/crow/http_connection.h
+		include/crow/http_parser_merged.h
+		include/crow/http_request.h
+		include/crow/http_response.h
+		include/crow/http_server.h
+		include/crow/json.h
+		include/crow/logging.h
+		include/crow/middleware.h
+		include/crow/middleware_context.h
+		include/crow/mime_types.h
+		include/crow/multipart.h
+		include/crow/multipart_view.h
+		include/crow/mustache.h
+		include/crow/parser.h
+		include/crow/query_string.h
+		include/crow/returnable.h
+		include/crow/routing.h
+		include/crow/settings.h
+		include/crow/socket_adaptors.h
+		include/crow/task_timer.h
+		include/crow/utility.h
+		include/crow/version.h
+		include/crow/websocket.h
+		include/crow/middlewares/cookie_parser.h
+		include/crow/middlewares/cors.h
+		include/crow/middlewares/session.h
+		include/crow/middlewares/utf-8.h
+	)
+
+	if(CROW_GENERATE_SBOM)
+		sbom_add(
+			PACKAGE python3
+			DOWNLOAD_LOCATION https://www.python.org/
+			LICENSE "PSF-2.0"
+			SUPPLIER "Organization: Python Software Foundation"
+			VERSION "${Python3_VERSION}"
+		)
+	endif()
+
 	add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/crow_all.h
 		COMMAND python3 ${CMAKE_CURRENT_SOURCE_DIR}/scripts/merge_all.py
 		${CMAKE_CURRENT_SOURCE_DIR}/include
 		${CMAKE_CURRENT_BINARY_DIR}/crow_all.h
 		WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-		DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/include/*.h ${CMAKE_CURRENT_SOURCE_DIR}/include/crow/*.h ${CMAKE_CURRENT_SOURCE_DIR}/include/crow/middlewares/*.h
+		DEPENDS ${CROW_AMALGAMATED_HEADERS}
 	)
 
 	add_custom_target(crow_amalgamated ALL DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/crow_all.h)
@@ -109,11 +279,11 @@ if(CROW_BUILD_TESTS)
     COMMAND ${CMAKE_CURRENT_BINARY_DIR}/tests/unittest
   )
 
-  if(NOT "compression" IN_LIST CROW_FEATURES)
-    message(STATUS "Compression tests are omitted. (Configure with CROW_FEATURES containing 'compression' to enable them)")
+  if(NOT CROW_ENABLE_COMPRESSION)
+    message(STATUS "Compression tests are omitted. (Configure with CROW_ENABLE_COMPRESSION to enable them)")
   endif()
-  if(NOT "ssl" IN_LIST CROW_FEATURES)
-    message(STATUS "SSL tests are omitted. (Configure with CROW_FEATURES containing 'ssl' to enable them)")
+  if(NOT CROW_ENABLE_SSL)
+    message(STATUS "SSL tests are omitted. (Configure with CROW_ENABLE_SSL to enable them)")
   else()
     if(NOT MSVC)
       add_test(
@@ -122,6 +292,11 @@ if(CROW_BUILD_TESTS)
       )
     endif()
   endif()
+endif()
+
+# Fuzzers
+if (CROW_BUILD_FUZZER)
+	add_subdirectory(tests/fuzz)
 endif()
 
 #####################################
@@ -140,6 +315,12 @@ if(CROW_INSTALL)
 		DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/Crow"
 	)
 
+	if(CROW_USE_BOOST)
+		set(CROW_ASIO_PROVIDER "Boost 1.64 COMPONENTS system date_time REQUIRED")
+	else()
+		set(CROW_ASIO_PROVIDER "asio")
+	endif()
+
 	include(CMakePackageConfigHelpers)
 	configure_package_config_file(
 		"${CMAKE_CURRENT_SOURCE_DIR}/cmake/CrowConfig.cmake.in"
@@ -153,7 +334,16 @@ if(CROW_INSTALL)
 	)
 endif()
 
-set(CPACK_GENERATOR "DEB")
+if(WIN32 AND NOT CYGWIN)
+	set(CPACK_GENERATOR NSIS ZIP)
+endif(WIN32 AND NOT CYGWIN)
+if(APPLE)
+	set(CPACK_GENERATOR DragNDrop TGZ)
+endif(APPLE)
+if (UNIX AND NOT APPLE AND NOT WIN32)
+	set(CPACK_GENERATOR DEB TGZ)
+endif (UNIX AND NOT APPLE AND NOT WIN32)
+
 set(CPACK_PACKAGE_NAME "Crow")
 set(CPACK_DEBIAN_PACKAGE_MAINTAINER "CrowCpp")
 set(CPACK_PACKAGE_VENDOR "CrowCpp")
@@ -177,4 +367,8 @@ if(NOT TARGET uninstall)
 
   add_custom_target(uninstall
     COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake)
+endif()
+
+if(CROW_GENERATE_SBOM)
+	sbom_finalize()
 endif()

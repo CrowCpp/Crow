@@ -12,7 +12,7 @@
     border-radius: .25rem !important;
 }
 
-.tag 
+.tag
 {
     background-color: var(--md-primary-fg-color);
     color: var(--md-default-tag-bg-color);
@@ -33,29 +33,29 @@
     color: var(--md-default-tag-bg-color);
 }
 
-.md-typeset :is(.emojione, .twemoji, .gemoji) 
+.md-typeset :is(.emojione, .twemoji, .gemoji)
 {
     vertical-align: text-bottom;
 }
 
-.md-typeset :is(.emojione, .twemoji, .gemoji) svg 
+.md-typeset :is(.emojione, .twemoji, .gemoji) svg
 {
     width: 1.25em;
 }
 
 [data-md-color-scheme="crow-dark"] img[src$="#only-dark"]
 {
-	display: block;
+        display: block;
 }
 [data-md-color-scheme="crow-light"] img[src$="#only-light"]
 {
-	display: block;
+        display: block;
 }
 [data-md-color-scheme="crow-light"] img[src$="#only-dark"]
 {
-	display: none;
+        display: none;
 }
 [data-md-color-scheme="crow-dark"] img[src$="#only-light"]
 {
-	display: none;
+        display: none;
 }

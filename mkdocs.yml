@@ -6,7 +6,7 @@ repo_url: https://github.com/CrowCpp/Crow
 site_url: https://crowcpp.org
 edit_uri: ""
 
-theme: 
+theme:
   name: material
   font: false
   language: 'en'
@@ -43,10 +43,10 @@ markdown_extensions:
   - pymdownx.keys
   - attr_list
   - pymdownx.emoji:
-      emoji_index: !!python/name:materialx.emoji.twemoji
-      emoji_generator: !!python/name:materialx.emoji.to_svg
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
 
-    
+
 nav:
   - Home: index.md
   - Getting Started:
@@ -54,6 +54,7 @@ nav:
       - Linux: getting_started/setup/linux.md
       - MacOS: getting_started/setup/macos.md
       - Windows: getting_started/setup/windows.md
+    - Project templates and applications: getting_started/project_templates_and_applications.md    
     - Your First Application: getting_started/your_first_application.md
     - A Simple Webpage: getting_started/a_simple_webpage.md
   - Guides:
@@ -66,6 +67,7 @@ nav:
       - Multipart: guides/multipart.md
       - Query Strings: guides/query-string.md
       - Middleware: guides/middleware.md
+      - SBOM Generation: guides/sbom.md
       - SSL: guides/ssl.md
       - Static Files: guides/static.md
       - Blueprints: guides/blueprints.md
@@ -81,7 +83,7 @@ nav:
       - Systemd run on startup: guides/syste.md
   - API Reference:
     - API Reference: 'reference/index.html'
-        
+
 extra:
   version:
     provider: mike

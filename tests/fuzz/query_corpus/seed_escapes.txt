@@ -1,0 +1,1 @@
+k=%2f%0A%09&bad=%zz&trunc=%2&pct100=%100&plus=a+b%2Bc

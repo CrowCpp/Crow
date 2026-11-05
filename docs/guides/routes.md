@@ -98,7 +98,7 @@ Please note that in order to return a response defined as a parameter you'll nee
 Alternatively, you can define the response in the body and return it (`#!cpp ([](){return crow::response()})`).<br>
 
 For more information on `crow::response` go [here](../reference/structcrow_1_1response.html).<br><br>
-    
+
 Crow defines the following status codes:
 ```
 100 Continue
@@ -111,6 +111,7 @@ Crow defines the following status codes:
 204 No Content
 205 Reset Content
 206 Partial Content
+207 Multi-Status (WebDav)
 
 300 Multiple Choices
 301 Moved Permanently
@@ -125,13 +126,22 @@ Crow defines the following status codes:
 403 Forbidden
 404 Not Found
 405 Method Not Allowed
+406 Not Acceptable
 407 Proxy Authentication Required
 409 Conflict
 410 Gone
+
+412 Precondition Failed (WebDav)
+422 Unprocessable Entity (WebDav)
+              
 413 Payload Too Large
+414 Request-URI Too Long (WebDav)
 415 Unsupported Media Type
 416 Range Not Satisfiable
 417 Expectation Failed
+423 Locked (WebDav)
+424 Failed Dependency (WebDav)
+
 428 Precondition Required
 429 Too Many Requests
 451 Unavailable For Legal Reasons
@@ -142,6 +152,8 @@ Crow defines the following status codes:
 503 Service Unavailable
 504 Gateway Timeout
 506 Variant Also Negotiates
+507 Insufficient Storage (WebDav)
+
 ```
 
 !!! note

@@ -2,18 +2,18 @@
 
 //#define CROW_JSON_NO_ERROR_CHECK
 //#define CROW_JSON_USE_MAP
+//#define CROW_JSON_USE_INSERTION_ORDER
 
 #include <string>
-#ifdef CROW_JSON_USE_MAP
 #include <map>
-#else
 #include <unordered_map>
-#endif
 #include <iostream>
 #include <algorithm>
 #include <memory>
 #include <vector>
 #include <cmath>
+#include <cfloat>
+#include <utility>
 
 #include "crow/utility.h"
 #include "crow/settings.h"
@@ -23,8 +23,13 @@
 using std::isinf;
 using std::isnan;
 
+#ifdef __CHAR_UNSIGNED__
+#define IS_CONTROL_ASCII(c) (c < 0x20)
+#else
+#define IS_CONTROL_ASCII(c) ((c >= 0) && (c < 0x20))
+#endif
 
-namespace crow
+namespace crow // NOTE: Already documented in "crow/app.h"
 {
     namespace mustache
     {
@@ -33,6 +38,14 @@ namespace crow
 
     namespace json
     {
+        static inline char to_hex(char c)
+        {
+            c = c & 0xf;
+            if (c < 10)
+                return '0' + c;
+            return 'a' + c - 10;
+        }
+
         inline void escape(const std::string& str, std::string& ret)
         {
             ret.reserve(ret.size() + str.size() + str.size() / 4);
@@ -48,15 +61,9 @@ namespace crow
                     case '\r': ret += "\\r"; break;
                     case '\t': ret += "\\t"; break;
                     default:
-                        if (c >= 0 && c < 0x20)
+                        if (IS_CONTROL_ASCII(c))
                         {
                             ret += "\\u00";
-                            auto to_hex = [](char c) {
-                                c = c & 0xf;
-                                if (c < 10)
-                                    return '0' + c;
-                                return 'a' + c - 10;
-                            };
                             ret += to_hex(c / 16);
                             ret += to_hex(c % 16);
                         }
@@ -105,7 +112,8 @@ namespace crow
             Signed_integer,
             Unsigned_integer,
             Floating_point,
-            Null
+            Null,
+            Double_precision_floating_point
         };
 
         class rvalue;
@@ -116,9 +124,9 @@ namespace crow
             /// A read string implementation with comparison functionality.
             struct r_string
             {
-                r_string(){};
+                r_string(){}
                 r_string(char* s, char* e):
-                  s_(s), e_(e){};
+                  s_(s), e_(e){}
                 ~r_string()
                 {
                     if (owned_)
@@ -132,11 +140,17 @@ namespace crow
 
                 r_string(r_string&& r)
                 {
-                    *this = r;
+                    *this = std::move(r);
                 }
 
                 r_string& operator=(r_string&& r)
                 {
+                    if (this == &r)
+                        return *this;
+
+                    if (owned_)
+                        delete[] s_;
+
                     s_ = r.s_;
                     e_ = r.e_;
                     owned_ = r.owned_;
@@ -147,6 +161,9 @@ namespace crow
 
                 r_string& operator=(const r_string& r)
                 {
+                    if (this == &r)
+                        return *this;
+
                     s_ = r.s_;
                     e_ = r.e_;
                     owned_ = 0;
@@ -176,7 +193,7 @@ namespace crow
                 }
 
             private:
-                void force(char* s, uint32_t length)
+                void force(char* s, size_t length)
                 {
                     s_ = s;
                     e_ = s_ + length;
@@ -263,6 +280,37 @@ namespace crow
             {
                 return !(l == r);
             }
+
+            struct unordered_policy
+            {
+                template<typename Value>
+                using object_type =
+                  std::unordered_map<std::string, Value>;
+            };
+
+            struct map_policy
+            {
+                template<typename Value>
+                using object_type =
+                  std::map<std::string, Value>;
+            };
+
+            struct insertion_order_policy
+            {
+                template<typename Value>
+                using object_type = utility::ordered_object<std::string, Value>;
+            };
+
+#if defined(CROW_JSON_USE_INSERTION_ORDER) && defined(CROW_JSON_USE_MAP)
+#error "Only one JSON object ordering policy may be selected"
+#elif defined(CROW_JSON_USE_INSERTION_ORDER)
+            using object_policy = insertion_order_policy;
+#elif defined(CROW_JSON_USE_MAP)
+            using object_policy = map_policy;
+#else
+            using object_policy = unordered_policy;
+#endif
+
         } // namespace detail
 
         /// JSON read value.
@@ -405,8 +453,9 @@ namespace crow
                         const std::string msg = "expected number, got: " + std::string(get_type_str(t()));
                         throw std::runtime_error(msg);
                 }
-#endif
+#else
                 return utility::lexical_cast<int64_t>(start_, end_ - start_);
+#endif
             }
 
             /// The unsigned integer value.
@@ -457,7 +506,7 @@ namespace crow
             }
 
             /// The list or object value
-            std::vector<rvalue> lo()
+            std::vector<rvalue> lo() const
             {
 #ifndef CROW_JSON_NO_ERROR_CHECK
                 if (t() != type::Object && t() != type::List)
@@ -507,7 +556,37 @@ namespace crow
                                       (from_hex(head[2]) << 8) +
                                       (from_hex(head[3]) << 4) +
                                       from_hex(head[4]);
-                                    if (code >= 0x800)
+                                    head += 4;
+                                    if (code >= 0xD800 && code <= 0xDFFF)
+                                    {
+                                        // UTF-16 surrogate: a high half followed by an escaped low half
+                                        // encodes one code point; an unpaired half is not a valid code
+                                        // point, so it is replaced with U+FFFD to keep the output valid UTF-8.
+                                        unsigned int low = 0;
+                                        if (code <= 0xDBFF && head[1] == '\\' && head[2] == 'u')
+                                        {
+                                            low = (from_hex(head[3]) << 12) +
+                                                  (from_hex(head[4]) << 8) +
+                                                  (from_hex(head[5]) << 4) +
+                                                  from_hex(head[6]);
+                                        }
+                                        if (low >= 0xDC00 && low <= 0xDFFF)
+                                        {
+                                            code = 0x10000 + ((code - 0xD800) << 10) + (low - 0xDC00);
+                                            *tail++ = 0xF0 | (code >> 18);
+                                            *tail++ = 0x80 | ((code >> 12) & 0x3F);
+                                            *tail++ = 0x80 | ((code >> 6) & 0x3F);
+                                            *tail++ = 0x80 | (code & 0x3F);
+                                            head += 6;
+                                        }
+                                        else
+                                        {
+                                            *tail++ = 0xEF;
+                                            *tail++ = 0xBF;
+                                            *tail++ = 0xBD;
+                                        }
+                                    }
+                                    else if (code >= 0x800)
                                     {
                                         *tail++ = 0xE0 | (code >> 12);
                                         *tail++ = 0x80 | ((code >> 6) & 0x3F);
@@ -522,7 +601,6 @@ namespace crow
                                     {
                                         *tail++ = code;
                                     }
-                                    head += 4;
                                 }
                                 break;
                             }
@@ -550,15 +628,15 @@ namespace crow
                     bool operator()(const rvalue& l, const rvalue& r) const
                     {
                         return l.key_ < r.key_;
-                    };
+                    }
                     bool operator()(const rvalue& l, const std::string& r) const
                     {
                         return l.key_ < r;
-                    };
+                    }
                     bool operator()(const std::string& l, const rvalue& r) const
                     {
                         return l < r.key_;
-                    };
+                    }
                 };
                 if (!is_cached())
                 {
@@ -569,7 +647,7 @@ namespace crow
                 return it != end() && it->key_ == str;
             }
 
-            int count(const std::string& str)
+            int count(const std::string& str) const
             {
                 return has(str) ? 1 : 0;
             }
@@ -645,15 +723,15 @@ namespace crow
                     bool operator()(const rvalue& l, const rvalue& r) const
                     {
                         return l.key_ < r.key_;
-                    };
+                    }
                     bool operator()(const rvalue& l, const std::string& r) const
                     {
                         return l.key_ < r;
-                    };
+                    }
                     bool operator()(const std::string& l, const rvalue& r) const
                     {
                         return l < r.key_;
-                    };
+                    }
                 };
                 if (!is_cached())
                 {
@@ -664,7 +742,7 @@ namespace crow
                 if (it != end() && it->key_ == str)
                     return *it;
 #ifndef CROW_JSON_NO_ERROR_CHECK
-                throw std::runtime_error("cannot find key");
+                throw std::runtime_error("cannot find key: " + str);
 #else
                 static rvalue nullValue;
                 return nullValue;
@@ -781,6 +859,7 @@ namespace crow
                         switch (r.nt())
                         {
                             case num_type::Floating_point: os << r.d(); break;
+                            case num_type::Double_precision_floating_point: os << r.d(); break;
                             case num_type::Signed_integer: os << r.i(); break;
                             case num_type::Unsigned_integer: os << r.u(); break;
                             case num_type::Null: throw std::runtime_error("Number with num_type Null");
@@ -846,37 +925,37 @@ namespace crow
             return l != r.s();
         }
 
-        inline bool operator==(const rvalue& l, double r)
+        inline bool operator==(const rvalue& l, const int& r)
         {
-            return l.d() == r;
+          return l.i() == r;
         }
 
-        inline bool operator==(double l, const rvalue& r)
+        inline bool operator==(const int& l, const rvalue& r)
         {
-            return l == r.d();
+          return l == r.i();
         }
 
-        inline bool operator!=(const rvalue& l, double r)
+        inline bool operator!=(const rvalue& l, const int& r)
         {
-            return l.d() != r;
+          return l.i() != r;
         }
 
-        inline bool operator!=(double l, const rvalue& r)
+        inline bool operator!=(const int& l, const rvalue& r)
         {
-            return l != r.d();
+          return l != r.i();
         }
 
 
         inline rvalue load_nocopy_internal(char* data, size_t size)
         {
             // Defend against excessive recursion
-            static constexpr unsigned max_depth = 10000;
+            static constexpr unsigned max_depth = 1024;
 
             //static const char* escaped = "\"\\/\b\f\n\r\t";
             struct Parser
             {
-                Parser(char* data, size_t /*size*/):
-                  data(data)
+                Parser(char* data_, size_t /*size*/):
+                  data(data_)
                 {
                 }
 
@@ -892,7 +971,7 @@ namespace crow
                 {
                     while (*data == ' ' || *data == '\t' || *data == '\r' || *data == '\n')
                         ++data;
-                };
+                }
 
                 rvalue decode_string()
                 {
@@ -1123,6 +1202,13 @@ namespace crow
 
                 rvalue decode_value(unsigned depth)
                 {
+                    if (CROW_UNLIKELY(depth > max_depth))
+                    {
+                        rvalue ret;
+                        ret.set_error();
+                        return ret;
+                    }
+
                     switch (*data)
                     {
                         case '[':
@@ -1277,23 +1363,24 @@ namespace crow
 
         struct wvalue_reader;
 
-        /// JSON write value.
-
-        ///
-        /// Value can mean any json value, including a JSON object.<br>
-        /// Write means this class is used to primarily assemble JSON objects using keys and values and export those into a string.
+        /**
+         * @brief JSON write value.
+         *
+         * Value can mean any json value, including a JSON object.<br>
+         * Write means this class is used to primarily assemble JSON objects using keys and values and export those into a string.
+         * The object container is selected at compile time. By default, object keys use an
+         * `std::unordered_map`; `CROW_JSON_USE_MAP` selects lexicographically sorted keys,
+         * while `CROW_JSON_USE_INSERTION_ORDER` preserves the order of newly inserted keys.
+         * Updating an existing key does not change its position. These options affect the
+         * order of serialized JSON object keys and cannot be used together.
+         */
         class wvalue : public returnable
         {
             friend class crow::mustache::template_t;
             friend struct wvalue_reader;
 
         public:
-            using object =
-#ifdef CROW_JSON_USE_MAP
-              std::map<std::string, wvalue>;
-#else
-              std::unordered_map<std::string, wvalue>;
-#endif
+            using object = detail::object_policy::object_type<wvalue>;
 
             using list = std::vector<wvalue>;
 
@@ -1318,7 +1405,9 @@ namespace crow
                   ui(value) {}
                 constexpr number(std::int64_t value) noexcept:
                   si(value) {}
-                constexpr number(double value) noexcept:
+                explicit constexpr number(double value) noexcept:
+                  d(value) {}
+                explicit constexpr number(float value) noexcept:
                   d(value) {}
             } num;                                      ///< Value if type is a number.
             std::string s;                              ///< Value if type is a string.
@@ -1357,7 +1446,7 @@ namespace crow
             wvalue(float value):
               returnable("application/json"), t_(type::Number), nt(num_type::Floating_point), num(static_cast<double>(value)) {}
             wvalue(double value):
-              returnable("application/json"), t_(type::Number), nt(num_type::Floating_point), num(static_cast<double>(value)) {}
+              returnable("application/json"), t_(type::Number), nt(num_type::Double_precision_floating_point), num(static_cast<double>(value)) {}
 
             wvalue(char const* value):
               returnable("application/json"), t_(type::String), s(value) {}
@@ -1379,7 +1468,7 @@ namespace crow
               returnable("application/json")
             {
                 t_ = type::List;
-                l = std::unique_ptr<list>(new list{});
+                l = std::make_unique<list>();
                 l->reserve(r.size());
                 for (auto it = r.begin(); it != r.end(); ++it)
                     l->emplace_back(*it);
@@ -1388,7 +1477,7 @@ namespace crow
               returnable("application/json")
             {
                 t_ = type::List;
-                l = std::unique_ptr<list>(new list{});
+                l = std::make_unique<list>();
                 l->reserve(r.size());
                 for (auto it = r.begin(); it != r.end(); ++it)
                     l->emplace_back(*it);
@@ -1408,7 +1497,7 @@ namespace crow
                         return;
                     case type::Number:
                         nt = r.nt();
-                        if (nt == num_type::Floating_point)
+                        if (nt == num_type::Floating_point || nt == num_type::Double_precision_floating_point)
                             num.d = r.d();
                         else if (nt == num_type::Signed_integer)
                             num.si = r.i();
@@ -1419,13 +1508,13 @@ namespace crow
                         s = r.s();
                         return;
                     case type::List:
-                        l = std::unique_ptr<list>(new list{});
+                        l = std::make_unique<list>();
                         l->reserve(r.size());
                         for (auto it = r.begin(); it != r.end(); ++it)
                             l->emplace_back(*it);
                         return;
                     case type::Object:
-                        o = std::unique_ptr<object>(new object{});
+                        o = std::make_unique<object>();
                         for (auto it = r.begin(); it != r.end(); ++it)
                             o->emplace(it->key(), *it);
                         return;
@@ -1444,7 +1533,7 @@ namespace crow
                         return;
                     case type::Number:
                         nt = r.nt;
-                        if (nt == num_type::Floating_point)
+                        if (nt == num_type::Floating_point || nt == num_type::Double_precision_floating_point)
                             num.d = r.num.d;
                         else if (nt == num_type::Signed_integer)
                             num.si = r.num.si;
@@ -1455,13 +1544,13 @@ namespace crow
                         s = r.s;
                         return;
                     case type::List:
-                        l = std::unique_ptr<list>(new list{});
+                        l = std::make_unique<list>();
                         l->reserve(r.size());
                         for (auto it = r.l->begin(); it != r.l->end(); ++it)
                             l->emplace_back(*it);
                         return;
                     case type::Object:
-                        o = std::unique_ptr<object>(new object{});
+                        o = std::make_unique<object>();
                         o->insert(r.o->begin(), r.o->end());
                         return;
                     case type::Function:
@@ -1514,12 +1603,21 @@ namespace crow
                 return *this;
             }
 
-            wvalue& operator=(double value)
+            wvalue& operator=(float value)
             {
                 reset();
                 t_ = type::Number;
                 num.d = value;
                 nt = num_type::Floating_point;
+                return *this;
+            }
+
+            wvalue& operator=(double value)
+            {
+                reset();
+                t_ = type::Number;
+                num.d = value;
+                nt = num_type::Double_precision_floating_point;
                 return *this;
             }
 
@@ -1617,7 +1715,7 @@ namespace crow
                     reset();
                 t_ = type::List;
                 if (!l)
-                    l = std::unique_ptr<list>(new list{});
+                    l = std::make_unique<list>();
                 l->clear();
                 l->resize(v.size());
                 size_t idx = 0;
@@ -1635,7 +1733,7 @@ namespace crow
                     reset();
                 t_ = type::List;
                 if (!l)
-                    l = std::unique_ptr<list>(new list{});
+                    l = std::make_unique<list>();
                 l->clear();
                 l->resize(v.size());
                 size_t idx = 0;
@@ -1652,12 +1750,12 @@ namespace crow
                 {
                     reset();
                     t_ = type::Object;
-                    o = std::unique_ptr<object>(new object(initializer_list));
+                    o = std::make_unique<object>(initializer_list);
                 }
                 else
                 {
-#if defined(__APPLE__) || defined(__MACH__) || defined(__FreeBSD__) || defined(__ANDROID__)
-                    o = std::unique_ptr<object>(new object(initializer_list));
+#if defined(__APPLE__) || defined(__MACH__) || defined(__FreeBSD__) || defined(__ANDROID__) || defined(_LIBCPP_VERSION)
+                    o = std::make_unique<object>(initializer_list);
 #else
                     (*o) = initializer_list;
 #endif
@@ -1671,12 +1769,12 @@ namespace crow
                 {
                     reset();
                     t_ = type::Object;
-                    o = std::unique_ptr<object>(new object(value));
+                    o = std::make_unique<object>(value);
                 }
                 else
                 {
-#if defined(__APPLE__) || defined(__MACH__) || defined(__FreeBSD__) || defined(__ANDROID__)
-                    o = std::unique_ptr<object>(new object(value));
+#if defined(__APPLE__) || defined(__MACH__) || defined(__FreeBSD__) || defined(__ANDROID__) || defined(_LIBCPP_VERSION)
+                    o = std::make_unique<object>(value);
 #else
                     (*o) = value;
 #endif
@@ -1690,7 +1788,7 @@ namespace crow
                 {
                     reset();
                     t_ = type::Object;
-                    o = std::unique_ptr<object>(new object(std::move(value)));
+                    o = std::make_unique<object>(std::move(value));
                 }
                 else
                 {
@@ -1713,7 +1811,7 @@ namespace crow
                     reset();
                 t_ = type::List;
                 if (!l)
-                    l = std::unique_ptr<list>(new list{});
+                    l = std::make_unique<list>();
                 if (l->size() < index + 1)
                     l->resize(index + 1);
                 return (*l)[index];
@@ -1724,7 +1822,27 @@ namespace crow
                 return const_cast<wvalue*>(this)->operator[](index);
             }
 
-            int count(const std::string& str) const
+            /// Check if the object contains the given key.
+            bool has(const char* key) const
+            {
+                return has(std::string(key));
+            }
+
+            /// Check if the object contains the given key.
+            bool has(const std::string& key) const
+            {
+                if (t_ != type::Object)
+                    return false;
+                if (!o)
+                    return false;
+#if (__cplusplus>=202002L)
+                return o->contains(key);
+#else
+                return o->count(key)>0;
+#endif
+            }
+
+            size_t count(const std::string& str) const
             {
                 if (t_ != type::Object)
                     return 0;
@@ -1739,7 +1857,7 @@ namespace crow
                     reset();
                 t_ = type::Object;
                 if (!o)
-                    o = std::unique_ptr<object>(new object{});
+                    o = std::make_unique<object>();
                 return (*o)[str];
             }
 
@@ -1826,7 +1944,14 @@ namespace crow
                 out.push_back('"');
             }
 
-            inline void dump_internal(const wvalue& v, std::string& out) const
+            inline void dump_indentation_part(std::string& out, const size_t indent, const char separator, const int indent_level) const
+            {
+                out.push_back('\n');
+                out.append(indent_level * indent, separator);
+            }
+
+
+            inline void dump_internal(const wvalue& v, std::string& out, const size_t indent, const char separator, const int indent_level = 0) const
             {
                 switch (v.t_)
                 {
@@ -1835,7 +1960,7 @@ namespace crow
                     case type::True: out += "true"; break;
                     case type::Number:
                     {
-                        if (v.nt == num_type::Floating_point)
+                        if (v.nt == num_type::Floating_point || v.nt == num_type::Double_precision_floating_point)
                         {
                             if (isnan(v.num.d) || isinf(v.num.d))
                             {
@@ -1847,15 +1972,29 @@ namespace crow
                             {
                                 start,
                                 decp, // Decimal point
-                                zero
+                                zero,
+                                exp // in the exponent
                             } f_state;
                             char outbuf[128];
+                            if (v.nt == num_type::Double_precision_floating_point)
+                            {
 #ifdef _MSC_VER
-                            sprintf_s(outbuf, sizeof(outbuf), "%f", v.num.d);
+                                sprintf_s(outbuf, sizeof(outbuf), "%.*g", std::numeric_limits<double>::max_digits10, v.num.d);
 #else
-                            snprintf(outbuf, sizeof(outbuf), "%f", v.num.d);
+                                snprintf(outbuf, sizeof(outbuf), "%.*g", std::numeric_limits<double>::max_digits10, v.num.d);
 #endif
-                            char *p = &outbuf[0], *o = nullptr; // o is the position of the first trailing 0
+                            }
+                            else
+                            {
+#ifdef _MSC_VER
+                                sprintf_s(outbuf, sizeof(outbuf), "%f", v.num.d);
+#else
+                                snprintf(outbuf, sizeof(outbuf), "%f", v.num.d);
+#endif
+                            }
+                            char* p = &outbuf[0];
+                            char* pos_first_trailing_0 = nullptr;
+                            char* pos_exponent = nullptr;
                             f_state = start;
                             while (*p != '\0')
                             {
@@ -1877,22 +2016,41 @@ namespace crow
                                         if (ch == '0')
                                         {
                                             f_state = zero;
-                                            o = p;
+                                            pos_first_trailing_0 = p;
+                                        }
+                                        else if (ch == 'e')
+                                        {
+                                            pos_exponent = p;
+                                            f_state = exp;
                                         }
                                         p++;
                                         break;
                                     case zero: // if a non 0 is found (e.g. 1.00004) remove the earlier recorded 0 position and look for more trailing 0s
-                                        if (ch != '0')
+                                        if (ch == 'e')
                                         {
-                                            o = nullptr;
+                                            pos_exponent = p;
+                                            f_state = exp;
+                                        }
+                                        else if (ch != '0')
+                                        {
+                                            pos_first_trailing_0 = nullptr;
                                             f_state = decp;
                                         }
                                         p++;
                                         break;
+                                    case exp: // if an 'e' has been found, one is in the exponent; no more looking for trailing zeroes
+                                        p++;
+                                        break;
                                 }
                             }
-                            if (o != nullptr) // if any trailing 0s are found, terminate the string where they begin
-                                *o = '\0';
+                            if (pos_first_trailing_0 != nullptr) // if any trailing 0s are found, terminate the string where they begin
+                            {
+                                *pos_first_trailing_0 = '\0';
+                                if (pos_exponent != nullptr) // if there is an exponent, include it
+                                {
+                                    strcpy(pos_first_trailing_0, pos_exponent);
+                                }
+                            }
                             out += outbuf;
                         }
                         else if (v.nt == num_type::Signed_integer)
@@ -1909,6 +2067,12 @@ namespace crow
                     case type::List:
                     {
                         out.push_back('[');
+
+                        if (indent !=std::string::npos)
+                        {
+                            dump_indentation_part(out, indent, separator, indent_level + 1);
+                        }
+
                         if (v.l)
                         {
                             bool first = true;
@@ -1917,17 +2081,34 @@ namespace crow
                                 if (!first)
                                 {
                                     out.push_back(',');
+
+                                    if (indent != std::string::npos)
+                                    {
+                                        dump_indentation_part(out, indent, separator, indent_level + 1);
+                                    }
                                 }
                                 first = false;
-                                dump_internal(x, out);
+                                dump_internal(x, out, indent, separator, indent_level + 1);
                             }
                         }
+
+                        if (indent !=std::string::npos)
+                        {
+                            dump_indentation_part(out, indent, separator, indent_level);
+                        }
+
                         out.push_back(']');
                     }
                     break;
                     case type::Object:
                     {
                         out.push_back('{');
+
+                        if (indent != std::string::npos)
+                        {
+                            dump_indentation_part(out, indent, separator, indent_level + 1);
+                        }
+
                         if (v.o)
                         {
                             bool first = true;
@@ -1936,13 +2117,29 @@ namespace crow
                                 if (!first)
                                 {
                                     out.push_back(',');
+                                    if (indent != std::string::npos)
+                                    {
+                                        dump_indentation_part(out, indent, separator, indent_level + 1);
+                                    }
                                 }
                                 first = false;
                                 dump_string(kv.first, out);
                                 out.push_back(':');
-                                dump_internal(kv.second, out);
+
+                                if (indent != std::string::npos)
+                                {
+                                    out.push_back(' ');
+                                }
+
+                                dump_internal(kv.second, out, indent, separator, indent_level + 1);
                             }
                         }
+
+                        if (indent != std::string::npos)
+                        {
+                            dump_indentation_part(out, indent, separator, indent_level);
+                        }
+
                         out.push_back('}');
                     }
                     break;
@@ -1954,12 +2151,25 @@ namespace crow
             }
 
         public:
-            std::string dump() const
+            std::string dump(const size_t indent, const char separator = ' ') const
             {
                 std::string ret;
                 ret.reserve(estimate_length());
-                dump_internal(*this, ret);
+                dump_internal(*this, ret, indent, separator);
                 return ret;
+            }
+
+            std::string dump() const override
+            {
+                static constexpr size_t DontIndent = std::string::npos;
+
+                return dump(DontIndent);
+            }
+
+            /// Return json string.
+            explicit operator std::string() const
+            {
+                return dump();
             }
         };
 
@@ -1968,14 +2178,16 @@ namespace crow
         {
             int64_t get(int64_t fallback)
             {
-                if (ref.t() != type::Number || ref.nt == num_type::Floating_point)
+                if (ref.t() != type::Number || ref.nt == num_type::Floating_point ||
+                    ref.nt == num_type::Double_precision_floating_point)
                     return fallback;
                 return ref.num.si;
             }
 
             double get(double fallback)
             {
-                if (ref.t() != type::Number || ref.nt != num_type::Floating_point)
+                if (ref.t() != type::Number || ref.nt != num_type::Floating_point ||
+                    ref.nt == num_type::Double_precision_floating_point)
                     return fallback;
                 return ref.num.d;
             }

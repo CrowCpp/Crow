@@ -51,6 +51,20 @@ html/
 *.cxxflags
 *.files
 *.includes
+CMakeLists.txt.user
 
 #VS-Code
 .vscode
+.idea
+cmake-build-*
+.cache
+site
+venv
+.vs
+
+#Bazel
+bazel-*
+MODULE.bazel.lock
+
+# macOS Files
+.DS_Store

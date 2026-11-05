@@ -16,7 +16,7 @@ int main()
           std::lock_guard<std::mutex> _(mtx);
           users.insert(&conn);
       })
-      .onclose([&](crow::websocket::connection& conn, const std::string& reason) {
+      .onclose([&](crow::websocket::connection& conn, const std::string& reason, uint16_t) {
           CROW_LOG_INFO << "websocket connection closed: " << reason;
           std::lock_guard<std::mutex> _(mtx);
           users.erase(&conn);

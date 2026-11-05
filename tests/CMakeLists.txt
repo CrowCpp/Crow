@@ -1,17 +1,45 @@
-cmake_minimum_required(VERSION 3.15)
+cmake_minimum_required(VERSION 3.21)
 project(crow_test)
 
-include(${CMAKE_SOURCE_DIR}/cmake/compiler_options.cmake)
+set(CMAKE_POLICY_DEFAULT_CMP0077 new)
+set(CMAKE_POLICY_WARNING_CMP0126 new)
 
+include(${CMAKE_SOURCE_DIR}/cmake/compiler_options.cmake)
+include(${CMAKE_SOURCE_DIR}/cmake/CPM.cmake)
+
+
+CPMAddPackage(Catch2
+  VERSION 3.15.1
+  GITHUB_REPOSITORY catchorg/Catch2
+  OPTIONS
+  "CATCH_INSTALL_DOCS Off"
+  "CATCH_INSTALL_EXTRAS Off"
+  "CATCH_ENABLE_REPRODUCIBLE_BUILD Off"
+)
+  
 enable_testing()
 
+# list the test sources
 set(TEST_SRCS
   unittest.cpp
+  query_string_tests.cpp
+  unit_tests/test_http_response.cpp
+  unit_tests/test_json.cpp
+  unit_tests/test_mustache.cpp
+  unit_tests/test_utility.cpp
+  unit_tests/test_websocket.cpp
+  unit_tests/test_json.cpp
+  test_ws_fragment_limit_e2e.cpp
+  test_ws_payload_overflow_e2e.cpp
+  test_ws_rfc6455_frame_validation_e2e.cpp
+  test_ws_minheader_split_e2e.cpp
+  test_ws_close_reserved_code_e2e.cpp
 )
 
 add_executable(unittest ${TEST_SRCS})
-target_link_libraries(unittest Crow::Crow)
+target_link_libraries(unittest Crow::Crow Catch2::Catch2WithMain)
 add_warnings_optimizations(unittest)
+add_sanitizer_flags(unittest)
 
 if("${CMAKE_SYSTEM_NAME}" STREQUAL "Android")
   target_link_libraries(unittest log)
@@ -26,7 +54,7 @@ add_subdirectory(template)
 add_subdirectory(multi_file)
 add_subdirectory(external_definition)
 if(NOT MSVC)
-  if ("ssl" IN_LIST CROW_FEATURES)
+  if (CROW_ENABLE_SSL)
     add_subdirectory(ssl)
   endif()
 endif()

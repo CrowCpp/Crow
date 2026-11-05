@@ -86,7 +86,8 @@ for x in edges:
         assert order.index(x) < order.index(y), 'cyclic include detected'
 
 print(order)
-build = [lsc, '#pragma once']
+spdx_lsc = '// SPDX-License-Identifier: BSD-3-Clause AND ISC AND MIT'
+build = [spdx_lsc, lsc, '#pragma once']
 for header in order:
     d = open(pt.join(header_path, header), encoding='UTF-8').read()
     d_no_depend = re_depends.sub(lambda x: '', d)
