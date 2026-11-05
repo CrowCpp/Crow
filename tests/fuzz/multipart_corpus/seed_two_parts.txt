@@ -1,0 +1,9 @@
+--X
+Content-Disposition: form-data; name="a"
+
+value a
+--X
+Content-Disposition: form-data; name="b"
+
+value b
+--X--
