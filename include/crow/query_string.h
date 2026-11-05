@@ -302,14 +302,18 @@ inline char * qs_scanvalue(const char * key, const char * qs, char * val, size_t
     qs += strcspn(qs, "=&#");
     if ( qs[0] == '=' )
     {
+        if ( val_len == 0 )
+            return val;
+
         qs++;
         size_t i = strcspn(qs, "&=#");
-#ifdef _MSC_VER
-        strncpy_s(val, val_len, qs, (val_len - 1)<(i + 1) ? (val_len - 1) : (i + 1));
-#else
-        strncpy(val, qs, (val_len - 1)<(i + 1) ? (val_len - 1) : (i + 1));
-#endif
-		qs_decode(val);
+        // copy at most val_len - 1 characters and always terminate,
+        // so a value longer than the buffer comes back truncated
+        if ( i > val_len - 1 )
+            i = val_len - 1;
+        memcpy(val, qs, i);
+        val[i] = '\0';
+        qs_decode(val);
     }
     else
     {
