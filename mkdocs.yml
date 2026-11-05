@@ -70,6 +70,7 @@ nav:
       - SBOM Generation: guides/sbom.md
       - SSL: guides/ssl.md
       - Static Files: guides/static.md
+      - Request body files: guides/body-file.md
       - Blueprints: guides/blueprints.md
       - Compression: guides/compression.md
       - Websockets: guides/websockets.md
