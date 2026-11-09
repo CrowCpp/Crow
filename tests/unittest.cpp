@@ -1363,30 +1363,37 @@ TEST_CASE("middleware_cors")
     const auto port = 33333;
     auto _ = app.bindaddr(LOCALHOST_ADDRESS).port(port).run_async();
     app.wait_for_server_start();
+
+    // the response may arrive in several segments, so read the whole header block
+    auto request_headers = [&](const std::string& msg) {
+        HttpClient c(LOCALHOST_ADDRESS, port);
+        c.send(msg);
+        std::string headers;
+        while (headers.find("\r\n\r\n") == std::string::npos)
+            headers += c.receive();
+        return headers;
+    };
+
     auto resp = HttpClient::request(LOCALHOST_ADDRESS, port,
                                     "OPTIONS / HTTP/1.1\r\n\r\n");
 
     CHECK(resp.find("Access-Control-Allow-Origin: *") != std::string::npos);
 
-    resp = HttpClient::request(LOCALHOST_ADDRESS, port,
-                               "GET /\r\n\r\n");
+    resp = request_headers("GET /\r\n\r\n");
     CHECK(resp.find("Access-Control-Allow-Origin: *") != std::string::npos);
     CHECK(resp.find("Vary: Origin") == std::string::npos);
 
-    resp = HttpClient::request(LOCALHOST_ADDRESS, port,
-                               "GET /origin\r\n\r\n");
+    resp = request_headers("GET /origin\r\n\r\n");
     CHECK(resp.find("Access-Control-Allow-Origin: test.test") != std::string::npos);
     CHECK(resp.find("Vary: Origin") == std::string::npos);
 
-    resp = HttpClient::request(LOCALHOST_ADDRESS, port,
-                               "GET /auth-origin\r\nOrigin: test-client\r\n\r\n");
+    resp = request_headers("GET /auth-origin\r\nOrigin: test-client\r\n\r\n");
     CHECK(resp.find("Access-Control-Allow-Origin: test-client") != std::string::npos);
     CHECK(resp.find("Access-Control-Allow-Credentials: true") != std::string::npos);
     CHECK(resp.find("Vary: Origin") != std::string::npos);
 
     // the reflected origin depends on the request, even when no Origin was sent
-    resp = HttpClient::request(LOCALHOST_ADDRESS, port,
-                               "GET /auth-origin\r\n\r\n");
+    resp = request_headers("GET /auth-origin\r\n\r\n");
     CHECK(resp.find("Access-Control-Allow-Origin:") == std::string::npos);
     CHECK(resp.find("Vary: Origin") != std::string::npos);
 
