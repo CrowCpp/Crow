@@ -93,6 +93,10 @@ add_executable(example_file_upload example_file_upload.cpp)
 add_warnings_optimizations(example_file_upload)
 target_link_libraries(example_file_upload PUBLIC Crow::Crow)
 
+add_executable(example_body_file example_body_file.cpp)
+add_warnings_optimizations(example_body_file)
+target_link_libraries(example_body_file PUBLIC Crow::Crow)
+
 add_executable(example_unix_socket example_unix_socket.cpp)
 add_warnings_optimizations(example_unix_socket)
 target_link_libraries(example_unix_socket PUBLIC Crow::Crow)
