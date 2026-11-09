@@ -1,8 +1,9 @@
 #pragma once
 
+#include <algorithm>
+#include <cstdint>
 #include <string>
 #include <unordered_map>
-#include <algorithm>
 
 #include "crow/http_request.h"
 #include "crow/http_parser_merged.h"
@@ -82,13 +83,20 @@ namespace crow
 
             self->set_connection_parameters();
 
-            self->process_header();
-            return 0;
+            return self->process_header();
         }
         static int on_body(http_parser* self_, const char* at, size_t length)
         {
             HTTPParser* self = static_cast<HTTPParser*>(self_);
+            if (self->max_body_size_ != UINT64_MAX &&
+                (length > self->max_body_size_ ||
+                 self->body_bytes_ > self->max_body_size_ - length))
+            {
+                self->handler_->reject_payload_too_large();
+                return 1;
+            }
             self->req.body.insert(self->req.body.end(), at, at + length);
+            self->body_bytes_ += length;
             return 0;
         }
         static int on_message_complete(http_parser* self_)
@@ -97,7 +105,8 @@ namespace crow
 
             self->message_complete = true;
             self->process_message();
-            return 0;
+            // Stop so leftover skipped-body bytes are not parsed as the next request.
+            return self->handler_->parser_should_abort() ? 1 : 0;
         }
         HTTPParser(Handler* handler):
           http_parser(),
@@ -145,7 +154,14 @@ namespace crow
             header_building_state = 0;
             qs_point = 0;
             message_complete = false;
+            body_bytes_ = 0;
+            max_body_size_ = UINT64_MAX;
             state = CROW_NEW_MESSAGE();
+        }
+
+        void set_max_body_size(uint64_t bytes)
+        {
+            max_body_size_ = bytes;
         }
 
         inline void process_url()
@@ -153,9 +169,9 @@ namespace crow
             handler_->handle_url();
         }
 
-        inline void process_header()
+        inline int process_header()
         {
-            handler_->handle_header();
+            return handler_->handle_header();
         }
 
         inline void process_message()
@@ -190,6 +206,8 @@ namespace crow
     private:
         int header_building_state = 0;
         bool message_complete = false;
+        uint64_t body_bytes_{0};
+        uint64_t max_body_size_{UINT64_MAX};
         std::string header_field;
         std::string header_value;
 
