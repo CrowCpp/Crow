@@ -138,6 +138,8 @@ namespace crow
                     if (origin_ == "*")
                     {
                         set_header_no_override("Access-Control-Allow-Origin", req.get_header_value("Origin"), res);
+                        // the allowed origin now depends on the request, so caches must key on it
+                        res.add_header("Vary", "Origin");
                         origin_set = true;
                     }
                 }
