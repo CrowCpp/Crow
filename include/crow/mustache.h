@@ -10,6 +10,8 @@
 #include <fstream>
 #include <iterator>
 #include <functional>
+#include <memory>
+#include <mutex>
 #include "crow/json.h"
 #include "crow/logging.h"
 #include "crow/returnable.h"
@@ -776,10 +778,25 @@ namespace crow // NOTE: Already documented in "crow/app.h"
 
         namespace detail
         {
-            inline std::function<std::string(std::string)>& get_loader_ref()
+            using loader_t = std::function<std::string(std::string)>;
+
+            struct loader_registry
             {
-                static std::function<std::string(std::string)> loader = default_loader;
-                return loader;
+                std::mutex mutex;
+                std::shared_ptr<loader_t> loader = std::make_shared<loader_t>(default_loader);
+            };
+
+            inline loader_registry& get_loader_registry()
+            {
+                static loader_registry registry;
+                return registry;
+            }
+
+            inline std::shared_ptr<loader_t> get_loader()
+            {
+                auto& registry = get_loader_registry();
+                std::lock_guard<std::mutex> lock(registry.mutex);
+                return registry.loader;
             }
         } // namespace detail
 
@@ -815,9 +832,17 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         /// By default, the previously mentioned functions load files
         /// using \ref default_loader, that only reads a file and
         /// returns a std::string.
+        /// Replacement is synchronized with loading; in-flight calls retain
+        /// their loader. Custom loaders must synchronize their own shared state.
         inline void set_loader(std::function<std::string(std::string)> loader)
         {
-            detail::get_loader_ref() = std::move(loader);
+            // Construct and destroy user callables outside the registry lock.
+            auto replacement = std::make_shared<detail::loader_t>(std::move(loader));
+            auto& registry = detail::get_loader_registry();
+            {
+                std::lock_guard<std::mutex> lock(registry.mutex);
+                registry.loader.swap(replacement);
+            }
         }
 
         /// \brief Open, read and sanitize a file but returns a
@@ -829,7 +854,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         {
             std::string filename_sanitized(filename);
             utility::sanitize_filename(filename_sanitized);
-            return detail::get_loader_ref()(filename_sanitized);
+            return (*detail::get_loader())(filename_sanitized);
         }
 
         /// \brief Open and read a file but returns a std::string
@@ -854,7 +879,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         /// **Never blindly trust your users!**
         inline std::string load_text_unsafe(const std::string& filename)
         {
-            return detail::get_loader_ref()(filename);
+            return (*detail::get_loader())(filename);
         }
 
         /// \brief Open, read and renders a file using a mustache
@@ -863,7 +888,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         {
             std::string filename_sanitized(filename);
             utility::sanitize_filename(filename_sanitized);
-            return compile(detail::get_loader_ref()(filename_sanitized));
+            return compile((*detail::get_loader())(filename_sanitized));
         }
 
         /// \brief Open, read and renders a file using a mustache
@@ -875,7 +900,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
         /// **Never blindly trust your users!**
         inline template_t load_unsafe(const std::string& filename)
         {
-            return compile(detail::get_loader_ref()(filename));
+            return compile((*detail::get_loader())(filename));
         }
     } // namespace mustache
 } // namespace crow
