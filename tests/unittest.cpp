@@ -151,6 +151,42 @@ TEST_CASE("Rule")
     CHECK(2 == x);
 } // Rule
 
+TEST_CASE("QueryStringKeptOutOfUrlAcrossReads")
+{
+    // Minimal handler satisfying the HTTPParser Handler interface.
+    struct Handler
+    {
+        void handle_url() {}
+        void handle_header() {}
+        void handle() {}
+    };
+
+    const std::string head = "GET /searchpath";
+    const std::string tail = "?q=secret HTTP/1.1\r\nHost: x\r\n\r\n";
+
+    // Baseline: the whole request in one feed() leaves req.url query-free.
+    {
+        Handler h;
+        HTTPParser<Handler> parser(&h);
+        const std::string whole = head + tail;
+        CHECK(parser.feed(whole.data(), static_cast<int>(whole.size())));
+        CHECK(parser.req.url == "/searchpath");
+    }
+
+    // The same bytes, split so the '?' arrives in a later read, must parse
+    // identically. Before the fix req.url kept the whole "?q=secret".
+    {
+        Handler h;
+        HTTPParser<Handler> parser(&h);
+        CHECK(parser.feed(head.data(), static_cast<int>(head.size())));
+        CHECK(parser.feed(tail.data(), static_cast<int>(tail.size())));
+        CHECK(parser.req.url == "/searchpath");
+        CHECK(parser.req.raw_url == "/searchpath?q=secret");
+        const char* q = parser.req.url_params.get("q");
+        CHECK((q != nullptr && std::string(q) == "secret"));
+    }
+} // QueryStringKeptOutOfUrlAcrossReads
+
 TEST_CASE("ParameterTagging")
 {
     static_assert(black_magic::is_valid("<int><int><int>"), "valid url");
