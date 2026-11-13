@@ -73,6 +73,23 @@ TEST_CASE("template_function", "[mustache]")
     CHECK("attack of killer tomatoes, IN SPACE!" == result);
 } // template_function
 
+TEST_CASE("template_function_renders_result_once", "[mustache]")
+{
+    auto t = crow::mustache::compile("Hello {{greeting}}");
+    crow::mustache::context ctx;
+    ctx["secret"] = "s3cr3t";
+    ctx["greeting"] = std::function<std::string(std::string)>([](std::string) {
+        return std::string("dear {{name}}");
+    });
+
+    ctx["name"] = "{{secret}}";
+    CHECK(t.render_string(ctx) == "Hello dear {{secret}}");
+
+    // used to re-render forever
+    ctx["name"] = "{{name}}";
+    CHECK(t.render_string(ctx) == "Hello dear {{name}}");
+} // template_function_renders_result_once
+
 TEST_CASE("template_function_empty", "[mustache]")
 {
     auto t = crow::mustache::compile(R"---(Message: {{func}})---");
