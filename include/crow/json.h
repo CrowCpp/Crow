@@ -13,6 +13,8 @@
 #include <vector>
 #include <cmath>
 #include <cfloat>
+#include <clocale>
+#include <cstring>
 #include <utility>
 
 #include "crow/utility.h"
@@ -1991,6 +1993,19 @@ namespace crow // NOTE: Already documented in "crow/app.h"
 #else
                                 snprintf(outbuf, sizeof(outbuf), "%f", v.num.d);
 #endif
+                            }
+                            // printf formats with the decimal point of the C locale (e.g. ',' after
+                            // setlocale(LC_ALL, "de_DE.UTF-8")), but JSON numbers always use '.'
+                            const char* locale_dp = std::localeconv()->decimal_point;
+                            if (locale_dp != nullptr && locale_dp[0] != '\0' && std::strcmp(locale_dp, ".") != 0)
+                            {
+                                char* pos_dp = std::strstr(outbuf, locale_dp);
+                                if (pos_dp != nullptr)
+                                {
+                                    const size_t dp_len = std::strlen(locale_dp);
+                                    *pos_dp = '.';
+                                    std::memmove(pos_dp + 1, pos_dp + dp_len, std::strlen(pos_dp + dp_len) + 1);
+                                }
                             }
                             char* p = &outbuf[0];
                             char* pos_first_trailing_0 = nullptr;
