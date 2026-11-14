@@ -328,7 +328,9 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                                 case json::type::Function:
                                 {
                                     std::string execute_result = ctx.execute();
-                                    while (execute_result.find("{{") != std::string::npos)
+                                    // render the lambda's result once; rendering it again would parse
+                                    // the values it interpolated as template tags
+                                    if (execute_result.find("{{") != std::string::npos)
                                     {
                                         template_t result_plug(execute_result);
                                         execute_result = result_plug.render_string(*(stack[0]));
