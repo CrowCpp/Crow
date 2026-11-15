@@ -9,6 +9,8 @@
 #include <asio.hpp>
 #endif
 
+#include <type_traits>
+
 #include "crow/logging.h"
 
 namespace crow
@@ -30,20 +32,25 @@ namespace crow
                 bool no_delay{false};
             };
 
-            inline void apply_tcp_socket_options(tcp::socket& socket, const tcp_socket_options& options)
-            {
-                error_code ec;
-                socket.set_option(tcp::no_delay(options.no_delay), ec);
-                if (ec)
-                {
-                    CROW_LOG_WARNING << "Failed to set TCP_NODELAY: " << ec.message();
-                }
-            }
-
             template<typename Socket>
-            inline void apply_tcp_socket_options(Socket&, const tcp_socket_options&)
+            inline void apply_tcp_socket_options(Socket& socket, const tcp_socket_options& options)
             {
-                CROW_LOG_WARNING << "This socket type does not support set TCP_NODELAY option";
+                auto& lowest = socket.lowest_layer();
+                using protocol_type = typename std::remove_reference_t<decltype(lowest)>::protocol_type;
+
+                if constexpr (std::is_same_v<protocol_type, tcp>)
+                {
+                    error_code ec;
+                    lowest.set_option(tcp::no_delay(options.no_delay), ec);
+                    if (ec)
+                    {
+                        CROW_LOG_WARNING << "Failed to set TCP_NODELAY: " << ec.message();
+                    }
+                }
+                else if (options.no_delay)
+                {
+                    CROW_LOG_WARNING << "TCP_NODELAY requested but not supported for this socket type";
+                }
             }
         } // namespace socket
     } // namespace detail
