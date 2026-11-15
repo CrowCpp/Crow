@@ -1331,6 +1331,24 @@ TEST_CASE("middleware_cors")
         .ignore();
     // clang-format on
 
+    Blueprint bp_origin("bp-origin");
+    Blueprint bp_nocors("bp-nocors");
+    cors.blueprint(bp_origin).origin("bp.test");
+    cors.blueprint(bp_nocors).ignore();
+
+    CROW_BP_ROUTE(bp_origin, "/path")
+    ([&](const request&) {
+        return "-";
+    });
+
+    CROW_BP_ROUTE(bp_nocors, "/path")
+    ([&](const request&) {
+        return "-";
+    });
+
+    app.register_blueprint(bp_origin);
+    app.register_blueprint(bp_nocors);
+
     CROW_ROUTE(app, "/")
     ([&](const request&) {
         return "-";
@@ -1409,6 +1427,12 @@ TEST_CASE("middleware_cors")
     resp = HttpClient::request(LOCALHOST_ADDRESS, port,
                                "GET /nocors/path\r\n\r\n");
 
+    CHECK(resp.find("Access-Control-Allow-Origin:") == std::string::npos);
+
+    resp = request_headers("GET /bp-origin/path\r\n\r\n");
+    CHECK(resp.find("Access-Control-Allow-Origin: bp.test") != std::string::npos);
+
+    resp = request_headers("GET /bp-nocors/path\r\n\r\n");
     CHECK(resp.find("Access-Control-Allow-Origin:") == std::string::npos);
 
     app.stop();
