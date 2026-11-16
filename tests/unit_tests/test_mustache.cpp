@@ -1,5 +1,8 @@
 #include "catch2/catch_all.hpp"
 
+#include <atomic>
+#include <thread>
+
 #include "crow.h"
 
 using namespace std;
@@ -182,6 +185,41 @@ TEST_CASE("template_custom_loader_with_partial", "[mustache]")
     CHECK(result == "Big Brother says: War is peace");
     crow::mustache::set_loader(crow::mustache::default_loader);
 } // template_custom_loader_with_partial
+
+TEST_CASE("template_set_loader_concurrent", "[mustache]")
+{
+    std::atomic<bool> stop{false};
+    std::thread setter([&stop] {
+        for (int i = 0; !stop; i++)
+        {
+            if (i % 2 == 0)
+                crow::mustache::set_loader([](std::string) -> std::string { return "a"; });
+            else
+                crow::mustache::set_loader([](std::string) -> std::string { return "b"; });
+        }
+    });
+
+    // Catch2 assertions are not thread-safe, so count failures and check afterwards
+    std::atomic<int> unexpected{0};
+    std::vector<std::thread> loaders;
+    for (int i = 0; i < 4; i++)
+    {
+        loaders.emplace_back([&unexpected] {
+            for (int j = 0; j < 1000; j++)
+            {
+                auto result = crow::mustache::load_text("file.mustache");
+                if (result != "a" && result != "b")
+                    unexpected++;
+            }
+        });
+    }
+    for (auto& t : loaders)
+        t.join();
+    stop = true;
+    setter.join();
+    CHECK(unexpected == 0);
+    crow::mustache::set_loader(crow::mustache::default_loader);
+} // template_set_loader_concurrent
 
 TEST_CASE("template_unescaped_triple_mustache", "[mustache]")
 {
