@@ -834,7 +834,7 @@ namespace crow
         inline static T lexical_cast(const U& v)
         {
             std::stringstream stream;
-            T res;
+            T res{};
 
             stream << v;
             stream >> res;
@@ -846,7 +846,7 @@ namespace crow
         inline static T lexical_cast(const char* v, size_t count)
         {
             std::stringstream stream;
-            T res;
+            T res{};
 
             stream.write(v, count);
             stream >> res;

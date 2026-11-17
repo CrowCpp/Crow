@@ -117,6 +117,14 @@ TEST_CASE("lexical_cast")
     CHECK(utility::lexical_cast<int>("5") == 5);
     CHECK(utility::lexical_cast<string>(4) == "4");
     CHECK(utility::lexical_cast<float>("10", 2) == Catch::Approx(10.0f));
+
+    // nothing to extract: the result must not be left uninitialized
+    CHECK(utility::lexical_cast<int64_t>("") == 0);
+    CHECK(utility::lexical_cast<uint64_t>("   ") == 0);
+    CHECK(utility::lexical_cast<double>("", 0) == Catch::Approx(0.0));
+    auto x = json::load(R"({"a":"","b":" "})");
+    CHECK(x["a"].i() == 0);
+    CHECK(x["b"].u() == 0);
 }
 
 TEST_CASE("ordered_object preserves insertion order", "[json]")
