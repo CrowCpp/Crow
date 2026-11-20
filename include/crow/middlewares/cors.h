@@ -192,7 +192,8 @@ namespace crow
         /// Handle CORS for a specific blueprint
         CORSRules& blueprint(const Blueprint& bp)
         {
-            rules.emplace_back(bp.prefix(), CORSRules(this));
+            // blueprint prefixes have no slashes, but they are matched against request urls
+            rules.emplace_back('/' + bp.prefix() + '/', CORSRules(this));
             return rules.back().second;
         }
 
