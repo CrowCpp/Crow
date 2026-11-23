@@ -13,6 +13,7 @@
 #include "crow/utility.h"
 #include "crow/common.h"
 #include "crow/http_request.h"
+#include "crow/body_sink.h"
 #include "crow/websocket.h"
 #include "crow/parser.h"
 #include "crow/http_response.h"
