@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['app_0',['App',['../namespacecrow.html#a153c1bf24903d1a8629ef6eaf045110b',1,'crow']]]
+  ['app_0',['App',['../namespacecrow.html#ab93b42929a9113b865d7daa241983126',1,'crow']]]
 ];

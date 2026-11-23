@@ -1,18 +1,10 @@
 var namespacecrow_1_1mustache =
 [
-    [ "Action", "structcrow_1_1mustache_1_1_action.html", null ],
     [ "invalid_template_exception", "classcrow_1_1mustache_1_1invalid__template__exception.html", null ],
     [ "rendered_template", "structcrow_1_1mustache_1_1rendered__template.html", null ],
+    [ "Action", "structcrow_1_1mustache_1_1_action.html", null ],
     [ "template_t", "classcrow_1_1mustache_1_1template__t.html", "classcrow_1_1mustache_1_1template__t" ],
-    [ "ActionType", "namespacecrow_1_1mustache.html#aeb8da2ae9d8d9fe55f6ab0a7455dd667", [
-      [ "Ignore", "namespacecrow_1_1mustache.html#aeb8da2ae9d8d9fe55f6ab0a7455dd667afd038fc7f319e48f3115d92bf5bdbef9", null ],
-      [ "Tag", "namespacecrow_1_1mustache.html#aeb8da2ae9d8d9fe55f6ab0a7455dd667ac101058e7ea21bbbf2a5ac893088e90b", null ],
-      [ "UnescapeTag", "namespacecrow_1_1mustache.html#aeb8da2ae9d8d9fe55f6ab0a7455dd667a6a92aa81e0cd0b1c2f77a84226ad4777", null ],
-      [ "OpenBlock", "namespacecrow_1_1mustache.html#aeb8da2ae9d8d9fe55f6ab0a7455dd667a047e46a0bc852354acb31de6a507a3fe", null ],
-      [ "CloseBlock", "namespacecrow_1_1mustache.html#aeb8da2ae9d8d9fe55f6ab0a7455dd667a470529d743a17635308c52dc50efccd8", null ],
-      [ "ElseBlock", "namespacecrow_1_1mustache.html#aeb8da2ae9d8d9fe55f6ab0a7455dd667ab82f53ea35520be1175d4764c22d2b30", null ],
-      [ "Partial", "namespacecrow_1_1mustache.html#aeb8da2ae9d8d9fe55f6ab0a7455dd667a44ffd38a6dea695cbe2b34efdcc6cf27", null ]
-    ] ],
+    [ "ActionType", "namespacecrow_1_1mustache.html#aeb8da2ae9d8d9fe55f6ab0a7455dd667", null ],
     [ "compile", "namespacecrow_1_1mustache.html#a5823e2be647059121cc4f0329e44741a", null ],
     [ "default_loader", "namespacecrow_1_1mustache.html#a7e8660fbdeeb994a1f00c704b469c792", null ],
     [ "load", "namespacecrow_1_1mustache.html#abe44de50c382e0d39e7ef5b7d5057ca6", null ],

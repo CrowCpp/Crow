@@ -7,8 +7,9 @@ var searchData=
   ['websocket_5ftcp_5fnodelay_4',['websocket_tcp_nodelay',['../classcrow_1_1_crow.html#a717c0811ebfcadd12dbef788771ec46d',1,'crow::Crow']]],
   ['websocket_5ftcp_5fsocket_5foptions_5',['websocket_tcp_socket_options',['../classcrow_1_1_crow.html#af7d8bd7e8b72899f3bcdae49a586c89c',1,'crow::Crow']]],
   ['websocketrule_6',['WebSocketRule',['../classcrow_1_1_web_socket_rule.html',1,'crow']]],
-  ['websocketrule_5ft_7',['WebSocketRule_t',['../classcrow_1_1_crow.html#a8ce9c4e7343480097d8a8afbf911ec72',1,'crow::Crow']]],
-  ['wrapped_8',['Wrapped',['../structcrow_1_1detail_1_1routing__handler__call__helper_1_1_wrapped.html',1,'crow::detail::routing_handler_call_helper']]],
-  ['wvalue_9',['wvalue',['../classcrow_1_1json_1_1wvalue.html',1,'crow::json::wvalue'],['../classcrow_1_1json_1_1wvalue.html#a1813a29de56af96789cc76b8cdb0dbbe',1,'crow::json::wvalue::wvalue()']]],
-  ['wvalue_5freader_10',['wvalue_reader',['../structcrow_1_1json_1_1wvalue__reader.html',1,'crow::json']]]
+  ['websocketrule_3c_20crow_3c_20middlewares_2e_2e_2e_20_3e_20_3e_7',['WebSocketRule&lt; Crow&lt; Middlewares... &gt; &gt;',['../classcrow_1_1_web_socket_rule.html',1,'crow']]],
+  ['websocketrule_5ft_8',['WebSocketRule_t',['../classcrow_1_1_crow.html#a95e666bf0229caba852e9df30275fa14',1,'crow::Crow']]],
+  ['wrapped_9',['Wrapped',['../structcrow_1_1detail_1_1routing__handler__call__helper_1_1_wrapped.html',1,'crow::detail::routing_handler_call_helper']]],
+  ['wvalue_10',['wvalue',['../classcrow_1_1json_1_1wvalue.html',1,'crow::json::wvalue'],['../classcrow_1_1json_1_1wvalue.html#a1813a29de56af96789cc76b8cdb0dbbe',1,'crow::json::wvalue::wvalue()']]],
+  ['wvalue_5freader_11',['wvalue_reader',['../structcrow_1_1json_1_1wvalue__reader.html',1,'crow::json']]]
 ];

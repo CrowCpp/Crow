@@ -58,9 +58,10 @@ var NAVTREE =
 var NAVTREEINDEX =
 [
 "_tiny_s_h_a1_8hpp.html",
-"classcrow_1_1websocket_1_1_connection.html#a4fab99ae7f8e269480d5842cff1daf88",
-"structcrow_1_1detail_1_1check__before__handle__arity__3.html"
+"classcrow_1_1websocket_1_1_connection.html#a595b84a3c7206d4923286ac863b45ffb",
+"structcrow_1_1detail_1_1routing__handler__call__helper_1_1call_3_01_f_00_01_n_int_00_01_n_uint_0b63d09427b176e92959de8d063124ae4.html"
 ];
 
-var SYNCONMSG = 'click to disable panel synchronisation';
-var SYNCOFFMSG = 'click to enable panel synchronisation';
+var SYNCONMSG = 'click to disable panel synchronization';
+var SYNCOFFMSG = 'click to enable panel synchronization';
+var LISTOFALLMEMBERS = 'List of all members';

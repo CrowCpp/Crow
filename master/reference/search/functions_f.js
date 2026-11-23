@@ -16,7 +16,7 @@ var searchData=
   ['set_5fstatic_5ffile_5finfo_13',['set_static_file_info',['../structcrow_1_1response.html#a53a9d396455de4120d9d7a1b9e414c98',1,'crow::response']]],
   ['set_5fstatic_5ffile_5finfo_5funsafe_14',['set_static_file_info_unsafe',['../structcrow_1_1response.html#a7182dc3f150a76f3ef8a19d3a21f5685',1,'crow::response']]],
   ['size_15',['size',['../classcrow_1_1json_1_1wvalue.html#a1ded929c63fcb6e3c53be38e9b54c672',1,'crow::json::wvalue']]],
-  ['socket_16',['socket',['../structcrow_1_1_socket_adaptor.html#a41fbd5c8e046163bb50e793f5decfda6',1,'crow::SocketAdaptor::socket()'],['../classcrow_1_1_connection.html#a4e1e6e41ec0fbf059c93fae2b9738a19',1,'crow::Connection::socket()']]],
+  ['socket_16',['socket',['../classcrow_1_1_connection.html#a4e1e6e41ec0fbf059c93fae2b9738a19',1,'crow::Connection::socket()'],['../structcrow_1_1_socket_adaptor.html#a41fbd5c8e046163bb50e793f5decfda6',1,'crow::SocketAdaptor::socket()']]],
   ['ssl_5fchainfile_17',['ssl_chainfile',['../classcrow_1_1_crow.html#a5db312a2a72f76be1f040eacaf387787',1,'crow::Crow']]],
   ['ssl_5ffile_18',['ssl_file',['../classcrow_1_1_crow.html#a6b3004e9388f1ac8114c0db2c93b6dd9',1,'crow::Crow::ssl_file(const std::string &amp;crt_filename, const std::string &amp;key_filename)'],['../classcrow_1_1_crow.html#ad56281ae1ca63aaa4b04a70ae445ed95',1,'crow::Crow::ssl_file(const std::string &amp;pem_filename)']]],
   ['start_19',['start',['../classcrow_1_1websocket_1_1_connection.html#a928134640aa98a86f56a71735a41147a',1,'crow::websocket::Connection']]],
