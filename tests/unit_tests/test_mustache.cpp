@@ -2,6 +2,8 @@
 
 #include "crow.h"
 
+#include <type_traits>
+
 using namespace std;
 using namespace crow;
 
@@ -50,6 +52,47 @@ TEST_CASE("template_double", "[mustache]")
     auto numeric_part = result.substr(result.find("3."));
     CHECK(Catch::Approx(std::stod(numeric_part)) == 3.14159);
 } // template_double
+
+TEMPLATE_TEST_CASE("template_numeric_sections", "[mustache]", int, unsigned int, float, double)
+{
+    auto t = mustache::compile("{{#value}}nonzero{{/value}}{{^value}}zero{{/value}}|{{name}}");
+    mustache::context ctx;
+    ctx["name"] = "after";
+
+    ctx["value"] = TestType(0);
+    CHECK(t.render_string(ctx) == "zero|after");
+
+    ctx["value"] = TestType(1);
+    CHECK(t.render_string(ctx) == "nonzero|after");
+
+    if constexpr (std::is_signed<TestType>::value)
+    {
+        ctx["value"] = TestType(-1);
+        CHECK(t.render_string(ctx) == "nonzero|after");
+    }
+
+    if constexpr (std::is_floating_point<TestType>::value)
+    {
+        ctx["value"] = TestType(-0.0);
+        CHECK(t.render_string(ctx) == "zero|after");
+
+        ctx["value"] = TestType(0.5);
+        CHECK(t.render_string(ctx) == "nonzero|after");
+    }
+}
+
+TEST_CASE("template_numeric_sections_nested_context", "[mustache]")
+{
+    auto t = mustache::compile("{{#outer}}{{#value}}nonzero{{/value}}"
+                              "{{^value}}{{name}}{{/value}}|{{name}}{{/outer}}");
+    mustache::context ctx;
+    ctx["outer"]["name"] = "outer";
+    ctx["outer"]["value"] = 0;
+    CHECK(t.render_string(ctx) == "outer|outer");
+
+    ctx["outer"]["value"] = "0";
+    CHECK(t.render_string(ctx) == "nonzero|outer");
+}
 
 TEST_CASE("template_nested_keys")
 {
