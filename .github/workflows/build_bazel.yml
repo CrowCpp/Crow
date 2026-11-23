@@ -30,7 +30,7 @@ jobs:
     - name: Prepare dependencies
       run: |
          if [ "$RUNNER_OS" == "Linux" ]; then
-              curl --tlsv1.2 --proto =https -Lo bazel https://github.com/bazelbuild/bazelisk/releases/download/v1.25.0/bazelisk-linux-amd64
+              curl --tlsv1.2 --proto =https -Lo bazel https://github.com/bazelbuild/bazelisk/releases/download/v1.30.0/bazelisk-linux-amd64
               chmod +x bazel
 
               sudo apt-get update && \
