@@ -1,4 +1,7 @@
 #pragma once
+#ifndef _WIN32
+#include <fcntl.h>
+#endif
 #ifdef CROW_USE_BOOST
 #include <boost/asio.hpp>
 #ifdef CROW_ENABLE_SSL
@@ -18,6 +21,24 @@
 
 namespace crow
 {
+    /// Set FD_CLOEXEC on a native socket handle to prevent file descriptor leaking across fork/exec.
+    template<typename NativeHandle>
+    inline int set_cloexec([[maybe_unused]] NativeHandle fd)
+    {
+#ifndef _WIN32
+        int flags = fcntl(fd, F_GETFD);
+        if (flags != -1)
+        {
+            return fcntl(fd, F_SETFD, flags | FD_CLOEXEC);
+        }
+        // Retrieving current flags failed
+        return flags;
+#else
+        // Return not -1 (following fcntl()'s docs)
+        return 0;
+#endif
+    }
+
 #ifdef CROW_USE_BOOST
     namespace asio = boost::asio;
     using error_code = boost::system::error_code;
