@@ -2,8 +2,245 @@
 
 #include "crow.h"
 
+#include <atomic>
+#include <chrono>
+#include <future>
+#include <memory>
+#include <thread>
+
 using namespace std;
 using namespace crow;
+
+namespace
+{
+    struct loader_reset
+    {
+        ~loader_reset()
+        {
+            mustache::set_loader(mustache::default_loader);
+        }
+    };
+
+    std::string load_through(int entry, const std::string& filename)
+    {
+        switch (entry)
+        {
+            case 0: return mustache::load_text(filename);
+            case 1: return mustache::load_text_unsafe(filename);
+            case 2: return mustache::load(filename).render_string();
+            default: return mustache::load_unsafe(filename).render_string();
+        }
+    }
+} // namespace
+
+TEST_CASE("template_loader_retains_in_flight_callable", "[mustache][loader]")
+{
+    loader_reset reset;
+    const int entry = GENERATE(0, 1, 2, 3);
+    CAPTURE(entry);
+    auto lifetime = std::make_shared<int>(0);
+    std::weak_ptr<int> previous_loader = lifetime;
+    std::promise<void> entered;
+    std::promise<void> release;
+    auto released = release.get_future().share();
+    auto started = entered.get_future();
+    mustache::set_loader([lifetime, &entered, released](std::string) {
+        // Do not access the callable's captures after announcing entry.
+        auto done = released;
+        entered.set_value();
+        done.wait();
+        return "old";
+    });
+    lifetime.reset();
+    std::string result;
+    std::exception_ptr error;
+    std::thread reader([&] {
+        try
+        {
+            result = load_through(entry, "page");
+        }
+        catch (...)
+        {
+            error = std::current_exception();
+        }
+    });
+    const bool did_start = started.wait_for(std::chrono::seconds(5)) == std::future_status::ready;
+    std::promise<void> replaced;
+    auto replacement = replaced.get_future();
+    std::thread writer([&] {
+        mustache::set_loader([](std::string) {
+            return "new";
+        });
+        replaced.set_value();
+    });
+    const bool did_replace = replacement.wait_for(std::chrono::seconds(5)) == std::future_status::ready;
+    const bool retained = !previous_loader.expired();
+    release.set_value();
+    reader.join();
+    writer.join();
+    CHECK(did_start);
+    CHECK(did_replace);
+    CHECK(retained);
+    CHECK_FALSE(error);
+    CHECK(result == "old");
+    CHECK(previous_loader.expired());
+    CHECK(load_through(entry, "page") == "new");
+}
+
+
+TEST_CASE("template_loader_preserves_mutable_state", "[mustache][loader]")
+{
+    loader_reset reset;
+    mustache::set_loader([count = 0](std::string) mutable {
+        return std::to_string(++count);
+    });
+    CHECK(mustache::load_text("page") == "1");
+    CHECK(mustache::load_text_unsafe("page") == "2");
+    CHECK(mustache::load("page").render_string() == "3");
+    CHECK(mustache::load_unsafe("page").render_string() == "4");
+}
+
+TEST_CASE("template_loader_callback_can_replace_and_load", "[mustache][loader]")
+{
+    loader_reset reset;
+    const int entry = GENERATE(0, 1, 2, 3);
+    CAPTURE(entry);
+    auto lifetime = std::make_shared<int>(0);
+    std::weak_ptr<int> previous_loader = lifetime;
+    bool retained = false;
+    mustache::set_loader([lifetime, &retained, &previous_loader, entry](std::string) {
+        auto* retained_result = &retained;
+        auto* previous = &previous_loader;
+        const int nested_entry = entry;
+        mustache::set_loader([](std::string) {
+            return "nested";
+        });
+        *retained_result = !previous->expired();
+        return load_through(nested_entry, "page");
+    });
+    lifetime.reset();
+    CHECK(load_through(entry, "page") == "nested");
+    CHECK(retained);
+    CHECK(previous_loader.expired());
+}
+
+TEST_CASE("template_loader_destructor_can_replace_and_load", "[mustache][loader]")
+{
+    loader_reset reset;
+    std::string observed;
+    auto lifetime = std::shared_ptr<int>(new int(0), [&](int* value) {
+        delete value;
+        observed = mustache::load_text("page");
+        mustache::set_loader([](std::string) {
+            return "reentered";
+        });
+    });
+    mustache::set_loader([lifetime](std::string) {
+        return "old";
+    });
+    lifetime.reset();
+    mustache::set_loader([](std::string) {
+        return "replacement";
+    });
+    CHECK(observed == "replacement");
+    CHECK(mustache::load_text("page") == "reentered");
+}
+
+TEST_CASE("template_loader_preserves_errors_and_empty_results", "[mustache][loader]")
+{
+    loader_reset reset;
+    const int entry = GENERATE(0, 1, 2, 3);
+    CAPTURE(entry);
+    mustache::set_loader([](std::string) -> std::string {
+        throw std::runtime_error("loader error");
+    });
+    CHECK_THROWS_WITH(load_through(entry, "page"), "loader error");
+    mustache::set_loader({});
+    CHECK_THROWS_AS(load_through(entry, "page"), std::bad_function_call);
+    mustache::set_loader([](std::string) {
+        return "";
+    });
+    CHECK(load_through(entry, "page").empty());
+    mustache::set_loader([](std::string) {
+        return "recovered";
+    });
+    CHECK(load_through(entry, "page") == "recovered");
+}
+
+TEST_CASE("template_loader_preserves_paths_and_rendering", "[mustache][loader]")
+{
+    loader_reset reset;
+    const int entry = GENERATE(0, 1, 2, 3);
+    CAPTURE(entry);
+    std::string observed;
+    mustache::set_loader([&](std::string filename) {
+        observed = filename;
+        return "{{name}}";
+    });
+    const std::string result = load_through(entry, "bad?.mustache");
+    CHECK(observed == ((entry == 0 || entry == 2) ? "bad_.mustache" : "bad?.mustache"));
+    CHECK(result == ((entry < 2) ? "{{name}}" : ""));
+    mustache::set_loader([](std::string filename) {
+        return filename == "main" ? "Hello {{name}} {{>partial}}" : "{{name}}!";
+    });
+    mustache::context ctx;
+    ctx["name"] = "Crow";
+    CHECK(mustache::load("main").render_string(ctx) == "Hello Crow Crow!");
+    CHECK(mustache::load_unsafe("main").render_string(ctx) == "Hello Crow Crow!");
+}
+
+TEST_CASE("template_loader_concurrent_replacement", "[mustache][loader]")
+{
+    loader_reset reset;
+    std::atomic<bool> start{false};
+    std::atomic<unsigned> failures{0};
+    std::atomic<unsigned> calls{0};
+    std::vector<std::thread> workers;
+    mustache::set_loader([](std::string) {
+        return "initial";
+    });
+    for (int writer = 0; writer < 2; ++writer)
+    {
+        workers.emplace_back([&, writer] {
+            while (!start.load())
+                std::this_thread::yield();
+            for (int i = 0; i < 1000; ++i)
+            {
+                // Immutable state: registry safety does not serialize user code.
+                auto value = std::make_shared<const std::string>(std::to_string(writer));
+                mustache::set_loader([value](std::string) {
+                    return *value;
+                });
+            }
+        });
+    }
+    for (int entry = 0; entry < 4; ++entry)
+    {
+        workers.emplace_back([&, entry] {
+            while (!start.load())
+                std::this_thread::yield();
+            for (int i = 0; i < 1000; ++i)
+            {
+                try
+                {
+                    auto value = load_through(entry, "page");
+                    if (value != "initial" && value != "0" && value != "1")
+                        ++failures;
+                }
+                catch (...)
+                {
+                    ++failures;
+                }
+                ++calls;
+            }
+        });
+    }
+    start.store(true);
+    for (auto& worker : workers)
+        worker.join();
+    CHECK(calls.load() == 4000);
+    CHECK(failures.load() == 0);
+}
 
 TEST_CASE("template_basic", "[mustache]")
 {
