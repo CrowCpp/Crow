@@ -5,6 +5,7 @@
  */
 
 #pragma once
+#include <cmath>
 #include <string>
 #include <vector>
 #include <fstream>
@@ -287,7 +288,7 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                         return ctx.num.ui == 0;
                     case json::num_type::Floating_point:
                     case json::num_type::Double_precision_floating_point:
-                        return ctx.num.d == 0.0;
+                        return std::fpclassify(ctx.num.d) == FP_ZERO;
                     default:
                         return false;
                 }
