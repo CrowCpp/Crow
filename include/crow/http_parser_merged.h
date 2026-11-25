@@ -157,7 +157,6 @@ enum http_errno {
 
         uint32_t nread;          /* # bytes read in various scenarios */
         uint64_t content_length; /* # bytes in body. `(uint64_t) -1` (all bits one) if no Content-Length header. */
-        unsigned long qs_point;
 
         /** READ-ONLY **/
         unsigned char http_major;
@@ -482,7 +481,7 @@ do {                                                                 \
  * URL and non-URL states by looking for these.
  */
 inline enum state
-parse_url_char(enum state s, const char ch, http_parser *parser, const char* url_mark, const char* p)
+parse_url_char(enum state s, const char ch)
 {
 # define CROW_T(v) 0
 
@@ -584,7 +583,6 @@ static const uint8_t normal_url_char[32] = {
       }
 
       if (ch == '?') {
-          parser->qs_point = p - url_mark;
         return s_req_query_string_start;
       }
 
@@ -604,7 +602,6 @@ static const uint8_t normal_url_char[32] = {
       }
       else if (ch == '?')
       {
-          parser->qs_point = p - url_mark;
           return s_req_query_string_start;
       }
 
@@ -697,7 +694,6 @@ static const int8_t unhex[256] =
   const char *header_field_mark = 0;
   const char *header_value_mark = 0;
   const char *url_mark = 0;
-  const char *url_start_mark = 0;
   const char *body_mark = 0;
   const unsigned int lenient = parser->lenient_http_headers;
   const unsigned int allow_chunked_length = parser->allow_chunked_length;
@@ -868,12 +864,11 @@ reexecute:
         if (ch == ' ') break;
 
         CROW_MARK(url);
-        CROW_MARK(url_start);
         if (parser->method == (unsigned)HTTPMethod::Connect) {
           parser->state = s_req_server_start;
         }
 
-        parser->state = parse_url_char(static_cast<state>(parser->state), ch, parser, url_start_mark, p);
+        parser->state = parse_url_char(static_cast<state>(parser->state), ch);
         if (CROW_UNLIKELY(parser->state == s_dead)) {
           CROW_SET_ERRNO(CHPE_INVALID_URL);
           goto error;
@@ -895,7 +890,7 @@ reexecute:
             CROW_SET_ERRNO(CHPE_INVALID_URL);
             goto error;
           default:
-            parser->state = parse_url_char(static_cast<state>(parser->state), ch, parser, url_start_mark, p);
+            parser->state = parse_url_char(static_cast<state>(parser->state), ch);
             if (CROW_UNLIKELY(parser->state == s_dead)) {
               CROW_SET_ERRNO(CHPE_INVALID_URL);
               goto error;
@@ -932,7 +927,7 @@ reexecute:
             CROW_CALLBACK_DATA(url);
             break;
           default:
-            parser->state = parse_url_char(static_cast<state>(parser->state), ch, parser, url_start_mark, p);
+            parser->state = parse_url_char(static_cast<state>(parser->state), ch);
             if (CROW_UNLIKELY(parser->state == s_dead)) {
               CROW_SET_ERRNO(CHPE_INVALID_URL);
               goto error;

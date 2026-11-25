@@ -32,7 +32,7 @@ namespace crow
             HTTPParser* self = static_cast<HTTPParser*>(self_);
             self->req.raw_url.insert(self->req.raw_url.end(), at, at + length);
             self->req.url_params = query_string(self->req.raw_url);
-            self->req.url = self->req.raw_url.substr(0, self->qs_point != 0 ? self->qs_point : std::string::npos);
+            self->req.url = self->req.raw_url.substr(0, self->req.raw_url.find('?'));
 
             self->process_url();
 
@@ -143,7 +143,6 @@ namespace crow
             header_field.clear();
             header_value.clear();
             header_building_state = 0;
-            qs_point = 0;
             message_complete = false;
             state = CROW_NEW_MESSAGE();
         }
