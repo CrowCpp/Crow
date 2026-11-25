@@ -5,6 +5,7 @@
  */
 
 #pragma once
+#include <cmath>
 #include <string>
 #include <vector>
 #include <fstream>
@@ -277,6 +278,22 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                 return false;
             }
 
+            static bool is_number_zero(const context& ctx)
+            {
+                switch (ctx.nt)
+                {
+                    case json::num_type::Signed_integer:
+                        return ctx.num.si == 0;
+                    case json::num_type::Unsigned_integer:
+                        return ctx.num.ui == 0;
+                    case json::num_type::Floating_point:
+                    case json::num_type::Double_precision_floating_point:
+                        return std::fpclassify(ctx.num.d) == FP_ZERO;
+                    default:
+                        return false;
+                }
+            }
+
             void render_internal(int actionBegin, int actionEnd, std::vector<const context*>& stack, std::string& out, int indent) const
             {
                 int current = actionBegin;
@@ -368,6 +385,12 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                                 case json::type::Null:
                                     stack.emplace_back(&nullContext);
                                     break;
+                                case json::type::Number:
+                                    if (is_number_zero(ctx))
+                                        stack.emplace_back(&nullContext);
+                                    else
+                                        current = action.pos;
+                                    break;
                                 default:
                                     current = action.pos;
                                     break;
@@ -397,6 +420,11 @@ namespace crow // NOTE: Already documented in "crow/app.h"
                                     current = action.pos;
                                     break;
                                 case json::type::Number:
+                                    if (is_number_zero(ctx))
+                                        current = action.pos;
+                                    else
+                                        stack.push_back(&ctx);
+                                    break;
                                 case json::type::String:
                                 case json::type::Object:
                                 case json::type::True:
