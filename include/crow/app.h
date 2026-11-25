@@ -339,14 +339,14 @@ namespace crow
         /// \brief Set the default max payload size for websockets
         self_t& websocket_max_payload(uint64_t max_payload)
         {
-            max_payload_ = max_payload;
+            configuration_.max_payload_ = max_payload;
             return *this;
         }
 
         /// \brief Get the default max payload size for websockets
         uint64_t websocket_max_payload()
         {
-            return max_payload_;
+            return configuration_.max_payload_;
         }
 
         self_t& signal_clear()
@@ -369,7 +369,7 @@ namespace crow
         /// \brief Set the port that Crow will handle requests on
         self_t& port(std::uint16_t port)
         {
-            port_ = port;
+            configuration_.port_ = port;
             return *this;
         }
 
@@ -378,7 +378,7 @@ namespace crow
         {
             if (!server_started_)
             {
-                return port_;
+                return configuration_.port_;
             }
 #ifdef CROW_ENABLE_SSL
             if (ssl_used_)
@@ -394,39 +394,39 @@ namespace crow
 
         /// \brief Set status variable to note that the address that Crow will handle requests on is bound
         void address_is_bound() {
-           is_bound_ = true;
+           configuration_.is_bound_ = true;
         }
 
         /// \brief Get whether address that Crow will handle requests on is bound
         bool is_bound() const {
-           return is_bound_;
+           return configuration_.is_bound_;
         }
 
         /// \brief Set the connection timeout in seconds (default is 5)
         self_t& timeout(std::uint8_t timeout)
         {
-            timeout_ = timeout;
+            configuration_.server.timeout_ = timeout;
             return *this;
         }
 
         /// \brief Set the server name included in the 'Server' HTTP response header. If set to an empty string, the header will be omitted by default.
         self_t& server_name(std::string server_name)
         {
-            server_name_ = server_name;
+            configuration_.server.server_name_ = server_name;
             return *this;
         }
 
         /// \brief The IP address that Crow will handle requests on (default is 0.0.0.0)
         self_t& bindaddr(std::string bindaddr)
         {
-            bindaddr_ = bindaddr;
+            configuration_.bindaddr_ = bindaddr;
             return *this;
         }
 
         /// \brief Get the address that Crow will handle requests on
         std::string bindaddr()
         {
-            return bindaddr_;
+            return configuration_.bindaddr_;
         }
 
         /// \brief Set the filesystem directory for implicit static file serving.
@@ -436,28 +436,28 @@ namespace crow
         /// \ref CROW_STATIC_ENDPOINT.
         self_t& static_directory(std::string path)
         {
-            static_directory_ = std::move(path);
+            configuration_.static_directory_ = std::move(path);
             return *this;
         }
 
         /// \brief Get the filesystem directory used for implicit static files
         std::string static_directory() const
         {
-            return static_directory_;
+            return configuration_.static_directory_;
         }
 
         /// \brief Disable tcp/ip and use unix domain socket instead
         self_t& local_socket_path(std::string path)
         {
-            bindaddr_ = path;
-            use_unix_ = true;
+            configuration_.bindaddr_ = path;
+            configuration_.server.use_unix_ = true;
             return *this;
         }
 
         /// \brief Get the unix domain socket path
         std::string local_socket_path()
         {
-            return bindaddr_;
+            return configuration_.bindaddr_;
         }
 
         /// \brief Run the server on multiple threads using all available threads
@@ -471,14 +471,14 @@ namespace crow
         {
             if (concurrency < 2) // Crow can have a minimum of 2 threads running
                 concurrency = 2;
-            concurrency_ = concurrency;
+            configuration_.server.concurrency_ = concurrency;
             return *this;
         }
 
         /// \brief Get the number of threads that server is using
         std::uint16_t concurrency() const
         {
-            return concurrency_;
+            return configuration_.server.concurrency_;
         }
 
         /// \brief Set the server's log level
@@ -498,28 +498,28 @@ namespace crow
         /// \brief Enable or disable TCP_NODELAY for accepted TCP connections.
         self_t& tcp_nodelay(bool enabled = true)
         {
-            tcp_socket_options_.no_delay = enabled;
+            configuration_.server.tcp_socket_options_.no_delay = enabled;
             return *this;
         }
 
         /// \brief Get the TCP_NODELAY setting for HTTP connections.
         detail::socket::tcp_socket_options tcp_socket_options() const
         {
-            return tcp_socket_options_;
+            return configuration_.server.tcp_socket_options_;
         }
 
         /// \brief Enable or disable TCP_NODELAY for WebSocket connections.
         /// We also have to differentiate between socket options for http server socket and websocket server socket.
         self_t& websocket_tcp_nodelay(bool enabled = true)
         {
-            websocket_tcp_socket_options_.no_delay = enabled;
+            configuration_.websocket_tcp_socket_options_.no_delay = enabled;
             return *this;
         }
 
         /// \brief Get the TCP_NODELAY setting for WebSocket connections.
         detail::socket::tcp_socket_options websocket_tcp_socket_options() const
         {
-            return websocket_tcp_socket_options_;
+            return configuration_.websocket_tcp_socket_options_;
         }
 
         /// \brief Set the response body size (in bytes) beyond which Crow automatically streams responses (Default is 1MiB)
@@ -619,7 +619,7 @@ namespace crow
         void add_static_dir()
         {
             if (are_static_routes_added()) return;
-            auto static_dir_ = crow::utility::normalize_path(static_directory_);
+            auto static_dir_ = crow::utility::normalize_path(configuration_.static_directory_);
 
             route<crow::black_magic::get_parameter_tag(CROW_STATIC_ENDPOINT)>(CROW_STATIC_ENDPOINT)([static_dir_](crow::response& res, std::string file_path_partial) {
                 utility::sanitize_filename(file_path_partial);
@@ -652,14 +652,18 @@ namespace crow
             {
 
                 error_code ec;
-                asio::ip::address addr = asio::ip::make_address(bindaddr_,ec);
+                asio::ip::address addr = asio::ip::make_address(configuration_.bindaddr_,ec);
                 if (ec){
-                    CROW_LOG_ERROR << ec.message() << " - Can not create valid ip address from string: \"" << bindaddr_ << "\"";
+                    CROW_LOG_ERROR << ec.message() << " - Can not create valid ip address from string: \"" << configuration_.bindaddr_ << "\"";
                     return;
                 }
-                tcp::endpoint endpoint(addr, port_);
+                tcp::endpoint endpoint(addr, configuration_.port_);
                 router_.using_ssl = true;
-                ssl_server_ = std::make_unique<ssl_server_t>(this, endpoint, server_name_, &middlewares_, concurrency_, timeout_, &ssl_context_, tcp_socket_options_);
+                ssl_server_ = std::make_unique<ssl_server_t>(this,
+                    endpoint,
+                    configuration_.server,
+                    &middlewares_,
+                    &ssl_context_);
                 ssl_server_->set_tick_function(tick_interval_, tick_function_);
                 ssl_server_->signal_clear();
                 for (auto snum : signals_)
@@ -672,10 +676,13 @@ namespace crow
             else
 #endif
             {
-                if (use_unix_)
+                if (configuration_.server.use_unix_)
                 {
-                    UnixSocketAcceptor::endpoint endpoint(bindaddr_);
-                    unix_server_ = std::make_unique<unix_server_t>(this, endpoint, server_name_, &middlewares_, concurrency_, timeout_, nullptr);
+                    UnixSocketAcceptor::endpoint endpoint(configuration_.bindaddr_);
+                    unix_server_ = std::make_unique<unix_server_t>(this, endpoint,
+                        configuration_.server,
+                        &middlewares_,
+                        nullptr);
                     unix_server_->set_tick_function(tick_interval_, tick_function_);
                     for (auto snum : signals_)
                     {
@@ -687,13 +694,16 @@ namespace crow
                 else
                 {
                     error_code ec;
-                    asio::ip::address addr = asio::ip::make_address(bindaddr_,ec);
+                    asio::ip::address addr = asio::ip::make_address(configuration_.bindaddr_,ec);
                     if (ec){
-                        CROW_LOG_ERROR << ec.message() << " - Can not create valid ip address from string: \"" << bindaddr_ << "\"";
+                        CROW_LOG_ERROR << ec.message() << " - Can not create valid ip address from string: \"" << configuration_.bindaddr_ << "\"";
                         return;
                     }
-                    TCPAcceptor::endpoint endpoint(addr, port_);
-                    server_ = std::make_unique<server_t>(this, endpoint, server_name_, &middlewares_, concurrency_, timeout_, nullptr, tcp_socket_options_);
+                    TCPAcceptor::endpoint endpoint(addr, configuration_.port_);
+                    server_ = std::make_unique<server_t>(this, endpoint,
+                                                         configuration_.server,
+                                                         &middlewares_,
+                                                         nullptr);
                     server_->set_tick_function(tick_interval_, tick_function_);
                     for (auto snum : signals_)
                     {
@@ -928,18 +938,17 @@ namespace crow
             return static_routes_added_;
         }
 
+        struct Configuration {
+            ServerConfiguration server;
+            detail::socket::tcp_socket_options websocket_tcp_socket_options_{};
+            std::string bindaddr_ = "0.0.0.0";
+            std::string static_directory_ = CROW_STATIC_DIRECTORY;
+            uint64_t max_payload_{UINT64_MAX};
+            std::atomic_bool is_bound_ = false;
+            uint16_t port_ = 80;
+        };
     private:
-        std::uint8_t timeout_{5};
-        uint16_t port_ = 80;
-        unsigned int concurrency_ = 2;
-        std::atomic_bool is_bound_ = false;
-        uint64_t max_payload_{UINT64_MAX};
-        std::string server_name_ = std::string("Crow/") + VERSION;
-        std::string bindaddr_ = "0.0.0.0";
-        std::string static_directory_ = CROW_STATIC_DIRECTORY;
-        bool use_unix_ = false;
-        detail::socket::tcp_socket_options tcp_socket_options_{};
-        detail::socket::tcp_socket_options websocket_tcp_socket_options_{};
+        Configuration configuration_;
         size_t res_stream_threshold_ = 1048576;
         Router router_;
         bool static_routes_added_{false};
