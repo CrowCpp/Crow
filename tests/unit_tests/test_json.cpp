@@ -2,6 +2,7 @@
 
 #include "crow.h"
 
+#include <clocale>
 #include <cstring>
 
 using namespace std;
@@ -773,4 +774,40 @@ TEST_CASE("Assorted floating points", "[json]")
         "        1.008,\n        100800,\n        10080000000,\n        1.008e+20,\n        1.008e-05,\n        1.008e-10\n"
         "    ]\n}";
     REQUIRE(text==expected_text);
+}
+
+TEST_CASE("json_dump_floating_point_ignores_locale", "[json]")
+{
+    const std::string old_locale = std::setlocale(LC_NUMERIC, nullptr);
+    const char* comma_locales[] = {"de_DE.UTF-8", "de_DE.utf8", "fr_FR.UTF-8", "fr_FR.utf8", "German_Germany.1252"};
+    bool locale_set = false;
+    for (const char* name : comma_locales)
+    {
+        if (std::setlocale(LC_NUMERIC, name) != nullptr && std::strcmp(std::localeconv()->decimal_point, ".") != 0)
+        {
+            locale_set = true;
+            break;
+        }
+    }
+    if (!locale_set)
+    {
+        std::setlocale(LC_NUMERIC, old_locale.c_str());
+        WARN("no locale with a non-'.' decimal point available, skipping");
+        return;
+    }
+
+    json::wvalue w(json::load(R"({"list":[1.5,2.25]})"));
+    w["d"] = 0.5;
+    w["f"] = 2.5f;
+    const std::string dumped = w.dump();
+
+    std::setlocale(LC_NUMERIC, old_locale.c_str());
+
+    auto x = json::load(dumped);
+    REQUIRE(x);
+    CHECK(x["list"].size() == 2);
+    CHECK(x["list"][0].d() == 1.5);
+    CHECK(x["list"][1].d() == 2.25);
+    CHECK(x["d"].d() == 0.5);
+    CHECK(x["f"].d() == 2.5);
 }
